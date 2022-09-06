@@ -1,17 +1,31 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.notifications.permissions
 
 import android.Manifest
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
@@ -19,22 +33,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
-import com.google.android.material.snackbar.Snackbar
+import io.getstream.chat.android.client.R
 import io.getstream.logging.StreamLog
 
-internal interface NotificationPermissionManager {
-
-    fun start()
-
-    fun stop()
-
-}
-
+@Suppress("ProtectedMemberInFinalClass", "ComplexCondition")
 internal class NotificationPermissionManagerImpl(
     private val context: Context,
     private val requestPermissionOnAppLaunch: () -> Boolean,
-    private val onPermissionGranted: () -> Unit,
-    private val onPermissionDenied: () -> Unit,
+    private val onPermissionStatus: (NotificationPermissionStatus) -> Unit,
 ) : NotificationPermissionManager, ActivityLifecycleCallbacks() {
 
     private val logger = StreamLog.getLogger("Chat:Notifications-PM")
@@ -44,9 +50,7 @@ internal class NotificationPermissionManagerImpl(
 
     private var started = false
     private var permissionRequested = false
-    private var activityCount = 0
-    private var currentActivity: ComponentActivity? = null
-    private var launcher: ActivityResultLauncher<String>? = null
+    private var currentActivity: Activity? = null
 
     init {
         (context.applicationContext as? Application)?.also {
@@ -64,7 +68,7 @@ internal class NotificationPermissionManagerImpl(
         logger.d { "[start] no args" }
         handler.post {
             started = true
-            requestPermissionIfPossible()
+            currentActivity?.requestPermissionIfPossible()
         }
     }
 
@@ -78,97 +82,112 @@ internal class NotificationPermissionManagerImpl(
     override fun onActivityCreated(activity: Activity, bunlde: Bundle?) {
         logger.v { "[onActivityCreated] activity: $activity" }
         super.onActivityCreated(activity, bunlde)
-        if (activity !is ComponentActivity) return
         currentActivity = activity
-        launcher?.unregister()
-        launcher = activity.registerForActivityResult(permissionContract) { isGranted: Boolean ->
-            logger.v { "[requestPermission] completed: $isGranted" }
-            when (isGranted) {
-                true -> onPermissionGranted()
-                else -> onPermissionDenied().also {
-                    showNotificationBlocked(activity)
-                }
-            }
-        }
     }
 
     override fun onActivityStarted(activity: Activity) {
         logger.v { "[onActivityStarted] activity: $activity" }
+        activity.registerPermissionCallback()
         super.onActivityStarted(activity)
-        if (activityCount++ == 0) {
-            onFirstActivityStarted(activity)
-        }
+    }
+
+    override fun onFirstActivityStarted(activity: Activity) {
+        logger.i { "[onFirstActivityStarted] activity: $activity" }
+        activity.requestPermissionIfPossible()
+    }
+
+    override fun onActivityResumed(activity: Activity) {
+        logger.v { "[onActivityResumed] activity: $activity" }
+        super.onActivityResumed(activity)
+        currentActivity = activity
+    }
+
+    override fun onActivityPaused(activity: Activity) {
+        logger.v { "[onActivityPaused] activity: $activity" }
+        super.onActivityPaused(activity)
+        currentActivity = null
     }
 
     override fun onActivityStopped(activity: Activity) {
         logger.v { "[onActivityStopped] activity: $activity" }
+        activity.unregisterPermissionCallback()
         super.onActivityStopped(activity)
-        launcher?.unregister()
-        currentActivity = null
-        if (--activityCount == 0) {
-            onLastActivityStopped(activity)
-        }
     }
 
-    private fun onFirstActivityStarted(activity: Activity) {
-        logger.i { "[onFirstActivityStarted] activity: $activity" }
-        currentActivity = activity as? ComponentActivity
-        requestPermissionIfPossible()
-    }
-
-    private fun onLastActivityStopped(activity: Activity) {
+    override fun onLastActivityStopped(activity: Activity) {
         logger.i { "[onLastActivityStopped] activity: $activity" }
-        launcher?.unregister()
-        currentActivity = null
         permissionRequested = false
     }
 
-    private fun requestPermissionIfPossible() {
-        logger.i { "[requestPermissionIfPossible] permissionRequested: $permissionRequested" }
-        val activity = currentActivity ?: return
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-            && started && !permissionRequested && requestPermissionOnAppLaunch()) {
-            requestPermission(activity)
+    private fun Activity.registerPermissionCallback() {
+        if (this !is ComponentActivity) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        logger.i { "[registerPermissionCallback] activity: ${this::class.simpleName}" }
+        val launcher = registerForActivityResult(permissionContract) { isGranted: Boolean ->
+            logger.v { "[registerPermissionCallback] completed: $isGranted" }
+            when (isGranted) {
+                true -> onPermissionStatus(NotificationPermissionStatus.GRANTED)
+                else -> onPermissionStatus(NotificationPermissionStatus.DENIED)
+            }
+        }
+        logger.v { "[registerPermissionCallback] launcher: $launcher" }
+        val contentLayout = findViewById<ViewGroup>(android.R.id.content)
+        contentLayout.putActivityResultLauncher(launcher)
+    }
+
+    private fun Activity.unregisterPermissionCallback() {
+        if (this !is ComponentActivity) return
+        logger.i { "[unregisterPermissionCallback] activity: ${this::class.simpleName}" }
+        val contentLayout = findViewById<ViewGroup>(android.R.id.content)
+        val launcher = contentLayout.getActivityResultLauncher()
+        logger.v { "[unregisterPermissionCallback] found launcher: $launcher" }
+        launcher?.unregister()
+    }
+
+    private fun Activity.requestPermissionIfPossible() {
+        val requestPermissionOnAppLaunch = requestPermissionOnAppLaunch()
+        logger.i {
+            "[requestPermissionIfPossible] started: $started, permissionRequested: $permissionRequested, " +
+                "requestPermissionOnAppLaunch: $requestPermissionOnAppLaunch, "
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            started && !permissionRequested && requestPermissionOnAppLaunch
+        ) {
+            requestPermission()
             permissionRequested = true
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun requestPermission(activity: ComponentActivity) {
+    private fun Activity.requestPermission() {
         logger.d { "[requestPermission] no args" }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
         when {
             ContextCompat.checkSelfPermission(
-                activity, Manifest.permission.POST_NOTIFICATIONS
+                this, Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED -> {
                 logger.v { "[requestPermission] already granted" }
-                onPermissionGranted()
             }
-            shouldShowRequestPermissionRationale(activity, Manifest.permission.POST_NOTIFICATIONS) -> {
-                logger.v { "[requestPermission] already denied" }
-                onPermissionDenied()
-                showNotificationBlocked(activity)
+            shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS) -> {
+                logger.i { "[requestPermission] rationale requested" }
+                onPermissionStatus(NotificationPermissionStatus.RATIONALE_NEEDED)
             }
             else -> {
-                logger.v { "[requestPermission] launch" }
+                val contentLayout = findViewById<ViewGroup>(android.R.id.content)
+                val launcher = contentLayout.getActivityResultLauncher()
+                logger.i { "[requestPermission] launcher: $launcher" }
                 launcher?.launch(Manifest.permission.POST_NOTIFICATIONS)
+                onPermissionStatus(NotificationPermissionStatus.REQUESTED)
             }
         }
     }
 
-    private fun showNotificationBlocked(activity: ComponentActivity) {
-        Snackbar.make(
-            activity.window.decorView.rootView,
-            "Notification blocked",
-            Snackbar.LENGTH_LONG
-        ).setAction("Settings") {
-            // Responds to click on the action
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            val uri = Uri.fromParts("package", activity.packageName, null)
-            intent.data = uri
-            activity.startActivity(intent)
-        }.show()
+    @Suppress("UNCHECKED_CAST")
+    private fun View.getActivityResultLauncher(): ActivityResultLauncher<String>? {
+        return getTag(R.id.stream_post_notifications_permission) as? ActivityResultLauncher<String>
     }
 
+    private fun View.putActivityResultLauncher(launcher: ActivityResultLauncher<String>) {
+        return setTag(R.id.stream_post_notifications_permission, launcher)
+    }
 }

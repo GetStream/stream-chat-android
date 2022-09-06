@@ -32,8 +32,10 @@ import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
+import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
-import kotlinx.coroutines.launch
+import io.getstream.logging.StreamLog
 import java.util.Date
 
 /**
@@ -47,7 +49,10 @@ internal class MessagingStyleNotificationHandler(
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
     private val userIconBuilder: UserIconBuilder,
+    private val permissionHandler: NotificationPermissionHandler?
 ) : NotificationHandler {
+
+    private val logger = StreamLog.getLogger("Chat:MsnHandler")
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -60,7 +65,17 @@ internal class MessagingStyleNotificationHandler(
         }
     }
 
+    override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) {
+        when (status) {
+            NotificationPermissionStatus.REQUESTED -> permissionHandler?.onPermissionRequested()
+            NotificationPermissionStatus.GRANTED -> permissionHandler?.onPermissionGranted()
+            NotificationPermissionStatus.DENIED -> permissionHandler?.onPermissionDenied()
+            NotificationPermissionStatus.RATIONALE_NEEDED -> permissionHandler?.onPermissionRationale()
+        }
+    }
+
     override fun showNotification(channel: Channel, message: Message) {
+        logger.d { "[showNotification] channel.cid: ${channel.cid}, message.cid: ${message.cid}" }
         val currentUser = ChatClient.instance().getCurrentUser()
             ?: ChatClient.instance().getStoredUser()
             ?: return

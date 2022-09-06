@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
+import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 
 /**
  * Handler responsible for showing and dismissing notification.
@@ -73,7 +74,5 @@ public interface NotificationHandler {
      */
     public fun dismissAllNotifications()
 
-    public fun onNotificationPermissionGranted() { /* no-op */ }
-
-    public fun onNotificationPermissionDenied() { /* no-op */ }
+    public fun onNotificationPermissionStatus(status: NotificationPermissionStatus) { /* no-op */ }
 }
