@@ -53,10 +53,18 @@ public fun MediaAttachmentQuotedContent(
 ) {
     val isImage = attachment.type == AttachmentType.IMAGE
     val isVideo = attachment.type == AttachmentType.VIDEO
+    val isGiphy = attachment.type == AttachmentType.GIPHY
+
     val backgroundColor =
         if (isImage) ChatTheme.colors.imageBackgroundMessageList else ChatTheme.colors.videoBackgroundMessageList
 
-    val data = if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) attachment.imagePreviewUrl else null
+    val data =
+        if (isImage || isGiphy || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
+            attachment.imagePreviewUrl
+        } else {
+            null
+        }
+
     val imagePainter = rememberStreamImagePainter(data = data)
 
     Box(
