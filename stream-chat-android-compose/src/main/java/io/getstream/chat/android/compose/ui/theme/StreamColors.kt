@@ -49,6 +49,10 @@ import io.getstream.chat.android.compose.R
  * Most visible in placeholders before the images are loaded.
  * @param imageBackgroundMediaGalleryPicker Used to set the background colour of images inside the media gallery picker
  * in the media gallery preview screen. Most visible in placeholders before the images are loaded.
+ * @param imageBackgroundMessageList Used to set the background colour of videos inside the message list.
+ * Most visible in placeholders before the video previews are loaded.
+ * @param imageBackgroundMediaGalleryPicker Used to set the background colour of videos inside the media gallery picker
+ * in the media gallery preview screen. Most visible in placeholders before the videos previews are loaded.
  */
 @Immutable
 public data class StreamColors(
@@ -74,6 +78,8 @@ public data class StreamColors(
     public val threadSeparatorGradientEnd: Color,
     public val imageBackgroundMessageList: Color,
     public val imageBackgroundMediaGalleryPicker: Color,
+    public val videoBackgroundMessageList: Color,
+    public val videoBackgroundMediaGalleryPicker: Color,
 ) {
 
     public companion object {
@@ -106,6 +112,8 @@ public data class StreamColors(
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
             imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
+            videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
+            videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
         )
 
         /**
@@ -137,6 +145,8 @@ public data class StreamColors(
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
             imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
+            videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
+            videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
         )
     }
 }

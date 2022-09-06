@@ -51,7 +51,13 @@ public fun MediaAttachmentQuotedContent(
     attachment: Attachment,
     modifier: Modifier = Modifier,
 ) {
-    val imagePainter = rememberStreamImagePainter(attachment.imagePreviewUrl)
+    val isImage = attachment.type == AttachmentType.IMAGE
+    val isVideo = attachment.type == AttachmentType.VIDEO
+    val backgroundColor =
+        if (isImage) ChatTheme.colors.imageBackgroundMessageList else ChatTheme.colors.videoBackgroundMessageList
+
+    val data = if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) attachment.imagePreviewUrl else null
+    val imagePainter = rememberStreamImagePainter(data = data)
 
     Box(
         modifier = modifier
@@ -68,13 +74,14 @@ public fun MediaAttachmentQuotedContent(
 
         Image(
             modifier = Modifier
-                .fillMaxSize(1f),
+                .fillMaxSize(1f)
+                .background(backgroundColor),
             painter = imagePainter,
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
 
-        if (attachment.type == AttachmentType.VIDEO) {
+        if (isVideo) {
             PlayButton(
                 modifier = Modifier
                     .padding(10.dp)

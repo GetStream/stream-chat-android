@@ -154,6 +154,7 @@ internal fun ShowSingleMediaAttachment(
     onLongItemClick: (Message) -> Unit,
     playButton: @Composable () -> Unit,
 ) {
+    val isVideo = attachment.type == AttachmentType.VIDEO
     // Depending on the CDN, images might not contain their original dimensions
     val ratio: Float? by remember(key1 = attachment.originalWidth, key2 = attachment.originalHeight) {
         derivedStateOf {
@@ -172,14 +173,14 @@ internal fun ShowSingleMediaAttachment(
         attachment = attachment,
         modifier = Modifier
             .heightIn(
-                max = if (attachment.type == AttachmentType.VIDEO) {
+                max = if (isVideo) {
                     ChatTheme.dimens.attachmentsContentVideoMaxHeight
                 } else {
                     ChatTheme.dimens.attachmentsContentImageMaxHeight
                 }
             )
             .width(
-                if (attachment.type == AttachmentType.VIDEO) {
+                if (isVideo) {
                     ChatTheme.dimens.attachmentsContentVideoWidth
                 } else {
                     ChatTheme.dimens.attachmentsContentImageWidth
@@ -320,6 +321,8 @@ internal fun MediaAttachmentContentItem(
     playButton: @Composable () -> Unit,
 ) {
     val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
+    val isImage = attachment.type == AttachmentType.IMAGE
+    val isVideo = attachment.type == AttachmentType.VIDEO
 
     // Used as a workaround for Coil's lack of a retry policy.
     // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
@@ -328,9 +331,7 @@ internal fun MediaAttachmentContentItem(
     }
 
     val data =
-        if (attachment.type == AttachmentType.IMAGE ||
-            (attachment.type == AttachmentType.VIDEO && ChatTheme.videoThumbnailsEnabled)
-        ) {
+        if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
             attachment.imagePreviewUrl
         } else {
             null
@@ -378,10 +379,14 @@ internal fun MediaAttachmentContentItem(
             ),
         contentAlignment = Alignment.Center
     ) {
+        val backgroundColor =
+            if (isImage) ChatTheme.colors.imageBackgroundMessageList
+            else ChatTheme.colors.videoBackgroundMessageList
+
         Image(
             modifier = modifier
                 .fillMaxSize()
-                .background(ChatTheme.colors.imageBackgroundMessageList),
+                .background(backgroundColor),
             painter = painter,
             contentDescription = null,
             contentScale = ContentScale.Crop
@@ -391,11 +396,11 @@ internal fun MediaAttachmentContentItem(
             asyncImagePainterState = painter.state,
             progressIndicatorStrokeWidth = 3.dp,
             progressIndicatorFillMaxSizePercentage = 0.25f,
-            isImage = attachment.type == AttachmentType.IMAGE,
+            isImage = isImage,
             placeholderIconTintColor = ChatTheme.colors.disabled
         )
 
-        if (attachment.type == AttachmentType.VIDEO) {
+        if (isVideo) {
             playButton()
         }
     }

@@ -1248,6 +1248,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         user: User,
         pagerState: PagerState,
     ) {
+        val isImage = attachment.type == AttachmentType.IMAGE
+        val isVideo = attachment.type == AttachmentType.VIDEO
+
         // Used as a workaround for Coil's lack of a retry policy.
         // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
         var retryHash by remember {
@@ -1269,9 +1272,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             contentAlignment = Alignment.Center
         ) {
             val data =
-                if (attachment.type == AttachmentType.IMAGE ||
-                    (attachment.type == AttachmentType.VIDEO && ChatTheme.videoThumbnailsEnabled)
-                ) {
+                if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
                     attachment.imagePreviewUrl
                 } else {
                     null
@@ -1290,11 +1291,14 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 retryHash++
             }
 
+            val backgroundColor = if (isImage) ChatTheme.colors.imageBackgroundMediaGalleryPicker
+            else ChatTheme.colors.videoBackgroundMediaGalleryPicker
+
             Image(
                 modifier = Modifier
                     .padding(1.dp)
                     .fillMaxSize()
-                    .background(color = ChatTheme.colors.imageBackgroundMediaGalleryPicker),
+                    .background(color = backgroundColor),
                 painter = painter,
                 contentDescription = null,
                 contentScale = ContentScale.Crop
@@ -1302,7 +1306,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
             MediaPreviewPlaceHolder(
                 asyncImagePainterState = painter.state,
-                isImage = attachment.type == AttachmentType.IMAGE,
+                isImage = isImage,
                 progressIndicatorStrokeWidth = 3.dp,
                 progressIndicatorFillMaxSizePercentage = 0.3f
             )
@@ -1325,7 +1329,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 initials = user.initials
             )
 
-            if (attachment.type == AttachmentType.VIDEO) {
+            if (isVideo) {
                 PlayButton(
                     modifier = Modifier
                         .shadow(6.dp, shape = CircleShape)
