@@ -78,7 +78,7 @@ public class MessageListViewModel(
     private val messageListController: MessageListController = MessageListController(
         cid = channelId,
         chatClient = chatClient,
-        deletedMessageVisibility = deletedMessageVisibility,
+        deletedVisibility = deletedMessageVisibility,
         showSystemMessages = showSystemMessages,
         showDateSeparators = showDateSeparators,
         dateSeparatorThresholdMillis = dateSeparatorThresholdMillis,

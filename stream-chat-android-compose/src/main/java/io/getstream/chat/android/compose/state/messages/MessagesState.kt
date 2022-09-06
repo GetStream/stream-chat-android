@@ -18,14 +18,9 @@ package io.getstream.chat.android.compose.state.messages
 
 import androidx.compose.ui.unit.IntSize
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.model.MessageListState
-import io.getstream.chat.android.common.model.MyOwn
-import io.getstream.chat.android.common.model.Other
-import io.getstream.chat.android.common.model.SelectedMessageFailedModerationState
-import io.getstream.chat.android.common.model.SelectedMessageOptionsState
-import io.getstream.chat.android.common.model.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.common.model.SelectedMessageReactionsState
+import io.getstream.chat.android.common.messagelist.MessageListState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.compose.util.extensions.toComposeState
 import io.getstream.chat.android.compose.util.extensions.toMessageListItemState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -105,22 +100,4 @@ public fun MessageListState.toComposeState(): MessagesState {
         newMessageState = newMessageState?.toComposeState(),
         selectedMessageState = selectedMessageState?.toComposeState(),
     )
-}
-
-// TODO
-public fun io.getstream.chat.android.common.model.NewMessageState.toComposeState(): NewMessageState {
-    return when(this) {
-        MyOwn -> io.getstream.chat.android.compose.state.messages.MyOwn
-        Other -> io.getstream.chat.android.compose.state.messages.Other
-    }
-}
-
-// TODO
-public fun io.getstream.chat.android.common.model.SelectedMessageState.toComposeState(): SelectedMessageState {
-    return when (this) {
-        is SelectedMessageFailedModerationState -> io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState(message, ownCapabilities)
-        is SelectedMessageOptionsState -> io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState(message, ownCapabilities)
-        is SelectedMessageReactionsPickerState -> io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState(message, ownCapabilities)
-        is SelectedMessageReactionsState -> io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState(message, ownCapabilities)
-    }
 }

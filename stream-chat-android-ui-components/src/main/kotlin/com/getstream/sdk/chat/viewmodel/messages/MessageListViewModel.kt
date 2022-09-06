@@ -25,11 +25,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.toPosition
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import com.getstream.sdk.chat.view.messages.toMessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.MessagePositionHandler
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
@@ -44,15 +42,17 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.messagelist.MessageListController
-import io.getstream.chat.android.common.model.MessageFocused
-import io.getstream.chat.android.common.model.MessageItem
+import io.getstream.chat.android.common.model.messsagelist.MessageItem
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.messagelist.MessageFocused
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.ui.utils.extensions.toCommonPosition
+import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.flow.StateFlow
@@ -62,8 +62,8 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
 import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
 import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphyCommon
-import io.getstream.chat.android.common.model.DateSeparatorHandler as DateSeparatorHandlerCommon
-import io.getstream.chat.android.common.model.MessagePositionHandler as MessagePositionHandlerCommon
+import io.getstream.chat.android.common.messagelist.DateSeparatorHandler as DateSeparatorHandlerCommon
+import io.getstream.chat.android.common.messagelist.MessagePositionHandler as MessagePositionHandlerCommon
 
 /**
  * View model class for [com.getstream.sdk.chat.view.MessageListView].
@@ -91,7 +91,7 @@ public class MessageListViewModel(
         cid = cid,
         messageId = messageId,
         chatClient = chatClient,
-        deletedMessageVisibility = deletedVisibility,
+        deletedVisibility = deletedVisibility,
         showSystemMessages = showSystemMessages,
         showDateSeparators = showDateSeparators,
         dateSeparatorThresholdMillis = dateSeparatorTime,
@@ -119,7 +119,7 @@ public class MessageListViewModel(
      * Regulates the visibility of deleted messages.
      */
     public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> =
-        messageListController._deletedMessageVisibility.asLiveData()
+        messageListController.deletedMessageVisibility.asLiveData()
 
     /**
      * Represents the current state of the message list
@@ -451,7 +451,7 @@ public class MessageListViewModel(
     public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandler) {
         messageListController.setMessagePositionHandler { prevMessage, message, nextMessage, isAfterDateSeparator ->
             messagePositionHandler.handleMessagePosition(prevMessage, message, nextMessage, isAfterDateSeparator)
-                .map { it.toPosition() }
+                .map { it.toCommonPosition() }
         }
     }
 
@@ -880,13 +880,6 @@ public class MessageListViewModel(
          */
     }
 
-    /**
-     * A SAM designed to evaluate if a date separator should be added between messages.
-     */
-    public fun interface DateSeparatorHandler {
-        public fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean
-    }
-
     //TODO
     private fun <T : Any> handleResult(result: Result<T>, wrapError: (ChatError) -> EventWrapper<ErrorEvent>) {
         if (result.isError) {
@@ -895,8 +888,32 @@ public class MessageListViewModel(
     }
 
     /**
+     * A SAM designed to evaluate if a date separator should be added between messages.
+     */
+    @Deprecated(
+        message = "Deprecated in favor of common implementation of DateSeparatorHandler.",
+        replaceWith = ReplaceWith(
+            expression = "DateSeparatorHandler",
+            imports = [] // TODO sort out imports
+        )
+    )
+    public fun interface DateSeparatorHandler {
+        public fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean
+    }
+
+    /**
      * A handler to determine the position of a message inside a group.
      */
+    /**
+     * A SAM designed to evaluate if a date separator should be added between messages.
+     */
+    @Deprecated(
+        message = "Deprecated in favor of common implementation of MessagePositionHandler.",
+        replaceWith = ReplaceWith(
+            expression = "MessagePositionHandler",
+            imports = [] // TODO sort out imports
+        )
+    )
     public fun interface MessagePositionHandler {
         /**
          * Determines the position of a message inside a group.

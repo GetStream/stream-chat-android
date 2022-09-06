@@ -17,8 +17,6 @@
 package com.getstream.sdk.chat.view.messages
 
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.toUiMessageListItem
-import io.getstream.chat.android.common.model.MessageListState
 
 /**
  * MessageListItemWrapper wraps a list of [MessageListItem] with a few extra fields.
@@ -30,18 +28,3 @@ public data class MessageListItemWrapper(
     val isThread: Boolean = false,
     val areNewestMessagesLoaded: Boolean = false
 )
-
-// TODO
-public fun MessageListState.toMessageListItemWrapper(): MessageListItemWrapper {
-    var messagesList: List<MessageListItem> = messages.map { it.toUiMessageListItem() }
-
-    if (isLoadingOlderMessages) messagesList = messagesList + listOf(MessageListItem.LoadingMoreIndicatorItem)
-    if (isLoadingNewerMessages) messagesList = listOf(MessageListItem.LoadingMoreIndicatorItem) + messagesList
-
-    return MessageListItemWrapper(
-        items = messagesList,
-        hasNewMessages = newMessageState != null,
-        isTyping = false, // TODO
-        areNewestMessagesLoaded = endOfNewMessagesReached // TODO?
-    )
-}

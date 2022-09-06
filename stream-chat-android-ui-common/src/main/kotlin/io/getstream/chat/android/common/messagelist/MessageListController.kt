@@ -18,26 +18,11 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.extensions.isError
 import io.getstream.chat.android.common.extensions.isSystem
-import io.getstream.chat.android.common.model.ClipboardHandler
-import io.getstream.chat.android.common.model.DateSeparatorHandler
-import io.getstream.chat.android.common.model.DateSeparatorItem
-import io.getstream.chat.android.common.model.MessageFocusRemoved
-import io.getstream.chat.android.common.model.MessageFocused
-import io.getstream.chat.android.common.model.MessageItem
-import io.getstream.chat.android.common.model.MessageListItem
-import io.getstream.chat.android.common.model.MessageListState
-import io.getstream.chat.android.common.model.MessagePosition
-import io.getstream.chat.android.common.model.MessagePositionHandler
-import io.getstream.chat.android.common.model.MyOwn
-import io.getstream.chat.android.common.model.NewMessageState
-import io.getstream.chat.android.common.model.Other
-import io.getstream.chat.android.common.model.SelectedMessageFailedModerationState
-import io.getstream.chat.android.common.model.SelectedMessageOptionsState
-import io.getstream.chat.android.common.model.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.common.model.SelectedMessageReactionsState
-import io.getstream.chat.android.common.model.SelectedMessageState
-import io.getstream.chat.android.common.model.SystemMessageItem
-import io.getstream.chat.android.common.model.ThreadSeparatorItem
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItem
+import io.getstream.chat.android.common.model.messsagelist.MessageItem
+import io.getstream.chat.android.common.model.messsagelist.MessageListItem
+import io.getstream.chat.android.common.model.messsagelist.SystemMessageItem
+import io.getstream.chat.android.common.model.messsagelist.ThreadSeparatorItem
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -50,6 +35,18 @@ import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
+import io.getstream.chat.android.common.state.messagelist.MessageFocusRemoved
+import io.getstream.chat.android.common.state.messagelist.MessageFocused
+import io.getstream.chat.android.common.state.messagelist.MessagePosition
+import io.getstream.chat.android.common.state.messagelist.MyOwn
+import io.getstream.chat.android.common.state.messagelist.NewMessageState
+import io.getstream.chat.android.common.state.messagelist.Other
+import io.getstream.chat.android.common.state.messagelist.SelectedMessageFailedModerationState
+import io.getstream.chat.android.common.state.messagelist.SelectedMessageOptionsState
+import io.getstream.chat.android.common.state.messagelist.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.common.state.messagelist.SelectedMessageReactionsState
+import io.getstream.chat.android.common.state.messagelist.SelectedMessageState
+import io.getstream.chat.android.common.util.ClipboardHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
@@ -91,7 +88,7 @@ import java.util.Date
  *
  * @param cid The channel id in the format messaging:123.
  * @param chatClient The client used to communicate with the API.
- * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list.
+ * @param deletedVisibility The [DeletedMessageVisibility] to be applied to the list.
  * @param showSystemMessages Determines if the system messages should be shown or not.
  * @param showDateSeparators Determines whether the date separators are shown or not.
  * @param dateSeparatorThresholdMillis The time between two messages after which the date separator will be visible.
@@ -102,7 +99,7 @@ public class MessageListController(
     private val cid: String,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val deletedMessageVisibility: DeletedMessageVisibility,
+    private val deletedVisibility: DeletedMessageVisibility,
     private val showSystemMessages: Boolean,
     private val showDateSeparators: Boolean,
     private val dateSeparatorThresholdMillis: Long,
@@ -318,8 +315,8 @@ public class MessageListController(
     /**
      * Regulates the visibility of deleted messages.
      */
-    public val _deletedMessageVisibility: MutableStateFlow<DeletedMessageVisibility> =
-        MutableStateFlow(deletedMessageVisibility)
+    public val deletedMessageVisibility: MutableStateFlow<DeletedMessageVisibility> =
+        MutableStateFlow(deletedVisibility)
 
     /**
      * Represents the message we wish to scroll to.
@@ -327,7 +324,7 @@ public class MessageListController(
     private var scrollToMessage: Message? = null
 
     /**
-     * TODO
+     * Whether the user is inside search or not.
      */
     public val isInsideSearch: StateFlow<Boolean> = channelState.filterNotNull()
         .flatMapLatest { it.insideSearch }
@@ -359,15 +356,13 @@ public class MessageListController(
                 channelState.messagesState,
                 channelState.reads,
                 _messageFooterVisibility,
-                _deletedMessageVisibility
+                deletedMessageVisibility
             ) { state, reads, _, _ ->
                 when (state) {
                     is MessagesState.Loading,
                     is MessagesState.NoQueryActive,
                     -> _messageListState.value.copy(isLoading = true)
-                    MessagesState.OfflineNoResults -> _messageListState.value.copy(
-                        isLoading = false
-                    )
+                    MessagesState.OfflineNoResults -> _messageListState.value.copy(isLoading = false)
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
                         isLoadingNewerMessages = false,
@@ -385,7 +380,7 @@ public class MessageListController(
             showEmptyState()
         }.onEach { newState ->
             val newLastMessage =
-                (newState.messages.firstOrNull { it is MessageItem } as? MessageItem)?.message
+                (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
 
             val hasNewMessage = lastLoadedMessage != null &&
                 _messageListState.value.messages.isNotEmpty() &&
@@ -397,10 +392,9 @@ public class MessageListController(
                 newState
             }
 
-            _messageListState.value.messages
-                .firstOrNull { it is MessageItem && it.message.id == scrollToMessage?.id }?.let {
-                    focusMessage((it as MessageItem).message.id)
-                }
+            _messageListState.value.messages.firstOrNull {
+                it is MessageItem && it.message.id == scrollToMessage?.id
+            }?.let { focusMessage((it as MessageItem).message.id) }
 
             lastLoadedMessage = newLastMessage
         }.launchIn(scope)
@@ -546,7 +540,7 @@ public class MessageListController(
                         isMine = user.id == currentUser?.id,
                         isInThread = isInThread,
                         isMessageRead = isMessageRead,
-                        deletedMessageVisibility = _deletedMessageVisibility.value,
+                        deletedMessageVisibility = deletedMessageVisibility.value,
                         showMessageFooter = shouldShowFooter
                     )
                 )
@@ -576,7 +570,7 @@ public class MessageListController(
         val currentUser = user.value
 
         return messages.filter {
-            val shouldShowIfDeleted = when (_deletedMessageVisibility.value) {
+            val shouldShowIfDeleted = when (deletedMessageVisibility.value) {
                 DeletedMessageVisibility.ALWAYS_VISIBLE -> true
                 DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
                     !(it.deletedAt != null && it.user.id != currentUser?.id)
@@ -1004,8 +998,6 @@ public class MessageListController(
      *
      * @param message Message to delete.
      * @param onResult Handler that notifies the flag message result.
-     *
-     * TODO
      */
     public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
         _messageActions.value =
@@ -1318,8 +1310,13 @@ public class MessageListController(
         })
     }
 
-    // TODO
-    public fun removeAttachment(messageId: String, attachment: Attachment) {
+    /**
+     * Removes a single [Attachment] from a [Message].
+     *
+     * @param messageId The [Message] id that contains the attachment.
+     * @param attachmentToBeDeleted The [Attachment] to be deleted from the message.
+     */
+    public fun removeAttachment(messageId: String, attachmentToBeDeleted: Attachment) {
         chatClient.loadMessageById(
             cid,
             messageId
@@ -1327,10 +1324,11 @@ public class MessageListController(
             if (result.isSuccess) {
                 val message = result.data()
                 message.attachments.removeAll { attachment ->
-                    if (attachment.assetUrl != null) {
-                        attachment.assetUrl == attachment.assetUrl
+                    if (attachmentToBeDeleted.assetUrl != null) {
+                        attachment.assetUrl == attachmentToBeDeleted.assetUrl
                     } else {
-                        attachment.imageUrl == attachment.imageUrl
+                        val isSame = attachment.imageUrl == attachmentToBeDeleted.imageUrl
+                        isSame
                     }
                 }
 
@@ -1394,7 +1392,7 @@ public class MessageListController(
      * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        _deletedMessageVisibility.value = deletedMessageVisibility
+        this.deletedMessageVisibility.value = deletedMessageVisibility
     }
 
     /**

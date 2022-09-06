@@ -24,8 +24,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.model.MessagePosition
-import io.getstream.chat.android.common.model.SystemMessageItem
 import java.util.Date
 
 /**
@@ -91,40 +89,5 @@ public sealed class MessageListItem {
         private const val THREAD_SEPARATOR_ITEM_STABLE_ID = 2L
         private const val LOADING_MORE_INDICATOR_STABLE_ID = 3L
         private const val THREAD_PLACEHOLDER_STABLE_ID = 4L
-    }
-}
-
-public fun io.getstream.chat.android.common.model.MessageListItem.toUiMessageListItem(): MessageListItem {
-    return when(this) {
-        is io.getstream.chat.android.common.model.DateSeparatorItem -> DateSeparatorItem(date = date)
-        is SystemMessageItem -> MessageListItem.ThreadPlaceholderItem
-        is io.getstream.chat.android.common.model.ThreadSeparatorItem -> ThreadSeparatorItem(date = date, messageCount = messageCount)
-        is io.getstream.chat.android.common.model.TypingItem -> TypingItem(users = typingUsers)
-        is io.getstream.chat.android.common.model.MessageItem -> MessageItem(
-            message = message,
-            positions = groupPosition.mapNotNull { it.toPosition() },
-            isMine = isMine,
-            messageReadBy = listOf(), // TODO
-            isThreadMode = isInThread,
-            isMessageRead = isMessageRead,
-            showMessageFooter = showMessageFooter
-        )
-    }
-}
-
-public fun MessagePosition.toPosition(): MessageListItem.Position? {
-    return when(this) {
-        MessagePosition.TOP -> MessageListItem.Position.TOP
-        MessagePosition.MIDDLE -> MessageListItem.Position.MIDDLE
-        MessagePosition.BOTTOM -> MessageListItem.Position.BOTTOM
-        MessagePosition.NONE -> null
-    }
-}
-
-public fun MessageListItem.Position.toPosition(): MessagePosition {
-    return when(this) {
-        MessageListItem.Position.TOP -> MessagePosition.TOP
-        MessageListItem.Position.MIDDLE -> MessagePosition.MIDDLE
-        MessageListItem.Position.BOTTOM -> MessagePosition.BOTTOM
     }
 }
