@@ -16,19 +16,13 @@
 
 package io.getstream.chat.ui.sample.feature.home
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -37,7 +31,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.utils.internal.toggle.dialog.ToggleDialogFragment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -56,8 +49,6 @@ import io.getstream.chat.ui.sample.feature.EXTRA_MESSAGE_ID
 import io.getstream.chat.ui.sample.feature.user_login.UserLoginViewModel
 import io.getstream.chat.ui.sample.util.extensions.useAdjustNothing
 
-private const val TAG = "Home-View"
-
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -67,66 +58,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var avatarView: AvatarView
     private lateinit var nameTextView: TextView
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        Log.i(TAG, "[onActivityResult] isGranted: $isGranted")
-        if (isGranted) {
-            // Permission is granted. Continue the action or workflow in your
-            // app.
-            sendNotification(this)
-        } else {
-            // Explain to the user that the feature is unavailable because the
-            // features requires a permission that the user has denied. At the
-            // same time, respect the user's decision. Don't link to system
-            // settings in an effort to convince the user to change their
-            // decision.
-            showNotificationBlocked()
-        }
-    }
-
-    private fun sendNotification(fragment: Fragment) {
-        Toast.makeText(fragment.requireContext(), "This is notification!", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun onRequestNotificationClick() {
-        when {
-            ContextCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                // You can use the API that requires the permission.
-                Log.i(TAG, "[onRequestNotificationClick] PERMISSION GRANTED")
-                sendNotification(this)
-            }
-            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
-                Log.i(TAG, "[onRequestNotificationClick] PERMISSION BLOCKED")
-                showNotificationBlocked()
-            }
-            else -> {
-                Log.i(TAG, "[onRequestNotificationClick] PERMISSION REQUESTED")
-                // The registered ActivityResultCallback gets the result of this request
-                requestPermissionLauncher.launch(
-                    Manifest.permission.POST_NOTIFICATIONS
-                )
-            }
-        }
-    }
-
-    private fun showNotificationBlocked() {
-        Snackbar.make(
-            requireView(),
-            "Notification blocked",
-            Snackbar.LENGTH_LONG
-        ).setAction("Settings") {
-            // Responds to click on the action
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            val uri: Uri = Uri.fromParts("package", requireContext().packageName, null)
-            intent.data = uri
-            startActivity(intent)
-        }.show()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -274,11 +205,6 @@ class HomeFragment : Fragment() {
                 }
                 R.id.groupChatFragment -> {
                     navigateSafely(R.id.action_homeFragment_to_addGroupChannelFragment)
-                    binding.drawerLayout.close()
-                    true
-                }
-                R.id.requestNotificationPermissions -> {
-                    onRequestNotificationClick()
                     binding.drawerLayout.close()
                     true
                 }

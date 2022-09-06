@@ -25,10 +25,4 @@
         android:icon="@drawable/ic_new_group"
         android:title="@string/home_drawer_new_group"
         />
-
-    <item
-        android:id="@+id/requestNotificationPermissions"
-        android:icon="@drawable/ic_check"
-        android:title="@string/home_drawer_request_notification_permissions"
-        />
 </menu>
