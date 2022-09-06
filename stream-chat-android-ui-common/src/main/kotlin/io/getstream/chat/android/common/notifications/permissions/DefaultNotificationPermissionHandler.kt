@@ -24,15 +24,23 @@ import android.net.Uri
 import android.provider.Settings
 import android.view.ViewGroup
 import com.google.android.material.snackbar.Snackbar
+import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.notifications.permissions.ActivityLifecycleCallbacks
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
+import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.ui.common.R
 
 private const val SCHEME_PACKAGE = "package"
 
 /**
  * Shows a [Snackbar] with a link to app settings on [android.Manifest.permission.POST_NOTIFICATIONS] permission denial.
+ *
+ * @see [NotificationHandlerFactory]
  */
+@StreamHandsOff(
+    reason = "This class shouldn't be renamed without verifying it works correctly since " +
+        "it's constructed by reflection in NotificationHandlerFactory."
+)
 @Suppress("ProtectedMemberInFinalClass")
 public class DefaultNotificationPermissionHandler(
     private val context: Context,
