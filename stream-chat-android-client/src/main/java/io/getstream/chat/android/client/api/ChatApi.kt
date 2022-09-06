@@ -42,6 +42,8 @@ import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.VideoCallInfo
+import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 import java.util.Date
@@ -371,6 +373,12 @@ internal interface ChatApi {
         createdAtBefore: Date?,
         createdAtBeforeOrEqual: Date?,
     ): Call<List<BannedUser>>
+
+    @CheckResult
+    fun createVideoCall(channelId: String, channelType: String, callId: String, callType: String): Call<VideoCallInfo>
+
+    @CheckResult
+    fun getVideoCallToken(callId: String): Call<VideoCallToken>
 
     @CheckResult
     fun sendEvent(
