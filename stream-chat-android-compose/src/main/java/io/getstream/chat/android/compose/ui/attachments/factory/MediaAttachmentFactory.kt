@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
@@ -37,7 +38,7 @@ import io.getstream.chat.android.uiutils.constant.AttachmentType
  * An [AttachmentFactory] that is able to handle Image and Video attachments.
  *
  * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
- * in a group when previewing Media attachments in the message list.
+ * in a group when previewing Media attachments in the message list. Values between 4 and 8 are optimal.
  * @param contentPlayButton Displays a play button above video attachments
  * in the messages list.
  * @param previewContentPlayButton Displays a play button above video attachments
@@ -82,6 +83,7 @@ public fun MediaAttachmentFactory(
  * overlaid above video attachment previews inside
  * the messages list.
  */
+@Preview(name = "DefaultContentPlayButton Preview")
 @Composable
 private fun DefaultContentPlayButton() {
     PlayButton(
@@ -99,6 +101,7 @@ private fun DefaultContentPlayButton() {
  * overlaid above video attachment previews inside
  * the message input.
  */
+@Preview(name = "DefaultPreviewContentPlayButton Preview")
 @Composable
 private fun DefaultPreviewContentPlayButton() {
     PlayButton(
