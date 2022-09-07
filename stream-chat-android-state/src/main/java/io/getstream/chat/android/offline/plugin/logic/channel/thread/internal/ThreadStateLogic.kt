@@ -52,11 +52,4 @@ internal interface ThreadStateLogic {
      * new messages should be kept.
      */
     fun upsertMessages(messages: List<Message>)
-
-    /**
-     * Removes local message. Doesn't remove message in database.
-     *
-     * @param message The [Message] to be deleted.
-     */
-    fun removeLocalMessage(message: Message)
 }

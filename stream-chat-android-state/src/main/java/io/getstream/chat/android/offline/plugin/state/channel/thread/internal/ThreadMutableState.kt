@@ -18,33 +18,56 @@ package io.getstream.chat.android.offline.plugin.state.channel.thread.internal
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
-/** State container with mutable data of a thread.*/
-internal interface ThreadMutableState : ThreadState {
-    /** Sorted version of messages. */
-    val sortedMessages: StateFlow<List<Message>>
+internal class ThreadMutableState(
+    override val parentId: String,
+    scope: CoroutineScope,
+) : ThreadState {
+    private val _messages = MutableStateFlow(emptyMap<String, Message>())
+    private val _loading = MutableStateFlow(false)
+    private val _loadingOlderMessages = MutableStateFlow(false)
+    private val _endOfOlderMessages = MutableStateFlow(false)
+    private val _oldestInThread: MutableStateFlow<Message?> = MutableStateFlow(null)
 
-    /** raw version of messages. */
-    var rawMessages: Map<String, Message>
+    val rawMessage: StateFlow<Map<String, Message>> = _messages
+    override val messages: StateFlow<List<Message>> = _messages
+        .map { it.values }
+        .map { threadMessages -> threadMessages.sortedBy { m -> m.createdAt ?: m.createdLocallyAt } }
+        .stateIn(scope, SharingStarted.Eagerly, emptyList())
+    override val loading: StateFlow<Boolean> = _loading
+    override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages
+    override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
+    override val oldestInThread: StateFlow<Message?> = _oldestInThread
 
-    /**
-     * Sets the thread to be loading older messages.
-     *
-     * @param isLoading Boolean.
-     */
-    fun setLoadingOlderMessages(isLoading: Boolean)
+    fun setLoading(isLoading: Boolean) {
+        _loading.value = isLoading
+    }
 
-    /** Sets the end for newer messages. */
-    fun setEndOfOlderMessages(isEnd: Boolean)
+    fun setLoadingOlderMessages(isLoading: Boolean) {
+        _loadingOlderMessages.value = isLoading
+    }
 
-    /**
-     * Sets loadings.
-     *
-     * @param isLoading Boolean.
-     */
-    fun setLoading(isLoading: Boolean)
+    fun setEndOfOlderMessages(isEnd: Boolean) {
+        _endOfOlderMessages.value = isEnd
+    }
 
-    /** Sets the oldest message in thread. */
-    fun setOldestInThread(message: Message?)
+    fun setOldestInThread(message: Message?) {
+        _oldestInThread.value = message
+    }
+
+    fun deleteMessage(message: Message) {
+        _messages.value -= message.id
+    }
+
+    fun upsertMessages(messages: List<Message>) {
+        _messages.value += messages.associateBy(Message::id)
+    }
 }
+
+internal fun ThreadState.toMutableState(): ThreadMutableState = this as ThreadMutableState

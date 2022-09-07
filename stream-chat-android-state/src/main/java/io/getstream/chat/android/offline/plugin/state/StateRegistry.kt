@@ -27,7 +27,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
-import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableStateImpl
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.logging.StreamLog
@@ -118,7 +117,7 @@ public class StateRegistry private constructor(
      */
     public fun thread(messageId: String): ThreadState {
         return threads.getOrPut(messageId) {
-            ThreadMutableStateImpl(messageId, scope)
+            ThreadMutableState(messageId, scope)
         }
     }
 
