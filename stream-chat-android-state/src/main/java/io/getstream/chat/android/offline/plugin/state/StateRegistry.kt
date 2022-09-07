@@ -115,10 +115,17 @@ public class StateRegistry private constructor(
      *
      * @return [ThreadState] object.
      */
-    public fun thread(messageId: String): ThreadState {
-        return threads.getOrPut(messageId) {
-            ThreadMutableState(messageId, scope)
-        }
+    public fun thread(messageId: String): ThreadState = mutableThread(messageId)
+
+    /**
+     * Returns [ThreadMutableState] of thread replies with parent message that has id equal to [messageId].
+     *
+     * @param messageId Thread's parent message id.
+     *
+     * @return [ThreadMutableState] object.
+     */
+    internal fun mutableThread(messageId: String): ThreadMutableState = threads.getOrPut(messageId) {
+        ThreadMutableState(messageId, scope)
     }
 
     internal fun getActiveQueryChannelsStates(): List<QueryChannelsState> = queryChannels.values.toList()

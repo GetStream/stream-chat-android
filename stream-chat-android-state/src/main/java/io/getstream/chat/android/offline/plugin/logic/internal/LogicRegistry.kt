@@ -34,7 +34,6 @@ import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.Que
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsStateLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
@@ -176,7 +175,7 @@ internal class LogicRegistry internal constructor(
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
     fun thread(messageId: String): ThreadLogic {
         return threads.getOrPut(messageId) {
-            val mutableState = stateRegistry.thread(messageId).toMutableState()
+            val mutableState = stateRegistry.mutableThread(messageId)
             val stateLogic = ThreadStateLogic(mutableState)
             ThreadLogic(stateLogic)
         }

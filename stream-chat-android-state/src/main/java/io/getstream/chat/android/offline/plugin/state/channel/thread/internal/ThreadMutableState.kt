@@ -69,5 +69,3 @@ internal class ThreadMutableState(
         _messages.value += messages.associateBy(Message::id)
     }
 }
-
-internal fun ThreadState.toMutableState(): ThreadMutableState = this as ThreadMutableState
