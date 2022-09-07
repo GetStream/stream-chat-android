@@ -79,5 +79,5 @@ public interface NotificationHandler {
      *
      * @param status Represents current [android.Manifest.permission.POST_NOTIFICATIONS] permission status.
      */
-    public fun onNotificationPermissionStatus(status: NotificationPermissionStatus) { /* no-op */ }
+    public fun onNotificationPermissionStatus(status: NotificationPermissionStatus)
 }

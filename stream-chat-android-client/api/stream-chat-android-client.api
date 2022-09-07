@@ -3477,7 +3477,6 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationHandler$DefaultImpls {
 	public static fun onChatEvent (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
-	public static fun onNotificationPermissionStatus (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;)V
 	public static fun onPushMessage (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;Lio/getstream/chat/android/client/models/PushMessage;)Z
 }
 
