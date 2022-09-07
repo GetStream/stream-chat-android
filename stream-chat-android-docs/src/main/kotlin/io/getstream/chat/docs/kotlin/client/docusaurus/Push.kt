@@ -88,7 +88,22 @@ class Push {
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             }
 
-            override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) { /* no-op */ }
+            override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) {
+                when (status) {
+                    NotificationPermissionStatus.REQUESTED -> {
+                        // invoked when POST_NOTIFICATIONS permission is requested
+                    }
+                    NotificationPermissionStatus.GRANTED -> {
+                        // invoked when POST_NOTIFICATIONS permission is granted
+                    }
+                    NotificationPermissionStatus.DENIED -> {
+                        // invoked when POST_NOTIFICATIONS permission is denied
+                    }
+                    NotificationPermissionStatus.RATIONALE_NEEDED -> {
+                        // invoked when POST_NOTIFICATIONS permission requires rationale
+                    }
+                }
+            }
 
             override fun showNotification(channel: Channel, message: Message) {
                 val notification = NotificationCompat.Builder(context, notificationChannelId)
