@@ -285,7 +285,7 @@ constructor(
         optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin
     )
 
-    internal companion object {
+    public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
         private val DEFAULT_SCROLL_BUTTON_ELEVATION = 3.dpToPx().toFloat()
         private val DEFAULT_SCROLL_BUTTON_MARGIN = 6.dpToPx()
@@ -295,28 +295,14 @@ constructor(
         private val DEFAULT_USER_REACTIONS_MARGIN = 8.dpToPx()
         private val DEFAULT_MESSAGE_OPTIONS_MARGIN = 24.dpToPx()
 
-        private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
-            return TextStyle.Builder(typedArray)
-                .color(
-                    R.styleable.MessageListView_streamUiEmptyStateTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
-                )
-                .size(
-                    R.styleable.MessageListView_streamUiEmptyStateTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium)
-                )
-                .font(
-                    R.styleable.MessageListView_streamUiEmptyStateTextFontAssets,
-                    R.styleable.MessageListView_streamUiEmptyStateTextFont,
-                )
-                .style(
-                    R.styleable.MessageListView_streamUiEmptyStateTextStyle,
-                    Typeface.NORMAL
-                )
-                .build()
-        }
+        /**
+         * Creates an [MessageListViewStyle] instance with the default values.
+         *
+         * @param context The context to load resources.
+         */
+        public fun createDefault(context: Context): MessageListViewStyle = invoke(context, null)
 
-        operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle {
+        internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MessageListView,
@@ -666,6 +652,27 @@ constructor(
                     optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
+        }
+
+        private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
+            return TextStyle.Builder(typedArray)
+                .color(
+                    R.styleable.MessageListView_streamUiEmptyStateTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .size(
+                    R.styleable.MessageListView_streamUiEmptyStateTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiEmptyStateTextFontAssets,
+                    R.styleable.MessageListView_streamUiEmptyStateTextFont,
+                )
+                .style(
+                    R.styleable.MessageListView_streamUiEmptyStateTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
         }
     }
 }
