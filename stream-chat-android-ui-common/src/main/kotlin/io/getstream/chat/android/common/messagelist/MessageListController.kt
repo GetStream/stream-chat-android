@@ -414,6 +414,10 @@ public class MessageListController(
         channelUnreadCount.onEach {
             _messageListState.value = _messageListState.value.copy(unreadCount = it)
         }.launchIn(scope)
+
+        typingUsers.onEach {
+            _messageListState.value = _messageListState.value.copy(typingUsers = it)
+        }
     }
 
     /**
@@ -494,6 +498,10 @@ public class MessageListController(
             .mapNotNull { it.lastRead }
             .maxOrNull()
 
+        val sortedReads = reads
+            .filter { it.user.id != currentUser?.id }
+            .sortedBy { it.lastRead }
+
         messages.forEachIndexed { index, message ->
             val user = message.user
             val previousMessage = messages.getOrNull(index - 1)
@@ -531,6 +539,10 @@ public class MessageListController(
                     ?.let { lastRead != null && it <= lastRead }
                     ?: false
 
+                val messageReadBy = message.createdAt?.let { messageCreatedAt ->
+                    sortedReads.filter { it.lastRead?.after(messageCreatedAt) ?: false }
+                } ?: emptyList()
+
                 groupedMessages.add(
                     MessageItem(
                         message = message,
@@ -541,7 +553,8 @@ public class MessageListController(
                         isInThread = isInThread,
                         isMessageRead = isMessageRead,
                         deletedMessageVisibility = deletedMessageVisibility.value,
-                        showMessageFooter = shouldShowFooter
+                        showMessageFooter = shouldShowFooter,
+                        messageReadBy = messageReadBy
                     )
                 )
             }
@@ -697,6 +710,7 @@ public class MessageListController(
      */
     public fun enterThreadMode(parentMessage: Message) {
         val channelState = channelState.value ?: return
+        _messageActions.value = _messageActions.value + Reply(parentMessage)
         val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
         _mode.value = MessageMode.MessageThread(parentMessage, state)
         observeThreadMessagesState(
@@ -889,7 +903,6 @@ public class MessageListController(
         when (messageAction) {
             is Resend -> resendMessage(messageAction.message)
             is ThreadReply -> {
-                _messageActions.value = _messageActions.value + Reply(messageAction.message)
                 enterThreadMode(messageAction.message)
             }
             is Delete, is io.getstream.chat.android.common.state.Flag -> {

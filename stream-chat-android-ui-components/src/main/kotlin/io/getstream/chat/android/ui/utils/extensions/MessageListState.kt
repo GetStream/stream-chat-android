@@ -18,7 +18,7 @@ public fun MessageListState.toMessageListItemWrapper(): MessageListItemWrapper {
     return MessageListItemWrapper(
         items = messagesList,
         hasNewMessages = newMessageState != null,
-        isTyping = false, // TODO
-        areNewestMessagesLoaded = endOfNewMessagesReached // TODO?
+        isTyping = typingUsers.isNotEmpty(),
+        areNewestMessagesLoaded = endOfNewMessagesReached
     )
 }

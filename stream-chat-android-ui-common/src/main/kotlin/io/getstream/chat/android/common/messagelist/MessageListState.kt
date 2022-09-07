@@ -34,5 +34,5 @@ public data class MessageListState(
     public val unreadCount: Int = 0,
     public val typingUsers: List<User> = emptyList(),
     public val newMessageState: NewMessageState? = null,
-    public val selectedMessageState: SelectedMessageState? = null
+    public val selectedMessageState: SelectedMessageState? = null,
 )

@@ -24,7 +24,7 @@ public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
             message = message,
             positions = groupPosition.mapNotNull { it.toUiPosition() },
             isMine = isMine,
-            messageReadBy = listOf(), // TODO
+            messageReadBy = messageReadBy,
             isThreadMode = isInThread,
             isMessageRead = isMessageRead,
             showMessageFooter = showMessageFooter

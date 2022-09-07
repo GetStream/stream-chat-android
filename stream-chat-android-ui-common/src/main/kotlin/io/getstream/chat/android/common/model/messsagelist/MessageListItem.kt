@@ -1,5 +1,6 @@
 package io.getstream.chat.android.common.model.messsagelist
 
+import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -36,7 +37,8 @@ public data class MessageItem(
     public val groupPosition: List<MessagePosition> = listOf(MessagePosition.NONE),
     public val isMessageRead: Boolean = false,
     public val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN,
-    public val focusState: MessageFocusState? = null
+    public val focusState: MessageFocusState? = null,
+    public val messageReadBy: List<ChannelUserRead> = emptyList()
 ) : MessageListItem()
 
 /**
