@@ -142,8 +142,8 @@ internal class FileAttachmentFragment : Fragment() {
     }
 
     private fun checkPermissions() {
-        if (!permissionChecker.isGrantedStoragePermissions(requireContext())) {
-            permissionChecker.checkStoragePermissions(
+        if (!permissionChecker.isGrantedFilePermissions(requireContext())) {
+            permissionChecker.checkFilePermissions(
                 binding.root,
                 onPermissionDenied = ::onPermissionDenied,
                 onPermissionGranted = ::onPermissionGranted
