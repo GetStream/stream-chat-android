@@ -1,0 +1,93 @@
+# Handling User Connection
+
+This page gives you more insights on how to properly connect, disconnect or switch the user.connect
+
+## Connecting a User
+
+You need to connect a user in order to use the SDK. This requires a valid Stream Chat token. As you must use your `API_SECRET` to create this token, it is unsafe to generate this token outside of a secure server.
+
+:::note
+To learn about how to create a token and different user types, see [Tokens & Authentication](https://getstream.io/chat/docs/android/tokens_and_authentication/?language=kotlin).
+:::
+
+```kotlin
+val user = User(
+    id = "bender",
+    name = "Bender",
+    image = "https://bit.ly/321RmWb",
+)
+
+// Check if the user is not already set
+if (ChatClient.instance().getCurrentUser() == null) {
+    ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
+        .enqueue { result ->
+            if (result.isSuccess) {
+                // Handle success
+            } else {
+                // Handle error
+            }
+        }
+}
+```
+
+Note that in the snippet above we are checking if the user is not already set. It's recommended approach as the SDK will automatically try to reconnect the user if they were already set.
+For example, after restoring the application from the background when clicking on a push notification.
+
+## Disconnecting the User
+
+The user connection is automatically kept as long as the application is not killed.
+However, you might want to explicitly disconnect the user, for example as a part of the logout flow.
+
+```kotlin
+ChatClient.instance().disconnect(flushPersistence = false).enqueue { result ->
+    if (result.isSuccess) {
+        // Handle success
+    } else {
+        // Handle error
+    }
+}
+```
+
+Note that the `disconnect` method has an additional parameter that allows you to clear the database when using offline storage.
+For more information about working with offline mode see [Offline Support](../02-client/06-guides/06-offline-support.mdx)
+
+## Switching the User
+
+You might also want to switch the current user. In that case, the flow consists of disconnecting the currently logged-in user and connecting the new one.
+Disconnecting is an asynchronous operation so you need to make sure to wait for its result before connecting the new user.
+You can also use the `switchUser` method that disconnects the current user and connects the new one under the hood.
+
+```kotlin
+val user1 = User(
+    id = "bender",
+    name = "Bender",
+    image = "https://bit.ly/321RmWb",
+)
+
+// Connect the first user
+ChatClient.instance().connectUser(user = user1, token = "userToken") // Replace with a real token
+    .enqueue { result ->
+        if (result.isSuccess) {
+            // Handle success
+        } else {
+            // Handle error
+        }
+}
+
+val user2 = User(
+    id = "bender2",
+    name = "Bender2",
+    image = "https://bit.ly/321RmWb",
+)
+
+ChatClient.instance().switchUser(user = user2, token = "userToken") // Replace with a real token
+    .enqueue { result ->
+        if (result.isSuccess) {
+            // Handle success
+        } else {
+            // Handle error
+        }
+}
+```
+
+The snippet above will firstly connect `Bender` and after establishing the connection, disconnects and connects `Bender2`.
