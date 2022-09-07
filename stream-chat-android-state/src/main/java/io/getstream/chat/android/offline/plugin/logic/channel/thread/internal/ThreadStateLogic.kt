@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
-import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 
 /**
  * The logic of the state of a thread. This class contains the logic of how to
@@ -34,9 +33,7 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
      * Return [ThreadMutableState] representing the state of the thread. Use this when you would like to
      * keep track of the state and would like to write a new state too.
      */
-    fun writeThreadState(): ThreadMutableState {
-        return mutableState.toMutableState()
-    }
+    fun writeThreadState(): ThreadMutableState = mutableState
 
     /**
      * Deletes a message for the thread
