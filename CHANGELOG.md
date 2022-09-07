@@ -18,6 +18,7 @@
 
 ### ✅ Added
 - Added `ChatEvent.rawDate` to access the time of an event as it was sent by the backend. This class includes microseconds precision and can be used when a higher precision than miliseconds is desired. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
+- Supported Android 13 behaviour changes. [#4039](https://github.com/GetStream/stream-chat-android/pull/4039)
 
 ### ⚠️ Changed
 

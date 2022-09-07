@@ -25,6 +25,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
+import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManager
+import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManagerImpl
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
@@ -53,8 +55,22 @@ internal class ChatNotificationsImpl constructor(
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context)
     private val showedMessages = mutableSetOf<String>()
+    private val permissionManager: NotificationPermissionManager = NotificationPermissionManagerImpl(
+        context = context,
+        requestPermissionOnAppLaunch = notificationConfig.requestPermissionOnAppLaunch,
+        onPermissionStatus = { status ->
+            logger.i { "[onPermissionStatus] status: $status" }
+            handler.onNotificationPermissionStatus(status)
+        }
+    )
+
+    init {
+        logger.i { "<init> no args" }
+    }
 
     override fun onSetUser() {
+        logger.i { "[onSetUser] no args" }
+        permissionManager.start()
         notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
             ?.let {
                 it.onPushDeviceGeneratorSelected()
@@ -63,6 +79,7 @@ internal class ChatNotificationsImpl constructor(
     }
 
     override fun setDevice(device: Device) {
+        logger.i { "[setDevice] device: $device" }
         scope.launch {
             pushTokenUpdateHandler.updateDeviceIfNecessary(device)
         }
@@ -72,7 +89,7 @@ internal class ChatNotificationsImpl constructor(
         message: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) {
-        logger.i { "onReceivePushMessage: $message" }
+        logger.i { "[onReceivePushMessage] message: $message" }
 
         pushNotificationReceivedListener.onPushNotificationReceived(message.channelType, message.channelId)
 
@@ -85,14 +102,16 @@ internal class ChatNotificationsImpl constructor(
         val currentUserId = ChatClient.instance().getCurrentUser()?.id
         if (newMessageEvent.message.user.id == currentUserId) return
 
-        logger.d { "Handling $newMessageEvent" }
+        logger.d { "[onNewMessageEvent] event: $newMessageEvent" }
         if (!handler.onChatEvent(newMessageEvent)) {
-            logger.i { "Handling $newMessageEvent internally" }
+            logger.i { "[onNewMessageEvent] handle event internally" }
             handleEvent(newMessageEvent)
         }
     }
 
     override suspend fun onLogout() {
+        logger.i { "[onLogout] no args" }
+        permissionManager.stop()
         handler.dismissAllNotifications()
         removeStoredDevice()
         cancelLoadDataWork()
@@ -114,10 +133,11 @@ internal class ChatNotificationsImpl constructor(
     }
 
     private fun handlePushMessage(message: PushMessage) {
-        obtainNotifactionData(message.channelId, message.channelType, message.messageId)
+        obtainNotificationData(message.channelId, message.channelType, message.messageId)
     }
 
-    private fun obtainNotifactionData(channelId: String, channelType: String, messageId: String) {
+    private fun obtainNotificationData(channelId: String, channelType: String, messageId: String) {
+        logger.d { "[obtainNotificationData] channelCid: $channelId:$channelType, messageId: $messageId" }
         LoadNotificationDataWorker.start(
             context = context,
             channelId = channelId,
@@ -127,13 +147,13 @@ internal class ChatNotificationsImpl constructor(
     }
 
     private fun handleEvent(event: NewMessageEvent) {
-        obtainNotifactionData(event.channelId, event.channelType, event.message.id)
+        obtainNotificationData(event.channelId, event.channelType, event.message.id)
     }
 
     private fun wasNotificationDisplayed(messageId: String) = showedMessages.contains(messageId)
 
     override fun displayNotification(channel: Channel, message: Message) {
-        logger.d { "Showing notification with loaded data" }
+        logger.d { "[displayNotification] channel.cid: ${channel.cid}, message.cid: ${message.cid}" }
         if (!wasNotificationDisplayed(message.id)) {
             showedMessages.add(message.id)
             handler.showNotification(channel, message)

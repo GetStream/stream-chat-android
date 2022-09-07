@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.Manifest
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
@@ -33,9 +34,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.StorageHelper
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionStatus
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
@@ -91,19 +90,25 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         var storagePermissionRequested by rememberSaveable { mutableStateOf(false) }
-        val storagePermissionState =
-            rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE) {
-                storagePermissionRequested = true
-            }
+        val storagePermissionState = rememberMultiplePermissionsState(
+            permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO,
+                Manifest.permission.READ_MEDIA_AUDIO,
+            ) else listOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        ) {
+            storagePermissionRequested = true
+        }
 
         val context = LocalContext.current
         val storageHelper: StorageHelperWrapper = remember {
             StorageHelperWrapper(context, StorageHelper(), AttachmentFilter())
         }
 
-        when (storagePermissionState.status) {
-            PermissionStatus.Granted -> {
-
+        when (storagePermissionState.allPermissionsGranted) {
+            true -> {
                 FilesPicker(
                     files = attachments,
                     onItemSelected = onAttachmentItemSelected,
@@ -123,13 +128,16 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                     }
                 )
             }
-            is PermissionStatus.Denied -> MissingPermissionContent(storagePermissionState)
+            else -> {
+                val revokedPermissionState = storagePermissionState.revokedPermissions.first()
+                MissingPermissionContent(revokedPermissionState)
+            }
         }
 
-        val hasPermission = storagePermissionState.status.isGranted
+        val hasPermission = storagePermissionState.allPermissionsGranted
 
-        LaunchedEffect(storagePermissionState.status.isGranted) {
-            if (storagePermissionState.status.isGranted) {
+        LaunchedEffect(storagePermissionState.allPermissionsGranted) {
+            if (storagePermissionState.allPermissionsGranted) {
                 onAttachmentsChanged(
                     storageHelper.getFiles().map { AttachmentPickerItemState(it, false) }
                 )
@@ -138,7 +146,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
 
         LaunchedEffect(Unit) {
             if (!hasPermission && !storagePermissionRequested) {
-                storagePermissionState.launchPermissionRequest()
+                storagePermissionState.launchMultiplePermissionRequest()
             }
         }
     }
