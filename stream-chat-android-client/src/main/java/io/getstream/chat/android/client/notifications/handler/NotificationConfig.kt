@@ -36,4 +36,9 @@ public data class NotificationConfig(
      * Allows enabling/disabling showing notification after receiving a push message.
      */
     val shouldShowNotificationOnPush: () -> Boolean = { true },
+
+    /**
+     * Allows SDK to request [android.Manifest.permission.POST_NOTIFICATIONS] permission for a connected user.
+     */
+    val requestPermissionOnAppLaunch: () -> Boolean = { true },
 )

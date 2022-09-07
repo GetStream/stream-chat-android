@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
+import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
@@ -264,6 +265,7 @@ internal open class BaseChatModule(
         buildRetrofitApi<ModerationApi>(),
         buildRetrofitApi<GeneralApi>(),
         buildRetrofitApi<ConfigApi>(),
+        buildRetrofitApi<VideoCallApi>(),
         scope,
     ).let { originalApi ->
         DistinctChatApiEnabler(DistinctChatApi(scope, originalApi)) {

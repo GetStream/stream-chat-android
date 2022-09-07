@@ -48,12 +48,18 @@ import io.getstream.chat.android.uiutils.extension.openSystemSettings
 @Composable
 internal fun MissingPermissionContent(permissionState: PermissionState) {
     val title = when (permissionState.permission) {
-        Manifest.permission.READ_EXTERNAL_STORAGE -> R.string.stream_ui_message_input_permission_storage_title
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.READ_MEDIA_IMAGES,
+        Manifest.permission.READ_MEDIA_AUDIO,
+        Manifest.permission.READ_MEDIA_VIDEO -> R.string.stream_ui_message_input_permission_storage_title
         else -> R.string.stream_ui_message_input_permission_camera_title
     }
 
     val message = when (permissionState.permission) {
-        Manifest.permission.READ_EXTERNAL_STORAGE -> R.string.stream_ui_message_input_permission_storage_message
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.READ_MEDIA_IMAGES,
+        Manifest.permission.READ_MEDIA_AUDIO,
+        Manifest.permission.READ_MEDIA_VIDEO -> R.string.stream_ui_message_input_permission_storage_message
         else -> R.string.stream_ui_message_input_permission_camera_message
     }
 

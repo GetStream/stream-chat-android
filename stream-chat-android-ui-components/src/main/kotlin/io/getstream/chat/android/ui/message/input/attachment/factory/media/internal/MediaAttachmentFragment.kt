@@ -136,8 +136,8 @@ internal class MediaAttachmentFragment : Fragment() {
     }
 
     private fun checkPermissions() {
-        if (!permissionChecker.isGrantedStoragePermissions(requireContext())) {
-            permissionChecker.checkStoragePermissions(
+        if (!permissionChecker.isGrantedMediaPermissions(requireContext())) {
+            permissionChecker.checkMediaPermissions(
                 binding.root,
                 onPermissionDenied = ::onPermissionDenied,
                 onPermissionGranted = ::onPermissionGranted

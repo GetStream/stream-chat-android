@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.test.SynchronizedCoroutineTest
@@ -71,6 +72,7 @@ import java.util.concurrent.Executors
  */
 @ExperimentalCoroutinesApi
 internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
+    private val streamDateFormatter = StreamDateFormatter()
 
     /** a realistic set of chat data, please only add to this, don't update */
     var data = TestDataHelper()
@@ -130,10 +132,13 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
     }
 
     private fun createClientMock(isConnected: Boolean = true): ChatClient {
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
         val connectedEvent = if (isConnected) {
-            ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
+            ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, data.user1, data.connection1)
         } else {
-            DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+            DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
         }
 
         val queryChannelsResult = Result.success(listOf(data.channel1))
@@ -157,7 +162,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
                     override fun dispose() {}
                 }
             }
-            on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
+            on { getSyncHistory(any(), any<Date>()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(queryChannelsResult)
             on { queryChannelsInternal(any()) } doReturn TestCall(queryChannelsResult)
             on { queryChannelInternal(any(), any(), any()) } doReturn TestCall(queryChannelResult)
