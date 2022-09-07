@@ -72,9 +72,8 @@ public object StreamFileUtil {
      */
     public suspend fun writeFileToShareableFile(context: Context, attachment: Attachment): Uri? {
         val result = runCatching {
-            val hashSuffix = "_tmp"
             val attachmentName = (attachment.url ?: attachment.assetUrl)?.hashCode()
-            val fileName = attachmentName.toString() + hashSuffix
+            val fileName = attachmentName.toString() + attachment.name
 
             val file = File(context.cacheDir, fileName)
 
