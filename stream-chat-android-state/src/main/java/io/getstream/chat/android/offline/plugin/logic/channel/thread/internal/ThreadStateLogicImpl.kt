@@ -46,7 +46,7 @@ internal class ThreadStateLogicImpl(
      * @param message [Message]
      */
     override fun deleteMessage(message: Message) {
-        mutableState.rawMessages -= message.id
+        mutableState.deleteMessage(message)
     }
 
     /**
@@ -63,30 +63,10 @@ internal class ThreadStateLogicImpl(
      * new messages should be kept.
      */
     override fun upsertMessages(messages: List<Message>) {
-        val newMessages = parseMessages(messages)
-        mutableState.rawMessages = newMessages
-    }
-
-    /**
-     * Removes local message. Doesn't remove message in database.
-     *
-     * @param message The [Message] to be deleted.
-     */
-    override fun removeLocalMessage(message: Message) {
-        mutableState.rawMessages -= message.id
-    }
-
-    /**
-     * Updates [ThreadMutableState.rawMessages] with new messages.
-     * The message will by only updated if its creation/update date is newer than the one stored in the StateFlow.
-     *
-     * @param messages The list of messages to update.
-     */
-    private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val currentMessages = mutableState.rawMessages
-        return currentMessages + messages
-            .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
-            .associateBy(Message::id)
+        val oldMessages = mutableState.rawMessage.value
+        mutableState.upsertMessages(
+            messages.filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
+        )
     }
 
     private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {

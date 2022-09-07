@@ -53,7 +53,7 @@ internal class ThreadLogic(private val threadStateLogic: ThreadStateLogic) {
      * @return [Message] if exists, null otherwise.
      */
     internal fun getMessage(messageId: String): Message? {
-        return mutableState.rawMessages[messageId]?.copy()
+        return mutableState.rawMessage.value[messageId]?.copy()
     }
 
     internal fun stateLogic(): ThreadStateLogic {
@@ -69,7 +69,7 @@ internal class ThreadLogic(private val threadStateLogic: ThreadStateLogic) {
     internal fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
 
     internal fun removeLocalMessage(message: Message) {
-        threadStateLogic.removeLocalMessage(message)
+        threadStateLogic.deleteMessage(message)
     }
 
     internal fun setEndOfOlderMessages(isEnd: Boolean) {
