@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.test.positiveRandomInt
@@ -67,6 +68,8 @@ import java.util.Date
 
 private val fixture = JFixture()
 
+private val streamFormatter = StreamDateFormatter()
+
 public fun randomChannelVisibleEvent(
     createdAt: Date = randomDate(),
     cid: String = randomCID(),
@@ -76,6 +79,7 @@ public fun randomChannelVisibleEvent(
 ): ChannelVisibleEvent = ChannelVisibleEvent(
     type = EventType.CHANNEL_VISIBLE,
     createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
     cid = cid,
     channelType = channelType,
     channelId = channelId,
@@ -92,6 +96,7 @@ public fun randomUserStartWatchingEvent(
 ): UserStartWatchingEvent = UserStartWatchingEvent(
     type = EventType.USER_WATCHING_START,
     createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
     cid = cid,
     watcherCount = watcherCount,
     channelType = channelType,
@@ -111,6 +116,7 @@ public fun randomChannelDeletedEvent(
     return ChannelDeletedEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -132,6 +138,7 @@ public fun randomNotificationChannelDeletedEvent(
     return NotificationChannelDeletedEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -154,6 +161,7 @@ public fun randomReactionNewEvent(
     return ReactionNewEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -174,6 +182,7 @@ public fun randomMessageReadEvent(
     return MessageReadEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -194,6 +203,7 @@ public fun randomNotificationMarkReadEvent(
     return NotificationMarkReadEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -215,6 +225,7 @@ public fun randomTypingStopEvent(
     return TypingStopEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -235,6 +246,7 @@ public fun randomTypingStartEvent(
     return TypingStartEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -255,6 +267,7 @@ public fun randomMemberAddedEvent(
     return MemberAddedEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -277,6 +290,7 @@ public fun randomNotificationAddedToChannelEvent(
     return NotificationAddedToChannelEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -301,6 +315,7 @@ public fun randomNotificationMessageNewEvent(
     return NotificationMessageNewEvent(
         type = type,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -322,6 +337,7 @@ public fun randomMessageUpdateEvent(
 ): MessageUpdatedEvent = MessageUpdatedEvent(
     type = type,
     createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
     user = user,
     cid = cid,
     channelType = channelType,
@@ -565,6 +581,7 @@ public fun randomChannelUpdatedEvent(
     return ChannelUpdatedEvent(
         type = EventType.CHANNEL_UPDATED,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -585,6 +602,7 @@ public fun randomChannelUpdatedByUserEvent(
     return ChannelUpdatedByUserEvent(
         type = EventType.CHANNEL_UPDATED,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -608,6 +626,7 @@ public fun randomNewMessageEvent(
     return NewMessageEvent(
         type = EventType.MESSAGE_NEW,
         createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
         cid = cid,
         channelType = channelType,
@@ -677,9 +696,12 @@ public fun randomNotificationAddedToChannelEvent(
     channel: Channel = randomChannel(),
     member: Member = randomMember()
 ): NotificationAddedToChannelEvent {
+    val createdAt = Date()
+
     return NotificationAddedToChannelEvent(
         type = randomString(),
-        createdAt = Date(),
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
         channelType = randomString(),
         channelId = randomString(),
@@ -695,10 +717,13 @@ public fun randomNotificationRemovedFromChannelEvent(
     channel: Channel = randomChannel(),
     member: Member = randomMember(),
 ): NotificationRemovedFromChannelEvent {
+    val createdAt = Date()
+
     return NotificationRemovedFromChannelEvent(
         type = randomString(),
         user = randomUser(),
-        createdAt = Date(),
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
         channelType = randomString(),
         channelId = randomString(),
@@ -711,9 +736,12 @@ public fun randomNotificationMessageNewEvent(
     cid: String = randomString(),
     channel: Channel = randomChannel()
 ): NotificationMessageNewEvent {
+    val createdAt = Date()
+
     return NotificationMessageNewEvent(
         type = randomString(),
-        createdAt = Date(),
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
         channelType = randomString(),
         channelId = randomString(),
@@ -725,9 +753,12 @@ public fun randomNotificationMessageNewEvent(
 }
 
 public fun randomMemberAddedEvent(cid: String = randomString()): MemberAddedEvent {
+    val createdAt = Date()
+
     return MemberAddedEvent(
         type = randomString(),
-        createdAt = Date(),
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = randomUser(),
         cid = cid,
         channelType = randomString(),
@@ -737,9 +768,12 @@ public fun randomMemberAddedEvent(cid: String = randomString()): MemberAddedEven
 }
 
 public fun randomMemberRemovedEvent(cid: String = randomString(), member: Member = randomMember()): MemberRemovedEvent {
+    val createdAt = Date()
+
     return MemberRemovedEvent(
         type = randomString(),
-        createdAt = Date(),
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
         user = randomUser(),
         cid = cid,
         channelType = randomString(),

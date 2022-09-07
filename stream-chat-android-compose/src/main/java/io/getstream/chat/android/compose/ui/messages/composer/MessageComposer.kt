@@ -165,6 +165,7 @@ public fun MessageComposer(
             validationErrors = it.validationErrors,
             attachments = it.attachments,
             ownCapabilities = it.ownCapabilities,
+            isInEditMode = it.action is Edit,
             onSendMessage = { input, attachments ->
                 val message = viewModel.buildNewMessage(input, attachments)
 
@@ -285,7 +286,8 @@ public fun MessageComposer(
             validationErrors = it.validationErrors,
             attachments = it.attachments,
             onSendMessage = onSendMessage,
-            ownCapabilities = messageComposerState.ownCapabilities
+            ownCapabilities = messageComposerState.ownCapabilities,
+            isInEditMode = it.action is Edit
         )
     },
 ) {
@@ -605,13 +607,14 @@ internal fun DefaultMessageComposerTrailingContent(
     attachments: List<Attachment>,
     validationErrors: List<ValidationError>,
     ownCapabilities: Set<String>,
+    isInEditMode: Boolean,
     onSendMessage: (String, List<Attachment>) -> Unit,
 ) {
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
     val description = stringResource(id = R.string.stream_compose_cd_send_button)
 
-    if (coolDownTime > 0) {
+    if (coolDownTime > 0 && !isInEditMode) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
         IconButton(
