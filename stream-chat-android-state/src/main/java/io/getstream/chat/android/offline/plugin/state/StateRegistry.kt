@@ -80,7 +80,17 @@ public class StateRegistry private constructor(
      *
      * @return [ChannelState] object.
      */
-    public fun channel(channelType: String, channelId: String): ChannelState {
+    public fun channel(channelType: String, channelId: String): ChannelState = mutableChannel(channelType, channelId)
+
+    /**
+     * Returns [ChannelMutableState] that represents a state of particular channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     *
+     * @return [ChannelState] object.
+     */
+    internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
         return channels.getOrPut(channelType to channelId) {
             ChannelMutableState(channelType, channelId, scope, userStateFlow, latestUsers)
         }

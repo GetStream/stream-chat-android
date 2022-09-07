@@ -199,7 +199,7 @@ internal class ChannelMarkReadHelperTests {
         private val clientState = mock<ClientState>()
 
         fun givenChannelState(channelType: String, channelId: String, channelState: ChannelMutableState) = apply {
-            whenever(state.channel(channelType = channelType, channelId = channelId)) doReturn channelState
+            whenever(state.mutableChannel(channelType = channelType, channelId = channelId)) doReturn channelState
         }
 
         fun givenChannelLogic(channelType: String, channelId: String, channelLogic: ChannelLogic) = apply {

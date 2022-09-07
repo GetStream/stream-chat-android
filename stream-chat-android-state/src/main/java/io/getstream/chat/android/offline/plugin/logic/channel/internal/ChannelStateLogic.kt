@@ -36,7 +36,6 @@ import io.getstream.chat.android.offline.message.attachments.internal.Attachment
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
@@ -84,9 +83,7 @@ internal class ChannelStateLogic(
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state and would like to write a new state too.
      */
-    fun writeChannelState(): ChannelMutableState {
-        return mutableState.toMutableState()
-    }
+    fun writeChannelState(): ChannelMutableState = mutableState
 
     /**
      * Increments the unread count of the Channel if necessary.
