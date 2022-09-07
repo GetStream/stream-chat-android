@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -44,10 +45,16 @@ internal class ChannelClientSubscribeTest {
         const val OTHER_CHANNEL_ID = "my-game"
         const val OTHER_CID = "$OTHER_CHANNEL_TYPE:$OTHER_CHANNEL_ID"
 
-        val NON_CHANNEL_EVENT = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
+        val streamDateFormatter = StreamDateFormatter()
+
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+        val NON_CHANNEL_EVENT = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, User(), "")
         val CHANNEL_EVENT = ChannelUpdatedEvent(
             EventType.CHANNEL_UPDATED,
-            Date(),
+            createdAt,
+            rawCreatedAt,
             CID,
             CHANNEL_TYPE,
             CHANNEL_ID,
@@ -56,7 +63,8 @@ internal class ChannelClientSubscribeTest {
         )
         val OTHER_CHANNEL_EVENT = NewMessageEvent(
             EventType.MESSAGE_NEW,
-            Date(),
+            createdAt,
+            rawCreatedAt,
             User(),
             OTHER_CID,
             OTHER_CHANNEL_TYPE,

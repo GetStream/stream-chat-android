@@ -65,7 +65,7 @@ class AddGroupChannelSelectNameFragment : Fragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.findItem(R.id.createGroupChannelButton).actionView.findViewById<View>(R.id.addChannelButton).apply {
+        menu.findItem(R.id.createGroupChannelButton).actionView?.findViewById<View>(R.id.addChannelButton)?.apply {
             isEnabled = isCreateButtonEnabled
             setOnClickListener {
                 sharedMembersViewModel.members.value?.let { members ->
