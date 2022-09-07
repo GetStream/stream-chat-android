@@ -450,5 +450,3 @@ internal class ChannelMutableState(
         private const val OFFSET_EVENT_TIME = 5L
     }
 }
-
-internal fun ChannelState.toMutableState(): ChannelMutableState = this as ChannelMutableState

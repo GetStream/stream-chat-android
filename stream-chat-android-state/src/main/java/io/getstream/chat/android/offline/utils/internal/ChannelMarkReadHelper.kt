@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.utils.internal
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 
 /**
  * Checks if the channel can be marked as read and marks it locally if needed.
@@ -45,8 +44,7 @@ internal class ChannelMarkReadHelper(
      * @return The flag to determine if the channel was marked as read locally.
      */
     internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean {
-        return state.channel(channelType = channelType, channelId = channelId)
-            .toMutableState()
+        return state.mutableChannel(channelType = channelType, channelId = channelId)
             .markChannelAsRead()
     }
 }
