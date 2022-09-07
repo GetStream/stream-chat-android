@@ -33,6 +33,7 @@ import io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMedi
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.utils.GiphySizingMode
 
 /**
  * Represents the Giphy attachment holder, when the Giphy is already sent.
@@ -108,6 +109,21 @@ internal class GiphyAttachmentViewHolder(
         }
 
         imageCorners(binding.mediaAttachmentView, data)
+
+        val width = with(binding.mediaAttachmentView) {
+            when {
+                !isStyleInitialized() -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
+                style.sizingMode == GiphySizingMode.AUTOMATIC_RESIZING -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
+                style.sizingMode == GiphySizingMode.FIXED_SIZE && style.width == ViewGroup.LayoutParams.MATCH_PARENT -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
+                style.sizingMode == GiphySizingMode.FIXED_SIZE -> ConstraintLayout.LayoutParams.WRAP_CONTENT
+
+                else -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
+            }
+        }
+
+        binding.messageContainer.updateLayoutParams {
+            this.width = width
+        }
 
         val attachment = data.message.attachments.first()
         binding.mediaAttachmentView.showGiphy(attachment = attachment)

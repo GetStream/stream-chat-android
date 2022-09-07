@@ -25,6 +25,7 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.loadAndResize
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
+import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -32,7 +33,9 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiGiphyMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.adapter.view.GiphyMediaAttachmentViewStyle
+import io.getstream.chat.android.ui.utils.GiphyInfo
 import io.getstream.chat.android.ui.utils.GiphyInfoType
+import io.getstream.chat.android.ui.utils.GiphySizingMode
 import io.getstream.chat.android.ui.utils.giphyInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -51,7 +54,7 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     /**
      * Style applied to [GiphyMediaAttachmentView].
      */
-    private lateinit var style: GiphyMediaAttachmentViewStyle
+    internal lateinit var style: GiphyMediaAttachmentViewStyle
 
     public constructor(context: Context) : this(context, null, 0)
 
@@ -96,7 +99,30 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
             it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
         } ?: return
 
-        ConstraintSet().apply {
+        if (style.sizingMode == GiphySizingMode.AUTOMATIC_RESIZING) {
+            applyAutomaticResizing(
+                giphyInfo = giphyInfo,
+                giphyUrl = url
+            )
+        } else {
+            applyFixedSizing(
+                giphyUrl = url
+            )
+        }
+    }
+
+    /**
+     * Automatically resizes the Giphy while respecting the Giphy's
+     * aspect ratio.
+     *
+     * This method is meant to ignore [GiphyMediaAttachmentViewStyle.width],
+     * [GiphyMediaAttachmentViewStyle.height] and [GiphyMediaAttachmentViewStyle.dimensionRatio].
+     *
+     * @param giphyInfo Used to determine the aspect ratio of the Giphy.
+     * @param giphyUrl The URL to the Giphy we are loading.
+     */
+    private fun applyAutomaticResizing(giphyInfo: GiphyInfo?, giphyUrl: String) {
+        binding.root.updateConstraints {
             constrainMaxWidth(binding.imageView.id, ViewGroup.LayoutParams.MATCH_PARENT)
             val ratio = (giphyInfo?.width ?: 1).toFloat() / (giphyInfo?.height ?: 1).toFloat()
             setDimensionRatio(binding.imageView.id, ratio.toString())
@@ -105,11 +131,34 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
             constrainViewToParentBySide(binding.imageView, ConstraintSet.RIGHT)
             constrainViewToParentBySide(binding.imageView, ConstraintSet.TOP)
             constrainViewToParentBySide(binding.imageView, ConstraintSet.BOTTOM)
-
-            applyTo(binding.root)
         }
 
-        loadGiphy(url)
+        loadGiphy(giphyUrl)
+    }
+
+    /**
+     * Applies fixed sizing to the Giphy container set via
+     * [GiphyMediaAttachmentViewStyle].
+     *
+     * @param giphyUrl The URL to the Giphy we are loading.
+     */
+    private fun applyFixedSizing(giphyUrl: String) {
+        binding.root.updateConstraints {
+            constrainWidth(binding.imageView.id, style.width)
+
+            when {
+                // If the user has set no dimension ratio or height, use a square dimension ratio
+                style.dimensionRatio == GiphyMediaAttachmentViewStyle.NO_DIMENSION_RATIO &&
+                    style.height == GiphyMediaAttachmentViewStyle.NO_GIVEN_HEIGHT
+                -> setDimensionRatio(binding.imageView.id, "1")
+                // If the user has set no dimension ratio and a height, respect the height
+                style.dimensionRatio == GiphyMediaAttachmentViewStyle.NO_DIMENSION_RATIO -> constrainHeight(binding.imageView.id, style.height)
+                // The user has set a dimension ratio, ignore the height and use the dimension ratio
+                else -> setDimensionRatio(binding.imageView.id, style.dimensionRatio.toString())
+            }
+        }
+
+        loadGiphy(giphyUrl)
     }
 
     /**
@@ -162,4 +211,11 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
     }
+
+    /**
+     * Checks if [style] has been initialized.
+     *
+     * @return True if [style] has been initialized, false otherwise.
+     */
+    internal fun isStyleInitialized(): Boolean = this::style.isInitialized
 }
