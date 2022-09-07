@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.list.options.message.internal
+package io.getstream.chat.android.ui.message.list.options.message
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
@@ -57,7 +57,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Lin
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
-import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItem
+import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDecoratorProvider
 
 /**
  * An overlay with available message options to the selected message. Also, allows leaving a reaction.

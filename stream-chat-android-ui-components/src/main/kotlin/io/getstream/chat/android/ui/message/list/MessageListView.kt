@@ -141,7 +141,7 @@ import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemP
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItem
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItemsFactory
-import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
+import io.getstream.chat.android.ui.message.list.options.message.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
