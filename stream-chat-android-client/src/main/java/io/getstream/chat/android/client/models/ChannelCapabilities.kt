@@ -43,6 +43,8 @@ public object ChannelCapabilities {
     public const val FREEZE_CHANNEL: String = "freeze-channel"
     /** Ability to leave the channel (remove own membership). */
     public const val LEAVE_CHANNEL: String = "leave-channel"
+    /** Ability to join channel (add own membership). */
+    public const val JOIN_CHANNEL: String = "join-channel"
     /** Ability to mute the channel. */
     public const val MUTE_CHANNEL: String = "mute-channel"
     /** Ability to pin a message. */
@@ -77,4 +79,12 @@ public object ChannelCapabilities {
     public const val UPDATE_OWN_MESSAGE: String = "update-own-message"
     /** Ability to upload message attachments. */
     public const val UPLOAD_FILE: String = "upload-file"
+    /** Ability to send and receive typing events. */
+    public const val TYPING_EVENTS: String = "typing-events"
+    /** Indicates that channel slow mode is active. */
+    public const val SLOW_MODE: String = "slow-mode"
+    /** Ability to join a call. */
+    public const val JOIN_CALL: String = "join-call"
+    /** "Ability to create a call. */
+    public const val CREATE_CALL: String = "create-call"
 }

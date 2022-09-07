@@ -18,6 +18,8 @@
 
 ### ✅ Added
 - Added `ChatEvent.rawDate` to access the time of an event as it was sent by the backend. This class includes microseconds precision and can be used when a higher precision than miliseconds is desired. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
+- Added [Handling User Connection](https://getstream.io/chat/docs/sdk/android/client/guides/handling-user-connection/) guide. [#4131](https://github.com/GetStream/stream-chat-android/pull/4131)
+- Supported Android 13 behaviour changes. [#4039](https://github.com/GetStream/stream-chat-android/pull/4039)
 
 ### ⚠️ Changed
 
@@ -49,6 +51,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved slow mode countdown which is now started only after the message is sent to the server. [#4120](https://github.com/GetStream/stream-chat-android/pull/4120)
 
 ### ✅ Added
 
