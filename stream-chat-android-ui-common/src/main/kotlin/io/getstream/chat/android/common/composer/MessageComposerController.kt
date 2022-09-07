@@ -499,8 +499,11 @@ public class MessageComposerController(
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             val (channelType, channelId) = message.cid.cidToTypeAndId()
-            if (activeMessage.isModerationFailed(chatClient))
+
+            if (activeMessage.isModerationFailed(chatClient)) {
                 chatClient.deleteMessage(activeMessage.id, true).enqueue()
+            }
+
             chatClient.sendMessage(channelType, channelId, message)
         }
 
@@ -710,7 +713,7 @@ public class MessageComposerController(
 
             cooldownTimer.value = cooldownInterval
             enqueue {
-                if (it.isSuccess) {
+                if (it.isSuccess || !chatClient.clientState.isNetworkAvailable) {
                     cooldownTimerJob = scope.launch {
                         for (timeRemaining in cooldownInterval downTo 0) {
                             cooldownTimer.value = timeRemaining
