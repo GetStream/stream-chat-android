@@ -74,5 +74,10 @@ public interface NotificationHandler {
      */
     public fun dismissAllNotifications()
 
+    /**
+     * Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
+     *
+     * @param status Represents current [android.Manifest.permission.POST_NOTIFICATIONS] permission status.
+     */
     public fun onNotificationPermissionStatus(status: NotificationPermissionStatus) { /* no-op */ }
 }

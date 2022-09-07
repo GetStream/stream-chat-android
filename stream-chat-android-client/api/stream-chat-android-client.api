@@ -3497,6 +3497,16 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 	public abstract fun buildIcon (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class io/getstream/chat/android/client/notifications/permissions/DefaultNotificationPermissionHandler : io/getstream/chat/android/client/notifications/permissions/ActivityLifecycleCallbacks, io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler {
+	public fun <init> (Landroid/content/Context;)V
+	public fun onActivityStarted (Landroid/app/Activity;)V
+	public fun onLastActivityStopped (Landroid/app/Activity;)V
+	public fun onPermissionDenied ()V
+	public fun onPermissionGranted ()V
+	public fun onPermissionRationale ()V
+	public fun onPermissionRequested ()V
+}
+
 public abstract interface class io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler {
 	public abstract fun onPermissionDenied ()V
 	public abstract fun onPermissionGranted ()V

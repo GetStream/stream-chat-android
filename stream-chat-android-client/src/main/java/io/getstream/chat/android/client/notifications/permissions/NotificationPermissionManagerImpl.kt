@@ -89,23 +89,13 @@ internal class NotificationPermissionManagerImpl(
         logger.v { "[onActivityStarted] activity: $activity" }
         activity.registerPermissionCallback()
         super.onActivityStarted(activity)
-    }
-
-    override fun onFirstActivityStarted(activity: Activity) {
-        logger.i { "[onFirstActivityStarted] activity: $activity" }
-        activity.requestPermissionIfPossible()
-    }
-
-    override fun onActivityResumed(activity: Activity) {
-        logger.v { "[onActivityResumed] activity: $activity" }
-        super.onActivityResumed(activity)
         currentActivity = activity
     }
 
-    override fun onActivityPaused(activity: Activity) {
-        logger.v { "[onActivityPaused] activity: $activity" }
-        super.onActivityPaused(activity)
-        currentActivity = null
+    override fun onFirstActivityStarted(activity: Activity) {
+        super.onFirstActivityStarted(activity)
+        logger.i { "[onFirstActivityStarted] activity: $activity" }
+        activity.requestPermissionIfPossible()
     }
 
     override fun onActivityStopped(activity: Activity) {
@@ -115,8 +105,10 @@ internal class NotificationPermissionManagerImpl(
     }
 
     override fun onLastActivityStopped(activity: Activity) {
+        super.onLastActivityStopped(activity)
         logger.i { "[onLastActivityStopped] activity: $activity" }
         permissionRequested = false
+        currentActivity = null
     }
 
     private fun Activity.registerPermissionCallback() {

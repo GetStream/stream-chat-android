@@ -25,6 +25,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.IconCompat
 import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.notifications.permissions.DefaultNotificationPermissionHandler
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
 import kotlin.reflect.full.primaryConstructor
 
@@ -97,12 +98,12 @@ public object NotificationHandlerFactory {
         }.getOrDefault(DefaultUserIconBuilder(appContext))
     }
 
-    private fun provideDefaultNotificationPermissionHandler(context: Context): NotificationPermissionHandler? {
+    private fun provideDefaultNotificationPermissionHandler(context: Context): NotificationPermissionHandler {
         val appContext = context.applicationContext
         return runCatching {
             Class.forName(
-                "io.getstream.chat.android.common.notifications.permissions.DefaultNotificationPermissionHandler"
-            ).kotlin.primaryConstructor?.call(appContext) as? NotificationPermissionHandler
-        }.getOrNull()
+                "io.getstream.chat.android.common.notifications.permissions.SnackbarNotificationPermissionHandler"
+            ).kotlin.primaryConstructor?.call(appContext) as NotificationPermissionHandler
+        }.getOrDefault(DefaultNotificationPermissionHandler(appContext))
     }
 }
