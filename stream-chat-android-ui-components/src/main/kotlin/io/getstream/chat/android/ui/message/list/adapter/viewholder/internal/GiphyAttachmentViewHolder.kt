@@ -114,7 +114,8 @@ internal class GiphyAttachmentViewHolder(
             when {
                 !isStyleInitialized() -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
                 style.sizingMode == GiphySizingMode.AUTOMATIC_RESIZING -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
-                style.sizingMode == GiphySizingMode.FIXED_SIZE && style.width == ViewGroup.LayoutParams.MATCH_PARENT -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
+                style.sizingMode == GiphySizingMode.FIXED_SIZE && style.width == ViewGroup.LayoutParams.MATCH_PARENT ->
+                    ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
                 style.sizingMode == GiphySizingMode.FIXED_SIZE -> ConstraintLayout.LayoutParams.WRAP_CONTENT
 
                 else -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT

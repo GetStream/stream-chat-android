@@ -111,7 +111,11 @@ public class GiphyMediaAttachmentViewStyle(
                         NO_GIVEN_HEIGHT.toFloat()
                     )
 
-                val dimensionRatio = attributes.getFloat(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentDimensionRatio, SQUARE_DIMENSION_RATIO)
+                val dimensionRatio =
+                    attributes.getFloat(
+                        R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentDimensionRatio,
+                        SQUARE_DIMENSION_RATIO
+                    )
 
                 return GiphyMediaAttachmentViewStyle(
                     progressIcon = progressIcon,
