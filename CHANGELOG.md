@@ -37,6 +37,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fixed incrementing unread count if the message is already in the state. [#4135](https://github.com/GetStream/stream-chat-android/pull/4135)
 
 ### ⬆️ Improved
 
