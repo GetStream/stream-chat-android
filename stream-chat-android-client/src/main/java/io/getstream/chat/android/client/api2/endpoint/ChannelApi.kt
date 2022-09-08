@@ -66,15 +66,13 @@ internal interface ChannelApi {
 
     @POST("/channels/read")
     fun markAllRead(
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body map: Map<String, String> = emptyMap<String, String>()
+        @Body map: Map<String, String> = emptyMap()
     ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}")
     fun updateChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateChannelRequest,
     ): RetrofitCall<ChannelResponse>
 
@@ -83,7 +81,6 @@ internal interface ChannelApi {
     fun updateChannelPartial(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateChannelPartialRequest,
     ): RetrofitCall<ChannelResponse>
 
@@ -92,7 +89,6 @@ internal interface ChannelApi {
     fun updateCooldown(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateCooldownRequest,
     ): RetrofitCall<ChannelResponse>
 
@@ -100,14 +96,12 @@ internal interface ChannelApi {
     fun deleteChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun acceptInvite(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: AcceptInviteRequest,
     ): RetrofitCall<ChannelResponse>
 
@@ -115,7 +109,6 @@ internal interface ChannelApi {
     fun rejectInvite(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: RejectInviteRequest,
     ): RetrofitCall<ChannelResponse>
 
@@ -123,7 +116,6 @@ internal interface ChannelApi {
     fun addMembers(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: AddMembersRequest,
     ): RetrofitCall<ChannelResponse>
 
@@ -131,7 +123,6 @@ internal interface ChannelApi {
     fun removeMembers(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: RemoveMembersRequest,
     ): RetrofitCall<ChannelResponse>
 
@@ -139,7 +130,6 @@ internal interface ChannelApi {
     fun sendEvent(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: SendEventRequest,
     ): RetrofitCall<EventResponse>
 
@@ -147,7 +137,6 @@ internal interface ChannelApi {
     fun hideChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: HideChannelRequest,
     ): RetrofitCall<CompletableResponse>
 
@@ -155,7 +144,6 @@ internal interface ChannelApi {
     fun truncateChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: TruncateChannelRequest,
     ): RetrofitCall<ChannelResponse>
 
@@ -179,7 +167,6 @@ internal interface ChannelApi {
     fun showChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: Map<Any, Any>,
     ): RetrofitCall<CompletableResponse>
 
