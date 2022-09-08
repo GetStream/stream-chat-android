@@ -128,8 +128,8 @@ constructor(
     public val groupAvatarInitialsXOffset: Dp,
     public val groupAvatarInitialsYOffset: Dp,
     public val attachmentsContentImageMaxHeight: Dp,
-    public val attachmentsContentGiphyMaxWidth: Dp,
-    public val attachmentsContentGiphyMaxHeight: Dp,
+    public val attachmentsContentGiphyMaxWidth: Dp = attachmentsContentGiphyWidth,
+    public val attachmentsContentGiphyMaxHeight: Dp = attachmentsContentGiphyHeight,
 ) {
 
     /**
@@ -232,8 +232,8 @@ constructor(
         groupAvatarInitialsXOffset: Dp,
         groupAvatarInitialsYOffset: Dp,
         attachmentsContentImageMaxHeight: Dp,
-        attachmentsContentGiphyMaxWidth: Dp,
-        attachmentsContentGiphyMaxHeight: Dp,
+        attachmentsContentGiphyMaxWidth: Dp = attachmentsContentGiphyWidth,
+        attachmentsContentGiphyMaxHeight: Dp = attachmentsContentGiphyHeight,
     ) : this(
         channelItemVerticalPadding = channelItemVerticalPadding,
         channelItemHorizontalPadding = channelItemHorizontalPadding,
@@ -333,8 +333,6 @@ constructor(
             groupAvatarInitialsXOffset = 1.5.dp,
             groupAvatarInitialsYOffset = 2.5.dp,
             attachmentsContentImageMaxHeight = 600.dp,
-            attachmentsContentGiphyMaxWidth = 250.dp,
-            attachmentsContentGiphyMaxHeight = 250.dp
         )
     }
 }
