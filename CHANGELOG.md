@@ -66,9 +66,12 @@
 
 ### ✅ Added
 - Added the `MessageListView::showMessageOptionsDialog` method to show message options dialog. [#4127](https://github.com/GetStream/stream-chat-android/pull/4127)
+- Added styled attribute `streamUiGiphyMediaAttachmentSizingMode` and it's programmatic counterpart `GiphyMediaAttachmentViewStyle.sizingMode`. This parameters controls the way Giphy containers resize themselves. For a care free experience use automatic resizing which will intelligently adapt its size while respecting the gif's aspect ratio. We recommend using automatic resizing, however if you require more control use manual mode. [#4134](https://github.com/GetStream/stream-chat-android/pull/4134)
+- Added styled attributes `streamUiGiphyMediaAttachmentWidth`, `streamUiGiphyMediaAttachmentHeight`, `streamUiGiphyMediaAttachmentDimensionRatio` and their programmatic counterparts contained within `GiphyMediaAttachmentViewStyle` that are `width`, `height` and `dimensionRatio`. These values are used to exert more control over Giphys. They are ignored if sizing mode is set to automatic and respected if it is set to manual. [#4134](https://github.com/GetStream/stream-chat-android/pull/4134)
 
 ### ⚠️ Changed
 - Exposed `MessageOptionsDialogFragment` so that clients are able to create and show the dialog manually. [#4127](https://github.com/GetStream/stream-chat-android/pull/4127)
+- 🚨 Breaking change: `streamUiGiphyMediaAttachmentGiphyType` and its programmatic counterpart `GiphyMediaAttachmentViewStyle.giphyType` no longer change the container size. Container sizing has been decoupled from giphy scale type which now only controls the quality of the gif itself. If you need fixed sizes, set the sizing mode to manual and manipulate the container by setting custom width, height and if needed dimension ratio and scale type. Please check the added section for the full names of the new attributes. [#4134](https://github.com/GetStream/stream-chat-android/pull/4134)
 
 ### ❌ Removed
 
