@@ -45,8 +45,8 @@ public object StreamAttachmentFactories {
      * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
      * makes the container capable of adaptive resizing and ignore
      * [ChatTheme.dimens.attachmentsContentGiphyWidth] and [ChatTheme.dimens.attachmentsContentGiphyHeight]
-     * dimensions, however you can still clip maximum dimensions using [ChatTheme.dimens.attachmentsContentGiphyMaxWidth]
-     * and [ChatTheme.dimens.attachmentsContentGiphyMaxHeight].
+     * dimensions, however you can still clip maximum dimensions using
+     * [ChatTheme.dimens.attachmentsContentGiphyMaxWidth] and [ChatTheme.dimens.attachmentsContentGiphyMaxHeight].
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
