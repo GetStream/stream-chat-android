@@ -98,27 +98,29 @@ public fun GiphyAttachmentContent(
     val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
     val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
 
+    val width = ChatTheme.dimens.attachmentsContentGiphyWidth
+    val height = ChatTheme.dimens.attachmentsContentGiphyHeight
+
     val giphyDimensions: DpSize by remember(key1 = giphyInfo) {
         derivedStateOf {
             if (giphyInfo != null) {
                 with(density) {
-                    val giphyWidth = (giphyInfo.width).dp
-                    val giphyHeight = (giphyInfo.height).dp
+                    val giphyWidth = giphyInfo.width.toDp()
+                    val giphyHeight = giphyInfo.height.toDp()
 
                     when {
                         giphySizingMode == GiphySizingMode.FIXED_SIZE -> {
                             DpSize(
-                                width = giphyWidth.coerceIn(
+                                width = width.coerceIn(
                                     minimumValue = null,
                                     maximumValue = maxWidth
                                 ),
-                                height = giphyHeight.coerceIn(
+                                height = height.coerceIn(
                                     minimumValue = null,
                                     maximumValue = maxHeight
                                 )
                             )
                         }
-                        giphyWidth <= maxWidth && giphyHeight <= maxHeight -> DpSize(giphyWidth, giphyHeight)
                         else -> calculateResultingDimensions(
                             maxWidth = maxWidth,
                             maxHeight = maxHeight,
