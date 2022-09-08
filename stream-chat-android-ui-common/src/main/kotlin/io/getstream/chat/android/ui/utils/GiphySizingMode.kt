@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.ui.utils
 
-import io.getstream.chat.android.ui.message.list.adapter.view.GiphyMediaAttachmentViewStyle
-
 /**
  * Sets the way in which Giphy container
  * sizing is determined.
