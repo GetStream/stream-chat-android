@@ -65,6 +65,9 @@ import io.getstream.chat.android.ui.utils.giphyInfo
  * [ChatTheme.dimens.attachmentsContentGiphyWidth] and [ChatTheme.dimens.attachmentsContentGiphyHeight]
  * dimensions, however you can still clip maximum dimensions using [ChatTheme.dimens.attachmentsContentGiphyMaxWidth]
  * and [ChatTheme.dimens.attachmentsContentGiphyMaxHeight].
+ *
+ * Setting it to fixed size mode will make it respect all given dimensions.
+ * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
@@ -74,6 +77,7 @@ public fun GiphyAttachmentContent(
     modifier: Modifier = Modifier,
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
+    contentScale: ContentScale = ContentScale.Crop,
 ) {
     val context = LocalContext.current
     val (message, onLongItemClick) = attachmentState
@@ -157,7 +161,7 @@ public fun GiphyAttachmentContent(
             modifier = Modifier.fillMaxSize(),
             painter = painter,
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = contentScale,
         )
 
         Image(

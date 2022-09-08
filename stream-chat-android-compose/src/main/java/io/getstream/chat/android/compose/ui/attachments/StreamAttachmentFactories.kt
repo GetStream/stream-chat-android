@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.compose.ui.attachments
 
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
@@ -48,18 +50,23 @@ public object StreamAttachmentFactories {
      * dimensions, however you can still clip maximum dimensions using
      * [ChatTheme.dimens.attachmentsContentGiphyMaxWidth] and [ChatTheme.dimens.attachmentsContentGiphyMaxHeight].
      *
+     * Setting it to fixed size mode will make it respect all given dimensions.
+     * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+     *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
     public fun defaultFactories(
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
+        contentScale: ContentScale = ContentScale.Crop,
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(),
         LinkAttachmentFactory(linkDescriptionMaxLines),
         GiphyAttachmentFactory(
             giphyInfoType = giphyInfoType,
-            giphySizingMode = giphySizingMode
+            giphySizingMode = giphySizingMode,
+            contentScale = contentScale,
         ),
         ImageAttachmentFactory(),
         FileAttachmentFactory(),

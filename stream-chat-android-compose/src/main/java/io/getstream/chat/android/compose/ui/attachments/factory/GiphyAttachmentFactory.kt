@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.layout.ContentScale
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
@@ -37,12 +39,16 @@ import io.getstream.chat.android.ui.utils.GiphySizingMode
  * dimensions, however you can still clip maximum dimensions using [ChatTheme.dimens.attachmentsContentGiphyMaxWidth]
  * and [ChatTheme.dimens.attachmentsContentGiphyMaxHeight].
  *
- * Setting it to fixed mode will make it respect all given dimensions.
+ * Setting it to fixed size mode will make it respect all given dimensions.
+ * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+ *
+ * @return Returns an instance of [AttachmentFactory] that is used to handle Giphys.
  */
 @Suppress("FunctionName")
 public fun GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
+    contentScale: ContentScale = ContentScale.Crop,
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
@@ -51,7 +57,8 @@ public fun GiphyAttachmentFactory(
                 modifier = modifier.wrapContentSize(),
                 attachmentState = state,
                 giphyInfoType = giphyInfoType,
-                giphySizingMode = giphySizingMode
+                giphySizingMode = giphySizingMode,
+                contentScale = contentScale,
             )
         },
     )
