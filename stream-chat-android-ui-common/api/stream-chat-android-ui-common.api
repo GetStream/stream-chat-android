@@ -443,7 +443,7 @@ public final class io/getstream/chat/android/ui/utils/GiphyInfoTypeKt {
 }
 
 public final class io/getstream/chat/android/ui/utils/GiphySizingMode : java/lang/Enum {
-	public static final field AUTOMATIC_RESIZING Lio/getstream/chat/android/ui/utils/GiphySizingMode;
+	public static final field ADAPTIVE Lio/getstream/chat/android/ui/utils/GiphySizingMode;
 	public static final field FIXED_SIZE Lio/getstream/chat/android/ui/utils/GiphySizingMode;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/utils/GiphySizingMode;
 	public static fun values ()[Lio/getstream/chat/android/ui/utils/GiphySizingMode;
