@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
 import io.getstream.chat.android.ui.utils.GiphyInfoType
+import io.getstream.chat.android.ui.utils.GiphySizingMode
 
 /**
  * An [AttachmentFactory] that validates and shows Giphy attachments using [GiphyAttachmentContent].
@@ -30,11 +31,18 @@ import io.getstream.chat.android.ui.utils.GiphyInfoType
  *
  * @param giphyInfoType Used to modify the quality and dimensions of the rendered
  * Giphy attachments.
+ * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
+ * makes the container capable of adaptive resizing and ignore
+ * [ChatTheme.dimens.attachmentsContentGiphyWidth] and [ChatTheme.dimens.attachmentsContentGiphyHeight]
+ * dimensions, however you can still clip maximum dimensions using [ChatTheme.dimens.attachmentsContentGiphyMaxWidth]
+ * and [ChatTheme.dimens.attachmentsContentGiphyMaxHeight].
+ *
+ * Setting it to fixed mode will make it respect all given dimensions.
  */
 @Suppress("FunctionName")
 public fun GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
-    giphyScaling: GiphyScaling = GiphyScaling.ADAPTABLE
+    giphySizingMode: GiphySizingMode = GiphySizingMode.AUTOMATIC_RESIZING,
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
@@ -43,12 +51,7 @@ public fun GiphyAttachmentFactory(
                 modifier = modifier.wrapContentSize(),
                 attachmentState = state,
                 giphyInfoType = giphyInfoType,
-                giphyScaling = giphyScaling
+                giphySizingMode = giphySizingMode
             )
         },
     )
-
-public enum class GiphyScaling {
-    ADAPTABLE,
-    FILL_MAX_SIZE
-}

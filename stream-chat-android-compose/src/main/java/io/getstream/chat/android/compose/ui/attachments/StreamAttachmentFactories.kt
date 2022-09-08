@@ -18,12 +18,12 @@ package io.getstream.chat.android.compose.ui.attachments
 
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.GiphyScaling
 import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 import io.getstream.chat.android.ui.utils.GiphyInfoType
+import io.getstream.chat.android.ui.utils.GiphySizingMode
 
 /**
  * Provides different attachment factories that build custom message content based on a given attachment.
@@ -42,19 +42,24 @@ public object StreamAttachmentFactories {
      * @param linkDescriptionMaxLines - The limit of how long the link attachment descriptions can be.
      * @param giphyInfoType Used to modify the quality and dimensions of the rendered
      * Giphy attachments.
+     * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
+     * makes the container capable of adaptive resizing and ignore
+     * [ChatTheme.dimens.attachmentsContentGiphyWidth] and [ChatTheme.dimens.attachmentsContentGiphyHeight]
+     * dimensions, however you can still clip maximum dimensions using [ChatTheme.dimens.attachmentsContentGiphyMaxWidth]
+     * and [ChatTheme.dimens.attachmentsContentGiphyMaxHeight].
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
     public fun defaultFactories(
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
-        giphyScaling: GiphyScaling = GiphyScaling.FILL_MAX_SIZE,
+        giphySizingMode: GiphySizingMode = GiphySizingMode.AUTOMATIC_RESIZING,
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(),
         LinkAttachmentFactory(linkDescriptionMaxLines),
         GiphyAttachmentFactory(
             giphyInfoType = giphyInfoType,
-            giphyScaling = giphyScaling
+            giphySizingMode = giphySizingMode
         ),
         ImageAttachmentFactory(),
         FileAttachmentFactory(),

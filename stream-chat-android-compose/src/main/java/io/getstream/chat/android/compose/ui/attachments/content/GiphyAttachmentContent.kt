@@ -45,10 +45,10 @@ import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.factory.GiphyScaling
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.ui.utils.GiphyInfoType
+import io.getstream.chat.android.ui.utils.GiphySizingMode
 import io.getstream.chat.android.ui.utils.giphyInfo
 
 /**
@@ -60,6 +60,11 @@ import io.getstream.chat.android.ui.utils.giphyInfo
  * @param modifier Modifier for styling.
  * @param giphyInfoType Used to modify the quality and dimensions of the rendered
  * Giphy attachments.
+ * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
+ * makes the container capable of adaptive resizing and ignore
+ * [ChatTheme.dimens.attachmentsContentGiphyWidth] and [ChatTheme.dimens.attachmentsContentGiphyHeight]
+ * dimensions, however you can still clip maximum dimensions using [ChatTheme.dimens.attachmentsContentGiphyMaxWidth]
+ * and [ChatTheme.dimens.attachmentsContentGiphyMaxHeight].
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
@@ -68,7 +73,7 @@ public fun GiphyAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
-    giphyScaling: GiphyScaling = GiphyScaling.ADAPTABLE
+    giphySizingMode: GiphySizingMode = GiphySizingMode.AUTOMATIC_RESIZING,
 ) {
     val context = LocalContext.current
     val (message, onLongItemClick) = attachmentState
@@ -101,7 +106,18 @@ public fun GiphyAttachmentContent(
                     val giphyHeight = (giphyInfo.height).dp
 
                     when {
-                        giphyScaling == GiphyScaling.FILL_MAX_SIZE -> { DpSize(width = maxWidth, height = maxHeight) }
+                        giphySizingMode == GiphySizingMode.FIXED_SIZE -> {
+                            DpSize(
+                                width = giphyWidth.coerceIn(
+                                    minimumValue = null,
+                                    maximumValue = maxWidth
+                                ),
+                                height = giphyHeight.coerceIn(
+                                    minimumValue = null,
+                                    maximumValue = maxHeight
+                                )
+                            )
+                        }
                         giphyWidth <= maxWidth && giphyHeight <= maxHeight -> DpSize(giphyWidth, giphyHeight)
                         else -> calculateResultingDimensions(
                             maxWidth = maxWidth,
