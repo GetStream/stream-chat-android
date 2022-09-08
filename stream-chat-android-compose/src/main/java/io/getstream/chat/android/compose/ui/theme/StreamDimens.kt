@@ -128,7 +128,6 @@ constructor(
     public val groupAvatarInitialsXOffset: Dp,
     public val groupAvatarInitialsYOffset: Dp,
     public val attachmentsContentImageMaxHeight: Dp,
-    public val groupAvatarInitialsYOffset: Dp,
     public val attachmentsContentGiphyMaxWidth: Dp,
     public val attachmentsContentGiphyMaxHeight: Dp,
 ) {
@@ -184,6 +183,10 @@ constructor(
      * users.
      * @param attachmentsContentImageMaxHeight The maximum height an image attachment will expand to while automatically
      *  re-sizing itself in order to obey its aspect ratio.
+     * @param attachmentsContentGiphyMaxWidth The maximum width a Giphy attachment will expand to while automatically
+     *  re-sizing itself in order to follow its aspect ratio.
+     * @param attachmentsContentGiphyMaxHeight The maximum height a Giphy attachment will expand to while automatically
+     *  re-sizing itself in order to follow its aspect ratio.
      */
     public constructor(
         channelItemVerticalPadding: Dp,
@@ -229,6 +232,8 @@ constructor(
         groupAvatarInitialsXOffset: Dp,
         groupAvatarInitialsYOffset: Dp,
         attachmentsContentImageMaxHeight: Dp,
+        attachmentsContentGiphyMaxWidth: Dp,
+        attachmentsContentGiphyMaxHeight: Dp,
     ) : this(
         channelItemVerticalPadding = channelItemVerticalPadding,
         channelItemHorizontalPadding = channelItemHorizontalPadding,
@@ -274,6 +279,8 @@ constructor(
         groupAvatarInitialsXOffset = groupAvatarInitialsXOffset,
         groupAvatarInitialsYOffset = groupAvatarInitialsYOffset,
         attachmentsContentImageMaxHeight = attachmentsContentImageMaxHeight,
+        attachmentsContentGiphyMaxWidth = attachmentsContentGiphyMaxWidth,
+        attachmentsContentGiphyMaxHeight = attachmentsContentGiphyMaxHeight
     )
 
     public companion object {
@@ -326,7 +333,6 @@ constructor(
             groupAvatarInitialsXOffset = 1.5.dp,
             groupAvatarInitialsYOffset = 2.5.dp,
             attachmentsContentImageMaxHeight = 600.dp,
-            groupAvatarInitialsYOffset = 2.5.dp,
             attachmentsContentGiphyMaxWidth = 250.dp,
             attachmentsContentGiphyMaxHeight = 250.dp
         )
