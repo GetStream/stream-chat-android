@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.randomString
@@ -62,7 +63,10 @@ import java.util.Calendar
 import java.util.Date
 import java.util.UUID
 
+@Suppress("LargeClass")
 public class TestDataHelper {
+
+    private val streamFormatter = StreamDateFormatter()
 
     public val connection1: String = "test-connection"
     public val user1: User = User("broad-lake-3")
@@ -192,27 +196,38 @@ public class TestDataHelper {
     }
 
     public val message1: Message = Message().apply {
-        cid = channel1.cid; text = "hi there"; id = "message-1"; user =
-            user1; createdAt = calendar(2020, 1, 1)
+        cid = channel1.cid
+        text = "hi there"
+        id = "message-1"
+        user = user1
+        createdAt = calendar(2020, 1, 1)
     }
 
     public val message1WithoutChannelAndCid: Message = Message().apply {
-        text = "hi there"; id = "message-1"; user =
-            user1; createdAt = calendar(2020, 1, 1)
+        text = "hi there"
+        id = "message -1"
+        user = user1
+        createdAt = calendar(2020, 1, 1)
     }
 
     public fun createMessage(): Message {
         val messageId = UUID.randomUUID().toString()
         val text = "hi there $messageId"
         return Message().apply {
-            cid = channel1.cid; this.text = text; id = messageId; user =
-                user1; createdAt = Date()
+            cid = channel1.cid
+            this.text = text
+            id = messageId
+            user = user1
+            createdAt = Date()
         }
     }
 
     public val message1Updated: Message = Message().apply {
-        cid = channel1.cid; text = "im update now"; id = "message-1"; user =
-            user1; createdAt = calendar(2020, 1, 1)
+        cid = channel1.cid
+        text = "im update now"
+        id = "message-1"
+        user = user1
+        createdAt = calendar(2020, 1, 1)
     }
 
     public val message1Deleted: Message = message1.copy(deletedAt = Date())
@@ -237,228 +252,418 @@ public class TestDataHelper {
         latestReactions = mutableListOf(reaction2, reaction1)
     }
     public val message2Older: Message = Message().apply {
-        text = "message2"; id = "message-2"; user = user1; createdAt =
-            calendar(2019, 1, 1)
+        text = "message2"; id = "message-2"; user = user1; createdAt = calendar(2019, 1, 1)
     }
     public val messageFromUser2: Message = Message().apply {
-        text = "messageFromUser2"; id = "message-2"; user = user2; createdAt =
-            calendar(2020, 2, 1)
+        text = "messageFromUser2"; id = "message-2"; user = user2; createdAt = calendar(2020, 2, 1)
     }
 
-    public val connectedEvent: ConnectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user1, connection1)
-    public val connectedEvent2: ConnectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user1, connection1)
+    public val connectedEvent: ConnectedEvent by lazy {
+        val createdAt = Date()
+
+        ConnectedEvent(EventType.HEALTH_CHECK, createdAt, streamFormatter.format(createdAt), user1, connection1)
+    }
+    public val connectedEvent2: ConnectedEvent by lazy {
+        val createdAt = Date()
+
+        ConnectedEvent(EventType.HEALTH_CHECK, Date(), streamFormatter.format(createdAt), user1, connection1)
+    }
 
     public val disconnectedEvent: DisconnectedEvent = DisconnectedEvent(
-        EventType.CONNECTION_DISCONNECTED, Date()
+        EventType.CONNECTION_DISCONNECTED, Date(), null
     )
-    public val newMessageEvent: NewMessageEvent = NewMessageEvent(
-        EventType.MESSAGE_NEW,
-        Date(),
-        user1,
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        message1,
-        1,
-        0,
-        0
-    )
-    public val newMessageEvent2: NewMessageEvent = NewMessageEvent(
-        EventType.MESSAGE_NEW,
-        Date(),
-        user1,
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        message2Older,
-        1,
-        0,
-        0
-    )
-    public val newMessageFromUser2: NewMessageEvent = NewMessageEvent(
-        EventType.MESSAGE_NEW,
-        Date(),
-        user2,
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        messageFromUser2,
-        1,
-        0,
-        0
-    )
+    public val newMessageEvent: NewMessageEvent by lazy {
+        val createdAt = Date()
 
-    public val newMessageEventNotification: NotificationMessageNewEvent = NotificationMessageNewEvent(
-        EventType.NOTIFICATION_MESSAGE_NEW,
-        Date(),
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        channel1,
-        message1WithoutChannelAndCid,
-        0,
-        0
-    )
+        NewMessageEvent(
+            EventType.MESSAGE_NEW,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            message1,
+            1,
+            0,
+            0
+        )
+    }
 
-    public val messageUpdatedEvent: MessageUpdatedEvent = MessageUpdatedEvent(
-        EventType.MESSAGE_UPDATED,
-        Date(),
-        user1,
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        message1Updated
-    )
+    private val newMessageEvent2: NewMessageEvent by lazy {
+        val createdAt = Date()
 
-    public val messageDeletedEvent: MessageDeletedEvent = MessageDeletedEvent(
-        type = EventType.MESSAGE_DELETED,
-        createdAt = Date(),
-        user = user1,
-        cid = channel1.cid,
-        channelType = channel1.type,
-        channelId = channel1.id,
-        message = message1Deleted,
-        hardDelete = false
-    )
+        NewMessageEvent(
+            EventType.MESSAGE_NEW,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            message2Older,
+            1,
+            0,
+            0
+        )
+    }
+    public val newMessageFromUser2: NewMessageEvent by lazy {
+        val createdAt = Date()
 
-    public val messageHardDeletedEvent: MessageDeletedEvent = MessageDeletedEvent(
-        type = EventType.MESSAGE_DELETED,
-        createdAt = Date(),
-        user = user1,
-        cid = channel1.cid,
-        channelType = channel1.type,
-        channelId = channel1.id,
-        message = message1Deleted,
-        hardDelete = true
-    )
+        NewMessageEvent(
+            EventType.MESSAGE_NEW,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user2,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            messageFromUser2,
+            1,
+            0,
+            0
+        )
+    }
 
-    public val userStartWatchingEvent: UserStartWatchingEvent = UserStartWatchingEvent(
-        EventType.USER_WATCHING_START,
-        Date(),
-        channel1.cid,
-        1,
-        channel1.type,
-        channel1.id,
-        user1
-    )
-    public val reactionEvent: ReactionNewEvent = ReactionNewEvent(
-        EventType.REACTION_NEW,
-        Date(),
-        user1,
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        reactionMessage1,
-        reaction1
-    )
-    public val reactionEvent2: ReactionNewEvent = ReactionNewEvent(
-        EventType.REACTION_NEW,
-        Date(),
-        user2,
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        reactionMessage2,
-        reaction2
-    )
+    public val newMessageEventNotification: NotificationMessageNewEvent by lazy {
+        val createdAt = Date()
 
-    public val channelUpdatedEvent: ChannelUpdatedEvent = ChannelUpdatedEvent(
-        EventType.CHANNEL_UPDATED,
-        Date(),
-        channel1Updated.cid,
-        channel1Updated.type,
-        channel1Updated.id,
-        null,
-        channel1Updated
-    )
-    public val channelUpdatedEvent2: ChannelUpdatedEvent =
-        ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel5.cid, channel5.type, channel5.id, null, channel5)
+        NotificationMessageNewEvent(
+            EventType.NOTIFICATION_MESSAGE_NEW,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            channel1,
+            message1WithoutChannelAndCid,
+            0,
+            0
+        )
+    }
 
-    public val user1TypingStarted: TypingStartEvent = TypingStartEvent(
-        EventType.TYPING_START,
-        Date(),
-        user1,
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        parentMessageId
-    )
-    public val user3TypingStartedOld: TypingStartEvent = TypingStartEvent(
-        EventType.TYPING_START,
-        getOldDate(),
-        user3,
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        parentMessageId
-    )
+    public val messageUpdatedEvent: MessageUpdatedEvent by lazy {
+        val createdAt = Date()
 
-    public val channelHiddenEvent: ChannelHiddenEvent = ChannelHiddenEvent(
-        EventType.CHANNEL_HIDDEN, Date(), channel2.cid, channel2.type, channel2.id, user1, false
-    )
-    public val channelVisibleEvent: ChannelVisibleEvent = ChannelVisibleEvent(
-        EventType.CHANNEL_VISIBLE, Date(), channel2.cid, channel2.type, channel2.id, user1
-    )
+        MessageUpdatedEvent(
+            EventType.MESSAGE_UPDATED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            message1Updated
+        )
+    }
 
-    public val user2TypingStarted: TypingStartEvent = TypingStartEvent(
-        EventType.TYPING_START,
-        Date(),
-        user2,
-        channel2.cid,
-        channel2.type,
-        channel2.id,
-        parentMessageId
-    )
-    public val user1TypingStop: TypingStopEvent = TypingStopEvent(
-        EventType.TYPING_STOP, Date(), user1, channel2.cid, channel2.type, channel2.id, parentMessageId
-    )
-    public val readEvent: MessageReadEvent = MessageReadEvent(
-        EventType.MESSAGE_READ, Date(), user1, channel1.cid, channel1.type, channel1.id
-    )
+    public val messageDeletedEvent: MessageDeletedEvent by lazy {
+        val createdAt = Date()
 
-    public val notificationMutesUpdated: NotificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(
-        EventType.NOTIFICATION_MUTES_UPDATED, Date(), me1
-    )
+        MessageDeletedEvent(
+            type = EventType.MESSAGE_DELETED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            message = message1Deleted,
+            hardDelete = false
+        )
+    }
 
-    public val user1Banned: ChannelUserBannedEvent = ChannelUserBannedEvent(
-        EventType.USER_BANNED, Date(), channel2.cid, channel2.type, channel2.id, user1, null
-    )
-    public val user1Unbanned: ChannelUserUnbannedEvent = ChannelUserUnbannedEvent(
-        EventType.USER_UNBANNED, Date(), user1, channel2.cid, channel2.type, channel2.id
-    )
+    public val messageHardDeletedEvent: MessageDeletedEvent by lazy {
+        val createdAt = Date()
 
-    public val user1ReadNotification: NotificationMarkReadEvent = NotificationMarkReadEvent(
-        EventType.NOTIFICATION_MARK_READ,
-        Date(),
-        user1,
-        channel2.cid,
-        channel2.type,
-        channel2.id,
-        0,
-        0
-    )
-    public val user1Read: MessageReadEvent = MessageReadEvent(
-        EventType.MESSAGE_READ, Date(), user1, channel2.cid, channel2.type, channel2.id
-    )
-    public val memberAddedToChannelEvent: MemberAddedEvent = MemberAddedEvent(
-        EventType.MEMBER_ADDED,
-        Date(),
-        user1,
-        channel1WithNewMember.cid,
-        channel1WithNewMember.type,
-        channel1WithNewMember.id,
-        member2
-    )
+        MessageDeletedEvent(
+            type = EventType.MESSAGE_DELETED,
+            createdAt = Date(),
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            message = message1Deleted,
+            hardDelete = true
+        )
+    }
+
+    public val userStartWatchingEvent: UserStartWatchingEvent by lazy {
+        val createdAt = Date()
+
+        UserStartWatchingEvent(
+            EventType.USER_WATCHING_START,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel1.cid,
+            1,
+            channel1.type,
+            channel1.id,
+            user1
+        )
+    }
+    public val reactionEvent: ReactionNewEvent by lazy {
+        val createdAt = Date()
+
+        ReactionNewEvent(
+            EventType.REACTION_NEW,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            reactionMessage1,
+            reaction1
+        )
+    }
+    public val reactionEvent2: ReactionNewEvent by lazy {
+        val createdAt = Date()
+
+        ReactionNewEvent(
+            EventType.REACTION_NEW,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user2,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            reactionMessage2,
+            reaction2
+        )
+    }
+
+    public val channelUpdatedEvent: ChannelUpdatedEvent by lazy {
+        val createdAt = Date()
+
+        ChannelUpdatedEvent(
+            EventType.CHANNEL_UPDATED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel1Updated.cid,
+            channel1Updated.type,
+            channel1Updated.id,
+            null,
+            channel1Updated
+        )
+    }
+    public val channelUpdatedEvent2: ChannelUpdatedEvent by lazy {
+        val createdAt = Date()
+
+        ChannelUpdatedEvent(
+            EventType.CHANNEL_UPDATED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel5.cid,
+            channel5.type,
+            channel5.id,
+            null,
+            channel5
+        )
+    }
+
+    public val user1TypingStarted: TypingStartEvent by lazy {
+        val createdAt = Date()
+
+        TypingStartEvent(
+            EventType.TYPING_START,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            parentMessageId
+        )
+    }
+    public val user3TypingStartedOld: TypingStartEvent by lazy {
+        val createdAt = getOldDate()
+
+        TypingStartEvent(
+            EventType.TYPING_START,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user3,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            parentMessageId
+        )
+    }
+
+    public val channelHiddenEvent: ChannelHiddenEvent by lazy {
+        val createdAt = Date()
+
+        ChannelHiddenEvent(
+            EventType.CHANNEL_HIDDEN,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel2.cid,
+            channel2.type,
+            channel2.id,
+            user1,
+            false
+        )
+    }
+    public val channelVisibleEvent: ChannelVisibleEvent by lazy {
+        val createdAt = Date()
+
+        ChannelVisibleEvent(
+            EventType.CHANNEL_VISIBLE,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel2.cid,
+            channel2.type,
+            channel2.id,
+            user1
+        )
+    }
+
+    public val user2TypingStarted: TypingStartEvent by lazy {
+        val createdAt = Date()
+
+        TypingStartEvent(
+            EventType.TYPING_START,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user2,
+            channel2.cid,
+            channel2.type,
+            channel2.id,
+            parentMessageId
+        )
+    }
+    public val user1TypingStop: TypingStopEvent by lazy {
+        val createdAt = Date()
+
+        TypingStopEvent(
+            EventType.TYPING_STOP,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel2.cid,
+            channel2.type,
+            channel2.id,
+            parentMessageId
+        )
+    }
+    public val readEvent: MessageReadEvent by lazy {
+        val createdAt = Date()
+
+        MessageReadEvent(
+            EventType.MESSAGE_READ,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel1.cid,
+            channel1.type,
+            channel1.id
+        )
+    }
+
+    public val notificationMutesUpdated: NotificationMutesUpdatedEvent by lazy {
+        val createdAt = Date()
+
+        NotificationMutesUpdatedEvent(
+            EventType.NOTIFICATION_MUTES_UPDATED, Date(), streamFormatter.format(createdAt), me1
+        )
+    }
+
+    public val user1Banned: ChannelUserBannedEvent by lazy {
+        val createdAt = Date()
+
+        ChannelUserBannedEvent(
+            EventType.USER_BANNED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel2.cid,
+            channel2.type,
+            channel2.id,
+            user1,
+            null
+        )
+    }
+    public val user1Unbanned: ChannelUserUnbannedEvent by lazy {
+        val createdAt = Date()
+
+        ChannelUserUnbannedEvent(
+            EventType.USER_UNBANNED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel2.cid,
+            channel2.type,
+            channel2.id
+        )
+    }
+
+    public val user1ReadNotification: NotificationMarkReadEvent by lazy {
+        val createdAt = Date()
+
+        NotificationMarkReadEvent(
+            EventType.NOTIFICATION_MARK_READ,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel2.cid,
+            channel2.type,
+            channel2.id,
+            0,
+            0
+        )
+    }
+    public val user1Read: MessageReadEvent by lazy {
+        val createdAt = Date()
+
+        MessageReadEvent(
+            EventType.MESSAGE_READ,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel2.cid,
+            channel2.type,
+            channel2.id
+        )
+    }
+    public val memberAddedToChannelEvent: MemberAddedEvent by lazy {
+        val createdAt = Date()
+
+        MemberAddedEvent(
+            EventType.MEMBER_ADDED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            user1,
+            channel1WithNewMember.cid,
+            channel1WithNewMember.type,
+            channel1WithNewMember.id,
+            member2
+        )
+    }
 
     // member removed doesn't have a cid
-    public val memberRemovedFromChannel: MemberRemovedEvent = MemberRemovedEvent(
-        EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id, member1
-    )
+    public val memberRemovedFromChannel: MemberRemovedEvent by lazy {
+        val createdAt = Date()
 
-    public val notificationRemovedFromChannel: NotificationRemovedFromChannelEvent =
+        MemberRemovedEvent(
+            EventType.MEMBER_REMOVED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            member2.user,
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            member1
+        )
+    }
+
+    public val notificationRemovedFromChannel: NotificationRemovedFromChannelEvent by lazy {
+        val createdAt = Date()
+
         NotificationRemovedFromChannelEvent(
             EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
-            Date(),
+            createdAt,
+            streamFormatter.format(createdAt),
             user1,
             channel1.cid,
             channel1.type,
@@ -466,68 +671,109 @@ public class TestDataHelper {
             channel1,
             member1
         )
+    }
 
     // for whatever reason these events don't have event.cid
-    public val notificationAddedToChannelEvent: NotificationAddedToChannelEvent = NotificationAddedToChannelEvent(
-        EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-        Date(),
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        channel1,
-        member1,
-        0,
-        0
-    )
-    public val notificationAddedToChannel2Event: NotificationAddedToChannelEvent = NotificationAddedToChannelEvent(
-        EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-        Date(),
-        channel2.cid,
-        channel2.type,
-        channel2.id,
-        channel2,
-        member2,
-        0,
-        0
-    )
+    public val notificationAddedToChannelEvent: NotificationAddedToChannelEvent by lazy {
+        val createdAt = Date()
+
+        NotificationAddedToChannelEvent(
+            EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            channel1,
+            member1,
+            0,
+            0
+        )
+    }
+    public val notificationAddedToChannel2Event: NotificationAddedToChannelEvent by lazy {
+        val createdAt = Date()
+
+        NotificationAddedToChannelEvent(
+            EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel2.cid,
+            channel2.type,
+            channel2.id,
+            channel2,
+            member2,
+            0,
+            0
+        )
+    }
 
     // no created by
-    public val notificationAddedToChannel3Event: NotificationAddedToChannelEvent = NotificationAddedToChannelEvent(
-        EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-        Date(),
-        channel3.cid,
-        channel3.type,
-        channel3.id,
-        channel3,
-        member3,
-        0,
-        0
-    )
-    public val user1UpdatedEvent: UserUpdatedEvent = UserUpdatedEvent(EventType.USER_UPDATED, Date(), user1updated)
+    public val notificationAddedToChannel3Event: NotificationAddedToChannelEvent by lazy {
+        val createdAt = Date()
+
+        NotificationAddedToChannelEvent(
+            EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel3.cid,
+            channel3.type,
+            channel3.id,
+            channel3,
+            member3,
+            0,
+            0
+        )
+    }
+    public val user1UpdatedEvent: UserUpdatedEvent by lazy {
+        val createdAt = Date()
+
+        UserUpdatedEvent(EventType.USER_UPDATED, createdAt, streamFormatter.format(createdAt), user1updated)
+    }
     public val syncHistoryResult: Result<List<ChatEvent>> =
         Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2))
 
-    public val channelTruncatedEvent: ChannelTruncatedEvent = ChannelTruncatedEvent(
-        EventType.CHANNEL_TRUNCATED,
-        Date(),
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        user1,
-        null,
-        channel1
-    )
-    public val notificationChannelTruncated: NotificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
-        EventType.NOTIFICATION_CHANNEL_TRUNCATED,
-        Date(),
-        channel1.cid,
-        channel1.type,
-        channel1.id,
-        channel1
-    )
-    public val channelDeletedEvent: ChannelDeletedEvent = ChannelDeletedEvent(
-        EventType.CHANNEL_DELETED, Date(), channel1.cid, channel1.type, channel1.id, channel1, null
-    )
+    public val channelTruncatedEvent: ChannelTruncatedEvent by lazy {
+        val createdAt = Date()
+
+        ChannelTruncatedEvent(
+            EventType.CHANNEL_TRUNCATED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            user1,
+            null,
+            channel1
+        )
+    }
+    public val notificationChannelTruncated: NotificationChannelTruncatedEvent by lazy {
+        val createdAt = Date()
+
+        NotificationChannelTruncatedEvent(
+            EventType.NOTIFICATION_CHANNEL_TRUNCATED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            channel1
+        )
+    }
+    public val channelDeletedEvent: ChannelDeletedEvent by lazy {
+        val createdAt = Date()
+
+        ChannelDeletedEvent(
+            EventType.CHANNEL_DELETED,
+            createdAt,
+            streamFormatter.format(createdAt),
+            channel1.cid,
+            channel1.type,
+            channel1.id,
+            channel1,
+            null
+        )
+    }
 }
 
 public fun calendar(

@@ -58,6 +58,7 @@ class ChatInitializer(private val context: Context) {
                         ApplicationConfigurator.XIAOMI_APP_KEY,
                     ),
                 ),
+                requestPermissionOnAppLaunch = { true }
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
