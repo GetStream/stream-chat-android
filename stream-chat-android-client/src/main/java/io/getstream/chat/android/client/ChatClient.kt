@@ -20,7 +20,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
-import androidx.annotation.WorkerThread
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -1223,21 +1222,6 @@ internal constructor(
         clientState.toMutableState()?.clearState()
 
         logger.v { "[disconnectSuspend] completed('$userId')" }
-    }
-
-    /**
-     * Disconnect the current user, stop all observers and clear user data
-     */
-    @Deprecated(
-        message = "It is a blocking method that shouldn't be used from the Main Thread.\n" +
-            "Instead of that, you can use `ChatClient.disconnect(true)` that return a `Call` " +
-            "and run it safe using coroutines.",
-        replaceWith = ReplaceWith("this.disconnect(true).await()"),
-        level = DeprecationLevel.ERROR,
-    )
-    @WorkerThread
-    public fun disconnect() {
-        disconnect(true).execute()
     }
 
     //region: api calls
