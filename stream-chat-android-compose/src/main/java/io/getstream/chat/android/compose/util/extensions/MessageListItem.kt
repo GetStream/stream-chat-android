@@ -36,6 +36,6 @@ public fun MessageListItem.toMessageListItemState(): MessageListItemState {
         )
         is SystemMessageItem -> SystemMessageState(this.message)
         is ThreadSeparatorItem -> ThreadSeparatorState(this.messageCount)
-        is TypingItem -> TypingItemState(this.typingUsers) // TODO
+        is TypingItem -> TypingItemState(this.typingUsers)
     }
 }

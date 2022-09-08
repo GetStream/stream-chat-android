@@ -38,10 +38,11 @@ import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.SendGiphy
 import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
-import io.getstream.chat.android.compose.state.messages.toComposeState
 import io.getstream.chat.android.compose.util.extensions.asState
+import io.getstream.chat.android.compose.util.extensions.toComposeState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import java.util.concurrent.TimeUnit
@@ -97,15 +98,22 @@ public class MessageListViewModel(
         get() = if (isInThread) threadMessagesState else messagesState
 
     /**
+     * Offset of a focused message needed to show it in the center of the screen.
+     */
+    private val focusedMessagesOffsetState: MutableStateFlow<Int?> = MutableStateFlow(0)
+
+    /**
      * State of the screen, for [MessageMode.Normal].
      */
-    private val messagesState: MessagesState by messageListController.messageListState.map { it.toComposeState() }
+    private val messagesState: MessagesState by messageListController.messageListState
+        .map { it.toComposeState(focusedMessagesOffsetState) }
         .asState(viewModelScope, MessagesState())
 
     /**
      * State of the screen, for [MessageMode.MessageThread].
      */
-    private val threadMessagesState: MessagesState by messageListController.threadListState.map { it.toComposeState() }
+    private val threadMessagesState: MessagesState by messageListController.threadListState
+        .map { it.toComposeState(focusedMessagesOffsetState) }
         .asState(viewModelScope, MessagesState())
 
     /**

@@ -81,6 +81,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
+import io.getstream.chat.android.common.state.Flag as FlagMessage
 
 /**
  * Controller responsible for handling message list state. It acts as a central place for core business logic and state
@@ -905,7 +906,7 @@ public class MessageListController(
             is ThreadReply -> {
                 enterThreadMode(messageAction.message)
             }
-            is Delete, is io.getstream.chat.android.common.state.Flag -> {
+            is Delete, is FlagMessage -> {
                 _messageActions.value = _messageActions.value + messageAction
             }
             is Copy -> copyMessage(messageAction.message)
@@ -959,7 +960,7 @@ public class MessageListController(
      * @param hard Whether we do a hard delete or not.
      */
     public fun deleteMessage(message: Message, hard: Boolean = false) {
-        _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<Delete>()
+        _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<Delete>().toSet()
         removeOverlay()
 
         chatClient.deleteMessage(message.id, hard)
@@ -1013,8 +1014,7 @@ public class MessageListController(
      * @param onResult Handler that notifies the flag message result.
      */
     public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
-        _messageActions.value =
-            _messageActions.value - _messageActions.value.filterIsInstance<io.getstream.chat.android.common.state.Flag>()
+        _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
         chatClient.flagMessage(message.id).enqueue { result ->
             onActionResult(result, "Unable to flag message: ${result.error().message}", onResult)
         }
@@ -1183,7 +1183,9 @@ public class MessageListController(
      * @return [Message] with the request id or null if the message is not in the list.
      */
     public fun getMessageWithId(messageId: String): Message? {
-        return (_messageListState.value.messages.firstOrNull { it is MessageItem && it.message.id == messageId } as? MessageItem)?.message
+        return (_messageListState.value.messages.firstOrNull {
+            it is MessageItem && it.message.id == messageId
+        } as? MessageItem)?.message
     }
 
     /**
