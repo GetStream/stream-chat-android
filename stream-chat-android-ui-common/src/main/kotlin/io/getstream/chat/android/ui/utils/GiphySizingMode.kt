@@ -29,7 +29,7 @@ public enum class GiphySizingMode {
      * Setting this mode means that the container will ignore any
      * width and height dimensions.
      */
-    AUTOMATIC_RESIZING,
+    ADAPTIVE,
 
     /**
      * Sets Giphy containers to fixed size mode.

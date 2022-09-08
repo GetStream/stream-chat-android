@@ -53,7 +53,7 @@ public object StreamAttachmentFactories {
     public fun defaultFactories(
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
-        giphySizingMode: GiphySizingMode = GiphySizingMode.AUTOMATIC_RESIZING,
+        giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(),
         LinkAttachmentFactory(linkDescriptionMaxLines),

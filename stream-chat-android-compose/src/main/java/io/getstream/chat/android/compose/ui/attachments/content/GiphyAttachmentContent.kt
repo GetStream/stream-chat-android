@@ -73,7 +73,7 @@ public fun GiphyAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
-    giphySizingMode: GiphySizingMode = GiphySizingMode.AUTOMATIC_RESIZING,
+    giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
 ) {
     val context = LocalContext.current
     val (message, onLongItemClick) = attachmentState

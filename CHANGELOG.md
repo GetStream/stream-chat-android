@@ -77,8 +77,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the way Giphy attachments are displayed. Instead of being cropped they can now be set to either respect the Giphys attachment's aspect ratio and adaptively resize themselves automatically or be manually sized in a fixed way by the user. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
+- Added the ability to control Giphy quality and sizing mode by adding the parameters `GiphyInfoType` (controls quality)  and `GiphySizingMode` (controls sizing) to the functions `StreamAttachmentFactories.defaultFactories()`, `GiphyAttachmentFactory()` and `GiphyAttachmentContent()`. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
 
 ### ✅ Added
+- Added `GiphySizingMode`, an enum class used to control the way Giphys are displayed. When `GiphySizingMode.ADAPTIVE` is passed in as an argument it will make Giphy automatically resize themselves to fill available space while respecting their original aspect ratios, while `GiphySizingMode.FIXED_SIZE` will allow you to manually control the dimensions of the Giphy container in a fixed size manner. You can clip the maximum height and width in both cases by modifying `ChatTheme.attachmentsContentGiphyMaxWidth` and `attachmentsContentGiphyMaxHeight`. `GiphySizingMode` can be passed in as an argument to the following functions: `StreamAttachmentFactories.defaultFactories()`, `GiphyAttachmentFactory()` and `GiphyAttachmentContent()`. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
+- Added parameters `attachmentsContentGiphyMaxWidth` and `attachmentsContentGiphyMaxHeight` to `StreamDimens`. These parameters can be used to control the maximum dimensions of Giphys in either sizing mode. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
 
 ### ⚠️ Changed
 

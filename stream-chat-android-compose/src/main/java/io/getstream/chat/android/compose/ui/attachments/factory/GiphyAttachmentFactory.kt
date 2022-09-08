@@ -42,7 +42,7 @@ import io.getstream.chat.android.ui.utils.GiphySizingMode
 @Suppress("FunctionName")
 public fun GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
-    giphySizingMode: GiphySizingMode = GiphySizingMode.AUTOMATIC_RESIZING,
+    giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
