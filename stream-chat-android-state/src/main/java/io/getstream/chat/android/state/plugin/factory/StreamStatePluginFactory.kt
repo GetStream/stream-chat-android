@@ -20,11 +20,13 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -35,17 +37,16 @@ import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterce
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerState
+import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelsListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListenerImpl
-import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListenerState
+import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerImpl
+import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerFull
 import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -54,13 +55,13 @@ import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
-import io.getstream.chat.android.state.BuildConfig
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.job
 import kotlin.reflect.KClass
@@ -111,9 +112,9 @@ public class StreamStatePluginFactory(
                 "[uncaughtCoroutineException] throwable: $throwable, context: $context"
             }
         }
-        val job = SupervisorJob()
-        val scope = CoroutineScope(job + DispatcherProvider.IO + exceptionHandler)
-
+        val scope = ChatClient.instance().inheritScope { parentJob ->
+            SupervisorJob(parentJob) + DispatcherProvider.IO + exceptionHandler
+        }
         return createStatePlugin(user, scope)
     }
 
@@ -210,6 +211,7 @@ public class StreamStatePluginFactory(
                 syncManager.stop()
                 eventHandler.stopListening()
                 clearCachedInstance()
+                scope.cancel()
             }
         }
 
@@ -219,22 +221,25 @@ public class StreamStatePluginFactory(
             }
         }
 
+        val getMessageFun: suspend (String) -> Result<Message> = { messageId: String ->
+            chatClient.getMessage(messageId).await()
+        }
+
         return StatePlugin(
             activeUser = user,
             queryChannelsListener = QueryChannelsListenerImpl(logic),
             queryChannelListener = QueryChannelListenerImpl(logic),
-            threadQueryListener = ThreadQueryListenerImpl(logic),
+            threadQueryListener = ThreadQueryListenerFull(logic, repositoryFacade, repositoryFacade, getMessageFun),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
-            editMessageListener = EditMessageListenerImpl(logic, clientState),
-            hideChannelListener = HideChannelListenerImpl(logic, repositoryFacade),
+            editMessageListener = EditMessageListenerState(logic, clientState),
+            hideChannelListener = HideChannelListenerState(logic),
             markAllReadListener = MarkAllReadListenerState(logic, stateRegistry.scope, channelMarkReadHelper),
             deleteReactionListener = DeleteReactionListenerState(logic, clientState),
             sendReactionListener = SendReactionListenerState(logic, clientState),
             deleteMessageListener = DeleteMessageListenerState(logic, clientState),
-            sendMessageListener = SendMessageListenerImpl(logic, repositoryFacade),
-            sendGiphyListener = SendGiphyListenerImpl(logic),
+            sendMessageListener = SendMessageListenerState(logic),
+            sendGiphyListener = SendGiphyListenerState(logic),
             shuffleGiphyListener = ShuffleGiphyListenerState(logic),
-            queryMembersListener = QueryMembersListenerImpl(repositoryFacade),
             typingEventListener = TypingEventListenerState(stateRegistry),
             provideDependency = createDependencyProvider(syncManager, eventHandler)
         )
@@ -266,7 +271,7 @@ public class StreamStatePluginFactory(
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
     ): EventHandler {
-        return when (BuildConfig.DEBUG || useSequentialEventHandler) {
+        return when (useSequentialEventHandler) {
             true -> EventHandlerSequential(
                 scope = scope,
                 currentUserId = user.id,

@@ -257,13 +257,13 @@ internal class ChannelLogic(
     }
 
     private fun updateDataFromLocalChannel(localChannel: Channel) {
-        localChannel.hidden?.let(channelStateLogic::setHidden)
+        localChannel.hidden?.let(channelStateLogic::toggleHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateDataFromChannel(localChannel, scrollUpdate = true)
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
-        localChannel.hidden?.let(channelStateLogic::setHidden)
+        localChannel.hidden?.let(channelStateLogic::toggleHidden)
         channelStateLogic.updateOldMessagesFromChannel(localChannel)
     }
 
@@ -278,7 +278,7 @@ internal class ChannelLogic(
     ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
     internal fun setHidden(hidden: Boolean) {
-        channelStateLogic.setHidden(hidden)
+        channelStateLogic.toggleHidden(hidden)
     }
 
     internal fun updateDataFromChannel(
@@ -519,14 +519,14 @@ internal class ChannelLogic(
                     upsertEventMessage(event.message)
                 }
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
-                channelStateLogic.setHidden(false)
+                channelStateLogic.toggleHidden(false)
             }
             is MessageUpdatedEvent -> {
                 event.message.apply {
                     replyTo = mutableState.messageList.value.firstOrNull { it.id == replyMessageId }
                 }.let(::upsertEventMessage)
 
-                channelStateLogic.setHidden(false)
+                channelStateLogic.toggleHidden(false)
             }
             is MessageDeletedEvent -> {
                 if (event.hardDelete) {
@@ -534,29 +534,29 @@ internal class ChannelLogic(
                 } else {
                     upsertEventMessage(event.message)
                 }
-                channelStateLogic.setHidden(false)
+                channelStateLogic.toggleHidden(false)
             }
             is NotificationMessageNewEvent -> {
                 if (!mutableState.insideSearch.value) {
                     upsertEventMessage(event.message)
                 }
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
-                channelStateLogic.setHidden(false)
+                channelStateLogic.toggleHidden(false)
             }
             is ReactionNewEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionUpdateEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionDeletedEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
-                channelStateLogic.deleteMember(event.user.id)
+                channelStateLogic.deleteMember(event.member)
             }
             is NotificationRemovedFromChannelEvent -> {
-                channelStateLogic.deleteMember(event.member.user.id)
+                channelStateLogic.deleteMember(event.member)
             }
             is MemberAddedEvent -> {
                 channelStateLogic.upsertMember(event.member)
@@ -588,10 +588,10 @@ internal class ChannelLogic(
                 channelStateLogic.updateChannelData(event.channel)
             }
             is ChannelHiddenEvent -> {
-                channelStateLogic.setHidden(true)
+                channelStateLogic.toggleHidden(true)
             }
             is ChannelVisibleEvent -> {
-                channelStateLogic.setHidden(false)
+                channelStateLogic.toggleHidden(false)
             }
             is ChannelDeletedEvent -> {
                 removeMessagesBefore(event.createdAt)
@@ -623,7 +623,7 @@ internal class ChannelLogic(
                 channelStateLogic.updateChannelData(event.channel)
             }
             is NotificationInviteRejectedEvent -> {
-                channelStateLogic.upsertMember(event.member)
+                channelStateLogic.deleteMember(event.member)
                 channelStateLogic.updateChannelData(event.channel)
             }
             is NotificationChannelMutesUpdatedEvent -> {

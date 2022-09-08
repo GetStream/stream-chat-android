@@ -20,8 +20,10 @@ import io.getstream.chat.android.client.BlockedTask
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -105,11 +107,14 @@ internal class CoroutineCallTest {
         val blockedTask = BlockedTask(validResult)
         val call = CoroutineCall(testCoroutines.scope, blockedTask.getSuspendTask())
 
-        val deferedResult = async { call.await() }
+        val localScope = testCoroutines.scope + Job()
+        val deferredResult = localScope.async {
+            call.await()
+        }
         delay(10)
         call.cancel()
         blockedTask.unblock()
-        val result = deferedResult.await()
+        val result = deferredResult.await()
 
         result `should be equal to` Call.callCanceledError()
         blockedTask.isStarted() `should be equal to` true

@@ -20,6 +20,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -93,13 +94,28 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
         addView(imageAttachmentView)
         state = State.OneView(imageAttachmentView)
         ConstraintSet().apply {
-            constrainHeight(imageAttachmentView.id, LayoutParams.WRAP_CONTENT)
             constrainMaxHeight(imageAttachmentView.id, maxImageAttachmentHeight)
+            constrainWidth(imageAttachmentView.id, ViewGroup.LayoutParams.MATCH_PARENT)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.LEFT)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.RIGHT)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.TOP)
+            constrainViewToParentBySide(imageAttachmentView, ConstraintSet.BOTTOM)
+
+            val imageWidth = first.originalWidth?.toFloat()
+            val imageHeight = first.originalHeight?.toFloat()
+
+            // Used to set a dimension ratio before we load an image
+            // so that message positions don't jump after we load it.
+            if (imageWidth != null && imageHeight != null) {
+                val ratio = (imageWidth / imageHeight).toString()
+                this.setDimensionRatio(imageAttachmentView.id, ratio)
+            } else {
+                constrainHeight(imageAttachmentView.id, LayoutParams.WRAP_CONTENT)
+            }
+
             applyTo(this@ImageAttachmentsGroupView)
         }
+
         imageAttachmentView.showAttachment(first)
     }
 

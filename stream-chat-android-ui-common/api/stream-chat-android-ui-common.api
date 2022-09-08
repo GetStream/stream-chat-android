@@ -108,14 +108,6 @@ public final class com/getstream/sdk/chat/utils/DateFormatter$Companion {
 public final class com/getstream/sdk/chat/utils/DateFormatterKt {
 }
 
-public abstract class com/getstream/sdk/chat/utils/LegacyDateFormatter : com/getstream/sdk/chat/utils/DateFormatter {
-	public fun <init> ()V
-	public abstract fun formatDate (Ljava/util/Date;)Ljava/lang/String;
-	public final fun formatDate (Lorg/threeten/bp/LocalDateTime;)Ljava/lang/String;
-	public abstract fun formatTime (Ljava/util/Date;)Ljava/lang/String;
-	public final fun formatTime (Lorg/threeten/bp/LocalTime;)Ljava/lang/String;
-}
-
 public final class com/getstream/sdk/chat/utils/MediaStringUtil {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/utils/MediaStringUtil;
 	public static final fun convertFileSizeByteCount (J)Ljava/lang/String;
@@ -167,33 +159,6 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/ChatClient;)Z
 }
 
-public abstract class com/getstream/sdk/chat/utils/roundedImageView/PorterImageView : androidx/appcompat/widget/AppCompatImageView {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public fun invalidate ()V
-	protected fun onDraw (Landroid/graphics/Canvas;)V
-	protected fun onMeasure (II)V
-	protected fun onSizeChanged (IIII)V
-	protected abstract fun paintMaskCanvas (Landroid/graphics/Canvas;Landroid/graphics/Paint;II)V
-	public fun setSquare (Z)V
-}
-
-public class com/getstream/sdk/chat/utils/roundedImageView/PorterShapeImageView : com/getstream/sdk/chat/utils/roundedImageView/PorterImageView {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	protected fun paintMaskCanvas (Landroid/graphics/Canvas;Landroid/graphics/Paint;II)V
-	public fun setShape (Landroid/content/Context;Landroid/graphics/drawable/Drawable;)V
-}
-
-public final class com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer : com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
-	public fun <init> (Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
-	public synthetic fun <init> (Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun clear ()V
-	public fun onKeystroke ()V
-}
-
 public abstract interface class com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
 	public abstract fun clear ()V
 	public abstract fun onKeystroke ()V
@@ -222,10 +187,11 @@ public final class io/getstream/chat/android/common/MessageOptionsUserReactionAl
 
 public final class io/getstream/chat/android/common/composer/MessageComposerState {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/Set;
+	public final fun component11 ()Z
 	public final fun component2 ()Ljava/util/List;
 	public final fun component3 ()Lio/getstream/chat/android/common/state/MessageAction;
 	public final fun component4 ()Ljava/util/List;
@@ -234,14 +200,15 @@ public final class io/getstream/chat/android/common/composer/MessageComposerStat
 	public final fun component7 ()I
 	public final fun component8 ()Lio/getstream/chat/android/common/state/MessageMode;
 	public final fun component9 ()Z
-	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;)Lio/getstream/chat/android/common/composer/MessageComposerState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/common/composer/MessageComposerState;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/common/composer/MessageComposerState;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;Z)Lio/getstream/chat/android/common/composer/MessageComposerState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/common/composer/MessageComposerState;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ZILjava/lang/Object;)Lio/getstream/chat/android/common/composer/MessageComposerState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAction ()Lio/getstream/chat/android/common/state/MessageAction;
 	public final fun getAlsoSendToChannel ()Z
 	public final fun getAttachments ()Ljava/util/List;
 	public final fun getCommandSuggestions ()Ljava/util/List;
 	public final fun getCoolDownTime ()I
+	public final fun getHasCommands ()Z
 	public final fun getInputValue ()Ljava/lang/String;
 	public final fun getMentionSuggestions ()Ljava/util/List;
 	public final fun getMessageMode ()Lio/getstream/chat/android/common/state/MessageMode;
@@ -275,6 +242,21 @@ public final class io/getstream/chat/android/common/model/ModeratedMessageOption
 
 public final class io/getstream/chat/android/common/model/SendAnyway : io/getstream/chat/android/common/model/ModeratedMessageOption {
 	public static final field INSTANCE Lio/getstream/chat/android/common/model/SendAnyway;
+}
+
+public final class io/getstream/chat/android/common/notifications/StreamCoilUserIconBuilder : io/getstream/chat/android/client/notifications/handler/UserIconBuilder {
+	public fun <init> (Landroid/content/Context;)V
+	public fun buildIcon (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/common/notifications/permissions/SnackbarNotificationPermissionHandler : io/getstream/chat/android/client/notifications/permissions/ActivityLifecycleCallbacks, io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler {
+	public fun <init> (Landroid/content/Context;)V
+	public fun onActivityStarted (Landroid/app/Activity;)V
+	public fun onLastActivityStopped (Landroid/app/Activity;)V
+	public fun onPermissionDenied ()V
+	public fun onPermissionGranted ()V
+	public fun onPermissionRationale ()V
+	public fun onPermissionRequested ()V
 }
 
 public final class io/getstream/chat/android/common/state/Copy : io/getstream/chat/android/common/state/MessageAction {

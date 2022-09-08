@@ -152,8 +152,8 @@ public class Messages {
             channelClient.sendImage(imageFile).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Successful upload, you can now attach this image
-                    // to an message that you then send to a channel
-                    String imageUrl = result.data();
+                    // to a message that you then send to a channel
+                    String imageUrl = result.data().getFile();
 
                     Attachment attachment = new Attachment();
                     attachment.setType("image");
@@ -191,6 +191,19 @@ public class Messages {
                     .fileUploader(new MyFileUploader())
                     .build();
         }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#deleting-files-and-images">Deleting Files and Images</a>
+     */
+    void deleteFileOrImage(){
+        ChannelClient channelClient = client.channel("messaging", "general");
+
+        // Deletes the image
+        channelClient.deleteImage("{{ url of uploaded image }}").enqueue();
+
+        // Deletes the file
+        channelClient.deleteFile("{{ url of uploaded file }}").enqueue();
     }
 
     /**

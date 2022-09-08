@@ -24,24 +24,24 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.helpers.CallPostponeHelper.Companion.DELAY_DURATION
 import io.getstream.chat.android.client.helpers.CallPostponeHelper.Companion.MAX_ATTEMPTS_COUNT
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
-import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 /**
  * Class responsible for postponing call until the socket connection is established.
  * The request will be retried [attemptsCount] times with a [delayDuration] ms delay between each request.
  *
  * @param socketStateService Service responsible for providing current socket state
- * @param coroutineScope Coroutine scope where the call should be run.
+ * @param userScope Coroutine scope where the call should be run.
  * @param delayDuration The delay duration between each query channels request. Default: [DELAY_DURATION].
  * @param attemptsCount Maximum number of attempts to be performed. Default: [MAX_ATTEMPTS_COUNT].
  */
 internal class CallPostponeHelper(
     private val socketStateService: SocketStateService,
-    private val coroutineScope: CoroutineScope,
+    private val userScope: UserScope,
     private val delayDuration: Long = DELAY_DURATION,
     private val attemptsCount: Int = MAX_ATTEMPTS_COUNT,
     private val chatSocketExperimental: ChatSocketExperimental? = null,
@@ -71,7 +71,7 @@ internal class CallPostponeHelper(
      * @return Executable async [Call] responsible for querying channels
      */
     internal fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
-        return CoroutineCall(coroutineScope) {
+        return CoroutineCall(userScope) {
             doSafeJob {
                 call()
             }.await()
@@ -83,7 +83,7 @@ internal class CallPostponeHelper(
         try {
             doJob(attemptsCount, job)
         } catch (e: Exception) {
-            ErrorCall(coroutineScope, ChatError(e.message, e))
+            ErrorCall(userScope, ChatError(e.message, e))
         }
 
     private tailrec suspend fun <T> doJob(attemptCount: Int = attemptsCount, job: () -> T): T {

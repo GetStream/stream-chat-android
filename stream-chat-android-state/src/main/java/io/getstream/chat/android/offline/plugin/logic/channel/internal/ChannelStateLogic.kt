@@ -164,9 +164,9 @@ internal interface ChannelStateLogic {
     /**
      * Deletes a member. Doesn't delete in the database.
      *
-     * @param userId Id of the user.
+     * @param member The member to be removed.
      */
-    fun deleteMember(userId: String)
+    fun deleteMember(member: Member)
 
     /**
      * Deletes channel.
@@ -201,7 +201,7 @@ internal interface ChannelStateLogic {
      *
      * @param hidden Boolean.
      */
-    fun setHidden(hidden: Boolean)
+    fun toggleHidden(hidden: Boolean)
 
     /**
      * Sets a replied message.

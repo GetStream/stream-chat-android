@@ -34,6 +34,10 @@ module.exports = {
                 },
                 {
                   type: 'doc',
+                  id: 'client/guides/handling-user-connection',
+                },
+                {
+                  type: 'doc',
                   id: 'client/guides/offline-support',
                 },
                 {

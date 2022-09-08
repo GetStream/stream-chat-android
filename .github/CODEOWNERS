@@ -18,13 +18,10 @@ stream-chat-android-test                    @GetStream/android-developers-core
 stream-chat-android-ui-common               @GetStream/android-developers-ui
 stream-chat-android-ui-components           @GetStream/android-developers-ui
 stream-chat-android-ui-components-sample    @GetStream/android-developers-ui
-
-# Compose
-stream-chat-android-compose             @GetStream/android-developers-ui
-stream-chat-android-compose-sample      @GetStream/android-developers-ui
-
-# UI testing
-stream-chat-android-ui-uitests          @GetStream/android-developers-ui
+stream-chat-android-compose                 @GetStream/android-developers-ui
+stream-chat-android-compose-sample          @GetStream/android-developers-ui
+stream-chat-android-ui-guides               @GetStream/android-developers-ui
+stream-chat-android-ui-uitests              @GetStream/android-developers-ui
 
 # Libraries
 libraries/logging/stream-logger              @GetStream/android-developers-core

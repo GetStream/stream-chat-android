@@ -35,13 +35,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import java.util.Date
-import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 internal class ChatEventsObservable(
     private val socket: ChatSocket,
     private val waitConnection: FlowCollector<Result<ConnectionData>>,
     private val scope: CoroutineScope,
-    private val chatSocketExperimental: ChatSocketExperimental
+    private val chatSocketExperimental: ChatSocketExperimental,
 ) {
 
     private val logger = StreamLog.getLogger("Chat:EventsObservable")
@@ -134,7 +134,7 @@ internal class ChatEventsObservable(
     private class EventsMapper(private val observable: ChatEventsObservable) : SocketListener() {
 
         override fun onConnecting() {
-            observable.onNext(ConnectingEvent(EventType.CONNECTION_CONNECTING, Date()))
+            observable.onNext(ConnectingEvent(EventType.CONNECTION_CONNECTING, Date(), null))
         }
 
         override fun onConnected(event: ConnectedEvent) {
@@ -142,7 +142,14 @@ internal class ChatEventsObservable(
         }
 
         override fun onDisconnected(cause: DisconnectCause) {
-            observable.onNext(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), cause))
+            observable.onNext(
+                DisconnectedEvent(
+                    EventType.CONNECTION_DISCONNECTED,
+                    createdAt = Date(),
+                    disconnectCause = cause,
+                    rawCreatedAt = null
+                )
+            )
         }
 
         override fun onEvent(event: ChatEvent) {
@@ -150,7 +157,14 @@ internal class ChatEventsObservable(
         }
 
         override fun onError(error: ChatError) {
-            observable.onNext(ErrorEvent(EventType.CONNECTION_ERROR, Date(), error))
+            observable.onNext(
+                ErrorEvent(
+                    EventType.CONNECTION_ERROR,
+                    createdAt = Date(),
+                    error = error,
+                    rawCreatedAt = null
+                )
+            )
         }
     }
 }

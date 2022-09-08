@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Deprecated(
     message = "This class has been deprecated and will be removed." +
         "You can either use BaseChatEventHandler or DefaultChatEventHandler for custom implementation.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
 )
 public class NonMemberChatEventHandler(
     private val channels: StateFlow<List<Channel>?>,

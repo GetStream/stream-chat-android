@@ -24,7 +24,10 @@ import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
 import org.junit.Rule
@@ -32,6 +35,7 @@ import org.junit.Test
 import org.mockito.kotlin.mock
 import java.util.Date
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class ChatEventsObservableTest {
 
     @get:Rule
@@ -40,6 +44,7 @@ internal class ChatEventsObservableTest {
     private lateinit var socket: FakeSocket
     private lateinit var observable: ChatEventsObservable
     private lateinit var result: MutableList<ChatEvent>
+    private val streamDateFormatter = StreamDateFormatter()
 
     @Before
     fun before() {
@@ -50,7 +55,10 @@ internal class ChatEventsObservableTest {
 
     @Test
     fun oneEventDelivery() {
-        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, User(), "")
         observable.subscribe { result.add(it) }
 
         socket.sendEvent(event)
@@ -60,11 +68,15 @@ internal class ChatEventsObservableTest {
 
     @Test
     fun multipleEventsDelivery() {
-        val eventA = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+        val eventA = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, User(), "")
         val eventB = NewMessageEvent(
             EventType.MESSAGE_NEW,
-            Date(),
-            User(),
+            createdAt,
+            rawCreatedAt,
+            randomUser(),
             "type:id",
             "type",
             "id",
@@ -73,7 +85,7 @@ internal class ChatEventsObservableTest {
             0,
             0
         )
-        val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+        val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
         observable.subscribe { result.add(it) }
 
         socket.sendEvent(eventA)
@@ -85,9 +97,12 @@ internal class ChatEventsObservableTest {
 
     @Test
     fun filtering() {
-        val eventA = UnknownEvent("a", Date(), null, emptyMap<Any, Any>())
-        val eventB = UnknownEvent("b", Date(), null, mapOf<Any, Any>("cid" to "myCid"))
-        val eventC = UnknownEvent("c", Date(), null, emptyMap<Any, Any>())
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+        val eventA = UnknownEvent("a", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
+        val eventB = UnknownEvent("b", createdAt, rawCreatedAt, null, mapOf<Any, Any>("cid" to "myCid"))
+        val eventC = UnknownEvent("c", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
 
         val filter: (ChatEvent) -> Boolean = {
             it.type == "b" && (it as? UnknownEvent)?.rawData?.get("cid") == "myCid"
@@ -105,9 +120,12 @@ internal class ChatEventsObservableTest {
 
     @Test
     fun unsubscription() {
-        val eventA = UnknownEvent("a", Date(), null, emptyMap<Any, Any>())
-        val eventB = UnknownEvent("b", Date(), null, emptyMap<Any, Any>())
-        val eventC = UnknownEvent("c", Date(), null, emptyMap<Any, Any>())
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+        val eventA = UnknownEvent("a", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
+        val eventB = UnknownEvent("b", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
+        val eventC = UnknownEvent("c", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
 
         val subscription = observable.subscribe { result.add(it) }
 

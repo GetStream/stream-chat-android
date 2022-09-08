@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.api
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -25,13 +27,15 @@ import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
@@ -39,6 +43,10 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -51,6 +59,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class ClientConnectionTests {
 
     companion object {
@@ -63,6 +72,11 @@ internal class ClientConnectionTests {
     private val connectionId = "connection-id"
     private val user = User().apply { id = userId }
     private val token = "token"
+    private val createdAt = Date()
+
+    private val streamDateFormatter = StreamDateFormatter()
+
+    private val rawCreatedAt = streamDateFormatter.format(createdAt)
 
     private val config = ChatClientConfig(
         "api-key",
@@ -70,18 +84,19 @@ internal class ClientConnectionTests {
         "cdn.http",
         "socket.url",
         false,
-        ChatLogger.Config(ChatLogLevel.NOTHING, null),
+        Mother.chatLoggerConfig(),
         false,
         false
     )
 
     private val connectedEvent = ConnectedEvent(
         EventType.HEALTH_CHECK,
-        Date(),
+        createdAt,
+        rawCreatedAt,
         user,
         connectionId
     )
-    private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+    private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
 
     private lateinit var api: MoshiChatApi
     private lateinit var socket: ChatSocket
@@ -90,13 +105,16 @@ internal class ClientConnectionTests {
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var initCallback: Call.Callback<ConnectionData>
     private lateinit var socketListener: SocketListener
+    private val clientState = mock<ClientState>()
 
     @BeforeEach
     fun before() {
+        val clientScope = ClientTestScope(testCoroutines.scope)
+        val userScope = UserTestScope(clientScope)
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val callPostponeHelper = CallPostponeHelper(socketStateService, testCoroutines.scope)
+        val callPostponeHelper = CallPostponeHelper(socketStateService, userScope)
         val tokenUtils: TokenUtils = mock()
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = mock()
@@ -110,6 +128,8 @@ internal class ClientConnectionTests {
             socketListener.onEvent(disconnectedEvent)
         }
 
+        whenever(clientState.user) doReturn MutableStateFlow(user)
+
         client = ChatClient(
             config,
             api,
@@ -121,14 +141,15 @@ internal class ClientConnectionTests {
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
-            scope = testCoroutines.scope,
+            clientScope = clientScope,
+            userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
-            lifecycle = lifecycleOwner.lifecycle,
+            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = mock()
+            clientState = clientState
         )
     }
 
@@ -140,12 +161,27 @@ internal class ClientConnectionTests {
     }
 
     @Test
-    fun connectAndDisconnect() {
+    fun connectAndDisconnect() = runTest {
         client.connectUser(user, token).enqueue()
         socketListener.onEvent(connectedEvent)
 
-        client.disconnect()
+        client.disconnect(flushPersistence = false).await()
 
         verify(socket, times(1)).disconnect()
+    }
+
+    @Test
+    fun `switchUser should return and also connect the socket`() = runTest {
+        val timeout = 10L
+
+        val result = client.connectUser(user, token, timeout).await()
+        result.isError `should be equal to` true
+        result.error().message `should be equal to` "Connection wasn't established in ${timeout}ms"
+
+        val result2 = client.switchUser(user, token, timeout).await()
+        result2.isError `should be equal to` true
+        result2.error().message `should be equal to` "Connection wasn't established in ${timeout}ms"
+
+        verify(socket, times(2)).connectUser(user, false)
     }
 }

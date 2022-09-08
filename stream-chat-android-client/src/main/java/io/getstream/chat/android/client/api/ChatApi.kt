@@ -39,7 +39,11 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.VideoCallInfo
+import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 import java.util.Date
@@ -52,10 +56,20 @@ internal interface ChatApi {
     fun appSettings(): Call<AppSettings>
 
     @CheckResult
-    fun sendFile(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>
+    fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback? = null,
+    ): Call<UploadedFile>
 
     @CheckResult
-    fun sendImage(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback? = null,
+    ): Call<UploadedImage>
 
     @CheckResult
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
@@ -361,6 +375,12 @@ internal interface ChatApi {
     ): Call<List<BannedUser>>
 
     @CheckResult
+    fun createVideoCall(channelId: String, channelType: String, callId: String, callType: String): Call<VideoCallInfo>
+
+    @CheckResult
+    fun getVideoCallToken(callId: String): Call<VideoCallToken>
+
+    @CheckResult
     fun sendEvent(
         eventType: String,
         channelType: String,
@@ -372,7 +392,7 @@ internal interface ChatApi {
     fun translate(messageId: String, language: String): Call<Message>
 
     @CheckResult
-    fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
+    fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>>
 
     fun warmUp()
 }

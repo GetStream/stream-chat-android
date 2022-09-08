@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.client.logger
 
 import io.getstream.chat.android.client.errors.ChatError
@@ -24,7 +26,7 @@ import io.getstream.chat.android.client.errors.ChatError
         expression = "StreamLog",
         imports = ["io.getstream.logging.StreamLog"]
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 public interface ChatLogger {
 
@@ -54,7 +56,7 @@ public interface ChatLogger {
             expression = "ChatLoggerConfig",
             imports = ["io.getstream.chat.android.client.logger.ChatLoggerConfig"]
         ),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public data class Config(
         override val level: ChatLogLevel,
@@ -95,7 +97,7 @@ public interface ChatLogger {
                     "io.getstream.logging.TaggedLogger",
                 ]
             ),
-            level = DeprecationLevel.WARNING
+            level = DeprecationLevel.ERROR,
         )
         public fun get(tag: Any): TaggedLogger {
             return TaggedLoggerImpl(tag, instance)

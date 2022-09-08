@@ -4,6 +4,10 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `StreamDimens` constructor containing parameter `attachmentsContentImageHeight`  | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageHeight`. |
+| `QueryChannelsState.chatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | Use `QueryChannelsState.chatEventHandlerFactory` instead. |
+| Multiple event specific `BaseChatEventHandler` methods | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | Use `handleChatEvent()` or `handleCidEvent()` instead. |
+| `NonMemberChatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13 ⌛ | Use `BaseChatEventHandler` or `DefaultChatEventHandler` instead. |
 | `StreamDimens` constructor containing params: `attachmentsContentGiphyWidth` and `attachmentsContentGiphyWidth`  | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | This constructor has been deprecated. Use the constructor that does not contain these parameters. |
 | `QueryChannelsState.chatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | Use `QueryChannelsState.chatEventHandlerFactory` instead. |
 | Multiple event specific `BaseChatEventHandler` methods | 2022.08.16 <br/>5.8.0 | 2022.08.30 ⌛ | 2022.09.13 ⌛ | Use `handleChatEvent()` or `handleCidEvent()` instead. |
@@ -20,18 +24,18 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `MessageListView::setBlockUserEnabled` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | The option to block the user from `MessageListView` has been deprecated and will be removed. |
 | `MessageListView` attributes | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | The attributes `streamUiMuteOptionIcon`, `streamUiUnmuteOptionIcon`, `streamUiMuteUserEnabled`, `streamUiBlockOptionIcon` and `streamUiBlockUserEnabled` have been deprecated and will be removed. The options to block and mute users will no longer be contained inside `MessageListView` |
 | `MessageListViewStyle` constructor containing params: `muteIcon`, `unmuteIcon`, `muteEnabled`, `blockIcon` and `blockEnabled`  | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | This constructor has been deprecated. Use the constructor that does not contain these parameters. |
-| `DefaultTypingUpdatesBuffer` | 2022.08.02 <br/>5.7.0 | 2022.08.16 ⌛ | 2022.08.30 ⌛ | This implementation of `TypingUpdatesBuffer` has been deprecated and will be removed. Should you wish to user your own typing updates buffer, you should create a custom implementation of `TypingUpdatesBuffer`. |
+| `DefaultTypingUpdatesBuffer` | 2022.08.02 <br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30<br/>5.9.0 | This implementation of `TypingUpdatesBuffer` has been deprecated and will be removed. Should you wish to user your own typing updates buffer, you should create a custom implementation of `TypingUpdatesBuffer`. |
 | `ChannelListView.showLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
 | `ChannelListView.hideLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
 | `RowScope.DefaultComposerInputContent` | 2022.08.02<br/>5.7.0 | 2022.09.06 ⌛ | 2022.10.04 ⌛ | Use `MessageInput` instead. |
-| `LegacyDateFormatter` | 2022.08.02<br/>5.7.0 | 2022.08.16 ⌛ | 2022.08.30 ⌛ | The class is unused and will be removed. |
-| `PorterImageView` | 2022.08.02<br/>5.7.0 | 2022.08.16 ⌛ | 2022.08.30 ⌛ | The class is unused and will be removed. |
-| `PorterShapeImageView` | 2022.08.02<br/>5.7.0 | 2022.08.16 ⌛ | 2022.08.30 ⌛ | The class is unused and will be removed. |
-| `ChatClient::disconnect` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.19 ⌛ | Use `ChatClient.disconnect(Boolean)` instead. |
-| `ChatLogger` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
-| `ChatLogger.Config` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use `ChatLoggerConfig` instead.|
-| `ChatLogger::get` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use `StreamLog::getLogger` instead.|
-| `BaseChatModule::logger` | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | 2022.09.13 ⌛ | Use `StreamLog` instead.|
+| `LegacyDateFormatter` | 2022.08.02<br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30<br/>5.9.0 | The class is unused and will be removed. |
+| `PorterImageView` | 2022.08.02<br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30<br/>5.9.0 | The class is unused and will be removed. |
+| `PorterShapeImageView` | 2022.08.02<br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30<br/>5.9.0 | The class is unused and will be removed. |
+| `ChatClient::disconnect` | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | 2022.09.19 ⌛ | Use `ChatClient.disconnect(Boolean)` instead. |
+| `TaggedLogger` | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | 2022.09.13 ⌛ | Use `StreamLog` instead.|
+| `ChatLogger` | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | 2022.09.13 ⌛ | Use `StreamLog` instead.|
+| `ChatLogger.Config` | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | 2022.09.13 ⌛ | Use `ChatLoggerConfig` instead.|
+| `ChatLogger::get` | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | 2022.09.13 ⌛ | Use `StreamLog::getLogger` instead.|
 | `GlobalState::isInitialized` | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0| 2022.09.06 ⌛ | Use `ClientState:isInitialized` instead.|
 | `GlobalState::isConnecting` | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0 | 2022.09.06 ⌛ | Use `ClientState:isConnecting` instead.|
 | `GlobalState::isOffline` | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0 | 2022.09.06 ⌛ | Use `ClientState:isOffline` instead.|
@@ -42,11 +46,11 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `GlobalState::errorEvents` | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0 | 2022.09.06 ⌛ | This method is no longer used.|
 | `GlobalState::typingUpdates` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0 | Use `GlobalState::typingChannels` instead. |
 | `MessageListView.setUserBlockHandler` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0 | The block action has been removed. Use `MessageOptionItemsFactory.setMessageOptionItemsFactory()` in conjunction with `MessageOptionItemsFactory.setCustomActionHandler()` to add support for custom block action. |
-| `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use QuerySortByReflection. |
-| `ChatClient.loadMessageById` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | Use the version without offsets, as it uses less requests to backend. |
-| `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
-| `MessageInputView.TypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16 ⌛ | Use your own implementation of `TypingUpdatesBuffer` or Stream's own `DefaultTypingUpdatesBuffer` instead. |
-| `InputField` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.15 ⌛ | Use the new implementation of `InputField`. |
+| `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use QuerySortByReflection. |
+| `ChatClient.loadMessageById` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use the version without offsets, as it uses less requests to backend. |
+| `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
+| `MessageInputView.TypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use your own implementation of `TypingUpdatesBuffer` or Stream's own `DefaultTypingUpdatesBuffer` instead. |
+| `InputField` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use the new implementation of `InputField`. |
 | `Member.isOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use Channel::ownCapabilities to determine user permissions. |
 | `List<Member?>.isCurrentUserOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use Channel::ownCapabilities to determine user permissions. |
 | `QuotedMessage` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use new implementation of `QuotedText`. |

@@ -89,9 +89,11 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
 
+        binding.commandsButton.isVisible = style.commandsButtonVisible
         binding.attachmentsButton.setImageDrawable(style.attachmentsButtonIconDrawable)
         binding.attachmentsButton.setBorderlessRipple(style.attachmentsButtonRippleColor)
 
+        binding.attachmentsButton.isVisible = style.attachmentsButtonVisible
         binding.commandsButton.setImageDrawable(style.commandsButtonIconDrawable)
         binding.commandsButton.setBorderlessRipple(style.commandsButtonRippleColor)
 
@@ -120,12 +122,13 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
         val hasCommandSuggestions = state.commandSuggestions.isNotEmpty()
         val hasMentionSuggestions = state.mentionSuggestions.isNotEmpty()
         val isInEditMode = state.action is Edit
+        val hasCommands = state.hasCommands
 
         binding.attachmentsButton.isEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
         binding.attachmentsButton.isVisible = style.attachmentsButtonVisible && canSendMessage && canUploadFile && !isInEditMode
 
         binding.commandsButton.isEnabled = !hasTextInput && !hasAttachments
-        binding.commandsButton.isVisible = style.commandsButtonVisible && canSendMessage && !isInEditMode
+        binding.commandsButton.isVisible = style.commandsButtonVisible && canSendMessage && !isInEditMode && hasCommands
         binding.commandsButton.isSelected = hasCommandSuggestions
     }
 }

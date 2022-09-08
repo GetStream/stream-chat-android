@@ -29,11 +29,11 @@ import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -49,7 +49,7 @@ internal open class ChatSocket constructor(
     private val socketFactory: SocketFactory,
     private val networkStateProvider: NetworkStateProvider,
     private val parser: ChatParser,
-    private val coroutineScope: CoroutineScope,
+    private val userScope: UserScope,
 ) {
     private val logger = StreamLog.getLogger("Chat:Socket")
     private var connectionConf: SocketFactory.ConnectionConf? = null
@@ -59,7 +59,7 @@ internal open class ChatSocket constructor(
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
-        coroutineScope = coroutineScope,
+        userScope = userScope,
         reconnectCallback = {
             if (state is State.DisconnectedTemporarily) {
                 this@ChatSocket.reconnect(connectionConf)
@@ -127,7 +127,12 @@ internal open class ChatSocket constructor(
                     connectionConf = null
                     networkStateProvider.unsubscribe(networkStateListener)
                     healthMonitor.stop()
-                    callListeners { it.onDisconnected(DisconnectCause.UnrecoverableError(newState.error)) }
+
+                    callListeners { listener ->
+                        listener.onDisconnected(
+                            DisconnectCause.UnrecoverableError(newState.error)
+                        )
+                    }
                 }
             }
         }
@@ -157,7 +162,7 @@ internal open class ChatSocket constructor(
             ChatErrorCode.NO_ERROR_BODY.code,
             -> {
                 if (reconnectionAttempts < RETRY_LIMIT) {
-                    coroutineScope.launch {
+                    userScope.launch {
                         delay(DEFAULT_DELAY * reconnectionAttempts.toDouble().pow(2.0).toLong())
                         reconnect(connectionConf)
                         reconnectionAttempts += 1
@@ -263,7 +268,7 @@ internal open class ChatSocket constructor(
                 is SocketFactory.ConnectionConf.AnonymousConnectionConf,
                 is SocketFactory.ConnectionConf.UserConnectionConf,
                 -> {
-                    socketConnectionJob = coroutineScope.launch {
+                    socketConnectionJob = userScope.launch {
                         tokenManager.ensureTokenLoaded()
                         withContext(DispatcherProvider.Main) {
                             socket = socketFactory.createSocket(createNewEventsParser(), connectionConf)
@@ -296,9 +301,9 @@ internal open class ChatSocket constructor(
     }
 
     private fun callListeners(call: (SocketListener) -> Unit) {
-        synchronized(listeners) {
-            listeners.forEach { listener ->
-                eventUiHandler.post { call(listener) }
+        eventUiHandler.post {
+            synchronized(listeners) {
+                listeners.forEach(call)
             }
         }
     }

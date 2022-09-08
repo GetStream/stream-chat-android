@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.client.di
 
 import android.content.Context
@@ -21,6 +23,7 @@ import android.net.ConnectivityManager
 import androidx.lifecycle.Lifecycle
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
+import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
@@ -45,10 +48,9 @@ import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
+import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.experimental.socket.lifecycle.NetworkLifecyclePublisher
-import io.getstream.chat.android.client.experimental.socket.lifecycle.StreamLifecyclePublisher
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -61,23 +63,23 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
-import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
-import io.getstream.chat.android.client.experimental.socket.ChatSocket as ChatSocketExperimental
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule(
     private val appContext: Context,
+    private val scope: UserScope,
     private val config: ChatClientConfig,
     private val notificationsHandler: NotificationHandler,
     private val notificationConfig: NotificationConfig,
@@ -104,13 +106,16 @@ internal open class BaseChatModule(
         StreamFileUploader(buildRetrofitCdnApi())
     }
 
-    val networkScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
+    val lifecycleObserver: StreamLifecycleObserver by lazy { StreamLifecycleObserver(lifecycle) }
+    val networkStateProvider: NetworkStateProvider by lazy {
+        NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+    }
     val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
     val callPostponeHelper: CallPostponeHelper by lazy {
         CallPostponeHelper(
             socketStateService = socketStateService,
-            coroutineScope = networkScope,
+            userScope = scope,
             chatSocketExperimental = chatSocketExperimental
         )
     }
@@ -122,9 +127,6 @@ internal open class BaseChatModule(
     fun socket(): ChatSocket = defaultSocket
 
     fun experimentalSocket() = chatSocketExperimental
-
-    fun networkLifecyclePublisher(): NetworkLifecyclePublisher =
-        NetworkLifecyclePublisher(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
 
     @Deprecated(
         message = "Use StreamLog instead.",
@@ -162,7 +164,7 @@ internal open class BaseChatModule(
             .baseUrl(endpoint)
             .client(okHttpClient)
             .also(parser::configRetrofit)
-            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser, networkScope))
+            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser, scope))
             .build()
     }
 
@@ -234,25 +236,22 @@ internal open class BaseChatModule(
         chatConfig.wssUrl,
         tokenManager,
         SocketFactory(parser, tokenManager),
-        NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager),
+        networkStateProvider,
         parser,
-        networkScope,
+        scope,
     )
 
     private fun buildExperimentalChatSocket(
         chatConfig: ChatClientConfig,
         parser: ChatParser,
-    ) = ChatSocketExperimental(
+    ) = ChatSocketExperimental.create(
         chatConfig.apiKey,
         chatConfig.wssUrl,
         tokenManager,
         SocketFactory(parser, tokenManager),
-        networkScope,
-        parser,
-        listOf(
-            StreamLifecyclePublisher(lifecycle),
-            networkLifecyclePublisher(),
-        ),
+        scope,
+        lifecycleObserver,
+        networkStateProvider,
     )
 
     @Suppress("RemoveExplicitTypeArguments")
@@ -266,13 +265,14 @@ internal open class BaseChatModule(
         buildRetrofitApi<ModerationApi>(),
         buildRetrofitApi<GeneralApi>(),
         buildRetrofitApi<ConfigApi>(),
-        networkScope,
+        buildRetrofitApi<VideoCallApi>(),
+        scope,
     ).let { originalApi ->
-        DistinctChatApiEnabler(DistinctChatApi(networkScope, originalApi)) {
+        DistinctChatApiEnabler(DistinctChatApi(scope, originalApi)) {
             chatConfig.distinctApiCalls
         }
     }.let { originalApi ->
-        ExtraDataValidator(networkScope, originalApi)
+        ExtraDataValidator(scope, originalApi)
     }
 
     private inline fun <reified T> buildRetrofitApi(): T {

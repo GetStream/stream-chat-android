@@ -28,7 +28,10 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -36,7 +39,10 @@ import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
@@ -48,6 +54,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class ConnectUserTest {
 
     companion object {
@@ -69,6 +76,7 @@ internal class ConnectUserTest {
     private val anonId = "!anon"
     private val anonUser = User(id = anonId)
     private val clientState: ClientState = ClientStateImpl(mock())
+    private val streamDateFormatter = StreamDateFormatter()
 
     @BeforeEach
     fun setup() {
@@ -80,6 +88,8 @@ internal class ConnectUserTest {
         chatApi = mock()
         userStateService = UserStateService()
         socketStateService = SocketStateService()
+        val clientScope = ClientTestScope(testCoroutines.scope)
+        val userScope = UserTestScope(clientScope)
         client = ChatClient(
             config = mock(),
             api = chatApi,
@@ -91,11 +101,12 @@ internal class ConnectUserTest {
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
-            scope = testCoroutines.scope,
+            clientScope = clientScope,
+            userScope = userScope,
             retryPolicy = mock(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
-            lifecycle = lifecycleOwner.lifecycle,
+            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
@@ -116,7 +127,10 @@ internal class ConnectUserTest {
     @Test
     fun `When connection is successful, initialisation state should be updated`() = runTest {
         val connectionId = randomString()
-        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, user, connectionId)
 
         val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
         socket.sendEvent(event)
@@ -128,9 +142,6 @@ internal class ConnectUserTest {
 
     @Test
     fun `When connection is running, initialisation state should be updated`() = runTest {
-        val connectionId = randomString()
-        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
-
         client.connectUser(user, jwt).enqueue()
 
         clientState.initializationState.value `should be equal to` InitializationState.RUNNING
@@ -150,7 +161,9 @@ internal class ConnectUserTest {
     @Test
     fun `Connect an user when no previous connection was performed should return a success`() = runTest {
         val connectionId = randomString()
-        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, user, connectionId)
 
         val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
         socket.sendEvent(event)
@@ -164,9 +177,14 @@ internal class ConnectUserTest {
     @Test
     fun `Where there is a connection error connecting an user, it should be propagated`() = runTest {
         val messageError = randomString()
-        val event = ErrorEvent(EventType.HEALTH_CHECK, Date(), ChatError(message = messageError))
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, ChatError(message = messageError))
 
-        val deferred = testCoroutines.scope.async { client.connectUser(user, jwt).await() }
+        val localScope = testCoroutines.scope + Job()
+        val deferred = localScope.async {
+            client.connectUser(user, jwt).await()
+        }
         socket.sendEvent(event)
         val result = deferred.await()
 
@@ -186,7 +204,6 @@ internal class ConnectUserTest {
 
     @Test
     fun `When connection take more time than expected an error should be propagated`() = runTest {
-
         val result = client.connectUser(user, jwt, 1).await()
 
         result.isError `should be equal to` true
@@ -194,19 +211,22 @@ internal class ConnectUserTest {
     }
 
     @Test
-    fun `When there is an user connected and try to connect a different user, an error should be propagated`() = runTest {
-        userStateService.onSetUser(user, false)
+    fun `When there is an user connected and try to connect a different user, an error should be propagated`() =
+        runTest {
+            userStateService.onSetUser(user, false)
 
-        val result = client.connectUser(user, jwt).await()
+            val result = client.connectUser(user, jwt).await()
 
-        result.isError `should be equal to` true
-        result.error().message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
-    }
+            result.isError `should be equal to` true
+            result.error().message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
+        }
 
     @Test
     fun `Connect a guest user when no previous connection was performed should return a success`() = runTest {
         val connectionId = randomString()
-        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user, connectionId)
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, user, connectionId)
 
         whenever(chatApi.getGuestUser(user.id, user.name)) doReturn GuestUser(user, jwt).asCall()
         val deferred = testCoroutines.scope.async { client.connectGuestUser(user.id, user.name).await() }
@@ -221,10 +241,13 @@ internal class ConnectUserTest {
     @Test
     fun `Where there is a connection error connecting a guest user, it should be propagated`() = runTest {
         val messageError = randomString()
-        val event = ErrorEvent(EventType.HEALTH_CHECK, Date(), ChatError(message = messageError))
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, ChatError(message = messageError))
 
         whenever(chatApi.getGuestUser(user.id, user.name)) doReturn GuestUser(user, jwt).asCall()
-        val deferred = testCoroutines.scope.async { client.connectGuestUser(user.id, user.name).await() }
+        val localScope = testCoroutines.scope + Job()
+        val deferred = localScope.async { client.connectGuestUser(user.id, user.name).await() }
         socket.sendEvent(event)
         val result = deferred.await()
 
@@ -235,7 +258,9 @@ internal class ConnectUserTest {
     @Test
     fun `Connect an anonymous user when no previous connection was performed should return a success`() = runTest {
         val connectionId = randomString()
-        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), anonUser, connectionId)
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, anonUser, connectionId)
 
         val deferred = testCoroutines.scope.async { client.connectAnonymousUser().await() }
         socket.sendEvent(event)
@@ -250,9 +275,12 @@ internal class ConnectUserTest {
     @Test
     fun `Where there is a connection error connecting an anonymous user, it should be propagated`() = runTest {
         val messageError = randomString()
-        val event = ErrorEvent(EventType.HEALTH_CHECK, Date(), ChatError(message = messageError))
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, ChatError(message = messageError))
 
-        val deferred = testCoroutines.scope.async { client.connectAnonymousUser().await() }
+        val localScope = testCoroutines.scope + Job()
+        val deferred = localScope.async { client.connectAnonymousUser().await() }
         socket.sendEvent(event)
         val result = deferred.await()
 

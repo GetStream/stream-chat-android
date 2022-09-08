@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.ui.message.input
 
 import android.animation.AnimatorSet
@@ -113,7 +111,6 @@ public class MessageInputView : ConstraintLayout {
     private var commandsEnabled: Boolean = true
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
-    private var typingListener: TypingListener? = null
 
     /**
      * Used to buffer typing updates in order to conserve API calls.
@@ -139,6 +136,7 @@ public class MessageInputView : ConstraintLayout {
     private var canUseCommands = false
     private var canSendLinks = false
     private var canSendTypingUpdates = false
+    private var hasCommands: Boolean = false
 
     /**
      * Changes value only when the new value
@@ -281,22 +279,6 @@ public class MessageInputView : ConstraintLayout {
         this.onSendButtonClickListener = listener
     }
 
-    @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "Use MessageInputView.setTypingListener(TypingUpdatesBuffer) instead to set a buffer " +
-            "which internally manages buffering " +
-            "start typing events and sending stop typing events.\n\n" +
-            "For the default implementation see DefaultTypingUpdatesBuffer.",
-        replaceWith = ReplaceWith(
-            "setTypingUpdatesBuffer(DefaultTypingUpdatesBuffer())",
-            "io.getstream.chat.android.ui.message.input.MessageInputView",
-            "com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer"
-        )
-    )
-    public fun setTypingListener(listener: TypingListener?) {
-        this.typingListener = listener
-    }
-
     /**
      * Sets the typing updates buffer.
      */
@@ -314,6 +296,7 @@ public class MessageInputView : ConstraintLayout {
 
     public fun setCommands(commands: List<Command>) {
         suggestionListController?.commands = commands
+        hasCommands = commands.isNotEmpty()
         refreshControlsState()
     }
 
@@ -465,7 +448,7 @@ public class MessageInputView : ConstraintLayout {
 
         setBackgroundColor(messageInputViewStyle.backgroundColor)
         configAttachmentButton()
-        configLightningButton()
+        configCommandsButton()
         configTextInput()
         configSendButton()
         configSendAlsoToChannelCheckbox()
@@ -651,6 +634,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configAttachmentButton() {
+        binding.attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled
         binding.attachmentsButton.setImageDrawable(messageInputViewStyle.attachButtonIcon)
         binding.attachmentsButton.setBorderlessRipple(messageInputViewStyle.attachmentButtonRippleColor)
 
@@ -734,7 +718,7 @@ public class MessageInputView : ConstraintLayout {
         binding.sendMessageButtonDisabled.setImageDrawable(drawable)
     }
 
-    private fun configLightningButton() {
+    private fun configCommandsButton() {
         binding.commandsButton.setImageDrawable(messageInputViewStyle.commandsButtonIcon)
         binding.commandsButton.setBorderlessRipple(messageInputViewStyle.commandButtonRippleColor)
 
@@ -900,10 +884,7 @@ public class MessageInputView : ConstraintLayout {
     private fun handleKeyStroke() {
         if (canSendTypingUpdates) {
             if (binding.messageInputFieldView.messageText.isNotEmpty()) {
-                typingListener?.onKeystroke()
                 typingUpdatesBuffer?.onKeystroke()
-            } else {
-                typingListener?.onStopTyping()
             }
         }
     }
@@ -933,7 +914,8 @@ public class MessageInputView : ConstraintLayout {
 
             attachmentsButton.isVisible =
                 messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode && canSendAttachments
-            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode && canUseCommands
+            commandsButton.isVisible = messageInputViewStyle.commandsButtonEnabled &&
+                shouldShowCommandsButton() && !isCommandMode && canUseCommands && hasCommands
             commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
         }
@@ -969,8 +951,8 @@ public class MessageInputView : ConstraintLayout {
      * @param canSend If the user is given the ability to send messages.
      */
     private fun setCanSendMessages(canSend: Boolean) {
-        binding.commandsButton.isVisible = canSend
-        binding.attachmentsButton.isVisible = canSend
+        binding.commandsButton.isVisible = messageInputViewStyle.commandsEnabled && canSend && hasCommands
+        binding.attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && canSend
 
         canSendAttachments = canSend
         canUseCommands = canSend
@@ -998,14 +980,13 @@ public class MessageInputView : ConstraintLayout {
      * @param canSend If the user is given the ability to send attachments.
      */
     private fun setCanSendAttachments(canSend: Boolean) {
-        binding.attachmentsButton.isVisible = canSend
+        binding.attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && canSend
         canSendAttachments = canSend
     }
 
     private fun shouldShowCommandsButton(): Boolean {
         val isEditMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
 
-        val hasCommands = suggestionListController?.commands?.isNotEmpty() ?: false
         return hasCommands && messageInputViewStyle.commandsButtonEnabled && commandsEnabled && !isEditMode
     }
 
@@ -1281,22 +1262,6 @@ public class MessageInputView : ConstraintLayout {
             maxMessageLength: Int,
             maxMessageLengthExceeded: Boolean,
         )
-    }
-
-    @Deprecated(
-        level = DeprecationLevel.ERROR,
-        message = "Use TypingUpdatesBuffer which internally manages buffering " +
-            "start typing events and sending stop typing events.\n\n" +
-            "For the default implementation see DefaultTypingUpdatesBuffer.",
-        replaceWith = ReplaceWith(
-            "TypingUpdatesBuffer",
-            "com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer",
-            "com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer"
-        )
-    )
-    public interface TypingListener {
-        public fun onKeystroke()
-        public fun onStopTyping()
     }
 
     @FunctionalInterface

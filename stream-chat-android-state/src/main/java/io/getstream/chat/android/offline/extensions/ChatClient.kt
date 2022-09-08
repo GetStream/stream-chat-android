@@ -291,57 +291,6 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
  *
  * @param cid The full channel id i. e. messaging:123.
  * @param messageId The id of the message.
- * @param olderMessagesOffset How many new messages to load before the requested message.
- * @param newerMessagesOffset How many new messages to load after the requested message.
- *
- * @return Executable async [Call] responsible for loading a message.
- */
-@Deprecated(
-    "Use the version without offsets, as it uses less requests to backend.",
-    level = DeprecationLevel.ERROR,
-)
-public fun ChatClient.loadMessageById(
-    cid: String,
-    messageId: String,
-    olderMessagesOffset: Int,
-    newerMessagesOffset: Int,
-): Call<Message> {
-    return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult(cid)
-
-        if (cidValidationResult.isSuccess) {
-            val result = getMessage(messageId).await()
-
-            if (result.isSuccess) {
-                val message = result.data()
-                val (channelType, channelId) = cid.cidToTypeAndId()
-
-                logic.channel(channelType = channelType, channelId = channelId).run {
-                    storeMessageLocally(listOf(message))
-                    loadOlderMessages(newerMessagesOffset, messageId)
-                    loadNewerMessages(messageId, olderMessagesOffset)
-                    upsertMessages(listOf(message))
-                }
-                result
-            } else {
-                try {
-                    repositoryFacade.selectMessage(messageId)?.let(::Result)
-                        ?: Result(ChatError("Error while fetching message from backend. Message id: $messageId"))
-                } catch (exception: Exception) {
-                    Result.error(exception)
-                }
-            }
-        } else {
-            cidValidationResult.error().toResultError()
-        }
-    }
-}
-
-/**
- * Loads message for a given message id and channel id.
- *
- * @param cid The full channel id i. e. messaging:123.
- * @param messageId The id of the message.
  *
  * @return Executable async [Call] responsible for loading a message.
  */

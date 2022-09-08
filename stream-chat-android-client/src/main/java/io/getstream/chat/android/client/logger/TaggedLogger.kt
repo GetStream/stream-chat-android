@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.errors.ChatError
             "io.getstream.logging.TaggedLogger",
         ]
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 public interface TaggedLogger {
     public fun logI(message: String)

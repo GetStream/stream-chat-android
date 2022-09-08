@@ -17,8 +17,10 @@
 package io.getstream.chat.android.ui.message.composer
 
 import android.content.Context
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupWindow
@@ -440,6 +442,7 @@ public class MessageComposerView : ConstraintLayout {
             suggestionsPopup = null
             dismissSuggestionsListener()
         }.apply {
+            setTouchInterceptor(SuggestionPopupTouchListener())
             this@MessageComposerView.suggestionsPopup = this
         }
 
@@ -474,5 +477,50 @@ public class MessageComposerView : ConstraintLayout {
     private fun <V> V.attachContext(): V where V : View, V : MessageComposerContent {
         attachContext(messageComposerContext)
         return this
+    }
+
+    /**
+     * A listener that helps to hide the currently visible command suggestions popup when the
+     * commands button is clicked.
+     *
+     * In general we don't want the suggestion popup to be "modal". An outside click should dismiss
+     * the popup and then the click event should be passed down to the layout below. For example,
+     * if the suggestion popup is displayed and the user clicks on the back button in the toolbar,
+     * then the popup should be dismissed and the user should be navigated back to the previous
+     * screen.
+     *
+     * However, there is one exception to this rule. If the command suggestion popup is displayed
+     * and the user clicks the commands button again the click should be consumed as otherwise the
+     * popup will be dismissed by the dismiss listener and then immediately shown again by the
+     * commands button click listener. This listener addresses this problem.
+     */
+    private inner class SuggestionPopupTouchListener : OnTouchListener {
+
+        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+            // Don't intercept the event if the suggestions popup is hidden
+            val suggestionsPopup = suggestionsPopup ?: return false
+
+            if (event != null && event.action == MotionEvent.ACTION_OUTSIDE) {
+                val suggestionsPopupLocation = IntArray(2)
+                suggestionsPopup.contentView.getLocationOnScreen(suggestionsPopupLocation)
+
+                // Click position relative to the popup
+                val relativeX = event.x
+                val relativeY = event.y
+
+                // Click position in global coordinates
+                val absoluteX = suggestionsPopupLocation[0] + relativeX
+                val absoluteY = suggestionsPopupLocation[1] + relativeY
+
+                val rect = Rect()
+                binding.leadingContent.getGlobalVisibleRect(rect)
+                if (rect.contains(absoluteX.toInt(), absoluteY.toInt())) {
+                    // Consume touch event outside the popup if the touch
+                    // position belongs to the leading content area.
+                    return true
+                }
+            }
+            return false
+        }
     }
 }

@@ -108,6 +108,18 @@ internal class LogicRegistry internal constructor(
         }
     }
 
+    fun getMessageById(messageId: String): Message? {
+        return channelFromMessageId(messageId)?.getMessage(messageId)
+            ?: threadFromMessageId(messageId)?.getMessage(messageId)
+    }
+
+    /**
+     * This method returns [ChannelLogic] if the messages passed is not only in a thread. Use this to avoid
+     * updating [ChannelLogic] for a messages that is only inside [ThreadLogic]. If you get null as a result,
+     * that means that no update is necessary.
+     *
+     * @param message [Message]
+     */
     fun channelFromMessage(message: Message): ChannelLogic? {
         return if (message.parentId == null || message.showInChannel) {
             val (channelType, channelId) = message.cid.cidToTypeAndId()
@@ -117,6 +129,13 @@ internal class LogicRegistry internal constructor(
         }
     }
 
+    /**
+     * This method returns [ThreadLogic] if the messages passed is inside a thread. Use this to avoid
+     * updating [ThreadLogic] for a messages that is only inside [ChannelLogic]. If you get null as a result,
+     * that means that no update is necessary.
+     *
+     * @param messageId String
+     */
     fun threadFromMessageId(messageId: String): ThreadLogic? {
         return threads.values.find { threadLogic ->
             threadLogic.getMessage(messageId) != null
@@ -142,11 +161,7 @@ internal class LogicRegistry internal constructor(
         return threads.getOrPut(messageId) {
             val mutableState = stateRegistry.thread(messageId).toMutableState()
             val stateLogic = ThreadStateLogicImpl(mutableState)
-            ThreadLogic(
-                repos,
-                client,
-                stateLogic
-            )
+            ThreadLogic(stateLogic)
         }
     }
 

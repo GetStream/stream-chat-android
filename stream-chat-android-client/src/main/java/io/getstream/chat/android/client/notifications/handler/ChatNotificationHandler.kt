@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
 /**
@@ -64,6 +65,8 @@ internal class ChatNotificationHandler(
             ""
         }
     }
+
+    override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) { /* no-op */ }
 
     override fun showNotification(channel: Channel, message: Message) {
         val notificationId: Int = System.nanoTime().toInt()

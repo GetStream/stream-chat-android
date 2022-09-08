@@ -27,6 +27,8 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -150,7 +152,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
     }
 
     @Test
-    fun `Given user set and user with different id Should call init connection listener with error`() {
+    fun `Given user set and user with different id Should call init connection listener with error`() = runTest {
         val connectionDataCallback: Call.Callback<ConnectionData> = mock()
         val sut = Fixture()
             .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
@@ -158,7 +160,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
             .get()
 
         sut.connectUser(Mother.randomUser { id = "userId2" }, "token").enqueue(connectionDataCallback)
-
+        delay(100L)
         verify(connectionDataCallback).onResult(argThat { isError })
     }
 
@@ -202,6 +204,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         fun givenUserAndToken(user: User, token: String) = apply {
             whenever(tokenUtils.getUserId(token)) doReturn user.id
+            whenever(clientState.user) doReturn MutableStateFlow(user)
         }
 
         fun clearSocketInvocations() = apply {
