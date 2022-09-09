@@ -147,15 +147,14 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
             constrainWidth(binding.imageView.id, style.width)
 
             when {
-                // If the user has set no dimension ratio or height, use a square dimension ratio
-                style.dimensionRatio == GiphyMediaAttachmentViewStyle.NO_DIMENSION_RATIO &&
-                    style.height == GiphyMediaAttachmentViewStyle.NO_GIVEN_HEIGHT
-                -> setDimensionRatio(binding.imageView.id, "1")
-                // If the user has set no dimension ratio and a height, respect the height
-                style.dimensionRatio == GiphyMediaAttachmentViewStyle.NO_DIMENSION_RATIO ->
+                // If the user has set a height, respect the height
+                style.height != GiphyMediaAttachmentViewStyle.NO_GIVEN_HEIGHT ->
                     constrainHeight(binding.imageView.id, style.height)
-                // The user has set a dimension ratio, ignore the height and use the dimension ratio
-                else -> setDimensionRatio(binding.imageView.id, style.dimensionRatio.toString())
+                // If the user has set a dimension ratio, respect the dimension ratio
+                style.dimensionRatio != GiphyMediaAttachmentViewStyle.NO_GIVEN_DIMENSION_RATIO ->
+                    setDimensionRatio(binding.imageView.id, style.dimensionRatio.toString())
+                // If the user has set no dimension ratio or height, use a square dimension ratio
+                else -> setDimensionRatio(binding.imageView.id, "1")
             }
         }
 

@@ -139,7 +139,7 @@ public class GiphyMediaAttachmentViewStyle(
         /**
          * Signifies that the user has not set a dimension ratio.
          */
-        public const val NO_DIMENSION_RATIO: Float = -1f
+        public const val NO_GIVEN_DIMENSION_RATIO: Float = -1f
 
         /**
          * Signifies that the user has not set height.
