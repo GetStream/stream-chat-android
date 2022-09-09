@@ -15,6 +15,7 @@
  */
 
 @file:JvmName("MessageListViewModelBinding")
+@file:Suppress("DEPRECATION_ERROR")
 
 package io.getstream.chat.android.ui.message.list.viewmodel
 

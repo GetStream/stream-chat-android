@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.ui.message.list
 
 import android.content.Context
@@ -90,9 +92,10 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  */
 public data class MessageListViewStyle
 @Deprecated(
-    "Properties `muteIcon`, `unmuteIcon`, `muteEnabled`, `blockIcon` " +
+    message = "Properties `muteIcon`, `unmuteIcon`, `muteEnabled`, `blockIcon` " +
         "and `blockEnabled` have been deprecated and will be removed. " +
-        "Use the constructor without these parameters."
+        "Use the constructor without these parameters.",
+    level = DeprecationLevel.ERROR,
 )
 constructor(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,

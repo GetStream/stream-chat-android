@@ -88,12 +88,6 @@ class MessageListViewSnippets : Fragment() {
         messageListView.setMessageReactionHandler { message: Message, reactionType: String ->
             // Handle when some reaction for message is going to be send
         }
-        messageListView.setUserMuteHandler { user: User ->
-            // Handle when a user is going to be muted
-        }
-        messageListView.setUserUnmuteHandler { user: User ->
-            // Handle when a user is going to be unmuted
-        }
         messageListView.setMessageReplyHandler { cid: String, message: Message ->
             // Handle when message is going to be replied in the channel with cid
         }

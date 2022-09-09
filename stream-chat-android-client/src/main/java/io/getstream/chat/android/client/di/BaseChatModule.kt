@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.client.di
 
 import android.content.Context
@@ -53,7 +51,6 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
@@ -90,8 +87,6 @@ internal open class BaseChatModule(
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
-    private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
-
     private val moshiParser: ChatParser by lazy { MoshiChatParser() }
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, notificationConfig) }
@@ -127,16 +122,6 @@ internal open class BaseChatModule(
     fun socket(): ChatSocket = defaultSocket
 
     fun experimentalSocket() = chatSocketExperimental
-
-    @Deprecated(
-        message = "Use StreamLog instead.",
-        replaceWith = ReplaceWith(
-            expression = "StreamLog",
-            imports = ["io.getstream.logging.StreamLog"]
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    fun logger(): ChatLogger = defaultLogger
 
     fun notifications(): ChatNotifications = defaultNotifications
 
