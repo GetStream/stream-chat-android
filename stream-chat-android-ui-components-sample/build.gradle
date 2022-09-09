@@ -1,3 +1,4 @@
+import io.getstream.chat.android.Configuration
 import io.getstream.chat.android.Dependencies
 
 apply plugin: 'com.android.application'
@@ -12,6 +13,7 @@ apply from: "${rootDir}/scripts/android.gradle"
 
 android {
     defaultConfig {
+        targetSdk Configuration.sampleTargetSdk
         applicationId "io.getstream.chat.ui.sample"
         versionCode sampleAppVersionCode
         versionName sampleAppVersionName

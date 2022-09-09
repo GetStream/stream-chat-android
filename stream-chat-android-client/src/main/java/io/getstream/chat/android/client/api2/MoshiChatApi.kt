@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
+import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
@@ -69,10 +70,14 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartial
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
+import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
+import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
+import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
@@ -95,6 +100,8 @@ import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.VideoCallInfo
+import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -118,6 +125,7 @@ constructor(
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
     private val configApi: ConfigApi,
+    private val callApi: VideoCallApi,
     private val coroutineScope: CoroutineScope,
 ) : ChatApi {
 
@@ -902,6 +910,23 @@ constructor(
         ).map { response -> response.members.map(DownstreamMemberDto::toDomain) }
     }
 
+    override fun createVideoCall(
+        channelId: String,
+        channelType: String,
+        callId: String,
+        callType: String,
+    ): Call<VideoCallInfo> {
+        return callApi.createCall(
+            channelId = channelId,
+            channelType = channelType,
+            request = VideoCallCreateRequest(id = callId, type = callType)
+        ).map(CreateVideoCallResponse::toDomain)
+    }
+
+    override fun getVideoCallToken(callId: String): Call<VideoCallToken> {
+        return callApi.getCallToken(callId, VideoCallTokenRequest(callId)).map(VideoCallTokenResponse::toDomain)
+    }
+
     override fun sendEvent(
         eventType: String,
         channelType: String,
@@ -919,10 +944,7 @@ constructor(
         ).map { response -> response.event.toDomain() }
     }
 
-    override fun getSyncHistory(
-        channelIds: List<String>,
-        lastSyncAt: Date,
-    ): Call<List<ChatEvent>> {
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> {
         return generalApi.getSyncHistory(
             body = SyncHistoryRequest(channelIds, lastSyncAt),
             connectionId = connectionId,

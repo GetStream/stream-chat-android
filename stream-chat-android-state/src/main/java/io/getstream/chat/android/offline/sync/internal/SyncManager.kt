@@ -82,9 +82,10 @@ internal class SyncManager(
     private val stateRegistry: StateRegistry,
     private val userPresence: Boolean,
     scope: CoroutineScope,
+    private val events: Tube<List<ChatEvent>> = Tube(),
 ) : SyncHistoryManager {
 
-    private val logger = StreamLog.getLogger("Chat:SyncManager")
+    private val logger = StreamLog.getLogger("SyncManager")
 
     private val syncScope = scope + SupervisorJob(scope.coroutineContext.job) +
         CoroutineExceptionHandler { context, throwable ->
@@ -97,10 +98,9 @@ internal class SyncManager(
 
     private var eventsDisposable: Disposable? = null
 
-    private val _syncEvents = Tube<List<ChatEvent>>()
     private val state = MutableStateFlow(State.Idle)
 
-    override val syncedEvents: Flow<List<ChatEvent>> = _syncEvents
+    override val syncedEvents: Flow<List<ChatEvent>> = events
 
     override fun start() {
         logger.d { "[start] no args" }
@@ -211,20 +211,28 @@ internal class SyncManager(
             return
         }
         val lastSyncAt = syncState.value?.lastSyncedAt ?: Date()
-        logger.i { "[performSync] cids.size: ${cids.size}, lastSyncAt: $lastSyncAt" }
-        val result = chatClient.getSyncHistory(cids, lastSyncAt).await()
+        val rawLastSyncAt = syncState.value?.rawLastSyncedAt
+        logger.i { "[performSync] cids.size: ${cids.size}, lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
+        val result = if (rawLastSyncAt != null) {
+            chatClient.getSyncHistory(cids, rawLastSyncAt).await()
+        } else {
+            chatClient.getSyncHistory(cids, lastSyncAt).await()
+        }
+
         if (result.isSuccess) {
             val sortedEvents = result.data().sortedBy { it.createdAt }
-            logger.d { "[performSync] succeed(${sortedEvents.size})" }
-            val latestEventDate = sortedEvents.lastOrNull()?.createdAt ?: Date()
-            updateLastSyncedDate(latestEventDate)
+            logger.d { "[performSync] succeed. events: ${sortedEvents.size}" }
+            val latestEvent = sortedEvents.lastOrNull()
+            val latestEventDate = latestEvent?.createdAt ?: Date()
+            val rawLatestEventDate = latestEvent?.rawCreatedAt
+            updateLastSyncedDate(latestEventDate, rawLatestEventDate)
             sortedEvents.forEach {
                 if (it is MarkAllReadEvent) {
                     updateAllReadStateForDate(it.user.id, it.createdAt)
                 }
             }
-            if (sortedEvents.isNotEmpty()) {
-                _syncEvents.emit(sortedEvents)
+            if (sortedEvents.isNotEmpty() && rawLastSyncAt != null && rawLastSyncAt != rawLatestEventDate) {
+                events.emit(sortedEvents)
                 logger.v { "[performSync] events emission completed" }
             } else {
                 logger.v { "[performSync] no events to emit" }
@@ -240,10 +248,12 @@ internal class SyncManager(
      *
      * @param latestEventDate The date of the last event returned by the sync endpoint.
      */
-    private suspend fun updateLastSyncedDate(latestEventDate: Date) {
-        logger.d { "[updateLastSyncedDate] latestEventDate: $latestEventDate" }
+    private suspend fun updateLastSyncedDate(latestEventDate: Date, rawLatestEventDate: String?) {
+        logger.d {
+            "[updateLastSyncedDate] latestEventDate: $latestEventDate, rawLatestEventDate: $rawLatestEventDate "
+        }
         syncState.value?.let { syncState ->
-            val newSyncState = syncState.copy(lastSyncedAt = latestEventDate)
+            val newSyncState = syncState.copy(lastSyncedAt = latestEventDate, rawLastSyncedAt = rawLatestEventDate)
             repos.insertSyncState(newSyncState)
             this.syncState.value = newSyncState
         }

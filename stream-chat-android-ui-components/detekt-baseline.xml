@@ -39,7 +39,7 @@
     <ID>LongMethod:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListHeaderViewStyle</ID>
     <ID>LongMethod:MessageListItemStyle.kt$MessageListItemStyle.Builder$fun build(): MessageListItemStyle</ID>
     <ID>LongMethod:MessageListViewModelBinding.kt$@JvmName("bind") public fun MessageListViewModel.bindView( view: MessageListView, lifecycleOwner: LifecycleOwner, enforceUniqueReactions: Boolean = true, )</ID>
-    <ID>LongMethod:MessageListViewStyle.kt$MessageListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle</ID>
+    <ID>LongMethod:MessageListViewStyle.kt$MessageListViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle</ID>
     <ID>LongMethod:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$override fun createMessageOptionItems( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, style: MessageListViewStyle, ): List&lt;MessageOptionItem></ID>
     <ID>LongMethod:MessageReplyStyle.kt$MessageReplyStyle.Companion$operator fun invoke(attributes: TypedArray, context: Context): MessageReplyStyle</ID>
     <ID>LongMethod:PinnedMessageListViewStyle.kt$PinnedMessageListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): PinnedMessageListViewStyle</ID>
@@ -47,7 +47,6 @@
     <ID>LongMethod:SuggestionListViewStyle.kt$SuggestionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SuggestionListViewStyle</ID>
     <ID>LongMethod:SwipeViewHolder.kt$SwipeViewHolder$@SuppressLint("ClickableViewAccessibility") public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?)</ID>
     <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, )</ID>
-    <ID>LongParameterList:MessageOptionsDialogFragment.kt$MessageOptionsDialogFragment.Companion$( optionsMode: OptionsMode, message: Message, style: MessageListViewStyle, messageListItemViewHolderFactory: MessageListItemViewHolderFactory, messageBackgroundFactory: MessageBackgroundFactory, attachmentFactoryManager: AttachmentFactoryManager, showAvatarPredicate: MessageListView.ShowAvatarPredicate, messageOptionItems: List&lt;MessageOptionItem>, )</ID>
     <ID>MagicNumber:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$500</ID>
     <ID>MagicNumber:AvatarBitmapCombiner.kt$AvatarBitmapCombiner$3</ID>
     <ID>MagicNumber:AvatarBitmapFactory.kt$AvatarBitmapFactory$4</ID>

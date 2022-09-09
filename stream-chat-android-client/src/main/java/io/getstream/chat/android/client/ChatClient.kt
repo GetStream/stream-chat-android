@@ -122,11 +122,14 @@ import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.VideoCallInfo
+import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
@@ -233,6 +236,8 @@ internal constructor(
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
+    @InternalStreamChatApi
+    public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, userScope, chatSocketExperimental)
 
     @Deprecated(
@@ -2500,9 +2505,39 @@ internal constructor(
         channelsIds: List<String>,
         lastSyncAt: Date,
     ): Call<List<ChatEvent>> {
-        return api.getSyncHistory(channelsIds, lastSyncAt)
+        val stringDate = streamDateFormatter.format(lastSyncAt)
+
+        return api.getSyncHistory(channelsIds, stringDate)
             .withPrecondition(userScope) {
                 checkSyncHistoryPreconditions(channelsIds, lastSyncAt)
+            }
+    }
+
+    /**
+     * Returns all events that happened for a list of channels since last sync (while the user was not
+     * connected to the web socket). [lastSyncAt] is in _yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'_ format.  Use this version of
+     * getSyncHistory when high precision is necessary.
+     *
+     * @param channelsIds The list of channel CIDs. Cannot be empty.
+     * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
+     *
+     * @return Executable async [Call] responsible for obtaining missing events.
+     */
+    @CheckResult
+    public fun getSyncHistory(
+        channelsIds: List<String>,
+        lastSyncAt: String,
+    ): Call<List<ChatEvent>> {
+        val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(
+            userScope,
+            ChatError(
+                "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}"
+            )
+        )
+
+        return api.getSyncHistory(channelsIds, lastSyncAt)
+            .withPrecondition(userScope) {
+                checkSyncHistoryPreconditions(channelsIds, parsedDate)
             }
     }
 
@@ -2607,6 +2642,43 @@ internal constructor(
                 this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
             }
             .share(userScope) { SendEventIdentifier(eventType, channelType, channelId, parentId) }
+    }
+
+    /**
+     * Creates a newly available video call, which belongs to a channel.
+     * The video call will be created based on the third-party video integration (Agora and 100ms) on your
+     * [Stream Dashboard](https://dashboard.getstream.io/).
+     *
+     * You can set the call type by passing [callType] like `video` or `audio`.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The id of the channel.
+     * @param callType Represents call type such as `video` or `audio`.
+     * @param callId A unique identifier to assign to the call. The id is case-insensitive.
+     */
+    @CheckResult
+    public fun createVideoCall(
+        channelType: String,
+        channelId: String,
+        callType: String,
+        callId: String,
+    ): Call<VideoCallInfo> {
+        return api.createVideoCall(
+            channelType = channelType,
+            channelId = channelId,
+            callType = callType,
+            callId = callId
+        )
+    }
+
+    /**
+     * Returns the currently available video call token.
+     *
+     * @param callId The call id, which indicates a dedicated video call id on the channel.
+     */
+    @CheckResult
+    public fun getVideoCallToken(callId: String): Call<VideoCallToken> {
+        return api.getVideoCallToken(callId = callId)
     }
 
     private fun warmUp() {
