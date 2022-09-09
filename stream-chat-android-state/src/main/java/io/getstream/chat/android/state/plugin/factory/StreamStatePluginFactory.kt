@@ -49,6 +49,7 @@ import kotlinx.coroutines.job
  * @param config [StatePluginConfig] Configuration of persistence of the SDK.
  * @param appContext [Context]
  */
+@InternalStreamChatApi
 public class StreamStatePluginFactory(
     private val config: StatePluginConfig,
     private val appContext: Context,
@@ -87,9 +88,7 @@ public class StreamStatePluginFactory(
         logger.i { "[createStatePlugin] no args" }
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
-        val clientState = chatClient.clientState.also { clientState ->
-            clientState.clearState()
-        }
+        val clientState = chatClient.clientState
         val globalState = GlobalMutableState.get(chatClient.clientState).apply {
             clearState()
         }
