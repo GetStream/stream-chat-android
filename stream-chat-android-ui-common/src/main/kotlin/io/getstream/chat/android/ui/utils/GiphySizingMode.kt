@@ -26,17 +26,16 @@ public enum class GiphySizingMode {
      * Automatically resizes Giphy containers
      * while respecting the original Giphy image dimension ratio.
      *
-     * Setting [GiphyMediaAttachmentViewStyle.sizingMode] to this value will make the
-     * container ignore [GiphyMediaAttachmentViewStyle.width], [GiphyMediaAttachmentViewStyle.height]
-     * and [GiphyMediaAttachmentViewStyle.dimensionRatio].
+     * Setting this mode means that the container will ignore any
+     * width and height dimensions.
      */
-    AUTOMATIC_RESIZING,
+    ADAPTIVE,
 
     /**
-     * Sets a fixed size to Giphy containers.
+     * Sets Giphy containers to fixed size mode.
      *
-     * You can adjust the size by changing [GiphyMediaAttachmentViewStyle.width],
-     * [GiphyMediaAttachmentViewStyle.height] and [GiphyMediaAttachmentViewStyle.dimensionRatio].
+     * Setting this mode means that the container will respect
+     * given width and height dimensions.
      */
     FIXED_SIZE
 }

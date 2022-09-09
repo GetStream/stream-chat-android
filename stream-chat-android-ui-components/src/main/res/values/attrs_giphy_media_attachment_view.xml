@@ -33,7 +33,7 @@
              Choosing this value makes the container ignore attributes
              'streamUiGiphyMediaAttachmentWidth', 'streamUiGiphyMediaAttachmentHeight' and
              'streamUiDimensionRatio'. -->
-            <enum name="automatic_resizing" value="0" />
+            <enum name="adaptive" value="0" />
             <!-- Applies a fixed size to the Giphy container. You can provide these
             by passing in values to 'streamUiGiphyMediaAttachmentWidth',
              'streamUiGiphyMediaAttachmentHeight' and  'streamUiDimensionRatio'. -->

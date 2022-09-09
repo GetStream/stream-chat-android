@@ -113,7 +113,7 @@ internal class GiphyAttachmentViewHolder(
         val width = with(binding.mediaAttachmentView) {
             when {
                 !isStyleInitialized() -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
-                style.sizingMode == GiphySizingMode.AUTOMATIC_RESIZING -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
+                style.sizingMode == GiphySizingMode.ADAPTIVE -> ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
                 style.sizingMode == GiphySizingMode.FIXED_SIZE && style.width == ViewGroup.LayoutParams.MATCH_PARENT ->
                     ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
                 style.sizingMode == GiphySizingMode.FIXED_SIZE -> ConstraintLayout.LayoutParams.WRAP_CONTENT

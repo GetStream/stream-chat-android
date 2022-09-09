@@ -31,8 +31,8 @@ import io.getstream.chat.android.ui.utils.GiphyInfoType
 import io.getstream.chat.android.ui.utils.GiphySizingMode
 
 /**
- * Sets the style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView] by obtaining
- * styled attributes.
+ * Sets the style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView]
+ * by obtaining styled attributes.
  *
  * @param progressIcon Displayed while the Giphy is Loading.
  * @param giphyIcon Displays the Giphy logo over the Giphy image.
@@ -40,11 +40,11 @@ import io.getstream.chat.android.ui.utils.GiphySizingMode
  * @param imageBackgroundColor Sets the background colour for the Giphy container.
  * @param giphyType Sets the Giphy type which directly affects image quality and if the container is resized or not.
  * @param scaleType Sets the scaling type for loading the image. E.g. 'centerCrop', 'fitCenter', etc...
- * @param sizingMode Sets the way the Giphy container scales itself, either automatic or manually sized.
- * @param width Sets the width of the Giphy container. This value is ignored if Giphys are automatically sized.
- * @param height Sets the height of the Giphy container. This value is ignored if Giphys are automatically sized.
+ * @param sizingMode Sets the way the Giphy container scales itself, either adaptive or of a fixed size.
+ * @param width Sets the width of the Giphy container. This value is ignored if Giphys are adaptively sized.
+ * @param height Sets the height of the Giphy container. This value is ignored if Giphys are adaptively sized.
  * @param dimensionRatio Sets the dimension ratio of the Giphy container. This value is ignored if
- * Giphys are automatically sized.
+ * Giphys are adaptively sized.
  */
 public class GiphyMediaAttachmentViewStyle(
     public val progressIcon: Drawable,
@@ -100,7 +100,7 @@ public class GiphyMediaAttachmentViewStyle(
 
                 val sizingMode = attributes.getEnum(
                     R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentSizingMode,
-                    GiphySizingMode.AUTOMATIC_RESIZING
+                    GiphySizingMode.ADAPTIVE
                 )
 
                 val width =

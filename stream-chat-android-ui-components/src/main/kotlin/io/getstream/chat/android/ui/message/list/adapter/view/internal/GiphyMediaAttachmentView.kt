@@ -99,8 +99,8 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
             it.imagePreviewUrl ?: it.titleLink ?: it.ogUrl
         } ?: return
 
-        if (style.sizingMode == GiphySizingMode.AUTOMATIC_RESIZING) {
-            applyAutomaticResizing(
+        if (style.sizingMode == GiphySizingMode.ADAPTIVE) {
+            applyAdaptiveSizing(
                 giphyInfo = giphyInfo,
                 giphyUrl = url
             )
@@ -121,7 +121,7 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
      * @param giphyInfo Used to determine the aspect ratio of the Giphy.
      * @param giphyUrl The URL to the Giphy we are loading.
      */
-    private fun applyAutomaticResizing(giphyInfo: GiphyInfo?, giphyUrl: String) {
+    private fun applyAdaptiveSizing(giphyInfo: GiphyInfo?, giphyUrl: String) {
         binding.root.updateConstraints {
             constrainMaxWidth(binding.imageView.id, ViewGroup.LayoutParams.MATCH_PARENT)
             val ratio = (giphyInfo?.width ?: 1).toFloat() / (giphyInfo?.height ?: 1).toFloat()
