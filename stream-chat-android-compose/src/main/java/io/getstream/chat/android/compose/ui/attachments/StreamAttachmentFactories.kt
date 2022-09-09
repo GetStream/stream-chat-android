@@ -24,6 +24,7 @@ import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentF
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
+import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.ui.utils.GiphyInfoType
 import io.getstream.chat.android.ui.utils.GiphySizingMode
 
@@ -46,9 +47,9 @@ public object StreamAttachmentFactories {
      * Giphy attachments.
      * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
      * makes the container capable of adaptive resizing and ignore
-     * [ChatTheme.dimens.attachmentsContentGiphyWidth] and [ChatTheme.dimens.attachmentsContentGiphyHeight]
+     * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
      * dimensions, however you can still clip maximum dimensions using
-     * [ChatTheme.dimens.attachmentsContentGiphyMaxWidth] and [ChatTheme.dimens.attachmentsContentGiphyMaxHeight].
+     * [StreamDimens.attachmentsContentGiphyMaxWidth] and [StreamDimens.attachmentsContentGiphyMaxHeight].
      *
      * Setting it to fixed size mode will make it respect all given dimensions.
      * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
