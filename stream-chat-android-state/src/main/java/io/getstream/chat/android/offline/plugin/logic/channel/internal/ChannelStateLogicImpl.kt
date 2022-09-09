@@ -107,12 +107,12 @@ internal class ChannelStateLogicImpl(
             val unreadCount: Int = readState.unreadMessages
             val lastMessageSeenDate = readState.lastMessageSeenDate
 
-            val shouldIncrementUnreadCount =
-                message.shouldIncrementUnreadCount(
-                    currentUserId = currentUserId,
-                    lastMessageAtDate = lastMessageSeenDate,
-                    isChannelMuted = globalMutableState.isChannelMutedForCurrentUser(mutableState.cid)
-                )
+            val isMessageAlreadyInState = mutableState.rawMessages.containsKey(message.id)
+            val shouldIncrementUnreadCount = !isMessageAlreadyInState && message.shouldIncrementUnreadCount(
+                currentUserId = currentUserId,
+                lastMessageAtDate = lastMessageSeenDate,
+                isChannelMuted = globalMutableState.isChannelMutedForCurrentUser(mutableState.cid)
+            )
 
             if (shouldIncrementUnreadCount) {
                 StreamLog.d(TAG) {
