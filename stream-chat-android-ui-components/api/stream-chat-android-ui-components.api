@@ -1413,6 +1413,13 @@ public final class io/getstream/chat/android/ui/common/extensions/UserKt {
 	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)Ljava/lang/String;
 }
 
+public class io/getstream/chat/android/ui/common/internal/FullScreenDialogFragment : androidx/fragment/app/DialogFragment {
+	public fun <init> ()V
+	public fun onCreate (Landroid/os/Bundle;)V
+	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
+	public fun onStart ()V
+}
+
 public final class io/getstream/chat/android/ui/common/navigation/ChatNavigator {
 	public static final field Companion Lio/getstream/chat/android/ui/common/navigation/ChatNavigator$Companion;
 	public static final field EMPTY_HANDLER Lcom/getstream/sdk/chat/navigation/ChatNavigationHandler;
@@ -2866,6 +2873,8 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun showEmptyStateView ()V
 	public final fun showError (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$ErrorEvent;)V
 	public final fun showLoadingView ()V
+	public final fun showMessageOptionsDialog (Landroidx/fragment/app/FragmentManager;Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun showMessageOptionsDialog$default (Lio/getstream/chat/android/ui/message/list/MessageListView;Landroidx/fragment/app/FragmentManager;Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$AttachmentClickListener {
@@ -3043,6 +3052,7 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 }
 
 public final class io/getstream/chat/android/ui/message/list/MessageListViewStyle {
+	public static final field Companion Lio/getstream/chat/android/ui/message/list/MessageListViewStyle$Companion;
 	public fun <init> (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;ZIIZIZIIZIIZIIZIIZIZIZZZZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;IIIIIIZIII)V
 	public fun <init> (Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/message/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/message/list/MessageListItemStyle;Lio/getstream/chat/android/ui/message/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;ZIIZIZIIZIIZIIZIZZZZZLio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;IILio/getstream/chat/android/ui/common/style/TextStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;IIIIIIZIII)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/message/list/ScrollButtonViewStyle;
@@ -3146,6 +3156,10 @@ public final class io/getstream/chat/android/ui/message/list/MessageListViewStyl
 	public final fun getWarningMessageOptionsText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/message/list/MessageListViewStyle$Companion {
+	public final fun createDefault (Landroid/content/Context;)Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;
 }
 
 public final class io/getstream/chat/android/ui/message/list/MessageReplyStyle {
@@ -3525,6 +3539,44 @@ public abstract interface class io/getstream/chat/android/ui/message/list/option
 
 public final class io/getstream/chat/android/ui/message/list/options/message/MessageOptionItemsFactory$Companion {
 	public final fun defaultFactory (Landroid/content/Context;)Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionItemsFactory;
+}
+
+public final class io/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment : io/getstream/chat/android/ui/common/internal/FullScreenDialogFragment {
+	public static final field Companion Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$Companion;
+	public static final field TAG Ljava/lang/String;
+	public fun <init> ()V
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDestroy ()V
+	public fun onDestroyView ()V
+	public fun onStart ()V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+	public final fun setMessageOptionClickListener (Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$MessageOptionClickListener;)V
+	public final fun setReactionClickListener (Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$ReactionClickListener;)V
+	public final fun setUserReactionClickListener (Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$UserReactionClickListener;)V
+}
+
+public final class io/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$Companion {
+	public final fun newInstance (Landroid/content/Context;Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;Lio/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory;Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory;Lio/getstream/chat/android/ui/message/list/MessageListView$ShowAvatarPredicate;)Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment;
+	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$Companion;Landroid/content/Context;Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;Lio/getstream/chat/android/ui/message/list/MessageListViewStyle;Lio/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory;Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;Lio/getstream/chat/android/ui/message/list/adapter/MessageListItemViewHolderFactory;Lio/getstream/chat/android/ui/message/list/MessageListView$ShowAvatarPredicate;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment;
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$MessageOptionClickListener {
+	public abstract fun onMessageOptionClick (Lio/getstream/chat/android/common/state/MessageAction;)V
+}
+
+public final class io/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$OptionsDialogType : java/lang/Enum {
+	public static final field MESSAGE_OPTIONS Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;
+	public static final field REACTION_OPTIONS Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;
+	public static fun values ()[Lio/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$ReactionClickListener {
+	public abstract fun onReactionClick (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/list/options/message/MessageOptionsDialogFragment$UserReactionClickListener {
+	public abstract fun onUserReactionClick (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/reactions/ReactionClickListener {
