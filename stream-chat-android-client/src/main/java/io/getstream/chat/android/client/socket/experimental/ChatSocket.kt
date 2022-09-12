@@ -39,9 +39,11 @@ import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 @Suppress("TooManyFunctions", "LongParameterList")
 internal class ChatSocket private constructor(
@@ -238,6 +240,26 @@ internal class ChatSocket private constructor(
     internal fun isConnected(): Boolean = chatSocketStateService.currentState is State.Connected
 
     /**
+     * Awaits until [State.Connected] is set.
+     *
+     * @param timeoutInMillis Timeout time in milliseconds.
+     */
+    internal suspend fun awaitConnection(timeoutInMillis: Long = DEFAULT_CONNECTION_TIMEOUT) {
+        awaitState<State.Connected>(timeoutInMillis)
+    }
+
+    /**
+     * Awaits until specified [State] is set.
+     *
+     * @param timeoutInMillis Timeout time in milliseconds.
+     */
+    internal suspend inline fun <reified T : State> awaitState(timeoutInMillis: Long) {
+        withTimeout(timeoutInMillis) {
+            chatSocketStateService.currentStateFlow.first { it is T }
+        }
+    }
+
+    /**
      * Get connection id of this connection.
      */
     internal fun connectionIdOrError(): String = when (val state = chatSocketStateService.currentState) {
@@ -273,6 +295,7 @@ internal class ChatSocket private constructor(
         }
 
     companion object {
+        private const val DEFAULT_CONNECTION_TIMEOUT = 60_000L
 
         fun create(
             apiKey: String,
