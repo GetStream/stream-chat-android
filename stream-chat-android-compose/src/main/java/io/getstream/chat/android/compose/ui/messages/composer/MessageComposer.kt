@@ -151,6 +151,7 @@ public fun MessageComposer(
     },
     label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(it.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
+        @Suppress("DEPRECATION_ERROR")
         DefaultComposerInputContent(
             messageComposerState = it,
             onValueChange = onValueChange,
@@ -272,6 +273,7 @@ public fun MessageComposer(
     },
     label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(messageComposerState.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
+        @Suppress("DEPRECATION_ERROR")
         DefaultComposerInputContent(
             messageComposerState = messageComposerState,
             onValueChange = onValueChange,
@@ -568,7 +570,8 @@ internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
             "    innerTrailingContent: @Composable RowScope.() -> Unit" +
             ")",
         imports = arrayOf("io.getstream.chat.android.compose.ui.components.composer.MessageInput")
-    )
+    ),
+    level = DeprecationLevel.ERROR,
 )
 @Composable
 public fun RowScope.DefaultComposerInputContent(

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.ui.message.list
 
 import android.animation.LayoutTransition
@@ -966,7 +968,7 @@ public class MessageListView : ConstraintLayout {
     @Deprecated(
         "The option to block the user inside `MessageListView`" +
             " has been deprecated and will be removed.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun setBlockUserEnabled(enabled: Boolean) {
         messageListViewStyle = requireStyle().copy(blockEnabled = enabled)
@@ -980,7 +982,7 @@ public class MessageListView : ConstraintLayout {
     @Deprecated(
         "The option to mute the user inside `MessageListView`" +
             " has been deprecated and will be removed.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun setMuteUserEnabled(enabled: Boolean) {
         messageListViewStyle = requireStyle().copy(muteEnabled = enabled)
@@ -1475,7 +1477,7 @@ public class MessageListView : ConstraintLayout {
         "The option to mute the user inside `MessageListView`" +
             " has been deprecated and will be removed. `MessageListView.setUserMuteHandler` " +
             "will be removed with it too.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun setUserMuteHandler(userMuteHandler: UserMuteHandler) {
         this.userMuteHandler = userMuteHandler
@@ -1490,7 +1492,7 @@ public class MessageListView : ConstraintLayout {
         "The option to unmute the user inside `MessageListView`" +
             " has been deprecated and will be removed. `MessageListView.setUserUnmuteHandler` " +
             "will be removed with it too.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun setUserUnmuteHandler(userUnmuteHandler: UserUnmuteHandler) {
         this.userUnmuteHandler = userUnmuteHandler
@@ -1812,7 +1814,7 @@ public class MessageListView : ConstraintLayout {
         "The option to mute the user inside `MessageListView`" +
             " has been deprecated and will be removed. `UserMuteHandler` will be removed " +
             "with it too.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun interface UserMuteHandler {
         public fun onUserMute(user: User)
@@ -1822,16 +1824,17 @@ public class MessageListView : ConstraintLayout {
         "The option to unmute the user inside `MessageListView`" +
             " has been deprecated and will be removed. `UserUnmuteHandler` will be removed " +
             "with it too.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun interface UserUnmuteHandler {
         public fun onUserUnmute(user: User)
     }
 
     @Deprecated(
-        "The option to block the user inside `MessageListView`" +
+        message = "The option to block the user inside `MessageListView`" +
             " has been deprecated and will be removed. `UserBlockHandler` will be removed " +
-            "with it too."
+            "with it too.",
+        level = DeprecationLevel.ERROR,
     )
     public fun interface UserBlockHandler {
         public fun onUserBlock(user: User, cid: String)

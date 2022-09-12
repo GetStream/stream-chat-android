@@ -26,5 +26,12 @@
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Algo salió mal. No se pudo abrir el archivo adjunto: %1$s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"No se pudo cargar debido a que es una URL invalida."</string>
   <string name="stream_ui_message_list_attachment_load_failed">"No se pudo cargar debido a un error inesperado."</string>
+  <string name="stream_ui_message_list_error_cannot_open_link">"No hay ninguna aplicación para ver esta URL:
+%s"</string>
+  <string name="stream_ui_moderation_dialog_delete">"Eliminar mensaje"</string>
+  <string name="stream_ui_moderation_dialog_description">"Este mensaje puede infringir nuestra política de moderación. ¿Estás seguro de que quieres enviarlo? Eche un vistazo a nuestras Pautas de la comunidad."</string>
+  <string name="stream_ui_moderation_dialog_edit">"Editar mensaje"</string>
+  <string name="stream_ui_moderation_dialog_send">"Enviar de todos modos"</string>
+  <string name="stream_ui_moderation_dialog_title">"No se pudo enviar el mensaje"</string>
   <string name="stream_ui_yesterday">"Ayer"</string>
 </resources>

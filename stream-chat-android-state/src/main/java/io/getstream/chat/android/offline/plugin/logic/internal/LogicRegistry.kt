@@ -37,7 +37,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutable
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
@@ -71,7 +70,6 @@ internal class LogicRegistry internal constructor(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
                 client,
                 repos,
-                globalState.toMutableState(),
                 this,
                 stateRegistry
             )

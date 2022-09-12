@@ -55,7 +55,6 @@
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$*</ID>
     <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:Mapper.kt$internal</ID>
-    <ID>MaxLineLength:NonMemberChatEventHandler.kt$NonMemberChatEventHandler$*</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
     <ID>MaxLineLength:SendReactionErrorHandlerImpl.kt$SendReactionErrorHandlerImpl$*</ID>

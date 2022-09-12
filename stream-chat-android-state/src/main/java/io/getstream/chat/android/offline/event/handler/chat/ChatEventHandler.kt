@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.offline.event.handler.chat
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
-import io.getstream.chat.android.client.events.MemberAddedEvent
-import io.getstream.chat.android.client.events.MemberRemovedEvent
-import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
 
 /**
@@ -97,98 +88,6 @@ public sealed class EventHandlingResult {
  * Other events will be skipped.
  */
 public abstract class BaseChatEventHandler : ChatEventHandler {
-    @Deprecated(
-        message = "Use handleChatEvent() instead.",
-        replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.ERROR,
-    )
-    /** Handles [NotificationAddedToChannelEvent] event. It runs in background. */
-    public abstract fun handleNotificationAddedToChannelEvent(
-        event: NotificationAddedToChannelEvent,
-        filter: FilterObject,
-    ): EventHandlingResult
-
-    @Deprecated(
-        message = "Use handleCidEvent() instead.",
-        replaceWith = ReplaceWith("this.handleCidEvent()"),
-        level = DeprecationLevel.ERROR,
-    )
-    /** Handles [MemberAddedEvent] event. It runs in background. */
-    public open fun handleMemberAddedEvent(
-        event: MemberAddedEvent,
-        filter: FilterObject,
-        cachedChannel: Channel?,
-    ): EventHandlingResult = EventHandlingResult.Skip
-
-    @Deprecated(
-        message = "Use handleCidEvent() instead.",
-        replaceWith = ReplaceWith("this.handleCidEvent()"),
-        level = DeprecationLevel.ERROR,
-    )
-    /** Handles [MemberRemovedEvent] event. It runs in background. */
-    public open fun handleMemberRemovedEvent(
-        event: MemberRemovedEvent,
-        filter: FilterObject,
-        cachedChannel: Channel?,
-    ): EventHandlingResult = EventHandlingResult.Skip
-
-    @Deprecated(
-        message = "Use handleChatEvent() instead.",
-        replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.ERROR,
-    )
-    /** Handles [ChannelUpdatedByUserEvent] event. It runs in background. */
-    public abstract fun handleChannelUpdatedByUserEvent(
-        event: ChannelUpdatedByUserEvent,
-        filter: FilterObject,
-    ): EventHandlingResult
-
-    @Deprecated(
-        message = "Use handleChatEvent() instead.",
-        replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.ERROR,
-    )
-    /** Handles [ChannelUpdatedEvent] event. It runs in background. */
-    public abstract fun handleChannelUpdatedEvent(event: ChannelUpdatedEvent, filter: FilterObject): EventHandlingResult
-
-    /**
-     * Handles [ChannelVisibleEvent] event.
-     * By default returns [EventHandlingResult.WatchAndAdd].
-     *
-     * @param event [ChannelVisibleEvent] to handle.
-     * @param filter [FilterObject] for query channels collection.
-     */
-    @Deprecated(
-        message = "Use handleCidEvent() instead.",
-        replaceWith = ReplaceWith("this.handleCidEvent()"),
-        level = DeprecationLevel.ERROR,
-    )
-    public open fun handleChannelVisibleEvent(
-        event: ChannelVisibleEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.WatchAndAdd(event.cid)
-
-    @Deprecated(
-        message = "Use handleChatEvent() instead.",
-        replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.ERROR,
-    )
-    /** Handles [NotificationMessageNewEvent] event. It runs in background. */
-    public open fun handleNotificationMessageNewEvent(
-        event: NotificationMessageNewEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.WatchAndAdd(event.cid)
-
-    @Deprecated(
-        message = "Use handleChatEvent() instead.",
-        replaceWith = ReplaceWith("this.handleChatEvent()"),
-        level = DeprecationLevel.ERROR,
-    )
-    /** Handles [NotificationRemovedFromChannelEvent] event. It runs in background. */
-    public open fun handleNotificationRemovedFromChannelEvent(
-        event: NotificationRemovedFromChannelEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.Skip
 
     /**
      * Handles [HasChannel] event which contains specific [Channel] object.
@@ -202,11 +101,6 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         return when (event) {
             is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
             is NotificationChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
-            is NotificationAddedToChannelEvent -> handleNotificationAddedToChannelEvent(event, filter)
-            is NotificationRemovedFromChannelEvent -> handleNotificationRemovedFromChannelEvent(event, filter)
-            is ChannelUpdatedByUserEvent -> handleChannelUpdatedByUserEvent(event, filter)
-            is ChannelUpdatedEvent -> handleChannelUpdatedEvent(event, filter)
-            is NotificationMessageNewEvent -> handleNotificationMessageNewEvent(event, filter)
             else -> EventHandlingResult.Skip
         }
     }
@@ -227,9 +121,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     ): EventHandlingResult {
         return when (event) {
             is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
-            is ChannelVisibleEvent -> handleChannelVisibleEvent(event, filter)
-            is MemberRemovedEvent -> handleMemberRemovedEvent(event, filter, cachedChannel)
-            is MemberAddedEvent -> handleMemberAddedEvent(event, filter, cachedChannel)
+            is ChannelVisibleEvent -> EventHandlingResult.WatchAndAdd(event.cid)
             else -> EventHandlingResult.Skip
         }
     }

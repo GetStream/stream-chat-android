@@ -17,8 +17,6 @@
 package io.getstream.chat.android.offline.event.handler.chat
 
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
@@ -173,66 +171,6 @@ public open class DefaultChatEventHandler(
             else -> EventHandlingResult.Add(channel)
         }
     }
-
-    /**
-     * Handles [MemberRemovedEvent]. It removes the channel if it's present in the list.
-     *
-     * @param event Instance of [MemberRemovedEvent] that is being handled.
-     * @param filter [FilterObject] which is used to define an outcome.
-     * @param cachedChannel optional [Channel] object cached in database
-     */
-    override fun handleMemberRemovedEvent(
-        event: MemberRemovedEvent,
-        filter: FilterObject,
-        cachedChannel: Channel?,
-    ): EventHandlingResult = removeIfCurrentUserLeftChannel(event.cid, event.member)
-
-    /**
-     *  Handles [MemberAddedEvent] event. It adds the channel if it is absent.
-     *
-     * @param event Instance of [NotificationAddedToChannelEvent] that is being handled.
-     * @param filter [FilterObject] which is used to define an outcome.
-     * @param cachedChannel optional [Channel] object cached in database.
-     */
-    override fun handleMemberAddedEvent(
-        event: MemberAddedEvent,
-        filter: FilterObject,
-        cachedChannel: Channel?,
-    ): EventHandlingResult = addIfCurrentUserJoinedChannel(cachedChannel, event.member)
-
-    /**
-     * Handles [NotificationRemovedFromChannelEvent]. It removes the channel if it's present in the list.
-     *
-     * @param event Instance of [NotificationRemovedFromChannelEvent] that is being handled.
-     * @param filter [FilterObject] which is used to define an outcome.
-     */
-    override fun handleNotificationRemovedFromChannelEvent(
-        event: NotificationRemovedFromChannelEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = removeIfCurrentUserLeftChannel(event.cid, event.member)
-
-    /**
-     *  Handles [NotificationAddedToChannelEvent] event. It adds the channel if it is absent.
-     *
-     * @param event Instance of [NotificationAddedToChannelEvent] that is being handled.
-     * @param filter [FilterObject] which is used to define an outcome.
-     */
-    override fun handleNotificationAddedToChannelEvent(
-        event: NotificationAddedToChannelEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.WatchAndAdd(event.cid)
-
-    /** Handles [ChannelUpdatedByUserEvent] event. The event is skipped. */
-    override fun handleChannelUpdatedByUserEvent(
-        event: ChannelUpdatedByUserEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.Skip
-
-    /** Handles [ChannelUpdatedEvent] event. The event is skipped. */
-    override fun handleChannelUpdatedEvent(
-        event: ChannelUpdatedEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = EventHandlingResult.Skip
 
     private companion object {
         private const val SYSTEM_MESSAGE = "system"
