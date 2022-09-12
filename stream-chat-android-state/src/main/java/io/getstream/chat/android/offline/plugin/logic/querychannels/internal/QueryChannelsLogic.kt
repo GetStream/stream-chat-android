@@ -26,10 +26,8 @@ import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.applyPagination
-import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
@@ -43,7 +41,6 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
@@ -62,32 +59,26 @@ internal class QueryChannelsLogic(
     private val client: ChatClient,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
-    private val stateRegistry: StateRegistry,
+    private val queryChannelsStateLogic: QueryChannelsStateLogic
 ) {
 
     private val logger = StreamLog.getLogger("QueryChannelsLogic")
 
     internal fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsRequest] request: $request" }
-        mutableState._currentRequest.value = request
+        queryChannelsStateLogic.setCurrentRequest(request)
     }
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest): Result<List<Channel>> {
-        val loading = if (mutableState.channels.value.isNullOrEmpty()) {
-            mutableState._loading
-        } else {
-            mutableState._loadingMore
-        }
-
-        if (loading.value) {
+        if (queryChannelsStateLogic.isLoading()) {
             logger.i { "[queryOffline] another query channels request is in progress. Ignoring this request." }
             return Result(ChatError("Another query channels request is in progress. Ignoring this request."))
         }
 
-        loading.value = true
+        queryChannelsStateLogic.setLoading(true)
 
         return fetchChannelsFromCache(pagination, repos)
-            .also { loading.value = it.isEmpty() }
+            .also { queryChannelsStateLogic.setLoading(it.isEmpty()) }
             .let { Result.success(it) }
     }
 
@@ -375,7 +366,7 @@ internal class QueryChannelsLogic(
         }
 
         if (event is MarkAllReadEvent) {
-            refreshAllChannels()
+            refreshAllChannelsState()
         }
 
         if (event is CidEvent) {
@@ -383,7 +374,7 @@ internal class QueryChannelsLogic(
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
             }
-            refreshChannel(event.cid)
+            refreshChannelState(event.cid)
         }
 
         if (event is UserPresenceChangedEvent) {
@@ -397,47 +388,27 @@ internal class QueryChannelsLogic(
      *
      * @param cidList The channels to refresh.
      */
-    private fun refreshChannels(cidList: Collection<String>) {
-        val existingChannels = mutableState.rawChannels
-        if (existingChannels == null) {
-            logger.w { "[refreshChannels] rejected (existingChannels is null)" }
-            return
-        }
-        mutableState.rawChannels = existingChannels + mutableState.queryChannelsSpec.cids
-            .intersect(cidList.toSet())
-            .map { cid -> cid.cidToTypeAndId() }
-            .filter { (channelType, channelId) ->
-                stateRegistry.isActiveChannel(
-                    channelType = channelType,
-                    channelId = channelId,
-                )
-            }
-            .associate { (channelType, channelId) ->
-                val cid = (channelType to channelId).toCid()
-                cid to stateRegistry.channel(
-                    channelType = channelType,
-                    channelId = channelId,
-                ).toChannel()
-            }
+    private fun refreshChannelsState(cidList: Collection<String>) {
+        queryChannelsStateLogic.refreshChannels(cidList)
     }
 
     /**
      * Refreshes all channels returned in this query.
      * Supports use cases like marking all channels as read.
      */
-    private fun refreshAllChannels() {
-        refreshChannels(mutableState.queryChannelsSpec.cids)
+    private fun refreshAllChannelsState() {
+        refreshChannelsState(mutableState.queryChannelsSpec.cids)
     }
 
     /**
      * Refreshes a single channel.
-     * @see [refreshChannels]
+     * @see [refreshChannelsState]
      *
      * @param cid The channel's cid to update.
      *
      */
-    internal fun refreshChannel(cid: String) {
-        refreshChannels(listOf(cid))
+    internal fun refreshChannelState(cid: String) {
+        refreshChannelsState(listOf(cid))
     }
 
     /**
