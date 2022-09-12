@@ -93,7 +93,7 @@ internal class LinkAttachmentsViewHolder(
     private fun initializeListeners() {
         binding.run {
             listeners?.let { container ->
-                root.setOnClickListener {
+                messageContainer.setOnClickListener {
                     container.messageClickListener.onMessageClick(data.message)
                 }
                 reactionsView.setReactionClickListener {
@@ -102,7 +102,7 @@ internal class LinkAttachmentsViewHolder(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
-                root.setOnLongClickListener {
+                messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
@@ -111,6 +111,10 @@ internal class LinkAttachmentsViewHolder(
                 }
                 linkAttachmentView.setLinkPreviewClickListener {
                     listeners.linkClickListener.onLinkClick(it)
+                }
+                linkAttachmentView.setOnLongClickListener {
+                    container.messageLongClickListener.onMessageLongClick(data.message)
+                    true
                 }
             }
         }

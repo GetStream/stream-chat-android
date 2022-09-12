@@ -112,7 +112,7 @@ internal class FileAttachmentsViewHolder(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
-                root.setOnLongClickListener {
+                messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }

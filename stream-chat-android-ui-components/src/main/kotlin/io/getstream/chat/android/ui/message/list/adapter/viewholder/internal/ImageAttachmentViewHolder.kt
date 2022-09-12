@@ -129,7 +129,7 @@ internal class ImageAttachmentViewHolder(
     private fun initializeListeners() {
         binding.run {
             listeners?.let { container ->
-                root.setOnClickListener {
+                messageContainer.setOnClickListener {
                     container.messageClickListener.onMessageClick(data.message)
                 }
                 reactionsView.setReactionClickListener {
@@ -138,7 +138,7 @@ internal class ImageAttachmentViewHolder(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
-                root.setOnLongClickListener {
+                messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }

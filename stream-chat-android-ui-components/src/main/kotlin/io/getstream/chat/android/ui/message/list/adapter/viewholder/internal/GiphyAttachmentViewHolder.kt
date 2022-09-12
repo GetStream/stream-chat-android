@@ -66,7 +66,7 @@ internal class GiphyAttachmentViewHolder(
     private fun initializeListeners() {
         binding.run {
             listeners?.let { container ->
-                root.setOnClickListener {
+                messageContainer.setOnClickListener {
                     data.message.attachments.firstOrNull()?.let { attachment ->
                         container.attachmentClickListener.onAttachmentClick(data.message, attachment)
                     }
@@ -77,7 +77,7 @@ internal class GiphyAttachmentViewHolder(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
-                root.setOnLongClickListener {
+                messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
