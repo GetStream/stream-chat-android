@@ -38,7 +38,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
@@ -511,7 +510,6 @@ internal class ChannelStateLogicImpl(
             }
             mutableState.recoveryNeeded = true
         }
-        globalMutableState.setErrorEvent(Event(error))
     }
 
     /**
