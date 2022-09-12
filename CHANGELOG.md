@@ -64,6 +64,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Clicking or long clicking on the white spaces next to messages will no longer trigger listeners, from now on, only clicking on the actual message containers will. [#4151](https://github.com/GetStream/stream-chat-android/pull/4151)
 
 ### ✅ Added
 - Added the `MessageListView::showMessageOptionsDialog` method to show message options dialog. [#4127](https://github.com/GetStream/stream-chat-android/pull/4127)
