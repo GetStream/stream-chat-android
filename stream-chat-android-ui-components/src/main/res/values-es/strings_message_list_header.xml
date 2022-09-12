@@ -26,7 +26,7 @@
   <string name="stream_ui_message_list_header_back_button_content_description">"Botón atrás"</string>
   <string name="stream_ui_message_list_header_disconnected">"Buscando conexión de red"</string>
   <string name="stream_ui_message_list_header_member_count_online">"%1$s, %2$d Conectados"</string>
-  <string name="stream_ui_message_list_header_offline">"Desconectado…"</string>
+  <string name="stream_ui_message_list_header_offline">"Desconectado"</string>
   <string name="stream_ui_message_list_header_retry">"Probar de nuevo"</string>
   <string name="stream_ui_message_list_header_thread_subtitle">"con %1$s"</string>
   <string name="stream_ui_message_list_header_thread_title">"Respuestas en el hilo"</string>

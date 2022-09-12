@@ -15,12 +15,16 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_ui_message_cannot_send_messages_hint">"No puedes enviar mensajes en este canal"</string>
   <string name="stream_ui_message_input_camera_access">"Permitir acceso a la cámara"</string>
   <string name="stream_ui_message_input_capture_media">"Tomar foto o vídeo"</string>
+  <string name="stream_ui_message_input_command_template">"/%1$s %2$s"</string>
   <string name="stream_ui_message_input_error_file_large_size">"El fichero es demasiado grande - Máximo %dMB."</string>
   <string name="stream_ui_message_input_error_file_size">"Fichero demasiado grande"</string>
   <string name="stream_ui_message_input_error_max_attachments_count_exceeded">"No es posible añadir más de %1$d archivos adjuntos."</string>
   <string name="stream_ui_message_input_error_max_length">"Tamaño máximo de mensaje (%1$d) excedido."</string>
+  <string name="stream_ui_message_input_error_sending_links_not_allowed">"No se permite enviar enlaces en esta conversación."</string>
+  <string name="stream_ui_message_input_file_not_supported">"Tipo de archivo no compatible"</string>
   <string name="stream_ui_message_input_files_access">"Permitir acceso a tus ficheros"</string>
   <string name="stream_ui_message_input_gallery_access">"Permitir acceso a tu galería"</string>
   <string name="stream_ui_message_input_hint">"Escribe algo aquí"</string>

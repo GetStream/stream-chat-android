@@ -1527,8 +1527,6 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors$Compa
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDimens$Companion;
-	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
@@ -1571,14 +1569,13 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun component43-D9Ej5fM ()F
 	public final fun component44-D9Ej5fM ()F
 	public final fun component45-D9Ej5fM ()F
-	public final fun component46-D9Ej5fM ()F
 	public final fun component5-D9Ej5fM ()F
 	public final fun component6-D9Ej5fM ()F
 	public final fun component7-D9Ej5fM ()F
 	public final fun component8-D9Ej5fM ()F
 	public final fun component9-D9Ej5fM ()F
-	public final fun copy-H7SJirg (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
-	public static synthetic fun copy-H7SJirg$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public final fun copy-FIEVJyw (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public static synthetic fun copy-FIEVJyw$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachmentsContentFileUploadWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentFileWidth-D9Ej5fM ()F
@@ -1587,7 +1584,6 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun getAttachmentsContentGiphyMaxWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentGiphyWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentImageGridSpacing-D9Ej5fM ()F
-	public final fun getAttachmentsContentImageHeight-D9Ej5fM ()F
 	public final fun getAttachmentsContentImageMaxHeight-D9Ej5fM ()F
 	public final fun getAttachmentsContentImageWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentLinkWidth-D9Ej5fM ()F

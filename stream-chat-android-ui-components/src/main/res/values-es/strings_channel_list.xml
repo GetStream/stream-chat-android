@@ -16,8 +16,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <plurals name="stream_ui_channel_list_member_info">
-    <item quantity="one">"%1d Miembro, %2d Conectados"</item>
-    <item quantity="other">"%1d Miembros, %2d Conectados"</item>
+    <item quantity="one">"%1$d Miembro, %2$d Conectados"</item>
+    <item quantity="other">"%1$d Miembros, %2$d Conectados"</item>
   </plurals>
   <string name="stream_ui_channel_list_delete_channel">"Eliminar conversación"</string>
   <string name="stream_ui_channel_list_delete_confirmation_message">"¿Estás seguro de que quieres eliminar permanentemente esta conversación?"</string>
