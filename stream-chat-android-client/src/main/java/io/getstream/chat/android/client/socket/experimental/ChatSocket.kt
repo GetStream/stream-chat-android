@@ -122,18 +122,21 @@ internal class ChatSocket private constructor(
                     is State.Disconnected -> {
                         when (state) {
                             is State.Disconnected.DisconnectedByRequest -> {
+                                streamWebSocket?.close()
                                 healthMonitor.stop()
                                 coroutineScope.launch { disposeObservers() }
-                                streamWebSocket?.close()
                             }
                             is State.Disconnected.NetworkDisconnected -> {
+                                streamWebSocket?.close()
                                 healthMonitor.stop()
                             }
                             is State.Disconnected.Stopped -> {
+                                streamWebSocket?.close()
                                 healthMonitor.stop()
                                 disposeNetworkStateObserver()
                             }
                             is State.Disconnected.DisconnectedPermanently -> {
+                                streamWebSocket?.close()
                                 healthMonitor.stop()
                                 coroutineScope.launch { disposeObservers() }
                             }
@@ -141,6 +144,7 @@ internal class ChatSocket private constructor(
                                 healthMonitor.onDisconnected()
                             }
                             is State.Disconnected.WebSocketEventLost -> {
+                                streamWebSocket?.close()
                                 connectionConf?.let { chatSocketStateService.onReconnect(it) }
                             }
                         }
