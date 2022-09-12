@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
@@ -58,27 +57,36 @@ internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val client: ChatClient,
     private val repos: RepositoryFacade,
-    private val logicRegistry: LogicRegistry,
-    private val queryChannelsStateLogic: QueryChannelsStateLogic
+    private val queryChannelsStateLogic: QueryChannelsStateLogic,
 ) {
 
     private val logger = StreamLog.getLogger("QueryChannelsLogic")
 
-    internal fun onQueryChannelsRequest(request: QueryChannelsRequest) {
-        logger.d { "[onQueryChannelsRequest] request: $request" }
-        queryChannelsStateLogic.setCurrentRequest(request)
+    private fun getLoading(): MutableStateFlow<Boolean> {
+        return if (mutableState.channels.value.isNullOrEmpty()) mutableState._loading else mutableState._loadingMore
     }
 
+    internal fun setCurrentRequest(request: QueryChannelsRequest) {
+        logger.d { "[onQueryChannelsRequest] request: $request" }
+        mutableState._currentRequest.value = request
+    }
+
+    internal fun setLoading(isLoading: Boolean) {
+        getLoading().value = isLoading
+    }
+
+    internal fun isLoading(): Boolean = getLoading().value
+
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest): Result<List<Channel>> {
-        if (queryChannelsStateLogic.isLoading()) {
+        if (isLoading()) {
             logger.i { "[queryOffline] another query channels request is in progress. Ignoring this request." }
             return Result(ChatError("Another query channels request is in progress. Ignoring this request."))
         }
 
-        queryChannelsStateLogic.setLoading(true)
+        setLoading(true)
 
         return fetchChannelsFromCache(pagination, repos)
-            .also { queryChannelsStateLogic.setLoading(it.isEmpty()) }
+            .also { setLoading(it.isEmpty()) }
             .let { Result.success(it) }
     }
 
@@ -130,10 +138,9 @@ internal class QueryChannelsLogic(
 
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
+
+        queryChannelsStateLogic.addChannelsState(channels)
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        val existingChannels = mutableState.rawChannels ?: emptyMap()
-        mutableState.rawChannels = existingChannels + channels.map { it.cid to it }
-        channels.forEach { logicRegistry.channel(it.type, it.id).updateDataFromChannel(it) }
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
@@ -174,7 +181,7 @@ internal class QueryChannelsLogic(
             messageLimit = MESSAGE_LIMIT,
             memberLimit = MEMBER_LIMIT,
         )
-        onQueryChannelsRequest(request)
+        setCurrentRequest(request)
         return client.queryChannelsInternal(request)
             .await()
             .also { onQueryChannelsResult(it, request) }
