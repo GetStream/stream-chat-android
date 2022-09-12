@@ -3,7 +3,6 @@ package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
