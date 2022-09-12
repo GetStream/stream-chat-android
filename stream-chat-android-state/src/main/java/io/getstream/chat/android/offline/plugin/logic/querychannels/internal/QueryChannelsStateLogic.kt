@@ -1,35 +1,34 @@
 package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
+import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.logging.StreamLog
-import kotlinx.coroutines.flow.MutableStateFlow
 
 internal class QueryChannelsStateLogic(
     private val mutableState: QueryChannelsMutableState,
-    private val stateRegistry: StateRegistry
+    private val stateRegistry: StateRegistry,
+    private val logicRegistry: LogicRegistry
 ) {
 
     private val logger = StreamLog.getLogger("QueryChannelsStateLogic")
 
-    private fun getLoading(): MutableStateFlow<Boolean> {
-        return if (mutableState.channels.value.isNullOrEmpty()) mutableState._loading else mutableState._loadingMore
+    internal fun addChannelsState(channels: List<Channel>) {
+        val existingChannels = mutableState.rawChannels ?: emptyMap()
+        mutableState.rawChannels = existingChannels + channels.map { it.cid to it }
+        channels.forEach { channel ->
+            logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
+                channel,
+                shouldRefreshMessages = false,
+                scrollUpdate = false
+            )
+        }
     }
-
-    internal fun setCurrentRequest(request: QueryChannelsRequest) {
-        mutableState._currentRequest.value = request
-    }
-
-    internal fun setLoading(isLoading: Boolean) {
-        getLoading().value = isLoading
-    }
-
-    internal fun isLoading(): Boolean = getLoading().value
-
 
     /**
      * Refreshes multiple channels in this query.

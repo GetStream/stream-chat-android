@@ -51,6 +51,7 @@ internal class QueryChannelsMutableState(
             _channels.value = value
         }
 
+    // This is needed for queries
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
     private val _channels = MutableStateFlow<Map<String, Channel>?>(null)
     internal val _loading = MutableStateFlow(false)
