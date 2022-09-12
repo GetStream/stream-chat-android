@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.CustomAction
@@ -104,7 +105,6 @@ import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMess
 import io.getstream.chat.android.ui.message.list.MessageListView.CustomActionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EnterThreadListener
-import io.getstream.chat.android.ui.message.list.MessageListView.ErrorEventHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.FlagMessageResultHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendListener
@@ -145,6 +145,8 @@ import io.getstream.chat.android.ui.message.list.options.message.MessageOptionIt
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
+import io.getstream.chat.android.ui.utils.extensions.toControllerErrorEvent
+import io.getstream.chat.android.ui.utils.extensions.toUiErrorEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -311,14 +313,14 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
-    private var errorEventHandler = ErrorEventHandler { errorEvent ->
-        when (errorEvent) {
-            is MessageListViewModel.ErrorEvent.MuteUserError -> R.string.stream_ui_message_list_error_mute_user
-            is MessageListViewModel.ErrorEvent.UnmuteUserError -> R.string.stream_ui_message_list_error_unmute_user
-            is MessageListViewModel.ErrorEvent.BlockUserError -> R.string.stream_ui_message_list_error_block_user
-            is MessageListViewModel.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
-            is MessageListViewModel.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
-            is MessageListViewModel.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
+    private var errorHandler = ErrorHandler { error ->
+        when (error) {
+            is MessageListController.ErrorEvent.MuteUserError -> R.string.stream_ui_message_list_error_mute_user
+            is MessageListController.ErrorEvent.UnmuteUserError -> R.string.stream_ui_message_list_error_unmute_user
+            is MessageListController.ErrorEvent.BlockUserError -> R.string.stream_ui_message_list_error_block_user
+            is MessageListController.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
+            is MessageListController.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
+            is MessageListController.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
         }.let(::showToast)
     }
 
@@ -908,8 +910,20 @@ public class MessageListView : ConstraintLayout {
      *
      * @param errorEvent The error event containing information about the error.
      */
+    @Deprecated(
+        message = "Deprecated in favor of newly implemented MessageListController Errors.",
+        replaceWith = ReplaceWith(
+            expression = "showError(errorEvent: MessageListController.ErrorEvent)",
+            imports = ["io.getstream.chat.android.ui.message.list"]
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun showError(errorEvent: MessageListViewModel.ErrorEvent) {
-        errorEventHandler.onErrorEvent(errorEvent)
+        errorHandler.onErrorEvent(errorEvent.toControllerErrorEvent())
+    }
+
+    public fun showError(errorEvent: MessageListController.ErrorEvent) {
+        errorHandler.onErrorEvent(errorEvent)
     }
 
     /**
@@ -1124,7 +1138,11 @@ public class MessageListView : ConstraintLayout {
         this.messageListItemTransformer = messageListItemTransformer
     }
 
-    // TODO
+    /**
+     * Sets the messages unread count to the scroll to bottom button.
+     *
+     * @param unreadCount The count of unread [Message]s for the thread/channel.
+     */
     public fun setUnreadCount(unreadCount: Int) {
         binding.scrollToBottomButton.setUnreadCount(unreadCount)
     }
@@ -1348,7 +1366,7 @@ public class MessageListView : ConstraintLayout {
         this.userReactionClickListener = userReactionClickListener ?: defaultUserReactionClickListener
     }
 
-    /* Set the click listener to be used when a message that is a reply is clicked
+    /** Set the click listener to be used when a message that is a reply is clicked
     *
     * @param replyMessageClickListener The listener to use. If null, no behaviour is added.
     */
@@ -1599,8 +1617,25 @@ public class MessageListView : ConstraintLayout {
      *
      * @param handler The handler to use.
      */
+    @Deprecated(
+        message = "Deprecated in favor of newly implemented ErrorHandler which uses MessageListController ErrorEvents.",
+        replaceWith = ReplaceWith(
+            expression = "setErrorHandler(handler: ErrorHandler)",
+            imports = ["io.getstream.chat.android.ui.message.list"]
+        ),
+        level = DeprecationLevel.WARNING
+    )
     public fun setErrorEventHandler(handler: ErrorEventHandler) {
-        this.errorEventHandler = handler
+        this.errorHandler = ErrorHandler { errorEvent -> handler.onErrorEvent(errorEvent.toUiErrorEvent()) }
+    }
+
+    /**
+     * Sets the handler used when handling the errors defined in [MessageListController.ErrorEvent].
+     *
+     * @param handler The handler to use.
+     */
+    public fun setErrorHandler(handler: ErrorHandler) {
+        this.errorHandler = handler
     }
 
     /**
@@ -1872,6 +1907,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ErrorEventHandler {
         public fun onErrorEvent(errorEvent: MessageListViewModel.ErrorEvent)
+    }
+
+    public fun interface ErrorHandler {
+        public fun onErrorEvent(errorEvent: MessageListController.ErrorEvent)
     }
 
     public fun interface ModeratedMessageOptionHandler {

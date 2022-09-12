@@ -20,7 +20,6 @@ package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
@@ -47,15 +46,17 @@ import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.messagelist.MessageFocused
-import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.ui.utils.extensions.toUiErrorEvent
 import io.getstream.chat.android.ui.utils.extensions.toCommonPosition
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onSubscription
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
@@ -66,7 +67,7 @@ import io.getstream.chat.android.common.messagelist.DateSeparatorHandler as Date
 import io.getstream.chat.android.common.messagelist.MessagePositionHandler as MessagePositionHandlerCommon
 
 /**
- * View model class for [com.getstream.sdk.chat.view.MessageListView].
+ * View model class for [io.getstream.chat.android.ui.message.list.MessageListView].
  * Responsible for updating the list of messages.
  * Can be bound to the view using [MessageListViewModel.bindView] function.
  *
@@ -100,6 +101,12 @@ public class MessageListViewModel(
         clipboardHandler = { }
     ),
 ) : ViewModel() {
+
+    /**
+     * The logger used to print to errors, warnings, information
+     * and other things to log.
+     */
+    private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
 
     /**
      * Holds information about the current channel and is actively updated.
@@ -167,15 +174,23 @@ public class MessageListViewModel(
 
     /**
      * Emits error events.
-     *
-     * TODO see to move this to the controller
      */
-    private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
+    @Deprecated(
+        message = "Deprecated in favor of ErrorEvents coming from MessageListController.",
+        replaceWith = ReplaceWith(
+            expression = "errorEvent: LiveData<EventWrapper<MessageListController.ErrorEvent>>",
+            imports = ["com.getstream.sdk.chat.viewmodel.messages"]
+        ),
+        level = DeprecationLevel.WARNING
+    )
+    public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = messageListController.errorEvent.filterNotNull()
+        .distinctUntilChanged().map { EventWrapper(it.toUiErrorEvent()) }.asLiveData()
 
     /**
      * Emits error events.
      */
-    public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
+    public val errorEvent: LiveData<EventWrapper<MessageListController.ErrorEvent>> = messageListController.errorEvent
+        .filterNotNull().map { EventWrapper(it) }.asLiveData()
 
     /**
      * The currently logged in user.
@@ -188,16 +203,13 @@ public class MessageListViewModel(
     public val unreadCount: LiveData<Int> = messageListController.unreadCount.asLiveData()
 
     /**
-     * The logger used to print to errors, warnings, information
-     * and other things to log.
-     */
-    private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
-
-    /**
      * Emits the status of searching situation. True when inside a search and false otherwise.
      */
     public val insideSearch: LiveData<Boolean> = messageListController.isInsideSearch.asLiveData()
 
+    /**
+     * Initializes the full message list state conversion and collection.
+     */
     init {
         val listState = messageListController.listState
             .onSubscription { State.Loading }
@@ -236,18 +248,13 @@ public class MessageListViewModel(
             is Event.FlagMessage -> {
                 messageListController.flagMessage(event.message) { result ->
                     event.resultHandler(result)
-                    handleResult(result) { error -> EventWrapper(ErrorEvent.FlagMessageError(error)) }
                 }
             }
             is Event.PinMessage -> {
-                messageListController.pinMessage(event.message) { result ->
-                    handleResult(result) { error -> EventWrapper(ErrorEvent.PinMessageError(error)) }
-                }
+                messageListController.pinMessage(event.message)
             }
             is Event.UnpinMessage -> {
-                messageListController.unpinMessage(event.message) { result ->
-                    handleResult(result) { error -> EventWrapper(ErrorEvent.UnpinMessageError(error)) }
-                }
+                messageListController.unpinMessage(event.message)
             }
             is Event.GiphyActionSelected -> {
                 onGiphyActionSelected(event)
@@ -259,14 +266,10 @@ public class MessageListViewModel(
                 onMessageReaction(event.message, event.reactionType, event.enforceUnique)
             }
             is Event.MuteUser -> {
-                messageListController.muteUser(event.user) { result ->
-                    handleResult(result) { error -> EventWrapper(ErrorEvent.MuteUserError(error)) }
-                }
+                messageListController.muteUser(event.user)
             }
             is Event.UnmuteUser -> {
-                messageListController.unmuteUser(event.user) { result ->
-                    handleResult(result) { error -> EventWrapper(ErrorEvent.UnpinMessageError(error)) }
-                }
+                messageListController.unmuteUser(event.user)
             }
             is Event.BlockUser -> {
                 val channelClient = chatClient.channel(cid)
@@ -274,39 +277,27 @@ public class MessageListViewModel(
                     targetId = event.user.id,
                     reason = null,
                     timeout = null,
-                ).enqueue(
-                    onError = { chatError ->
-                        logger.e { "Could not block user: ${chatError.message}" }
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
-                    }
-                )
+                ).enqueue(onError = { chatError ->
+                    logger.e { "Could not block user: ${chatError.message}" }
+                })
             }
             is Event.BanUser -> {
                 messageListController.banUser(
                     userId = event.user.id,
                     reason = event.reason,
                     timeout = event.timeout
-                ) { result ->
-                    handleResult(result) { error -> EventWrapper(ErrorEvent.BlockUserError(error)) }
-                }
+                )
             }
             is Event.UnbanUser -> {
-                messageListController.unbanUser(event.user.id) { result ->
-                    handleResult(result) { error -> EventWrapper(ErrorEvent.BlockUserError(error)) }
-                }
+                messageListController.unbanUser(event.user.id)
             }
             is Event.ShadowBanUser -> {
-                messageListController.shadowBanUser(event.user.id) { result ->
-                    handleResult(result) { error -> EventWrapper(ErrorEvent.BlockUserError(error)) }
-                }
+                messageListController.shadowBanUser(event.user.id)
             }
             is Event.RemoveShadowBanFromUser -> {
-                messageListController.removeShadowBanFromUser(event.user.id) { result ->
-                    handleResult(result) { error -> EventWrapper(ErrorEvent.BlockUserError(error)) }
-                }
+                messageListController.removeShadowBanFromUser(event.user.id)
             }
             is Event.ReplyMessage -> {
-                // TODO
                 chatClient.setMessageForReply(event.cid, event.repliedMessage).enqueue(
                     onError = { chatError ->
                         logger.e {
@@ -333,13 +324,9 @@ public class MessageListViewModel(
                 messageListController.removeAttachment(event.messageId, event.attachment)
             }
             is Event.ReplyAttachment -> {
-                // TODO
                 val messageId = event.repliedMessageId
                 val cid = event.cid
-                chatClient.loadMessageById(
-                    cid,
-                    messageId
-                ).enqueue { result ->
+                messageListController.loadMessageById(messageId) { result ->
                     if (result.isSuccess) {
                         val message = result.data()
                         onEvent(Event.ReplyMessage(cid, message))
@@ -379,7 +366,7 @@ public class MessageListViewModel(
         message = "Deprecated in favor of common module DateSeparatorHandler.",
         replaceWith = ReplaceWith(
             expression = "public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandlerCommon)",
-            imports = ["io.getstream.chat.android.common.model"] // TODO update package
+            imports = ["io.getstream.chat.android.common.messagelist"]
         ),
         level = DeprecationLevel.WARNING
     )
@@ -412,7 +399,7 @@ public class MessageListViewModel(
         message = "Deprecated in favor of common module DateSeparatorHandler.",
         replaceWith = ReplaceWith(
             expression = "setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandlerCommon)",
-            imports = ["io.getstream.chat.android.common.model"] // TODO update package
+            imports = ["io.getstream.chat.android.common.messagelist"]
         ),
         level = DeprecationLevel.WARNING
     )
@@ -444,7 +431,7 @@ public class MessageListViewModel(
         message = "Deprecated in favor of common module MessagePositionHandler.",
         replaceWith = ReplaceWith(
             expression = "setMessagePositionHandler(messagePositionHandler: MessagePositionHandlerCommon)",
-            imports = ["io.getstream.chat.android.common.model"] // TODO update package
+            imports = ["io.getstream.chat.android.common.messagelist"]
         ),
         level = DeprecationLevel.WARNING
     )
@@ -530,8 +517,6 @@ public class MessageListViewModel(
      * @param message The message the user is reacting to.
      * @param reactionType The exact reaction type.
      * @param enforceUnique Whether the user is able to leave multiple reactions.
-     *
-     * TODO
      */
     private fun onMessageReaction(message: Message, reactionType: String, enforceUnique: Boolean) {
         val reaction = Reaction().apply {
@@ -831,6 +816,10 @@ public class MessageListViewModel(
      *
      * @param chatError Contains the original [Throwable] along with a message.
      */
+    @Deprecated(
+        message = "Deprecated in favor of MessageListControllers ErrorEvent.",
+        level = DeprecationLevel.WARNING
+    )
     public sealed class ErrorEvent(public open val chatError: ChatError) {
 
         /**
@@ -838,6 +827,10 @@ public class MessageListViewModel(
          *
          * @param chatError Contains the original [Throwable] along with a message.
          */
+        @Deprecated(
+            message = "Deprecated in favor of MessageListControllers ErrorEvent.MuteUserError.",
+            level = DeprecationLevel.WARNING
+        )
         public data class MuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
 
         /**
@@ -845,6 +838,10 @@ public class MessageListViewModel(
          *
          * @param chatError Contains the original [Throwable] along with a message.
          */
+        @Deprecated(
+            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
+            level = DeprecationLevel.WARNING
+        )
         public data class UnmuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
 
         /**
@@ -852,6 +849,10 @@ public class MessageListViewModel(
          *
          * @param chatError Contains the original [Throwable] along with a message.
          */
+        @Deprecated(
+            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
+            level = DeprecationLevel.WARNING
+        )
         public data class FlagMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
 
         /**
@@ -859,6 +860,10 @@ public class MessageListViewModel(
          *
          * @param chatError Contains the original [Throwable] along with a message.
          */
+        @Deprecated(
+            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
+            level = DeprecationLevel.WARNING
+        )
         public data class BlockUserError(override val chatError: ChatError) : ErrorEvent(chatError)
 
         /**
@@ -866,6 +871,10 @@ public class MessageListViewModel(
          *
          * @param chatError Contains the original [Throwable] along with a message.
          */
+        @Deprecated(
+            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
+            level = DeprecationLevel.WARNING
+        )
         public data class PinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
 
         /**
@@ -873,18 +882,11 @@ public class MessageListViewModel(
          *
          * @param chatError Contains the original [Throwable] along with a message.
          */
+        @Deprecated(
+            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
+            level = DeprecationLevel.WARNING
+        )
         public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while
-         */
-    }
-
-    //TODO
-    private fun <T : Any> handleResult(result: Result<T>, wrapError: (ChatError) -> EventWrapper<ErrorEvent>) {
-        if (result.isError) {
-            _errorEvents.postValue(wrapError(result.error()))
-        }
     }
 
     /**
@@ -894,7 +896,7 @@ public class MessageListViewModel(
         message = "Deprecated in favor of common implementation of DateSeparatorHandler.",
         replaceWith = ReplaceWith(
             expression = "DateSeparatorHandler",
-            imports = [] // TODO sort out imports
+            imports = ["io.getstream.chat.android.common.messagelist"]
         )
     )
     public fun interface DateSeparatorHandler {
@@ -902,16 +904,13 @@ public class MessageListViewModel(
     }
 
     /**
-     * A handler to determine the position of a message inside a group.
-     */
-    /**
      * A SAM designed to evaluate if a date separator should be added between messages.
      */
     @Deprecated(
         message = "Deprecated in favor of common implementation of MessagePositionHandler.",
         replaceWith = ReplaceWith(
             expression = "MessagePositionHandler",
-            imports = [] // TODO sort out imports
+            imports = ["io.getstream.chat.android.common.messagelist"]
         )
     )
     public fun interface MessagePositionHandler {

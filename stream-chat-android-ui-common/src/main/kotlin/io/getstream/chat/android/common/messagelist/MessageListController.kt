@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -12,7 +13,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
@@ -88,25 +88,31 @@ import io.getstream.chat.android.common.state.Flag as FlagMessage
  * required to show the message list, message thread and handling message actions.
  *
  * @param cid The channel id in the format messaging:123.
+ * @param clipboardHandler [ClipboardHandler] used to copy messages.
+ * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param chatClient The client used to communicate with the API.
- * @param deletedVisibility The [DeletedMessageVisibility] to be applied to the list.
- * @param showSystemMessages Determines if the system messages should be shown or not.
- * @param showDateSeparators Determines whether the date separators are shown or not.
+ * @param deletedVisibility The [DeletedMessageVisibility] to be applied to the list. By default it is
+ * [DeletedMessageVisibility.ALWAYS_VISIBLE].
+ * @param showSystemMessages Determines if the system messages should be shown or not. True by default.
+ * @param showDateSeparators Determines whether the date separators are shown or not. True by default.
  * @param dateSeparatorThresholdMillis The time between two messages after which the date separator will be visible.
- * @param messageFooterVisibility Determines if and when the message footer is visible or not.
+ * By default it is [SEPARATOR_TIME_MILLIS].
+ * @param messageFooterVisibility Determines if and when the message footer is visible or not. By default it is
+ * [MessageFooterVisibility.WithTimeDifference].
  * @param enforceUniqueReactions Determines whether the user can send only a single or multiple reactions to a message.
+ * True by default.
  */
 public class MessageListController(
     private val cid: String,
+    private val clipboardHandler: ClipboardHandler,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val deletedVisibility: DeletedMessageVisibility,
-    private val showSystemMessages: Boolean,
-    private val showDateSeparators: Boolean,
-    private val dateSeparatorThresholdMillis: Long,
-    private val messageFooterVisibility: MessageFooterVisibility,
-    private val enforceUniqueReactions: Boolean,
-    private val clipboardHandler: ClipboardHandler,
+    private val deletedVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+    private val showSystemMessages: Boolean = true,
+    private val showDateSeparators: Boolean = true,
+    private val dateSeparatorThresholdMillis: Long = SEPARATOR_TIME_MILLIS,
+    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    private val enforceUniqueReactions: Boolean = true,
 ) {
 
     /**
@@ -228,6 +234,11 @@ public class MessageListController(
         .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = emptyList())
 
     /**
+     * Determines whether we should show system messages or not.
+     */
+    private val _showSystemMessages: MutableStateFlow<Boolean> = MutableStateFlow(showSystemMessages)
+
+    /**
      * Current state of the message list.
      */
     private val _messageListState: MutableStateFlow<MessageListState> = MutableStateFlow(MessageListState())
@@ -281,13 +292,16 @@ public class MessageListController(
     private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
 
     /**
+     * Determines whether we should show date separators or not.
+     */
+    private val _showDateSeparators: MutableStateFlow<Boolean> = MutableStateFlow(showDateSeparators)
+
+    /**
      * Evaluates whether date separators should be added to the message list.
      */
     private var dateSeparatorHandler: DateSeparatorHandler? =
         DateSeparatorHandler { previousMessage: Message?, message: Message ->
-            if (!showDateSeparators) {
-                false
-            } else if (previousMessage == null) {
+            if (previousMessage == null) {
                 true
             } else {
                 val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
@@ -316,8 +330,9 @@ public class MessageListController(
     /**
      * Regulates the visibility of deleted messages.
      */
-    public val deletedMessageVisibility: MutableStateFlow<DeletedMessageVisibility> =
+    private val _deletedMessageVisibility: MutableStateFlow<DeletedMessageVisibility> =
         MutableStateFlow(deletedVisibility)
+    public val deletedMessageVisibility: StateFlow<DeletedMessageVisibility> = _deletedMessageVisibility
 
     /**
      * Represents the message we wish to scroll to.
@@ -337,8 +352,14 @@ public class MessageListController(
      */
     private var threadJob: Job? = null
 
+    /**
+     *
+     */
+    private val _errorEvent: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
+    public val errorEvent: StateFlow<ErrorEvent?> = _errorEvent
+
     init {
-        observeMessagesState()
+        observeMessagesListState()
         messageId?.takeUnless { it.isNullOrBlank() }?.let { messageId ->
             scope.launch {
                 _messageListState
@@ -351,14 +372,22 @@ public class MessageListController(
     /**
      * Start observing messages for a given channel, groups and filers them to be show on the ui.
      */
-    private fun observeMessagesState() {
+    private fun observeMessagesListState() {
         channelState.filterNotNull().flatMapLatest { channelState ->
             combine(
                 channelState.messagesState,
                 channelState.reads,
+                _showSystemMessages,
+                _showDateSeparators,
+                _deletedMessageVisibility,
                 _messageFooterVisibility,
-                deletedMessageVisibility
-            ) { state, reads, _, _ ->
+            ) { data ->
+                val state = data[0] as MessagesState
+                val reads = (data[1] as List<*>).map { it as ChannelUserRead }
+                val showSystemMessages = data[2] as Boolean
+                val showDateSeparators = data[3] as Boolean
+                val deletedMessageVisibility = data[4] as DeletedMessageVisibility
+
                 when (state) {
                     is MessagesState.Loading,
                     is MessagesState.NoQueryActive,
@@ -369,9 +398,14 @@ public class MessageListController(
                         isLoadingNewerMessages = false,
                         isLoadingOlderMessages = false,
                         messages = groupMessages(
-                            filterMessagesToShow(state.messages),
+                            messages = filterMessagesToShow(
+                                messages = state.messages,
+                                showSystemMessages = showSystemMessages,
+                                deletedMessageVisibility = deletedMessageVisibility
+                            ),
                             isInThread = isInThread,
-                            reads = reads
+                            reads = reads,
+                            shouldShowDateSeparator = showDateSeparators,
                         ),
                     )
                 }
@@ -440,13 +474,28 @@ public class MessageListController(
             combine(
                 messages,
                 reads,
-            ) { messages, reads ->
+                _showSystemMessages,
+                _showDateSeparators,
+                _deletedMessageVisibility,
+                _messageFooterVisibility,
+            ) { data ->
+                val messages = (data[0] as List<*>).map { it as Message }
+                val reads = (data[1] as List<*>).map { it as ChannelUserRead }
+                val showSystemMessages = data[2] as Boolean
+                val showDateSeparators = data[3] as Boolean
+                val deletedMessageVisibility = data[4] as DeletedMessageVisibility
+
                 _threadListState.value.copy(
                     isLoading = false,
                     messages = groupMessages(
-                        messages = filterMessagesToShow(messages),
+                        messages = filterMessagesToShow(
+                            messages = messages,
+                            showSystemMessages = showSystemMessages,
+                            deletedMessageVisibility = deletedMessageVisibility
+                        ),
                         isInThread = true,
                         reads = reads,
+                        shouldShowDateSeparator = showDateSeparators
                     ),
                     parentMessageId = threadId,
                     isLoadingNewerMessages = false,
@@ -490,6 +539,7 @@ public class MessageListController(
         messages: List<Message>,
         isInThread: Boolean,
         reads: List<ChannelUserRead>,
+        shouldShowDateSeparator: Boolean,
     ): List<MessageListItem> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
@@ -508,16 +558,21 @@ public class MessageListController(
             val previousMessage = messages.getOrNull(index - 1)
             val nextMessage = messages.getOrNull(index + 1)
 
-            val shouldAddDateSeparator = if (isInThread) {
-                threadDateSeparatorHandler
+            val shouldAddDateSeparator = if (shouldShowDateSeparator) {
+                if (isInThread) {
+                    threadDateSeparatorHandler
+                } else {
+                    dateSeparatorHandler
+                }?.shouldAddDateSeparator(previousMessage, message) ?: false
             } else {
-                dateSeparatorHandler
-            }?.shouldAddDateSeparator(previousMessage, message) ?: false
+                false
+            }
 
-            val position = messagePositionHandler.handleMessagePosition(previousMessage,
-                message,
-                nextMessage,
-                shouldAddDateSeparator
+            val position = messagePositionHandler.handleMessagePosition(
+                prevMessage = previousMessage,
+                message = message,
+                nextMessage = nextMessage,
+                isAfterDateSeparator = shouldAddDateSeparator
             )
 
             val isLastMessageInGroup =
@@ -578,13 +633,18 @@ public class MessageListController(
      *
      * @param messages List of all messages.
      *
+     * TODO
      * @return Filtered messages.
      */
-    private fun filterMessagesToShow(messages: List<Message>): List<Message> {
+    private fun filterMessagesToShow(
+        messages: List<Message>,
+        showSystemMessages: Boolean,
+        deletedMessageVisibility: DeletedMessageVisibility
+    ): List<Message> {
         val currentUser = user.value
 
         return messages.filter {
-            val shouldShowIfDeleted = when (deletedMessageVisibility.value) {
+            val shouldShowIfDeleted = when (deletedMessageVisibility) {
                 DeletedMessageVisibility.ALWAYS_VISIBLE -> true
                 DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
                     !(it.deletedAt != null && it.user.id != currentUser?.id)
@@ -1011,12 +1071,17 @@ public class MessageListController(
      * Flags the selected message.
      *
      * @param message Message to delete.
-     * @param onResult Handler that notifies the flag message result.
      */
     public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
         _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
-        chatClient.flagMessage(message.id).enqueue { result ->
-            onActionResult(result, "Unable to flag message: ${result.error().message}", onResult)
+        chatClient.flagMessage(message.id).enqueue { response ->
+            onResult(response)
+            if (response.isError) {
+                val error = response.error()
+                onActionResult(error, "Unable to flag message: ${error.message}") {
+                    ErrorEvent.FlagMessageError(it)
+                }
+            }
         }
     }
 
@@ -1024,13 +1089,12 @@ public class MessageListController(
      * Pins or unpins the message from the current channel based on its state.
      *
      * @param message The message to update the pin state of.
-     * @param onResult Handler that propagates the result of the pin or unpin action.
      */
-    public fun updateMessagePin(message: Message, onResult: (Result<Message>) -> Unit = {}) {
+    public fun updateMessagePin(message: Message) {
         if (message.pinned) {
-            unpinMessage(message, onResult)
+            unpinMessage(message)
         } else {
-            pinMessage(message, onResult)
+            pinMessage(message)
         }
     }
 
@@ -1038,32 +1102,26 @@ public class MessageListController(
      * Pins the message from the current channel.
      *
      * @param message The message to pin.
-     * @param onResult Handler that propagates the result of the pin action.
      */
-    public fun pinMessage(message: Message, onResult: (Result<Message>) -> Unit = {}) {
-        chatClient.pinMessage(message).enqueue { result ->
-            onActionResult(
-                result = result,
-                defaultError = "Could not pin the message: ${result.error().message}",
-                onResult = onResult
-            )
-        }
+    public fun pinMessage(message: Message) {
+        chatClient.pinMessage(message).enqueue(onError = { error ->
+            onActionResult(error, "Could not pin the message: ${error.message}") {
+                ErrorEvent.PinMessageError(it)
+            }
+        })
     }
 
     /**
      * Unpins the message from the current channel.
      *
      * @param message The message to unpin.
-     * @param onResult Handler that propagates the result of the unpin action.
      */
-    public fun unpinMessage(message: Message, onResult: (Result<Message>) -> Unit = {}) {
-        chatClient.unpinMessage(message).enqueue { result ->
-            onActionResult(
-                result = result,
-                defaultError = "Could not unpin message: ${result.error().message}",
-                onResult = onResult
-            )
-        }
+    public fun unpinMessage(message: Message) {
+        chatClient.unpinMessage(message).enqueue(onError = { error ->
+            onActionResult(error, "Could not unpin message: ${error.message}") {
+                ErrorEvent.UnpinMessageError(it)
+            }
+        })
     }
 
     /**
@@ -1101,32 +1159,26 @@ public class MessageListController(
      * Mutes the given user.
      *
      * @param user The [User] we wish to mute.
-     * @param onResult Handler that notifies the result of the mute action.
      */
-    public fun muteUser(user: User, onResult: (Result<Mute>) -> Unit = {}) {
-        chatClient.muteUser(user.id).enqueue { result ->
-            onActionResult(
-                result = result,
-                defaultError = "Could not mute the user: ${result.error().message}",
-                onResult = onResult
-            )
-        }
+    public fun muteUser(user: User) {
+        chatClient.muteUser(user.id).enqueue(onError = { error ->
+            onActionResult(error, "Could not mute the user: ${error.message}") {
+                ErrorEvent.MuteUserError(it)
+            }
+        })
     }
 
     /**
      * Unmutes the given user.
      *
      * @param user The [User] we wish to unmute.
-     * @param onResult Handler that notifies the result of the mute action.
      */
-    public fun unmuteUser(user: User, onResult: (Result<Unit>) -> Unit = {}) {
-        chatClient.unmuteUser(user.id).enqueue { result ->
-            onActionResult(
-                result = result,
-                defaultError = "Could not unmute the user: ${result.error().message}",
-                onResult = onResult
-            )
-        }
+    public fun unmuteUser(user: User) {
+        chatClient.unmuteUser(user.id).enqueue(onError = { error ->
+            onActionResult(error, "Could not unmute the user: ${error.message}") {
+                ErrorEvent.UnmuteUserError(it)
+            }
+        })
     }
 
     /**
@@ -1232,37 +1284,30 @@ public class MessageListController(
      * @param reason The reason for banning the user.
      * @param timeout The period of time for which the user will be banned, expressed in minutes. A null value signifies
      * that the user will be banned for an indefinite time.
-     * @param onResult Handler to notify when the action finishes.
      */
     public fun banUser(
         userId: String,
         reason: String? = null,
         timeout: Int? = null,
-        onResult: (Result<Unit>) -> Unit = {},
     ) {
-        chatClient.channel(cid).banUser(userId, reason, timeout).enqueue { result ->
-            onActionResult(
-                result = result,
-                defaultError = "Unable to ban the user: ${result.error().message}",
-                onResult = onResult
-            )
-        }
+        chatClient.channel(cid).banUser(userId, reason, timeout).enqueue(onError = { error ->
+            onActionResult(error, "Unable to ban the user: ${error.message}") {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
     }
 
     /**
      * Unbans the given user inside this channel.
      *
      * @param userId The ID of the user to be unbanned.
-     * @param onResult Handler to notify when the action finishes.
      */
-    public fun unbanUser(userId: String, onResult: (Result<Unit>) -> Unit = {}) {
-        chatClient.channel(cid).unbanUser(userId).enqueue { result ->
-            onActionResult(
-                result = result,
-                defaultError = "Unable to unban the user: ${result.error().message}",
-                onResult = onResult
-            )
-        }
+    public fun unbanUser(userId: String) {
+        chatClient.channel(cid).unbanUser(userId).enqueue(onError = { error ->
+            onActionResult(error, "Unable to unban the user: ${error.message}") {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
     }
 
     /**
@@ -1272,21 +1317,17 @@ public class MessageListController(
      * @param reason The reason for shadow banning the user.
      * @param timeout The period of time for which the user will be shadow banned, expressed in minutes. A null value
      * signifies that the user will be shadow banned for an indefinite time.
-     * @param onResult Handler to notify when the action finishes.
      */
     public fun shadowBanUser(
         userId: String,
         reason: String? = null,
         timeout: Int? = null,
-        onResult: (Result<Unit>) -> Unit = {},
     ) {
-        chatClient.channel(cid).shadowBanUser(userId, reason, timeout).enqueue { result ->
-            onActionResult(
-                result = result,
-                defaultError = "Unable to shadow ban the user: ${result.error().message}",
-                onResult = onResult
-            )
-        }
+        chatClient.channel(cid).shadowBanUser(userId, reason, timeout).enqueue(onError = { error ->
+            onActionResult(error, "Unable to shadow ban the user: ${error.message}") {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
     }
 
     /**
@@ -1294,16 +1335,13 @@ public class MessageListController(
      * this channel.
      *
      * @param userId The ID of the user for which the shadow ban is removed.
-     * @param onResult Handler to notify when the action finishes.
      */
-    public fun removeShadowBanFromUser(userId: String, onResult: (Result<Unit>) -> Unit = {}) {
-        chatClient.channel(cid).removeShadowBan(userId).enqueue { result ->
-            onActionResult(
-                result = result,
-                defaultError = "Unable to remove the shadow ban for user: ${result.error().message}",
-                onResult = onResult
-            )
-        }
+    public fun removeShadowBanFromUser(userId: String) {
+        chatClient.channel(cid).removeShadowBan(userId).enqueue(onError = { error ->
+            onActionResult(error, "Unable to remove the shadow ban for user: ${error.message}") {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
     }
 
     /**
@@ -1407,22 +1445,88 @@ public class MessageListController(
      * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        this.deletedMessageVisibility.value = deletedMessageVisibility
+        _deletedMessageVisibility.value = deletedMessageVisibility
+    }
+
+    /**
+     * Sets whether the system messages should be visible.
+     *
+     * @param showSystemMessages Whether system messages should be visible or not.
+     */
+    public fun setAreSystemMessagesVisible(showSystemMessages: Boolean) {
+        _showSystemMessages.value = showSystemMessages
+    }
+
+    /**
+     * Sets whether the date separators should be visible.
+     *
+     * @param showDateSeparators Whether date separators should be visible or not.
+     */
+    public fun setAreDateSeparatorsVisible(showDateSeparators: Boolean) {
+        _showDateSeparators.value = showDateSeparators
     }
 
     /**
      * Quality of life function that notifies the result of an action and logs and error in case the action has failed.
      *
-     * @param result The [Result] of the action.
-     * @param onResult Handler that notifies the result of the action.
+     * @param error The [ChatError] thrown if the action fails.
      * @param defaultError The default error to be shown on the screen if we can't get the error from the result.
+     * @param onError Handler to wrap [ChatError] into [ErrorEvent] depending on action.
      */
-    private fun <T : Any> onActionResult(result: Result<T>, defaultError: String, onResult: (Result<T>) -> Unit) {
-        onResult(result)
-        if (result.isError) {
-            val errorMessage = result.error().message ?: result.error().cause?.message ?: defaultError
-            logger.e { errorMessage }
-        }
+    private fun onActionResult(error: ChatError, defaultError: String, onError: (ChatError) -> ErrorEvent) {
+        val errorMessage = error.message ?: error.cause?.message ?: defaultError
+        logger.e { errorMessage }
+        _errorEvent.value = onError(error)
+    }
+
+    /**
+     * A class designed for error event propagation.
+     *
+     * @param chatError Contains the original [Throwable] along with a message.
+     */
+    public sealed class ErrorEvent(public open val chatError: ChatError) {
+
+        /**
+         * When an error occurs while muting a user.
+         *
+         * @param chatError Contains the original [Throwable] along with a message.
+         */
+        public data class MuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
+
+        /**
+         * When an error occurs while unmuting a user.
+         *
+         * @param chatError Contains the original [Throwable] along with a message.
+         */
+        public data class UnmuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
+
+        /**
+         * When an error occurs while flagging a message.
+         *
+         * @param chatError Contains the original [Throwable] along with a message.
+         */
+        public data class FlagMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+
+        /**
+         * When an error occurs while blocking a user.
+         *
+         * @param chatError Contains the original [Throwable] along with a message.
+         */
+        public data class BlockUserError(override val chatError: ChatError) : ErrorEvent(chatError)
+
+        /**
+         * When an error occurs while pinning a message.
+         *
+         * @param chatError Contains the original [Throwable] along with a message.
+         */
+        public data class PinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+
+        /**
+         * When an error occurs while unpinning a message.
+         *
+         * @param chatError Contains the original [Throwable] along with a message.
+         */
+        public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
     }
 
     internal companion object {
