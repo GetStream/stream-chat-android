@@ -162,7 +162,7 @@ internal class ImageAttachmentViewHolder(
         listeners?.let { container ->
             LongClickFriendlyLinkMovementMethod.set(
                 textView = binding.messageText,
-                longClickTarget = binding.root,
+                longClickTarget = binding.messageContainer,
                 onLinkClicked = container.linkClickListener::onLinkClick
             )
         }

@@ -63,7 +63,7 @@ internal class MessagePlainTextViewHolder(
                 }
                 LongClickFriendlyLinkMovementMethod.set(
                     textView = messageText,
-                    longClickTarget = root,
+                    longClickTarget = messageContainer,
                     onLinkClicked = container.linkClickListener::onLinkClick
                 )
             }

@@ -138,7 +138,7 @@ internal class FileAttachmentsViewHolder(
         listeners?.let { listenerContainer ->
             LongClickFriendlyLinkMovementMethod.set(
                 textView = binding.messageText,
-                longClickTarget = binding.root,
+                longClickTarget = binding.messageContainer,
                 onLinkClicked = listenerContainer.linkClickListener::onLinkClick
             )
         }
