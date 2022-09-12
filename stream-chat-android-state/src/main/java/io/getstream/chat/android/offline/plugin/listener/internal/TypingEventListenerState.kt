@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import java.util.Date
 
 /**
@@ -56,7 +55,7 @@ internal class TypingEventListenerState(
         extraData: Map<Any, Any>,
         eventTime: Date,
     ): Result<Unit> {
-        val channelState = state.channel(channelType, channelId).toMutableState()
+        val channelState = state.mutableChannel(channelType, channelId)
         return when (eventType) {
             EventType.TYPING_START -> {
                 onTypingStartPrecondition(channelState, eventTime)
@@ -132,13 +131,12 @@ internal class TypingEventListenerState(
         extraData: Map<Any, Any>,
         eventTime: Date,
     ) {
-        val channelState = state.channel(channelType, channelId).toMutableState()
+        val channelState = state.mutableChannel(channelType, channelId)
 
         if (eventType == EventType.TYPING_START) {
             channelState.lastStartTypingEvent = eventTime
         } else if (eventType == EventType.TYPING_STOP) {
             channelState.lastStartTypingEvent = null
-            channelState.lastKeystrokeAt = null
         }
     }
 
@@ -163,7 +161,7 @@ internal class TypingEventListenerState(
         eventTime: Date,
     ) {
         if (result.isSuccess) {
-            val channelState = state.channel(channelType, channelId).toMutableState()
+            val channelState = state.mutableChannel(channelType, channelId)
 
             when (eventType) {
                 EventType.TYPING_START ->

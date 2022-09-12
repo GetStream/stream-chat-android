@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -164,8 +163,7 @@ internal class TypingEventsTest {
                 eventTime
             )
 
-            stateRegistry.channel(channelType, channelId)
-                .toMutableState().lastStartTypingEvent `should be equal to` eventTime
+            stateRegistry.mutableChannel(channelType, channelId).lastStartTypingEvent `should be equal to` eventTime
         }
 
     private class Fixture(scope: CoroutineScope, user: User) {
@@ -178,7 +176,7 @@ internal class TypingEventsTest {
         )
 
         fun givenTypingEventsDisabled(channelType: String, channelId: String): Fixture {
-            val channelState = stateRegistry.channel(channelType, channelId).toMutableState()
+            val channelState = stateRegistry.mutableChannel(channelType, channelId)
             channelState.setChannelConfig(
                 channelState.channelConfig.value.copy(
                     typingEventsEnabled = false
@@ -188,7 +186,7 @@ internal class TypingEventsTest {
         }
 
         fun givenTypingEventsEnabled(channelType: String, channelId: String): Fixture {
-            val channelState = stateRegistry.channel(channelType, channelId).toMutableState()
+            val channelState = stateRegistry.mutableChannel(channelType, channelId)
             channelState.setChannelConfig(
                 channelState.channelConfig.value.copy(
                     typingEventsEnabled = true

@@ -69,7 +69,6 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.extensions.internal.wasCreatedBeforeOrAt
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -86,7 +85,6 @@ import io.getstream.chat.android.offline.model.querychannels.pagination.internal
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
 import io.getstream.logging.StreamLog
 import java.util.Date
 
@@ -381,15 +379,6 @@ internal class ChannelLogic(
     }
 
     /**
-     * Remove a local message from the current list.
-     *
-     * @param message The [Message] to remove.
-     */
-    internal fun removeLocalMessage(message: Message) {
-        channelStateLogic.removeLocalMessage(message)
-    }
-
-    /**
      * Removes messages before the given date and optionally adds a system message
      * that was coming with the event.
      *
@@ -419,38 +408,17 @@ internal class ChannelLogic(
     }
 
     /**
-     * Returns message stored in [ChannelMutableStateImpl] if exists and wasn't hidden.
+     * Returns message stored in [ChannelMutableState] if exists and wasn't hidden.
      *
      * @param messageId The id of the message.
      *
      * @return [Message] if exists and wasn't hidden, null otherwise.
      */
-    internal fun getMessage(messageId: String): Message? {
-        var message = mutableState.rawMessages[messageId]?.copy()
-
-        if (mutableState.hideMessagesBefore != null) {
-            if (message != null && message.wasCreatedBeforeOrAt(mutableState.hideMessagesBefore)) {
-                message = null
-            }
-        }
-
-        return message
-    }
+    internal fun getMessage(messageId: String): Message? =
+        mutableState.visibleMessages.value[messageId]?.copy()
 
     private fun upsertUserPresence(user: User) {
-        val userId = user.id
-        // members and watchers have users
-        val members = mutableState.members.value
-        val watchers = mutableState.watchers.value
-        val member = members.firstOrNull { it.getUserId() == userId }?.copy()
-        val watcher = watchers.firstOrNull { it.id == userId }
-        if (member != null) {
-            member.user = user
-            channelStateLogic.upsertMember(member)
-        }
-        if (watcher != null) {
-            channelStateLogic.upsertWatcher(user)
-        }
+        channelStateLogic.upsertUserPresence(user)
     }
 
     internal fun updateReads(reads: List<ChannelUserRead>) {
@@ -530,7 +498,7 @@ internal class ChannelLogic(
             }
             is MessageDeletedEvent -> {
                 if (event.hardDelete) {
-                    removeLocalMessage(event.message)
+                    deleteMessage(event.message)
                 } else {
                     upsertEventMessage(event.message)
                 }
@@ -559,7 +527,7 @@ internal class ChannelLogic(
                 channelStateLogic.deleteMember(event.member)
             }
             is MemberAddedEvent -> {
-                channelStateLogic.upsertMember(event.member)
+                channelStateLogic.addMember(event.member)
             }
             is MemberUpdatedEvent -> {
                 channelStateLogic.upsertMember(event.member)
@@ -574,12 +542,10 @@ internal class ChannelLogic(
                 upsertUser(event.user)
             }
             is UserStartWatchingEvent -> {
-                channelStateLogic.upsertWatcher(event.user)
-                channelStateLogic.setWatcherCount(event.watcherCount)
+                channelStateLogic.upsertWatcher(event)
             }
             is UserStopWatchingEvent -> {
-                channelStateLogic.deleteWatcher(event.user)
-                channelStateLogic.setWatcherCount(event.watcherCount)
+                channelStateLogic.deleteWatcher(event)
             }
             is ChannelUpdatedEvent -> {
                 channelStateLogic.updateChannelData(event.channel)
@@ -619,7 +585,7 @@ internal class ChannelLogic(
                 channelStateLogic.updateRead(ChannelUserRead(event.user, event.createdAt))
             }
             is NotificationInviteAcceptedEvent -> {
-                channelStateLogic.upsertMember(event.member)
+                channelStateLogic.addMember(event.member)
                 channelStateLogic.updateChannelData(event.channel)
             }
             is NotificationInviteRejectedEvent -> {
