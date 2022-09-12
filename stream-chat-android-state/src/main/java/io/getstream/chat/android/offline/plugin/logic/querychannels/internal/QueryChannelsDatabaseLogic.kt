@@ -72,7 +72,6 @@ internal class QueryChannelsDatabaseLogic(
 
     internal suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
-        queryChannelsRepository: QueryChannelsRepository,
         queryChannelsSpec: QueryChannelsSpec
     ): List<Channel> {
         val query = queryChannelsRepository.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort)
@@ -90,5 +89,17 @@ internal class QueryChannelsDatabaseLogic(
         } else {
             messages
         }
+    }
+
+    internal suspend fun selectChannelWithoutMessages(cid: String): Channel? {
+        return channelRepository.selectChannelWithoutMessages(cid)
+    }
+
+    internal suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
+        return queryChannelsRepository.insertQueryChannels(queryChannelsSpec)
+    }
+
+    internal suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
+        return channelConfigRepository.insertChannelConfigs(configs)
     }
 }

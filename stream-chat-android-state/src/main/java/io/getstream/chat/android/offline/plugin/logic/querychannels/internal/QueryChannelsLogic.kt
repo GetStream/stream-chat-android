@@ -32,10 +32,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
-import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
@@ -55,11 +51,7 @@ private const val CHANNEL_LIMIT = 30
 internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val client: ChatClient,
-    private val repos: RepositoryFacade,
     private val queryChannelsStateLogic: QueryChannelsStateLogic,
-    private val queryChannelsRepository: QueryChannelsRepository,
-    private val channelConfigRepository: ChannelConfigRepository,
-    private val channelRepository: ChannelRepository,
     private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
 ) {
 
@@ -88,10 +80,10 @@ internal class QueryChannelsLogic(
 
         setLoading(true)
 
-        return fetchChannelsFromCache(pagination, queryChannelsRepository)
+        return fetchChannelsFromCache(pagination)
             .also { channels ->
                 setLoading(channels.isEmpty())
-                addChannels(channels, queryChannelsRepository)
+                addChannels(channels)
             }
             .let { Result.success(it) }
     }
@@ -113,11 +105,10 @@ internal class QueryChannelsLogic(
 
     private suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
-        queryChannelsRepository: QueryChannelsRepository,
     ): List<Channel> {
         val queryChannelsSpec = mutableState.queryChannelsSpec
 
-        return queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, queryChannelsRepository, queryChannelsSpec)
+        return queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, queryChannelsSpec)
             .also { logger.i { "[fetchChannelsFromCache] found ${it.size} channels in offline storage" } }
     }
 
@@ -127,7 +118,7 @@ internal class QueryChannelsLogic(
      * @param channel [Channel]
      */
     private suspend fun addChannel(channel: Channel) {
-        addChannels(listOf(channel), queryChannelsRepository)
+        addChannels(listOf(channel))
     }
 
     /**
@@ -143,16 +134,16 @@ internal class QueryChannelsLogic(
         }
     }
 
-    private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
+    private suspend fun addChannels(channels: List<Channel>) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
 
         queryChannelsStateLogic.addChannelsState(channels)
-        queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
+        queryChannelsDatabaseLogic.insertQueryChannels(mutableState.queryChannelsSpec)
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
-        onOnlineQueryResult(result, request, channelConfigRepository)
+        onOnlineQueryResult(result, request)
 
         val loading = loadingForCurrentRequest()
         loading.value = false
@@ -194,11 +185,7 @@ internal class QueryChannelsLogic(
             .also { onQueryChannelsResult(it, request) }
     }
 
-    private suspend fun onOnlineQueryResult(
-        result: Result<List<Channel>>,
-        request: QueryChannelsRequest,
-        channelConfigRepository: ChannelConfigRepository,
-    ) {
+    private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         if (result.isSuccess) {
             mutableState._recoveryNeeded.value = false
 
@@ -209,7 +196,7 @@ internal class QueryChannelsLogic(
             }
             // first things first, store the configs
             val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
-            channelConfigRepository.insertChannelConfigs(channelConfigs)
+            queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
             logger.i { "[onOnlineQueryResult] api call returned ${channelsResponse.size} channels" }
             storeStateForChannels(channelsResponse)
         } else {
@@ -278,7 +265,7 @@ internal class QueryChannelsLogic(
                 val remoteCids = getRemoteCids(request.filter, request.limit, request.limit, existingChannels.size)
                 val cidsToRemove = localCids - remoteCids.toSet()
                 logger.v { "[updateOnlineChannels] cidsToRemove.size: ${cidsToRemove.size}" }
-                removeChannels(cidsToRemove, queryChannelsRepository)
+                removeChannels(cidsToRemove)
                 newChannelsOffset += remoteCids.size
             }
             logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
@@ -288,7 +275,7 @@ internal class QueryChannelsLogic(
             logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
             mutableState.channelsOffset.value = newChannelsOffset
         }
-        addChannels(channels, queryChannelsRepository)
+        addChannels(channels)
     }
 
     /**
@@ -323,9 +310,9 @@ internal class QueryChannelsLogic(
         return remoteCids
     }
 
-    private suspend fun removeChannel(cid: String) = removeChannels(listOf(cid), queryChannelsRepository)
+    private suspend fun removeChannel(cid: String) = removeChannels(listOf(cid))
 
-    private suspend fun removeChannels(cidList: List<String>, queryChannelsRepository: QueryChannelsRepository) {
+    private suspend fun removeChannels(cidList: List<String>) {
         val existingChannels = mutableState.rawChannels
         if (existingChannels.isNullOrEmpty()) {
             logger.w { "[removeChannels] skipping remove channels as they are not loaded yet." }
@@ -335,7 +322,7 @@ internal class QueryChannelsLogic(
         val cidSet = cidList.toSet()
 
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
-        queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
+        queryChannelsDatabaseLogic.insertQueryChannels(mutableState.queryChannelsSpec)
         mutableState.rawChannels = existingChannels - cidSet
     }
 
@@ -346,7 +333,7 @@ internal class QueryChannelsLogic(
      */
     internal suspend fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
-            handleEvent(event, channelRepository)
+            handleEvent(event, queryChannelsDatabaseLogic)
         }
     }
 
@@ -354,12 +341,12 @@ internal class QueryChannelsLogic(
      * Handles event received from the socket.
      * Responsible for synchronizing [QueryChannelsMutableState].
      */
-    private suspend fun handleEvent(event: ChatEvent, channelRepository: ChannelRepository) {
+    private suspend fun handleEvent(event: ChatEvent, queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic) {
         // update the info for that channel from the channel repo
         logger.i { "[handleEvent] event: $event" }
 
         val cachedChannel = if (event is CidEvent) {
-            channelRepository.selectChannelWithoutMessages(event.cid)
+            queryChannelsDatabaseLogic.selectChannelWithoutMessages(event.cid)
         } else null
 
         when (
