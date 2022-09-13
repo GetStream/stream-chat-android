@@ -70,6 +70,7 @@ public object StreamFileUtil {
      * @return The Stream cache directory if it exists or its creation
      * was successful, false otherwise.
      */
+    @Suppress("TooGenericExceptionCaught")
     private fun getOrCreateStreamCacheDir(
         context: Context,
         onError: (exception: Exception) -> Unit = {},
@@ -95,6 +96,7 @@ public object StreamFileUtil {
      *
      * @return True if the cache was cleared, false otherwise.
      */
+    @Suppress("TooGenericExceptionCaught")
     public fun clearStreamCache(
         context: Context,
         onError: (exception: Exception) -> Unit = {},
