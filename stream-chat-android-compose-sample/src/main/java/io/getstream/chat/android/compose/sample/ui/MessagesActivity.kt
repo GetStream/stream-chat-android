@@ -131,7 +131,6 @@ class MessagesActivity : BaseConnectedActivity() {
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)
                     },
-                    // TODO edit docs
                     onMediaGalleryPreviewResult = { result ->
                         when (result?.resultType) {
                             MediaGalleryPreviewResultType.QUOTE -> {
