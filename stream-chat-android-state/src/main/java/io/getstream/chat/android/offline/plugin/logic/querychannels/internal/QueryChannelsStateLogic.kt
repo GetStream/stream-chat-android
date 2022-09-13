@@ -25,6 +25,14 @@ internal class QueryChannelsStateLogic(
         mutableState._currentRequest.value = request
     }
 
+    internal fun setEndOfChannels(isEnd: Boolean) {
+        mutableState._endOfChannels.value = isEnd
+    }
+
+    internal fun setRecoveryNeeded(recoveryNeeded: Boolean) {
+        mutableState._recoveryNeeded.value = recoveryNeeded
+    }
+
     internal fun addChannelsState(channels: List<Channel>) {
         val existingChannels = mutableState.rawChannels ?: emptyMap()
         mutableState.rawChannels = existingChannels + channels.map { it.cid to it }
