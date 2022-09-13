@@ -48,6 +48,7 @@ private const val CHANNEL_LIMIT = 30
 
 @Suppress("TooManyFunctions")
 internal class QueryChannelsLogic(
+    // Todo: Parar de usar o mutableState separadamente. Ele tem que entrar dentro do QueryChannelsStateLogic
     private val mutableState: QueryChannelsMutableState,
     private val client: ChatClient,
     private val queryChannelsStateLogic: QueryChannelsStateLogic?,
@@ -172,14 +173,13 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        if (result.isSuccess) {
-            mutableState._recoveryNeeded.value = false
+        queryChannelsStateLogic?.setRecoveryNeeded(!result.isSuccess)
 
+        if (result.isSuccess) {
             // store the results in the database
             val channelsResponse = result.data().toSet()
-            if (channelsResponse.size < request.limit) {
-                mutableState._endOfChannels.value = true
-            }
+            queryChannelsStateLogic?.setEndOfChannels(channelsResponse.size < request.limit)
+
             val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
             // first things first, store the configs
             queryChannelsDatabaseLogic?.insertChannelConfigs(channelConfigs)
@@ -187,7 +187,6 @@ internal class QueryChannelsLogic(
             storeStateForChannelsInDb(channelsResponse)
         } else {
             logger.i { "[onOnlineQueryResult] query with filter ${request.filter} failed; recovery needed" }
-            mutableState._recoveryNeeded.value = true
         }
     }
 
