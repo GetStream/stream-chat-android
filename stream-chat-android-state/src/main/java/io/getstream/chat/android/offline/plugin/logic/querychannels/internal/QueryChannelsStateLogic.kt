@@ -90,9 +90,11 @@ internal class QueryChannelsStateLogic(
         }
     }
 
-    internal fun removeChannels(cidList: Set<String>) {
+    internal fun removeChannels(cidSet: Set<String>) {
         val existingChannels = mutableState.rawChannels ?: return
-        mutableState.rawChannels = existingChannels - cidList
+
+        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
+        mutableState.rawChannels = existingChannels - cidSet
     }
 
     /**
