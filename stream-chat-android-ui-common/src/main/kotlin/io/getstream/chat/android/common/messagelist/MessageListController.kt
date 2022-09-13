@@ -65,7 +65,6 @@ import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -116,14 +115,12 @@ public class MessageListController(
 ) {
 
     /**
-     * The logger used to print to errors, warnings, information
-     * and other things to log.
+     * The logger used to print to errors, warnings, information and other things to log.
      */
     private val logger: TaggedLogger = StreamLog.getLogger("MessageListController")
 
     /**
-     * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
-     * ViewModel is disposed.
+     * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent ViewModel is disposed.
      *
      * We use the [DispatcherProvider.Immediate] variant here to make sure the UI updates don't go through to process of
      * dispatching events.
@@ -152,14 +149,7 @@ public class MessageListController(
         get() = chatClient.clientState.user
 
     /**
-     * Gives us information about the online state of the device.
-     */
-    public val isOnline: Flow<Boolean>
-        get() = chatClient.clientState.connectionState.map { it == ConnectionState.CONNECTED }
-
-    /**
-     * Holds information about the abilities the current user
-     * is able to exercise in the given channel.
+     * Holds information about the abilities the current user is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
@@ -189,7 +179,7 @@ public class MessageListController(
     public val mode: StateFlow<MessageMode> = _mode
 
     /**
-     * Gives us information if we're currently in the [Thread] message mode.
+     * Gives us information if we're currently in the [MessageMode.MessageThread] mode.
      */
     public val isInThread: Boolean
         get() = _mode.value is MessageMode.MessageThread
@@ -215,7 +205,7 @@ public class MessageListController(
         }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
 
     /**
-     * Unread count for channel or thread depending on the state of [_mode].
+     * Unread count for channel or thread depending on the [MessageMode] the list is in.
      */
     public val unreadCount: StateFlow<Int> = _mode.flatMapLatest {
         if (it is MessageMode.Normal) {
@@ -280,8 +270,7 @@ public class MessageListController(
     private var lastLoadedThreadMessage: Message? = null
 
     /**
-     * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and
-     * similar actions.
+     * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and similar actions.
      */
     private val _messageActions: MutableStateFlow<Set<MessageAction>> = MutableStateFlow(emptySet())
     public val messageActions: StateFlow<Set<MessageAction>> = _messageActions
@@ -317,7 +306,7 @@ public class MessageListController(
             if (previousMessage == null) {
                 false
             } else {
-                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > SEPARATOR_TIME_MILLIS
+                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > dateSeparatorThresholdMillis
             }
         }
 
@@ -353,13 +342,18 @@ public class MessageListController(
     private var threadJob: Job? = null
 
     /**
-     *
+     * Emits error events.
      */
-    private val _errorEvent: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
-    public val errorEvent: StateFlow<ErrorEvent?> = _errorEvent
+    private val _errorEvents: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
+    public val errorEvents: StateFlow<ErrorEvent?> = _errorEvents
 
+    /**
+     * We start observing messages and if the message list screen was started after searching for a message, it will
+     * load the message if it is not in the list and scroll to it.
+     */
     init {
         observeMessagesListState()
+
         messageId?.takeUnless { it.isNullOrBlank() }?.let { messageId ->
             scope.launch {
                 _messageListState
@@ -526,12 +520,13 @@ public class MessageListController(
 
     /**
      * Takes in the available messages for a [Channel] and groups them based on the sender ID. We put the message in a
-     * group, where the positions can be [MessagePosition.TOP], [MessagePosition.MIDDLE],
-     * [MessagePosition.BOTTOM] or [MessagePosition.NONE] if the message isn't in a group.
+     * group, where the positions can be [MessagePosition.TOP], [MessagePosition.MIDDLE], [MessagePosition.BOTTOM] or
+     * [MessagePosition.NONE] if the message isn't in a group.
      *
      * @param messages The messages we need to group.
      * @param isInThread If we are in inside a thread.
      * @param reads The list of read states.
+     * @param shouldShowDateSeparator Whether we shoudl show the date separator or not.
      *
      * @return A list of [MessageListItem]s, each containing a position.
      */
@@ -632,8 +627,10 @@ public class MessageListController(
      * Used to filter messages which we should show to the current user.
      *
      * @param messages List of all messages.
+     * @param showSystemMessages Whether we should show system messages or not.
+     * @param deletedMessageVisibility The visibility of deleted messages. We filter them out if
+     * [DeletedMessageVisibility.ALWAYS_HIDDEN].
      *
-     * TODO
      * @return Filtered messages.
      */
     private fun filterMessagesToShow(
@@ -712,8 +709,6 @@ public class MessageListController(
      *
      * @param baseMessageId The id of the most new [Message] inside the messages list.
      * @param messageLimit The size of the message list page to load.
-     *
-     * @return Whether the data is being loaded or not.
      */
     public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = DEFAULT_MESSAGES_LIMIT) {
         if (_mode.value !is MessageMode.Normal ||
@@ -749,7 +744,7 @@ public class MessageListController(
     /**
      * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
      *
-     * @param threadMode Current thread mode.
+     * @param threadMode Current thread mode containing information about the thread.
      */
     private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
         if (threadMode.threadState != null) {
@@ -764,8 +759,8 @@ public class MessageListController(
     }
 
     /**
-     *  Changes the current [_mode] to be [MessageMode.MessageThread] with and uses [ChatClient] to get the
-     *  [ThreadState] for the current thread.
+     *  Changes the current [_mode] to be [MessageMode.MessageThread] and uses [ChatClient] to get the [ThreadState] for
+     *  the current thread.
      *
      * @param parentMessage The message with the thread we want to observe.
      */
@@ -783,7 +778,7 @@ public class MessageListController(
     }
 
     /**
-     * Leaves the thread we're in.
+     * Leaves the thread we're in and switches to [MessageMode.Normal].
      */
     public fun enterNormalMode() {
         _mode.value = MessageMode.Normal
@@ -1036,6 +1031,11 @@ public class MessageListController(
             )
     }
 
+    /**
+     * Updates the last seen message so we can determine the unread count and [NewMessageState].
+     *
+     * @param message The last seen [Message].
+     */
     public fun updateLastSeenMessage(message: Message) {
         val latestMessage: MessageItem? = listState.value.messages.firstOrNull { messageItem ->
             messageItem is MessageItem
@@ -1047,7 +1047,7 @@ public class MessageListController(
     }
 
     /**
-     * Marks that the last message in the list as read.
+     * Marks that the last message in the list as read. This also sets the unread count to 0.
      */
     public fun markLastMessageRead() {
         cid.cidToTypeAndId().let { (channelType, channelId) ->
@@ -1182,15 +1182,14 @@ public class MessageListController(
     }
 
     /**
-     * Triggered when the user selets a reaction for the currently selected message. If the
-     * message already has that reaction, from the current user, we remove it. Otherwise we add a new
-     * reaction.
+     * Triggered when the user selects a reaction for the currently selected message. If the message already has that
+     * reaction, from the current user, we remove it. Otherwise we add a new reaction.
      *
      * @param reaction The reaction to add or remove.
      * @param message The currently selected message.
      * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
      */
-    public fun reactToMessage(reaction: Reaction, message: Message, enforceUnique: Boolean) {
+    public fun reactToMessage(reaction: Reaction, message: Message, enforceUnique: Boolean = enforceUniqueReactions) {
         if (message.ownReactions.any { it.type == reaction.type }) {
             chatClient.deleteReaction(
                 messageId = message.id,
@@ -1476,7 +1475,7 @@ public class MessageListController(
     private fun onActionResult(error: ChatError, defaultError: String, onError: (ChatError) -> ErrorEvent) {
         val errorMessage = error.message ?: error.cause?.message ?: defaultError
         logger.e { errorMessage }
-        _errorEvent.value = onError(error)
+        _errorEvents.value = onError(error)
     }
 
     /**

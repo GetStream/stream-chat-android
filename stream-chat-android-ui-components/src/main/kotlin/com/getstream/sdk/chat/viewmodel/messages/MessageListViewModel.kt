@@ -23,6 +23,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
@@ -175,6 +176,12 @@ public class MessageListViewModel(
     /**
      * Emits error events.
      */
+    public val errorEvent: LiveData<EventWrapper<MessageListController.ErrorEvent>> = messageListController.errorEvents
+        .filterNotNull().map { EventWrapper(it) }.asLiveData()
+
+    /**
+     * Emits error events.
+     */
     @Deprecated(
         message = "Deprecated in favor of ErrorEvents coming from MessageListController.",
         replaceWith = ReplaceWith(
@@ -183,14 +190,9 @@ public class MessageListViewModel(
         ),
         level = DeprecationLevel.WARNING
     )
-    public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = messageListController.errorEvent.filterNotNull()
-        .distinctUntilChanged().map { EventWrapper(it.toUiErrorEvent()) }.asLiveData()
-
-    /**
-     * Emits error events.
-     */
-    public val errorEvent: LiveData<EventWrapper<MessageListController.ErrorEvent>> = messageListController.errorEvent
-        .filterNotNull().map { EventWrapper(it) }.asLiveData()
+    public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = errorEvent.map {
+        EventWrapper(it.peekContent().toUiErrorEvent())
+    }
 
     /**
      * The currently logged in user.

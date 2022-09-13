@@ -2033,7 +2033,13 @@ internal constructor(
             .precondition(relevantPlugins) { onChannelMarkReadPrecondition(channelType, channelId) }
     }
 
-    // TODO
+    /**
+     * Marks the specified thread inside a channel as read.
+     *
+     * @param channelType Type of the channel.
+     * @param channelId The id of the channel.
+     * @param parentMessageId The id of the parrent message which contains the thread.
+     */
     public fun markThreadRead(channelType: String, channelId: String, parentMessageId: String) {
         plugins.filterIsInstance<MarkThreadReadListener>().also(::logPlugins).forEach {
             it.markThreadAsRead(channelType, channelId, parentMessageId)
