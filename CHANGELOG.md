@@ -14,12 +14,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improving precision in time in the endpoint that syncs information between SDK and Stream's backend to make sure that undesired events are not coming due to a incorrect round down in time or desired events are not being ignored due to a incorrect round up of time when serializing/desirializing time in the SDK. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
 
 ### ✅ Added
-- Added `ChatEvent.rawDate` to access the time of an event as it was sent by the backend. This class includes microseconds precision and can be used when a higher precision than miliseconds is desired. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
-- Added [Handling User Connection](https://getstream.io/chat/docs/sdk/android/client/guides/handling-user-connection/) guide. [#4131](https://github.com/GetStream/stream-chat-android/pull/4131)
-- Supported Android 13 behaviour changes. [#4039](https://github.com/GetStream/stream-chat-android/pull/4039)
 
 ### ⚠️ Changed
 
@@ -38,7 +34,6 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Fixed incrementing unread count if the message is already in the state. [#4135](https://github.com/GetStream/stream-chat-android/pull/4135)
 
 ### ⬆️ Improved
 
@@ -52,7 +47,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improved slow mode countdown which is now started only after the message is sent to the server. [#4120](https://github.com/GetStream/stream-chat-android/pull/4120)
 
 ### ✅ Added
 
@@ -64,16 +58,10 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Clicking or long clicking on the white spaces next to messages will no longer trigger listeners, from now on, only clicking on the actual message containers will. [#4151](https://github.com/GetStream/stream-chat-android/pull/4151)
 
 ### ✅ Added
-- Added the `MessageListView::showMessageOptionsDialog` method to show message options dialog. [#4127](https://github.com/GetStream/stream-chat-android/pull/4127)
-- Added styled attribute `streamUiGiphyMediaAttachmentSizingMode` and it's programmatic counterpart `GiphyMediaAttachmentViewStyle.sizingMode`. This parameters controls the way Giphy containers resize themselves. For a care free experience use adaptive resizing which will intelligently adapt its size while respecting the gif's aspect ratio. We recommend using adaptive resizing, however if you require more control use manual mode. [#4134](https://github.com/GetStream/stream-chat-android/pull/4134)
-- Added styled attributes `streamUiGiphyMediaAttachmentWidth`, `streamUiGiphyMediaAttachmentHeight`, `streamUiGiphyMediaAttachmentDimensionRatio` and their programmatic counterparts contained within `GiphyMediaAttachmentViewStyle` that are `width`, `height` and `dimensionRatio`. These values are used to exert more control over Giphys. They are ignored if sizing mode is set to adaptive and respected if it is set to manual. [#4134](https://github.com/GetStream/stream-chat-android/pull/4134)
 
 ### ⚠️ Changed
-- Exposed `MessageOptionsDialogFragment` so that clients are able to create and show the dialog manually. [#4127](https://github.com/GetStream/stream-chat-android/pull/4127)
-- 🚨 Breaking change: `streamUiGiphyMediaAttachmentGiphyType` and its programmatic counterpart `GiphyMediaAttachmentViewStyle.giphyType` no longer change the container size. Container sizing has been decoupled from giphy scale type which now only controls the quality of the gif itself. If you need fixed sizes, set the sizing mode to manual and manipulate the container by setting custom width, height and if needed dimension ratio and scale type. Please check the added section for the full names of the new attributes. [#4134](https://github.com/GetStream/stream-chat-android/pull/4134)
 
 ### ❌ Removed
 
@@ -81,12 +69,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improved the way Giphy attachments are displayed. Instead of being cropped they can now be set to either respect the Giphy attachment's aspect ratio and adaptively resize themselves automatically or be manually sized in a fixed way by the user. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
-- Added the ability to control Giphy quality, sizing mode and content scaling by adding the parameters `GiphyInfoType` (controls quality), `GiphySizingMode` (controls sizing) and `contentScale` (controls scaling) to the functions `StreamAttachmentFactories.defaultFactories()`, `GiphyAttachmentFactory()` and `GiphyAttachmentContent()`. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
 
 ### ✅ Added
-- Added `GiphySizingMode`, an enum class used to control the way Giphys are displayed. When `GiphySizingMode.ADAPTIVE` is passed in as an argument it will make Giphy automatically resize themselves to fill available space while respecting their original aspect ratios, while `GiphySizingMode.FIXED_SIZE` will allow you to manually control the dimensions of the Giphy container in a fixed size manner. You can clip the maximum height and width in both cases by modifying `ChatTheme.attachmentsContentGiphyMaxWidth` and `attachmentsContentGiphyMaxHeight`. `GiphySizingMode` can be passed in as an argument to the following functions: `StreamAttachmentFactories.defaultFactories()`, `GiphyAttachmentFactory()` and `GiphyAttachmentContent()`. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
-- Added parameters `attachmentsContentGiphyMaxWidth` and `attachmentsContentGiphyMaxHeight` to `StreamDimens`. These parameters can be used to control the maximum dimensions of Giphys in either sizing mode. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
 
 ### ⚠️ Changed
 
@@ -135,6 +119,46 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# September 13th, 2022 - 5.10.0
+## stream-chat-android-client
+### ⬆️ Improved
+- Improving precision in time in the endpoint that syncs information between SDK and Stream's backend to make sure that undesired events are not coming due to a incorrect round down in time or desired events are not being ignored due to a incorrect round up of time when serializing/desirializing time in the SDK. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
+
+### ✅ Added
+- Added `ChatEvent.rawDate` to access the time of an event as it was sent by the backend. This class includes microseconds precision and can be used when a higher precision than miliseconds is desired. [#4102](https://github.com/GetStream/stream-chat-android/pull/4102)
+- Added [Handling User Connection](https://getstream.io/chat/docs/sdk/android/client/guides/handling-user-connection/) guide. [#4131](https://github.com/GetStream/stream-chat-android/pull/4131)
+- Supported Android 13 behaviour changes. [#4039](https://github.com/GetStream/stream-chat-android/pull/4039)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fixed incrementing unread count if the message is already in the state. [#4135](https://github.com/GetStream/stream-chat-android/pull/4135)
+
+## stream-chat-android-ui-common
+### ⬆️ Improved
+- Improved slow mode countdown which is now started only after the message is sent to the server. [#4120](https://github.com/GetStream/stream-chat-android/pull/4120)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Clicking or long clicking on the white spaces next to messages will no longer trigger listeners, from now on, only clicking on the actual message containers will. [#4151](https://github.com/GetStream/stream-chat-android/pull/4151)
+
+### ✅ Added
+- Added the `MessageListView::showMessageOptionsDialog` method to show message options dialog. [#4127](https://github.com/GetStream/stream-chat-android/pull/4127)
+- Added styled attribute `streamUiGiphyMediaAttachmentSizingMode` and it's programmatic counterpart `GiphyMediaAttachmentViewStyle.sizingMode`. This parameters controls the way Giphy containers resize themselves. For a care free experience use adaptive resizing which will intelligently adapt its size while respecting the gif's aspect ratio. We recommend using adaptive resizing, however if you require more control use manual mode. [#4134](https://github.com/GetStream/stream-chat-android/pull/4134)
+- Added styled attributes `streamUiGiphyMediaAttachmentWidth`, `streamUiGiphyMediaAttachmentHeight`, `streamUiGiphyMediaAttachmentDimensionRatio` and their programmatic counterparts contained within `GiphyMediaAttachmentViewStyle` that are `width`, `height` and `dimensionRatio`. These values are used to exert more control over Giphys. They are ignored if sizing mode is set to adaptive and respected if it is set to manual. [#4134](https://github.com/GetStream/stream-chat-android/pull/4134)
+
+### ⚠️ Changed
+- Exposed `MessageOptionsDialogFragment` so that clients are able to create and show the dialog manually. [#4127](https://github.com/GetStream/stream-chat-android/pull/4127)
+- 🚨 Breaking change: `streamUiGiphyMediaAttachmentGiphyType` and its programmatic counterpart `GiphyMediaAttachmentViewStyle.giphyType` no longer change the container size. Container sizing has been decoupled from giphy scale type which now only controls the quality of the gif itself. If you need fixed sizes, set the sizing mode to manual and manipulate the container by setting custom width, height and if needed dimension ratio and scale type. Please check the added section for the full names of the new attributes. [#4134](https://github.com/GetStream/stream-chat-android/pull/4134)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Improved the way Giphy attachments are displayed. Instead of being cropped they can now be set to either respect the Giphy attachment's aspect ratio and adaptively resize themselves automatically or be manually sized in a fixed way by the user. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
+- Added the ability to control Giphy quality, sizing mode and content scaling by adding the parameters `GiphyInfoType` (controls quality), `GiphySizingMode` (controls sizing) and `contentScale` (controls scaling) to the functions `StreamAttachmentFactories.defaultFactories()`, `GiphyAttachmentFactory()` and `GiphyAttachmentContent()`. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
+
+### ✅ Added
+- Added `GiphySizingMode`, an enum class used to control the way Giphys are displayed. When `GiphySizingMode.ADAPTIVE` is passed in as an argument it will make Giphy automatically resize themselves to fill available space while respecting their original aspect ratios, while `GiphySizingMode.FIXED_SIZE` will allow you to manually control the dimensions of the Giphy container in a fixed size manner. You can clip the maximum height and width in both cases by modifying `ChatTheme.attachmentsContentGiphyMaxWidth` and `attachmentsContentGiphyMaxHeight`. `GiphySizingMode` can be passed in as an argument to the following functions: `StreamAttachmentFactories.defaultFactories()`, `GiphyAttachmentFactory()` and `GiphyAttachmentContent()`. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
+- Added parameters `attachmentsContentGiphyMaxWidth` and `attachmentsContentGiphyMaxHeight` to `StreamDimens`. These parameters can be used to control the maximum dimensions of Giphys in either sizing mode. [#4027](https://github.com/GetStream/stream-chat-android/pull/4027)
 
 # August 30th, 2022 - 5.9.0
 ## stream-chat-android-client
