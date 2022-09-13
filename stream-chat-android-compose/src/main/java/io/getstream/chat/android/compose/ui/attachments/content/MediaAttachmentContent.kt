@@ -67,7 +67,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.RETRY_HASH
+import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.uiutils.constant.AttachmentType
 import io.getstream.chat.android.uiutils.extension.hasLink
@@ -313,7 +313,7 @@ internal fun RowScope.MultipleMediaAttachments(
  * @param overlayContent Represents the content overlaid above attachment previews.
  * Usually used to display a play button over video previews.
  */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun MediaAttachmentContentItem(
@@ -345,7 +345,7 @@ internal fun MediaAttachmentContentItem(
     val painter = rememberStreamImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(data)
-            .setParameter(key = RETRY_HASH, value = retryHash)
+            .setParameter(key = RetryHash, value = retryHash)
             .build()
     )
 
@@ -418,6 +418,7 @@ internal fun MediaAttachmentContentItem(
  * @param modifier The modifier used for styling.
  * @param contentDescription Used to describe the content represented by this composable.
  */
+@Suppress("MagicNumber")
 @Composable
 internal fun PlayButton(
     modifier: Modifier = Modifier,

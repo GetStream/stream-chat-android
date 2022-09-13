@@ -151,7 +151,7 @@ import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.RETRY_HASH
+import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
@@ -642,7 +642,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(data)
                         .crossfade(true)
-                        .setParameter(key = RETRY_HASH, value = retryHash)
+                        .setParameter(key = RetryHash, value = retryHash)
                         .build()
                 )
 
@@ -1283,7 +1283,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             val painter = rememberStreamImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(data)
-                    .setParameter(RETRY_HASH, retryHash.toString())
+                    .setParameter(RetryHash, retryHash.toString())
                     .build()
             )
 

@@ -164,4 +164,4 @@ public fun rememberStreamImagePainter(
  *
  * See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
  */
-internal const val RETRY_HASH: String = "retry_hash"
+internal const val RetryHash: String = "retry_hash"
