@@ -38,5 +38,6 @@
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
     <ID>MaxLineLength:MessagesViewModelFactory.kt$MessagesViewModelFactory$private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold)</ID>
     <ID>ReturnCount:MessageListViewModel.kt$MessageListViewModel$public fun updateLastSeenMessage(message: Message)</ID>
+    <ID>TooManyFunctions:ImagePreviewActivity.kt$ImagePreviewActivity : AppCompatActivity</ID>
   </CurrentIssues>
 </SmellBaseline>
