@@ -621,7 +621,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Medi
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentPreviewContentKt {
-	public static final fun MediaAttachmentPreviewContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MediaAttachmentPreviewContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentQuotedContentKt {
