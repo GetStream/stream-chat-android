@@ -33,8 +33,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.compose.ui.attachments.factory.DefaultPreviewItemOverlayContent
 import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.uiutils.constant.AttachmentType
 
@@ -44,16 +46,22 @@ import io.getstream.chat.android.uiutils.constant.AttachmentType
  * @param attachments Selected attachments.
  * @param onAttachmentRemoved Handler when the user removes an attachment from the list.
  * @param modifier Modifier for styling.
+ * @param previewItemOverlayContent Represents the content overlaid above individual preview items.
+ * By default it is used to display a play button over video previews.
  */
 @Composable
 public fun MediaAttachmentPreviewContent(
     attachments: List<Attachment>,
     onAttachmentRemoved: (Attachment) -> Unit,
-    playButton: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    previewItemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
+        if (attachmentType == AttachmentType.VIDEO) {
+            DefaultPreviewItemOverlayContent()
+        }
+    },
 ) {
     LazyRow(
-        modifier = modifier.clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+        modifier = modifier.clip(ChatTheme.shapes.attachment),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
     ) {
@@ -61,7 +69,7 @@ public fun MediaAttachmentPreviewContent(
             MediaAttachmentPreviewItem(
                 mediaAttachment = image,
                 onAttachmentRemoved = onAttachmentRemoved,
-                playButton = playButton
+                overlayContent = previewItemOverlayContent
             )
         }
     }
@@ -72,14 +80,14 @@ public fun MediaAttachmentPreviewContent(
  *
  * @param mediaAttachment The selected attachment.
  * @param onAttachmentRemoved Handler when the user removes an attachment from the list.
- * @param playButton Represents the play button that is overlaid above video attachment
- * previews.
+ * @param overlayContent Represents the content overlaid above the item.
+ * Usually used to display an icon above video previews.
  */
 @Composable
 private fun MediaAttachmentPreviewItem(
     mediaAttachment: Attachment,
     onAttachmentRemoved: (Attachment) -> Unit,
-    playButton: @Composable () -> Unit,
+    overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
     val painter = rememberStreamImagePainter(data = mediaAttachment.upload ?: mediaAttachment.imagePreviewUrl)
 
@@ -96,9 +104,7 @@ private fun MediaAttachmentPreviewItem(
             contentScale = ContentScale.Crop
         )
 
-        if (mediaAttachment.type == AttachmentType.VIDEO) {
-            playButton()
-        }
+        overlayContent(mediaAttachment.type)
 
         CancelIcon(
             modifier = Modifier

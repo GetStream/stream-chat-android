@@ -39,19 +39,23 @@ import io.getstream.chat.android.uiutils.constant.AttachmentType
  *
  * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
  * in a group when previewing Media attachments in the message list. Values between 4 and 8 are optimal.
- * @param contentPlayButton Displays a play button above video attachments
- * in the messages list.
- * @param previewContentPlayButton Displays a play button above video attachments
- * in the message input.
+ * @param itemOverlayContent Represents the content overlaid above individual items.
+ * By default it is used to display a play button over video previews.
+ * @param previewItemOverlayContent Represents the content overlaid above individual preview items.
+ * By default it is used to display a play button over video previews.
  */
 @Suppress("FunctionName")
 public fun MediaAttachmentFactory(
     maximumNumberOfPreviewedItems: Int = 4,
-    contentPlayButton: @Composable () -> Unit = {
-        DefaultContentPlayButton()
+    itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
+        if (attachmentType == AttachmentType.VIDEO) {
+            DefaultItemOverlayContent()
+        }
     },
-    previewContentPlayButton: @Composable () -> Unit = {
-        DefaultPreviewContentPlayButton()
+    previewItemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
+        if (attachmentType == AttachmentType.VIDEO) {
+            DefaultPreviewItemOverlayContent()
+        }
     },
 ): AttachmentFactory =
     AttachmentFactory(
@@ -65,7 +69,7 @@ public fun MediaAttachmentFactory(
                 attachments = attachments,
                 onAttachmentRemoved = onAttachmentRemoved,
                 modifier = modifier,
-                playButton = previewContentPlayButton
+                previewItemOverlayContent = previewItemOverlayContent
             )
         },
         content = @Composable { modifier, state ->
@@ -73,7 +77,7 @@ public fun MediaAttachmentFactory(
                 modifier = modifier,
                 attachmentState = state,
                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
-                playButton = { contentPlayButton() }
+                itemOverlayContent = itemOverlayContent
             )
         }
     )
@@ -83,9 +87,9 @@ public fun MediaAttachmentFactory(
  * overlaid above video attachment previews inside
  * the messages list.
  */
-@Preview(name = "DefaultContentPlayButton Preview")
+@Preview(name = "DefaultItemOverlayContent Preview")
 @Composable
-private fun DefaultContentPlayButton() {
+private fun DefaultItemOverlayContent() {
     PlayButton(
         modifier = Modifier
             .padding(2.dp)
@@ -101,9 +105,9 @@ private fun DefaultContentPlayButton() {
  * overlaid above video attachment previews inside
  * the message input.
  */
-@Preview(name = "DefaultPreviewContentPlayButton Preview")
+@Preview(name = "DefaultPreviewItemOverlayContent Preview")
 @Composable
-private fun DefaultPreviewContentPlayButton() {
+internal fun DefaultPreviewItemOverlayContent() {
     PlayButton(
         modifier = Modifier
             .shadow(6.dp, shape = CircleShape)

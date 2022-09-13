@@ -151,6 +151,7 @@ import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.RETRY_HASH
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
@@ -641,7 +642,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(data)
                         .crossfade(true)
-                        .setParameter(key = "retry_hash", value = retryHash)
+                        .setParameter(key = RETRY_HASH, value = retryHash)
                         .build()
                 )
 
@@ -904,7 +905,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 .size(
                                     width = 42.dp,
                                     height = 42.dp
-                                )
+                                ),
+                            contentDescription = getString(R.string.stream_compose_cd_play_button)
                         )
                     }
                 }
@@ -1281,7 +1283,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             val painter = rememberStreamImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(data)
-                    .setHeader("retry_hash", retryHash.toString())
+                    .setParameter(RETRY_HASH, retryHash.toString())
                     .build()
             )
 
@@ -1329,12 +1331,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 initials = user.initials
             )
 
-            if (isVideo) {
+            if (isVideo && painter.state !is AsyncImagePainter.State.Loading) {
                 PlayButton(
                     modifier = Modifier
                         .shadow(6.dp, shape = CircleShape)
                         .background(color = Color.White, shape = CircleShape)
-                        .fillMaxSize(0.2f)
+                        .fillMaxSize(0.2f),
+                    contentDescription = getString(R.string.stream_compose_cd_play_button)
                 )
             }
         }

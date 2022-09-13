@@ -67,6 +67,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.RETRY_HASH
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.uiutils.constant.AttachmentType
 import io.getstream.chat.android.uiutils.extension.hasLink
@@ -79,8 +80,8 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param modifier The modifier used for styling.
  * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
  * in a group when previewing Media attachments in the message list.
- * @param playButton Represents the play button that is overlaid above video attachment
- * previews.
+ * @param itemOverlayContent Represents the content overlaid above individual items.
+ * By default it is used to display a play button over video previews.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -88,7 +89,11 @@ public fun MediaAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
     maximumNumberOfPreviewedItems: Int = 4,
-    playButton: @Composable () -> Unit = { PlayButton() },
+    itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
+        if (attachmentType == AttachmentType.VIDEO) {
+            PlayButton()
+        }
+    },
 ) {
     val (message, onLongItemClick, _, onMediaGalleryPreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentMediaGridSpacing
@@ -106,22 +111,22 @@ public fun MediaAttachmentContent(
     ) {
         val attachments =
             message.attachments.filter {
-                !it.hasLink() && it.type == AttachmentType.IMAGE || it.type == AttachmentType.VIDEO
+                !it.hasLink() && (it.type == AttachmentType.IMAGE || it.type == AttachmentType.VIDEO)
             }
         val attachmentCount = attachments.size
 
         if (attachmentCount == 1) {
             val attachment = attachments.first()
 
-            ShowSingleMediaAttachment(
+            SingleMediaAttachment(
                 attachment = attachment,
                 message = message,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
-                playButton = playButton
+                overlayContent = itemOverlayContent
             )
         } else {
-            ShowMultipleMediaAttachments(
+            MultipleMediaAttachments(
                 attachments = attachments,
                 attachmentCount = attachmentCount,
                 gridSpacing = gridSpacing,
@@ -129,7 +134,7 @@ public fun MediaAttachmentContent(
                 message = message,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
-                playButton = playButton
+                itemOverlayContent = itemOverlayContent
             )
         }
     }
@@ -143,16 +148,16 @@ public fun MediaAttachmentContent(
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when an item is long clicked.
- * @param playButton Represents the play button that is overlaid above video attachment
- * previews.
+ * @param overlayContent Represents the content overlaid above attachment previews.
+ * Usually used to display a play button over video previews.
  */
 @Composable
-internal fun ShowSingleMediaAttachment(
+internal fun SingleMediaAttachment(
     attachment: Attachment,
     message: Message,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
-    playButton: @Composable () -> Unit,
+    overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
     val isVideo = attachment.type == AttachmentType.VIDEO
     // Depending on the CDN, images might not contain their original dimensions
@@ -191,7 +196,7 @@ internal fun ShowSingleMediaAttachment(
         attachmentPosition = 0,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onLongItemClick = onLongItemClick,
-        playButton = playButton
+        overlayContent = overlayContent
     )
 }
 
@@ -207,12 +212,12 @@ internal fun ShowSingleMediaAttachment(
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when an item is long clicked.
- * @param playButton Represents the play button that is overlaid above video attachment
- * previews.
+ * @param itemOverlayContent Represents the content overlaid above individual items.
+ * Usually used to display a play button over video previews.
  */
 @Suppress("LongParameterList", "LongMethod")
 @Composable
-internal fun RowScope.ShowMultipleMediaAttachments(
+internal fun RowScope.MultipleMediaAttachments(
     attachments: List<Attachment>,
     attachmentCount: Int,
     gridSpacing: Dp,
@@ -220,7 +225,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
     message: Message,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
-    playButton: @Composable () -> Unit,
+    itemOverlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
 
     Column(
@@ -239,7 +244,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
                     attachmentPosition = attachmentIndex,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                     onLongItemClick = onLongItemClick,
-                    playButton = playButton
+                    overlayContent = itemOverlayContent
                 )
             }
         }
@@ -266,7 +271,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
                             attachmentPosition = attachmentIndex,
                             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                             onLongItemClick = onLongItemClick,
-                            playButton = playButton
+                            overlayContent = itemOverlayContent
                         )
 
                         if (!isUploading) {
@@ -285,7 +290,7 @@ internal fun RowScope.ShowMultipleMediaAttachments(
                         attachmentPosition = attachmentIndex,
                         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                         onLongItemClick = onLongItemClick,
-                        playButton = playButton
+                        overlayContent = itemOverlayContent
                     )
                 }
             }
@@ -305,8 +310,8 @@ internal fun RowScope.ShowMultipleMediaAttachments(
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when the item is long clicked.
  * @param modifier Modifier used for styling.
- * @param playButton Represents the play button that is overlaid above video attachment
- * previews.
+ * @param overlayContent Represents the content overlaid above attachment previews.
+ * Usually used to display a play button over video previews.
  */
 @Suppress("LongParameterList")
 @OptIn(ExperimentalFoundationApi::class)
@@ -318,7 +323,7 @@ internal fun MediaAttachmentContentItem(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
-    playButton: @Composable () -> Unit,
+    overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
     val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
     val isImage = attachment.type == AttachmentType.IMAGE
@@ -340,7 +345,7 @@ internal fun MediaAttachmentContentItem(
     val painter = rememberStreamImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(data)
-            .setParameter(key = "retry_hash", value = retryHash)
+            .setParameter(key = RETRY_HASH, value = retryHash)
             .build()
     )
 
@@ -400,8 +405,8 @@ internal fun MediaAttachmentContentItem(
             placeholderIconTintColor = ChatTheme.colors.disabled
         )
 
-        if (isVideo) {
-            playButton()
+        if (painter.state !is AsyncImagePainter.State.Loading) {
+            overlayContent(attachment.type)
         }
     }
 }
@@ -411,28 +416,28 @@ internal fun MediaAttachmentContentItem(
  * video attachments.
  *
  * @param modifier The modifier used for styling.
+ * @param contentDescription Used to describe the content represented by this composable.
  */
 @Composable
-public fun PlayButton(
+internal fun PlayButton(
     modifier: Modifier = Modifier,
+    contentDescription: String? = null,
 ) {
-    Box(
+    Column(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        verticalArrangement = Arrangement.Center
     ) {
-        Column {
-            Image(
-                modifier = Modifier
-                    .fillMaxSize(0.85f)
-                    .alignBy { measured ->
-                        // emulated offset as seen in the design specs,
-                        // otherwise the button is visibly off to the start of the screen
-                        -(measured.measuredWidth * 1 / 8)
-                    },
-                painter = painterResource(id = R.drawable.stream_compose_ic_play),
-                contentDescription = null,
-            )
-        }
+        Image(
+            modifier = Modifier
+                .fillMaxSize(0.85f)
+                .alignBy { measured ->
+                    // emulated offset as seen in the design specs,
+                    // otherwise the button is visibly off to the start of the screen
+                    -(measured.measuredWidth * 1 / 6)
+                },
+            painter = painterResource(id = R.drawable.stream_compose_ic_play),
+            contentDescription = contentDescription,
+        )
     }
 }
 
@@ -477,9 +482,3 @@ internal fun MediaAttachmentViewMoreOverlay(
  * Composable when calling [Modifier.aspectRatio].
  */
 private const val EqualDimensionsRatio = 1f
-
-/**
- * Produces a height value that is twice the width of the
- * Composable when calling [Modifier.aspectRatio].
- */
-private const val TwiceAsTallAsIsWideRatio = 0.5f

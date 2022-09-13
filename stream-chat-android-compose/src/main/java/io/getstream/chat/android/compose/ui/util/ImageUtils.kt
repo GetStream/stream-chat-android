@@ -157,3 +157,11 @@ public fun rememberStreamImagePainter(
         filterQuality = filterQuality,
     )
 }
+
+/**
+ * Used to change a parameter set on Coil requests in order
+ * to force Coil into retrying a request.
+ *
+ * See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
+ */
+internal const val RETRY_HASH: String = "retry_hash"
