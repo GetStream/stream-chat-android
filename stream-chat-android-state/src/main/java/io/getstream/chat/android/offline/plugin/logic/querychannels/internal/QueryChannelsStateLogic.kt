@@ -1,24 +1,52 @@
 package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 
+import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.flow.MutableStateFlow
 
 internal class QueryChannelsStateLogic(
     private val mutableState: QueryChannelsMutableState,
     private val stateRegistry: StateRegistry,
-    private val logicRegistry: LogicRegistry
+    private val logicRegistry: LogicRegistry,
 ) {
 
     private val logger = StreamLog.getLogger("QueryChannelsStateLogic")
+
+    private fun getLoading(): MutableStateFlow<Boolean> {
+        return if (mutableState.channels.value.isNullOrEmpty()) mutableState._loading else mutableState._loadingMore
+    }
+
+    internal fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
+        return mutableState.eventHandler.handleChatEvent(event, mutableState.filter, cachedChannel)
+    }
+
+    internal fun isLoading(): Boolean = getLoading().value
+
+    internal fun getChannelsOffset(): Int = mutableState.channelsOffset.value
+
+    internal fun getChannels(): Map<String, Channel>? = mutableState.rawChannels
+
+    internal fun getQuerySpecs(): QueryChannelsSpec = mutableState.queryChannelsSpec
+
+    internal fun getState(): QueryChannelsState = mutableState
+
+    internal fun setLoading(isLoading: Boolean) {
+        getLoading().value = isLoading
+    }
 
     internal fun setCurrentRequest(request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsRequest] request: $request" }
@@ -31,6 +59,23 @@ internal class QueryChannelsStateLogic(
 
     internal fun setRecoveryNeeded(recoveryNeeded: Boolean) {
         mutableState._recoveryNeeded.value = recoveryNeeded
+    }
+
+    internal fun setChannelsOffset(offset: Int) {
+        mutableState.channelsOffset.value = offset
+    }
+
+    internal fun incrementChannelsOffset(size: Int) {
+        val currentChannelsOffset = mutableState.channelsOffset.value
+        val newChannelsOffset = currentChannelsOffset + size
+        logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
+        mutableState.channelsOffset.value = newChannelsOffset
+    }
+
+    internal fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
+        return mutableState._currentRequest.value?.isFirstPage?.let { isFirstPage ->
+            if (isFirstPage) mutableState._loading else mutableState._loadingMore
+        } ?: mutableState._loading
     }
 
     internal fun addChannelsState(channels: List<Channel>) {
@@ -49,7 +94,6 @@ internal class QueryChannelsStateLogic(
         val existingChannels = mutableState.rawChannels ?: return
         mutableState.rawChannels = existingChannels - cidList
     }
-
 
     /**
      * Initializes [QueryChannelsMutableState.rawChannels] with an empty map if it wasn't initialized yet.
@@ -90,7 +134,6 @@ internal class QueryChannelsStateLogic(
                 ).toChannel()
             }
     }
-
 
     /**
      * Refreshes member state in all channels from this query.

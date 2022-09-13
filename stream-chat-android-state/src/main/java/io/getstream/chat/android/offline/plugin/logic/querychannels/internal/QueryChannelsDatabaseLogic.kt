@@ -72,10 +72,11 @@ internal class QueryChannelsDatabaseLogic(
 
     internal suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
-        queryChannelsSpec: QueryChannelsSpec
+        queryChannelsSpec: QueryChannelsSpec?
     ): List<Channel> {
-        val query = queryChannelsRepository.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort)
-            ?: return emptyList()
+        val query = queryChannelsSpec?.run {
+            queryChannelsRepository.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort)
+        } ?: return emptyList()
 
         return selectChannels(query.cids.toList(), pagination).applyPagination(pagination)
     }
