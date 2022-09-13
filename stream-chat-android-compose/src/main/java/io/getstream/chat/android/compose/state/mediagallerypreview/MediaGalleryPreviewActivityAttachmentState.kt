@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.state.mediagallerypreview
 
 import android.os.Parcelable
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.uiutils.constant.AttachmentType
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -26,16 +27,20 @@ import kotlinx.parcelize.Parcelize
  * for the proper functioning of the Media Gallery Preview screen.
  *
  * @param name The name of the attachment.
- * @param url The url of the file.
+ * @param url The URL of the file.
  * @param thumbUrl The URL for the thumbnail version of the attachment,
- *  given the attachment has a visual quality, e.g. is a video, an image,
- *  a link to a website or similar.
+ * given the attachment has a visual quality, e.g. is a video, an image,
+ * a link to a website or similar.
  * @param imageUrl The URL for the raw version of the attachment.
- * @param assetUrl The URL for the asset.
+ * Guaranteed to be non-null for images, optional for other types.
+ * @param assetUrl The URL for the raw asset, used for various types of
+ * attachments.
  * @param originalHeight The original height of the attachment.
  * Provided if the attachment is of type "image".
  * @param originalWidth The original width of the attachment.
  * Provided if the attachment is of type "image".
+ * @param type The type of the attachment, e.g. "image" or "video".
+ * @see [AttachmentType]
  */
 @Parcelize
 internal class MediaGalleryPreviewActivityAttachmentState(
