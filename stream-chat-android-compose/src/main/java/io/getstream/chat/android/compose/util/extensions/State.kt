@@ -12,13 +12,22 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.stateIn
 
-// TODO
+/**
+ * Converts a [StateFlow] to compose [State].
+ *
+ * @param coroutineScope The [CoroutineScope] in which to launch the coroutine in.
+ */
 internal fun <T> StateFlow<T>.asState(coroutineScope: CoroutineScope) : State<T> {
     val state = mutableStateOf(this.value)
     onEach { state.value = it }.launchIn(coroutineScope)
     return state
 }
 
+/**
+ * Converts a [Flow] to compose [State].
+ *
+ * @param coroutineScope The [CoroutineScope] in which to launch the coroutine in.
+ */
 internal fun <T> Flow<T>.asState(coroutineScope: CoroutineScope, defaultValue: T) : State<T> {
     val state = mutableStateOf(defaultValue)
     onEach { state.value = it }.launchIn(coroutineScope)

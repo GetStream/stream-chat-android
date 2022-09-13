@@ -47,7 +47,11 @@ public data class ThreadSeparatorState(val replyCount: Int) : MessageListItemSta
  */
 public data class SystemMessageState(val message: Message) : MessageListItemState()
 
-// TODO
+/**
+ * Represents a typing indicator.
+ *
+ * @param users The list of [User]s currently typing.
+ */
 public data class TypingItemState(val users: List<User>): MessageListItemState()
 
 /**

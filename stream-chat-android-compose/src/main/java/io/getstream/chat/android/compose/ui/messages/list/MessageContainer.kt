@@ -57,6 +57,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param threadSeparatorContent Composable that represents thread separators.
  * @param systemMessageContent Composable that represents system messages.
  * @param messageItemContent Composable that represents regular messages.
+ * @param typingIndicatorContent Composable that represents a typing indicator.
  */
 @Composable
 public fun MessageContainer(
@@ -87,15 +88,14 @@ public fun MessageContainer(
             onQuotedMessageClick = onQuotedMessageClick,
         )
     },
+    typingIndicatorContent: @Composable (TypingItemState) -> Unit = { }
 ) {
     when (messageListItem) {
         is DateSeparatorState -> dateSeparatorContent(messageListItem)
         is ThreadSeparatorState -> threadSeparatorContent(messageListItem)
         is SystemMessageState -> systemMessageContent(messageListItem)
         is MessageItemState -> messageItemContent(messageListItem)
-        else -> {
-            // TODO
-        }
+        is TypingItemState -> typingIndicatorContent(messageListItem)
     }
 }
 
