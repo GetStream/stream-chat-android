@@ -74,6 +74,10 @@ internal class QueryChannelsLogic(
         }
     }
 
+    internal fun setCurrentRequest(request: QueryChannelsRequest) {
+        queryChannelsStateLogic?.setCurrentRequest(request)
+    }
+
     /**
      * Returns the state of Channel. Useful to check how it the state of the channel of the [QueryChannelsLogic]
      *
@@ -297,7 +301,6 @@ internal class QueryChannelsLogic(
         queryChannelsStateLogic?.getQuerySpecs()?.let { specs ->
             queryChannelsDatabaseLogic?.insertQueryChannels(specs)
         }
-
     }
 
     /**

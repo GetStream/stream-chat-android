@@ -30,7 +30,9 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelSt
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogicImpl
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsStateLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
@@ -64,12 +66,28 @@ internal class LogicRegistry internal constructor(
 
     fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsLogic(
+            val queryChannelsStateLogic = QueryChannelsStateLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
-                client,
+                stateRegistry,
+                this
+            )
+
+            val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
                 repos,
-                this,
-                stateRegistry
+                repos,
+                repos,
+                repos,
+                repos,
+                coroutineScope,
+                repos.provideConfig()
+            )
+
+            QueryChannelsLogic(
+                filter,
+                sort,
+                client,
+                queryChannelsStateLogic,
+                queryChannelsDatabaseLogic,
             )
         }
     }
