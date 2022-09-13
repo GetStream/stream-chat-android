@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
@@ -39,7 +40,6 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannel
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.offline.utils.internal.ChannelFilterRequest.filterWithOffset
 import io.getstream.logging.StreamLog
-import kotlinx.coroutines.flow.MutableStateFlow
 
 private const val MESSAGE_LIMIT = 30
 private const val MEMBER_LIMIT = 30
@@ -49,7 +49,7 @@ private const val CHANNEL_LIMIT = 30
 @Suppress("TooManyFunctions")
 internal class QueryChannelsLogic(
     // Todo: Parar de usar o mutableState separadamente. Ele tem que entrar dentro do QueryChannelsStateLogic
-    private val mutableState: QueryChannelsMutableState,
+    private val mutableState: QueryChannelsMutableState?,
     private val client: ChatClient,
     private val queryChannelsStateLogic: QueryChannelsStateLogic?,
     private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic?,
@@ -57,28 +57,18 @@ internal class QueryChannelsLogic(
 
     private val logger = StreamLog.getLogger("QueryChannelsLogic")
 
-    private fun getLoading(): MutableStateFlow<Boolean> {
-        // Todo: Create a copy of loading and loadingMode to QueryChannelsLogic
-        return if (mutableState.channels.value.isNullOrEmpty()) mutableState._loading else mutableState._loadingMore
-    }
-    private fun setLoading(isLoading: Boolean) {
-        getLoading().value = isLoading
-    }
-
-    internal fun isLoading(): Boolean = getLoading().value
-
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {
-        if (isLoading()) {
+        if (queryChannelsStateLogic?.isLoading() == true) {
             logger.i { "[queryOffline] another query channels request is in progress. Ignoring this request." }
             return
         }
 
-        setLoading(true)
+        queryChannelsStateLogic?.setLoading(true)
 
         queryChannelsDatabaseLogic?.let { dbLogic ->
             fetchChannelsFromCache(pagination, dbLogic)
                 .also { channels ->
-                    setLoading(channels.isEmpty())
+                    queryChannelsStateLogic?.setLoading(channels.isEmpty())
                     addChannels(channels)
                 }
         }
@@ -89,21 +79,15 @@ internal class QueryChannelsLogic(
      *
      * @return [QueryChannelsState]
      */
-    internal fun state(): QueryChannelsState {
-        return mutableState
-    }
-
-    private fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
-        return mutableState._currentRequest.value?.isFirstPage?.let { isFirstPage ->
-            if (isFirstPage) mutableState._loading else mutableState._loadingMore
-        } ?: mutableState._loading
+    internal fun state(): QueryChannelsState? {
+        return queryChannelsStateLogic?.getState()
     }
 
     private suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
         queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
     ): List<Channel> {
-        val queryChannelsSpec = mutableState.queryChannelsSpec
+        val queryChannelsSpec = queryChannelsStateLogic?.getQuerySpecs()
 
         return queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, queryChannelsSpec)
             .also { logger.i { "[fetchChannelsFromCache] found ${it.size} channels in offline storage" } }
@@ -132,18 +116,20 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun addChannels(channels: List<Channel>) {
-        mutableState.queryChannelsSpec.cids += channels.map { it.cid }
+        //Todo: Make a local copy of queryChannelsSpec
+        var cids = queryChannelsStateLogic?.getQuerySpecs()?.cids ?: emptySet()
+        cids += channels.map { it.cid }
 
         queryChannelsStateLogic?.addChannelsState(channels)
-        queryChannelsDatabaseLogic?.insertQueryChannels(mutableState.queryChannelsSpec)
+        mutableState?.queryChannelsSpec?.let { specs -> queryChannelsDatabaseLogic?.insertQueryChannels(specs) }
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
         onOnlineQueryResult(result, request)
 
-        val loading = loadingForCurrentRequest()
-        loading.value = false
+        val loading = queryChannelsStateLogic?.loadingForCurrentRequest()
+        loading?.value = false
 
         if (result.isSuccess) {
             updateOnlineChannels(request, result.data())
@@ -166,7 +152,9 @@ internal class QueryChannelsLogic(
             messageLimit = MESSAGE_LIMIT,
             memberLimit = MEMBER_LIMIT,
         )
+
         queryChannelsStateLogic?.setCurrentRequest(request)
+
         return client.queryChannelsInternal(request)
             .await()
             .also { onQueryChannelsResult(it, request) }
@@ -229,37 +217,37 @@ internal class QueryChannelsLogic(
      * @param request The [QueryChannelsRequest].
      * @param channels The list of channels to update.
      */
-    private suspend fun updateOnlineChannels(
-        request: QueryChannelsRequest,
-        channels: List<Channel>,
-    ) {
-        val existingChannels = mutableState.rawChannels
-        val currentChannelsOffset = mutableState.channelsOffset.value
-        logger.d {
-            "[updateOnlineChannels] isFirstPage: ${request.isFirstPage}, " +
-                "channels.size: ${channels.size}, " +
-                "existingChannels.size: ${existingChannels?.size}, " +
-                "currentChannelsOffset: $currentChannelsOffset"
-        }
-        if (request.isFirstPage && !existingChannels.isNullOrEmpty()) {
-            var newChannelsOffset = channels.size
-            val notUpdatedChannels = existingChannels - channels.map { it.cid }.toSet()
-            logger.v { "[updateOnlineChannels] notUpdatedChannels.size: ${notUpdatedChannels.size}" }
-            if (notUpdatedChannels.isNotEmpty()) {
-                val localCids = notUpdatedChannels.values.map { it.cid }
-                val remoteCids = getRemoteCids(request.filter, request.limit, request.limit, existingChannels.size)
-                val cidsToRemove = localCids - remoteCids.toSet()
-                logger.v { "[updateOnlineChannels] cidsToRemove.size: ${cidsToRemove.size}" }
-                removeChannels(cidsToRemove)
-                newChannelsOffset += remoteCids.size
+    private suspend fun updateOnlineChannels(request: QueryChannelsRequest, channels: List<Channel>) {
+        queryChannelsStateLogic?.run {
+            val existingChannels = getChannels()
+            val currentChannelsOffset = getChannelsOffset()
+
+            logger.d {
+                "[updateOnlineChannels] isFirstPage: ${request.isFirstPage}, " +
+                    "channels.size: ${channels.size}, " +
+                    "existingChannels.size: ${existingChannels?.size}, " +
+                    "currentChannelsOffset: $currentChannelsOffset"
             }
-            logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
-            mutableState.channelsOffset.value = newChannelsOffset
-        } else {
-            val newChannelsOffset = mutableState.channelsOffset.value + channels.size
-            logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
-            mutableState.channelsOffset.value = newChannelsOffset
+
+            if (request.isFirstPage && !existingChannels.isNullOrEmpty()) {
+                var newChannelsOffset = channels.size
+                val notUpdatedChannels = existingChannels - channels.map { it.cid }.toSet()
+                logger.v { "[updateOnlineChannels] notUpdatedChannels.size: ${notUpdatedChannels.size}" }
+                if (notUpdatedChannels.isNotEmpty()) {
+                    val localCids = notUpdatedChannels.values.map { it.cid }
+                    val remoteCids = getRemoteCids(request.filter, request.limit, request.limit, existingChannels.size)
+                    val cidsToRemove = localCids - remoteCids.toSet()
+                    logger.v { "[updateOnlineChannels] cidsToRemove.size: ${cidsToRemove.size}" }
+                    removeChannels(cidsToRemove)
+                    newChannelsOffset += remoteCids.size
+                }
+                logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
+                setChannelsOffset(newChannelsOffset)
+            } else {
+                incrementChannelsOffset(channels.size)
+            }
         }
+
         addChannels(channels)
     }
 
@@ -334,13 +322,13 @@ internal class QueryChannelsLogic(
         } else null
 
         when (
-            val handlingResult =
-                mutableState.eventHandler.handleChatEvent(event, mutableState.filter, cachedChannel)
+            val handlingResult = queryChannelsStateLogic?.handleChatEvent(event, cachedChannel)
         ) {
             is EventHandlingResult.Add -> addChannel(handlingResult.channel)
             is EventHandlingResult.WatchAndAdd -> watchAndAddChannel(handlingResult.cid)
             is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
             is EventHandlingResult.Skip -> Unit
+            null -> Unit
         }
 
         if (event is MarkAllReadEvent) {
