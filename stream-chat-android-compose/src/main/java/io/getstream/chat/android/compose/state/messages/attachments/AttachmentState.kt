@@ -45,7 +45,7 @@ constructor(
         level = DeprecationLevel.WARNING
     )
     val onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
-    val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
+    val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
 
     /**
