@@ -57,6 +57,7 @@ internal class QueryChannelsLogic(
     private val logger = StreamLog.getLogger("QueryChannelsLogic")
 
     private fun getLoading(): MutableStateFlow<Boolean> {
+        // Todo: Create a copy of loading and loadingMode to QueryChannelsLogic
         return if (mutableState.channels.value.isNullOrEmpty()) mutableState._loading else mutableState._loadingMore
     }
 
@@ -73,7 +74,6 @@ internal class QueryChannelsLogic(
 
     internal suspend fun queryOffline(
         pagination: AnyChannelPaginationRequest,
-        queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
     ) {
         if (isLoading()) {
             logger.i { "[queryOffline] another query channels request is in progress. Ignoring this request." }
@@ -82,11 +82,13 @@ internal class QueryChannelsLogic(
 
         setLoading(true)
 
-        fetchChannelsFromCache(pagination, queryChannelsDatabaseLogic)
-            .also { channels ->
-                setLoading(channels.isEmpty())
-                addChannels(channels)
-            }
+        queryChannelsDatabaseLogic?.let { dbLogic ->
+            fetchChannelsFromCache(pagination, dbLogic)
+                .also { channels ->
+                    setLoading(channels.isEmpty())
+                    addChannels(channels)
+                }
+        }
     }
 
     /**
