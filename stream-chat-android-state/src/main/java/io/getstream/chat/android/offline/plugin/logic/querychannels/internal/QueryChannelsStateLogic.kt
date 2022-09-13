@@ -2,7 +2,9 @@ package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
+import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -26,6 +28,22 @@ internal class QueryChannelsStateLogic(
                 shouldRefreshMessages = false,
                 scrollUpdate = false
             )
+        }
+    }
+
+    internal fun removeChannels(cidList: Set<String>) {
+        val existingChannels = mutableState.rawChannels ?: return
+        mutableState.rawChannels = existingChannels - cidList
+    }
+
+
+    /**
+     * Initializes [QueryChannelsMutableState.rawChannels] with an empty map if it wasn't initialized yet.
+     * This might happen when we don't have any channels in the offline storage and API request fails.
+     */
+    internal fun initializeChannelsIfNeeded() {
+        if (mutableState.rawChannels == null) {
+            mutableState.rawChannels = emptyMap()
         }
     }
 
@@ -57,5 +75,31 @@ internal class QueryChannelsStateLogic(
                     channelId = channelId,
                 ).toChannel()
             }
+    }
+
+
+    /**
+     * Refreshes member state in all channels from this query.
+     *
+     * @param newUser The user to refresh.
+     */
+    internal fun refreshMembersStateForUser(newUser: User) {
+        val userId = newUser.id
+        val existingChannels = mutableState.rawChannels
+        if (existingChannels == null) {
+            logger.w { "[refreshMembersStateForUser] rejected (existingChannels is null)" }
+            return
+        }
+        val affectedChannels = existingChannels
+            .filter { (_, channel) -> channel.users().any { it.id == userId } }
+            .mapValues { (_, channel) ->
+                channel.copy(
+                    members = channel.members.map { member ->
+                        member.copy(user = member.user.takeUnless { it.id == userId } ?: newUser)
+                    }
+                )
+            }
+
+        mutableState.rawChannels = existingChannels + affectedChannels
     }
 }
