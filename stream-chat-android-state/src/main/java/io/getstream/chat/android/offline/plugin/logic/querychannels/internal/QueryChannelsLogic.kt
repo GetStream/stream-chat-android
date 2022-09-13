@@ -60,21 +60,13 @@ internal class QueryChannelsLogic(
         // Todo: Create a copy of loading and loadingMode to QueryChannelsLogic
         return if (mutableState.channels.value.isNullOrEmpty()) mutableState._loading else mutableState._loadingMore
     }
-
-    internal fun setCurrentRequest(request: QueryChannelsRequest) {
-        logger.d { "[onQueryChannelsRequest] request: $request" }
-        mutableState._currentRequest.value = request
-    }
-
     private fun setLoading(isLoading: Boolean) {
         getLoading().value = isLoading
     }
 
     internal fun isLoading(): Boolean = getLoading().value
 
-    internal suspend fun queryOffline(
-        pagination: AnyChannelPaginationRequest,
-    ) {
+    internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {
         if (isLoading()) {
             logger.i { "[queryOffline] another query channels request is in progress. Ignoring this request." }
             return
@@ -173,7 +165,7 @@ internal class QueryChannelsLogic(
             messageLimit = MESSAGE_LIMIT,
             memberLimit = MEMBER_LIMIT,
         )
-        setCurrentRequest(request)
+        queryChannelsStateLogic?.setCurrentRequest(request)
         return client.queryChannelsInternal(request)
             .await()
             .also { onQueryChannelsResult(it, request) }

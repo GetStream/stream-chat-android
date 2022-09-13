@@ -1,5 +1,6 @@
 package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.extensions.internal.users
@@ -18,6 +19,11 @@ internal class QueryChannelsStateLogic(
 ) {
 
     private val logger = StreamLog.getLogger("QueryChannelsStateLogic")
+
+    internal fun setCurrentRequest(request: QueryChannelsRequest) {
+        logger.d { "[onQueryChannelsRequest] request: $request" }
+        mutableState._currentRequest.value = request
+    }
 
     internal fun addChannelsState(channels: List<Channel>) {
         val existingChannels = mutableState.rawChannels ?: emptyMap()
