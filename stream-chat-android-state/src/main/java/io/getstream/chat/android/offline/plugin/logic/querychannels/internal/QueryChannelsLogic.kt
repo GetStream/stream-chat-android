@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -31,7 +32,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
@@ -48,8 +48,8 @@ private const val CHANNEL_LIMIT = 30
 
 @Suppress("TooManyFunctions")
 internal class QueryChannelsLogic(
-    // Todo: Parar de usar o mutableState separadamente. Ele tem que entrar dentro do QueryChannelsStateLogic
-    private val mutableState: QueryChannelsMutableState?,
+    private val filter: FilterObject,
+    private val sort: QuerySorter<Channel>,
     private val client: ChatClient,
     private val queryChannelsStateLogic: QueryChannelsStateLogic?,
     private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic?,
@@ -116,12 +116,13 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun addChannels(channels: List<Channel>) {
-        //Todo: Make a local copy of queryChannelsSpec
         var cids = queryChannelsStateLogic?.getQuerySpecs()?.cids ?: emptySet()
         cids += channels.map { it.cid }
 
         queryChannelsStateLogic?.addChannelsState(channels)
-        mutableState?.queryChannelsSpec?.let { specs -> queryChannelsDatabaseLogic?.insertQueryChannels(specs) }
+        queryChannelsStateLogic?.getQuerySpecs()?.let { specs ->
+            queryChannelsDatabaseLogic?.insertQueryChannels(specs)
+        }
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
@@ -143,12 +144,11 @@ internal class QueryChannelsLogic(
      */
     internal suspend fun queryFirstPage(): Result<List<Channel>> {
         logger.d { "[queryFirstPage] no args" }
-        val state = mutableState
         val request = QueryChannelsRequest(
-            filter = state.filter,
+            filter = filter,
             offset = INITIAL_CHANNEL_OFFSET,
             limit = CHANNEL_LIMIT,
-            querySort = state.sort,
+            querySort = sort,
             messageLimit = MESSAGE_LIMIT,
             memberLimit = MEMBER_LIMIT,
         )
@@ -286,16 +286,18 @@ internal class QueryChannelsLogic(
     private suspend fun removeChannel(cid: String) = removeChannels(listOf(cid))
 
     private suspend fun removeChannels(cidList: List<String>) {
-        if (mutableState.queryChannelsSpec.cids.isEmpty()) {
+        if (queryChannelsStateLogic?.getQuerySpecs()?.cids?.isEmpty() == true) {
             logger.w { "[removeChannels] skipping remove channels as they are not loaded yet." }
             return
         }
 
         val cidSet = cidList.toSet()
-        mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
 
         queryChannelsStateLogic?.removeChannels(cidSet)
-        queryChannelsDatabaseLogic?.insertQueryChannels(mutableState.queryChannelsSpec)
+        queryChannelsStateLogic?.getQuerySpecs()?.let { specs ->
+            queryChannelsDatabaseLogic?.insertQueryChannels(specs)
+        }
+
     }
 
     /**
@@ -363,7 +365,7 @@ internal class QueryChannelsLogic(
      * Supports use cases like marking all channels as read.
      */
     private fun refreshAllChannelsState() {
-        refreshChannelsState(mutableState.queryChannelsSpec.cids)
+        queryChannelsStateLogic?.getQuerySpecs()?.cids?.let(::refreshChannelsState)
     }
 
     /**
