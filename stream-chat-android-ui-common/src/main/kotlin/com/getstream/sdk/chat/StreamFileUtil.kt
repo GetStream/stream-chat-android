@@ -28,6 +28,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Exception
 
 private const val DEFAULT_BITMAP_QUALITY = 90
 
@@ -60,6 +61,59 @@ public object StreamFileUtil {
     }
 
     /**
+     * Creates a Stream cache directory if one doesn't exist already.
+     *
+     * @param context The [Context] necessary to perform
+     * file operations.
+     * @param onError Called when an error occurs.
+     *
+     * @return The Stream cache directory if it exists or its creation
+     * was successful, false otherwise.
+     */
+    private fun getOrCreateStreamCacheDir(
+        context: Context,
+        onError: (exception: Exception) -> Unit = {},
+    ): File? {
+        return try {
+            val streamCacheDir = File(context.cacheDir, streamCacheDirName)
+            streamCacheDir.mkdir()
+
+            streamCacheDir
+        } catch (e: Exception) {
+            onError(e)
+            null
+        }
+    }
+
+    /**
+     * Deletes all the content contained within the
+     * Stream cache directory.
+     *
+     *  @param context The [Context] necessary to perform
+     *  file operations.
+     * @param onError Called when an error occurs.
+     *
+     * @return True if the cache was cleared, false otherwise.
+     */
+    public fun clearStreamCache(
+        context: Context,
+        onError: (exception: Exception) -> Unit = {},
+    ): Boolean {
+        return try {
+            val directory = File(context.cacheDir, streamCacheDirName)
+
+            directory.listFiles()?.forEach {
+                it.delete()
+            }
+
+            true
+        } catch (e: Exception) {
+            onError(e)
+            false
+        }
+    }
+
+    /**
      * Hashes the links of given attachments and then tries to create a new file
      * under that hash. If the file already exists checks that the full file
      * has been written and shares it if it has, in other cases downloads the file
@@ -67,22 +121,26 @@ public object StreamFileUtil {
      *
      * @param context The Android [Context] used for path resolving and [Uri] fetching.
      * @param attachment the attachment to be downloaded.
+     * @param onError Called when an error occurs.
      *
      * @return The [Uri] that represents the path to the downloaded file.
      */
-    public suspend fun writeFileToShareableFile(context: Context, attachment: Attachment): Uri? {
+    public suspend fun writeFileToShareableFile(
+        context: Context,
+        attachment: Attachment,
+        onError: (exception: Exception) -> Unit = {},
+    ): Uri? {
         val result = runCatching {
+            val streamCacheDir = getOrCreateStreamCacheDir(context, onError)
             val attachmentName = (attachment.url ?: attachment.assetUrl)?.hashCode()
             val fileName = attachmentName.toString() + attachment.name
 
-            val file = File(context.cacheDir, fileName)
+            val file = File(streamCacheDir, fileName)
 
             // When File.createNewFile returns false it means that the file already exists.
             // We then check the hash name equality to confirm it's the same file and check file size
             // equality to make sure we've completed the download successfully.
             if (!file.createNewFile() &&
-                // TODO reported size is not the same as downloaded size
-                // TODO check why
                 attachmentName != null &&
                 // once this is functional
                 file.length() == attachment.fileSize.toLong()
@@ -106,6 +164,20 @@ public object StreamFileUtil {
             }
         }
 
+        result.onFailure { throwable ->
+            if (throwable is Exception) {
+                onError(throwable)
+            }
+        }
+
         return result.getOrNull()
     }
+
+    /**
+     * The name of the Stream cache directory.
+     *
+     * This does not include file separators so do not forget to include them
+     * when using this to access the directory or files contained within.
+     */
+    private const val streamCacheDirName = "stream_cache"
 }
