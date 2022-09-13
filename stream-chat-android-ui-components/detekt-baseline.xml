@@ -99,7 +99,6 @@
     <ID>MaxLineLength:FootnoteDecorator.kt$FootnoteDecorator$SyncStatus.IN_PROGRESS</ID>
     <ID>MaxLineLength:GapView.kt$GapView$constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)</ID>
     <ID>MaxLineLength:GiphyAttachmentViewHolder.kt$GiphyAttachmentViewHolder$*</ID>
-    <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle$*</ID>
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentPlaceHolderIcon)</ID>
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentProgressIcon)</ID>
     <ID>MaxLineLength:GiphyViewHolderStyle.kt$GiphyViewHolderStyle$*</ID>
