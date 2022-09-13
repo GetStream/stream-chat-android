@@ -1,0 +1,51 @@
+name: Check DB Entities
+
+on: [pull_request]
+
+jobs:
+  check-db-entities:
+    name: Check DB Entities
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: 11
+      - name: Find touched DB Entities
+        id: touchedEntities
+        continue-on-error: true
+        run: |
+          status=$(grep '@Entity' -rinl . | xargs -r git diff-index --name-only --exit-code --output=touchedEntities origin/${{ github.base_ref }} $(); echo $?)
+          output=$(cat touchedEntities)
+          output="${output//'%'/'%25'}"
+          output="${output//$'\n'/'%0A'}"
+          output="${output//$'\r'/'%0D'}"
+          echo $output
+          echo ::set-output name=touchedEntities::$output
+          exit $status
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: fc
+        if: steps.touchedEntities.outcome == 'failure'
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: DB Entities has been updated, Do we need to upgrade DB Version
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v2
+        if: steps.touchedEntities.outcome == 'failure'
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            DB Entities has been updated, Do we need to upgrade DB Version?
+            Modified Entities :
+            ```
+            ${{ steps.touchedEntities.outputs.touchedEntities }}
+            ```
+          edit-mode: replace
