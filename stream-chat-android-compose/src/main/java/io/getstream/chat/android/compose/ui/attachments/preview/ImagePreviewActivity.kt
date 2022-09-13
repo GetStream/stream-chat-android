@@ -902,11 +902,6 @@ public class ImagePreviewActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        StreamFileUtil.clearStreamCache(context = applicationContext)
-    }
-
     public companion object {
         /**
          * The column count used for the image gallery.
