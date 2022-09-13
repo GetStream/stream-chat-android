@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.list.options.message.internal
+package io.getstream.chat.android.ui.message.list.options.message
 
+import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
@@ -33,16 +34,21 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
+import io.getstream.chat.android.ui.message.list.DefaultShowAvatarPredicate
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
@@ -50,20 +56,22 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Ima
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
-import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItem
+import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
+import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDecoratorProvider
 
 /**
  * An overlay with available message options to the selected message. Also, allows leaving a reaction.
  */
-internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
+@ExperimentalStreamChatApi
+public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private var _binding: StreamUiDialogMessageOptionsBinding? = null
     private val binding get() = _binding!!
 
     /**
-     * The options overlay type.
+     * The options dialog type.
      */
-    private lateinit var optionsMode: OptionsMode
+    private lateinit var optionsDialogType: OptionsDialogType
 
     /**
      * The selected message
@@ -98,17 +106,17 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     /**
      * A callback for clicks on reactions.
      */
-    private var reactionClickHandler: ReactionClickHandler? = null
+    private var reactionClickListener: ReactionClickListener? = null
 
     /**
      * A callback for clicks on users who reacted to the message.
      */
-    private var userReactionClickHandler: UserReactionClickHandler? = null
+    private var userReactionClickListener: UserReactionClickListener? = null
 
     /**
-     * A callback for clicks on message actions.
+     * A callback for clicks on message options.
      */
-    private var messageActionClickHandler: MessageActionClickHandler? = null
+    private var messageOptionClickListener: MessageOptionClickListener? = null
 
     private val optionsOffset: Int by lazy { requireContext().getDimension(R.dimen.stream_ui_spacing_medium) }
 
@@ -134,7 +142,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val isInitialized = ::optionsMode.isInitialized && ::message.isInitialized && ::style.isInitialized &&
+        val isInitialized = ::optionsDialogType.isInitialized && ::message.isInitialized && ::style.isInitialized &&
             ::messageListItemViewHolderFactory.isInitialized && ::attachmentFactoryManager.isInitialized &&
             ::messageOptionItems.isInitialized
         if (savedInstanceState == null && isInitialized) {
@@ -152,9 +160,9 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         setupEditReactionsView()
         setupMessageView()
         anchorReactionsViewToMessageView()
-        when (optionsMode) {
-            OptionsMode.MESSAGE_OPTIONS -> setupMessageOptions()
-            OptionsMode.REACTION_OPTIONS -> setupUserReactionsView()
+        when (optionsDialogType) {
+            OptionsDialogType.MESSAGE_OPTIONS -> setupMessageOptions()
+            OptionsDialogType.REACTION_OPTIONS -> setupUserReactionsView()
         }
     }
 
@@ -165,21 +173,36 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        reactionClickHandler = null
-        userReactionClickHandler = null
-        messageActionClickHandler = null
+        reactionClickListener = null
+        userReactionClickListener = null
+        messageOptionClickListener = null
     }
 
-    fun setReactionClickHandler(reactionClickHandler: ReactionClickHandler) {
-        this.reactionClickHandler = reactionClickHandler
+    /**
+     * Allows clients to set a click listener for reactions in the reaction butbble.
+     *
+     * @param reactionClickListener The callback to be invoked on reaction item click.
+     */
+    public fun setReactionClickListener(reactionClickListener: ReactionClickListener) {
+        this.reactionClickListener = reactionClickListener
     }
 
-    fun setUserReactionClickHandler(userReactionClickHandler: UserReactionClickHandler) {
-        this.userReactionClickHandler = userReactionClickHandler
+    /**
+     * Allows clients to set a click listener for reactions in the reaction butbble.
+     *
+     * @param userReactionClickListener The callback to be invoked on user reaction item click.
+     */
+    public fun setUserReactionClickListener(userReactionClickListener: UserReactionClickListener) {
+        this.userReactionClickListener = userReactionClickListener
     }
 
-    fun setMessageActionClickHandler(messageActionClickHandler: MessageActionClickHandler) {
-        this.messageActionClickHandler = messageActionClickHandler
+    /**
+     * Allows clients to set a click listener for reactions in the reaction butbble.
+     *
+     * @param messageOptionClickListener The callback to be invoked on message option item click.
+     */
+    public fun setMessageOptionClickListener(messageOptionClickListener: MessageOptionClickListener) {
+        this.messageOptionClickListener = messageOptionClickListener
     }
 
     private fun setupDismissibleArea() {
@@ -202,7 +225,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             if (style.reactionsEnabled) {
                 setMessage(message, messageItem.isMine)
                 setReactionClickListener {
-                    reactionClickHandler?.onReactionClick(message, it)
+                    reactionClickListener?.onReactionClick(message, it)
                     dismiss()
                 }
             } else {
@@ -242,7 +265,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             ChatClient.instance().clientState.user.value?.let { user -> setMessage(message, user) }
 
             setOnUserReactionClickListener { user, reaction ->
-                userReactionClickHandler?.let {
+                userReactionClickListener?.let {
                     it.onUserReactionClick(message, user, reaction)
                     dismiss()
                 }
@@ -272,7 +295,7 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             setMessageOptions(messageOptionItems, style)
 
             setMessageActionClickListener { messageAction ->
-                messageActionClickHandler?.onMessageActionClick(messageAction)
+                messageOptionClickListener?.onMessageOptionClick(messageAction)
                 dismiss()
             }
 
@@ -332,60 +355,79 @@ internal class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     /**
      * A listener for reaction clicks.
      */
-    internal fun interface ReactionClickHandler {
-        fun onReactionClick(message: Message, reactionType: String)
+    public fun interface ReactionClickListener {
+        public fun onReactionClick(message: Message, reactionType: String)
     }
 
     /**
      * A listener for clicks on users who left the reactions.
      */
-    internal fun interface UserReactionClickHandler {
-        fun onUserReactionClick(message: Message, user: User, reaction: Reaction)
+    public fun interface UserReactionClickListener {
+        public fun onUserReactionClick(message: Message, user: User, reaction: Reaction)
     }
 
     /**
      * A listener for message option clicks.
      */
-    internal fun interface MessageActionClickHandler {
-        fun onMessageActionClick(messageAction: MessageAction)
+    public fun interface MessageOptionClickListener {
+        public fun onMessageOptionClick(messageAction: MessageAction)
     }
 
     /**
      * Represents the type of message options dialogs.
      */
-    internal enum class OptionsMode {
+    public enum class OptionsDialogType {
+        /**
+         * Options dialog with message options.
+         */
         MESSAGE_OPTIONS,
+
+        /**
+         * Options dialog with user reactions.
+         */
         REACTION_OPTIONS
     }
 
-    companion object {
-        const val TAG = "MessageOptionsDialogFragment"
+    public companion object {
+        public const val TAG: String = "MessageOptionsDialogFragment"
 
         /**
          * Creates a new instance of [MessageOptionsDialogFragment].
          *
-         * @param optionsMode The type of options dialog.
+         * @param context The context to load resources.
          * @param message The selected message.
+         * @param messageOptionItems The list of message options to display.
+         * @param optionsDialogType The type of options dialog.
          * @param style The style for the dialog.
-         * @param messageListItemViewHolderFactory The factory class for message items.
          * @param messageBackgroundFactory The factory for message background.
          * @param attachmentFactoryManager The factory for the attachments in the selected message.
+         * @param messageListItemViewHolderFactory The factory class for message items.
          * @param showAvatarPredicate If an avatar should be shown for the message.
-         * @param messageOptionItems The list of message options to display.
+
          */
-        fun newInstance(
-            optionsMode: OptionsMode,
+        public fun newInstance(
+            context: Context,
             message: Message,
-            style: MessageListViewStyle,
-            messageListItemViewHolderFactory: MessageListItemViewHolderFactory,
-            messageBackgroundFactory: MessageBackgroundFactory,
-            attachmentFactoryManager: AttachmentFactoryManager,
-            showAvatarPredicate: MessageListView.ShowAvatarPredicate,
             messageOptionItems: List<MessageOptionItem>,
+            optionsDialogType: OptionsDialogType = OptionsDialogType.MESSAGE_OPTIONS,
+            style: MessageListViewStyle = MessageListViewStyle.createDefault(context),
+            messageBackgroundFactory: MessageBackgroundFactory = MessageBackgroundFactoryImpl(style.itemStyle),
+            attachmentFactoryManager: AttachmentFactoryManager = ChatUI.attachmentFactoryManager,
+            messageListItemViewHolderFactory: MessageListItemViewHolderFactory = MessageListItemViewHolderFactory()
+                .apply {
+                    setAttachmentFactoryManager(attachmentFactoryManager)
+                    setMessageListItemStyle(style.itemStyle)
+                    setGiphyViewHolderStyle(style.giphyViewHolderStyle)
+                    setReplyMessageListItemViewStyle(style.replyMessageStyle)
+                    decoratorProvider = object : DecoratorProvider {
+                        override val decorators: List<Decorator> get() = emptyList()
+                    }
+                },
+            showAvatarPredicate: MessageListView.ShowAvatarPredicate = DefaultShowAvatarPredicate(),
         ): MessageOptionsDialogFragment {
             return MessageOptionsDialogFragment().also {
-                it.optionsMode = optionsMode
                 it.message = message
+                it.optionsDialogType = optionsDialogType
                 it.style = style
                 it.attachmentFactoryManager = attachmentFactoryManager
                 it.messageListItemViewHolderFactory = messageListItemViewHolderFactory

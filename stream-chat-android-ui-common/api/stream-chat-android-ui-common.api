@@ -249,6 +249,16 @@ public final class io/getstream/chat/android/common/notifications/StreamCoilUser
 	public fun buildIcon (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class io/getstream/chat/android/common/notifications/permissions/SnackbarNotificationPermissionHandler : io/getstream/chat/android/client/notifications/permissions/ActivityLifecycleCallbacks, io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler {
+	public fun <init> (Landroid/content/Context;)V
+	public fun onActivityStarted (Landroid/app/Activity;)V
+	public fun onLastActivityStopped (Landroid/app/Activity;)V
+	public fun onPermissionDenied ()V
+	public fun onPermissionGranted ()V
+	public fun onPermissionRationale ()V
+	public fun onPermissionRequested ()V
+}
+
 public final class io/getstream/chat/android/common/state/Copy : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
@@ -402,5 +412,40 @@ public final class io/getstream/chat/android/ui/common/BuildConfig {
 	public static final field DEBUG Z
 	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
 	public fun <init> ()V
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphyInfo {
+	public fun <init> (Ljava/lang/String;II)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (Ljava/lang/String;II)Lio/getstream/chat/android/ui/utils/GiphyInfo;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/utils/GiphyInfo;Ljava/lang/String;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()I
+	public final fun getUrl ()Ljava/lang/String;
+	public final fun getWidth ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphyInfoType : java/lang/Enum {
+	public static final field FIXED_HEIGHT Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public static final field FIXED_HEIGHT_DOWNSAMPLED Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public static final field ORIGINAL Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public final fun getValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public static fun values ()[Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphyInfoTypeKt {
+	public static final fun giphyInfo (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
+}
+
+public final class io/getstream/chat/android/ui/utils/GiphySizingMode : java/lang/Enum {
+	public static final field ADAPTIVE Lio/getstream/chat/android/ui/utils/GiphySizingMode;
+	public static final field FIXED_SIZE Lio/getstream/chat/android/ui/utils/GiphySizingMode;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/utils/GiphySizingMode;
+	public static fun values ()[Lio/getstream/chat/android/ui/utils/GiphySizingMode;
 }
 

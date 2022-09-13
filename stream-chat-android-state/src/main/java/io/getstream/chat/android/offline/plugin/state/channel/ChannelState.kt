@@ -65,7 +65,7 @@ public interface ChannelState {
     public val read: StateFlow<ChannelUserRead?>
 
     /** Unread count for this channel, calculated based on read state. This works even if you're offline. */
-    public val unreadCount: StateFlow<Int?>
+    public val unreadCount: StateFlow<Int>
 
     /** The list of members of this channel. */
     public val members: StateFlow<List<Member>>

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package io.getstream.chat.android.ui.message.list
 
 import android.animation.LayoutTransition
@@ -27,6 +29,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -65,6 +68,7 @@ import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
@@ -137,8 +141,9 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
+import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItem
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItemsFactory
-import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
+import io.getstream.chat.android.ui.message.list.options.message.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -373,30 +378,53 @@ public class MessageListView : ConstraintLayout {
                         style = viewStyle
                     )
 
-                    MessageOptionsDialogFragment
-                        .newInstance(
-                            optionsMode = MessageOptionsDialogFragment.OptionsMode.MESSAGE_OPTIONS,
-                            message = message,
-                            style = viewStyle,
-                            messageListItemViewHolderFactory = messageListItemViewHolderFactory,
-                            messageBackgroundFactory = messageBackgroundFactory,
-                            attachmentFactoryManager = attachmentFactoryManager,
-                            showAvatarPredicate = showAvatarPredicate,
-                            messageOptionItems = messageOptionItems,
-                        )
-                        .apply {
-                            setReactionClickHandler { message, reactionType ->
-                                messageReactionHandler.onMessageReaction(message, reactionType)
-                            }
-
-                            setMessageActionClickHandler { messageAction ->
-                                handleMessageAction(messageAction)
-                            }
-                        }
-                        .show(fragmentManager, MessageOptionsDialogFragment.TAG)
+                    showMessageOptionsDialog(fragmentManager, message, messageOptionItems)
                 }
             }
         }
+
+    /**
+     * Show message options dialog for the given set of message options.
+     *
+     * @param fragmentManager The FragmentManager this dialog fragment will be added to.
+     * @param message The selected message.
+     * @param messageOptionItems The list of message options to display.
+     * @param reactionClickListener The callback to be invoked on reaction item click.
+     * @param optionClickListener The callback to be invoked on option item click.
+     */
+    @ExperimentalStreamChatApi
+    public fun showMessageOptionsDialog(
+        fragmentManager: FragmentManager,
+        message: Message,
+        messageOptionItems: List<MessageOptionItem>,
+        reactionClickListener: (Message, String) -> Unit = { message: Message, reactionType: String ->
+            messageReactionHandler.onMessageReaction(message, reactionType)
+        },
+        optionClickListener: (MessageAction) -> Unit = { messageAction: MessageAction ->
+            handleMessageAction(messageAction)
+        }
+    ) {
+        MessageOptionsDialogFragment.newInstance(
+            context = context,
+            optionsDialogType = MessageOptionsDialogFragment.OptionsDialogType.MESSAGE_OPTIONS,
+            message = message,
+            style = requireStyle(),
+            messageListItemViewHolderFactory = messageListItemViewHolderFactory,
+            messageBackgroundFactory = messageBackgroundFactory,
+            attachmentFactoryManager = attachmentFactoryManager,
+            showAvatarPredicate = showAvatarPredicate,
+            messageOptionItems = messageOptionItems,
+        )
+            .apply {
+                setReactionClickListener { message, reactionType ->
+                    reactionClickListener(message, reactionType)
+                }
+                setMessageOptionClickListener { messageAction ->
+                    optionClickListener(messageAction)
+                }
+            }
+            .show(fragmentManager, MessageOptionsDialogFragment.TAG)
+    }
 
     /**
      * Provides long click listener for moderated messages. By default opens the [ModeratedMessageDialogFragment].
@@ -496,7 +524,8 @@ public class MessageListView : ConstraintLayout {
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
                 MessageOptionsDialogFragment.newInstance(
-                    optionsMode = MessageOptionsDialogFragment.OptionsMode.REACTION_OPTIONS,
+                    context = context,
+                    optionsDialogType = MessageOptionsDialogFragment.OptionsDialogType.REACTION_OPTIONS,
                     message = message,
                     style = requireStyle(),
                     messageListItemViewHolderFactory = messageListItemViewHolderFactory,
@@ -505,10 +534,10 @@ public class MessageListView : ConstraintLayout {
                     showAvatarPredicate = showAvatarPredicate,
                     messageOptionItems = emptyList()
                 ).apply {
-                    setReactionClickHandler { message, reactionType ->
+                    setReactionClickListener { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
                     }
-                    setUserReactionClickHandler { message, user, reaction ->
+                    setUserReactionClickListener { message, user, reaction ->
                         userReactionClickListener.onUserReactionClick(message, user, reaction)
                     }
                 }
@@ -939,7 +968,7 @@ public class MessageListView : ConstraintLayout {
     @Deprecated(
         "The option to block the user inside `MessageListView`" +
             " has been deprecated and will be removed.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun setBlockUserEnabled(enabled: Boolean) {
         messageListViewStyle = requireStyle().copy(blockEnabled = enabled)
@@ -953,7 +982,7 @@ public class MessageListView : ConstraintLayout {
     @Deprecated(
         "The option to mute the user inside `MessageListView`" +
             " has been deprecated and will be removed.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun setMuteUserEnabled(enabled: Boolean) {
         messageListViewStyle = requireStyle().copy(muteEnabled = enabled)
@@ -1448,7 +1477,7 @@ public class MessageListView : ConstraintLayout {
         "The option to mute the user inside `MessageListView`" +
             " has been deprecated and will be removed. `MessageListView.setUserMuteHandler` " +
             "will be removed with it too.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun setUserMuteHandler(userMuteHandler: UserMuteHandler) {
         this.userMuteHandler = userMuteHandler
@@ -1463,7 +1492,7 @@ public class MessageListView : ConstraintLayout {
         "The option to unmute the user inside `MessageListView`" +
             " has been deprecated and will be removed. `MessageListView.setUserUnmuteHandler` " +
             "will be removed with it too.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun setUserUnmuteHandler(userUnmuteHandler: UserUnmuteHandler) {
         this.userUnmuteHandler = userUnmuteHandler
@@ -1785,7 +1814,7 @@ public class MessageListView : ConstraintLayout {
         "The option to mute the user inside `MessageListView`" +
             " has been deprecated and will be removed. `UserMuteHandler` will be removed " +
             "with it too.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun interface UserMuteHandler {
         public fun onUserMute(user: User)
@@ -1795,16 +1824,17 @@ public class MessageListView : ConstraintLayout {
         "The option to unmute the user inside `MessageListView`" +
             " has been deprecated and will be removed. `UserUnmuteHandler` will be removed " +
             "with it too.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     public fun interface UserUnmuteHandler {
         public fun onUserUnmute(user: User)
     }
 
     @Deprecated(
-        "The option to block the user inside `MessageListView`" +
+        message = "The option to block the user inside `MessageListView`" +
             " has been deprecated and will be removed. `UserBlockHandler` will be removed " +
-            "with it too."
+            "with it too.",
+        level = DeprecationLevel.ERROR,
     )
     public fun interface UserBlockHandler {
         public fun onUserBlock(user: User, cid: String)

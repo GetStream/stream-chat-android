@@ -161,9 +161,7 @@ internal class UploadAttachmentsWorker(
                     }
                 }
                 val updatedMessage = message.copy(attachments = newAttachments.toMutableList())
-                val newMessages =
-                    mutableState.messageList.value.associateBy(Message::id) + (updatedMessage.id to updatedMessage)
-                mutableState.rawMessages = newMessages
+                mutableState.upsertMessage(updatedMessage)
             }
         }
     }

@@ -113,7 +113,7 @@ internal class CustomAttachmentsViewHolder(
     private fun initializeListeners() {
         binding.run {
             listeners?.let { container ->
-                root.setOnClickListener {
+                messageContainer.setOnClickListener {
                     container.messageClickListener.onMessageClick(data.message)
                 }
                 reactionsView.setReactionClickListener {
@@ -122,7 +122,7 @@ internal class CustomAttachmentsViewHolder(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
-                root.setOnLongClickListener {
+                messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
@@ -131,7 +131,7 @@ internal class CustomAttachmentsViewHolder(
                 }
                 LongClickFriendlyLinkMovementMethod.set(
                     textView = messageText,
-                    longClickTarget = root,
+                    longClickTarget = messageContainer,
                     onLinkClicked = container.linkClickListener::onLinkClick
                 )
             }
@@ -145,7 +145,7 @@ internal class CustomAttachmentsViewHolder(
         listeners?.let { container ->
             LongClickFriendlyLinkMovementMethod.set(
                 textView = binding.messageText,
-                longClickTarget = binding.root,
+                longClickTarget = binding.messageContainer,
                 onLinkClicked = container.linkClickListener::onLinkClick
             )
         }

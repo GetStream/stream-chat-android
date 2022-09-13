@@ -81,7 +81,7 @@ public class Flag(message: Message) : MessageAction(message)
  */
 @Deprecated(
     message = "The ability to mute a user via a message option has been deprecated and will be removed.",
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR,
 )
 public class MuteUser(message: Message) : MessageAction(message)
 

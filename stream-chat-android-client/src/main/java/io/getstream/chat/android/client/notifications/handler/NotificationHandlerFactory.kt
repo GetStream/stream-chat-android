@@ -25,6 +25,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.IconCompat
 import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.notifications.permissions.DefaultNotificationPermissionHandler
+import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
 import kotlin.reflect.full.primaryConstructor
 
 /**
@@ -41,6 +43,7 @@ public object NotificationHandlerFactory {
      * @param notificationChannel Lambda expression used to generate a [NotificationChannel].
      * Used in SDK_INT >= VERSION_CODES.O.
      * @param userIconBuilder Generates [IconCompat] to be shown on notifications.
+     * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
      */
     @SuppressLint("NewApi")
     public fun createNotificationHandler(
@@ -48,6 +51,7 @@ public object NotificationHandlerFactory {
         newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null,
         notificationChannel: (() -> NotificationChannel)? = null,
         userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
+        permissionHandler: NotificationPermissionHandler? = provideDefaultNotificationPermissionHandler(context),
     ): NotificationHandler {
         val notificationChannelFun = notificationChannel ?: getDefaultNotificationChannel(context)
         (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let { newMessageIntentFun ->
@@ -56,7 +60,8 @@ public object NotificationHandlerFactory {
                     context,
                     newMessageIntentFun,
                     notificationChannelFun,
-                    userIconBuilder
+                    userIconBuilder,
+                    permissionHandler
                 )
             } else {
                 ChatNotificationHandler(context, newMessageIntentFun, notificationChannelFun)
@@ -91,5 +96,14 @@ public object NotificationHandlerFactory {
                 .kotlin.primaryConstructor
                 ?.call(appContext) as UserIconBuilder
         }.getOrDefault(DefaultUserIconBuilder(appContext))
+    }
+
+    private fun provideDefaultNotificationPermissionHandler(context: Context): NotificationPermissionHandler {
+        val appContext = context.applicationContext
+        return runCatching {
+            Class.forName(
+                "io.getstream.chat.android.common.notifications.permissions.SnackbarNotificationPermissionHandler"
+            ).kotlin.primaryConstructor?.call(appContext) as NotificationPermissionHandler
+        }.getOrDefault(DefaultNotificationPermissionHandler(appContext))
     }
 }

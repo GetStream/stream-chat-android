@@ -163,7 +163,6 @@ public class StreamStatePluginFactory(
         val channelMarkReadHelper = ChannelMarkReadHelper(
             logic = logic,
             state = stateRegistry,
-            clientState = clientState,
         )
 
         chatClient.apply {

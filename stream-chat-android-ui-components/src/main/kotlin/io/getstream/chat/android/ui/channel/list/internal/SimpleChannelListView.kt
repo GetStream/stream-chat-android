@@ -173,7 +173,7 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         message = "Deprecated in favor of new logic for setChannels. To set the loading item call set channels with" +
             "the loading item already in the list. Show loading more function is race condition prone, which can" +
             "cause the list to apply an old state of channels.",
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR,
     )
     fun showLoadingMore(show: Boolean) {
         requireAdapter().let { adapter ->

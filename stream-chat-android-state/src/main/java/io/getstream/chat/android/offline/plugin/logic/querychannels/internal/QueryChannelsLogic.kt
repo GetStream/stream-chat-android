@@ -45,10 +45,8 @@ import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
-import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.offline.utils.internal.ChannelFilterRequest.filterWithOffset
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,7 +61,6 @@ internal class QueryChannelsLogic(
     private val mutableState: QueryChannelsMutableState,
     private val client: ChatClient,
     private val repos: RepositoryFacade,
-    private val globalState: MutableGlobalState,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
 ) {
@@ -150,7 +147,7 @@ internal class QueryChannelsLogic(
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
-        onOnlineQueryResult(result, request, repos, globalState)
+        onOnlineQueryResult(result, request, repos)
 
         val loading = loadingForCurrentRequest()
         loading.value = false
@@ -196,7 +193,6 @@ internal class QueryChannelsLogic(
         result: Result<List<Channel>>,
         request: QueryChannelsRequest,
         channelConfigRepository: ChannelConfigRepository,
-        globalState: MutableGlobalState,
     ) {
         if (result.isSuccess) {
             mutableState._recoveryNeeded.value = false
@@ -214,7 +210,6 @@ internal class QueryChannelsLogic(
         } else {
             logger.i { "[onOnlineQueryResult] query with filter ${request.filter} failed; recovery needed" }
             mutableState._recoveryNeeded.value = true
-            globalState.setErrorEvent(Event(result.error()))
         }
     }
 

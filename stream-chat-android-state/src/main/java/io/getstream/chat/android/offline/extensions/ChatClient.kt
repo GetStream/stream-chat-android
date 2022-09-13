@@ -44,7 +44,6 @@ import io.getstream.chat.android.offline.extensions.internal.logic
 import io.getstream.chat.android.offline.extensions.internal.requestsAsState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
@@ -176,7 +175,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 
         if (cidValidationResult.isSuccess) {
             val (channelType, channelId) = cid.cidToTypeAndId()
-            state.channel(channelType = channelType, channelId = channelId).toMutableState().run {
+            state.mutableChannel(channelType = channelType, channelId = channelId).run {
                 setRepliedMessage(message)
             }
             Result(Unit)
@@ -272,7 +271,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
         if (cidValidationResult.isSuccess) {
             try {
                 require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-                logic.channelFromMessage(message)?.removeLocalMessage(message)
+                logic.channelFromMessage(message)?.deleteMessage(message)
                 logic.threadFromMessage(message)?.removeLocalMessage(message)
                 repositoryFacade.deleteChannelMessage(message)
 

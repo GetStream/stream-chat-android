@@ -151,6 +151,7 @@ public fun MessageComposer(
     },
     label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(it.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
+        @Suppress("DEPRECATION_ERROR")
         DefaultComposerInputContent(
             messageComposerState = it,
             onValueChange = onValueChange,
@@ -165,6 +166,7 @@ public fun MessageComposer(
             validationErrors = it.validationErrors,
             attachments = it.attachments,
             ownCapabilities = it.ownCapabilities,
+            isInEditMode = it.action is Edit,
             onSendMessage = { input, attachments ->
                 val message = viewModel.buildNewMessage(input, attachments)
 
@@ -271,6 +273,7 @@ public fun MessageComposer(
     },
     label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(messageComposerState.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
+        @Suppress("DEPRECATION_ERROR")
         DefaultComposerInputContent(
             messageComposerState = messageComposerState,
             onValueChange = onValueChange,
@@ -285,7 +288,8 @@ public fun MessageComposer(
             validationErrors = it.validationErrors,
             attachments = it.attachments,
             onSendMessage = onSendMessage,
-            ownCapabilities = messageComposerState.ownCapabilities
+            ownCapabilities = messageComposerState.ownCapabilities,
+            isInEditMode = it.action is Edit
         )
     },
 ) {
@@ -566,7 +570,8 @@ internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
             "    innerTrailingContent: @Composable RowScope.() -> Unit" +
             ")",
         imports = arrayOf("io.getstream.chat.android.compose.ui.components.composer.MessageInput")
-    )
+    ),
+    level = DeprecationLevel.ERROR,
 )
 @Composable
 public fun RowScope.DefaultComposerInputContent(
@@ -605,13 +610,14 @@ internal fun DefaultMessageComposerTrailingContent(
     attachments: List<Attachment>,
     validationErrors: List<ValidationError>,
     ownCapabilities: Set<String>,
+    isInEditMode: Boolean,
     onSendMessage: (String, List<Attachment>) -> Unit,
 ) {
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
     val description = stringResource(id = R.string.stream_compose_cd_send_button)
 
-    if (coolDownTime > 0) {
+    if (coolDownTime > 0 && !isInEditMode) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
         IconButton(

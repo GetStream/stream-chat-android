@@ -31,7 +31,7 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 internal fun MutableGlobalState.updateCurrentUser(self: SelfUser) {
     val me = when (self) {
         is SelfUserFull -> self.me
-        is SelfUserPart -> user.value?.mergePartially(self.me) ?: self.me
+        is SelfUserPart -> clientState.user.value?.mergePartially(self.me) ?: self.me
     }
 
     clientState.toMutableState()?.setUser(me)

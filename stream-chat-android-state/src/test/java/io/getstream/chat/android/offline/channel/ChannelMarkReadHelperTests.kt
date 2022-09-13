@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableStateImpl
+import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
@@ -35,7 +35,6 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -56,7 +55,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn false
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableStateImpl> {
+        val channelMutableState = mock<ChannelMutableState> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
         }
         val sut = Fixture()
@@ -74,7 +73,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableStateImpl> {
+        val channelMutableState = mock<ChannelMutableState> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(emptyList())
         }
@@ -94,10 +93,10 @@ internal class ChannelMarkReadHelperTests {
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
         val now = Date()
-        val channelMutableState = mock<ChannelMutableStateImpl> {
+        val channelMutableState = mock<ChannelMutableState> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage(createdAt = now)))
-            on { it.lastMarkReadEvent } doReturn Date(now.time + 1000)
+            on { it.lastMarkReadEvent } doReturn MutableStateFlow(Date(now.time + 1000))
         }
         val sut = Fixture()
             .givenChannelState(channelType = channelType, channelId = channelId, channelMutableState)
@@ -114,7 +113,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableStateImpl> {
+        val channelMutableState = mock<ChannelMutableState> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage()))
         }
@@ -134,7 +133,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableStateImpl> {
+        val channelMutableState = mock<ChannelMutableState> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage()))
         }
@@ -154,7 +153,7 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableStateImpl> {
+        val channelMutableState = mock<ChannelMutableState> {
             on { it.channelConfig } doReturn MutableStateFlow(config)
             on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage()))
         }
@@ -168,7 +167,7 @@ internal class ChannelMarkReadHelperTests {
 
         sut.markChannelReadLocallyIfNeeded(channelType = channelType, channelId = channelId)
 
-        verify(channelMutableState).lastMarkReadEvent = any()
+        verify(channelMutableState).markChannelAsRead()
     }
 
     @Test
@@ -177,9 +176,8 @@ internal class ChannelMarkReadHelperTests {
             on { it.readEventsEnabled } doReturn true
         }
         val (channelType, channelId) = randomCID().cidToTypeAndId()
-        val channelMutableState = mock<ChannelMutableStateImpl> {
-            on { it.channelConfig } doReturn MutableStateFlow(config)
-            on { it.sortedMessages } doReturn MutableStateFlow(listOf(randomMessage()))
+        val channelMutableState = mock<ChannelMutableState> {
+            on { markChannelAsRead() } doReturn true
         }
         val channelLogic = mock<ChannelLogic>()
         val sut = Fixture()
@@ -200,8 +198,8 @@ internal class ChannelMarkReadHelperTests {
         private val state = mock<StateRegistry>()
         private val clientState = mock<ClientState>()
 
-        fun givenChannelState(channelType: String, channelId: String, channelState: ChannelMutableStateImpl) = apply {
-            whenever(state.channel(channelType = channelType, channelId = channelId)) doReturn channelState
+        fun givenChannelState(channelType: String, channelId: String, channelState: ChannelMutableState) = apply {
+            whenever(state.mutableChannel(channelType = channelType, channelId = channelId)) doReturn channelState
         }
 
         fun givenChannelLogic(channelType: String, channelId: String, channelLogic: ChannelLogic) = apply {
@@ -216,6 +214,6 @@ internal class ChannelMarkReadHelperTests {
             whenever(clientState.isNetworkAvailable) doReturn true
         }
 
-        fun get(): ChannelMarkReadHelper = ChannelMarkReadHelper(logic, state, clientState)
+        fun get(): ChannelMarkReadHelper = ChannelMarkReadHelper(logic, state)
     }
 }
