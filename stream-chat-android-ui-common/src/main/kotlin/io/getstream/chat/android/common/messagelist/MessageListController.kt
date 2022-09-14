@@ -187,6 +187,12 @@ public class MessageListController(
         get() = _mode.value is MessageMode.MessageThread
 
     /**
+     * Emits error events.
+     */
+    private val _errorEvents: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
+    public val errorEvents: StateFlow<ErrorEvent?> = _errorEvents
+
+    /**
      * The unread message count for the channel when the [_mode] is [MessageMode.Normal].
      */
     public val channelUnreadCount: StateFlow<Int> = channelState.filterNotNull()
@@ -224,12 +230,6 @@ public class MessageListController(
         .flatMapLatest { it.typing }
         .map { it.users }
         .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = emptyList())
-
-    /**
-     * Determines whether we should show system messages or not.
-     */
-    private val _showSystemMessagesState: MutableStateFlow<Boolean> = MutableStateFlow(showSystemMessages)
-    public val showSystemMessagesState: StateFlow<Boolean> = _showSystemMessagesState
 
     /**
      * Current state of the message list.
@@ -295,6 +295,12 @@ public class MessageListController(
         MutableStateFlow(threadDateSeparatorHandler)
 
     /**
+     * Determines whether we should show system messages or not.
+     */
+    private val _showSystemMessagesState: MutableStateFlow<Boolean> = MutableStateFlow(showSystemMessages)
+    public val showSystemMessagesState: StateFlow<Boolean> = _showSystemMessagesState
+
+    /**
      * Regulates the message footer visibility.
      */
     private val _messageFooterVisibilityState: MutableStateFlow<MessageFooterVisibility> =
@@ -325,12 +331,6 @@ public class MessageListController(
      * out of the thread state.
      */
     private var threadJob: Job? = null
-
-    /**
-     * Emits error events.
-     */
-    private val _errorEvents: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
-    public val errorEvents: StateFlow<ErrorEvent?> = _errorEvents
 
     /**
      * We start observing messages and if the message list screen was started after searching for a message, it will
@@ -1511,6 +1511,9 @@ public class MessageListController(
          */
         const val SEPARATOR_TIME_MILLIS: Long = 1000 * 60 * 60 * 4
 
+        /**
+         * Time after which the focus from message will be removed
+         */
         const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
     }
 }

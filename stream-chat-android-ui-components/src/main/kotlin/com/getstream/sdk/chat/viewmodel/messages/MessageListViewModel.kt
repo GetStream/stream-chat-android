@@ -132,6 +132,17 @@ public class MessageListViewModel(
     public val ownCapabilities: LiveData<Set<String>> = messageListController.ownCapabilities.asLiveData()
 
     /**
+     * Determines whether we should show system messages or not.
+     */
+    public val showSystemMessagesState: LiveData<Boolean> = messageListController.showSystemMessagesState.asLiveData()
+
+    /**
+     * Regulates the message footer visibility.
+     */
+    public val messageFooterVisibilityState: LiveData<MessageFooterVisibility> = messageListController
+        .messageFooterVisibilityState.asLiveData()
+
+    /**
      * Regulates the visibility of deleted messages.
      */
     public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> =
@@ -562,6 +573,15 @@ public class MessageListViewModel(
      */
     public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
         messageListController.setMessageFooterVisibility(messageFooterVisibility)
+    }
+
+    /**
+     * Sets whether the system messages should be visible.
+     *
+     * @param showSystemMessages Whether system messages should be visible or not.
+     */
+    public fun setAreSystemMessagesVisible(showSystemMessages: Boolean) {
+        messageListController.setAreSystemMessagesVisible(showSystemMessages)
     }
 
     /**

@@ -32,7 +32,12 @@ public fun interface MessagePositionHandler {
          * @return The default implementation of [MessagePositionHandler].
          */
         internal fun defaultHandler(): MessagePositionHandler {
-            return MessagePositionHandler { prevMessage: Message?, message: Message, nextMessage: Message?, isAfterDateSeparator: Boolean ->
+            return MessagePositionHandler {
+                    prevMessage: Message?,
+                    message: Message,
+                    nextMessage: Message?,
+                    isAfterDateSeparator: Boolean,
+                ->
                 val prevUser = prevMessage?.user
                 val user = message.user
                 val nextUser = nextMessage?.user

@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
+import io.getstream.chat.android.common.messagelist.MessagePositionHandler
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageFooterVisibility
@@ -216,6 +217,23 @@ public class MessageListViewModel(
      * Gives us information about the logged in user state.
      */
     public val user: StateFlow<User?> = messageListController.user
+
+    /**
+     * Determines whether we should show system messages or not.
+     */
+    public val showSystemMessagesState: Boolean by messageListController.showSystemMessagesState.asState(viewModelScope)
+
+    /**
+     * Regulates the message footer visibility.
+     */
+    public val messageFooterVisibilityState: MessageFooterVisibility by messageListController
+        .messageFooterVisibilityState.asState(viewModelScope)
+
+    /**
+     * Regulates the visibility of deleted messages.
+     */
+    public val deletedMessageVisibilityState: DeletedMessageVisibility by messageListController
+        .deletedMessageVisibilityState.asState(viewModelScope)
 
     /**
      * Attempts to update the last seen message in the channel or thread. We only update the last seen message the first
@@ -540,6 +558,64 @@ public class MessageListViewModel(
      */
     public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit, scrollToBottom: () -> Unit) {
         messageListController.scrollToBottom(messageLimit, scrollToBottom)
+    }
+
+    /**
+     * Sets a handler which determines the position of a message inside a group.
+     *
+     * @param messagePositionHandler The handler to use.
+     */
+    public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandler) {
+        messageListController.setMessagePositionHandler(messagePositionHandler)
+    }
+
+    /**
+     * Sets the date separator handler which determines when to add date separators.
+     * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
+     *
+     * @param dateSeparatorHandler The handler to use. If null, the messages list won't contain date separators.
+     */
+    public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
+        messageListController.setDateSeparatorHandler(dateSeparatorHandler)
+    }
+
+    /**
+     * Sets thread date separator handler which determines when to add date separators inside the thread.
+     *
+     * @param threadDateSeparatorHandler The handler to use. If null, the thread messages list won't contain date
+     * separators.
+     */
+    public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
+        messageListController.setThreadDateSeparatorHandler(threadDateSeparatorHandler)
+    }
+
+    /**
+     * Sets the value used to determine if message footer content is shown.
+     * @see MessageFooterVisibility
+     *
+     * @param messageFooterVisibility Changes the visibility of message footers.
+     */
+    public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
+        messageListController.setMessageFooterVisibility(messageFooterVisibility)
+    }
+
+    /**
+     * Sets the value used to filter deleted messages.
+     * @see DeletedMessageVisibility
+     *
+     * @param deletedMessageVisibility Changes the visibility of deleted messages.
+     */
+    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
+        messageListController.setDeletedMessageVisibility(deletedMessageVisibility)
+    }
+
+    /**
+     * Sets whether the system messages should be visible.
+     *
+     * @param showSystemMessages Whether system messages should be visible or not.
+     */
+    public fun setAreSystemMessagesVisible(showSystemMessages: Boolean) {
+        messageListController.setAreSystemMessagesVisible(showSystemMessages)
     }
 
     internal companion object {
