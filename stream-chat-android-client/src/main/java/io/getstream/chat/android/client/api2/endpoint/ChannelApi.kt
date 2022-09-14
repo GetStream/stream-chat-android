@@ -66,7 +66,7 @@ internal interface ChannelApi {
 
     @POST("/channels/read")
     fun markAllRead(
-        @Body map: Map<String, String> = emptyMap()
+        @Body map: Map<String, String> = emptyMap(),
     ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}")
