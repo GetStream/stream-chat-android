@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageAction
@@ -59,10 +60,12 @@ import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphy
  * @param clipboardHandler Used to copy data from message actions to the clipboard.
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param enforceUniqueReactions Enables or disables unique message reactions per user.
- * @param showDateSeparators Enables or disables date separator items in the list.
  * @param showSystemMessages Enables or disables system messages in the list.
- * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param messageFooterVisibility Determines when the message footer should be visible.
+ * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
+ * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
+ * @param messageListController Controller used to relay the logic and fetch the state.
  */
 @Suppress("TooManyFunctions", "LargeClass", "TooManyFunctions")
 public class MessageListViewModel(
@@ -71,23 +74,73 @@ public class MessageListViewModel(
     private val clipboardHandler: ClipboardHandler,
     private val messageLimit: Int = DefaultMessageLimit,
     private val enforceUniqueReactions: Boolean = true,
-    private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
-    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler
+        .getDefaultDateSeparator(TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold)),
+    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler
+        .getDefaultThreadDateSeparator(TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold)),
     private val messageListController: MessageListController = MessageListController(
         cid = channelId,
         chatClient = chatClient,
-        deletedVisibility = deletedMessageVisibility,
+        deletedMessageVisibility = deletedMessageVisibility,
         showSystemMessages = showSystemMessages,
-        showDateSeparators = showDateSeparators,
-        dateSeparatorThresholdMillis = dateSeparatorThresholdMillis,
         messageFooterVisibility = messageFooterVisibility,
         enforceUniqueReactions = enforceUniqueReactions,
-        clipboardHandler = { clipboardHandler.copyMessage(it) }
+        clipboardHandler = { clipboardHandler.copyMessage(it) },
+        dateSeparatorHandler = dateSeparatorHandler,
+        threadDateSeparatorHandler = threadDateSeparatorHandler
     ),
 ) : ViewModel() {
+
+    @Deprecated(
+        message = "Deprecated in favor of new implementation of MessageListViewModel constructor that uses " +
+            "MessageListController in the background. The deprecation removes dateSeparatorThresholdMillis and " +
+            "showDateSeparators in favor of DateSeparatorHandler. To achieve the same effect please provide a custom" +
+            "handler to show, hide or change the frequency of the date separators.",
+        replaceWith = ReplaceWith(
+            "MessageListViewModel(\n" +
+                "    public val chatClient: ChatClient,\n" +
+                "    private val channelId: String,\n" +
+                "    private val clipboardHandler: ClipboardHandler,\n" +
+                "    private val messageLimit: Int,\n" +
+                "    private val enforceUniqueReactions: Boolean,\n" +
+                "    private val showSystemMessages: Boolean = true,\n" +
+                "    private val deletedMessageVisibility: DeletedMessageVisibility,\n" +
+                "    private val messageFooterVisibility: MessageFooterVisibility,\n" +
+                "    private val dateSeparatorHandler: DateSeparatorHandler\n" +
+                "    private val threadDateSeparatorHandler: DateSeparatorHandler\n" +
+                "    private val messageListController: MessageListController)",
+            imports = ["io.getstream.chat.android.compose.viewmodel.messages"],
+        ),
+        level = DeprecationLevel.WARNING
+    )
+    public constructor(
+        chatClient: ChatClient,
+        channelId: String,
+        clipboardHandler: ClipboardHandler,
+        messageLimit: Int = DefaultMessageLimit,
+        enforceUniqueReactions: Boolean = true,
+        showDateSeparators: Boolean = true,
+        showSystemMessages: Boolean = true,
+        dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
+        deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+        messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    ) : this(
+        chatClient = chatClient,
+        channelId = channelId,
+        clipboardHandler = clipboardHandler,
+        messageLimit = messageLimit,
+        enforceUniqueReactions = enforceUniqueReactions,
+        showSystemMessages = showSystemMessages,
+        deletedMessageVisibility = deletedMessageVisibility,
+        messageFooterVisibility = messageFooterVisibility,
+        dateSeparatorHandler = DateSeparatorHandler
+            .getDefaultDateSeparator(dateSeparatorThresholdMillis, showDateSeparators),
+        threadDateSeparatorHandler = DateSeparatorHandler
+            .getDefaultThreadDateSeparator(dateSeparatorThresholdMillis, showDateSeparators)
+    )
 
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.

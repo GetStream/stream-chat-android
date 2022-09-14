@@ -56,7 +56,6 @@ import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onSubscription
@@ -76,6 +75,13 @@ import io.getstream.chat.android.common.messagelist.MessagePositionHandler as Me
  * @param chatClient Entry point for all low-level operations.
  * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.
+ * @param deletedVisibility Determines the visibility of deleted messages.
+ * @param footerVisibility Determines the visibility of message footer.
+ * @param showSystemMessages Whether we will show the system messages or not.
+ * @param enforceUniqueReactions Enables or disables unique message reactions per user.
+ * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
+ * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
+ * @param messageListController Controller used to relay the logic and fetch the state.
  */
 @Suppress("TooManyFunctions")
 public class MessageListViewModel(
@@ -86,20 +92,22 @@ public class MessageListViewModel(
     private val deletedVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val footerVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup,
     private val showSystemMessages: Boolean = true,
-    private val showDateSeparators: Boolean = true,
-    private val dateSeparatorTime: Long = SEPARATOR_TIME.toLong(),
     private val enforceUniqueReactions: Boolean = true,
+    private val dateSeparatorHandler: DateSeparatorHandlerCommon = DateSeparatorHandlerCommon
+        .getDefaultDateSeparator(SEPARATOR_TIME.toLong()),
+    private val threadDateSeparatorHandler: DateSeparatorHandlerCommon = DateSeparatorHandlerCommon
+        .getDefaultThreadDateSeparator(SEPARATOR_TIME.toLong()),
     private val messageListController: MessageListController = MessageListController(
         cid = cid,
         messageId = messageId,
         chatClient = chatClient,
-        deletedVisibility = deletedVisibility,
+        deletedMessageVisibility = deletedVisibility,
         showSystemMessages = showSystemMessages,
-        showDateSeparators = showDateSeparators,
-        dateSeparatorThresholdMillis = dateSeparatorTime,
         messageFooterVisibility = footerVisibility,
         enforceUniqueReactions = enforceUniqueReactions,
-        clipboardHandler = { }
+        clipboardHandler = { },
+        dateSeparatorHandler = dateSeparatorHandler,
+        threadDateSeparatorHandler = threadDateSeparatorHandler
     ),
 ) : ViewModel() {
 
@@ -127,7 +135,7 @@ public class MessageListViewModel(
      * Regulates the visibility of deleted messages.
      */
     public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> =
-        messageListController.deletedMessageVisibility.asLiveData()
+        messageListController.deletedMessageVisibilityState.asLiveData()
 
     /**
      * Represents the current state of the message list
@@ -386,7 +394,7 @@ public class MessageListViewModel(
      *
      * @param dateSeparatorHandler The handler to use. If null, the messages list won't contain date separators.
      */
-    public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandlerCommon) {
+    public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandlerCommon?) {
         messageListController.setDateSeparatorHandler(dateSeparatorHandler)
     }
 
@@ -420,7 +428,7 @@ public class MessageListViewModel(
      * @param threadDateSeparatorHandler The handler to use. If null, the thread messages list won't contain date
      * separators.
      */
-    public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandlerCommon) {
+    public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandlerCommon?) {
         messageListController.setThreadDateSeparatorHandler(threadDateSeparatorHandler)
     }
 

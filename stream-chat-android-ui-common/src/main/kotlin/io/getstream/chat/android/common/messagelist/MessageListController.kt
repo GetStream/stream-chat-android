@@ -90,28 +90,30 @@ import io.getstream.chat.android.common.state.Flag as FlagMessage
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param chatClient The client used to communicate with the API.
- * @param deletedVisibility The [DeletedMessageVisibility] to be applied to the list. By default it is
+ * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list. By default it is
  * [DeletedMessageVisibility.ALWAYS_VISIBLE].
  * @param showSystemMessages Determines if the system messages should be shown or not. True by default.
- * @param showDateSeparators Determines whether the date separators are shown or not. True by default.
- * @param dateSeparatorThresholdMillis The time between two messages after which the date separator will be visible.
  * By default it is [SEPARATOR_TIME_MILLIS].
  * @param messageFooterVisibility Determines if and when the message footer is visible or not. By default it is
  * [MessageFooterVisibility.WithTimeDifference].
  * @param enforceUniqueReactions Determines whether the user can send only a single or multiple reactions to a message.
  * True by default.
+ * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
+ * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  */
 public class MessageListController(
     private val cid: String,
     private val clipboardHandler: ClipboardHandler,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val deletedVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+    private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
-    private val showDateSeparators: Boolean = true,
-    private val dateSeparatorThresholdMillis: Long = SEPARATOR_TIME_MILLIS,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     private val enforceUniqueReactions: Boolean = true,
+    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler
+        .getDefaultDateSeparator(SEPARATOR_TIME_MILLIS),
+    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler
+        .getDefaultThreadDateSeparator(SEPARATOR_TIME_MILLIS),
 ) {
 
     /**
@@ -226,7 +228,8 @@ public class MessageListController(
     /**
      * Determines whether we should show system messages or not.
      */
-    private val _showSystemMessages: MutableStateFlow<Boolean> = MutableStateFlow(showSystemMessages)
+    private val _showSystemMessagesState: MutableStateFlow<Boolean> = MutableStateFlow(showSystemMessages)
+    public val showSystemMessagesState: StateFlow<Boolean> = _showSystemMessagesState
 
     /**
      * Current state of the message list.
@@ -281,47 +284,29 @@ public class MessageListController(
     private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
 
     /**
-     * Determines whether we should show date separators or not.
-     */
-    private val _showDateSeparators: MutableStateFlow<Boolean> = MutableStateFlow(showDateSeparators)
-
-    /**
      * Evaluates whether date separators should be added to the message list.
      */
-    private var dateSeparatorHandler: DateSeparatorHandler? =
-        DateSeparatorHandler { previousMessage: Message?, message: Message ->
-            if (previousMessage == null) {
-                true
-            } else {
-                val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
-                timeDifference > dateSeparatorThresholdMillis
-            }
-        }
+    private val _dateSeparatorHandler: MutableStateFlow<DateSeparatorHandler> = MutableStateFlow(dateSeparatorHandler)
 
     /**
      * Evaluates whether thread separators should be added to the message list.
      */
-    private var threadDateSeparatorHandler: DateSeparatorHandler? =
-        DateSeparatorHandler { previousMessage: Message?, message: Message ->
-            if (previousMessage == null) {
-                false
-            } else {
-                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > dateSeparatorThresholdMillis
-            }
-        }
+    private val _threadDateSeparatorHandler: MutableStateFlow<DateSeparatorHandler> =
+        MutableStateFlow(threadDateSeparatorHandler)
 
     /**
      * Regulates the message footer visibility.
      */
-    private val _messageFooterVisibility: MutableStateFlow<MessageFooterVisibility> =
+    private val _messageFooterVisibilityState: MutableStateFlow<MessageFooterVisibility> =
         MutableStateFlow(messageFooterVisibility)
+    public val messageFooterVisibilityState: StateFlow<MessageFooterVisibility> = _messageFooterVisibilityState
 
     /**
      * Regulates the visibility of deleted messages.
      */
-    private val _deletedMessageVisibility: MutableStateFlow<DeletedMessageVisibility> =
-        MutableStateFlow(deletedVisibility)
-    public val deletedMessageVisibility: StateFlow<DeletedMessageVisibility> = _deletedMessageVisibility
+    private val _deletedMessageVisibilityState: MutableStateFlow<DeletedMessageVisibility> =
+        MutableStateFlow(deletedMessageVisibility)
+    public val deletedMessageVisibilityState: StateFlow<DeletedMessageVisibility> = _deletedMessageVisibilityState
 
     /**
      * Represents the message we wish to scroll to.
@@ -371,15 +356,15 @@ public class MessageListController(
             combine(
                 channelState.messagesState,
                 channelState.reads,
-                _showSystemMessages,
-                _showDateSeparators,
-                _deletedMessageVisibility,
-                _messageFooterVisibility,
+                _showSystemMessagesState,
+                _dateSeparatorHandler,
+                _deletedMessageVisibilityState,
+                _messageFooterVisibilityState,
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = (data[1] as List<*>).map { it as ChannelUserRead }
                 val showSystemMessages = data[2] as Boolean
-                val showDateSeparators = data[3] as Boolean
+                val dateSeparatorHandler = data[3] as DateSeparatorHandler
                 val deletedMessageVisibility = data[4] as DeletedMessageVisibility
 
                 when (state) {
@@ -399,7 +384,8 @@ public class MessageListController(
                             ),
                             isInThread = isInThread,
                             reads = reads,
-                            shouldShowDateSeparator = showDateSeparators,
+                            dateSeparatorHandler = dateSeparatorHandler,
+                            deletedMessageVisibility = deletedMessageVisibility
                         ),
                     )
                 }
@@ -468,15 +454,15 @@ public class MessageListController(
             combine(
                 messages,
                 reads,
-                _showSystemMessages,
-                _showDateSeparators,
-                _deletedMessageVisibility,
-                _messageFooterVisibility,
+                _showSystemMessagesState,
+                _threadDateSeparatorHandler,
+                _deletedMessageVisibilityState,
+                _messageFooterVisibilityState,
             ) { data ->
                 val messages = (data[0] as List<*>).map { it as Message }
                 val reads = (data[1] as List<*>).map { it as ChannelUserRead }
                 val showSystemMessages = data[2] as Boolean
-                val showDateSeparators = data[3] as Boolean
+                val dateSeparatorHandler = data[3] as DateSeparatorHandler
                 val deletedMessageVisibility = data[4] as DeletedMessageVisibility
 
                 _threadListState.value.copy(
@@ -489,7 +475,8 @@ public class MessageListController(
                         ),
                         isInThread = true,
                         reads = reads,
-                        shouldShowDateSeparator = showDateSeparators
+                        dateSeparatorHandler = dateSeparatorHandler,
+                        deletedMessageVisibility = deletedMessageVisibility
                     ),
                     parentMessageId = threadId,
                     isLoadingNewerMessages = false,
@@ -526,7 +513,7 @@ public class MessageListController(
      * @param messages The messages we need to group.
      * @param isInThread If we are in inside a thread.
      * @param reads The list of read states.
-     * @param shouldShowDateSeparator Whether we shoudl show the date separator or not.
+     * @param shouldShowDateSeparator Whether we should show the date separator or not.
      *
      * @return A list of [MessageListItem]s, each containing a position.
      */
@@ -534,7 +521,8 @@ public class MessageListController(
         messages: List<Message>,
         isInThread: Boolean,
         reads: List<ChannelUserRead>,
-        shouldShowDateSeparator: Boolean,
+        deletedMessageVisibility: DeletedMessageVisibility,
+        dateSeparatorHandler: DateSeparatorHandler,
     ): List<MessageListItem> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
@@ -553,15 +541,7 @@ public class MessageListController(
             val previousMessage = messages.getOrNull(index - 1)
             val nextMessage = messages.getOrNull(index + 1)
 
-            val shouldAddDateSeparator = if (shouldShowDateSeparator) {
-                if (isInThread) {
-                    threadDateSeparatorHandler
-                } else {
-                    dateSeparatorHandler
-                }?.shouldAddDateSeparator(previousMessage, message) ?: false
-            } else {
-                false
-            }
+            val shouldAddDateSeparator = dateSeparatorHandler.shouldAddDateSeparator(previousMessage, message)
 
             val position = messagePositionHandler.handleMessagePosition(
                 prevMessage = previousMessage,
@@ -573,7 +553,7 @@ public class MessageListController(
             val isLastMessageInGroup =
                 position.contains(MessagePosition.BOTTOM) || position.contains(MessagePosition.NONE)
 
-            val shouldShowFooter = _messageFooterVisibility.value.shouldShowMessageFooter(
+            val shouldShowFooter = _messageFooterVisibilityState.value.shouldShowMessageFooter(
                 message = message,
                 isLastMessageInGroup = isLastMessageInGroup,
                 nextMessage = nextMessage
@@ -603,7 +583,7 @@ public class MessageListController(
                         isMine = user.id == currentUser?.id,
                         isInThread = isInThread,
                         isMessageRead = isMessageRead,
-                        deletedMessageVisibility = deletedMessageVisibility.value,
+                        deletedMessageVisibility = deletedMessageVisibility,
                         showMessageFooter = shouldShowFooter,
                         messageReadBy = messageReadBy
                     )
@@ -636,7 +616,7 @@ public class MessageListController(
     private fun filterMessagesToShow(
         messages: List<Message>,
         showSystemMessages: Boolean,
-        deletedMessageVisibility: DeletedMessageVisibility
+        deletedMessageVisibility: DeletedMessageVisibility,
     ): List<Message> {
         val currentUser = user.value
 
@@ -1414,7 +1394,7 @@ public class MessageListController(
      * @param dateSeparatorHandler The handler to use. If null, [_messageListState] won't contain date separators.
      */
     public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
-        this.dateSeparatorHandler = dateSeparatorHandler
+        _dateSeparatorHandler.value = dateSeparatorHandler ?: DateSeparatorHandler { _, _ -> false }
     }
 
     /**
@@ -1424,7 +1404,7 @@ public class MessageListController(
      * @param threadDateSeparatorHandler The handler to use. If null, [_messageListState] won't contain date separators.
      */
     public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
-        this.threadDateSeparatorHandler = threadDateSeparatorHandler
+        _threadDateSeparatorHandler.value = threadDateSeparatorHandler ?: DateSeparatorHandler { _, _ -> false }
     }
 
     /**
@@ -1434,7 +1414,7 @@ public class MessageListController(
      * @param messageFooterVisibility Changes the visibility of message footers.
      */
     public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
-        _messageFooterVisibility.value = messageFooterVisibility
+        _messageFooterVisibilityState.value = messageFooterVisibility
     }
 
     /**
@@ -1444,7 +1424,7 @@ public class MessageListController(
      * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        _deletedMessageVisibility.value = deletedMessageVisibility
+        _deletedMessageVisibilityState.value = deletedMessageVisibility
     }
 
     /**
@@ -1453,16 +1433,7 @@ public class MessageListController(
      * @param showSystemMessages Whether system messages should be visible or not.
      */
     public fun setAreSystemMessagesVisible(showSystemMessages: Boolean) {
-        _showSystemMessages.value = showSystemMessages
-    }
-
-    /**
-     * Sets whether the date separators should be visible.
-     *
-     * @param showDateSeparators Whether date separators should be visible or not.
-     */
-    public fun setAreDateSeparatorsVisible(showDateSeparators: Boolean) {
-        _showDateSeparators.value = showDateSeparators
+        _showSystemMessagesState.value = showSystemMessages
     }
 
     /**
