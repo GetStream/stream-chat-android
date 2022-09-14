@@ -29,9 +29,9 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.FILE_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.IMAGE_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINK_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MEDIA_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
@@ -49,6 +49,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Gip
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.SystemMessageViewHolder
@@ -167,7 +168,7 @@ public open class MessageListItemViewHolderFactory {
             LINK_ATTACHMENTS -> createLinkAttachmentsViewHolder(parentView)
             GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
             FILE_ATTACHMENTS -> createFileAttachmentsViewHolder(parentView)
-            IMAGE_ATTACHMENT -> createImageAttachmentsViewHolder(parentView)
+            MEDIA_ATTACHMENT -> createMediaAttachmentsViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -214,10 +215,37 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that displays messages with image attachments.
      */
+    @Deprecated(
+        message = "This function has been deprecated in favor of the function 'createMediaAttachmentsViewHolder'." +
+            "The new functions returns the new media 'ViewHolder' which is capable of previewing both image" +
+            "and video attachments.",
+        replaceWith = ReplaceWith(
+            "createMediaAttachmentsViewHolder(parentView = parentView)",
+            "this::createMediaAttachmentsViewHolder"
+        )
+    )
     protected fun createImageAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {
         return ImageAttachmentViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listenerContainer,
+            textTransformer,
+        )
+    }
+
+    /**
+     * Creates a ViewHolder for messages containing image and/ or video attachments and no other type
+     * of attachments.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that displays messages with image and/or video attachments.
+     */
+    protected fun createMediaAttachmentsViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<out MessageListItem> {
+        return MediaAttachmentsViewHolder(
             parentView,
             decoratorProvider.decorators,
             listenerContainer,

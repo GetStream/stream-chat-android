@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time â
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder` | 2022.09.28<br/>5.10.1 | 2022.10.12<br/>5.10.1 | 2022.10.26<br/>5.10.1 | The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder` has been deprecated in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder` which returns the new `ViewHolder` capable of previewing both images and videos. |
 | `StreamDimens` constructor containing parameter `attachmentsContentImageHeight`  | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13<br/>5.10.0 | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageHeight`. |
 | `QueryChannelsState.chatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13<br/>5.10.0 | Use `QueryChannelsState.chatEventHandlerFactory` instead. |
 | Multiple event specific `BaseChatEventHandler` methods | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13<br/>5.10.0 | Use `handleChatEvent()` or `handleCidEvent()` instead. |
