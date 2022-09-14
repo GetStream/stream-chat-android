@@ -55,7 +55,7 @@ internal interface ModerationApi {
     fun unflag(@Body body: Map<String, String>): RetrofitCall<FlagResponse>
 
     @POST("/moderation/ban")
-    fun banUser(@Body body: BanUserRequest,): RetrofitCall<CompletableResponse>
+    fun banUser(@Body body: BanUserRequest): RetrofitCall<CompletableResponse>
 
     @DELETE("/moderation/ban")
     fun unbanUser(
