@@ -1012,12 +1012,12 @@ public class MessageListController(
     }
 
     /**
-     * Updates the last seen message so we can determine the unread count and [NewMessageState].
+     * Updates the last seen message so we can determine the unread count and mark messages as read.
      *
      * @param message The last seen [Message].
      */
     public fun updateLastSeenMessage(message: Message) {
-        val latestMessage: MessageItem? = listState.value.messages.firstOrNull { messageItem ->
+        val latestMessage: MessageItem? = listState.value.messages.lastOrNull { messageItem ->
             messageItem is MessageItem
         } as? MessageItem
 
