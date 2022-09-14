@@ -57,14 +57,14 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
-) : ChannelStateLogicProvider {
+) : ChannelStateLogicProvider, QueryChannelsLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
+    override fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
             val queryChannelsStateLogic = QueryChannelsStateLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
@@ -93,7 +93,7 @@ internal class LogicRegistry internal constructor(
     }
 
     /** Returns [QueryChannelsLogic] accordingly to [QueryChannelsRequest]. */
-    fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
+    override fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
         queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
 
     /** Returns [ChannelLogic] by channelType and channelId combination. */
