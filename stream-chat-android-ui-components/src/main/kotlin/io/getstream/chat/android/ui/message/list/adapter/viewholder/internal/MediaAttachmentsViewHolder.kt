@@ -109,7 +109,9 @@ internal class MediaAttachmentsViewHolder(
     private fun bindUploadingIndicator() {
         val totalAttachmentsCount = data.message.attachments.size
         val completedAttachmentsCount =
-            data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }
+            data.message.attachments.count {
+                it.uploadState == null || it.uploadState == Attachment.UploadState.Success
+            }
         if (completedAttachmentsCount == totalAttachmentsCount) {
             binding.sentFiles.isVisible = false
         } else {
