@@ -25,6 +25,15 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 
 internal interface QueryChannelsDatabaseLogic {
 
+    /**
+     * Store the state oc the channels in the database.
+     *
+     * @param configs Collection<ChannelConfig>
+     * @param users List<User>
+     * @param channels: Collection<Channel>
+     * @param messages: List<Message>
+     * @param cacheForMessages: Boolean
+     */
     suspend fun storeStateForChannels(
         configs: Collection<ChannelConfig>? = null,
         users: List<User>,
@@ -33,14 +42,35 @@ internal interface QueryChannelsDatabaseLogic {
         cacheForMessages: Boolean = false,
     )
 
+    /**
+     * Fetch channels from database
+     *
+     * @param pagination [AnyChannelPaginationRequest]
+     * @param queryChannelsSpec [QueryChannelsSpec]
+     */
     suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
         queryChannelsSpec: QueryChannelsSpec?
     ): List<Channel>
 
+    /**
+     * Select channels from database without fetching messages
+     *
+     * @param cid String
+     */
     suspend fun selectChannelWithoutMessages(cid: String): Channel?
 
+    /**
+     * Insert a query spec that was made in the database.
+     *
+     * @param queryChannelsSpec QueryChannelsSpec
+     */
     suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec)
 
+    /**
+     * Insert the configs of the channels
+     *
+     * @param configs Collection<ChannelConfig>
+     */
     suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>)
 }

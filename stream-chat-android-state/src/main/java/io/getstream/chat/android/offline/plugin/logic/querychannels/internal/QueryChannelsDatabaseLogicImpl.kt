@@ -46,6 +46,15 @@ internal class QueryChannelsDatabaseLogicImpl(
     private val defaultConfig: Config,
 ) : QueryChannelsDatabaseLogic {
 
+    /**
+     * Store the state oc the channels in the database.
+     *
+     * @param configs Collection<ChannelConfig>
+     * @param users List<User>
+     * @param channels: Collection<Channel>
+     * @param messages: List<Message>
+     * @param cacheForMessages: Boolean
+     */
     private suspend fun selectChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest?,
@@ -84,6 +93,12 @@ internal class QueryChannelsDatabaseLogicImpl(
         messageRepository.insertMessages(messages, cacheForMessages)
     }
 
+    /**
+     * Fetch channels from database
+     *
+     * @param pagination [AnyChannelPaginationRequest]
+     * @param queryChannelsSpec [QueryChannelsSpec]
+     */
     override suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
         queryChannelsSpec: QueryChannelsSpec?,
@@ -95,14 +110,29 @@ internal class QueryChannelsDatabaseLogicImpl(
         return selectChannels(query.cids.toList(), pagination).applyPagination(pagination)
     }
 
+    /**
+     * Select channels from database without fetching messages
+     *
+     * @param cid String
+     */
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         return channelRepository.selectChannelWithoutMessages(cid)
     }
 
+    /**
+     * Insert a query spec that was made in the database.
+     *
+     * @param queryChannelsSpec QueryChannelsSpec
+     */
     override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
         return queryChannelsRepository.insertQueryChannels(queryChannelsSpec)
     }
 
+    /**
+     * Insert the configs of the channels
+     *
+     * @param configs Collection<ChannelConfig>
+     */
     override suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
         return channelConfigRepository.insertChannelConfigs(configs)
     }
