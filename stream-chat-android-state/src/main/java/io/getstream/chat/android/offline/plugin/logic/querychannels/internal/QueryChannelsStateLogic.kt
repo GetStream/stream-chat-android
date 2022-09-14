@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -10,41 +26,41 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannel
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Suppress("TooManyFunctions")
-public interface QueryChannelsStateLogic {
+internal interface QueryChannelsStateLogic {
 
-    public fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult
+    fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult
 
-    public fun isLoading(): Boolean
+    fun isLoading(): Boolean
 
-    public fun getChannelsOffset(): Int
+    fun getChannelsOffset(): Int
 
-    public fun getChannels(): Map<String, Channel>?
+    fun getChannels(): Map<String, Channel>?
 
-    public fun getQuerySpecs(): QueryChannelsSpec
+    fun getQuerySpecs(): QueryChannelsSpec
 
-    public fun getState(): QueryChannelsState
+    fun getState(): QueryChannelsState
 
-    public fun setLoading(isLoading: Boolean)
+    fun setLoading(isLoading: Boolean)
 
-    public fun setCurrentRequest(request: QueryChannelsRequest)
+    fun setCurrentRequest(request: QueryChannelsRequest)
 
-    public fun setEndOfChannels(isEnd: Boolean)
+    fun setEndOfChannels(isEnd: Boolean)
 
-    public fun setRecoveryNeeded(recoveryNeeded: Boolean)
+    fun setRecoveryNeeded(recoveryNeeded: Boolean)
 
-    public fun setChannelsOffset(offset: Int)
+    fun setChannelsOffset(offset: Int)
 
-    public fun incrementChannelsOffset(size: Int)
+    fun incrementChannelsOffset(size: Int)
 
-    public fun loadingForCurrentRequest(): MutableStateFlow<Boolean>
+    fun loadingForCurrentRequest(): MutableStateFlow<Boolean>
 
-    public fun addChannelsState(channels: List<Channel>)
+    fun addChannelsState(channels: List<Channel>)
 
-    public fun removeChannels(cidSet: Set<String>)
+    fun removeChannels(cidSet: Set<String>)
 
-    public fun initializeChannelsIfNeeded()
+    fun initializeChannelsIfNeeded()
 
-    public fun refreshChannels(cidList: Collection<String>)
+    fun refreshChannels(cidList: Collection<String>)
 
-    public fun refreshMembersStateForUser(newUser: User)
+    fun refreshMembersStateForUser(newUser: User)
 }

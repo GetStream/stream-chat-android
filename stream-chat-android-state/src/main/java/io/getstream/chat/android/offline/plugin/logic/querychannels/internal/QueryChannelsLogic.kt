@@ -33,13 +33,11 @@ import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filterWithOffset
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
-import io.getstream.chat.android.offline.utils.internal.ChannelFilterRequest.filterWithOffset
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.flow.StateFlow
 
 private const val MESSAGE_LIMIT = 30
 private const val MEMBER_LIMIT = 30
@@ -78,13 +76,10 @@ internal class QueryChannelsLogic(
         queryChannelsStateLogic?.setCurrentRequest(request)
     }
 
-    /**
-     * Returns the state of Channel. Useful to check how it the state of the channel of the [QueryChannelsLogic]
-     *
-     * @return [QueryChannelsState]
-     */
-    internal fun state(): QueryChannelsState? {
-        return queryChannelsStateLogic?.getState()
+    internal fun filter(): FilterObject = filter
+
+    internal fun recoveryNeeded(): StateFlow<Boolean>? {
+        return queryChannelsStateLogic?.getState()?.recoveryNeeded
     }
 
     private suspend fun fetchChannelsFromCache(
@@ -316,7 +311,7 @@ internal class QueryChannelsLogic(
 
     /**
      * Handles event received from the socket.
-     * Responsible for synchronizing [QueryChannelsMutableState].
+     * Responsible for synchronizing channels.
      */
     private suspend fun handleEvent(event: ChatEvent) {
         // update the info for that channel from the channel repo
@@ -355,7 +350,6 @@ internal class QueryChannelsLogic(
 
     /**
      * Refreshes multiple channels in this query.
-     * Note that it retrieves the data from the current [ChannelState] object.
      *
      * @param cidList The channels to refresh.
      */
