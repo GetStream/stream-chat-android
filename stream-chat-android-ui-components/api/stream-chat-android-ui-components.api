@@ -3322,13 +3322,24 @@ public abstract interface class io/getstream/chat/android/ui/message/list/adapte
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/view/GiphyMediaAttachmentViewStyle {
-	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/utils/GiphyInfoType;Landroid/widget/ImageView$ScaleType;)V
+	public static final field Companion Lio/getstream/chat/android/ui/message/list/adapter/view/GiphyMediaAttachmentViewStyle$Companion;
+	public static final field NO_GIVEN_DIMENSION_RATIO F
+	public static final field NO_GIVEN_HEIGHT I
+	public static final field SQUARE_DIMENSION_RATIO F
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/utils/GiphyInfoType;Landroid/widget/ImageView$ScaleType;Lio/getstream/chat/android/ui/utils/GiphySizingMode;IIF)V
+	public final fun getDimensionRatio ()F
 	public final fun getGiphyIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getGiphyType ()Lio/getstream/chat/android/ui/utils/GiphyInfoType;
+	public final fun getHeight ()I
 	public final fun getImageBackgroundColor ()I
 	public final fun getPlaceholderIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getProgressIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getScaleType ()Landroid/widget/ImageView$ScaleType;
+	public final fun getSizingMode ()Lio/getstream/chat/android/ui/utils/GiphySizingMode;
+	public final fun getWidth ()I
+}
+
+public final class io/getstream/chat/android/ui/message/list/adapter/view/GiphyMediaAttachmentViewStyle$Companion {
 }
 
 public final class io/getstream/chat/android/ui/message/list/adapter/view/ImageAttachmentViewStyle {
@@ -4143,33 +4154,5 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingI
 	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
 	public final fun chatClient (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
 	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
-}
-
-public final class io/getstream/chat/android/ui/utils/GiphyInfo {
-	public fun <init> (Ljava/lang/String;II)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()I
-	public final fun component3 ()I
-	public final fun copy (Ljava/lang/String;II)Lio/getstream/chat/android/ui/utils/GiphyInfo;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/utils/GiphyInfo;Ljava/lang/String;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getHeight ()I
-	public final fun getUrl ()Ljava/lang/String;
-	public final fun getWidth ()I
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/utils/GiphyInfoType : java/lang/Enum {
-	public static final field FIXED_HEIGHT Lio/getstream/chat/android/ui/utils/GiphyInfoType;
-	public static final field FIXED_HEIGHT_DOWNSAMPLED Lio/getstream/chat/android/ui/utils/GiphyInfoType;
-	public static final field ORIGINAL Lio/getstream/chat/android/ui/utils/GiphyInfoType;
-	public final fun getValue ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/utils/GiphyInfoType;
-	public static fun values ()[Lio/getstream/chat/android/ui/utils/GiphyInfoType;
-}
-
-public final class io/getstream/chat/android/ui/utils/GiphyInfoTypeKt {
-	public static final fun giphyInfo (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/ui/utils/GiphyInfoType;)Lio/getstream/chat/android/ui/utils/GiphyInfo;
 }
 

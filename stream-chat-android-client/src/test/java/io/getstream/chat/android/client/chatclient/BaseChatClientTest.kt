@@ -93,9 +93,9 @@ internal open class BaseChatClientTest {
             notifications = mock(),
             tokenManager = tokenManager,
             socketStateService = socketStateService,
-            callPostponeHelper = CallPostponeHelper(
-                socketStateService, userScope
-            ),
+            callPostponeHelper = CallPostponeHelper(userScope) {
+                socketStateService.awaitConnection()
+            },
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,

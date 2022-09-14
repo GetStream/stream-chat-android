@@ -112,7 +112,7 @@ internal class FileAttachmentsViewHolder(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
-                root.setOnLongClickListener {
+                messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
@@ -138,7 +138,7 @@ internal class FileAttachmentsViewHolder(
         listeners?.let { listenerContainer ->
             LongClickFriendlyLinkMovementMethod.set(
                 textView = binding.messageText,
-                longClickTarget = binding.root,
+                longClickTarget = binding.messageContainer,
                 onLinkClicked = listenerContainer.linkClickListener::onLinkClick
             )
         }

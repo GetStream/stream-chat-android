@@ -16,13 +16,11 @@
 
 package io.getstream.chat.android.offline.plugin.state.global.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.offline.utils.Event
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 
 /**
@@ -31,8 +29,6 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
 internal interface MutableGlobalState : GlobalState {
 
     val clientState: ClientState
-
-    fun setErrorEvent(errorEvent: Event<ChatError>)
 
     fun setTotalUnreadCount(totalUnreadCount: Int)
 

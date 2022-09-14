@@ -16,12 +16,9 @@
 
 package io.getstream.chat.android.offline.utils.internal
 
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
-import io.getstream.logging.StreamLog
 
 /**
  * Checks if the channel can be marked as read and marks it locally if needed.
@@ -33,10 +30,7 @@ import io.getstream.logging.StreamLog
 internal class ChannelMarkReadHelper(
     private val logic: LogicRegistry,
     private val state: StateRegistry,
-    private val clientState: ClientState,
 ) {
-
-    private val logger = StreamLog.getLogger("Chat:ChannelMarkReadHelper")
 
     /**
      * Marks channel as read locally if different conditions are met:
@@ -50,51 +44,7 @@ internal class ChannelMarkReadHelper(
      * @return The flag to determine if the channel was marked as read locally.
      */
     internal fun markChannelReadLocallyIfNeeded(channelType: String, channelId: String): Boolean {
-        val channelState = state.channel(channelType = channelType, channelId = channelId).toMutableState()
-        if (!channelState.channelConfig.value.readEventsEnabled) {
-            return false
-        }
-
-        // throttle the mark read
-        val messages = channelState.sortedMessages.value
-
-        if (messages.isEmpty()) {
-            logger.i { "No messages; nothing to mark read." }
-            return false
-        }
-
-        return messages.last().createdAt
-            .let { lastMessageDate ->
-                val shouldUpdate =
-                    channelState.lastMarkReadEvent == null || lastMessageDate?.after(channelState.lastMarkReadEvent) == true
-
-                if (!shouldUpdate) {
-                    logger.i {
-                        "Last message date [$lastMessageDate] is not after " +
-                            "last read event [${channelState.lastMarkReadEvent}]; no need to update."
-                    }
-                    return false
-                }
-
-                val currentUser = clientState.user.value
-
-                if (currentUser == null) {
-                    logger.i { "Cannot mark read because user is not set!" }
-                    return false
-                }
-
-                if (!clientState.isNetworkAvailable) {
-                    logger.i { "Cannot mark as read because the network connection is unavailable." }
-                    return false
-                }
-
-                channelState.lastMarkReadEvent = lastMessageDate
-
-                // update live data with new read
-                logic.channel(channelType = channelType, channelId = channelId)
-                    .updateReads(listOf(ChannelUserRead(currentUser, channelState.lastMarkReadEvent)))
-
-                true
-            }
+        return state.mutableChannel(channelType = channelType, channelId = channelId)
+            .markChannelAsRead()
     }
 }

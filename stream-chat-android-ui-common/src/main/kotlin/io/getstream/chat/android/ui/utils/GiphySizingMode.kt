@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.clientstate
+package io.getstream.chat.android.ui.utils
 
-internal sealed class SocketState {
-    object Idle : SocketState() { override fun toString() = "Idle" }
-    object Pending : SocketState() { override fun toString() = "Pending" }
-    data class Connected(val connectionId: String) : SocketState()
-    object Disconnected : SocketState() { override fun toString() = "Disconnected" }
+/**
+ * Sets the way in which Giphy container
+ * sizing is determined.
+ */
+public enum class GiphySizingMode {
 
-    internal fun connectionIdOrError(): String = when (this) {
-        is Connected -> connectionId
-        else -> error("This state doesn't contain connectionId")
-    }
+    /**
+     * Automatically resizes Giphy containers
+     * while respecting the original Giphy image dimension ratio.
+     *
+     * Setting this mode means that the container will ignore any
+     * width and height dimensions.
+     */
+    ADAPTIVE,
+
+    /**
+     * Sets Giphy containers to fixed size mode.
+     *
+     * Setting this mode means that the container will respect
+     * given width and height dimensions.
+     */
+    FIXED_SIZE
 }
