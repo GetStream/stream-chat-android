@@ -94,6 +94,7 @@ internal class QueryChannelsStateLogic(
     }
 
     internal fun addChannelsState(channels: List<Channel>) {
+        mutableState.queryChannelsSpec.cids += channels.map { it.cid }
         val existingChannels = mutableState.rawChannels ?: emptyMap()
         mutableState.rawChannels = existingChannels + channels.map { it.cid to it }
         channels.forEach { channel ->
