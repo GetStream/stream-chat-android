@@ -326,7 +326,7 @@ internal class SyncManager(
         logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
         val queryLogicsToRestore = logicRegistry.getActiveQueryChannelsLogic()
             .asSequence()
-            .filter { queryChannelsLogic -> queryChannelsLogic.state()?.recoveryNeeded?.value == true || recoverAll }
+            .filter { queryChannelsLogic -> queryChannelsLogic.recoveryNeeded()?.value == true || recoverAll }
             .take(QUERIES_TO_RETRY)
             .toList()
         if (queryLogicsToRestore.isEmpty()) {
@@ -338,7 +338,7 @@ internal class SyncManager(
         val failed = AtomicReference<ChatError>()
         val updatedCids = mutableSetOf<String>()
         queryLogicsToRestore.forEach { queryLogic ->
-            logger.v { "[updateActiveQueryChannels] queryLogic.filter: ${queryLogic.state()?.filter}" }
+            logger.v { "[updateActiveQueryChannels] queryLogic.filter: ${queryLogic.filter()}" }
             queryLogic.queryFirstPage()
                 .onError {
                     logger.e { "[updateActiveQueryChannels] request failed: ${it.stringify()}" }
