@@ -76,10 +76,9 @@ public object StreamFileUtil {
         onError: (exception: Exception) -> Unit = {},
     ): File? {
         return try {
-            val streamCacheDir = File(context.cacheDir, streamCacheDirName)
-            streamCacheDir.mkdir()
-
-            streamCacheDir
+            File(context.cacheDir, streamCacheDirName).also { streamCacheDir ->
+                streamCacheDir.mkdirs()
+            }
         } catch (e: Exception) {
             onError(e)
             null
@@ -90,8 +89,8 @@ public object StreamFileUtil {
      * Deletes all the content contained within the
      * Stream cache directory.
      *
-     *  @param context The [Context] necessary to perform
-     *  file operations.
+     * @param context The [Context] necessary to perform
+     * file operations.
      * @param onError Called when an error occurs.
      *
      * @return True if the cache was cleared, false otherwise.
