@@ -46,13 +46,11 @@ internal interface GeneralApi {
 
     @GET("/search")
     fun searchMessages(
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: SearchMessagesRequest,
     ): RetrofitCall<SearchMessagesResponse>
 
     @GET("/members")
     fun queryMembers(
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryMembersRequest,
     ): RetrofitCall<QueryMembersResponse>
 }

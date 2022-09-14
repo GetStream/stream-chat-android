@@ -163,7 +163,6 @@ constructor(
         return messageApi.sendMessage(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             message = MessageRequest(message.toDto()),
         ).map { response -> response.message.toDomain() }
     }
@@ -171,7 +170,6 @@ constructor(
     override fun updateMessage(message: Message): Call<Message> {
         return messageApi.updateMessage(
             messageId = message.id,
-            connectionId = connectionId,
             message = MessageRequest(message.toDto()),
         ).map { response -> response.message.toDomain() }
     }
@@ -179,7 +177,6 @@ constructor(
     override fun partialUpdateMessage(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Message> {
         return messageApi.partialUpdateMessage(
             messageId = messageId,
-            connectionId = connectionId,
             body = PartialUpdateMessageRequest(set, unset)
         ).map { response -> response.message.toDomain() }
     }
@@ -187,14 +184,12 @@ constructor(
     override fun getMessage(messageId: String): Call<Message> {
         return messageApi.getMessage(
             messageId = messageId,
-            connectionId = connectionId,
         ).map { response -> response.message.toDomain() }
     }
 
     override fun deleteMessage(messageId: String, hard: Boolean): Call<Message> {
         return messageApi.deleteMessage(
             messageId = messageId,
-            connectionId = connectionId,
             hard = if (hard) true else null
         ).map { response -> response.message.toDomain() }
     }
@@ -206,7 +201,6 @@ constructor(
     ): Call<List<Reaction>> {
         return messageApi.getReactions(
             messageId = messageId,
-            connectionId = connectionId,
             offset = offset,
             limit = limit,
         ).map { response -> response.reactions.map(DownstreamReactionDto::toDomain) }
@@ -215,7 +209,6 @@ constructor(
     override fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
         return messageApi.sendReaction(
             messageId = reaction.messageId,
-            connectionId = connectionId,
             request = ReactionRequest(
                 reaction = reaction.toDto(),
                 enforce_unique = enforceUnique,
@@ -230,13 +223,11 @@ constructor(
         return messageApi.deleteReaction(
             messageId = messageId,
             reactionType = reactionType,
-            connectionId = connectionId,
         ).map { response -> response.message.toDomain() }
     }
 
     override fun addDevice(device: Device): Call<Unit> {
         return deviceApi.addDevices(
-            connectionId = connectionId,
             request = AddDeviceRequest(
                 device.token,
                 device.pushProvider.key,
@@ -246,16 +237,11 @@ constructor(
     }
 
     override fun deleteDevice(device: Device): Call<Unit> {
-        return deviceApi.deleteDevice(
-            deviceId = device.token,
-            connectionId = connectionId,
-        ).toUnitCall()
+        return deviceApi.deleteDevice(deviceId = device.token).toUnitCall()
     }
 
     override fun getDevices(): Call<List<Device>> {
-        return deviceApi.getDevices(
-            connectionId = connectionId,
-        ).map { response -> response.devices.map(DeviceDto::toDomain) }
+        return deviceApi.getDevices().map { response -> response.devices.map(DeviceDto::toDomain) }
     }
 
     override fun muteCurrentUser(): Call<Mute> {
@@ -274,7 +260,6 @@ constructor(
         timeout: Int?,
     ): Call<Mute> {
         return moderationApi.muteUser(
-            connectionId = connectionId,
             body = MuteUserRequest(
                 target_id = userId,
                 user_id = this.userId,
@@ -285,7 +270,6 @@ constructor(
 
     override fun unmuteUser(userId: String): Call<Unit> {
         return moderationApi.unmuteUser(
-            connectionId = this.connectionId,
             body = MuteUserRequest(
                 target_id = userId,
                 user_id = this.userId,
@@ -300,7 +284,6 @@ constructor(
         expiration: Int?,
     ): Call<Unit> {
         return moderationApi.muteChannel(
-            connectionId = connectionId,
             body = MuteChannelRequest(
                 channel_cid = "$channelType:$channelId",
                 expiration = expiration
@@ -313,7 +296,6 @@ constructor(
         channelId: String,
     ): Call<Unit> {
         return moderationApi.unmuteChannel(
-            connectionId = connectionId,
             body = MuteChannelRequest(
                 channel_cid = "$channelType:$channelId",
                 expiration = null
@@ -333,7 +315,6 @@ constructor(
                     channelType = channelType,
                     channelId = channelId,
                     userId = userId,
-                    connectionId = connectionId,
                     file = file,
                     callback
                 )
@@ -342,7 +323,6 @@ constructor(
                     channelType = channelType,
                     channelId = channelId,
                     userId = userId,
-                    connectionId = connectionId,
                     file = file,
                 )
             }
@@ -361,7 +341,6 @@ constructor(
                     channelType = channelType,
                     channelId = channelId,
                     userId = userId,
-                    connectionId = connectionId,
                     file = file,
                     callback
                 )
@@ -370,7 +349,6 @@ constructor(
                     channelType = channelType,
                     channelId = channelId,
                     userId = userId,
-                    connectionId = connectionId,
                     file = file
                 )
             }
@@ -383,7 +361,6 @@ constructor(
                 channelType = channelType,
                 channelId = channelId,
                 userId = userId,
-                connectionId = connectionId,
                 url = url
             )
             Result(Unit)
@@ -396,7 +373,6 @@ constructor(
                 channelType = channelType,
                 channelId = channelId,
                 userId = userId,
-                connectionId = connectionId,
                 url = url
             )
             Result(Unit)
@@ -416,17 +392,11 @@ constructor(
         unflag(mutableMapOf("target_message_id" to messageId))
 
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
-        return moderationApi.flag(
-            connectionId = connectionId,
-            body = body
-        ).map { response -> response.flag.toDomain() }
+        return moderationApi.flag(body = body).map { response -> response.flag.toDomain() }
     }
 
     private fun unflag(body: MutableMap<String, String>): Call<Flag> {
-        return moderationApi.unflag(
-            connectionId = connectionId,
-            body = body
-        ).map { response -> response.flag.toDomain() }
+        return moderationApi.unflag(body = body).map { response -> response.flag.toDomain() }
     }
 
     override fun banUser(
@@ -438,7 +408,6 @@ constructor(
         shadow: Boolean,
     ): Call<Unit> {
         return moderationApi.banUser(
-            connectionId = connectionId,
             body = BanUserRequest(
                 target_user_id = targetId,
                 timeout = timeout,
@@ -457,7 +426,6 @@ constructor(
         shadow: Boolean,
     ): Call<Unit> {
         return moderationApi.unbanUser(
-            connectionId = connectionId,
             targetUserId = targetId,
             channelId = channelId,
             channelType = channelType,
@@ -476,7 +444,6 @@ constructor(
         createdAtBeforeOrEqual: Date?,
     ): Call<List<BannedUser>> {
         return moderationApi.queryBannedUsers(
-            connectionId = connectionId,
             payload = QueryBannedUsersRequest(
                 filter_conditions = filter.toMap(),
                 sort = sort.toDto(),
@@ -517,7 +484,6 @@ constructor(
         return channelApi.updateCooldown(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = UpdateCooldownRequest.create(cooldownTimeInSeconds),
         ).map(this::flattenChannel)
     }
@@ -558,7 +524,6 @@ constructor(
         return channelApi.updateChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = UpdateChannelRequest(extraData, updateMessage?.toDto()),
         ).map(this::flattenChannel)
     }
@@ -572,7 +537,6 @@ constructor(
         return channelApi.updateChannelPartial(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = UpdateChannelPartialRequest(set, unset),
         ).map(this::flattenChannel)
     }
@@ -584,7 +548,6 @@ constructor(
         return channelApi.showChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = emptyMap(),
         ).toUnitCall()
     }
@@ -597,7 +560,6 @@ constructor(
         return channelApi.hideChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = HideChannelRequest(clearHistory),
         ).toUnitCall()
     }
@@ -610,7 +572,6 @@ constructor(
         return channelApi.truncateChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = TruncateChannelRequest(message = systemMessage?.toDto())
         ).map(this::flattenChannel)
     }
@@ -619,7 +580,6 @@ constructor(
         return channelApi.rejectInvite(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = RejectInviteRequest(),
         ).map(this::flattenChannel)
     }
@@ -632,7 +592,6 @@ constructor(
         return channelApi.acceptInvite(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = AcceptInviteRequest.create(userId = userId, message = message),
         ).map(this::flattenChannel)
     }
@@ -641,7 +600,6 @@ constructor(
         return channelApi.deleteChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
         ).map(this::flattenChannel)
     }
 
@@ -654,22 +612,19 @@ constructor(
     }
 
     override fun markAllRead(): Call<Unit> {
-        return channelApi.markAllRead(
-            connectionId = connectionId,
-        ).toUnitCall()
+        return channelApi.markAllRead().toUnitCall()
     }
 
     override fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>,
-        message: Message?,
+        systemMessage: Message?,
     ): Call<Channel> {
         return channelApi.addMembers(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
-            body = AddMembersRequest(members, message?.toDto()),
+            body = AddMembersRequest(members, systemMessage?.toDto()),
         ).map(this::flattenChannel)
     }
 
@@ -677,13 +632,12 @@ constructor(
         channelType: String,
         channelId: String,
         members: List<String>,
-        message: Message?,
+        systemMessage: Message?,
     ): Call<Channel> {
         return channelApi.removeMembers(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
-            body = RemoveMembersRequest(members, message?.toDto()),
+            body = RemoveMembersRequest(members, systemMessage?.toDto()),
         ).map(this::flattenChannel)
     }
 
@@ -704,7 +658,6 @@ constructor(
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return messageApi.getReplies(
             messageId = messageId,
-            connectionId = connectionId,
             limit = limit,
         ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
     }
@@ -712,7 +665,6 @@ constructor(
     override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> {
         return messageApi.getRepliesMore(
             messageId = messageId,
-            connectionId = connectionId,
             limit = limit,
             firstId = firstId,
         ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
@@ -721,7 +673,6 @@ constructor(
     override fun sendAction(request: DomainSendActionRequest): Call<Message> {
         return messageApi.sendAction(
             messageId = request.messageId,
-            connectionId = connectionId,
             request = SendActionRequest(
                 channel_id = request.channelId,
                 message_id = request.messageId,
@@ -761,7 +712,6 @@ constructor(
     override fun translate(messageId: String, language: String): Call<Message> {
         return messageApi.translate(
             messageId = messageId,
-            connectionId = connectionId,
             request = TranslateMessageRequest(language),
         ).map { response -> response.message.toDomain() }
     }
@@ -775,7 +725,7 @@ constructor(
             next = request.next,
             sort = request.sort,
         )
-        return generalApi.searchMessages(connectionId, newRequest)
+        return generalApi.searchMessages(newRequest)
             .map { response ->
                 response.results.map { resp ->
                     resp.message.toDomain().apply {
@@ -802,7 +752,7 @@ constructor(
             next = next,
             sort = sort?.toDto(),
         )
-        return generalApi.searchMessages(connectionId, newRequest)
+        return generalApi.searchMessages(newRequest)
             .map { response ->
                 val results = response.results
 
@@ -904,10 +854,8 @@ constructor(
             members = members.map(Member::toDto),
         )
 
-        return generalApi.queryMembers(
-            connectionId,
-            request,
-        ).map { response -> response.members.map(DownstreamMemberDto::toDomain) }
+        return generalApi.queryMembers(request)
+            .map { response -> response.members.map(DownstreamMemberDto::toDomain) }
     }
 
     override fun createVideoCall(
@@ -939,7 +887,6 @@ constructor(
         return channelApi.sendEvent(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             request = SendEventRequest(map),
         ).map { response -> response.event.toDomain() }
     }
