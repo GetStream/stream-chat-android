@@ -60,8 +60,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both image and video attachments. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 
 ### ⚠️ Changed
+- The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been deprecated in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 
 ### ❌ Removed
 

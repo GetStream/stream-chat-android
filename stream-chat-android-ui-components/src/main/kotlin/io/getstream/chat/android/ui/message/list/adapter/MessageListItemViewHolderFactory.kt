@@ -217,7 +217,7 @@ public open class MessageListItemViewHolderFactory {
      */
     @Deprecated(
         message = "This function has been deprecated in favor of the function 'createMediaAttachmentsViewHolder'." +
-            "The new functions returns the new media 'ViewHolder' which is capable of previewing both image" +
+            "The new functions returns a 'ViewHolder' which is capable of previewing both image" +
             "and video attachments.",
         replaceWith = ReplaceWith(
             "createMediaAttachmentsViewHolder(parentView = parentView)",
