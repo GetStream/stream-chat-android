@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Gip
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
@@ -88,6 +89,19 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
      */
     override fun decorateImageAttachmentsMessage(
         viewHolder: ImageAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = with(viewHolder.binding) {
+        setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)
+    }
+
+    /**
+     * Decorates the reactions sections of messages containing image and/ or video attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateMediaAttachmentsMessage(
+        viewHolder: MediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         setupReactionsView(root, messageContainer, reactionsSpace, reactionsView, data)

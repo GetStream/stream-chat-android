@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Gip
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 
 internal class TextDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
@@ -71,6 +72,17 @@ internal class TextDecorator(private val style: MessageListItemStyle) : BaseDeco
      */
     override fun decorateImageAttachmentsMessage(
         viewHolder: ImageAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupTextView(viewHolder.binding.messageText, data)
+
+    /**
+     * Decorates the texts of messages containing image and/ or video attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateMediaAttachmentsMessage(
+        viewHolder: MediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupTextView(viewHolder.binding.messageText, data)
 

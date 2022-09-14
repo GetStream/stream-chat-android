@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Gip
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
@@ -91,6 +92,23 @@ internal class BackgroundDecorator(
      */
     override fun decorateImageAttachmentsMessage(
         viewHolder: ImageAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        viewHolder.binding.messageContainer.background =
+            messageBackgroundFactory.imageAttachmentMessageBackground(
+                viewHolder.binding.messageContainer.context,
+                data
+            )
+    }
+
+    /**
+     * Decorates the backgrounds of messages containing image and/ or video attachments.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decorateMediaAttachmentsMessage(
+        viewHolder: MediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         viewHolder.binding.messageContainer.background =
