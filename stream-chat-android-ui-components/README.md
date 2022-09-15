@@ -22,11 +22,15 @@ To see these components in action, check out our [sample app](../stream-chat-and
 
 You'll find the detailed documentation for the components on our website:
 
-- [Channel List View](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/)
-- [Channel List Header View](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list-header/)
-- [Message List View](https://getstream.io/chat/docs/sdk/android/ui/components/message-list/)
-- [Message List Header View](https://getstream.io/chat/docs/sdk/android/ui/components/message-list-header/)
-- [Message Input View](https://getstream.io/chat/docs/sdk/android/ui/components/message-input/)
-- [Mention List View](https://getstream.io/chat/docs/sdk/android/ui/components/mention-list-view/)
-- [Search View](https://getstream.io/chat/docs/sdk/android/ui/components/search-view/)
-- [Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/components/attachment-gallery/)
+- [Channel List Screen](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-screen/)
+- [Channel List View](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/)
+- [Channel List Header View](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/)
+- [Message List Screen](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-screen/)
+- [Message List View](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
+- [Message List Header View](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/)
+- [Message Input View](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/)
+- [Message Composer View](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/)
+- [Mention List View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/)
+- [Pinned Message List View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/pinned-message-list-view/)
+- [Search View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/)
+- [Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/utility-components/attachment-gallery/)
