@@ -144,7 +144,6 @@ import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
-import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
@@ -761,11 +760,10 @@ internal constructor(
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         logger.d { "[queryMembers] cid: $channelType:$channelId, offset: $offset, limit: $limit" }
-        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>()
         val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
             .doOnResult(userScope) { result ->
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[queryMembers] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onQueryMembersResult(
                         result,

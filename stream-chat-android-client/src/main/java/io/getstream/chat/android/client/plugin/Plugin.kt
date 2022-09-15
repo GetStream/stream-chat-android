@@ -17,8 +17,25 @@
 package io.getstream.chat.android.client.plugin
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.utils.Result
 
 /**
  * Plugin is an extension for [ChatClient].
  */
-public interface Plugin
+public interface Plugin : QueryMembersListener {
+
+    override suspend fun onQueryMembersResult(
+        result: Result<List<Member>>,
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySorter<Member>,
+        members: List<Member>,
+    ) { /* No-Op */ }
+}
