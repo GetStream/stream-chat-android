@@ -351,6 +351,9 @@ public final class io/getstream/chat/android/state/plugin/factory/StreamStatePlu
 }
 
 public final class io/getstream/chat/android/state/plugin/internal/StateAwarePlugin$DefaultImpls {
+	public static fun onDeleteReactionPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onDeleteReactionRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onDeleteReactionResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryMembersResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

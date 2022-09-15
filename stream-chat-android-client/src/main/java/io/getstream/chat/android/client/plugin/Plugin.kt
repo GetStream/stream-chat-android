@@ -20,13 +20,18 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.utils.Result
 
 /**
  * Plugin is an extension for [ChatClient].
  */
-public interface Plugin : QueryMembersListener {
+public interface Plugin :
+    QueryMembersListener,
+    DeleteReactionListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -38,4 +43,21 @@ public interface Plugin : QueryMembersListener {
         sort: QuerySorter<Member>,
         members: List<Member>,
     ) { /* No-Op */ }
+
+    override suspend fun onDeleteReactionRequest(
+        cid: String?,
+        messageId: String,
+        reactionType: String,
+        currentUser: User,
+    ) { /* No-Op */ }
+
+    override suspend fun onDeleteReactionResult(
+        cid: String?,
+        messageId: String,
+        reactionType: String,
+        currentUser: User,
+        result: Result<Message>,
+    ) { /* No-Op */ }
+
+    override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> = Result.success(Unit)
 }

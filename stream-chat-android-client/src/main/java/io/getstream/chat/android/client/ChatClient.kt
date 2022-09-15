@@ -138,7 +138,6 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
-import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
@@ -902,15 +901,13 @@ internal constructor(
      */
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
         val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
-
         val currentUser = getCurrentUser()
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
             .retry(scope = userScope, retryPolicy = retryPolicy)
             .doOnStart(userScope) {
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[deleteReaction] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onDeleteReactionRequest(
                         cid = cid,
@@ -921,7 +918,7 @@ internal constructor(
                 }
             }
             .doOnResult(userScope) { result ->
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[deleteReaction] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onDeleteReactionResult(
                         cid = cid,
@@ -932,7 +929,7 @@ internal constructor(
                     )
                 }
             }
-            .precondition(relevantPlugins) { onDeleteReactionPrecondition(currentUser) }
+            .precondition(plugins) { onDeleteReactionPrecondition(currentUser) }
             .onMessageError(relevantErrorHandlers, cid, messageId)
             .share(userScope) { DeleteReactionIdentifier(messageId, reactionType, cid) }
     }
