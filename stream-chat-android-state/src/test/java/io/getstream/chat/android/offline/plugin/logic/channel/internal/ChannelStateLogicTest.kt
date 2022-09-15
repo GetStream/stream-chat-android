@@ -52,7 +52,6 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
-import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -143,6 +142,7 @@ internal class ChannelStateLogicTest {
         val createdLocallyAt = randomDateBefore(createdAt.time)
         val updatedAt = randomDateAfter(createdAt.time)
         val oldUpdatedAt = randomDateBefore(updatedAt.time)
+        whenever(mutableState.visibleMessages) doReturn MutableStateFlow(_messages)
 
         val recentMessage = randomMessage(
             user = User(id = "otherUserId"),
@@ -219,13 +219,17 @@ internal class ChannelStateLogicTest {
     @Test
     fun `given inside search should not upsert messages when messages are not coming from scroll update`() {
         _insideSearch.value = true
+        whenever(mutableState.visibleMessages) doReturn MutableStateFlow(_messages)
+        whenever(mutableState.cachedMessages) doReturn MutableStateFlow(emptyMap())
 
         val message = randomMessage()
 
         channelStateLogic.updateDataFromChannel(
             randomChannel(messages = listOf(message)),
             shouldRefreshMessages = false,
-            scrollUpdate = false
+            scrollUpdate = false,
+            isNotificationUpdate = false,
+            skipMessages = true
         )
 
         _messages `should be equal to` emptyMap()
@@ -250,7 +254,7 @@ internal class ChannelStateLogicTest {
         val filteringRequest = QueryChannelPaginationRequest(1)
             .withMessages(Pagination.GREATER_THAN, randomString(), 1)
 
-        channelStateLogicImpl.propagateChannelQuery(channel, filteringRequest)
-        verify(mutableState).rawMessages = any()
+        channelStateLogic.propagateChannelQuery(channel, filteringRequest)
+        verify(mutableState).upsertMessages(any())
     }
 }

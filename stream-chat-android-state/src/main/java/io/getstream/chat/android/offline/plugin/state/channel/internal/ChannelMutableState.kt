@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -82,6 +83,11 @@ internal class ChannelMutableState(
 
     /** the data to hide messages before */
     var hideMessagesBefore: Date? = null
+
+    /**
+     * Messages to show on the channels list when the state is inside search to show the latest message in the preview.
+     */
+    internal val cachedMessages: MutableStateFlow<Map<String, Message>> = MutableStateFlow(emptyMap())
 
     /** The raw message list updated by recent users value. */
     val messageList: StateFlow<List<Message>> =
@@ -131,7 +137,13 @@ internal class ChannelMutableState(
     /** Channel config data */
     override val channelConfig: StateFlow<Config> = _channelConfig
 
-    override val messages: StateFlow<List<Message>> = sortedVisibleMessages
+    override val messages: StateFlow<List<Message>> = _insideSearch.flatMapLatest {
+        if (it) {
+            cachedMessages.map { it.values.toList() }
+        } else {
+            sortedMessages
+        }
+    }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override val messagesState: StateFlow<MessagesState> = _messagesState
     override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages.map { it.values })
@@ -172,8 +184,16 @@ internal class ChannelMutableState(
             } else {
                 channelData
             }
-        }
-            .stateIn(scope, SharingStarted.Eagerly, ChannelData(type = channelType, channelId = channelId))
+        }.stateIn(
+            scope,
+            SharingStarted.Eagerly,
+            ChannelData(
+                type = channelType,
+                channelId = channelId,
+                insideSearch = _insideSearch.value,
+                cachedMessages = cachedMessages.value.values.toList()
+            )
+        )
 
     override val hidden: StateFlow<Boolean> = _hidden
     override val muted: StateFlow<Boolean> = _muted
@@ -182,9 +202,6 @@ internal class ChannelMutableState(
     override val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
-
-    /** The newest cached messages for channel if the newest items are not contained inside [messageList]. */
-    val cachedMessages: StateFlow<Map<String, Message>>
 
     /** If we need to recover state when connection established again. */
     override var recoveryNeeded: Boolean = false
@@ -195,7 +212,7 @@ internal class ChannelMutableState(
         // recreate a channel object from the various observables.
         val channelData = channelData.value
 
-        val messages = sortedMessages.value
+        val messages = if (_insideSearch.value) cachedMessages.value.values.toList() else sortedMessages.value
         val members = members.value
         val watchers = watchers.value
         val reads = _rawReads.value.values.toList()
@@ -204,6 +221,7 @@ internal class ChannelMutableState(
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = _channelConfig.value
         channel.unreadCount = unreadCount.value
+        // TODO not good, needs to take into account the cached messages
         channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
 
@@ -298,6 +316,16 @@ internal class ChannelMutableState(
      * @param isInsideSearch Boolean.
      * */
     fun setInsideSearch(isInsideSearch: Boolean) {
+        when {
+            isInsideSearch && !_insideSearch.value -> {
+                cacheMessages()
+            }
+
+            !isInsideSearch && _insideSearch.value -> {
+                cachedMessages.value = emptyMap()
+            }
+        }
+
         _insideSearch.value = isInsideSearch
     }
 
@@ -449,13 +477,19 @@ internal class ChannelMutableState(
         _messages.value = messages.associateBy(Message::id)
     }
 
-    private companion object {
-        private const val OFFSET_EVENT_TIME = 5L
+    private fun cacheMessages() {
+        cachedMessages.value = mapOf()
+        cachedMessages.value = cachedMessages.value + visibleMessages.value
     }
-    fun updateTypingEvents(eventsMap: Map<String, TypingStartEvent>, typingEvent: TypingEvent)
 
     /**
      * Updates the cached messages with new messages.
      */
-    fun updateCachedMessages(messages: Map<String, Message>)
+    fun updateCachedMessages(messages: Map<String, Message>) {
+        cachedMessages.value = cachedMessages.value + messages
+    }
+
+    private companion object {
+        private const val OFFSET_EVENT_TIME = 5L
+    }
 }
