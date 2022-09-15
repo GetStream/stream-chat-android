@@ -19,11 +19,13 @@ package io.getstream.chat.android.offline.plugin.state.querychannels.internal
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
@@ -45,7 +47,7 @@ internal class QueryChannelsMutableState(
 
     private val logger = StreamLog.getLogger("Chat:QueryChannelsState")
 
-    internal var rawChannels: Map<String, Channel>?
+    internal var rawChannels: Map<String, Channel>
         get() = _channels.value
         set(value) {
             _channels.value = value
@@ -53,9 +55,13 @@ internal class QueryChannelsMutableState(
 
     // This is needed for queries
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
-    private val _channels = MutableStateFlow<Map<String, Channel>?>(null)
+    private val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
     internal val _loading = MutableStateFlow(false)
     internal val _loadingMore = MutableStateFlow(false)
+
+    internal val currentLoading: MutableStateFlow<Boolean>
+        get () = if (channels.value.isNullOrEmpty()) _loading else _loadingMore
+
     internal val _endOfChannels = MutableStateFlow(false)
     private val _sortedChannels: StateFlow<List<Channel>?> =
         _channels.combine(latestUsers) { channelMap, userMap ->
@@ -92,8 +98,12 @@ internal class QueryChannelsMutableState(
      * Non-nullable property of [ChatEventHandler] to ensure we always have some handler to handle events. Returns
      * handler set by user or default one if there is no.
      */
-    internal val eventHandler: ChatEventHandler by lazy {
+    private val eventHandler: ChatEventHandler by lazy {
         chatEventHandler ?: (chatEventHandlerFactory ?: ChatEventHandlerFactory()).chatEventHandler(_channels)
+    }
+
+    fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
+        return eventHandler.handleChatEvent(event, filter, cachedChannel)
     }
 
     override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest
@@ -114,6 +124,48 @@ internal class QueryChannelsMutableState(
         currentRequest.combine(channelsOffset) { currentRequest, currentOffset ->
             currentRequest?.copy(offset = currentOffset)
         }.stateIn(scope, SharingStarted.Eagerly, null)
+
+    fun setLoading(isLoading: Boolean) {
+        currentLoading.value = isLoading
+    }
+
+
+    /**
+     * Set the current request being made.
+     *
+     * @param request [QueryChannelsRequest]
+     */
+    fun setCurrentRequest(request: QueryChannelsRequest) {
+        _currentRequest.value = request
+    }
+
+
+    /**
+     * Set the end of channels.
+     *
+     * @parami isEnd Boolean
+     */
+    fun setEndOfChannels(isEnd: Boolean) {
+        _endOfChannels.value = isEnd
+    }
+
+    /**
+     * Sets if recovery is needed.
+     *
+     * @param recoveryNeeded Boolean
+     */
+    fun setRecoveryNeeded(recoveryNeeded: Boolean) {
+        _recoveryNeeded.value = recoveryNeeded
+    }
+
+    /**
+     * Set the offset of the channels.
+     *
+     * @param offset Int
+     */
+    fun setChannelsOffset(offset: Int) {
+        channelsOffset.value = offset
+    }
 }
 
 internal fun QueryChannelsState.toMutableState(): QueryChannelsMutableState = this as QueryChannelsMutableState

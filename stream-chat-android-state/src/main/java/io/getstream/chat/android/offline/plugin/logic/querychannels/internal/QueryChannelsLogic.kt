@@ -128,13 +128,10 @@ internal class QueryChannelsLogic(
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
         onOnlineQueryResult(result, request)
 
-        val loading = queryChannelsStateLogic?.loadingForCurrentRequest()
-        loading?.value = false
+        queryChannelsStateLogic?.setLoading(false)
 
         if (result.isSuccess) {
             updateOnlineChannels(request, result.data())
-        } else {
-            queryChannelsStateLogic?.initializeChannelsIfNeeded()
         }
     }
 

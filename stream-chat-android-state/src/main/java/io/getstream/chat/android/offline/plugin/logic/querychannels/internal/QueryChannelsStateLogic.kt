@@ -116,11 +116,6 @@ internal interface QueryChannelsStateLogic {
     fun removeChannels(cidSet: Set<String>)
 
     /**
-     * Initialized the chanels as a empty list, if needed.
-     */
-    fun initializeChannelsIfNeeded()
-
-    /**
      * Refresh all the channels.
      */
     fun refreshChannels(cidList: Collection<String>)
