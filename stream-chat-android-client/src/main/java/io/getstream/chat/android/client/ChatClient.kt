@@ -142,7 +142,6 @@ import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
-import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
@@ -1504,7 +1503,6 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
         val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
 
         return CoroutineCall(userScope) {
@@ -1519,7 +1517,7 @@ internal constructor(
                     .retry(userScope, retryPolicy)
                     .doOnResult(userScope) { result ->
                         logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
-                        relevantPlugins.forEach { listener ->
+                        plugins.forEach { listener ->
                             logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                             listener.onMessageSendResult(
                                 result,
