@@ -352,6 +352,9 @@ public final class io/getstream/chat/android/state/plugin/factory/StreamStatePlu
 
 public final class io/getstream/chat/android/state/plugin/internal/StateAwarePlugin$DefaultImpls {
 	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onCreateChannelPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onCreateChannelRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onCreateChannelResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onDeleteReactionPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/utils/Result;
 	public static fun onDeleteReactionRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onDeleteReactionResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

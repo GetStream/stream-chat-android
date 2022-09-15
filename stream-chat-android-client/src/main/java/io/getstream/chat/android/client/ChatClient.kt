@@ -135,7 +135,6 @@ import io.getstream.chat.android.client.persistance.repository.noop.NoOpReposito
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
-import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.InitializationCoordinator
@@ -2377,7 +2376,6 @@ internal constructor(
         memberIds: List<String>,
         extraData: Map<String, Any>,
     ): Call<Channel> {
-        val relevantPlugins = plugins.filterIsInstance<CreateChannelListener>()
         val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
         val currentUser = getCurrentUser()
 
@@ -2389,7 +2387,7 @@ internal constructor(
         )
             .retry(scope = userScope, retryPolicy = retryPolicy)
             .doOnStart(userScope) {
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[createChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onCreateChannelRequest(
                         channelType = channelType,
@@ -2401,7 +2399,7 @@ internal constructor(
                 }
             }
             .doOnResult(userScope) { result ->
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[createChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onCreateChannelResult(
                         channelType = channelType,
@@ -2418,7 +2416,7 @@ internal constructor(
                 memberIds = memberIds,
                 extraData = extraData,
             )
-            .precondition(relevantPlugins) {
+            .precondition(plugins) {
                 onCreateChannelPrecondition(
                     currentUser = currentUser,
                     channelId = channelId,
