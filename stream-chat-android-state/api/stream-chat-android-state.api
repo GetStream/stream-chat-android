@@ -378,5 +378,8 @@ public final class io/getstream/chat/android/state/plugin/internal/StateAwarePlu
 	public static fun onSendReactionRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onSendReactionResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onShuffleGiphyResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onTypingEventPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onTypingEventRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
+	public static fun onTypingEventResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
 }
 

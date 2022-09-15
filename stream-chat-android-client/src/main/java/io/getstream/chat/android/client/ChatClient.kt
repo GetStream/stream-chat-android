@@ -139,7 +139,6 @@ import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
-import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.InitializationCoordinator
@@ -2520,7 +2519,6 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
         val eventTime = Date()
         val eventType = EventType.TYPING_START
         return api.sendEvent(
@@ -2530,18 +2528,18 @@ internal constructor(
             extraData = extraData,
         )
             .doOnStart(userScope) {
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[keystroke] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
                 }
             }
             .doOnResult(userScope) { result ->
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[keystroke] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
                 }
             }
-            .precondition(relevantPlugins) {
+            .precondition(plugins) {
                 this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
             }
             .share(userScope) { SendEventIdentifier(eventType, channelType, channelId, parentId) }
@@ -2562,7 +2560,6 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
         val eventTime = Date()
         val eventType = EventType.TYPING_STOP
         return api.sendEvent(
@@ -2572,18 +2569,18 @@ internal constructor(
             extraData = extraData,
         )
             .doOnStart(userScope) {
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[stopTyping] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventRequest(eventType, channelType, channelId, extraData, eventTime)
                 }
             }
             .doOnResult(userScope) { result ->
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[stopTyping] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onTypingEventResult(result, eventType, channelType, channelId, extraData, eventTime)
                 }
             }
-            .precondition(relevantPlugins) {
+            .precondition(plugins) {
                 this.onTypingEventPrecondition(eventType, channelType, channelId, extraData, eventTime)
             }
             .share(userScope) { SendEventIdentifier(eventType, channelType, channelId, parentId) }

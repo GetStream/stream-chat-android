@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -37,7 +38,9 @@ import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.utils.Result
+import java.util.Date
 
 /**
  * Plugin is an extension for [ChatClient].
@@ -54,7 +57,8 @@ public interface Plugin :
     SendMessageListener,
     EditMessageListener,
     QueryChannelListener,
-    QueryChannelsListener {
+    QueryChannelsListener,
+    TypingEventListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -189,5 +193,30 @@ public interface Plugin :
     override suspend fun onQueryChannelsResult(
         result: Result<List<Channel>>,
         request: QueryChannelsRequest,
+    ) { /* No-Op */ }
+
+    override fun onTypingEventPrecondition(
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any>,
+        eventTime: Date,
+    ): Result<Unit> = Result.success(Unit)
+
+    override fun onTypingEventRequest(
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any>,
+        eventTime: Date,
+    ) { /* No-Op */ }
+
+    override fun onTypingEventResult(
+        result: Result<ChatEvent>,
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any>,
+        eventTime: Date,
     ) { /* No-Op */ }
 }
