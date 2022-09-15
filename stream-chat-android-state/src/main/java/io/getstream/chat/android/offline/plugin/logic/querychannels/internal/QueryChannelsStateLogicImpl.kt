@@ -58,7 +58,7 @@ internal class QueryChannelsStateLogicImpl(
     /**
      * Get all the channels that were queried so far.
      */
-    override fun getChannels(): Map<String, Channel>? = mutableState.rawChannels
+    override fun getChannels(): Map<String, Channel> = mutableState.rawChannels
 
     /**
      * The the specs of the query.
@@ -143,7 +143,7 @@ internal class QueryChannelsStateLogicImpl(
      */
     override fun addChannelsState(channels: List<Channel>) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
-        val existingChannels = mutableState.rawChannels ?: emptyMap()
+        val existingChannels = mutableState.rawChannels
         mutableState.rawChannels = existingChannels + channels.map { it.cid to it }
         channels.forEach { channel ->
             logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
@@ -158,7 +158,7 @@ internal class QueryChannelsStateLogicImpl(
      * Remove channels to state.
      */
     override fun removeChannels(cidSet: Set<String>) {
-        val existingChannels = mutableState.rawChannels ?: return
+        val existingChannels = mutableState.rawChannels
 
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
         mutableState.rawChannels = existingChannels - cidSet
