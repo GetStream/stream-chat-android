@@ -137,7 +137,6 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
-import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
@@ -1777,21 +1776,20 @@ internal constructor(
         clearHistory: Boolean = false,
     ): Call<Unit> {
         logger.d { "[hideChannel] cid: $channelType:$channelId, clearHistory: $clearHistory" }
-        val relevantPlugins = plugins.filterIsInstance<HideChannelListener>()
         return api.hideChannel(channelType, channelId, clearHistory)
             .doOnStart(userScope) {
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[hideChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onHideChannelRequest(channelType, channelId, clearHistory)
                 }
             }
             .doOnResult(userScope) { result ->
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[hideChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onHideChannelResult(result, channelType, channelId, clearHistory)
                 }
             }
-            .precondition(relevantPlugins) { onHideChannelPrecondition(channelType, channelId, clearHistory) }
+            .precondition(plugins) { onHideChannelPrecondition(channelType, channelId, clearHistory) }
             .share(userScope) { HideChannelIdentifier(channelType, channelId, clearHistory) }
     }
 

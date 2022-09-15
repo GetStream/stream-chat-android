@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
@@ -58,7 +59,8 @@ public interface Plugin :
     EditMessageListener,
     QueryChannelListener,
     QueryChannelsListener,
-    TypingEventListener {
+    TypingEventListener,
+    HideChannelListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -218,5 +220,24 @@ public interface Plugin :
         channelId: String,
         extraData: Map<Any, Any>,
         eventTime: Date,
+    ) { /* No-Op */ }
+
+    override suspend fun onHideChannelPrecondition(
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean,
+    ): Result<Unit> = Result.success(Unit)
+
+    override suspend fun onHideChannelRequest(
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean,
+    ) { /* No-Op */ }
+
+    override suspend fun onHideChannelResult(
+        result: Result<Unit>,
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean,
     ) { /* No-Op */ }
 }
