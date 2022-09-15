@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
@@ -62,7 +63,8 @@ public interface Plugin :
     QueryChannelsListener,
     TypingEventListener,
     HideChannelListener,
-    MarkAllReadListener {
+    MarkAllReadListener,
+    ChannelMarkReadListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -244,4 +246,9 @@ public interface Plugin :
     ) { /* No-Op */ }
 
     override suspend fun onMarkAllReadRequest() { /* No-Op */ }
+
+    override suspend fun onChannelMarkReadPrecondition(
+        channelType: String,
+        channelId: String,
+    ): Result<Unit> = Result.success(Unit)
 }
