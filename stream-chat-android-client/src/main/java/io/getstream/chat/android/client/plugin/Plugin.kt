@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
@@ -45,7 +46,8 @@ public interface Plugin :
     SendGiphyListener,
     ShuffleGiphyListener,
     DeleteMessageListener,
-    SendMessageListener {
+    SendMessageListener,
+    EditMessageListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -149,4 +151,8 @@ public interface Plugin :
         channelId: String,
         message: Message,
     ) { /* No-Op */ }
+
+    override suspend fun onMessageEditRequest(message: Message) { /* No-Op */ }
+
+    override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) { /* No-Op */ }
 }
