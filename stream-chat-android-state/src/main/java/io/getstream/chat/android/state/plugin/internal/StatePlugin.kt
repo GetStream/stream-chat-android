@@ -92,16 +92,7 @@ public class StatePlugin(
     SendMessageListener by sendMessageListener,
     TypingEventListener by typingEventListener {
 
-    override val name: String = MODULE_NAME
-
     @Suppress("UNCHECKED_CAST")
     @InternalStreamChatApi
     public override fun <T : Any> resolveDependency(klass: KClass<T>): T? = provideDependency(klass) as? T
-
-    private companion object {
-        /**
-         * Name of this plugin module.
-         */
-        private const val MODULE_NAME: String = "State"
-    }
 }

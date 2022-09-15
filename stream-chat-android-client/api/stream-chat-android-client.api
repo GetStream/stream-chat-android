@@ -3593,7 +3593,6 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/Plugin {
-	public abstract fun getName ()Ljava/lang/String;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/factory/PluginFactory {

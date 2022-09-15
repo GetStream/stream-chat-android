@@ -401,17 +401,6 @@ internal constructor(
         this.errorHandlers = errorHandlers.sorted()
     }
 
-    private fun logPlugins(plugins: List<Any>) {
-        if (plugins.isNotEmpty()) {
-            val jointString = plugins.joinToString { plugin ->
-                plugin::class.qualifiedName ?: "plugin without qualified name"
-            }
-            logger.d { "Plugins found: $jointString" }
-        } else {
-            logger.d { "No plugins found for this request." }
-        }
-    }
-
     //region Set user
 
     /**
@@ -772,7 +761,7 @@ internal constructor(
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         logger.d { "[queryMembers] cid: $channelType:$channelId, offset: $offset, limit: $limit" }
-        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<QueryMembersListener>()
         val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
             .doOnResult(userScope) { result ->
@@ -915,7 +904,7 @@ internal constructor(
      */
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<DeleteReactionListener>()
         val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
 
         val currentUser = getCurrentUser()
@@ -971,7 +960,7 @@ internal constructor(
     @CheckResult
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
-        val relevantPlugins = plugins.filterIsInstance<SendReactionListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<SendReactionListener>()
         val relevantErrorHandlers = errorHandlers.filterIsInstance<SendReactionErrorHandler>()
         val currentUser = getCurrentUser()
 
@@ -1380,7 +1369,7 @@ internal constructor(
     @CheckResult
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         logger.d { "[getReplies] messageId: $messageId, limit: $limit" }
-        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
 
         return api.getReplies(messageId, limit)
             .doOnStart(userScope) {
@@ -1406,7 +1395,7 @@ internal constructor(
         limit: Int,
     ): Call<List<Message>> {
         logger.d { "[getRepliesMore] messageId: $messageId, firstId: $firstId, limit: $limit" }
-        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
 
         return api.getRepliesMore(messageId, firstId, limit)
             .doOnStart(userScope) {
@@ -1440,7 +1429,7 @@ internal constructor(
      * @return Executable async [Call] responsible for sending the Giphy.
      */
     public fun sendGiphy(message: Message): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<SendGiphyListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<SendGiphyListener>()
         val request = message.run {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
         }
@@ -1467,7 +1456,7 @@ internal constructor(
      * @return Executable async [Call] responsible for shuffling the Giphy.
      */
     public fun shuffleGiphy(message: Message): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<ShuffleGiphyListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<ShuffleGiphyListener>()
         val request = message.run {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
         }
@@ -1487,7 +1476,7 @@ internal constructor(
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
         logger.d { "[deleteMessage] messageId: $messageId, hard: $hard" }
-        val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>()
 
         return api.deleteMessage(messageId, hard)
             .doOnStart(userScope) {
@@ -1531,7 +1520,7 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<SendMessageListener>()
         val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
 
         return CoroutineCall(userScope) {
@@ -1568,7 +1557,7 @@ internal constructor(
      */
     @CheckResult
     public fun updateMessage(message: Message): Call<Message> {
-        val relevantPlugins = plugins.filterIsInstance<EditMessageListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<EditMessageListener>()
 
         return api.updateMessage(message)
             .doOnStart(userScope) {
@@ -1726,7 +1715,7 @@ internal constructor(
         request: QueryChannelRequest,
     ): Call<Channel> {
         logger.d { "[queryChannel] cid: $channelType:$channelId" }
-        val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
 
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
             .doOnStart(userScope) {
@@ -1761,7 +1750,6 @@ internal constructor(
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
         logger.d { "[queryChannels] offset: ${request.offset}, limit: ${request.limit}" }
         val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
-        logPlugins(relevantPluginsLazy())
 
         return queryChannelsInternal(request = request).doOnStart(userScope) {
             relevantPluginsLazy().forEach { listener ->
@@ -1817,7 +1805,7 @@ internal constructor(
         clearHistory: Boolean = false,
     ): Call<Unit> {
         logger.d { "[hideChannel] cid: $channelType:$channelId, clearHistory: $clearHistory" }
-        val relevantPlugins = plugins.filterIsInstance<HideChannelListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<HideChannelListener>()
         return api.hideChannel(channelType, channelId, clearHistory)
             .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
@@ -2007,7 +1995,7 @@ internal constructor(
      */
     @CheckResult
     public fun markAllRead(): Call<Unit> {
-        val relevantPlugins = plugins.filterIsInstance<MarkAllReadListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<MarkAllReadListener>()
         return api.markAllRead()
             .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
@@ -2026,7 +2014,7 @@ internal constructor(
      */
     @CheckResult
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
-        val relevantPlugins = plugins.filterIsInstance<ChannelMarkReadListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<ChannelMarkReadListener>()
 
         return api.markRead(channelType, channelId)
             .precondition(relevantPlugins) { onChannelMarkReadPrecondition(channelType, channelId) }
@@ -2424,7 +2412,7 @@ internal constructor(
         memberIds: List<String>,
         extraData: Map<String, Any>,
     ): Call<Channel> {
-        val relevantPlugins = plugins.filterIsInstance<CreateChannelListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<CreateChannelListener>()
         val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
         val currentUser = getCurrentUser()
 
@@ -2559,7 +2547,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
         val eventTime = Date()
         val eventType = EventType.TYPING_START
         return api.sendEvent(
@@ -2601,7 +2589,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>().also(::logPlugins)
+        val relevantPlugins = plugins.filterIsInstance<TypingEventListener>()
         val eventTime = Date()
         val eventType = EventType.TYPING_STOP
         return api.sendEvent(
