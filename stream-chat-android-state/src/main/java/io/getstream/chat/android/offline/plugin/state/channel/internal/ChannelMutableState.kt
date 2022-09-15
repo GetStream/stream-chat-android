@@ -446,6 +446,10 @@ internal class ChannelMutableState(
         _messages.value = messages.associateBy(Message::id)
     }
 
+    fun containsMessageWithId(messageId: String): Boolean {
+        return _messages.value.containsKey(messageId)
+    }
+
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
     }
