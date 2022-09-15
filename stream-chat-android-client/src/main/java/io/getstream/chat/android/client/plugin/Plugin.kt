@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.plugin
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
@@ -29,6 +30,7 @@ import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
@@ -51,7 +53,8 @@ public interface Plugin :
     DeleteMessageListener,
     SendMessageListener,
     EditMessageListener,
-    QueryChannelListener {
+    QueryChannelListener,
+    QueryChannelsListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -177,5 +180,14 @@ public interface Plugin :
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
+    ) { /* No-Op */ }
+
+    override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> = Result.success(Unit)
+
+    override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) { /* No-Op */ }
+
+    override suspend fun onQueryChannelsResult(
+        result: Result<List<Channel>>,
+        request: QueryChannelsRequest,
     ) { /* No-Op */ }
 }

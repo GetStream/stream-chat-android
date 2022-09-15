@@ -139,7 +139,6 @@ import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
-import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
@@ -1725,19 +1724,17 @@ internal constructor(
     @CheckResult
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
         logger.d { "[queryChannels] offset: ${request.offset}, limit: ${request.limit}" }
-        val relevantPluginsLazy = { plugins.filterIsInstance<QueryChannelsListener>() }
-
         return queryChannelsInternal(request = request).doOnStart(userScope) {
-            relevantPluginsLazy().forEach { listener ->
+            plugins.forEach { listener ->
                 logger.v { "[queryChannels] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsRequest(request)
             }
         }.doOnResult(userScope) { result ->
-            relevantPluginsLazy().forEach { listener ->
+            plugins.forEach { listener ->
                 logger.v { "[queryChannels] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                 listener.onQueryChannelsResult(result, request)
             }
-        }.precondition(relevantPluginsLazy()) {
+        }.precondition(plugins) {
             onQueryChannelsPrecondition(request)
         }.share(userScope) {
             QueryChannelsIdentifier(request)
