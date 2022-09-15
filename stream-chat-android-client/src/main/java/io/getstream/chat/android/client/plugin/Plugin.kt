@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
 
@@ -39,7 +40,8 @@ public interface Plugin :
     DeleteReactionListener,
     SendReactionListener,
     ThreadQueryListener,
-    SendGiphyListener {
+    SendGiphyListener,
+    ShuffleGiphyListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -125,4 +127,6 @@ public interface Plugin :
     ) { /* No-Op */ }
 
     override fun onGiphySendResult(cid: String, result: Result<Message>) { /* No-Op */ }
+
+    override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) { /* No-Op */ }
 }

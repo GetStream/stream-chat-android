@@ -365,5 +365,6 @@ public final class io/getstream/chat/android/state/plugin/internal/StateAwarePlu
 	public static fun onSendReactionPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
 	public static fun onSendReactionRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onSendReactionResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onShuffleGiphyResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

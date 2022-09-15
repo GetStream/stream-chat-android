@@ -3592,7 +3592,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun createRepositoryFactory (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
 }
 
-public abstract interface class io/getstream/chat/android/client/plugin/Plugin : io/getstream/chat/android/client/plugin/listeners/DeleteReactionListener, io/getstream/chat/android/client/plugin/listeners/QueryMembersListener, io/getstream/chat/android/client/plugin/listeners/SendGiphyListener, io/getstream/chat/android/client/plugin/listeners/SendReactionListener, io/getstream/chat/android/client/plugin/listeners/ThreadQueryListener {
+public abstract interface class io/getstream/chat/android/client/plugin/Plugin : io/getstream/chat/android/client/plugin/listeners/DeleteReactionListener, io/getstream/chat/android/client/plugin/listeners/QueryMembersListener, io/getstream/chat/android/client/plugin/listeners/SendGiphyListener, io/getstream/chat/android/client/plugin/listeners/SendReactionListener, io/getstream/chat/android/client/plugin/listeners/ShuffleGiphyListener, io/getstream/chat/android/client/plugin/listeners/ThreadQueryListener {
 	public abstract fun onDeleteReactionPrecondition (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun onDeleteReactionRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onDeleteReactionResult (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -3607,6 +3607,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 	public abstract fun onSendReactionPrecondition (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun onSendReactionRequest (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onSendReactionResult (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onShuffleGiphyResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
@@ -3624,6 +3625,7 @@ public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
 	public static fun onSendReactionPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
 	public static fun onSendReactionRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onSendReactionResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onShuffleGiphyResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/factory/PluginFactory {
