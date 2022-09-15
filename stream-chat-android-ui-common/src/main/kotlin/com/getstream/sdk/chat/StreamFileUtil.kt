@@ -135,6 +135,7 @@ public object StreamFileUtil {
      * [Result.data] will contain a [Uri] pointing to the file, otherwise [Result.error]
      * will contain a [ChatError].
      */
+    @Suppress("ReturnCount")
     public suspend fun writeFileToShareableFile(
         context: Context,
         attachment: Attachment,
