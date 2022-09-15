@@ -78,8 +78,7 @@ internal class LogicRegistry internal constructor(
                 repos,
                 repos,
                 repos,
-                coroutineScope,
-                repos.provideConfig()
+                repos
             )
 
             QueryChannelsLogic(

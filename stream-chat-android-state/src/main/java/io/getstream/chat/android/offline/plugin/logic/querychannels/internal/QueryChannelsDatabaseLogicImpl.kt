@@ -27,13 +27,10 @@ import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepo
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 
 @Suppress("LongParameterList")
 internal class QueryChannelsDatabaseLogicImpl(
@@ -42,43 +39,8 @@ internal class QueryChannelsDatabaseLogicImpl(
     private val channelRepository: ChannelRepository,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
-    private val scope: CoroutineScope,
-    private val defaultConfig: Config,
+    private val repositoryFacade: RepositoryFacade,
 ) : QueryChannelsDatabaseLogic {
-
-    /**
-     * Store the state oc the channels in the database.
-     *
-     * @param configs Collection<ChannelConfig>
-     * @param users List<User>
-     * @param channels: Collection<Channel>
-     * @param messages: List<Message>
-     * @param cacheForMessages: Boolean
-     */
-    private suspend fun selectChannels(
-        channelIds: List<String>,
-        pagination: AnyChannelPaginationRequest?,
-        forceCache: Boolean = false,
-    ): List<Channel> {
-        // fetch the channel entities from room
-        val channels = channelRepository.selectChannels(channelIds, forceCache)
-        // TODO why it is not compared this way?
-        //  pagination?.isRequestingMoreThanLastMessage() == true
-        val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
-            // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
-            // sqlite has window functions: https://sqlite.org/windowfunctions.html
-            // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
-            channelIds.map { cid ->
-                scope.async { cid to messageRepository.selectMessagesForChannel(cid, pagination) }
-            }.awaitAll().toMap()
-        } else {
-            emptyMap()
-        }
-
-        return channels.onEach { channel ->
-            channel.enrichChannel(messagesMap, defaultConfig)
-        }
-    }
 
     override suspend fun storeStateForChannels(
         configs: Collection<ChannelConfig>?,
@@ -107,7 +69,7 @@ internal class QueryChannelsDatabaseLogicImpl(
             queryChannelsRepository.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort)
         } ?: return emptyList()
 
-        return selectChannels(query.cids.toList(), pagination).applyPagination(pagination)
+        return repositoryFacade.selectChannels(query.cids.toList(), pagination).applyPagination(pagination)
     }
 
     /**
