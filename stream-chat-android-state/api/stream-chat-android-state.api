@@ -364,6 +364,7 @@ public final class io/getstream/chat/android/state/plugin/internal/StateAwarePlu
 	public static fun onHideChannelPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onHideChannelRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onHideChannelResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMarkAllReadRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onMessageDeletePrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onMessageDeleteRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onMessageDeleteResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

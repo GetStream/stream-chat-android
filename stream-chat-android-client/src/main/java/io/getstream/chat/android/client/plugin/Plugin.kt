@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
@@ -60,7 +61,8 @@ public interface Plugin :
     QueryChannelListener,
     QueryChannelsListener,
     TypingEventListener,
-    HideChannelListener {
+    HideChannelListener,
+    MarkAllReadListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -240,4 +242,6 @@ public interface Plugin :
         channelId: String,
         clearHistory: Boolean,
     ) { /* No-Op */ }
+
+    override suspend fun onMarkAllReadRequest() { /* No-Op */ }
 }
