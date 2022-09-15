@@ -21,9 +21,11 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.utils.Result
 
 /**
@@ -31,7 +33,8 @@ import io.getstream.chat.android.client.utils.Result
  */
 public interface Plugin :
     QueryMembersListener,
-    DeleteReactionListener {
+    DeleteReactionListener,
+    SendReactionListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -60,4 +63,21 @@ public interface Plugin :
     ) { /* No-Op */ }
 
     override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> = Result.success(Unit)
+
+    override suspend fun onSendReactionRequest(
+        cid: String?,
+        reaction: Reaction,
+        enforceUnique: Boolean,
+        currentUser: User,
+    ) { /* No-Op */ }
+
+    override suspend fun onSendReactionResult(
+        cid: String?,
+        reaction: Reaction,
+        enforceUnique: Boolean,
+        currentUser: User,
+        result: Result<Reaction>,
+    ) { /* No-Op */ }
+
+    override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> = Result.success(Unit)
 }
