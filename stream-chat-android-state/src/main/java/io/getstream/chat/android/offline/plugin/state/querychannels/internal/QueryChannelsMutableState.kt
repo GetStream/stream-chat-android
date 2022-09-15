@@ -49,20 +49,20 @@ internal class QueryChannelsMutableState(
 
     internal var rawChannels: Map<String, Channel>
         get() = _channels.value
-        set(value) {
+        private set(value) {
             _channels.value = value
         }
 
     // This is needed for queries
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
     private val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
-    internal val _loading = MutableStateFlow(false)
-    internal val _loadingMore = MutableStateFlow(false)
+    private val _loading = MutableStateFlow(false)
+    private val _loadingMore = MutableStateFlow(false)
 
     internal val currentLoading: MutableStateFlow<Boolean>
         get() = if (channels.value.isNullOrEmpty()) _loading else _loadingMore
 
-    internal val _endOfChannels = MutableStateFlow(false)
+    private val _endOfChannels = MutableStateFlow(false)
     private val _sortedChannels: StateFlow<List<Channel>?> =
         _channels.combine(latestUsers) { channelMap, userMap ->
             channelMap.values.updateUsers(userMap)
@@ -83,8 +83,8 @@ internal class QueryChannelsMutableState(
                 }
             }
         }.stateIn(scope, SharingStarted.Eagerly, null)
-    internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
-    internal val _recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
+    private val _recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
 
     /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsMutableState]. */
@@ -163,6 +163,10 @@ internal class QueryChannelsMutableState(
      */
     fun setChannelsOffset(offset: Int) {
         channelsOffset.value = offset
+    }
+
+    fun setChannels(channelsMap: Map<String, Channel>) {
+        rawChannels = channelsMap
     }
 }
 

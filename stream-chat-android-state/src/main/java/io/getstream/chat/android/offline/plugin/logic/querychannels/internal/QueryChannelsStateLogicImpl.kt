@@ -144,7 +144,7 @@ internal class QueryChannelsStateLogicImpl(
     override fun addChannelsState(channels: List<Channel>) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
         val existingChannels = mutableState.rawChannels
-        mutableState.rawChannels = existingChannels + channels.map { it.cid to it }
+        mutableState.setChannels(existingChannels + channels.map { it.cid to it })
         channels.forEach { channel ->
             logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
                 channel,
@@ -161,7 +161,7 @@ internal class QueryChannelsStateLogicImpl(
         val existingChannels = mutableState.rawChannels
 
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
-        mutableState.rawChannels = existingChannels - cidSet
+        mutableState.setChannels(existingChannels - cidSet)
     }
 
     /**
@@ -173,7 +173,7 @@ internal class QueryChannelsStateLogicImpl(
     override fun refreshChannels(cidList: Collection<String>) {
         val existingChannels = mutableState.rawChannels
 
-        mutableState.rawChannels = existingChannels + mutableState.queryChannelsSpec.cids
+        val newChannels = existingChannels + mutableState.queryChannelsSpec.cids
             .intersect(cidList.toSet())
             .map { cid -> cid.cidToTypeAndId() }
             .filter { (channelType, channelId) ->
@@ -189,6 +189,8 @@ internal class QueryChannelsStateLogicImpl(
                     channelId = channelId,
                 ).toChannel()
             }
+
+        mutableState.setChannels(newChannels)
     }
 
     /**
@@ -210,6 +212,6 @@ internal class QueryChannelsStateLogicImpl(
                 )
             }
 
-        mutableState.rawChannels = existingChannels + affectedChannels
+        mutableState.setChannels(existingChannels + affectedChannels)
     }
 }
