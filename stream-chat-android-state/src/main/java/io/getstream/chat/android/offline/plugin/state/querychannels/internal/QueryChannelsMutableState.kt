@@ -60,22 +60,22 @@ internal class QueryChannelsMutableState(
     internal val _loadingMore = MutableStateFlow(false)
 
     internal val currentLoading: MutableStateFlow<Boolean>
-        get () = if (channels.value.isNullOrEmpty()) _loading else _loadingMore
+        get() = if (channels.value.isNullOrEmpty()) _loading else _loadingMore
 
     internal val _endOfChannels = MutableStateFlow(false)
     private val _sortedChannels: StateFlow<List<Channel>?> =
         _channels.combine(latestUsers) { channelMap, userMap ->
-            channelMap?.values?.updateUsers(userMap)
+            channelMap.values.updateUsers(userMap)
         }.map { channels ->
-            if (channels?.isNotEmpty() == true) {
+            if (channels.isNotEmpty()) {
                 logger.d {
                     val ids = channels.joinToString { channel -> channel.id }
                     "Sorting channels: $ids"
                 }
             }
 
-            channels?.sortedWith(sort.comparator).also { sortedChannels ->
-                if (sortedChannels?.isNotEmpty() == true) {
+            channels.sortedWith(sort.comparator).also { sortedChannels ->
+                if (sortedChannels.isNotEmpty()) {
                     logger.d {
                         val ids = sortedChannels.joinToString { channel -> channel.id }
                         "Sorting result: $ids"
@@ -129,7 +129,6 @@ internal class QueryChannelsMutableState(
         currentLoading.value = isLoading
     }
 
-
     /**
      * Set the current request being made.
      *
@@ -138,7 +137,6 @@ internal class QueryChannelsMutableState(
     fun setCurrentRequest(request: QueryChannelsRequest) {
         _currentRequest.value = request
     }
-
 
     /**
      * Set the end of channels.
