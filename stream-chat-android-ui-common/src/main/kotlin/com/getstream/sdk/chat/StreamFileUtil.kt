@@ -23,7 +23,9 @@ import android.net.Uri
 import android.os.Environment
 import androidx.core.content.FileProvider
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.io.FileOutputStream
@@ -65,23 +67,28 @@ public object StreamFileUtil {
      *
      * @param context The [Context] necessary to perform
      * file operations.
-     * @param onError Called when an error occurs.
      *
-     * @return The Stream cache directory if it exists or its creation
-     * was successful, false otherwise.
+     * @return Returns a [Result]. If the action was successful
+     * [Result.data] will contain a [File] pointing to the cache directory,
+     * otherwise [Result.error] will contain a [ChatError].
      */
     @Suppress("TooGenericExceptionCaught")
     private fun getOrCreateStreamCacheDir(
         context: Context,
-        onError: (exception: Exception) -> Unit = {},
-    ): File? {
+    ): Result<File> {
         return try {
-            File(context.cacheDir, streamCacheDirName).also { streamCacheDir ->
+            val file = File(context.cacheDir, STREAM_CACHE_DIR_NAME).also { streamCacheDir ->
                 streamCacheDir.mkdirs()
             }
+
+            Result(data = file)
         } catch (e: Exception) {
-            onError(e)
-            null
+            val chatError = ChatError(
+                message = "Could not get or create the Stream cache directory",
+                cause = e
+            )
+
+            Result(error = chatError)
         }
     }
 
@@ -91,26 +98,27 @@ public object StreamFileUtil {
      *
      * @param context The [Context] necessary to perform
      * file operations.
-     * @param onError Called when an error occurs.
      *
-     * @return True if the cache was cleared, false otherwise.
+     * @return Returns a [Result]. If the action was successful
+     * [Result.data] will contain [Unit], otherwise [Result.error]
+     * will contain a [ChatError].
      */
     @Suppress("TooGenericExceptionCaught")
     public fun clearStreamCache(
         context: Context,
-        onError: (exception: Exception) -> Unit = {},
-    ): Boolean {
+    ): Result<Unit> {
         return try {
-            val directory = File(context.cacheDir, streamCacheDirName)
+            val directory = File(context.cacheDir, STREAM_CACHE_DIR_NAME)
+            directory.deleteRecursively()
 
-            directory.listFiles()?.forEach {
-                it.delete()
-            }
-
-            true
+            Result(data = Unit)
         } catch (e: Exception) {
-            onError(e)
-            false
+            val chatError = ChatError(
+                message = "Could clear the Stream cache directory",
+                cause = e
+            )
+
+            Result(error = chatError)
         }
     }
 
@@ -122,33 +130,40 @@ public object StreamFileUtil {
      *
      * @param context The Android [Context] used for path resolving and [Uri] fetching.
      * @param attachment the attachment to be downloaded.
-     * @param onError Called when an error occurs.
      *
-     * @return The [Uri] that represents the path to the downloaded file.
+     * @return Returns a [Result]. If the action was successful
+     * [Result.data] will contain a [Uri] pointing to the file, otherwise [Result.error]
+     * will contain a [ChatError].
      */
     public suspend fun writeFileToShareableFile(
         context: Context,
         attachment: Attachment,
-        onError: (exception: Exception) -> Unit = {},
-    ): Uri? {
-        val result = runCatching {
-            val streamCacheDir = getOrCreateStreamCacheDir(context, onError)
+    ): Result<Uri> {
+        val runCatching = kotlin.runCatching {
+            val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)
+            if (getOrCreateCacheDirResult.isError) return Result(error = getOrCreateCacheDirResult.error())
+
+            val streamCacheDir = getOrCreateCacheDirResult.data()
+
             val attachmentName = (attachment.url ?: attachment.assetUrl)?.hashCode()
-            val fileName = attachmentName.toString() + attachment.name
+            val fileName = CACHED_FILE_PREFIX + attachmentName.toString() + attachment.name
 
             val file = File(streamCacheDir, fileName)
 
             // When File.createNewFile returns false it means that the file already exists.
             // We then check the hash name equality to confirm it's the same file and check file size
             // equality to make sure we've completed the download successfully.
-            if (!file.createNewFile() &&
+            return if (!file.createNewFile() &&
                 attachmentName != null &&
                 // once this is functional
                 file.length() == attachment.fileSize.toLong()
             ) {
-                getUriForFile(context, file)
+                Result(data = getUriForFile(context, file))
             } else {
-                val fileUrl = attachment.assetUrl ?: attachment.url ?: return null
+                val fileUrl = attachment.assetUrl ?: attachment.url ?: return Result(
+                    error = ChatError(message = "File URL cannot be null.")
+                )
+
                 val response = ChatClient.instance().downloadFile(fileUrl).await()
 
                 if (response.isSuccess) {
@@ -158,20 +173,19 @@ public object StreamFileUtil {
                     fileOutputStream.write(byteArray)
                     fileOutputStream.close()
 
-                    getUriForFile(context, file)
+                    Result(data = getUriForFile(context, file))
                 } else {
-                    null
+                    Result(error = response.error())
                 }
             }
         }
 
-        result.onFailure { throwable ->
-            if (throwable is Exception) {
-                onError(throwable)
-            }
-        }
-
-        return result.getOrNull()
+        return runCatching.getOrNull() ?: Result(
+            error = ChatError(
+                message = "Could not write to file.",
+                cause = (runCatching.exceptionOrNull())
+            )
+        )
     }
 
     /**
@@ -180,5 +194,10 @@ public object StreamFileUtil {
      * This does not include file separators so do not forget to include them
      * when using this to access the directory or files contained within.
      */
-    private const val streamCacheDirName = "stream_cache"
+    private const val STREAM_CACHE_DIR_NAME = "stream_cache"
+
+    /**
+     * The prefix to all cached file names.
+     */
+    private const val CACHED_FILE_PREFIX = "TMP"
 }
