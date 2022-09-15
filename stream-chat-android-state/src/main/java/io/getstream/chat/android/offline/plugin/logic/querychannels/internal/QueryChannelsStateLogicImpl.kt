@@ -171,9 +171,7 @@ internal class QueryChannelsStateLogicImpl(
      * @param cidList The channels to refresh.
      */
     override fun refreshChannels(cidList: Collection<String>) {
-        val existingChannels = mutableState.rawChannels
-
-        val newChannels = existingChannels + mutableState.queryChannelsSpec.cids
+        val newChannels = mutableState.rawChannels + mutableState.queryChannelsSpec.cids
             .intersect(cidList.toSet())
             .map { cid -> cid.cidToTypeAndId() }
             .filter { (channelType, channelId) ->
