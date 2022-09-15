@@ -146,7 +146,6 @@ import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
-import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
@@ -1362,22 +1361,21 @@ internal constructor(
     @CheckResult
     public fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         logger.d { "[getReplies] messageId: $messageId, limit: $limit" }
-        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
 
         return api.getReplies(messageId, limit)
             .doOnStart(userScope) {
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[getReplies] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesRequest(messageId, limit)
                 }
             }
             .doOnResult(userScope) { result ->
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[getReplies] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesResult(result, messageId, limit)
                 }
             }
-            .precondition(relevantPlugins) { onGetRepliesPrecondition(messageId, limit) }
+            .precondition(plugins) { onGetRepliesPrecondition(messageId, limit) }
             .share(userScope) { GetRepliesIdentifier(messageId, limit) }
     }
 
@@ -1388,22 +1386,21 @@ internal constructor(
         limit: Int,
     ): Call<List<Message>> {
         logger.d { "[getRepliesMore] messageId: $messageId, firstId: $firstId, limit: $limit" }
-        val relevantPlugins = plugins.filterIsInstance<ThreadQueryListener>()
 
         return api.getRepliesMore(messageId, firstId, limit)
             .doOnStart(userScope) {
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[getRepliesMore] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesMoreRequest(messageId, firstId, limit)
                 }
             }
             .doOnResult(userScope) { result ->
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[getRepliesMore] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onGetRepliesMoreResult(result, messageId, firstId, limit)
                 }
             }
-            .precondition(relevantPlugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
+            .precondition(plugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
             .share(userScope) { GetRepliesMoreIdentifier(messageId, firstId, limit) }
     }
 

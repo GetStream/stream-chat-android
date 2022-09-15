@@ -26,15 +26,18 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
 
 /**
  * Plugin is an extension for [ChatClient].
  */
+@Suppress("TooManyFunctions")
 public interface Plugin :
     QueryMembersListener,
     DeleteReactionListener,
-    SendReactionListener {
+    SendReactionListener,
+    ThreadQueryListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -79,5 +82,43 @@ public interface Plugin :
         result: Result<Reaction>,
     ) { /* No-Op */ }
 
-    override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> = Result.success(Unit)
+    override fun onSendReactionPrecondition(
+        currentUser: User?,
+        reaction: Reaction,
+    ): Result<Unit> = Result.success(Unit)
+
+    override suspend fun onGetRepliesPrecondition(
+        messageId: String,
+        limit: Int,
+    ): Result<Unit> = Result.success(Unit)
+
+    override suspend fun onGetRepliesRequest(
+        messageId: String,
+        limit: Int,
+    ) { /* No-Op */ }
+
+    override suspend fun onGetRepliesResult(
+        result: Result<List<Message>>,
+        messageId: String,
+        limit: Int,
+    ) { /* No-Op */ }
+
+    override suspend fun onGetRepliesMorePrecondition(
+        messageId: String,
+        firstId: String,
+        limit: Int,
+    ): Result<Unit> = Result.success(Unit)
+
+    override suspend fun onGetRepliesMoreRequest(
+        messageId: String,
+        firstId: String,
+        limit: Int,
+    ) { /* No-Op */ }
+
+    override suspend fun onGetRepliesMoreResult(
+        result: Result<List<Message>>,
+        messageId: String,
+        firstId: String,
+        limit: Int,
+    ) { /* No-Op */ }
 }
