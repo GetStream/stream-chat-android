@@ -16,11 +16,9 @@
 
 package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
@@ -97,16 +95,5 @@ internal class QueryChannelsDatabaseLogicImpl(
      */
     override suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
         return channelConfigRepository.insertChannelConfigs(configs)
-    }
-
-    @VisibleForTesting
-    fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
-        config = channelConfigRepository.selectChannelConfig(type)?.config ?: defaultConfig
-        messages = if (messageMap.containsKey(cid)) {
-            val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
-            fullList.distinctBy(Message::id)
-        } else {
-            messages
-        }
     }
 }
