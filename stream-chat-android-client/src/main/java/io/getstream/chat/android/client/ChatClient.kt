@@ -139,7 +139,6 @@ import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
-import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.scope.ClientScope
@@ -1694,20 +1693,18 @@ internal constructor(
         request: QueryChannelRequest,
     ): Call<Channel> {
         logger.d { "[queryChannel] cid: $channelType:$channelId" }
-        val relevantPlugins = plugins.filterIsInstance<QueryChannelListener>()
-
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
             .doOnStart(userScope) {
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onQueryChannelRequest(channelType, channelId, request)
                 }
             }.doOnResult(userScope) { result ->
-                relevantPlugins.forEach { plugin ->
+                plugins.forEach { plugin ->
                     logger.v { "[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onQueryChannelResult(result, channelType, channelId, request)
                 }
-            }.precondition(relevantPlugins) {
+            }.precondition(plugins) {
                 onQueryChannelPrecondition(channelType, channelId, request)
             }.share(userScope) {
                 QueryChannelIdentifier(channelType, channelId, request)
