@@ -5,9 +5,9 @@ This module contains reusable UI components to use in combination with the [offl
 > Already using Compose? Check out our [Compose UI Components](../stream-chat-android-compose) instead!
 
 <p align="center">
-  <img alt="Channels screen" src="../docs/sample-channels-light.png" width="40%">
+  <img alt="Channels screen" src="../docs/sample-channels.png" width="40%">
 &nbsp; &nbsp;
-  <img alt="Messages screen" src="../docs/sample-messages-light.png" width="40%">
+  <img alt="Messages screen" src="../docs/sample-messages.png" width="40%">
 </p>
 
 ## Setup

@@ -4,12 +4,18 @@
 
 This modules includes a fully functional sample app featuring threads, reactions, typing indicators, optimistic UI updates and offline storage. All built on top of our [UI components](../stream-chat-android-ui-components).
 
+## 📷 Screenshots
+
 <p align="center">
-  <img alt="Login screen" src="../docs/sample-login-dark.png" width="30%">
-&nbsp; &nbsp;
-  <img alt="Channels screen" src="../docs/sample-channels-dark.png" width="30%">
-&nbsp; &nbsp;
-  <img alt="Messages screen" src="../docs/sample-messages-dark.png" width="30%">
+  <img alt="Video preview" src="../docs/sample-video.gif" alt="drawing" width="32%" />
+  <img alt="User login" src="../docs/sample-user-login.png" alt="drawing" width="32%" />
+  <img alt="Channels" src="../docs/sample-channels.png" alt="drawing" width="32%" />
+  <img alt="Channel actions" src="../docs/sample-channel-actions.png" alt="drawing" width="32%" />
+  <img alt="Messages" src="../docs/sample-messages.png" alt="drawing" width="32%" />
+  <img alt="Message options" src="../docs/sample-message-options.png" alt="drawing" width="32%" />
+  <img alt="Reaction options" src="../docs/sample-reaction-options.png" alt="drawing" width="32%" />
+  <img alt="Attachments picker" src="../docs/sample-attachments-picker.png" alt="drawing" width="32%" />
+  <img alt="Channel details" src="../docs/sample-channel-details.png" alt="drawing" width="32%" />
 </p>
 
 ## Running the sample

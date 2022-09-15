@@ -4,10 +4,18 @@
 
 This modules includes a sample app featuring threads, reactions, optimistic UI updates and offline storage. All built on top of our [Compose UI Components](../stream-chat-android-compose).
 
+## 📷 Screenshots
+
 <p align="center">
-  <img alt="Channels screen" src="../docs/compose-sample-channels-dark.png" width="40%">
-&nbsp; &nbsp;
-  <img alt="Messages screen" src="../docs/compose-sample-messages-dark.png" width="40%">
+  <img alt="Video preview" src="../docs/compose-sample-video.gif" alt="drawing" width="32%" />
+  <img alt="User login" src="../docs/compose-sample-user-login.png" alt="drawing" width="32%" />
+  <img alt="Channels" src="../docs/compose-sample-channels.png" alt="drawing" width="32%" />
+  <img alt="Channel actions" src="../docs/compose-sample-channel-actions.png" alt="drawing" width="32%" />
+  <img alt="Messages" src="../docs/compose-sample-messages.png" alt="drawing" width="32%" />
+  <img alt="Message options" src="../docs/compose-sample-message-options.png" alt="drawing" width="32%" />
+  <img alt="Reaction options" src="../docs/compose-sample-reaction-options.png" alt="drawing" width="32%" />
+  <img alt="Attachments picker" src="../docs/compose-sample-attachments-picker.png" alt="drawing" width="32%" />
+  <img alt="Attachments gallery" src="../docs/compose-sample-attachments-gallery.png" alt="drawing" width="32%" />
 </p>
 
 ## Running the sample
