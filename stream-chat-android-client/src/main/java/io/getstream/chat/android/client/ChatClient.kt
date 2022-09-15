@@ -137,7 +137,6 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
-import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
@@ -1462,22 +1461,21 @@ internal constructor(
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
         logger.d { "[deleteMessage] messageId: $messageId, hard: $hard" }
-        val relevantPlugins = plugins.filterIsInstance<DeleteMessageListener>()
 
         return api.deleteMessage(messageId, hard)
             .doOnStart(userScope) {
-                relevantPlugins.forEach { listener ->
+                plugins.forEach { listener ->
                     logger.v { "[deleteMessage] #doOnStart; plugin: ${listener::class.qualifiedName}" }
                     listener.onMessageDeleteRequest(messageId)
                 }
             }
             .doOnResult(userScope) { result ->
-                relevantPlugins.forEach { listener ->
+                plugins.forEach { listener ->
                     logger.v { "[deleteMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onMessageDeleteResult(messageId, result)
                 }
             }
-            .precondition(relevantPlugins) {
+            .precondition(plugins) {
                 onMessageDeletePrecondition(messageId)
             }
             .share(userScope) { DeleteMessageIdentifier(messageId, hard) }

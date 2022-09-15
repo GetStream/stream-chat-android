@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
@@ -41,7 +42,8 @@ public interface Plugin :
     SendReactionListener,
     ThreadQueryListener,
     SendGiphyListener,
-    ShuffleGiphyListener {
+    ShuffleGiphyListener,
+    DeleteMessageListener {
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -129,4 +131,13 @@ public interface Plugin :
     override fun onGiphySendResult(cid: String, result: Result<Message>) { /* No-Op */ }
 
     override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) { /* No-Op */ }
+
+    override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> = Result.success(Unit)
+
+    override suspend fun onMessageDeleteRequest(messageId: String) { /* No-Op */ }
+
+    override suspend fun onMessageDeleteResult(
+        originalMessageId: String,
+        result: Result<Message>,
+    ) { /* No-Op */ }
 }
