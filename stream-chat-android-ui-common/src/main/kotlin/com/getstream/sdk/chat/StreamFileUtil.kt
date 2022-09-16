@@ -146,17 +146,16 @@ public object StreamFileUtil {
 
             val streamCacheDir = getOrCreateCacheDirResult.data()
 
-            val attachmentName = (attachment.url ?: attachment.assetUrl)?.hashCode()
-            val fileName = CACHED_FILE_PREFIX + attachmentName.toString() + attachment.name
+            val attachmentHashCode = (attachment.url ?: attachment.assetUrl)?.hashCode()
+            val fileName = CACHED_FILE_PREFIX + attachmentHashCode.toString() + attachment.name
 
             val file = File(streamCacheDir, fileName)
 
             // When File.createNewFile returns false it means that the file already exists.
-            // We then check the hash name equality to confirm it's the same file and check file size
+            // We then check the hash code is valid and check file size
             // equality to make sure we've completed the download successfully.
             return if (!file.createNewFile() &&
-                attachmentName != null &&
-                // once this is functional
+                attachmentHashCode != null &&
                 file.length() == attachment.fileSize.toLong()
             ) {
                 Result(data = getUriForFile(context, file))
