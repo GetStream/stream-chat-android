@@ -31,7 +31,6 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.logging.StreamLog
-import kotlinx.coroutines.flow.MutableStateFlow
 
 internal class QueryChannelsStateLogicImpl(
     private val mutableState: QueryChannelsMutableState,
@@ -126,14 +125,6 @@ internal class QueryChannelsStateLogicImpl(
         val newChannelsOffset = currentChannelsOffset + size
         logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
         mutableState.setChannelsOffset(newChannelsOffset)
-    }
-
-    /**
-     * MutableStateFlow<Boolean> for the current state. It returns the accordingly with loading first page
-     * or loading more channels.
-     */
-    internal fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
-        return mutableState.currentLoading
     }
 
     /**
