@@ -143,8 +143,6 @@ import io.getstream.chat.android.ui.message.list.options.message.MessageOptionIt
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
-import io.getstream.chat.android.ui.utils.extensions.toControllerErrorEvent
-import io.getstream.chat.android.ui.utils.extensions.toUiErrorEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -311,7 +309,7 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
-    private var errorHandler = ErrorHandler { error ->
+    private var errorEventHandler = ErrorEventHandler { error ->
         when (error) {
             is MessageListController.ErrorEvent.MuteUserError -> R.string.stream_ui_message_list_error_mute_user
             is MessageListController.ErrorEvent.UnmuteUserError -> R.string.stream_ui_message_list_error_unmute_user
@@ -904,24 +902,12 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Shows a error for one of the reasons defined in [MessageListViewModel.ErrorEvent].
+     * Shows a error for one of the reasons defined in [MessageListController.ErrorEvent].
      *
      * @param errorEvent The error event containing information about the error.
      */
-    @Deprecated(
-        message = "Deprecated in favor of newly implemented MessageListController Errors.",
-        replaceWith = ReplaceWith(
-            expression = "showError(errorEvent: MessageListController.ErrorEvent)",
-            imports = ["io.getstream.chat.android.ui.message.list"]
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun showError(errorEvent: MessageListViewModel.ErrorEvent) {
-        errorHandler.onErrorEvent(errorEvent.toControllerErrorEvent())
-    }
-
     public fun showError(errorEvent: MessageListController.ErrorEvent) {
-        errorHandler.onErrorEvent(errorEvent)
+        errorEventHandler.onErrorEvent(errorEvent)
     }
 
     /**
@@ -1611,29 +1597,12 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Sets the handler used when handling the errors defined in [MessageListViewModel.ErrorEvent].
-     *
-     * @param handler The handler to use.
-     */
-    @Deprecated(
-        message = "Deprecated in favor of newly implemented ErrorHandler which uses MessageListController ErrorEvents.",
-        replaceWith = ReplaceWith(
-            expression = "setErrorHandler(handler: ErrorHandler)",
-            imports = ["io.getstream.chat.android.ui.message.list"]
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun setErrorEventHandler(handler: ErrorEventHandler) {
-        this.errorHandler = ErrorHandler { errorEvent -> handler.onErrorEvent(errorEvent.toUiErrorEvent()) }
-    }
-
-    /**
      * Sets the handler used when handling the errors defined in [MessageListController.ErrorEvent].
      *
      * @param handler The handler to use.
      */
-    public fun setErrorHandler(handler: ErrorHandler) {
-        this.errorHandler = handler
+    public fun setErrorEventHandler(handler: ErrorEventHandler) {
+        this.errorEventHandler = handler
     }
 
     /**
@@ -1896,10 +1865,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface ErrorEventHandler {
-        public fun onErrorEvent(errorEvent: MessageListViewModel.ErrorEvent)
-    }
-
-    public fun interface ErrorHandler {
         public fun onErrorEvent(errorEvent: MessageListController.ErrorEvent)
     }
 

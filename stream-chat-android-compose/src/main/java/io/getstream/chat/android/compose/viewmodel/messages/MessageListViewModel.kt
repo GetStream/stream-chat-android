@@ -93,54 +93,6 @@ public class MessageListViewModel(
     ),
 ) : ViewModel() {
 
-    @Deprecated(
-        message = "Deprecated in favor of new implementation of MessageListViewModel constructor that uses " +
-            "MessageListController in the background. The deprecation removes dateSeparatorThresholdMillis and " +
-            "showDateSeparators in favor of DateSeparatorHandler. To achieve the same effect please provide a custom" +
-            "handler to show, hide or change the frequency of the date separators.",
-        replaceWith = ReplaceWith(
-            "MessageListViewModel(\n" +
-                "    public val chatClient: ChatClient,\n" +
-                "    private val channelId: String,\n" +
-                "    private val clipboardHandler: ClipboardHandler,\n" +
-                "    private val messageLimit: Int,\n" +
-                "    private val enforceUniqueReactions: Boolean,\n" +
-                "    private val showSystemMessages: Boolean = true,\n" +
-                "    private val deletedMessageVisibility: DeletedMessageVisibility,\n" +
-                "    private val messageFooterVisibility: MessageFooterVisibility,\n" +
-                "    private val dateSeparatorHandler: DateSeparatorHandler\n" +
-                "    private val threadDateSeparatorHandler: DateSeparatorHandler\n" +
-                "    private val messageListController: MessageListController)",
-            imports = ["io.getstream.chat.android.compose.viewmodel.messages"],
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public constructor(
-        chatClient: ChatClient,
-        channelId: String,
-        clipboardHandler: ClipboardHandler,
-        messageLimit: Int = DefaultMessageLimit,
-        enforceUniqueReactions: Boolean = true,
-        showDateSeparators: Boolean = true,
-        showSystemMessages: Boolean = true,
-        dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
-        deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
-        messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    ) : this(
-        chatClient = chatClient,
-        channelId = channelId,
-        clipboardHandler = clipboardHandler,
-        messageLimit = messageLimit,
-        enforceUniqueReactions = enforceUniqueReactions,
-        showSystemMessages = showSystemMessages,
-        deletedMessageVisibility = deletedMessageVisibility,
-        messageFooterVisibility = messageFooterVisibility,
-        dateSeparatorHandler = DateSeparatorHandler
-            .getDefaultDateSeparator(dateSeparatorThresholdMillis, showDateSeparators),
-        threadDateSeparatorHandler = DateSeparatorHandler
-            .getDefaultThreadDateSeparator(dateSeparatorThresholdMillis, showDateSeparators)
-    )
-
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.
      *
@@ -241,21 +193,6 @@ public class MessageListViewModel(
      */
     public fun updateLastSeenMessage(message: Message) {
         messageListController.updateLastSeenMessage(message)
-    }
-
-    /**
-     * Triggered when the user loads more data by reaching the end of the current messages.
-     */
-    @Deprecated(
-        message = "Deprecated after implementing bi directional pagination.",
-        replaceWith = ReplaceWith(
-            "loadOlderMessages(messageId: String)",
-            "io.getstream.chat.android.compose.viewmodel.messages"
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun loadMore() {
-        loadOlderMessages()
     }
 
     /**

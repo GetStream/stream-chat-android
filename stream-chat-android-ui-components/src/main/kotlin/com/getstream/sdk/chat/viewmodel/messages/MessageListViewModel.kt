@@ -21,16 +21,11 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.map
-import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.MessagePositionHandler
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.enqueue
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
@@ -48,8 +43,6 @@ import io.getstream.chat.android.common.state.messagelist.MessageFocused
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
-import io.getstream.chat.android.ui.utils.extensions.toUiErrorEvent
-import io.getstream.chat.android.ui.utils.extensions.toCommonPosition
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
@@ -193,23 +186,8 @@ public class MessageListViewModel(
     /**
      * Emits error events.
      */
-    public val errorEvent: LiveData<EventWrapper<MessageListController.ErrorEvent>> = messageListController.errorEvents
+    public val errorEvents: LiveData<EventWrapper<MessageListController.ErrorEvent>> = messageListController.errorEvents
         .filterNotNull().map { EventWrapper(it) }.asLiveData()
-
-    /**
-     * Emits error events.
-     */
-    @Deprecated(
-        message = "Deprecated in favor of ErrorEvents coming from MessageListController.",
-        replaceWith = ReplaceWith(
-            expression = "errorEvent: LiveData<EventWrapper<MessageListController.ErrorEvent>>",
-            imports = ["com.getstream.sdk.chat.viewmodel.messages"]
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = errorEvent.map {
-        EventWrapper(it.peekContent().toUiErrorEvent())
-    }
 
     /**
      * The currently logged in user.
@@ -290,16 +268,6 @@ public class MessageListViewModel(
             is Event.UnmuteUser -> {
                 messageListController.unmuteUser(event.user)
             }
-            is Event.BlockUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.shadowBanUser(
-                    targetId = event.user.id,
-                    reason = null,
-                    timeout = null,
-                ).enqueue(onError = { chatError ->
-                    logger.e { "Could not block user: ${chatError.message}" }
-                })
-            }
             is Event.BanUser -> {
                 messageListController.banUser(
                     userId = event.user.id,
@@ -379,28 +347,6 @@ public class MessageListViewModel(
      * Sets the date separator handler which determines when to add date separators.
      * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
      *
-     * @param dateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
-     */
-    @Deprecated(
-        message = "Deprecated in favor of common module DateSeparatorHandler.",
-        replaceWith = ReplaceWith(
-            expression = "public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandlerCommon)",
-            imports = ["io.getstream.chat.android.common.messagelist"]
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
-        dateSeparatorHandler?.let {
-            messageListController.setDateSeparatorHandler { previousMessage, message ->
-                it.shouldAddDateSeparator(previousMessage, message)
-            }
-        }
-    }
-
-    /**
-     * Sets the date separator handler which determines when to add date separators.
-     * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
-     *
      * @param dateSeparatorHandler The handler to use. If null, the messages list won't contain date separators.
      */
     public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandlerCommon?) {
@@ -414,51 +360,8 @@ public class MessageListViewModel(
      * @param threadDateSeparatorHandler The handler to use. If null, the thread messages list won't contain date
      * separators.
      */
-    @Deprecated(
-        message = "Deprecated in favor of common module DateSeparatorHandler.",
-        replaceWith = ReplaceWith(
-            expression = "setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandlerCommon)",
-            imports = ["io.getstream.chat.android.common.messagelist"]
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
-        threadDateSeparatorHandler?.let {
-            messageListController.setThreadDateSeparatorHandler { previousMessage, message ->
-                it.shouldAddDateSeparator(previousMessage, message)
-            }
-        }
-    }
-
-    /**
-     * Sets thread date separator handler which determines when to add date separators inside the thread.
-     * @see setDateSeparatorHandler
-     *
-     * @param threadDateSeparatorHandler The handler to use. If null, the thread messages list won't contain date
-     * separators.
-     */
     public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandlerCommon?) {
         messageListController.setThreadDateSeparatorHandler(threadDateSeparatorHandler)
-    }
-
-    /**
-     * Sets a handler which determines the position of a message inside a group.
-     *
-     * @param messagePositionHandler The handler to use.
-     */
-    @Deprecated(
-        message = "Deprecated in favor of common module MessagePositionHandler.",
-        replaceWith = ReplaceWith(
-            expression = "setMessagePositionHandler(messagePositionHandler: MessagePositionHandlerCommon)",
-            imports = ["io.getstream.chat.android.common.messagelist"]
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandler) {
-        messageListController.setMessagePositionHandler { prevMessage, message, nextMessage, isAfterDateSeparator ->
-            messagePositionHandler.handleMessagePosition(prevMessage, message, nextMessage, isAfterDateSeparator)
-                .map { it.toCommonPosition() }
-        }
     }
 
     /**
@@ -716,23 +619,6 @@ public class MessageListViewModel(
         public data class UnmuteUser(val user: User) : Event()
 
         /**
-         * When the user blocks another user.
-         *
-         * @param user The user to be blocked.
-         * @param cid The full channel id, i.e. "messaging:123".
-         */
-        @Deprecated(
-            "Deprecated in order to make the action more explicit." +
-                "Use `MessageListViewModel.ShadowBanUser` if you want to keep the same functionality " +
-                "(shadow banning) or `MessageListViewModel.BanUser` if you want to ban a user.",
-            replaceWith = ReplaceWith(
-                "ShadowBanUser",
-                "package com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.ShadowBanUser"
-            )
-        )
-        public data class BlockUser(val user: User, val cid: String) : Event()
-
-        /**
          * When the user bans another user.
          *
          * @param user The user to be blocked.
@@ -836,159 +722,6 @@ public class MessageListViewModel(
          * Normal mode. When the user is not participating in a thread.
          */
         public object Normal : Mode()
-    }
-
-    /**
-     * A class designed for error event propagation.
-     *
-     * @param chatError Contains the original [Throwable] along with a message.
-     */
-    @Deprecated(
-        message = "Deprecated in favor of MessageListControllers ErrorEvent.",
-        level = DeprecationLevel.WARNING
-    )
-    public sealed class ErrorEvent(public open val chatError: ChatError) {
-
-        /**
-         * When an error occurs while muting a user.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        @Deprecated(
-            message = "Deprecated in favor of MessageListControllers ErrorEvent.MuteUserError.",
-            level = DeprecationLevel.WARNING
-        )
-        public data class MuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while unmuting a user.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        @Deprecated(
-            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
-            level = DeprecationLevel.WARNING
-        )
-        public data class UnmuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while flagging a message.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        @Deprecated(
-            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
-            level = DeprecationLevel.WARNING
-        )
-        public data class FlagMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while blocking a user.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        @Deprecated(
-            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
-            level = DeprecationLevel.WARNING
-        )
-        public data class BlockUserError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while pinning a message.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        @Deprecated(
-            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
-            level = DeprecationLevel.WARNING
-        )
-        public data class PinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while unpinning a message.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        @Deprecated(
-            message = "Deprecated in favor of MessageListControllers ErrorEvent.UnmuteUserError.",
-            level = DeprecationLevel.WARNING
-        )
-        public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
-    }
-
-    /**
-     * A SAM designed to evaluate if a date separator should be added between messages.
-     */
-    @Deprecated(
-        message = "Deprecated in favor of common implementation of DateSeparatorHandler.",
-        replaceWith = ReplaceWith(
-            expression = "DateSeparatorHandler",
-            imports = ["io.getstream.chat.android.common.messagelist"]
-        )
-    )
-    public fun interface DateSeparatorHandler {
-        public fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean
-    }
-
-    /**
-     * A SAM designed to evaluate if a date separator should be added between messages.
-     */
-    @Deprecated(
-        message = "Deprecated in favor of common implementation of MessagePositionHandler.",
-        replaceWith = ReplaceWith(
-            expression = "MessagePositionHandler",
-            imports = ["io.getstream.chat.android.common.messagelist"]
-        )
-    )
-    public fun interface MessagePositionHandler {
-        /**
-         * Determines the position of a message inside a group.
-         *
-         * @param prevMessage The previous [Message] in the list.
-         * @param message The current [Message] in the list.
-         * @param nextMessage The next [Message] in the list.
-         * @param isAfterDateSeparator If a date separator was added before the current [Message].
-         *
-         * @return The position of the current message inside the group.
-         */
-        public fun handleMessagePosition(
-            prevMessage: Message?,
-            message: Message,
-            nextMessage: Message?,
-            isAfterDateSeparator: Boolean,
-        ): List<MessageListItem.Position>
-
-        public companion object {
-            /**
-             * The default implementation of the [MessagePositionHandler] interface which can be taken
-             * as a reference when implementing a custom one.
-             *
-             * @return The default implementation of [MessagePositionHandler].
-             */
-            internal fun defaultHandler(): MessagePositionHandler {
-                return MessagePositionHandler { prevMessage: Message?, message: Message, nextMessage: Message?, isAfterDateSeparator: Boolean ->
-                    val prevUser = prevMessage?.user
-                    val user = message.user
-                    val nextUser = nextMessage?.user
-
-                    fun Message.isServerMessage(): Boolean {
-                        return type == ModelType.message_system || type == ModelType.message_error
-                    }
-
-                    mutableListOf<MessageListItem.Position>().apply {
-                        if (prevMessage == null || prevUser != user || prevMessage.isServerMessage() || isAfterDateSeparator) {
-                            add(MessageListItem.Position.TOP)
-                        }
-                        if (prevMessage != null && nextMessage != null && prevUser == user && nextUser == user) {
-                            add(MessageListItem.Position.MIDDLE)
-                        }
-                        if (nextMessage == null || nextUser != user || nextMessage.isServerMessage()) {
-                            add(MessageListItem.Position.BOTTOM)
-                        }
-                    }
-                }
-            }
-        }
     }
 
     internal companion object {

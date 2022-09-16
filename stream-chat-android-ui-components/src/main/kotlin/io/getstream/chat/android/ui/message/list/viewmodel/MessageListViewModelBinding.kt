@@ -130,7 +130,7 @@ public fun MessageListViewModel.bindView(
             )
         )
     }
-    errorEvent.observe(
+    errorEvents.observe(
         lifecycleOwner,
         EventObserver {
             view.showError(it)

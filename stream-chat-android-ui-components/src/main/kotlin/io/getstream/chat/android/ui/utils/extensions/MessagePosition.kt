@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.utils.extensions
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.common.state.messagelist.MessagePosition
 
+// TODO see to propagate common instead of ui one
 /**
  * Converts the common [MessagePosition] to ui-components [MessageListItem.Position].
  *
