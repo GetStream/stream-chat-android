@@ -49,8 +49,8 @@ internal class QueryChannelsLogic(
     private val filter: FilterObject,
     private val sort: QuerySorter<Channel>,
     private val client: ChatClient,
-    private val queryChannelsStateLogic: QueryChannelsStateLogic?,
-    private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic?,
+    private val queryChannelsStateLogic: QueryChannelsStateLogicImpl?,
+    private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogicImpl?,
 ) {
 
     private val logger = StreamLog.getLogger("QueryChannelsLogic")
@@ -84,7 +84,7 @@ internal class QueryChannelsLogic(
 
     private suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
-        queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
+        queryChannelsDatabaseLogic: QueryChannelsDatabaseLogicImpl,
     ): List<Channel> {
         val queryChannelsSpec = queryChannelsStateLogic?.getQuerySpecs()
 
@@ -195,7 +195,8 @@ internal class QueryChannelsLogic(
             configs = configs,
             users = users.values.toList(),
             channels = channelsResponse,
-            messages = messages
+            messages = messages,
+            cacheForMessages = false
         )
 
         logger.i {
