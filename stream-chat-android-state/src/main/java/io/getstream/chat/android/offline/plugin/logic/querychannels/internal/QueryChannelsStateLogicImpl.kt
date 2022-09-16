@@ -37,45 +37,45 @@ internal class QueryChannelsStateLogicImpl(
     private val mutableState: QueryChannelsMutableState,
     private val stateRegistry: StateRegistry,
     private val logicRegistry: LogicRegistry,
-) : QueryChannelsStateLogic {
+) {
 
     private val logger = StreamLog.getLogger("QueryChannelsStateLogic")
 
-    override fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
+    internal fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
         return mutableState.handleChatEvent(event, cachedChannel)
     }
 
     /**
      * Returns the loading status.
      */
-    override fun isLoading(): Boolean = mutableState.currentLoading.value
+    internal fun isLoading(): Boolean = mutableState.currentLoading.value
 
     /**
      * Returns the current channel offset.
      */
-    override fun getChannelsOffset(): Int = mutableState.channelsOffset.value
+    internal fun getChannelsOffset(): Int = mutableState.channelsOffset.value
 
     /**
      * Get all the channels that were queried so far.
      */
-    override fun getChannels(): Map<String, Channel> = mutableState.rawChannels
+    internal fun getChannels(): Map<String, Channel> = mutableState.rawChannels
 
     /**
      * The the specs of the query.
      */
-    override fun getQuerySpecs(): QueryChannelsSpec = mutableState.queryChannelsSpec
+    internal fun getQuerySpecs(): QueryChannelsSpec = mutableState.queryChannelsSpec
 
     /**
      * Get the state of the query.
      */
-    override fun getState(): QueryChannelsState = mutableState
+    internal fun getState(): QueryChannelsState = mutableState
 
     /**
      * Set the loading state.
      *
      * @param isLoading Boolean
      */
-    override fun setLoading(isLoading: Boolean) {
+    internal fun setLoading(isLoading: Boolean) {
         mutableState.setLoading(isLoading)
     }
 
@@ -84,7 +84,7 @@ internal class QueryChannelsStateLogicImpl(
      *
      * @param request [QueryChannelsRequest]
      */
-    override fun setCurrentRequest(request: QueryChannelsRequest) {
+    internal fun setCurrentRequest(request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsRequest] request: $request" }
         mutableState.setCurrentRequest(request)
     }
@@ -94,7 +94,7 @@ internal class QueryChannelsStateLogicImpl(
      *
      * @parami isEnd Boolean
      */
-    override fun setEndOfChannels(isEnd: Boolean) {
+    internal fun setEndOfChannels(isEnd: Boolean) {
         mutableState.setEndOfChannels(isEnd)
     }
 
@@ -103,7 +103,7 @@ internal class QueryChannelsStateLogicImpl(
      *
      * @param recoveryNeeded Boolean
      */
-    override fun setRecoveryNeeded(recoveryNeeded: Boolean) {
+    internal fun setRecoveryNeeded(recoveryNeeded: Boolean) {
         mutableState.setRecoveryNeeded(recoveryNeeded)
     }
 
@@ -112,7 +112,7 @@ internal class QueryChannelsStateLogicImpl(
      *
      * @param offset Int
      */
-    override fun setChannelsOffset(offset: Int) {
+    internal fun setChannelsOffset(offset: Int) {
         mutableState.setChannelsOffset(offset)
     }
 
@@ -121,7 +121,7 @@ internal class QueryChannelsStateLogicImpl(
      *
      * @param size Int
      */
-    override fun incrementChannelsOffset(size: Int) {
+    internal fun incrementChannelsOffset(size: Int) {
         val currentChannelsOffset = mutableState.channelsOffset.value
         val newChannelsOffset = currentChannelsOffset + size
         logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
@@ -132,7 +132,7 @@ internal class QueryChannelsStateLogicImpl(
      * MutableStateFlow<Boolean> for the current state. It returns the accordingly with loading first page
      * or loading more channels.
      */
-    override fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
+    internal fun loadingForCurrentRequest(): MutableStateFlow<Boolean> {
         return mutableState.currentLoading
     }
 
@@ -141,7 +141,7 @@ internal class QueryChannelsStateLogicImpl(
      *
      * @param channels List<Channel>.
      */
-    override fun addChannelsState(channels: List<Channel>) {
+    internal fun addChannelsState(channels: List<Channel>) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
         val existingChannels = mutableState.rawChannels
         mutableState.setChannels(existingChannels + channels.map { it.cid to it })
@@ -157,7 +157,7 @@ internal class QueryChannelsStateLogicImpl(
     /**
      * Remove channels to state.
      */
-    override fun removeChannels(cidSet: Set<String>) {
+    internal fun removeChannels(cidSet: Set<String>) {
         val existingChannels = mutableState.rawChannels
 
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
@@ -170,7 +170,7 @@ internal class QueryChannelsStateLogicImpl(
      *
      * @param cidList The channels to refresh.
      */
-    override fun refreshChannels(cidList: Collection<String>) {
+    internal fun refreshChannels(cidList: Collection<String>) {
         val newChannels = mutableState.rawChannels + mutableState.queryChannelsSpec.cids
             .intersect(cidList.toSet())
             .map { cid -> cid.cidToTypeAndId() }
@@ -196,7 +196,7 @@ internal class QueryChannelsStateLogicImpl(
      *
      * @param newUser The user to refresh.
      */
-    override fun refreshMembersStateForUser(newUser: User) {
+    internal fun refreshMembersStateForUser(newUser: User) {
         val userId = newUser.id
         val existingChannels = mutableState.rawChannels
 

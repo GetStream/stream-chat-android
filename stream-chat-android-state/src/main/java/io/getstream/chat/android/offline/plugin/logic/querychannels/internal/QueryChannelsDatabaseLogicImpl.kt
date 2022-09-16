@@ -38,9 +38,9 @@ internal class QueryChannelsDatabaseLogicImpl(
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
     private val repositoryFacade: RepositoryFacade,
-) : QueryChannelsDatabaseLogic {
+) {
 
-    override suspend fun storeStateForChannels(
+    internal suspend fun storeStateForChannels(
         configs: Collection<ChannelConfig>?,
         users: List<User>,
         channels: Collection<Channel>,
@@ -59,7 +59,7 @@ internal class QueryChannelsDatabaseLogicImpl(
      * @param pagination [AnyChannelPaginationRequest]
      * @param queryChannelsSpec [QueryChannelsSpec]
      */
-    override suspend fun fetchChannelsFromCache(
+    internal suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
         queryChannelsSpec: QueryChannelsSpec?,
     ): List<Channel> {
@@ -75,7 +75,7 @@ internal class QueryChannelsDatabaseLogicImpl(
      *
      * @param cid String
      */
-    override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
+    internal suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         return channelRepository.selectChannelWithoutMessages(cid)
     }
 
@@ -84,7 +84,7 @@ internal class QueryChannelsDatabaseLogicImpl(
      *
      * @param queryChannelsSpec QueryChannelsSpec
      */
-    override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
+    internal suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
         return queryChannelsRepository.insertQueryChannels(queryChannelsSpec)
     }
 
@@ -93,7 +93,7 @@ internal class QueryChannelsDatabaseLogicImpl(
      *
      * @param configs Collection<ChannelConfig>
      */
-    override suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
+    internal suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
         return channelConfigRepository.insertChannelConfigs(configs)
     }
 }
