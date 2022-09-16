@@ -450,18 +450,6 @@ internal class ChannelLogic(
         channelStateLogic.upsertUserPresence(user)
     }
 
-    internal fun updateReads(reads: List<ChannelUserRead>) {
-        channelStateLogic.updateReads(reads)
-    }
-
-    internal fun markChannelAsRead() {
-        channelStateLogic.markChannelAsRead()
-    }
-
-    internal fun markThreadAsRead(parentId: String) {
-        channelStateLogic.markThreadAsRead(parentId)
-    }
-
     private fun upsertUser(user: User) {
         upsertUserPresence(user)
         // channels have users

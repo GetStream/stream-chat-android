@@ -106,12 +106,6 @@ public interface ChannelState {
     /** If the user is inside search or not. */
     public val insideSearch: StateFlow<Boolean>
 
-    /** Unread count for the channel excluding threads unread count. */
-    public val channelUnreadCount: StateFlow<Int>
-
-    /** Unread count for threads inside the channel mapped by thread [Message] parent id to unread count. */
-    public val threadsUnreadCount: StateFlow<Map<String, Int>>
-
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel
 }

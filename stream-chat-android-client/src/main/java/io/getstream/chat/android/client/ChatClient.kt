@@ -149,7 +149,6 @@ import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
-import io.getstream.chat.android.client.plugin.listeners.MarkThreadReadListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.scope.ClientScope
@@ -2031,19 +2030,6 @@ internal constructor(
 
         return api.markRead(channelType, channelId)
             .precondition(relevantPlugins) { onChannelMarkReadPrecondition(channelType, channelId) }
-    }
-
-    /**
-     * Marks the specified thread inside a channel as read.
-     *
-     * @param channelType Type of the channel.
-     * @param channelId The id of the channel.
-     * @param parentMessageId The id of the parrent message which contains the thread.
-     */
-    public fun markThreadRead(channelType: String, channelId: String, parentMessageId: String) {
-        plugins.filterIsInstance<MarkThreadReadListener>().also(::logPlugins).forEach {
-            it.markThreadAsRead(channelType, channelId, parentMessageId)
-        }
     }
 
     @CheckResult

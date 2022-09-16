@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.compose.runtime.getValue
@@ -265,37 +263,6 @@ public class MessageListViewModel(
      * do nothing.
      *
      * @param messageId The id of the newest [Message] inside the messages list.
-     */
-    public fun loadNewerMessages(messageId: String) {
-        if (chatClient.clientState.isOffline || messagesState.startOfMessages) return
-
-        if (messageMode is MessageMode.Normal) {
-            messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreNewMessages = true)
-            chatClient.loadNewerMessages(channelId, messageId, messageLimit).enqueue()
-        }
-    }
-
-    /**
-     * Loads older messages of a channel following the currently oldest loaded message. Also will load older messages
-     * of a thread.
-     */
-    public fun loadOlderMessages() {
-        if (chatClient.clientState.isOffline || messagesState.endOfMessages) return
-        val messageMode = messageMode
-
-        if (messageMode is MessageMode.MessageThread) {
-            threadLoadMore(messageMode)
-        } else {
-            messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreOldMessages = true)
-            chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
-        }
-    }
-
-    /**
-     * Loads newer messages of a channel following the currently newest loaded message. In case of threads this will
-     * do nothing.
-     *
-     * @param messageId The id of the most new [Message] inside the messages list.
      */
     public fun loadNewerMessages(messageId: String, messageLimit: Int = DefaultMessageLimit) {
         messageListController.loadNewerMessages(messageId, messageLimit)

@@ -29,7 +29,6 @@ import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
@@ -192,35 +191,39 @@ public class MessageListController(
     private val _errorEvents: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
     public val errorEvents: StateFlow<ErrorEvent?> = _errorEvents
 
-    /**
-     * The unread message count for the channel when the [_mode] is [MessageMode.Normal].
-     */
-    public val channelUnreadCount: StateFlow<Int> = channelState.filterNotNull()
-        .flatMapLatest { it.channelUnreadCount }
-        .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
-
-    /**
-     * The unread message count of a thread when the [_mode] is [MessageMode.MessageThread].
-     */
-    public val threadUnreadCount: StateFlow<Int> = channelState.filterNotNull()
-        .flatMapLatest { it.threadsUnreadCount }
-        .combine(_mode) { threadCounts, mode ->
-            if (mode is MessageMode.MessageThread) {
-                threadCounts[mode.parentMessage.id] ?: 0
-            } else {
-                0
-            }
-        }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
-
-    /**
-     * Unread count for channel or thread depending on the [MessageMode] the list is in.
-     */
-    public val unreadCount: StateFlow<Int> = _mode.flatMapLatest {
-        if (it is MessageMode.Normal) {
-            channelUnreadCount
-        } else {
-            threadUnreadCount
-        }
+    // TODO sort out unread
+    // /**
+    //  * The unread message count for the channel when the [_mode] is [MessageMode.Normal].
+    //  */
+    // public val channelUnreadCount: StateFlow<Int> = channelState.filterNotNull()
+    //     .flatMapLatest { it.channelUnreadCount }
+    //     .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
+    //
+    // /**
+    //  * The unread message count of a thread when the [_mode] is [MessageMode.MessageThread].
+    //  */
+    // public val threadUnreadCount: StateFlow<Int> = channelState.filterNotNull()
+    //     .flatMapLatest { it.threadsUnreadCount }
+    //     .combine(_mode) { threadCounts, mode ->
+    //         if (mode is MessageMode.MessageThread) {
+    //             threadCounts[mode.parentMessage.id] ?: 0
+    //         } else {
+    //             0
+    //         }
+    //     }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
+    //
+    // /**
+    //  * Unread count for channel or thread depending on the [MessageMode] the list is in.
+    //  */
+    // public val unreadCount: StateFlow<Int> = _mode.flatMapLatest {
+    //     if (it is MessageMode.Normal) {
+    //         channelUnreadCount
+    //     } else {
+    //         threadUnreadCount
+    //     }
+    // }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
+    public val unreadCount: StateFlow<Int> = channelState.filterNotNull().flatMapLatest {
+        it.unreadCount
     }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
 
     /**
@@ -426,7 +429,11 @@ public class MessageListController(
             _messageListState.value = _messageListState.value.copy(currentUser = it)
         }.launchIn(scope)
 
-        channelUnreadCount.onEach {
+        // TODO
+        // channelUnreadCount.onEach {
+        //     _messageListState.value = _messageListState.value.copy(unreadCount = it)
+        // }.launchIn(scope)
+        unreadCount.onEach {
             _messageListState.value = _messageListState.value.copy(unreadCount = it)
         }.launchIn(scope)
 
@@ -499,9 +506,12 @@ public class MessageListController(
                 _threadListState.value = _threadListState.value.copy(endOfOldMessagesReached = it)
             }.launchIn(this)
 
-            threadUnreadCount.onEach {
-                _threadListState.value = _threadListState.value.copy(unreadCount = it)
-            }.launchIn(this)
+            // threadUnreadCount.onEach {
+            //     _threadListState.value = _threadListState.value.copy(unreadCount = it)
+            // }.launchIn(this)
+            unreadCount.onEach {
+                _threadListState.value = _messageListState.value.copy(unreadCount = it)
+            }.launchIn(scope)
         }
     }
 
@@ -945,7 +955,6 @@ public class MessageListController(
                 _messageActions.value = _messageActions.value + messageAction
             }
             is Copy -> copyMessage(messageAction.message)
-            is MuteUser -> updateUserMute(messageAction.message.user)
             is React -> reactToMessage(messageAction.reaction, messageAction.message, enforceUniqueReactions)
             is Pin -> updateMessagePin(messageAction.message)
             else -> {
@@ -1033,7 +1042,8 @@ public class MessageListController(
         cid.cidToTypeAndId().let { (channelType, channelId) ->
             val mode = _mode.value
             if (mode is MessageMode.MessageThread) {
-                chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
+                // TODO
+                // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
             } else {
                 chatClient.markRead(channelType, channelId).enqueue(
                     onError = { chatError ->

@@ -28,7 +28,6 @@ import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.Flag
-import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
@@ -108,7 +107,7 @@ public open class DefaultMessageOptionItemsFactory(
         val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
         val hasLinks = selectedMessage.attachments.any { it.hasLink() && it.type != ModelType.attach_giphy }
         val isOwnMessage = selectedMessageUserId == currentUser?.id
-        val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: false
+        // val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: false
         val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
         val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
 
@@ -185,19 +184,6 @@ public open class DefaultMessageOptionItemsFactory(
                     optionIcon = context.getDrawableCompat(style.deleteIcon)!!,
                     messageAction = Delete(selectedMessage),
                     isWarningItem = true,
-                )
-            } else null,
-            if (style.muteEnabled && !isOwnMessage) {
-                val (muteText, muteIcon) = if (isUserMuted) {
-                    R.string.stream_ui_message_list_unmute_user to style.unmuteIcon
-                } else {
-                    R.string.stream_ui_message_list_mute_user to style.muteIcon
-                }
-
-                MessageOptionItem(
-                    optionText = context.getString(muteText),
-                    optionIcon = context.getDrawableCompat(muteIcon)!!,
-                    messageAction = MuteUser(selectedMessage),
                 )
             } else null
         )

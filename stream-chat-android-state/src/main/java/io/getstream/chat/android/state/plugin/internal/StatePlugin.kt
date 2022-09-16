@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
-import io.getstream.chat.android.client.plugin.listeners.MarkThreadReadListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -75,7 +74,6 @@ public class StatePlugin(
     private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
     private val typingEventListener: TypingEventListener,
-    private val markThreadReadListener: MarkThreadReadListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
 ) : StateAwarePlugin,
     DependencyResolver,
@@ -92,8 +90,7 @@ public class StatePlugin(
     SendGiphyListener by sendGiphyListener,
     ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
-    TypingEventListener by typingEventListener,
-    MarkThreadReadListener by markThreadReadListener {
+    TypingEventListener by typingEventListener {
 
     override val name: String = MODULE_NAME
 

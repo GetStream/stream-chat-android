@@ -63,7 +63,6 @@ import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
@@ -73,7 +72,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
@@ -1716,14 +1714,6 @@ public class MessageListView : ConstraintLayout {
                     }
                 } else {
                     messageFlagHandler.onMessageFlag(message)
-                }
-            }
-            is MuteUser -> {
-                val isUserMuted = ChatClient.instance().globalState.muted.value.any { it.target.id == message.user.id }
-                if (isUserMuted) {
-                    userUnmuteHandler.onUserUnmute(message.user)
-                } else {
-                    userMuteHandler.onUserMute(message.user)
                 }
             }
             is CustomAction -> customActionHandler.onCustomAction(message, messageAction.extraProperties)
