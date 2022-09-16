@@ -979,6 +979,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * @param attachments The attachments to use for the UI state and options.
      * @param pagerState The state of the pager, used for current page information.
      */
+    @Suppress("LongMethod")
     @Composable
     private fun MediaGalleryPreviewBottomBar(attachments: List<Attachment>, pagerState: PagerState) {
         val attachmentCount = attachments.size
