@@ -41,7 +41,6 @@ public interface FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
         callback: ProgressCallback,
     ): Result<UploadedFile>
@@ -59,7 +58,6 @@ public interface FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
     ): Result<UploadedFile>
 
@@ -77,7 +75,6 @@ public interface FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
         callback: ProgressCallback,
     ): Result<UploadedImage>
@@ -95,7 +92,6 @@ public interface FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
     ): Result<UploadedImage>
 
@@ -111,7 +107,6 @@ public interface FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         url: String,
     ): Result<Unit>
 
@@ -127,7 +122,6 @@ public interface FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         url: String,
     ): Result<Unit>
 }
