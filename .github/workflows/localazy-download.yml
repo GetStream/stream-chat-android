@@ -17,6 +17,9 @@ jobs:
         with:
           read_key: ${{ secrets.LOCALAZY_READ_KEY }}
           write_key: ${{ secrets.LOCALAZY_WRITE_KEY }}
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-lint
       - name: Add license headers
         run: ./gradlew spotlessApply
       - name: Create Pull Request

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.client.di
 
 import android.content.Context
@@ -43,6 +41,7 @@ import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
+import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
@@ -53,7 +52,6 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
@@ -70,6 +68,7 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.logging.StreamLog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -89,8 +88,6 @@ internal open class BaseChatModule(
     private val lifecycle: Lifecycle,
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
-
-    private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
 
     private val moshiParser: ChatParser by lazy { MoshiChatParser() }
 
@@ -114,9 +111,13 @@ internal open class BaseChatModule(
     val userStateService: UserStateService = UserStateService()
     val callPostponeHelper: CallPostponeHelper by lazy {
         CallPostponeHelper(
-            socketStateService = socketStateService,
+            awaitConnection = {
+                when (ToggleService.isSocketExperimental()) {
+                    true -> chatSocketExperimental.awaitConnection()
+                    else -> socketStateService.awaitConnection()
+                }
+            },
             userScope = scope,
-            chatSocketExperimental = chatSocketExperimental
         )
     }
 
@@ -127,16 +128,6 @@ internal open class BaseChatModule(
     fun socket(): ChatSocket = defaultSocket
 
     fun experimentalSocket() = chatSocketExperimental
-
-    @Deprecated(
-        message = "Use StreamLog instead.",
-        replaceWith = ReplaceWith(
-            expression = "StreamLog",
-            imports = ["io.getstream.logging.StreamLog"]
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    fun logger(): ChatLogger = defaultLogger
 
     fun notifications(): ChatNotifications = defaultNotifications
 
@@ -266,6 +257,7 @@ internal open class BaseChatModule(
         buildRetrofitApi<GeneralApi>(),
         buildRetrofitApi<ConfigApi>(),
         buildRetrofitApi<VideoCallApi>(),
+        buildRetrofitApi<FileDownloadApi>(),
         scope,
     ).let { originalApi ->
         DistinctChatApiEnabler(DistinctChatApi(scope, originalApi)) {

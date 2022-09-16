@@ -20,7 +20,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
-import androidx.annotation.WorkerThread
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -199,6 +198,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -236,6 +236,7 @@ internal constructor(
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
+
     @InternalStreamChatApi
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(socket, waitConnection, userScope, chatSocketExperimental)
@@ -256,7 +257,7 @@ internal constructor(
      * and returns a reference to the coroutine as a [Job].
      */
     internal fun launch(
-        block: suspend CoroutineScope.() -> Unit
+        block: suspend CoroutineScope.() -> Unit,
     ) = userScope.launch(block = block)
 
     /**
@@ -507,8 +508,8 @@ internal constructor(
         isAnonymous: Boolean,
     ) {
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'" }
-        val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: - 1
-        val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: - 1
+        val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: -1
+        val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
         _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
@@ -603,7 +604,7 @@ internal constructor(
         user: User,
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long? = null,
-        onDisconnectionComplete: () -> Unit = {}
+        onDisconnectionComplete: () -> Unit = {},
     ): Call<ConnectionData> {
         return CoroutineCall(clientScope) {
             logger.d { "[switchUser] user.id: '${user.id}'" }
@@ -634,7 +635,7 @@ internal constructor(
         user: User,
         token: String,
         timeoutMilliseconds: Long? = null,
-        onDisconnectionComplete: () -> Unit = {}
+        onDisconnectionComplete: () -> Unit = {},
     ): Call<ConnectionData> {
         return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds, onDisconnectionComplete)
     }
@@ -1223,21 +1224,6 @@ internal constructor(
         clientState.toMutableState()?.clearState()
 
         logger.v { "[disconnectSuspend] completed('$userId')" }
-    }
-
-    /**
-     * Disconnect the current user, stop all observers and clear user data
-     */
-    @Deprecated(
-        message = "It is a blocking method that shouldn't be used from the Main Thread.\n" +
-            "Instead of that, you can use `ChatClient.disconnect(true)` that return a `Call` " +
-            "and run it safe using coroutines.",
-        replaceWith = ReplaceWith("this.disconnect(true).await()"),
-        level = DeprecationLevel.ERROR,
-    )
-    @WorkerThread
-    public fun disconnect() {
-        disconnect(true).execute()
     }
 
     //region: api calls
@@ -2679,6 +2665,19 @@ internal constructor(
     @CheckResult
     public fun getVideoCallToken(callId: String): Call<VideoCallToken> {
         return api.getVideoCallToken(callId = callId)
+    }
+
+    /**
+     * Downloads the given file which can be fetched through the response body.
+     *
+     * @param fileUrl The URL of the file that we are downloading.
+     *
+     * @return A Retrofit [ResponseBody] wrapped inside a [Call].
+     */
+    @InternalStreamChatApi
+    @CheckResult
+    public fun downloadFile(fileUrl: String): Call<ResponseBody> {
+        return api.downloadFile(fileUrl)
     }
 
     private fun warmUp() {

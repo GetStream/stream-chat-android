@@ -210,8 +210,9 @@ internal class SyncManager(
             logger.w { "[performSync] rejected (cids is empty)" }
             return
         }
-        val lastSyncAt = syncState.value?.lastSyncedAt ?: Date()
-        val rawLastSyncAt = syncState.value?.rawLastSyncedAt
+        val syncState = syncState.value ?: repos.selectSyncState(currentUserId)
+        val lastSyncAt = syncState?.lastSyncedAt ?: Date()
+        val rawLastSyncAt = syncState?.rawLastSyncedAt
         logger.i { "[performSync] cids.size: ${cids.size}, lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
         val result = if (rawLastSyncAt != null) {
             chatClient.getSyncHistory(cids, rawLastSyncAt).await()

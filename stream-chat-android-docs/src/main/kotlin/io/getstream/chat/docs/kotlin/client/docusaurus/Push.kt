@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiMessagingDelegate
@@ -85,6 +86,23 @@ class Push {
         class MyNotificationHandler(private val context: Context) : NotificationHandler {
             private val notificationManager: NotificationManager by lazy {
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            }
+
+            override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) {
+                when (status) {
+                    NotificationPermissionStatus.REQUESTED -> {
+                        // invoked when POST_NOTIFICATIONS permission is requested
+                    }
+                    NotificationPermissionStatus.GRANTED -> {
+                        // invoked when POST_NOTIFICATIONS permission is granted
+                    }
+                    NotificationPermissionStatus.DENIED -> {
+                        // invoked when POST_NOTIFICATIONS permission is denied
+                    }
+                    NotificationPermissionStatus.RATIONALE_NEEDED -> {
+                        // invoked when POST_NOTIFICATIONS permission requires rationale
+                    }
+                }
             }
 
             override fun showNotification(channel: Channel, message: Message) {

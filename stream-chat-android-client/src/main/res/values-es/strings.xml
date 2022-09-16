@@ -23,8 +23,9 @@
   <string name="stream_chat_notification_empty_username">"Usuario sin nombre"</string>
   <string name="stream_chat_notification_group_summary_content_text">"Has recibido un nuevo mensaje"</string>
   <string name="stream_chat_notification_read">"Marcar como leído"</string>
-  <string name="stream_chat_notification_reply">"Contestar"</string>
+  <string name="stream_chat_notification_reply">"Responder"</string>
   <string name="stream_chat_notification_title">"Mensaje de Chat"</string>
   <string name="stream_chat_notification_type_hint">"Escribe un mensaje"</string>
   <string name="stream_chat_other_notifications_channel_name">"Otras notificaciones"</string>
+  <string name="stream_ui_message_input_permission_notifications_message">"Notificaciones bloqueadas"</string>
 </resources>

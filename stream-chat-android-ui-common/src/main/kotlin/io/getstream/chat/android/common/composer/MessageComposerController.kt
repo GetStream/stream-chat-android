@@ -159,6 +159,22 @@ public class MessageComposerController(
         )
 
     /**
+     * Signals if the user needs to wait before sending the next message.
+     *
+     * Depending on roles & permissions setup in the dashboard, some user groups are allowed
+     * to send messages instantly even if the slow mode is enabled for the channel.
+     *
+     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
+     * ever read directly.
+     */
+    private val isSlowModeActive = ownCapabilities.map { it.contains(ChannelCapabilities.SLOW_MODE) }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
+
+    /**
      * Full message composer state holding all the required information.
      */
     public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
@@ -483,16 +499,18 @@ public class MessageComposerController(
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             val (channelType, channelId) = message.cid.cidToTypeAndId()
-            if (activeMessage.isModerationFailed(chatClient))
+
+            if (activeMessage.isModerationFailed(chatClient)) {
                 chatClient.deleteMessage(activeMessage.id, true).enqueue()
+            }
+
             chatClient.sendMessage(channelType, channelId, message)
         }
 
         dismissMessageActions()
         clearData()
-        handleCooldownTimer()
 
-        sendMessageCall.enqueue()
+        sendMessageCall.enqueueAndHandleSlowMode()
     }
 
     /**
@@ -686,17 +704,28 @@ public class MessageComposerController(
     }
 
     /**
-     * Shows cooldown countdown timer instead of send button when slow mode is enabled.
+     * Executes the message Call and shows cooldown countdown timer instead of send button
+     * when slow mode is enabled.
      */
-    private fun handleCooldownTimer() {
-        if (cooldownInterval > 0) {
+    private fun Call<Message>.enqueueAndHandleSlowMode() {
+        if (cooldownInterval > 0 && isSlowModeActive.value && !isInEditMode) {
             cooldownTimerJob?.cancel()
-            cooldownTimerJob = scope.launch {
-                for (timeRemaining in cooldownInterval downTo 0) {
-                    cooldownTimer.value = timeRemaining
-                    delay(OneSecond)
+
+            cooldownTimer.value = cooldownInterval
+            enqueue {
+                if (it.isSuccess || !chatClient.clientState.isNetworkAvailable) {
+                    cooldownTimerJob = scope.launch {
+                        for (timeRemaining in cooldownInterval downTo 0) {
+                            cooldownTimer.value = timeRemaining
+                            delay(OneSecond)
+                        }
+                    }
+                } else {
+                    cooldownTimer.value = 0
                 }
             }
+        } else {
+            enqueue()
         }
     }
 

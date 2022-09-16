@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.flow.StateFlow
 
 internal class ChatSocketStateService(initialState: State = State.Disconnected.Stopped) {
     private val logger = StreamLog.getLogger("Chat:ChatSocketStateService")
@@ -122,6 +123,12 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      */
     val currentState: State
         get() = stateMachine.state
+
+    /**
+     * Current state of the WebSocket connection as [StateFlow].
+     */
+    val currentStateFlow: StateFlow<State>
+        get() = stateMachine.stateFlow
 
     private val stateMachine: FiniteStateMachine<State, Event> by lazy {
         FiniteStateMachine {
@@ -282,7 +289,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
         /**
          * State of socket when connection need to be reestablished.
          */
-        object RestartConnection : State()
+        object RestartConnection : State() { override fun toString() = "RestartConnection" }
 
         /**
          * State of socket when connection is being establishing.

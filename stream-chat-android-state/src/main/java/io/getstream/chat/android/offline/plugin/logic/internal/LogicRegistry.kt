@@ -27,17 +27,14 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogicImpl
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogicImpl
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.offline.plugin.state.global.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
@@ -71,7 +68,6 @@ internal class LogicRegistry internal constructor(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
                 client,
                 repos,
-                globalState.toMutableState(),
                 this,
                 stateRegistry
             )
@@ -85,8 +81,8 @@ internal class LogicRegistry internal constructor(
     /** Returns [ChannelLogic] by channelType and channelId combination. */
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
-            val mutableState = stateRegistry.channel(channelType, channelId).toMutableState()
-            val stateLogic = ChannelStateLogicImpl(
+            val mutableState = stateRegistry.mutableChannel(channelType, channelId)
+            val stateLogic = ChannelStateLogic(
                 mutableState = mutableState,
                 globalMutableState = globalState,
                 searchLogic = SearchLogic(mutableState),

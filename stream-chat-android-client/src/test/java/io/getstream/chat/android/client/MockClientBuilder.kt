@@ -104,7 +104,9 @@ internal class MockClientBuilder(
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutineExtension.scope)
         val userScope = UserTestScope(clientScope)
-        val callPostponeHelper = CallPostponeHelper(socketStateService, userScope)
+        val callPostponeHelper = CallPostponeHelper(userScope) {
+            socketStateService.awaitConnection()
+        }
         client = ChatClient(
             config,
             api,

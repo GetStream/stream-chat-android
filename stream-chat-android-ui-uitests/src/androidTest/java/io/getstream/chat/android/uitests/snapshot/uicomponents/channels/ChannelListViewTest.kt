@@ -160,6 +160,7 @@ class ChannelListViewTest : ScreenshotTest {
                     ChannelListItem.LoadingMoreItem,
                 )
             )
+            @Suppress("DEPRECATION_ERROR")
             showLoadingMore()
         }
     }

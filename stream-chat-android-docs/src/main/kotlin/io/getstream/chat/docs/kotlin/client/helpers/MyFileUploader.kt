@@ -12,7 +12,6 @@ class MyFileUploader : FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
         callback: ProgressCallback,
     ): Result<UploadedFile> {
@@ -27,7 +26,6 @@ class MyFileUploader : FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
     ): Result<UploadedFile> {
         return try {
@@ -41,7 +39,6 @@ class MyFileUploader : FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
         callback: ProgressCallback,
     ): Result<UploadedImage> {
@@ -56,7 +53,6 @@ class MyFileUploader : FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
     ): Result<UploadedImage> {
         return try {
@@ -70,7 +66,6 @@ class MyFileUploader : FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         url: String,
     ): Result<Unit> {
         return try {
@@ -84,7 +79,6 @@ class MyFileUploader : FileUploader {
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         url: String,
     ): Result<Unit> {
         return try {
