@@ -22,10 +22,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.client.events.MarkAllReadEvent
-import io.getstream.chat.android.client.events.UserPresenceChangedEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
-import io.getstream.chat.android.client.events.UserStopWatchingEvent
+import io.getstream.chat.android.client.events.EventHandlingResult
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Channel
@@ -35,7 +32,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filterWithOffset
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.StateFlow
 
@@ -97,7 +93,7 @@ internal class QueryChannelsLogic(
      *
      * @param channel [Channel]
      */
-    private suspend fun addChannel(channel: Channel) {
+    internal suspend fun addChannel(channel: Channel) {
         addChannels(listOf(channel))
     }
 
@@ -106,7 +102,7 @@ internal class QueryChannelsLogic(
      *
      * @param cid cid of the channel.
      */
-    private suspend fun watchAndAddChannel(cid: String) {
+    internal suspend fun watchAndAddChannel(cid: String) {
         val result = client.channel(cid = cid).watch().await()
 
         if (result.isSuccess) {
@@ -280,7 +276,7 @@ internal class QueryChannelsLogic(
         return remoteCids
     }
 
-    private suspend fun removeChannel(cid: String) = removeChannels(listOf(cid))
+    internal suspend fun removeChannel(cid: String) = removeChannels(listOf(cid))
 
     private suspend fun removeChannels(cidList: List<String>) {
         if (queryChannelsStateLogic?.getQuerySpecs()?.cids?.isEmpty() == true) {
@@ -297,56 +293,6 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Handles events received from the socket.
-     *
-     * @see [handleEvent]
-     */
-    internal suspend fun handleEvents(events: List<ChatEvent>) {
-        for (event in events) {
-            handleEvent(event)
-        }
-    }
-
-    /**
-     * Handles event received from the socket.
-     * Responsible for synchronizing channels.
-     */
-    private suspend fun handleEvent(event: ChatEvent) {
-        // update the info for that channel from the channel repo
-        logger.i { "[handleEvent] event: $event" }
-
-        val cachedChannel = if (event is CidEvent) {
-            queryChannelsDatabaseLogic?.selectChannelWithoutMessages(event.cid)
-        } else null
-
-        when (
-            val handlingResult = queryChannelsStateLogic?.handleChatEvent(event, cachedChannel)
-        ) {
-            is EventHandlingResult.Add -> addChannel(handlingResult.channel)
-            is EventHandlingResult.WatchAndAdd -> watchAndAddChannel(handlingResult.cid)
-            is EventHandlingResult.Remove -> removeChannel(handlingResult.cid)
-            is EventHandlingResult.Skip -> Unit
-            null -> Unit
-        }
-
-        if (event is MarkAllReadEvent) {
-            refreshAllChannelsState()
-        }
-
-        if (event is CidEvent) {
-            // skip events that are typically not impacting the query channels overview
-            if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
-                return
-            }
-            refreshChannelState(event.cid)
-        }
-
-        if (event is UserPresenceChangedEvent) {
-            queryChannelsStateLogic?.refreshMembersStateForUser(event.user)
-        }
-    }
-
-    /**
      * Refreshes multiple channels in this query.
      *
      * @param cidList The channels to refresh.
@@ -355,12 +301,24 @@ internal class QueryChannelsLogic(
         queryChannelsStateLogic?.refreshChannels(cidList)
     }
 
+    internal fun refreshMembersStateForUser(newUser: User) {
+        queryChannelsStateLogic?.refreshMembersStateForUser(newUser)
+    }
+
     /**
      * Refreshes all channels returned in this query.
      * Supports use cases like marking all channels as read.
      */
-    private fun refreshAllChannelsState() {
+    internal fun refreshAllChannelsState() {
         queryChannelsStateLogic?.getQuerySpecs()?.cids?.let(::refreshChannelsState)
+    }
+
+    internal suspend fun parseChatEventResult(chatEvent: ChatEvent): EventHandlingResult {
+        val cachedChannel = if (chatEvent is CidEvent) {
+            queryChannelsDatabaseLogic?.selectChannelWithoutMessages(chatEvent.cid)
+        } else null
+
+        return queryChannelsStateLogic?.handleChatEvent(chatEvent, cachedChannel) ?: EventHandlingResult.Skip
     }
 
     /**
