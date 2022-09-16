@@ -35,7 +35,8 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
-          body-includes: DB Entities has been updated, Do we need to upgrade DB Version
+          body-includes: DB Entities have been updated. Do we need to upgrade DB Version?
+
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v2
         if: steps.touchedEntities.outcome == 'failure'
@@ -43,7 +44,7 @@ jobs:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            DB Entities has been updated, Do we need to upgrade DB Version?
+            DB Entities have been updated. Do we need to upgrade DB Version?
             Modified Entities :
             ```
             ${{ steps.touchedEntities.outputs.touchedEntities }}
