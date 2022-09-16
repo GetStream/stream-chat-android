@@ -158,9 +158,11 @@ import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.uiutils.constant.AttachmentType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 import kotlin.math.abs
 
@@ -1221,6 +1223,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 )
             }
         } else {
+            mediaGalleryPreviewViewModel.isSharingInProgress = false
             toastFailedShare()
         }
     }
@@ -1246,6 +1249,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         mediaUri: Uri?,
         attachmentType: String?,
     ) {
+        mediaGalleryPreviewViewModel.isSharingInProgress = false
+
         if (mediaUri == null) {
             toastFailedShare()
             return
@@ -1280,10 +1285,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * @param attachment The attachment to share.
      */
     private suspend fun shareVideo(attachment: Attachment) {
-        val result = StreamFileUtil.writeFileToShareableFile(
-            context = applicationContext,
-            attachment = attachment
-        )
+        val result = withContext(DispatcherProvider.IO) {
+            StreamFileUtil.writeFileToShareableFile(
+                context = applicationContext,
+                attachment = attachment
+            )
+        }
 
         mediaGalleryPreviewViewModel.isSharingInProgress = false
 
@@ -1292,6 +1299,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 mediaUri = result.data(),
                 attachmentType = attachment.type
             )
+        } else {
+            toastFailedShare()
         }
     }
 
@@ -1484,6 +1493,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        StreamFileUtil.clearStreamCache(context = applicationContext)
     }
 
     public companion object {
