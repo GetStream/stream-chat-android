@@ -539,29 +539,6 @@ public class MessageListViewModel(
     }
 
     /**
-     * Triggered when the user loads more data by reaching the end of the current messages.
-     */
-    @Deprecated(
-        message = "Deprecated after implementing bi directional pagination.",
-        replaceWith = ReplaceWith(
-            "loadOlderMessages(messageId: String)",
-            "io.getstream.chat.android.compose.viewmodel.messages"
-        ),
-        level = DeprecationLevel.WARNING
-    )
-    public fun loadMore() {
-        if (chatClient.clientState.isOffline) return
-        val messageMode = messageMode
-
-        if (messageMode is MessageMode.MessageThread) {
-            threadLoadMore(messageMode)
-        } else {
-            messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreOldMessages = true)
-            chatClient.loadOlderMessages(channelId, messageLimit).enqueue()
-        }
-    }
-
-    /**
      * Loads newer messages of a channel following the currently newest loaded message. In case of threads this will
      * do nothing.
      *
