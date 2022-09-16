@@ -89,12 +89,12 @@ import androidx.compose.ui.unit.dp
 @Immutable
 public data class StreamDimens
 @Deprecated(
-    "This constructor has been deprecated. Parameters 'attachmentsContentImageHeight' and " +
-        "'attachmentsContentImageGridSpacing' have been deprecated in" +
-        " favor of 'attachmentsContentImageMaxHeight' and 'attachmentsContentMediaGridSpacing'. " +
-        "Please use the constructor which does not contain `attachmentsContentImageHeight` and " +
+    "This constructor has been deprecated. Parameter " +
+        "'attachmentsContentImageGridSpacing' has been deprecated in " +
+        "favor of 'attachmentsContentMediaGridSpacing'. " +
+        "Please use the constructor which does not contain " +
         "attachmentsContentImageGridSpacing.",
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.WARNING,
 )
 constructor(
     public val channelItemVerticalPadding: Dp,
