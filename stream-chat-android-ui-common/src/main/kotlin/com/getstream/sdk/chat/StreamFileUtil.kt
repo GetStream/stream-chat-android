@@ -30,7 +30,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.Exception
+import kotlin.Exception
 
 private const val DEFAULT_BITMAP_QUALITY = 90
 
@@ -123,6 +123,58 @@ public object StreamFileUtil {
     }
 
     /**
+     * Fetches the given attachment from cache if it has been previously cached.
+     * Returns an error otherwise.
+     *
+     * @param context The Android [Context] used for path resolving and [Uri] fetching.
+     * @param attachment the attachment to be downloaded.
+     *
+     * @return A [Uri] to the file is returned in the form of [Result.data]
+     * if the file was successfully fetched from the cache. Returns a [ChatError]
+     * accessible via [Result.error] otherwise.
+     */
+    public fun getFileFromCache(
+        context: Context,
+        attachment: Attachment,
+    ): Result<Uri> {
+        return try {
+            val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)
+            if (getOrCreateCacheDirResult.isError) return Result(error = getOrCreateCacheDirResult.error())
+
+            val streamCacheDir = getOrCreateCacheDirResult.data()
+
+            val attachmentHashCode = (attachment.url ?: attachment.assetUrl)?.hashCode()
+            val fileName = CACHED_FILE_PREFIX + attachmentHashCode.toString() + attachment.name
+
+            val file = File(streamCacheDir, fileName)
+
+            // First we check if the file exists.
+            // We then check the hash code is valid and check file size
+            // equality to make sure we've completed the download successfully.
+            val isFileCached = file.exists() &&
+                attachmentHashCode != null &&
+                file.length() == attachment.fileSize.toLong()
+
+            if (isFileCached) {
+                Result(data = getUriForFile(context, file))
+            } else {
+                Result(
+                    error = ChatError(
+                        message = "No such file in cache.",
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Result(
+                error = ChatError(
+                    message = "Cannot determine if the file has been cached.",
+                    cause = e
+                )
+            )
+        }
+    }
+
+    /**
      * Hashes the links of given attachments and then tries to create a new file
      * under that hash. If the file already exists checks that the full file
      * has been written and shares it if it has, in other cases downloads the file
@@ -151,10 +203,7 @@ public object StreamFileUtil {
 
             val file = File(streamCacheDir, fileName)
 
-            // When File.createNewFile returns false it means that the file already exists.
-            // We then check the hash code is valid and check file size
-            // equality to make sure we've completed the download successfully.
-            return if (!file.createNewFile() &&
+            return if (file.exists() &&
                 attachmentHashCode != null &&
                 file.length() == attachment.fileSize.toLong()
             ) {

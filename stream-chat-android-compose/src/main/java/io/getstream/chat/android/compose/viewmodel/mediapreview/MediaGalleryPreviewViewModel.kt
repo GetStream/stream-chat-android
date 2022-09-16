@@ -62,6 +62,19 @@ public class MediaGalleryPreviewViewModel(
         internal set
 
     /**
+     * If we are preparing a file for sharing or not.
+     */
+    public var isSharingInProgress: Boolean by mutableStateOf(false)
+
+    /**
+     * If an attachment needs a prompt to be shared due to a large file size
+     * this value will be non-null.
+     *
+     * You should clear this value once the prompt is removed.
+     */
+    public var promptedAttachment: Attachment? by mutableStateOf(null)
+
+    /**
      * Represent the header title of the gallery screen.
      */
     public var connectionState: ConnectionState by mutableStateOf(ConnectionState.OFFLINE)

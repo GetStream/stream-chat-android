@@ -150,6 +150,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -186,11 +187,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * Holds a job used to share an image or a file.
      */
     private var fileSharingJob: Job? = null
-
-    /**
-     * Indicated that we are preparing a file for sharing.
-     */
-    private var isSharingInProgress: Boolean by mutableStateOf(false)
 
     /**
      * The ViewModel that exposes screen data.
@@ -265,19 +261,41 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 topBar = { MediaGalleryPreviewTopBar(message) },
                 content = { contentPadding ->
                     if (message.id.isNotEmpty()) {
-
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(contentPadding)
-                        ) {
-                            MediaPreviewContent(pagerState, message.attachments) {
-                                coroutineScope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(
-                                        message = getString(R.string.stream_ui_message_list_video_display_error)
-                                    )
+                        Box(Modifier.fillMaxSize()) {
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(contentPadding)
+                            ) {
+                                MediaPreviewContent(pagerState, message.attachments) {
+                                    coroutineScope.launch {
+                                        scaffoldState.snackbarHostState.showSnackbar(
+                                            message = getString(R.string.stream_ui_message_list_video_display_error)
+                                        )
+                                    }
                                 }
                             }
+                        }
+
+                        val promptedAttachment = mediaGalleryPreviewViewModel.promptedAttachment
+
+                        if (promptedAttachment != null) {
+                            SimpleDialog(
+                                title = getString(
+                                    R.string.stream_compose_media_gallery_share_large_file_prompt_title,
+                                ),
+                                message = getString(
+                                    R.string.stream_compose_media_gallery_share_large_file_prompt_message,
+                                    (promptedAttachment.fileSize.toFloat() / (1024 * 1024))
+                                ),
+                                onPositiveAction = {
+                                    shareAttachment(promptedAttachment)
+                                    mediaGalleryPreviewViewModel.promptedAttachment = null
+                                },
+                                onDismiss = {
+                                    mediaGalleryPreviewViewModel.promptedAttachment = null
+                                }
+                            )
                         }
                     }
                 },
@@ -1000,17 +1018,35 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterStart),
                     onClick = {
-                        if (isSharingInProgress) {
-                            fileSharingJob?.cancel()
-                            isSharingInProgress = false
-                        } else {
-                            onShareMediaClick(attachments[pagerState.currentPage])
+                        val attachment = attachments[pagerState.currentPage]
+
+                        when {
+                            mediaGalleryPreviewViewModel.isSharingInProgress -> {
+                                fileSharingJob?.cancel()
+                                mediaGalleryPreviewViewModel.isSharingInProgress = false
+                            }
+                            attachment.fileSize >= MaxUnpromptedFileSize -> {
+                                val result = StreamFileUtil.getFileFromCache(
+                                    context = applicationContext,
+                                    attachment = attachment
+                                )
+
+                                if (result.isSuccess) {
+                                    shareAttachment(
+                                        mediaUri = result.data(),
+                                        attachmentType = attachment.type
+                                    )
+                                } else {
+                                    mediaGalleryPreviewViewModel.promptedAttachment = attachment
+                                }
+                            }
+                            else -> shareAttachment(attachment)
                         }
                     },
                     enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED
                 ) {
 
-                    val shareIcon = if (!isSharingInProgress) {
+                    val shareIcon = if (!mediaGalleryPreviewViewModel.isSharingInProgress) {
                         R.drawable.stream_compose_ic_share
                     } else {
                         R.drawable.stream_compose_ic_clear
@@ -1031,7 +1067,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     modifier = Modifier.align(Alignment.Center),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (isSharingInProgress) {
+                    if (mediaGalleryPreviewViewModel.isSharingInProgress) {
                         CircularProgressIndicator(
                             modifier = Modifier
                                 .padding(horizontal = 12.dp)
@@ -1041,7 +1077,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         )
                     }
 
-                    val text = if (!isSharingInProgress) {
+                    val text = if (!mediaGalleryPreviewViewModel.isSharingInProgress) {
                         stringResource(
                             id = R.string.stream_compose_image_order,
                             pagerState.currentPage + 1,
@@ -1147,13 +1183,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     }
 
     /**
-     * Handles the logic of loading the image and preparing a shareable file.
+     * Handles the logic of sharing a file.
      *
-     * @param attachment The attachment to preload and share.
+     * @param attachment The attachment to be shared.
      */
-    private fun onShareMediaClick(attachment: Attachment) {
+    private fun shareAttachment(attachment: Attachment) {
         fileSharingJob = lifecycleScope.launch {
-            isSharingInProgress = true
+            mediaGalleryPreviewViewModel.isSharingInProgress = true
 
             when (attachment.type) {
                 AttachmentType.IMAGE -> shareImage(attachment)
@@ -1180,7 +1216,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                 shareAttachment(
                     mediaUri = imageUri,
-                    mediaType = "image/*"
+                    attachmentType = attachment.type
                 )
             }
         } else {
@@ -1203,15 +1239,24 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * Starts a picker to share the current image.
      *
      * @param mediaUri The URI of the media attachment to share.
-     * @param mediaType type of media being shared.
+     * @param attachmentType type of attachment being shared.
      */
     private fun shareAttachment(
         mediaUri: Uri?,
-        mediaType: String,
+        attachmentType: String?,
     ) {
         if (mediaUri == null) {
             toastFailedShare()
             return
+        }
+
+        val mediaType = when (attachmentType) {
+            AttachmentType.IMAGE -> "image/*"
+            AttachmentType.VIDEO -> "video/*"
+            else -> {
+                toastFailedShare()
+                return
+            }
         }
 
         ContextCompat.startActivity(
@@ -1239,12 +1284,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             attachment = attachment
         )
 
-        isSharingInProgress = false
+        mediaGalleryPreviewViewModel.isSharingInProgress = false
 
         if (result.isSuccess) {
             shareAttachment(
                 mediaUri = result.data(),
-                mediaType = "video/*"
+                attachmentType = attachment.type
             )
         }
     }
@@ -1441,6 +1486,15 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     }
 
     public companion object {
+
+        /**
+         * If the file is at least this big or bigger we prompt the user to make sure they
+         * want to download it.
+         *
+         * Expressed in bytes.
+         */
+        private const val MaxUnpromptedFileSize = 10 * 1024 * 1024
+
         /**
          * The column count used for the image gallery.
          */

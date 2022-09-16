@@ -2043,9 +2043,13 @@ public final class io/getstream/chat/android/compose/viewmodel/mediapreview/Medi
 	public final fun deleteCurrentMediaAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
 	public final fun getConnectionState ()Lio/getstream/chat/android/client/models/ConnectionState;
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public final fun getPromptedAttachment ()Lio/getstream/chat/android/client/models/Attachment;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun isSharingInProgress ()Z
 	public final fun isShowingGallery ()Z
 	public final fun isShowingOptions ()Z
+	public final fun setPromptedAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun setSharingInProgress (Z)V
 	public final fun toggleGallery (Z)V
 	public final fun toggleMediaOptions (Z)V
 }
