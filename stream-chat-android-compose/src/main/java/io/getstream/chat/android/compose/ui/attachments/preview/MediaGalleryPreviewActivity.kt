@@ -80,6 +80,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -156,6 +157,7 @@ import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
 import io.getstream.chat.android.uiutils.constant.AttachmentType
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.Date
 import kotlin.math.abs
@@ -178,6 +180,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             )?.messageId ?: ""
         )
     }
+
+    /**
+     * Holds a job used to share an image or a file.
+     */
+    private var fileSharingJob: Job? = null
+
+    /**
+     * Indicated that we are preparing a file for sharing.
+     */
+    private var isSharingInProgress: Boolean by mutableStateOf(false)
 
     /**
      * The ViewModel that exposes screen data.
@@ -986,12 +998,26 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             ) {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterStart),
-                    onClick = { onShareMediaClick(attachments[pagerState.currentPage]) },
+                    onClick = {
+                        if (isSharingInProgress) {
+                            fileSharingJob?.cancel()
+                            isSharingInProgress = false
+                        } else {
+                            onShareMediaClick(attachments[pagerState.currentPage])
+                        }
+                    },
                     enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
                         !isCurrentAttachmentVideo
                 ) {
+
+                    val shareIcon = if (!isSharingInProgress) {
+                        R.drawable.stream_compose_ic_share
+                    } else {
+                        R.drawable.stream_compose_ic_clear
+                    }
+
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_share),
+                        painter = painterResource(id = shareIcon),
                         contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
                         tint = if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
                             !isCurrentAttachmentVideo
@@ -1003,16 +1029,36 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     )
                 }
 
-                Text(
+                Row(
                     modifier = Modifier.align(Alignment.Center),
-                    text = stringResource(
-                        id = R.string.stream_compose_image_order,
-                        pagerState.currentPage + 1,
-                        attachmentCount
-                    ),
-                    style = ChatTheme.typography.title3Bold,
-                    color = ChatTheme.colors.textHighEmphasis
-                )
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (isSharingInProgress) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(horizontal = 12.dp)
+                                .size(24.dp),
+                            strokeWidth = 2.dp,
+                            color = ChatTheme.colors.primaryAccent,
+                        )
+                    }
+
+                    val text = if (!isSharingInProgress) {
+                        stringResource(
+                            id = R.string.stream_compose_image_order,
+                            pagerState.currentPage + 1,
+                            attachmentCount
+                        )
+                    } else {
+                        stringResource(id = R.string.stream_compose_media_gallery_preview_preparing)
+                    }
+
+                    Text(
+                        text = text,
+                        style = ChatTheme.typography.title3Bold,
+                        color = ChatTheme.colors.textHighEmphasis
+                    )
+                }
 
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterEnd),
@@ -1109,7 +1155,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      */
     private fun onShareMediaClick(attachment: Attachment) {
         // TODO share videos as well
-        lifecycleScope.launch {
+        fileSharingJob = lifecycleScope.launch {
+            isSharingInProgress = true
             val uri = StreamImageLoader.instance().loadAsBitmap(
                 context = applicationContext,
                 url = attachment.imagePreviewUrl!!
@@ -1118,6 +1165,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             }
 
             if (uri != null) {
+                isSharingInProgress = false
                 shareImage(uri)
             }
         }
