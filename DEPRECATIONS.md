@@ -4,8 +4,6 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `Messages` | 2022.08.30<br/>5.6.0 | 2022.09.27 ⌛ | 2022.10.25 ⌛ | Use new implementation of `Messages` composable. |
-| `MesageListViewModel.loadMore` | 2022.08.30<br/>5.6.0 | 2022.09.27 ⌛ | 2022.10.25 ⌛ | Use `MessageListViewModel.loadOlderMessages` to achieve the same effect in compose. |
 | `StreamDimens` constructor containing parameter `attachmentsContentImageHeight`  | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13<br/>5.10.0 | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageHeight`. |
 | `QueryChannelsState.chatEventHandler` | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13<br/>5.10.0 | Use `QueryChannelsState.chatEventHandlerFactory` instead. |
 | Multiple event specific `BaseChatEventHandler` methods | 2022.08.16 <br/>5.8.0 | 2022.08.30<br/>5.9.0 | 2022.09.13<br/>5.10.0 | Use `handleChatEvent()` or `handleCidEvent()` instead. |
