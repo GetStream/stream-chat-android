@@ -14,12 +14,14 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Reviewed requests parameters. `connectionId` is now sent only if necessary. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
 
 ### ✅ Added
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+- 🚨 Breaking change: Removed `connectionId` parameter from `FileUploader` methods. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed

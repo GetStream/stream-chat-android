@@ -37,7 +37,6 @@ internal class StreamFileUploader(
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
         callback: ProgressCallback,
     ): Result<UploadedFile> {
@@ -48,7 +47,6 @@ internal class StreamFileUploader(
             channelType = channelType,
             channelId = channelId,
             file = part,
-            connectionId = connectionId,
             progressCallback = callback,
         ).execute().map {
             it.toUploadedFile()
@@ -59,7 +57,6 @@ internal class StreamFileUploader(
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
     ): Result<UploadedFile> {
         val body = file.asRequestBody(file.getMediaType())
@@ -69,7 +66,6 @@ internal class StreamFileUploader(
             channelType = channelType,
             channelId = channelId,
             file = part,
-            connectionId = connectionId,
             progressCallback = null,
         ).execute().map {
             it.toUploadedFile()
@@ -80,7 +76,6 @@ internal class StreamFileUploader(
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
         callback: ProgressCallback,
     ): Result<UploadedImage> {
@@ -91,7 +86,6 @@ internal class StreamFileUploader(
             channelType = channelType,
             channelId = channelId,
             file = part,
-            connectionId = connectionId,
             progressCallback = callback,
         ).execute().map {
             UploadedImage(file = it.file)
@@ -102,7 +96,6 @@ internal class StreamFileUploader(
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         file: File,
     ): Result<UploadedImage> {
         val body = file.asRequestBody(file.getMediaType())
@@ -112,7 +105,6 @@ internal class StreamFileUploader(
             channelType = channelType,
             channelId = channelId,
             file = part,
-            connectionId = connectionId,
             progressCallback = null,
         ).execute().map {
             UploadedImage(file = it.file)
@@ -123,13 +115,11 @@ internal class StreamFileUploader(
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         url: String,
     ): Result<Unit> {
         return retrofitCdnApi.deleteFile(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             url = url
         ).execute().toUnitResult()
     }
@@ -138,13 +128,11 @@ internal class StreamFileUploader(
         channelType: String,
         channelId: String,
         userId: String,
-        connectionId: String,
         url: String,
     ): Result<Unit> {
         return retrofitCdnApi.deleteImage(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             url = url
         ).execute().toUnitResult()
     }

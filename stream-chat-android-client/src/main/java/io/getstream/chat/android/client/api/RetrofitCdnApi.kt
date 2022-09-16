@@ -37,7 +37,6 @@ internal interface RetrofitCdnApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Part file: MultipartBody.Part,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Tag progressCallback: ProgressCallback?,
     ): RetrofitCall<UploadFileResponse>
 
@@ -47,7 +46,6 @@ internal interface RetrofitCdnApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Part file: MultipartBody.Part,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Tag progressCallback: ProgressCallback?
     ): RetrofitCall<UploadFileResponse>
 
@@ -55,7 +53,6 @@ internal interface RetrofitCdnApi {
     fun deleteFile(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("url") url: String,
     ): RetrofitCall<CompletableResponse>
 
@@ -63,7 +60,6 @@ internal interface RetrofitCdnApi {
     fun deleteImage(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Query("url") url: String,
     ): RetrofitCall<CompletableResponse>
 }
