@@ -168,6 +168,7 @@
     <string name="stream_compose_media_gallery_preview_share">Share</string>
     <string name="stream_compose_media_gallery_preview_photos">Photos</string>
     <string name="stream_compose_media_gallery_preview_preparing">Preparing...</string>
+    <string name="stream_compose_media_gallery_preview_could_not_share_attachment">Could not share attachment</string>
 
     <!-- Content Description -->
     <string name="stream_compose_cd_channel_item" translatable="false">Channel item</string>

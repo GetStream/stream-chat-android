@@ -41,6 +41,7 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.MediaController
+import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -983,7 +984,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     @Composable
     private fun MediaGalleryPreviewBottomBar(attachments: List<Attachment>, pagerState: PagerState) {
         val attachmentCount = attachments.size
-        val isCurrentAttachmentVideo = attachments[pagerState.currentPage].type == AttachmentType.VIDEO
 
         Surface(
             modifier = Modifier
@@ -1007,8 +1007,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             onShareMediaClick(attachments[pagerState.currentPage])
                         }
                     },
-                    enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
-                        !isCurrentAttachmentVideo
+                    enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED
                 ) {
 
                     val shareIcon = if (!isSharingInProgress) {
@@ -1020,9 +1019,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     Icon(
                         painter = painterResource(id = shareIcon),
                         contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
-                        tint = if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
-                            !isCurrentAttachmentVideo
-                        ) {
+                        tint = if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) {
                             ChatTheme.colors.textHighEmphasis
                         } else {
                             ChatTheme.colors.disabled
@@ -1155,35 +1152,74 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * @param attachment The attachment to preload and share.
      */
     private fun onShareMediaClick(attachment: Attachment) {
-        // TODO share videos as well
         fileSharingJob = lifecycleScope.launch {
             isSharingInProgress = true
-            val uri = StreamImageLoader.instance().loadAsBitmap(
-                context = applicationContext,
-                url = attachment.imagePreviewUrl!!
-            )?.let {
-                StreamFileUtil.writeImageToSharableFile(applicationContext, it)
-            }
 
-            if (uri != null) {
-                isSharingInProgress = false
-                shareImage(uri)
+            when (attachment.type) {
+                AttachmentType.IMAGE -> shareImage(attachment)
+                AttachmentType.VIDEO -> shareVideo(attachment)
+                else -> toastFailedShare()
             }
         }
     }
 
     /**
+     * Fetches an image from Coil's cache and shares it.
+     *
+     * @param attachment The attachment used to prepare the URI.
+     */
+    private suspend fun shareImage(attachment: Attachment) {
+        val attachmentUrl = attachment.imagePreviewUrl
+
+        if (attachmentUrl != null) {
+            StreamImageLoader.instance().loadAsBitmap(
+                context = applicationContext,
+                url = attachmentUrl
+            )?.let {
+                val imageUri = StreamFileUtil.writeImageToSharableFile(applicationContext, it)
+
+                shareAttachment(
+                    mediaUri = imageUri,
+                    mediaType = "image/*"
+                )
+            }
+        } else {
+            toastFailedShare()
+        }
+    }
+
+    /**
+     * Displays a toast saying that sharing the attachment has failed.
+     */
+    private fun toastFailedShare() {
+        Toast.makeText(
+            applicationContext,
+            applicationContext.getString(R.string.stream_compose_media_gallery_preview_could_not_share_attachment),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    /**
      * Starts a picker to share the current image.
      *
-     * @param imageUri The URI of the image to share.
+     * @param mediaUri The URI of the media attachment to share.
+     * @param mediaType type of media being shared.
      */
-    private fun shareImage(imageUri: Uri) {
+    private fun shareAttachment(
+        mediaUri: Uri?,
+        mediaType: String,
+    ) {
+        if (mediaUri == null) {
+            toastFailedShare()
+            return
+        }
+
         ContextCompat.startActivity(
             this,
             Intent.createChooser(
                 Intent(Intent.ACTION_SEND).apply {
-                    type = "image/*"
-                    putExtra(Intent.EXTRA_STREAM, imageUri)
+                    type = mediaType
+                    putExtra(Intent.EXTRA_STREAM, mediaUri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 },
                 getString(R.string.stream_compose_attachment_gallery_share),
@@ -1195,10 +1231,22 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     /**
      * Starts a picker to share the current image.
      *
-     * @param imageUri The URI of the image to share.
+     * @param attachment The attachment to share.
      */
-    private fun shareVideo(videoUri: Uri) {
-        // TODO
+    private suspend fun shareVideo(attachment: Attachment) {
+        val result = StreamFileUtil.writeFileToShareableFile(
+            context = applicationContext,
+            attachment = attachment
+        )
+
+        isSharingInProgress = false
+
+        if (result.isSuccess) {
+            shareAttachment(
+                mediaUri = result.data(),
+                mediaType = "video/*"
+            )
+        }
     }
 
     /**
