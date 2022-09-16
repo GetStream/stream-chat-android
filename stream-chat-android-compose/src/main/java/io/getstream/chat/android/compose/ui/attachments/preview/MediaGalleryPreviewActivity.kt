@@ -241,6 +241,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * @param initialAttachmentPosition The initial pager position, based on the attachment preview
      * the user clicked on.
      */
+    @Suppress("MagicNumber")
     @OptIn(ExperimentalAnimationApi::class)
     @Composable
     private fun MediaGalleryPreviewContentWrapper(

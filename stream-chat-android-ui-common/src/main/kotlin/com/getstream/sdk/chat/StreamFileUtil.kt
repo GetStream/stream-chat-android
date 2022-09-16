@@ -133,6 +133,7 @@ public object StreamFileUtil {
      * if the file was successfully fetched from the cache. Returns a [ChatError]
      * accessible via [Result.error] otherwise.
      */
+    @Suppress("TooGenericExceptionCaught")
     public fun getFileFromCache(
         context: Context,
         attachment: Attachment,
