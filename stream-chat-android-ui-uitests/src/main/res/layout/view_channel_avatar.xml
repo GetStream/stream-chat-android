@@ -14,9 +14,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<io.getstream.chat.android.ui.avatar.AvatarView xmlns:android="http://schemas.android.com/apk/res/android"
+<io.getstream.chat.android.ui.avatar.ChannelAvatarView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/avatarView"
+    android:id="@+id/channelAvatarView"
     android:layout_width="60dp"
     android:layout_height="60dp"
     app:streamUiAvatarBorderWidth="0dp"

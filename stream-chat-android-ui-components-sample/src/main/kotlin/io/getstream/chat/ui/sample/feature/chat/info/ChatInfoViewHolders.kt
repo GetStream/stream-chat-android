@@ -52,10 +52,10 @@ class ChatInfoMemberViewHolder(private val binding: ChatInfoMemberItemBinding) :
     override fun bind(item: ChatInfoItem.MemberItem) {
         with(item.member) {
             if (user.image.isNotEmpty()) {
-                binding.memberAvatar.isInvisible = false
-                binding.memberAvatar.setUserData(user)
+                binding.userAvatarView.isInvisible = false
+                binding.userAvatarView.setUser(user)
             } else {
-                binding.memberAvatar.isInvisible = true
+                binding.userAvatarView.isInvisible = true
             }
             binding.memberUsername.text = user.name
             binding.memberOnlineIndicator.isVisible = user.online
@@ -130,7 +130,7 @@ class ChatInfoGroupMemberViewHolder(
     override fun bind(item: ChatInfoItem.MemberItem) {
         with(item.member) {
             member = this
-            binding.userAvatar.setUserData(user)
+            binding.userAvatarView.setUser(user)
             binding.nameTextView.text = user.name
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
 

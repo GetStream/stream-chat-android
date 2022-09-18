@@ -65,10 +65,10 @@ internal class MediaAttachmentAdapter(
 
             val user = attachmentGalleryItem.user
             if (showUserAvatars) {
-                binding.avatarView.isVisible = true
-                binding.avatarView.setUserData(user)
+                binding.userAvatarView.isVisible = true
+                binding.userAvatarView.setUser(user)
             } else {
-                binding.avatarView.isVisible = false
+                binding.userAvatarView.isVisible = false
             }
         }
     }

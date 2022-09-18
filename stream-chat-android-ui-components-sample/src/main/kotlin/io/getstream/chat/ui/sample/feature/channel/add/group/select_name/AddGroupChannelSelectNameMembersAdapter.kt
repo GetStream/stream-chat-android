@@ -57,7 +57,7 @@ class AddGroupChannelSelectNameMembersAdapter :
 
         fun bind(user: User) {
             binding.deleteMemberButton.setOnClickListener { deleteMemberClickListener.onDeleteMember(user) }
-            binding.memberAvatar.setUserData(user)
+            binding.userAvatarView.setUser(user)
             binding.memberNameTextView.text = user.name
         }
     }

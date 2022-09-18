@@ -55,7 +55,7 @@ class ChatInfoSharedGroupsViewHolder(
         this.channel = channel
 
         binding.apply {
-            avatarView.setChannelData(channel)
+            channelAvatarView.setChannel(channel)
             nameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
                 channel = channel,
                 currentUser = ChatClient.instance().getCurrentUser()

@@ -70,7 +70,7 @@ internal class MessagePreviewView : FrameLayout {
     }
 
     fun setMessage(message: Message, currentUserMention: String? = null) {
-        binding.avatarView.setUserData(message.user)
+        binding.userAvatarView.setUser(message.user)
         binding.senderNameLabel.text = formatChannelName(message)
         binding.messageLabel.text = formatMessagePreview(message, currentUserMention)
         binding.messageTimeLabel.text = ChatUI.dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)

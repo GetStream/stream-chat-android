@@ -31,16 +31,20 @@ import io.getstream.chat.android.ui.common.extensions.internal.getEnum
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
+/**
+ * Style for [UserAvatarView] and [ChannelAvatarView].
+ */
 public data class AvatarStyle(
     @Px public val avatarBorderWidth: Int,
     @ColorInt public val avatarBorderColor: Int,
     public val avatarInitialText: TextStyle,
+    public val groupAvatarInitialText: TextStyle,
     public val onlineIndicatorEnabled: Boolean,
-    public val onlineIndicatorPosition: AvatarView.OnlineIndicatorPosition,
+    public val onlineIndicatorPosition: OnlineIndicatorPosition,
     @ColorInt public val onlineIndicatorColor: Int,
     @ColorInt public val onlineIndicatorBorderColor: Int,
-    public val avatarShape: AvatarView.AvatarShape,
-    @Px public val borderRadius: Float
+    public val avatarShape: AvatarShape,
+    @Px public val borderRadius: Float,
 ) {
 
     internal companion object {
@@ -55,10 +59,12 @@ public data class AvatarStyle(
                     R.styleable.AvatarView_streamUiAvatarBorderWidth,
                     context.getDimension(R.dimen.stream_ui_avatar_border_width)
                 )
+
                 val avatarBorderColor = it.getColor(
                     R.styleable.AvatarView_streamUiAvatarBorderColor,
                     context.getColorCompat(R.color.stream_ui_black)
                 )
+
                 val avatarInitialText = TextStyle.Builder(it)
                     .size(
                         R.styleable.AvatarView_streamUiAvatarTextSize,
@@ -77,16 +83,38 @@ public data class AvatarStyle(
                         Typeface.BOLD
                     )
                     .build()
+
+                val groupAvatarInitialText = TextStyle.Builder(it)
+                    .size(
+                        R.styleable.AvatarView_streamUiGroupAvatarTextSize,
+                        context.getDimension(R.dimen.stream_ui_group_avatar_initials)
+                    )
+                    .color(
+                        R.styleable.AvatarView_streamUiGroupAvatarTextColor,
+                        context.getColorCompat(R.color.stream_ui_white)
+                    )
+                    .font(
+                        R.styleable.AvatarView_streamUiGroupAvatarTextFontAssets,
+                        R.styleable.AvatarView_streamUiGroupAvatarTextFont
+                    )
+                    .style(
+                        R.styleable.AvatarView_streamUiGroupAvatarTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
+
                 val onlineIndicatorEnabled = it.getBoolean(
                     R.styleable.AvatarView_streamUiAvatarOnlineIndicatorEnabled,
                     false
                 )
+
                 val onlineIndicatorPosition = it.getEnum(
                     R.styleable.AvatarView_streamUiAvatarOnlineIndicatorPosition,
-                    AvatarView.OnlineIndicatorPosition.TOP_END
+                    OnlineIndicatorPosition.TOP_END
                 )
                 val onlineIndicatorColor =
                     it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
+
                 val onlineIndicatorBorderColor =
                     it.getColor(
                         R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor,
@@ -94,7 +122,7 @@ public data class AvatarStyle(
                     )
 
                 val avatarShape =
-                    it.getEnum(R.styleable.AvatarView_streamUiAvatarShape, AvatarView.AvatarShape.CIRCLE)
+                    it.getEnum(R.styleable.AvatarView_streamUiAvatarShape, AvatarShape.CIRCLE)
 
                 val borderRadius =
                     it.getDimensionPixelSize(
@@ -106,6 +134,7 @@ public data class AvatarStyle(
                     avatarBorderWidth = avatarBorderWidth,
                     avatarBorderColor = avatarBorderColor,
                     avatarInitialText = avatarInitialText,
+                    groupAvatarInitialText = groupAvatarInitialText,
                     onlineIndicatorEnabled = onlineIndicatorEnabled,
                     onlineIndicatorPosition = onlineIndicatorPosition,
                     onlineIndicatorColor = onlineIndicatorColor,

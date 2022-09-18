@@ -22,8 +22,8 @@
     android:background="@color/stream_ui_white_snow"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/userAvatar"
+    <io.getstream.chat.android.ui.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="@style/StreamUiChannelListAvatarStyle"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toTopOf="@id/separator"
@@ -42,7 +42,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/onlineTextView"
         app:layout_constraintEnd_toStartOf="@id/ownerTextView"
-        app:layout_constraintStart_toEndOf="@id/userAvatar"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="An Amazing Guy"
@@ -58,7 +58,7 @@
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/ownerTextView"
-        app:layout_constraintStart_toEndOf="@id/userAvatar"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toBottomOf="@id/nameTextView"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Las seen 3 days ago"
