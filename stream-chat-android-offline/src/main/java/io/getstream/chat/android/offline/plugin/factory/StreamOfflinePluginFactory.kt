@@ -50,6 +50,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelLis
 import io.getstream.chat.android.offline.plugin.listener.internal.NoOpThreadQueryListener
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.NoOpThreadQueryStateListener
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerDatabase
@@ -176,8 +177,8 @@ public class StreamOfflinePluginFactory(
         return OfflinePlugin(
             activeUser = user,
             queryChannelsListener = statePlugin,
-            threadQueryListener = NoOpThreadQueryListener(),
             queryChannelListener = queryChannelListener,
+            threadQueryListener = NoOpThreadQueryStateListener(),
             channelMarkReadListener = statePlugin,
             editMessageListener = editMessageListener,
             hideChannelListener = hideChannelListener,
