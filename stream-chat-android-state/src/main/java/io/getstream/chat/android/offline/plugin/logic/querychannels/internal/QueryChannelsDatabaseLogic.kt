@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 
 @Suppress("LongParameterList")
-internal class QueryChannelsDatabaseLogicImpl(
+internal class QueryChannelsDatabaseLogic(
     private val queryChannelsRepository: QueryChannelsRepository,
     private val channelConfigRepository: ChannelConfigRepository,
     private val channelRepository: ChannelRepository,

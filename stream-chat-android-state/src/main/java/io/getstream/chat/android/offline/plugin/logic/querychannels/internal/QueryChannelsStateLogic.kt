@@ -32,7 +32,7 @@ import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannel
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.logging.StreamLog
 
-internal class QueryChannelsStateLogicImpl(
+internal class QueryChannelsStateLogic(
     private val mutableState: QueryChannelsMutableState,
     private val stateRegistry: StateRegistry,
     private val logicRegistry: LogicRegistry,

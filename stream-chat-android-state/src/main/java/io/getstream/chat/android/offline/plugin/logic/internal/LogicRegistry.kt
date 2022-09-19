@@ -30,9 +30,9 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelSt
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogicImpl
-import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogicImpl
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
-import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsStateLogicImpl
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsStateLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
@@ -66,13 +66,13 @@ internal class LogicRegistry internal constructor(
 
     override fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
-            val queryChannelsStateLogic = QueryChannelsStateLogicImpl(
+            val queryChannelsStateLogic = QueryChannelsStateLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
                 stateRegistry,
                 this
             )
 
-            val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogicImpl(
+            val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
                 repos,
                 repos,
                 repos,

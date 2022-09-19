@@ -35,7 +35,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-internal class QueryChannelsStateLogicImplTest {
+internal class QueryChannelsStateLogicTest {
 
     private val testCid = randomCID()
 
@@ -54,7 +54,7 @@ internal class QueryChannelsStateLogicImplTest {
         on(it.channelState(any(), any())) doReturn mock()
     }
 
-    private val queryChannelsStateLogicImpl = QueryChannelsStateLogicImpl(mutableState, stateRegistry, logicRegistry)
+    private val queryChannelsStateLogic = QueryChannelsStateLogic(mutableState, stateRegistry, logicRegistry)
 
     @Test
     fun `when a channel is inside the query spec and it is refreshed, it should be added`() {
@@ -68,7 +68,7 @@ internal class QueryChannelsStateLogicImplTest {
         whenever(stateRegistry.isActiveChannel(channelType, channelId)) doReturn true
         whenever(stateRegistry.channel(channelType, channelId)) doReturn channelState
 
-        queryChannelsStateLogicImpl.refreshChannels(listOf(testCid))
+        queryChannelsStateLogic.refreshChannels(listOf(testCid))
 
         verify(mutableState).setChannels(mapOf(testCid to channel))
     }
@@ -86,7 +86,7 @@ internal class QueryChannelsStateLogicImplTest {
         whenever(stateRegistry.isActiveChannel(channel.type, channel.id)) doReturn true
         whenever(stateRegistry.channel(channelType, channelId)) doReturn channelState
 
-        queryChannelsStateLogicImpl.refreshChannels(listOf(cidOutsideSpecs))
+        queryChannelsStateLogic.refreshChannels(listOf(cidOutsideSpecs))
 
         verify(mutableState, never()).setChannels(mapOf(testCid to channel))
     }
@@ -104,7 +104,7 @@ internal class QueryChannelsStateLogicImplTest {
         whenever(stateRegistry.isActiveChannel(channel.type, channel.id)) doReturn false
         whenever(stateRegistry.channel(channelType, channelId)) doReturn channelState
 
-        queryChannelsStateLogicImpl.refreshChannels(listOf(cidOutsideSpecs))
+        queryChannelsStateLogic.refreshChannels(listOf(cidOutsideSpecs))
 
         verify(mutableState, never()).setChannels(mapOf(testCid to channel))
     }
@@ -117,7 +117,7 @@ internal class QueryChannelsStateLogicImplTest {
 
         whenever(mutableState.queryChannelsSpec) doReturn queryChannelsSpec
 
-        queryChannelsStateLogicImpl.addChannelsState(channels)
+        queryChannelsStateLogic.addChannelsState(channels)
 
         queryChannelsSpec.cids `should contain same` setOf(testCid, channel1.cid, channel2.cid)
         verify(mutableState).setChannels(channels.associateBy { it.cid })
