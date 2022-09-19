@@ -132,9 +132,27 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.plugin.CombinedPlugin
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
+import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
+import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
+import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
+import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListenerFull
+import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.InitializationCoordinator
@@ -294,6 +312,13 @@ internal constructor(
      * Error handlers for API calls.
      */
     private var errorHandlers: List<ErrorHandler> = emptyList()
+
+    @InternalStreamChatApi
+    public val threadQueryListenerFull: ThreadQueryListenerFull by lazy {
+        val getMessageFun: suspend (String) -> Result<Message> = { messageId -> getMessage(messageId).await() }
+
+        ThreadQueryListenerFull(null, repositoryFacade, repositoryFacade, getMessageFun)
+    }
 
     init {
         eventsObservable.subscribeSuspend { event ->
@@ -486,6 +511,8 @@ internal constructor(
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
         _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
+        plugins += CombinedPlugin("CombinedPlugin", threadQueryListenerFull)
+
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)

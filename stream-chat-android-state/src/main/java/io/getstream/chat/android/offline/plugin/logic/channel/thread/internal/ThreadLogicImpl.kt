@@ -26,22 +26,23 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.thread.ThreadLogic
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
-internal class ThreadLogic(private val threadStateLogic: ThreadStateLogic) {
+internal class ThreadLogicImpl(private val threadStateLogic: ThreadStateLogic) : ThreadLogic {
 
     private val mutableState: ThreadMutableState = threadStateLogic.writeThreadState()
 
-    fun isLoadingOlderMessages(): Boolean = mutableState.loadingOlderMessages.value
+    override fun isLoadingOlderMessages(): Boolean = mutableState.loadingOlderMessages.value
 
-    fun isLoadingMessages(): Boolean = mutableState.loading.value
+    override fun isLoadingMessages(): Boolean = mutableState.loading.value
 
-    internal fun setLoading(isLoading: Boolean) {
+    override fun setLoading(isLoading: Boolean) {
         mutableState.setLoading(isLoading)
     }
 
-    internal fun setLoadingOlderMessages(isLoading: Boolean) {
+    override fun setLoadingOlderMessages(isLoading: Boolean) {
         mutableState.setLoadingOlderMessages(isLoading)
     }
 
@@ -52,7 +53,7 @@ internal class ThreadLogic(private val threadStateLogic: ThreadStateLogic) {
      *
      * @return [Message] if exists, null otherwise.
      */
-    internal fun getMessage(messageId: String): Message? {
+    override fun getMessage(messageId: String): Message? {
         return mutableState.rawMessage.value[messageId]?.copy()
     }
 
@@ -64,19 +65,19 @@ internal class ThreadLogic(private val threadStateLogic: ThreadStateLogic) {
         threadStateLogic.deleteMessage(message)
     }
 
-    internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
+    override fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
-    internal fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
+    override fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
 
     internal fun removeLocalMessage(message: Message) {
         threadStateLogic.deleteMessage(message)
     }
 
-    internal fun setEndOfOlderMessages(isEnd: Boolean) {
+    override fun setEndOfOlderMessages(isEnd: Boolean) {
         mutableState.setEndOfOlderMessages(isEnd)
     }
 
-    internal fun updateOldestMessageInThread(messages: List<Message>) {
+    override fun updateOldestMessageInThread(messages: List<Message>) {
         mutableState.setOldestInThread(
             messages.sortedBy { it.createdAt }
                 .firstOrNull()

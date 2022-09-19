@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogicImpl
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,7 +51,7 @@ internal class SendMessageInterceptorImplTest {
         on(it.toChannel()) doReturn randomChannel()
     }
 
-    private val threadLogic: ThreadLogic = mock {}
+    private val threadLogic: ThreadLogicImpl = mock {}
 
     private val logic: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn channelLogic
