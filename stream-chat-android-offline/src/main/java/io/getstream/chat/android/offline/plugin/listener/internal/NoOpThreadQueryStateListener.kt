@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
 
-internal class NoOpThreadQueryListener : ThreadQueryListener {
+internal class NoOpThreadQueryStateListener : ThreadQueryListener {
 
     override suspend fun onGetRepliesRequest(messageId: String, limit: Int) {
         // Nothing to do.
