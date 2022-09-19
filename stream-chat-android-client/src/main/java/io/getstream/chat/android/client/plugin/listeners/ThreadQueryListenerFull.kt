@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.plugin.listener.internal
+package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
-import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.client.plugin.ThreadLogicProvider
+import io.getstream.chat.android.client.thread.ThreadLogic
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.logging.StreamLog
 
 /**
  * ThreadQueryListenerFull handles both state and database. It uses, if available, the database
  * to update, if available, the state.
  *
- * @param logic [LogicRegistry] Optional class to handle state updates
+ * @param logic [ThreadLogicProvider] Optional class to handle state updates
  * @param messageRepository [MessageRepository] Optional to handle database updates related to messages
  * @param userRepository [UserRepository]  Optional to handle database updates related to user
  * @param getRemoteMessage Returns a remote message from backend side.
  */
-internal class ThreadQueryListenerFull(
-    private val logic: LogicRegistry?,
-    private val messageRepository: MessageRepository?,
-    private val userRepository: UserRepository?,
+@InternalStreamChatApi
+public class ThreadQueryListenerFull(
+    public var logic: ThreadLogicProvider?,
+    private val messageRepository: MessageRepository,
+    private val userRepository: UserRepository,
     private val getRemoteMessage: suspend (messageId: String) -> Result<Message>
 ) : ThreadQueryListener {
 
@@ -62,18 +63,18 @@ internal class ThreadQueryListenerFull(
         val threadLogic = logic?.thread(messageId)
 
         threadLogic?.setLoading(true)
-        val messages = messageRepository?.selectMessagesForThread(messageId, limit)
-        val parentMessage = threadLogic?.getMessage(messageId) ?: messages?.firstOrNull { it.id == messageId }
+        val messages = messageRepository.selectMessagesForThread(messageId, limit)
+        val parentMessage = threadLogic?.getMessage(messageId) ?: messages.firstOrNull { it.id == messageId }
 
-        if (parentMessage != null && messages?.isNotEmpty() == true) {
+        if (parentMessage != null && messages.isNotEmpty()) {
             threadLogic?.upsertMessages(messages)
         } else {
             val result = getRemoteMessage(messageId)
             if (result.isSuccess) {
                 val message = result.data()
                 threadLogic?.upsertMessage(result.data())
-                userRepository?.insertUsers(message.users())
-                messageRepository?.insertMessage(message)
+                userRepository.insertUsers(message.users())
+                messageRepository.insertMessage(message)
             }
         }
     }
@@ -123,8 +124,8 @@ internal class ThreadQueryListenerFull(
         }
 
         result.onSuccessSuspend { messages ->
-            userRepository?.insertUsers(messages.flatMap(Message::users))
-            messageRepository?.insertMessages(messages)
+            userRepository.insertUsers(messages.flatMap(Message::users))
+            messageRepository.insertMessages(messages)
         }
     }
 }

@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
-import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogicImpl
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,7 +52,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadStateLogic: ThreadStateLogic = mock()
-        val threadLogic: ThreadLogic = mock {
+        val threadLogic: ThreadLogicImpl = mock {
             on(it.stateLogic()) doReturn threadStateLogic
         }
 
@@ -82,7 +82,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadStateLogic: ThreadStateLogic = mock()
-        val threadLogic: ThreadLogic = mock {
+        val threadLogic: ThreadLogicImpl = mock {
             on(it.stateLogic()) doReturn threadStateLogic
         }
 
@@ -113,7 +113,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadStateLogic: ThreadStateLogic = mock()
-        val threadLogic: ThreadLogic = mock {
+        val threadLogic: ThreadLogicImpl = mock {
             on(it.stateLogic()) doReturn threadStateLogic
         }
 
@@ -144,7 +144,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadStateLogic: ThreadStateLogic = mock()
-        val threadLogic: ThreadLogic = mock {
+        val threadLogic: ThreadLogicImpl = mock {
             on(it.stateLogic()) doReturn threadStateLogic
         }
 
@@ -175,7 +175,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadStateLogic: ThreadStateLogic = mock()
-        val threadLogic: ThreadLogic = mock {
+        val threadLogic: ThreadLogicImpl = mock {
             on(it.stateLogic()) doReturn threadStateLogic
         }
 

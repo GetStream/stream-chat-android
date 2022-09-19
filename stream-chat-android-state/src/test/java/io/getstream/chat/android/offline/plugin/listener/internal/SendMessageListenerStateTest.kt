@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogicImpl
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,7 +39,7 @@ import org.mockito.kotlin.whenever
 internal class SendMessageListenerStateTest {
 
     private val channelLogic: ChannelLogic = mock()
-    private val threadLogic: ThreadLogic = mock()
+    private val threadLogic: ThreadLogicImpl = mock()
     private val logicRegistry: LogicRegistry = mock {
         on(it.channelFromMessage(any())) doReturn channelLogic
         on(it.threadFromMessage(any())) doReturn threadLogic

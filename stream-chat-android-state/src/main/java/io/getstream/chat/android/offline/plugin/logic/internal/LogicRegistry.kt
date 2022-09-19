@@ -24,11 +24,12 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.plugin.ThreadLogicProvider
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
-import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
+import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogicImpl
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -56,12 +57,12 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
-) : ChannelStateLogicProvider {
+) : ChannelStateLogicProvider, ThreadLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
-    private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
+    private val threads: ConcurrentHashMap<String, ThreadLogicImpl> = ConcurrentHashMap()
 
     internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
@@ -131,7 +132,7 @@ internal class LogicRegistry internal constructor(
 
     /**
      * This method returns [ChannelLogic] if the messages passed is not only in a thread. Use this to avoid
-     * updating [ChannelLogic] for a messages that is only inside [ThreadLogic]. If you get null as a result,
+     * updating [ChannelLogic] for a messages that is only inside [ThreadLogicImpl]. If you get null as a result,
      * that means that no update is necessary.
      *
      * @param message [Message]
@@ -146,19 +147,19 @@ internal class LogicRegistry internal constructor(
     }
 
     /**
-     * This method returns [ThreadLogic] if the messages passed is inside a thread. Use this to avoid
-     * updating [ThreadLogic] for a messages that is only inside [ChannelLogic]. If you get null as a result,
+     * This method returns [ThreadLogicImpl] if the messages passed is inside a thread. Use this to avoid
+     * updating [ThreadLogicImpl] for a messages that is only inside [ChannelLogic]. If you get null as a result,
      * that means that no update is necessary.
      *
      * @param messageId String
      */
-    fun threadFromMessageId(messageId: String): ThreadLogic? {
+    fun threadFromMessageId(messageId: String): ThreadLogicImpl? {
         return threads.values.find { threadLogic ->
             threadLogic.getMessage(messageId) != null
         }
     }
 
-    fun threadFromMessage(message: Message): ThreadLogic? {
+    fun threadFromMessage(message: Message): ThreadLogicImpl? {
         return message.parentId?.let { thread(it) }
     }
 
@@ -172,12 +173,12 @@ internal class LogicRegistry internal constructor(
         return channel(channelType, channelId).stateLogic()
     }
 
-    /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
-    fun thread(messageId: String): ThreadLogic {
+    /** Returns [ThreadLogicImpl] of thread replies with parent message that has id equal to [messageId]. */
+    override fun thread(messageId: String): ThreadLogicImpl {
         return threads.getOrPut(messageId) {
             val mutableState = stateRegistry.mutableThread(messageId)
             val stateLogic = ThreadStateLogic(mutableState)
-            ThreadLogic(stateLogic)
+            ThreadLogicImpl(stateLogic)
         }
     }
 
