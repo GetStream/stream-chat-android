@@ -128,7 +128,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     viewModel = listViewModel,
                     lazyListState = if (listViewModel.currentMessagesState.parentMessageId != null) rememberLazyListState() else lazyListState,
                     onThreadClick = { message ->
-                        composerViewModel.setMessageMode(MessageMode.MessageThread(message))
+                        composerViewModel.setMessageMode(MessageMode.Thread(message))
                         listViewModel.openMessageThread(message)
                     },
                     onImagePreviewResult = { result ->

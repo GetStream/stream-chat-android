@@ -379,7 +379,7 @@ public fun DefaultMessageComposerFooterContent(
     messageComposerState: MessageComposerState,
     onAlsoSendToChannelSelected: (Boolean) -> Unit,
 ) {
-    if (messageComposerState.messageMode is MessageMode.MessageThread) {
+    if (messageComposerState.messageMode is MessageMode.Thread) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

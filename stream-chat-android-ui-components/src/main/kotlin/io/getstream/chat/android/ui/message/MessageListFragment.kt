@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.common.model.DeleteMessage
 import io.getstream.chat.android.common.model.EditMessage
 import io.getstream.chat.android.common.model.SendAnyway
+import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBinding
 import io.getstream.chat.android.ui.message.input.MessageInputView
@@ -193,11 +194,11 @@ public open class MessageListFragment : Fragment() {
 
         messageListViewModel.mode.observe(viewLifecycleOwner) {
             when (it) {
-                is MessageListViewModel.Mode.Thread -> {
+                is MessageMode.Thread -> {
                     messageListHeaderViewModel.setActiveThread(it.parentMessage)
                     messageInputViewModel.setActiveThread(it.parentMessage)
                 }
-                is MessageListViewModel.Mode.Normal -> {
+                is MessageMode.Normal -> {
                     messageListHeaderViewModel.resetThread()
                     messageInputViewModel.resetThread()
                 }

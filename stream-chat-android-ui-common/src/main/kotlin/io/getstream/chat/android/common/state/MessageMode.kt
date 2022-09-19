@@ -35,6 +35,6 @@ public sealed class MessageMode {
      * @param parentMessage The message users are responding to in a Thread.
      * @param threadState The state of the current thread.
      */
-    public class MessageThread(public val parentMessage: Message, public val threadState: ThreadState? = null) :
+    public class Thread(public val parentMessage: Message, public val threadState: ThreadState? = null) :
         MessageMode()
 }

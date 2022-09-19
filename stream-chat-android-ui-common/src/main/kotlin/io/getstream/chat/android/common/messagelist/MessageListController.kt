@@ -182,10 +182,10 @@ public class MessageListController(
     public val mode: StateFlow<MessageMode> = _mode
 
     /**
-     * Gives us information if we're currently in the [MessageMode.MessageThread] mode.
+     * Gives us information if we're currently in the [MessageMode.Thread] mode.
      */
     public val isInThread: Boolean
-        get() = _mode.value is MessageMode.MessageThread
+        get() = _mode.value is MessageMode.Thread
 
     /**
      * Emits error events.
@@ -252,7 +252,7 @@ public class MessageListController(
      * Current state of the message list depending on the [MessageMode] the list is in.
      */
     public val listState: StateFlow<MessageListState> = _mode.flatMapLatest {
-        if (it is MessageMode.MessageThread) {
+        if (it is MessageMode.Thread) {
             _threadListState
         } else {
             _messageListState
@@ -536,7 +536,7 @@ public class MessageListController(
         deletedMessageVisibility: DeletedMessageVisibility,
         dateSeparatorHandler: DateSeparatorHandler,
     ): List<MessageListItem> {
-        val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
+        val parentMessageId = (_mode.value as? MessageMode.Thread)?.parentMessage?.id
         val currentUser = user.value
         val groupedMessages = mutableListOf<MessageListItem>()
         val lastRead = reads
@@ -677,7 +677,7 @@ public class MessageListController(
      * @param scrollToBottom Handler that notifies when the message has been loaded.
      */
     public fun scrollToBottom(messageLimit: Int = DEFAULT_MESSAGES_LIMIT, scrollToBottom: () -> Unit) {
-        if (_mode.value is MessageMode.MessageThread) {
+        if (_mode.value is MessageMode.Thread) {
             scrollToBottom()
         } else {
             if (channelState.value?.endOfNewerMessages?.value == true) {
@@ -728,17 +728,17 @@ public class MessageListController(
                     _messageListState.value = _messageListState.value.copy(isLoadingOlderMessages = true)
                     chatClient.loadOlderMessages(cid, messageLimit).enqueue()
                 }
-                is MessageMode.MessageThread -> threadLoadMore(this)
+                is MessageMode.Thread -> threadLoadMore(this)
             }
         }
     }
 
     /**
-     * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
+     * Load older messages for the specified thread [MessageMode.Thread.parentMessage].
      *
      * @param threadMode Current thread mode containing information about the thread.
      */
-    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
+    private fun threadLoadMore(threadMode: MessageMode.Thread) {
         if (threadMode.threadState != null) {
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
@@ -751,7 +751,7 @@ public class MessageListController(
     }
 
     /**
-     *  Changes the current [_mode] to be [MessageMode.MessageThread] and uses [ChatClient] to get the [ThreadState] for
+     *  Changes the current [_mode] to be [MessageMode.Thread] and uses [ChatClient] to get the [ThreadState] for
      *  the current thread.
      *
      * @param parentMessage The message with the thread we want to observe.
@@ -760,7 +760,7 @@ public class MessageListController(
         val channelState = channelState.value ?: return
         _messageActions.value = _messageActions.value + Reply(parentMessage)
         val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
-        _mode.value = MessageMode.MessageThread(parentMessage, state)
+        _mode.value = MessageMode.Thread(parentMessage, state)
         observeThreadMessagesState(
             threadId = state.parentId,
             messages = state.messages,
@@ -1043,7 +1043,7 @@ public class MessageListController(
     public fun markLastMessageRead() {
         cid.cidToTypeAndId().let { (channelType, channelId) ->
             val mode = _mode.value
-            if (mode is MessageMode.MessageThread) {
+            if (mode is MessageMode.Thread) {
                 // TODO
                 // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
             } else {

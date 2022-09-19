@@ -170,7 +170,7 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState()
                 .get()
 
-            viewModel.setMessageMode(MessageMode.MessageThread(Message()))
+            viewModel.setMessageMode(MessageMode.Thread(Message()))
             viewModel.setAlsoSendToChannel(true)
 
             val messageComposerState = viewModel.messageComposerState.value
@@ -189,8 +189,8 @@ internal class MessageComposerViewModelTest {
         viewModel.performMessageAction(ThreadReply(Message()))
 
         val messageComposerState = viewModel.messageComposerState.value
-        messageComposerState.messageMode `should be instance of` MessageMode.MessageThread::class
-        viewModel.messageMode.value `should be instance of` MessageMode.MessageThread::class
+        messageComposerState.messageMode `should be instance of` MessageMode.Thread::class
+        viewModel.messageMode.value `should be instance of` MessageMode.Thread::class
     }
 
     @Test

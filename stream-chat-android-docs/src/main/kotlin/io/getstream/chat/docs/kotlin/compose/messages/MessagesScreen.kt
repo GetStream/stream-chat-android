@@ -75,7 +75,6 @@ private object MessagesScreenCustomizationSnippet {
                         messageLimit = 30,
                         showHeader = true,
                         enforceUniqueReactions = true,
-                        showDateSeparators = true,
                         showSystemMessages = true,
                     )
                 }

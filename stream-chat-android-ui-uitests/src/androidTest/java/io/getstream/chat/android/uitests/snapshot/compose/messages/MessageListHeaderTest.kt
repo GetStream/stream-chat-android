@@ -53,7 +53,7 @@ class MessageListHeaderTest : ComposeScreenshotTest() {
             },
             currentUser = TestData.user1(),
             connectionState = ConnectionState.CONNECTED,
-            messageMode = MessageMode.MessageThread(TestData.message1(), null)
+            messageMode = MessageMode.Thread(TestData.message1(), null)
         )
     }
 

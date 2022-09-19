@@ -111,7 +111,7 @@ public class MessageListViewModel(
         .asState(viewModelScope, MessagesState())
 
     /**
-     * State of the screen, for [MessageMode.MessageThread].
+     * State of the screen, for [MessageMode.Thread].
      */
     private val threadMessagesState: MessagesState by messageListController.threadListState
         .map { it.toComposeState(focusedMessagesOffsetState) }

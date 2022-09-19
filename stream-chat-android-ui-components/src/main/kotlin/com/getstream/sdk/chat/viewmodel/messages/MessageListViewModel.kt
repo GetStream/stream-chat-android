@@ -41,7 +41,6 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.messagelist.MessageFocused
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessagePositionHandler
@@ -152,14 +151,9 @@ public class MessageListViewModel(
 
     /**
      * Whether the user is viewing a thread.
-     * @see Mode
+     * @see MessageMode
      */
-    public val mode: LiveData<Mode> = messageListController.mode.map {
-        when (it) {
-            is MessageMode.MessageThread -> Mode.Thread(it.parentMessage, it.threadState)
-            MessageMode.Normal -> Mode.Normal
-        }
-    }.asLiveData()
+    public val mode: LiveData<MessageMode> = messageListController.mode.asLiveData()
 
     /**
      * Emits true if we should are loading more older messages.
@@ -409,10 +403,10 @@ public class MessageListViewModel(
     private fun onBackButtonPressed() {
         mode.value?.run {
             when (this) {
-                is Mode.Normal -> {
+                is MessageMode.Normal -> {
                     stateMerger.postValue(State.NavigateUp)
                 }
-                is Mode.Thread -> {
+                is MessageMode.Thread -> {
                     onNormalModeEntered()
                 }
             }
@@ -697,26 +691,6 @@ public class MessageListViewModel(
          * @param attachment The attachment to be deleted.
          */
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
-    }
-
-    /**
-     * The modes the message list can be in.
-     */
-    public sealed class Mode {
-
-        /**
-         * Thread mode. Occurs when a user enters a thread.
-         *
-         * @param parentMessage The original message all messages in a thread are replying to.
-         * @param threadState Contains information about the state of the thread, such as
-         * if we are loading older messages, have reached the oldest message available, etc.
-         */
-        public data class Thread(val parentMessage: Message, val threadState: ThreadState? = null) : Mode()
-
-        /**
-         * Normal mode. When the user is not participating in a thread.
-         */
-        public object Normal : Mode()
     }
 
     internal companion object {

@@ -210,7 +210,7 @@ public fun MessagesScreen(
                 viewModel = listViewModel,
                 lazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 onThreadClick = { message ->
-                    composerViewModel.setMessageMode(MessageMode.MessageThread(message))
+                    composerViewModel.setMessageMode(MessageMode.Thread(message))
                     listViewModel.openMessageThread(message)
                 },
                 onImagePreviewResult = { result ->
