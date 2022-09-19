@@ -21,60 +21,12 @@ import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ChatEventHandler
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.events.EventHandlingResult
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.models.Channel
-
-/**
- * Handler responsible for deciding whether the set of channels should be updated after receiving the particular event.
- *
- * @see [EventHandlingResult]
- */
-public fun interface ChatEventHandler {
-    /**
-     * Computes the event handling result.
-     *
-     * @param event [ChatEvent] that may contain updates for the set of channels.
-     * @param filter [FilterObject] associated with the set of channels. Can be used to define the result of handling.
-     * @param cachedChannel optional cached [Channel] object.
-     *
-     * @return [EventHandlingResult] Result of handling.
-     */
-    public fun handleChatEvent(event: ChatEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult
-}
-
-/**
- * Represent possible outcomes of handling a chat event.
- */
-public sealed class EventHandlingResult {
-    /**
-     * Add a channel to a query channels collection.
-     *
-     * @param channel Channel to be added.
-     */
-    public data class Add(public val channel: Channel) : EventHandlingResult()
-
-    /**
-     * Call watch and add the channel to a query channels collection.
-     *
-     * @param cid cid of the channel to watch and add.
-     */
-    public data class WatchAndAdd(public val cid: String) : EventHandlingResult()
-
-    /**
-     * Remove a channel from a query channels collection.
-     *
-     * @param cid cid of channel to remove.
-     *
-     */
-    public data class Remove(public val cid: String) : EventHandlingResult()
-
-    /**
-     * Skip the event.
-     */
-    public object Skip : EventHandlingResult()
-}
 
 /**
  * More specific [ChatEventHandler] implementation that gives you a separation

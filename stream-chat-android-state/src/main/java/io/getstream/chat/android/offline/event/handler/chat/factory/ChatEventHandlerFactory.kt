@@ -17,9 +17,9 @@
 package io.getstream.chat.android.offline.event.handler.chat.factory
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChatEventHandler
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
 import kotlinx.coroutines.flow.StateFlow
 

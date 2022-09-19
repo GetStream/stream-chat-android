@@ -30,7 +30,9 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelSt
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogicImpl
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsStateLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
@@ -55,27 +57,42 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
-) : ChannelStateLogicProvider {
+) : ChannelStateLogicProvider, QueryChannelsLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
+    override fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsLogic(
+            val queryChannelsStateLogic = QueryChannelsStateLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
-                client,
+                stateRegistry,
+                this
+            )
+
+            val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
                 repos,
-                this,
-                stateRegistry
+                repos,
+                repos,
+                repos,
+                repos,
+                repos
+            )
+
+            QueryChannelsLogic(
+                filter,
+                sort,
+                client,
+                queryChannelsStateLogic,
+                queryChannelsDatabaseLogic,
             )
         }
     }
 
     /** Returns [QueryChannelsLogic] accordingly to [QueryChannelsRequest]. */
-    fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
+    override fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
         queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
 
     /** Returns [ChannelLogic] by channelType and channelId combination. */
@@ -96,6 +113,10 @@ internal class LogicRegistry internal constructor(
                 channelStateLogic = stateLogic,
             )
         }
+    }
+
+    fun channelState(channelType: String, channelId: String): ChannelStateLogic {
+        return channel(channelType, channelId).stateLogic()
     }
 
     fun channelFromMessageId(messageId: String): ChannelLogic? {

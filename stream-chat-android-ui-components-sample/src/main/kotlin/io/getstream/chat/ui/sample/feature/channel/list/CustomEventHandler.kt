@@ -21,13 +21,13 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.events.EventHandlingResult
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
-import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.flow.StateFlow

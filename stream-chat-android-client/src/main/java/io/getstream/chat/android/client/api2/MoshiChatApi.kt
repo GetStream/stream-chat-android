@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
+import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
@@ -108,6 +109,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
+import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
@@ -126,6 +128,7 @@ constructor(
     private val generalApi: GeneralApi,
     private val configApi: ConfigApi,
     private val callApi: VideoCallApi,
+    private val fileDownloadApi: FileDownloadApi,
     private val coroutineScope: CoroutineScope,
 ) : ChatApi {
 
@@ -896,6 +899,10 @@ constructor(
             body = SyncHistoryRequest(channelIds, lastSyncAt),
             connectionId = connectionId,
         ).map { response -> response.events.map(ChatEventDto::toDomain) }
+    }
+
+    override fun downloadFile(fileUrl: String): Call<ResponseBody> {
+        return fileDownloadApi.downloadFile(fileUrl)
     }
 
     override fun warmUp() {
