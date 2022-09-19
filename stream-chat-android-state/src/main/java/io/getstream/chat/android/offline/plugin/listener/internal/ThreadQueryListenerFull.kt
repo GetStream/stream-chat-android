@@ -39,8 +39,8 @@ import io.getstream.logging.StreamLog
  */
 internal class ThreadQueryListenerFull(
     private val logic: LogicRegistry?,
-    private val messageRepository: MessageRepository?,
-    private val userRepository: UserRepository?,
+    private val messageRepository: MessageRepository,
+    private val userRepository: UserRepository,
     private val getRemoteMessage: suspend (messageId: String) -> Result<Message>
 ) : ThreadQueryListener {
 
@@ -62,18 +62,18 @@ internal class ThreadQueryListenerFull(
         val threadLogic = logic?.thread(messageId)
 
         threadLogic?.setLoading(true)
-        val messages = messageRepository?.selectMessagesForThread(messageId, limit)
-        val parentMessage = threadLogic?.getMessage(messageId) ?: messages?.firstOrNull { it.id == messageId }
+        val messages = messageRepository.selectMessagesForThread(messageId, limit)
+        val parentMessage = threadLogic?.getMessage(messageId) ?: messages.firstOrNull { it.id == messageId }
 
-        if (parentMessage != null && messages?.isNotEmpty() == true) {
+        if (parentMessage != null && messages.isNotEmpty()) {
             threadLogic?.upsertMessages(messages)
         } else {
             val result = getRemoteMessage(messageId)
             if (result.isSuccess) {
                 val message = result.data()
                 threadLogic?.upsertMessage(result.data())
-                userRepository?.insertUsers(message.users())
-                messageRepository?.insertMessage(message)
+                userRepository.insertUsers(message.users())
+                messageRepository.insertMessage(message)
             }
         }
     }
@@ -123,8 +123,8 @@ internal class ThreadQueryListenerFull(
         }
 
         result.onSuccessSuspend { messages ->
-            userRepository?.insertUsers(messages.flatMap(Message::users))
-            messageRepository?.insertMessages(messages)
+            userRepository.insertUsers(messages.flatMap(Message::users))
+            messageRepository.insertMessages(messages)
         }
     }
 }
