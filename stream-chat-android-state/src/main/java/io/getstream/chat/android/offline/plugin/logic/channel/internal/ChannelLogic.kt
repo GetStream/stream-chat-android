@@ -450,6 +450,10 @@ internal class ChannelLogic(
         channelStateLogic.upsertUserPresence(user)
     }
 
+    internal fun updateReads(reads: List<ChannelUserRead>) {
+        channelStateLogic.updateReads(reads)
+    }
+
     private fun upsertUser(user: User) {
         upsertUserPresence(user)
         // channels have users

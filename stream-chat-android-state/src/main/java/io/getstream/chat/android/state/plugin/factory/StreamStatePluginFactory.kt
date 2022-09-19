@@ -240,7 +240,7 @@ public class StreamStatePluginFactory(
             sendGiphyListener = SendGiphyListenerState(logic),
             shuffleGiphyListener = ShuffleGiphyListenerState(logic),
             typingEventListener = TypingEventListenerState(stateRegistry),
-            provideDependency = createDependencyProvider(syncManager, eventHandler),
+            provideDependency = createDependencyProvider(syncManager, eventHandler)
         )
     }
 
