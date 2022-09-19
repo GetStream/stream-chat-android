@@ -27,7 +27,6 @@ public class io/getstream/chat/android/offline/event/handler/chat/DefaultChatEve
 	public fun handleChannelEvent (Lio/getstream/chat/android/client/events/HasChannel;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/events/EventHandlingResult;
 	public fun handleCidEvent (Lio/getstream/chat/android/client/events/CidEvent;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/events/EventHandlingResult;
 	protected final fun removeIfChannelExists (Ljava/lang/String;)Lio/getstream/chat/android/client/events/EventHandlingResult;
-	protected final fun removeIfCurrentUserLeftChannel (Ljava/lang/String;Lio/getstream/chat/android/client/models/Member;)Lio/getstream/chat/android/client/events/EventHandlingResult;
 }
 
 public class io/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory {
