@@ -148,10 +148,6 @@ public class RepositoryFacade private constructor(
         insertMessages(messages, cacheForMessages)
     }
 
-    public fun provideConfig(): Config {
-        return defaultConfig
-    }
-
     override suspend fun clear() {
         userRepository.clear()
         channelsRepository.clear()
