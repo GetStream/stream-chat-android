@@ -18,6 +18,7 @@ package io.getstream.chat.android.offline.event.handler.chat
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ChatEventHandler
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.EventHandlingResult
 import io.getstream.chat.android.client.events.HasChannel
@@ -112,7 +113,7 @@ public open class DefaultChatEventHandler(
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    protected fun removeIfCurrentUserLeftChannel(cid: String, member: Member): EventHandlingResult {
+    private fun removeIfCurrentUserLeftChannel(cid: String, member: Member): EventHandlingResult {
         return if (member.getUserId() != clientState.user.value?.id) {
             EventHandlingResult.Skip
         } else {
