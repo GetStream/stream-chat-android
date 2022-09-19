@@ -20,7 +20,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.distinctUntilChanged
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
@@ -44,6 +43,8 @@ import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
+import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
+import io.getstream.chat.android.common.messagelist.MessagePositionHandler
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.flow.StateFlow
@@ -54,8 +55,6 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
 import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
 import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphyCommon
-import io.getstream.chat.android.common.messagelist.DateSeparatorHandler as DateSeparatorHandlerCommon
-import io.getstream.chat.android.common.messagelist.MessagePositionHandler as MessagePositionHandlerCommon
 
 /**
  * View model class for [io.getstream.chat.android.ui.message.list.MessageListView].
@@ -84,10 +83,8 @@ public class MessageListViewModel(
     private val footerVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup,
     private val showSystemMessages: Boolean = true,
     private val enforceUniqueReactions: Boolean = true,
-    private val dateSeparatorHandler: DateSeparatorHandlerCommon = DateSeparatorHandlerCommon
-        .getDefaultDateSeparator(SEPARATOR_TIME.toLong()),
-    private val threadDateSeparatorHandler: DateSeparatorHandlerCommon = DateSeparatorHandlerCommon
-        .getDefaultThreadDateSeparator(SEPARATOR_TIME.toLong()),
+    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
+    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
     private val messageListController: MessageListController = MessageListController(
         cid = cid,
         messageId = messageId,
@@ -103,8 +100,7 @@ public class MessageListViewModel(
 ) : ViewModel() {
 
     /**
-     * The logger used to print to errors, warnings, information
-     * and other things to log.
+     * The logger used to print to errors, warnings, information and other things to log.
      */
     private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
 
@@ -114,8 +110,12 @@ public class MessageListViewModel(
     public val channelState: StateFlow<ChannelState?> = messageListController.channelState
 
     /**
-     * Holds information about the abilities the current user
-     * is able to exercise in the given channel.
+     *  The current channel used to load the message list data.
+     */
+    public val channel: LiveData<Channel> = messageListController.channel.asLiveData()
+
+    /**
+     * Holds information about the abilities the current user is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
@@ -140,8 +140,7 @@ public class MessageListViewModel(
         messageListController.deletedMessageVisibilityState.asLiveData()
 
     /**
-     * Represents the current state of the message list
-     * that is a product of multiple sources.
+     * Represents the current state of the message list that is a product of multiple sources.
      */
     private val stateMerger = MediatorLiveData<State>()
 
@@ -163,19 +162,13 @@ public class MessageListViewModel(
     }.asLiveData()
 
     /**
-     * Emits true if we should load more messages.
+     * Emits true if we should are loading more older messages.
      */
     public val loadMoreLiveData: LiveData<Boolean> = messageListController.messageListState
         .map { it.isLoadingOlderMessages }.asLiveData()
 
     /**
-     *  The current channel used to load the message list data.
-     */
-    public val channel: LiveData<Channel> = messageListController.channel.asLiveData().distinctUntilChanged()
-
-    /**
-     * The target message that the list should scroll to.
-     * Used when scrolling to a pinned message, a message opened from
+     * The target message that the list should scroll to. Used when scrolling to a pinned message, a message opened from
      * a push notification or similar.
      */
     public val targetMessage: LiveData<Message> = messageListController.messageListState.map {
@@ -216,8 +209,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Handles an [event] coming from the View layer.
-     * @see Event
+     * Handles an [Event] coming from the View layer.
      */
     @Suppress("LongMethod", "ComplexMethod")
     public fun onEvent(event: Event) {
@@ -327,7 +319,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Returns a message with the given ID from the [messageListData].
+     * Returns a message with the given ID from the messages list.
      *
      * @param messageId The ID of the selected message.
      * @return The [Message] with the ID, if it exists.
@@ -338,9 +330,12 @@ public class MessageListViewModel(
      * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest
      * messages. If the messages are not loaded we need to load them first and then scroll to the bottom of the
      * list.
+     *
+     * @param messageLimit The limit of messages to load when loading newest messages.
+     * @param scrollToBottom The handler that notifies when the data has been loaded to scroll to the bottom.
      */
-    public fun scrollToBottom(scrollToBottom: () -> Unit) {
-        messageListController.scrollToBottom(DEFAULT_MESSAGES_LIMIT, scrollToBottom)
+    public fun scrollToBottom(messageLimit: Int = DEFAULT_MESSAGES_LIMIT, scrollToBottom: () -> Unit) {
+        messageListController.scrollToBottom(messageLimit, scrollToBottom)
     }
 
     /**
@@ -349,7 +344,7 @@ public class MessageListViewModel(
      *
      * @param dateSeparatorHandler The handler to use. If null, the messages list won't contain date separators.
      */
-    public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandlerCommon?) {
+    public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
         messageListController.setDateSeparatorHandler(dateSeparatorHandler)
     }
 
@@ -357,10 +352,10 @@ public class MessageListViewModel(
      * Sets thread date separator handler which determines when to add date separators inside the thread.
      * @see setDateSeparatorHandler
      *
-     * @param threadDateSeparatorHandler The handler to use. If null, the thread messages list won't contain date
+     * @param threadDateSeparatorHandler The handler to use. If null, the thread message list won't contain date
      * separators.
      */
-    public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandlerCommon?) {
+    public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
         messageListController.setThreadDateSeparatorHandler(threadDateSeparatorHandler)
     }
 
@@ -369,7 +364,7 @@ public class MessageListViewModel(
      *
      * @param messagePositionHandler The handler to use.
      */
-    public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandlerCommon) {
+    public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandler) {
         messageListController.setMessagePositionHandler(messagePositionHandler)
     }
 
@@ -388,8 +383,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Loads more messages if we have reached
-     * the oldest message currently loaded.
+     * Loads more messages if we have reached the oldest message currently loaded.
      */
     private fun onEndRegionReached() {
         messageListController.loadOlderMessages()
@@ -397,19 +391,20 @@ public class MessageListViewModel(
 
     /**
      * Loads more messages if we have reached the newest messages currently loaded and we are handling search.
+     *
+     * @param baseMessageId The id of the currently newest loaded [Message].
+     * @param messageLimit The limit of messages to be loaded in the next page.
      */
-    private fun onBottomEndRegionReached(baseMessageId: String?) {
+    private fun onBottomEndRegionReached(baseMessageId: String?, messageLimit: Int = DEFAULT_MESSAGES_LIMIT) {
         if (baseMessageId != null) {
-            messageListController.loadNewerMessages(baseMessageId, DEFAULT_MESSAGES_LIMIT)
+            messageListController.loadNewerMessages(baseMessageId, messageLimit)
         } else {
             logger.e { "There's no base message to request more message at bottom of limit" }
         }
     }
 
     /**
-     * Evaluates whether a navigation event should occur
-     * or if we should switch from thread mode back to
-     * normal mode.
+     * Evaluates whether a navigation event should occur or if we should switch from thread mode back to normal mode.
      */
     private fun onBackButtonPressed() {
         mode.value?.run {
@@ -450,7 +445,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Called when upon initialization or exiting thread mode.
+     * Called when upon initialization or when exiting thread mode.
      */
     private fun onNormalModeEntered() {
         messageListController.enterNormalMode()
@@ -460,7 +455,7 @@ public class MessageListViewModel(
      * Sets the value used to filter deleted messages.
      * @see DeletedMessageVisibility
      *
-     * @param deletedMessageVisibility Changes the visibility of deleted messages.
+     * @param deletedMessageVisibility Determines the visibility of deleted messages.
      */
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
         messageListController.setDeletedMessageVisibility(deletedMessageVisibility)
@@ -470,7 +465,7 @@ public class MessageListViewModel(
      * Sets the value used to determine if message footer content is shown.
      * @see MessageFooterVisibility
      *
-     * @param messageFooterVisibility Changes the visibility of message footers.
+     * @param messageFooterVisibility Determines the visibility of message footers.
      */
     public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
         messageListController.setMessageFooterVisibility(messageFooterVisibility)
@@ -729,7 +724,5 @@ public class MessageListViewModel(
          * The default limit of messages to load.
          */
         const val DEFAULT_MESSAGES_LIMIT = 30
-
-        const val SEPARATOR_TIME = 1000 * 60 * 60 * 4
     }
 }

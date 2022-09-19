@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.model.DeleteMessage
 import io.getstream.chat.android.common.model.EditMessage
 import io.getstream.chat.android.common.model.SendAnyway
@@ -101,10 +102,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * @param messageLimit The limit of messages per query.
  * @param showHeader If we're showing the header or not.
  * @param enforceUniqueReactions If we need to enforce unique reactions or not.
- * @param showDateSeparators If we should show date separators or not.
  * @param showSystemMessages If we should show system messages or not.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
+ * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
+ * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
@@ -117,10 +119,11 @@ public fun MessagesScreen(
     messageLimit: Int = MessageListViewModel.DefaultMessageLimit,
     showHeader: Boolean = true,
     enforceUniqueReactions: Boolean = true,
-    showDateSeparators: Boolean = true,
     showSystemMessages: Boolean = true,
     deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
+    threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
@@ -130,9 +133,10 @@ public fun MessagesScreen(
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
         showSystemMessages = showSystemMessages,
-        showDateSeparators = showDateSeparators,
         deletedMessageVisibility = deletedMessageVisibility,
-        messageFooterVisibility = messageFooterVisibility
+        messageFooterVisibility = messageFooterVisibility,
+        dateSeparatorHandler = dateSeparatorHandler,
+        threadDateSeparatorHandler = threadDateSeparatorHandler
     )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -565,30 +569,33 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
  * @param channelId The current channel ID, to load the messages from.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param messageLimit The limit when loading messages.
- * @param showDateSeparators If we should show date separators or not.
  * @param showSystemMessages If we should show system messages or not. * @param deletedMessageVisibility The behavior of deleted messages in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
- */
+ * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
+ * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
+ * */
 @ExperimentalCoroutinesApi
 private fun buildViewModelFactory(
     context: Context,
     channelId: String,
     enforceUniqueReactions: Boolean,
     messageLimit: Int,
-    showDateSeparators: Boolean,
     showSystemMessages: Boolean,
     deletedMessageVisibility: DeletedMessageVisibility,
     messageFooterVisibility: MessageFooterVisibility,
+    dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
+    threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
         channelId = channelId,
         enforceUniqueReactions = enforceUniqueReactions,
         messageLimit = messageLimit,
-        showDateSeparators = showDateSeparators,
         showSystemMessages = showSystemMessages,
         deletedMessageVisibility = deletedMessageVisibility,
-        messageFooterVisibility = messageFooterVisibility
+        messageFooterVisibility = messageFooterVisibility,
+        dateSeparatorHandler = dateSeparatorHandler,
+        threadDateSeparatorHandler = threadDateSeparatorHandler
     )
 }

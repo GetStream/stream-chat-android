@@ -45,7 +45,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import java.util.concurrent.TimeUnit
 import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
 import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
 import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
@@ -76,10 +75,8 @@ public class MessageListViewModel(
     private val showSystemMessages: Boolean = true,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler
-        .getDefaultDateSeparator(TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold)),
-    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler
-        .getDefaultThreadDateSeparator(TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold)),
+    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
+    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
     private val messageListController: MessageListController = MessageListController(
         cid = channelId,
         chatClient = chatClient,
@@ -136,8 +133,7 @@ public class MessageListViewModel(
     public val typingUsers: List<User> by messageListController.typingUsers.asState(viewModelScope)
 
     /**
-     * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and
-     * similar actions.
+     * Set of currently active [MessageAction]s. Used to show things like edit, reply, delete and similar actions.
      */
     public val messageActions: Set<MessageAction> by messageListController.messageActions.asState(viewModelScope)
 
@@ -200,6 +196,7 @@ public class MessageListViewModel(
      * do nothing.
      *
      * @param messageId The id of the newest [Message] inside the messages list.
+     * @param messageLimit The limit of messages to be loaded in the page.
      */
     public fun loadNewerMessages(messageId: String, messageLimit: Int = DefaultMessageLimit) {
         messageListController.loadNewerMessages(messageId, messageLimit)
@@ -208,6 +205,8 @@ public class MessageListViewModel(
     /**
      * Loads older messages of a channel following the currently oldest loaded message. Also will load older messages
      * of a thread.
+     *
+     * @param messageLimit The limit of messages to be loaded in the page.
      */
     public fun loadOlderMessages(messageLimit: Int = DefaultMessageLimit) {
         messageListController.loadOlderMessages(messageLimit)
@@ -241,12 +240,13 @@ public class MessageListViewModel(
     }
 
     /**
-     * Triggered when the user taps on a message that has a thread active.
+     *  Changes the current [messageMode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
+     *  directly. The data is observed by using [ThreadState].
      *
      * @param message The selected message with a thread.
      */
     public fun openMessageThread(message: Message) {
-        loadThread(message)
+        messageListController.enterThreadMode(message)
     }
 
     /**
@@ -276,16 +276,6 @@ public class MessageListViewModel(
      */
     public fun performMessageAction(messageAction: MessageAction) {
         messageListController.performMessageAction(messageAction)
-    }
-
-    /**
-     *  Changes the current [messageMode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
-     *  directly. The data is observed by using [ThreadState].
-     *
-     * @param parentMessage The message with the thread we want to observe.
-     */
-    private fun loadThread(parentMessage: Message) {
-        messageListController.enterThreadMode(parentMessage)
     }
 
     /**
@@ -523,12 +513,6 @@ public class MessageListViewModel(
     }
 
     internal companion object {
-        /**
-         * The default threshold for showing date separators. If the message difference in hours is equal to this
-         * number, then we show a separator, if it's enabled in the list.
-         */
-        internal const val DateSeparatorDefaultHourThreshold: Long = 4
-
         /**
          * The default limit for messages count in requests.
          */
