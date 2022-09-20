@@ -188,37 +188,7 @@ public class MessageListController(
     private val _errorEvents: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
     public val errorEvents: StateFlow<ErrorEvent?> = _errorEvents
 
-    // TODO sort out unread after https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
-    // /**
-    //  * The unread message count for the channel when the [_mode] is [MessageMode.Normal].
-    //  */
-    // public val channelUnreadCount: StateFlow<Int> = channelState.filterNotNull()
-    //     .flatMapLatest { it.channelUnreadCount }
-    //     .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
-    //
-    // /**
-    //  * The unread message count of a thread when the [_mode] is [MessageMode.MessageThread].
-    //  */
-    // public val threadUnreadCount: StateFlow<Int> = channelState.filterNotNull()
-    //     .flatMapLatest { it.threadsUnreadCount }
-    //     .combine(_mode) { threadCounts, mode ->
-    //         if (mode is MessageMode.MessageThread) {
-    //             threadCounts[mode.parentMessage.id] ?: 0
-    //         } else {
-    //             0
-    //         }
-    //     }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
-    //
-    // /**
-    //  * Unread count for channel or thread depending on the [MessageMode] the list is in.
-    //  */
-    // public val unreadCount: StateFlow<Int> = _mode.flatMapLatest {
-    //     if (it is MessageMode.Normal) {
-    //         channelUnreadCount
-    //     } else {
-    //         threadUnreadCount
-    //     }
-    // }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
+    // TODO separate unreads to message list unreads and thread unreads after https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
     public val unreadCount: StateFlow<Int> = channelState.filterNotNull()
         .flatMapLatest { it.unreadCount }
         .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
@@ -428,10 +398,7 @@ public class MessageListController(
             _messageListState.value = _messageListState.value.copy(currentUser = it)
         }.launchIn(scope)
 
-        // TODO
-        // channelUnreadCount.onEach {
-        //     _messageListState.value = _messageListState.value.copy(unreadCount = it)
-        // }.launchIn(scope)
+        // TODO separate unreads to message list unreads and thread unreads after https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
         unreadCount.onEach {
             _messageListState.value = _messageListState.value.copy(unreadCount = it)
         }.launchIn(scope)
@@ -489,6 +456,7 @@ public class MessageListController(
                     parentMessageId = threadId,
                     isLoadingNewerMessages = false,
                     isLoadingOlderMessages = false,
+                    endOfNewMessagesReached = true
                 )
             }.collect { newState ->
                 val newLastMessage =
@@ -507,9 +475,7 @@ public class MessageListController(
                 _threadListState.value = _threadListState.value.copy(endOfOldMessagesReached = it)
             }.launchIn(this)
 
-            // threadUnreadCount.onEach {
-            //     _threadListState.value = _threadListState.value.copy(unreadCount = it)
-            // }.launchIn(this)
+            // TODO separate unreads to message list unreads and thread unreads after https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
             unreadCount.onEach {
                 _threadListState.value = _messageListState.value.copy(unreadCount = it)
             }.launchIn(scope)

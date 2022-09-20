@@ -54,6 +54,8 @@ internal class MessageListScrollHelper(
 
     private var areNewestMessagesLoaded: Boolean = false
 
+    private var bottomOffset: Int = 0
+
     /**
      * True when the latest message is visible.
      *
@@ -101,7 +103,7 @@ internal class MessageListScrollHelper(
 
                     val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
                     val lastPotentiallyVisibleItemPosition = currentList.indexOfLast { it.isValid() }
-                    val bottomOffset = lastPotentiallyVisibleItemPosition - lastVisibleItemPosition
+                    bottomOffset = lastPotentiallyVisibleItemPosition - lastVisibleItemPosition
                     isAtBottom = bottomOffset == 0
 
                     scrollButtonView.isVisible = shouldScrollToBottomBeVisible(bottomOffset)
@@ -177,6 +179,8 @@ internal class MessageListScrollHelper(
         areNewestMessagesLoaded: Boolean,
     ) {
         this.areNewestMessagesLoaded = areNewestMessagesLoaded
+        scrollButtonView.isVisible = shouldScrollToBottomBeVisible(bottomOffset)
+
         if (shouldKeepScrollPosition(areNewestMessagesLoaded, hasNewMessages)) {
             return
         }
@@ -186,8 +190,6 @@ internal class MessageListScrollHelper(
         } else if (shouldScrollToBottom(isInitialList, areNewestMessagesLoaded)) {
             layoutManager.scrollToPosition(currentList.lastIndex)
             callback.onLastMessageRead()
-        } else {
-            scrollButtonView.isVisible = true
         }
     }
 
