@@ -74,6 +74,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ownMessageText` and `otherMessageText` to `StreamColors` to enable message text customization. [#4175](https://github.com/GetStream/stream-chat-android/pull/4175)
 
 ### ⚠️ Changed
 
