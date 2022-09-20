@@ -387,7 +387,7 @@ public class MessageListController(
                                 showSystemMessages = showSystemMessages,
                                 deletedMessageVisibility = deletedMessageVisibility
                             ),
-                            isInThread = isInThread,
+                            isInThread = false,
                             reads = reads,
                             dateSeparatorHandler = dateSeparatorHandler,
                             deletedMessageVisibility = deletedMessageVisibility
