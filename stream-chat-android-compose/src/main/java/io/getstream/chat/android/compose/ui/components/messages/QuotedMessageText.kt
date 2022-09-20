@@ -24,6 +24,8 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.extensions.isMine
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -81,7 +83,7 @@ public fun QuotedMessageText(
         "quotedMessageText is null. Cannot display invalid message title."
     }
 
-    val styledText = buildAnnotatedMessageText(quotedMessageText)
+    val styledText = buildAnnotatedMessageText(quotedMessageText, message.isMine(ChatClient.instance()))
 
     val horizontalPadding = ChatTheme.dimens.quotedMessageTextHorizontalPadding
     val verticalPadding = ChatTheme.dimens.quotedMessageTextVerticalPadding
