@@ -46,6 +46,7 @@ internal fun buildAnnotatedMessageText(message: Message): AnnotatedString {
  * if there are any links available.
  *
  * @param text The message text to style.
+ * @param isOwnMessage Whether the message is the current users message or not.
  *
  * @return The annotated String, with clickable links, if applicable.
  */
