@@ -60,6 +60,7 @@ object Versions {
     internal const val MOCKITO_KOTLIN = "4.0.0"
     internal const val MOCKITO = "4.8.0"
     internal const val MOSHI = "1.14.0"
+    internal const val NAVIGATION = "2.5.2"
     internal const val OK2CURL = "0.8.0"
     internal const val OKHTTP = "4.10.0"
     internal const val PHOTOVIEW = "2.3.0"
