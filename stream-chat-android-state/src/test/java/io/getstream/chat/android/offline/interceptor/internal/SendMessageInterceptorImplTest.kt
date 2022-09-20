@@ -158,7 +158,7 @@ internal class SendMessageInterceptorImplTest {
 
         whenever(logic.channelFromMessage(messageToSend)) doReturn channelLogic
 
-        // logic.threadFromMessage(messageToSend) `should be` null
+        logic.threadFromMessage(messageToSend) `should be` null
 
         val result = sendMessageInterceptorImpl.interceptMessage(
             randomString(),
