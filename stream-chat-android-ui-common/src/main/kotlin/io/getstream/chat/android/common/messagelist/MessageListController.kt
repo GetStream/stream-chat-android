@@ -90,14 +90,10 @@ import io.getstream.chat.android.common.state.Flag as FlagMessage
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param chatClient The client used to communicate with the API.
- * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list. By default it is
- * [DeletedMessageVisibility.ALWAYS_VISIBLE].
- * @param showSystemMessages Determines if the system messages should be shown or not. True by default.
- * By default it is [SEPARATOR_TIME_MILLIS].
- * @param messageFooterVisibility Determines if and when the message footer is visible or not. By default it is
- * [MessageFooterVisibility.WithTimeDifference].
+ * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list.
+ * @param showSystemMessages Determines if the system messages should be shown or not.
+ * @param messageFooterVisibility Determines if and when the message footer is visible or not.
  * @param enforceUniqueReactions Determines whether the user can send only a single or multiple reactions to a message.
- * True by default.
  * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
  * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  */
@@ -193,7 +189,7 @@ public class MessageListController(
     private val _errorEvents: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
     public val errorEvents: StateFlow<ErrorEvent?> = _errorEvents
 
-    // TODO sort out unread
+    // TODO sort out unread after https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
     // /**
     //  * The unread message count for the channel when the [_mode] is [MessageMode.Normal].
     //  */
@@ -224,9 +220,9 @@ public class MessageListController(
     //         threadUnreadCount
     //     }
     // }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
-    public val unreadCount: StateFlow<Int> = channelState.filterNotNull().flatMapLatest {
-        it.unreadCount
-    }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
+    public val unreadCount: StateFlow<Int> = channelState.filterNotNull()
+        .flatMapLatest { it.unreadCount }
+        .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
 
     /**
      * The list of typing users.
@@ -371,6 +367,7 @@ public class MessageListController(
                 val showSystemMessages = data[2] as Boolean
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
                 val deletedMessageVisibility = data[4] as DeletedMessageVisibility
+                val messageFooterVisibility = data[5] as MessageFooterVisibility
 
                 when (state) {
                     is MessagesState.Loading,
@@ -390,7 +387,8 @@ public class MessageListController(
                             isInThread = false,
                             reads = reads,
                             dateSeparatorHandler = dateSeparatorHandler,
-                            deletedMessageVisibility = deletedMessageVisibility
+                            deletedMessageVisibility = deletedMessageVisibility,
+                            messageFooterVisibility = messageFooterVisibility
                         ),
                     )
                 }
@@ -473,6 +471,7 @@ public class MessageListController(
                 val showSystemMessages = data[2] as Boolean
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
                 val deletedMessageVisibility = data[4] as DeletedMessageVisibility
+                val messageFooterVisibility = data[5] as MessageFooterVisibility
 
                 _threadListState.value.copy(
                     isLoading = false,
@@ -485,7 +484,8 @@ public class MessageListController(
                         isInThread = true,
                         reads = reads,
                         dateSeparatorHandler = dateSeparatorHandler,
-                        deletedMessageVisibility = deletedMessageVisibility
+                        deletedMessageVisibility = deletedMessageVisibility,
+                        messageFooterVisibility = messageFooterVisibility
                     ),
                     parentMessageId = threadId,
                     isLoadingNewerMessages = false,
@@ -493,7 +493,7 @@ public class MessageListController(
                 )
             }.collect { newState ->
                 val newLastMessage =
-                    (newState.messages.firstOrNull { it is MessageItem } as? MessageItem)?.message
+                    (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
                 _threadListState.value = newState.copy(
                     newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
                 )
@@ -525,7 +525,9 @@ public class MessageListController(
      * @param messages The messages we need to group.
      * @param isInThread If we are in inside a thread.
      * @param reads The list of read states.
-     * @param shouldShowDateSeparator Whether we should show the date separator or not.
+     * @param deletedMessageVisibility Determines visibility of deleted messages.
+     * @param dateSeparatorHandler Handler used to determine when the date separator should be visible.
+     * @param messageFooterVisibility Determines when the message footer should be visible.
      *
      * @return A list of [MessageListItem]s, each containing a position.
      */
@@ -535,6 +537,7 @@ public class MessageListController(
         reads: List<ChannelUserRead>,
         deletedMessageVisibility: DeletedMessageVisibility,
         dateSeparatorHandler: DateSeparatorHandler,
+        messageFooterVisibility: MessageFooterVisibility
     ): List<MessageListItem> {
         val parentMessageId = (_mode.value as? MessageMode.Thread)?.parentMessage?.id
         val currentUser = user.value
@@ -565,7 +568,7 @@ public class MessageListController(
             val isLastMessageInGroup =
                 position.contains(MessagePosition.BOTTOM) || position.contains(MessagePosition.NONE)
 
-            val shouldShowFooter = _messageFooterVisibilityState.value.shouldShowMessageFooter(
+            val shouldShowFooter = messageFooterVisibility.shouldShowMessageFooter(
                 message = message,
                 isLastMessageInGroup = isLastMessageInGroup,
                 nextMessage = nextMessage

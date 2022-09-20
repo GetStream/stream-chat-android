@@ -1,5 +1,6 @@
 package io.getstream.chat.android.common.messagelist
 
+import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.state.messagelist.MessagePosition
 
@@ -42,14 +43,22 @@ public fun interface MessagePositionHandler {
                 val user = message.user
                 val nextUser = nextMessage?.user
 
-                val position = when {
-                    prevUser != user && nextUser == user && isAfterDateSeparator -> MessagePosition.TOP
-                    prevUser == user && nextUser == user && !isAfterDateSeparator -> MessagePosition.MIDDLE
-                    prevUser == user && nextUser != user -> MessagePosition.BOTTOM
-                    else -> MessagePosition.NONE
+                fun Message.isServerMessage(): Boolean {
+                    return type == ModelType.message_system || type == ModelType.message_error
                 }
 
-                listOf(position)
+                mutableListOf<MessagePosition>().apply {
+                    if (prevMessage == null || prevUser != user || prevMessage.isServerMessage() || isAfterDateSeparator) {
+                        add(MessagePosition.TOP)
+                    }
+                    if (prevMessage != null && nextMessage != null && prevUser == user && nextUser == user) {
+                        add(MessagePosition.MIDDLE)
+                    }
+                    if (nextMessage == null || nextUser != user || nextMessage.isServerMessage()) {
+                        add(MessagePosition.BOTTOM)
+                    }
+                    if (isEmpty()) add(MessagePosition.NONE)
+                }
             }
         }
     }
