@@ -32,12 +32,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -56,7 +58,6 @@ internal class SendMessageInterceptorImplTest {
     private val logic: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn channelLogic
         on(it.thread(any())) doReturn threadLogic
-        on(it.threadFromMessage(any())) doReturn threadLogic
     }
 
     private val prepareMessage: PrepareMessageLogic = mock {
@@ -126,6 +127,8 @@ internal class SendMessageInterceptorImplTest {
 
     @Test
     fun `when send message in thread without show in channel, message should be added to threadState`() = runTest {
+
+
         val messageToSend = randomMessage(text = randomString(), parentId = randomString(), showInChannel = false)
 
         logic.channelFromMessage(messageToSend) `should be` null
