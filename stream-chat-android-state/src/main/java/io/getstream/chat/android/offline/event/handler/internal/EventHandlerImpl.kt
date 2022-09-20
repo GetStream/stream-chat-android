@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.events.EventHandlingResult
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasMessage
@@ -92,6 +93,7 @@ import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFu
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
 import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.logging.StreamLog
@@ -577,7 +579,39 @@ internal class EventHandlerImpl(
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
         logic.getActiveQueryChannelsLogic().forEach { queryChannelsLogic ->
-            queryChannelsLogic.handleEvents(events)
+            handleChatEvents(events, queryChannelsLogic)
+        }
+    }
+
+    private suspend fun handleChatEvents(eventList: List<ChatEvent>, queryChannelsLogic: QueryChannelsLogic) {
+        eventList.forEach { event -> handleChatEvent(event, queryChannelsLogic) }
+    }
+
+    private suspend fun handleChatEvent(event: ChatEvent, queryChannelsLogic: QueryChannelsLogic) {
+        // update the info for that channel from the channel repo
+        logger.i { "[handleEvent] event: $event" }
+
+        when (val handlingResult = queryChannelsLogic.parseChatEventResult(event)) {
+            is EventHandlingResult.Add -> queryChannelsLogic.addChannel(handlingResult.channel)
+            is EventHandlingResult.WatchAndAdd -> queryChannelsLogic.watchAndAddChannel(handlingResult.cid)
+            is EventHandlingResult.Remove -> queryChannelsLogic.removeChannel(handlingResult.cid)
+            is EventHandlingResult.Skip -> Unit
+        }
+
+        if (event is MarkAllReadEvent) {
+            queryChannelsLogic.refreshAllChannelsState()
+        }
+
+        if (event is CidEvent) {
+            // skip events that are typically not impacting the query channels overview
+            if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
+                return
+            }
+            queryChannelsLogic.refreshChannelState(event.cid)
+        }
+
+        if (event is UserPresenceChangedEvent) {
+            queryChannelsLogic.refreshMembersStateForUser(event.user)
         }
     }
 
