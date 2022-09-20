@@ -106,10 +106,8 @@ public class MessageListController(
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     private val enforceUniqueReactions: Boolean = true,
-    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler
-        .getDefaultDateSeparator(SEPARATOR_TIME_MILLIS),
-    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler
-        .getDefaultThreadDateSeparator(SEPARATOR_TIME_MILLIS),
+    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
+    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
 ) {
 
     /**
@@ -132,7 +130,8 @@ public class MessageListController(
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = scope
+            coroutineScope = scope,
+            skipMessages = messageId != null
         )
 
     /**
@@ -1519,12 +1518,6 @@ public class MessageListController(
          * The default limit of messages to load.
          */
         const val DEFAULT_MESSAGES_LIMIT = 30
-
-        /**
-         * The default threshold for showing date separators. If the message difference in millis is equal to this
-         * number, then we show a separator, if it's enabled in the list.
-         */
-        const val SEPARATOR_TIME_MILLIS: Long = 1000 * 60 * 60 * 4
 
         /**
          * Time after which the focus from message will be removed
