@@ -28,7 +28,7 @@ object Versions {
     internal const val COROUTINES = "1.6.4"
     internal const val DETEKT_PLUGIN = "1.21.0"
     internal const val DEXTER = "6.2.3"
-    internal const val DOKKA = "1.7.0"
+    internal const val DOKKA = "1.7.10"
     internal const val DOKKASAURUS = "0.1.10"
     internal const val ESPRESSO = "3.4.0"
     internal const val FRAGMENT_TESTING = "1.5.1"
