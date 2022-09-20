@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
 
 /**
- * Implementation of [ThreadQueryListener] that doesn't add behaviour. 
+ * Implementation of [ThreadQueryListener] that doesn't add behaviour.
  */
 internal class NoOpThreadQueryStateListener : ThreadQueryListener {
 
