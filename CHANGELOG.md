@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Moved `ThreadQueryListenerFull` to LLC module so the behaviour of this listener will change accordingly with usage of database and state modules. [#4172](https://github.com/GetStream/stream-chat-android/pull/4172)
 
 ### ✅ Added
 
