@@ -8,7 +8,7 @@ object Versions {
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.5.1"
     internal const val ANDROIDX_ANNOTATIONS = "1.4.0"
-    internal const val ANDROIDX_APPCOMPAT = "1.4.2"
+    internal const val ANDROIDX_APPCOMPAT = "1.5.1"
     internal const val ANDROIDX_CORE_TEST = "2.1.0"
     internal const val ANDROIDX_FRAGMENT_KTX = "1.4.0"
     internal const val ANDROIDX_KTX = "1.8.0"
