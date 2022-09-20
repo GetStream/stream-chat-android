@@ -209,5 +209,5 @@ object Dependencies {
     fun isNonStable(version: String): Boolean = isStable(version).not()
 
     @JvmStatic
-    fun isStable(version: String): Boolean = ("^[0-9.]+$").toRegex().matches(version)
+    fun isStable(version: String): Boolean = ("^[0-9.-]+$").toRegex().matches(version)
 }
