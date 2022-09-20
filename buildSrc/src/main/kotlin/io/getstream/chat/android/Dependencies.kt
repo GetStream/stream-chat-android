@@ -75,7 +75,7 @@ object Versions {
     internal const val THREETENBP = "1.6.1"
     internal const val THREETENABP = "1.4.0"
     internal const val TIMBER = "5.0.1"
-    internal const val TURBINE = "0.8.0"
+    internal const val TURBINE = "0.10.0"
     internal const val WORK = "2.7.1"
 }
 
