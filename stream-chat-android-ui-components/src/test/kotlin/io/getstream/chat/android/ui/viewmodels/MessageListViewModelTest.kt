@@ -236,8 +236,7 @@ internal class MessageListViewModelTest {
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
-            whenever(chatClient.queryChannel(any(), any(), any())) doReturn channel.asCall()
-            whenever(chatClient.queryChannelInternal(any(), any(), any())) doReturn channel.asCall()
+            whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
         }
 
         fun givenNotifications() = apply {

@@ -1692,7 +1692,7 @@ internal constructor(
         logger.d { "[queryChannel] cid: $channelType:$channelId" }
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
             .doOnStart(userScope) {
-                if (skipDatabaseFetch) {
+                if (!skipDatabaseFetch) {
                     plugins.forEach { plugin ->
                         logger.v { "[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                         plugin.onQueryChannelRequest(channelType, channelId, request)
