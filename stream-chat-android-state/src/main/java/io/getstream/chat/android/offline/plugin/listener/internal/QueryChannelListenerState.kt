@@ -24,6 +24,11 @@ import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
+/**
+ * Implementation of [QueryChannelListener] that handles state updates in the SDK.
+ *
+ * @param logic [LogicRegistry]
+ */
 internal class QueryChannelListenerState(private val logic: LogicRegistry) : QueryChannelListener {
 
     override suspend fun onQueryChannelPrecondition(
@@ -32,6 +37,13 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
         request: QueryChannelRequest,
     ): Result<Unit> = Result.success(Unit)
 
+    /**
+     * The method that should be called before a call to query channel is made.
+     *
+     * @param channelType [String]
+     * @param channelId [String]
+     * @param request [QueryChannelRequest]
+     */
     override suspend fun onQueryChannelRequest(
         channelType: String,
         channelId: String,
@@ -40,6 +52,14 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
         logic.channel(channelType, channelId).updateStateFromDatabase(request)
     }
 
+    /**
+     * The method that should be called after a call to query channel is made.
+     *
+     * @param result Result<Channel>
+     * @param channelType [String]
+     * @param channelId [String]
+     * @param request [QueryChannelRequest]
+     */
     override suspend fun onQueryChannelResult(
         result: Result<Channel>,
         channelType: String,

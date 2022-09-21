@@ -1654,7 +1654,7 @@ internal constructor(
      */
     @CheckResult
     @InternalStreamChatApi
-    public fun queryChannelInternal(
+    private fun queryChannelInternal(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
@@ -1687,13 +1687,16 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
+        skipDatabaseFetch: Boolean = false
     ): Call<Channel> {
         logger.d { "[queryChannel] cid: $channelType:$channelId" }
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
             .doOnStart(userScope) {
-                plugins.forEach { plugin ->
-                    logger.v { "[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
-                    plugin.onQueryChannelRequest(channelType, channelId, request)
+                if (skipDatabaseFetch) {
+                    plugins.forEach { plugin ->
+                        logger.v { "[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
+                        plugin.onQueryChannelRequest(channelType, channelId, request)
+                    }
                 }
             }.doOnResult(userScope) { result ->
                 plugins.forEach { plugin ->
