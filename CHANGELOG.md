@@ -1,128 +1,18 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# September 21th, 2022 - 5.11.0
 ## stream-chat-android-client
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Reviewed requests parameters. `connectionId` is now sent only if necessary. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
-
-### ✅ Added
-
-### ⚠️ Changed
 
 ### ❌ Removed
 - 🚨 Breaking change: Removed `connectionId` parameter from `FileUploader` methods. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
 
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Divided QueryChannelLogic into state and database. [#4156](https://github.com/GetStream/stream-chat-android/pull/4156)
 
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `ownMessageText` and `otherMessageText` to `StreamColors` to enable message text customization. If you have been using `StreamColors.textHighEmphasis` to customize the color of the message texts, we recommend switching to the new attributes instead. [#4175](https://github.com/GetStream/stream-chat-android/pull/4175)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # September 13th, 2022 - 5.10.0
 ## stream-chat-android-client
