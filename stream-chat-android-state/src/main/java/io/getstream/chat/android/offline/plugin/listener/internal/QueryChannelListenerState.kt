@@ -20,9 +20,11 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.onError
+import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
-internal class QueryChannelListenerImpl(private val logic: LogicRegistry) : QueryChannelListener {
+internal class QueryChannelListenerState(private val logic: LogicRegistry) : QueryChannelListener {
 
     override suspend fun onQueryChannelPrecondition(
         channelType: String,
@@ -35,7 +37,7 @@ internal class QueryChannelListenerImpl(private val logic: LogicRegistry) : Quer
         channelId: String,
         request: QueryChannelRequest,
     ) {
-        logic.channel(channelType, channelId).onQueryChannelRequest(channelType, channelId, request)
+        logic.channel(channelType, channelId).updateStateFromDatabase(request)
     }
 
     override suspend fun onQueryChannelResult(
@@ -44,6 +46,9 @@ internal class QueryChannelListenerImpl(private val logic: LogicRegistry) : Quer
         channelId: String,
         request: QueryChannelRequest,
     ) {
-        logic.channel(channelType, channelId).onQueryChannelResult(result, channelType, channelId, request)
+        val channelStateLogic = logic.channel(channelType, channelId).stateLogic()
+
+        result.onSuccess { channel -> channelStateLogic.propagateChannelQuery(channel, request) }
+            .onError(channelStateLogic::propagateQueryError)
     }
 }
