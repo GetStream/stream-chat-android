@@ -431,7 +431,7 @@ internal class ChannelStateLogic(
         val noMoreMessages = request.messagesLimit() > channel.messages.size
         val isNotificationUpdate = request.isNotificationUpdate
 
-        if (!isNotificationUpdate) {
+        if (!isNotificationUpdate || request.skipMessages) {
             searchLogic.handleMessageBounds(request, noMoreMessages)
             mutableState.recoveryNeeded = false
 
