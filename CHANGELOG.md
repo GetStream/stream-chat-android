@@ -40,6 +40,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Separated `QueryChannelListenerState` into state and databased focused classes. [#4188](https://github.com/GetStream/stream-chat-android/pull/4188)
 - Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
 
 ### ❌ Removed
