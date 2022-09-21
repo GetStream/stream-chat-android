@@ -294,12 +294,7 @@ public class MessageListViewModel(
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
         initialJob = viewModelScope.launch {
-            chatClient.watchChannelAsState(
-                cid = cid,
-                messageLimit = DEFAULT_MESSAGES_LIMIT,
-                coroutineScope = viewModelScope,
-                skipMessages = messageId != null
-            ).collect { channelState ->
+            channelState.collect { channelState ->
                 if (channelState != null) {
                     initWithOfflinePlugin(channelState)
                     initialJob?.cancel()

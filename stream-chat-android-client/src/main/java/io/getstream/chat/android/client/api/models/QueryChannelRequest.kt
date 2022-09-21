@@ -172,6 +172,8 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         if (watchers != other.watchers) return false
         if (members != other.members) return false
         if (data != other.data) return false
+        if (isNotificationUpdate != other.isNotificationUpdate) return false
+        if (skipMessages != other.skipMessages) return false
         return true
     }
 
@@ -184,6 +186,8 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         result = 31 * result + watchers.hashCode()
         result = 31 * result + members.hashCode()
         result = 31 * result + data.hashCode()
+        result = 31 * result + isNotificationUpdate.hashCode()
+        result = 31 * result + skipMessages.hashCode()
         return result
     }
 
