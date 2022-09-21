@@ -32,9 +32,7 @@ internal class DeleteMessageListenerComposite(
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
         return deleteMessageListenerList.map { listener ->
             listener.onMessageDeletePrecondition(messageId)
-        }.fold(Result.success(Unit)) { acc, result ->
-            if (acc.isError) acc else result
-        }
+        }.foldResults()
     }
 
     override suspend fun onMessageDeleteRequest(messageId: String) {
