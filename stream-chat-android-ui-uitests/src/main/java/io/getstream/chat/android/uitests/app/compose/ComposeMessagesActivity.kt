@@ -23,6 +23,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 
 /**
  * An Activity that represents a message list screen. Relies on the components
@@ -37,7 +38,10 @@ class ComposeMessagesActivity : AppCompatActivity() {
         setContent {
             ChatTheme {
                 MessagesScreen(
-                    channelId = channelId,
+                    viewModelFactory = MessagesViewModelFactory(
+                        context = this,
+                        channelId = channelId
+                    ),
                     onBackPressed = ::finish,
                 )
             }

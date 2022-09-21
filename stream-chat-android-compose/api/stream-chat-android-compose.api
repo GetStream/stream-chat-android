@@ -711,7 +711,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/hand
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/ChannelsScreenKt {
-	public static final fun ChannelsScreen (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/String;ZZIIILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
+	public static final fun ChannelsScreen (Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Ljava/lang/String;ZZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/header/ChannelListHeaderKt {
@@ -1304,7 +1304,7 @@ public final class io/getstream/chat/android/compose/ui/components/userreactions
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {
-	public static final fun MessagesScreen (Ljava/lang/String;IZZZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessagesScreen (Lio/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {
@@ -1874,6 +1874,7 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelL
 
 public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
+	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Lio/getstream/chat/android/client/api/models/FilterObject;IIILio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Lio/getstream/chat/android/client/api/models/FilterObject;IIILio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
