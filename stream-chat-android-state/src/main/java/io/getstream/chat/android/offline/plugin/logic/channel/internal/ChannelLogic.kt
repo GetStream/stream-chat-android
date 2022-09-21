@@ -66,20 +66,14 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.applyPagination
-import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.onError
-import io.getstream.chat.android.client.utils.onSuccess
-import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -90,7 +84,8 @@ import java.util.Date
 /**
  * This class contains all the logic to manipulate and modify the state of the corresponding channel.
  *
- * @property repos [RepositoryFacade] that interact with data sources.
+ * @property repos [RepositoryFacade] that interact with data sources. The this object should be used only
+ * to read data and never update data as the state module should never change the database.
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
  * @property channelStateLogic [ChannelStateLogic]
  */
@@ -117,32 +112,6 @@ internal class ChannelLogic(
         }
     }
 
-    private suspend fun onQueryChannelResult(result: Result<Channel>, request: QueryChannelRequest) {
-        result.onSuccessSuspend { channel ->
-            logger.v { "[onQueryChannelResult] isSuccess: ${result.isSuccess}" }
-            // first thing here needs to be updating configs otherwise we have a race with receiving events
-            repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
-            storeStateForChannel(channel)
-        }
-            .onSuccess { channel -> channelStateLogic.propagateChannelQuery(channel, request) }
-            .onError(channelStateLogic::propagateQueryError)
-    }
-
-    private suspend fun storeStateForChannel(channel: Channel) {
-        val users = channel.users().associateBy { it.id }.toMutableMap()
-        val configs: MutableCollection<ChannelConfig> = mutableSetOf(ChannelConfig(channel.type, channel.config))
-        channel.messages.forEach { message ->
-            message.enrichWithCid(channel.cid)
-            users.putAll(message.users().associateBy { it.id })
-        }
-        repos.storeStateForChannels(
-            configs = configs,
-            users = users.values.toList(),
-            channels = listOf(channel),
-            messages = channel.messages
-        )
-    }
-
     /**
      * Returns the state of Channel. Useful to check how it the state of the channel of the [ChannelLogic]
      *
@@ -167,22 +136,6 @@ internal class ChannelLogic(
             return
         }
         runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
-    }
-
-    /**
-     * Starts to watch this channel.
-     *
-     * @param messagesLimit The limit of messages inside the channel that should be requested.
-     * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events. Used by the SDK to indicate if the user is online or not.
-     */
-    internal suspend fun loadNewestMessages(messagesLimit: Int = 30, userPresence: Boolean): Result<Channel> {
-        val request = QueryChannelPaginationRequest(messagesLimit)
-            .toWatchChannelRequest(userPresence)
-            .apply {
-                shouldRefresh = true
-            }
-
-        return runChannelQuery(request)
     }
 
     /**
@@ -216,11 +169,9 @@ internal class ChannelLogic(
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
         val offlineChannel = runChannelQueryOffline(request)
 
-        val onlineResult =
-            ChatClient.instance().queryChannelInternal(mutableState.channelType, mutableState.channelId, request)
-                .await().also { result ->
-                    onQueryChannelResult(result, request)
-                }
+        val onlineResult = ChatClient.instance()
+            .queryChannel(mutableState.channelType, mutableState.channelId, request, skipDatabaseFetch = true)
+            .await()
 
         return when {
             onlineResult.isSuccess -> onlineResult
@@ -260,10 +211,6 @@ internal class ChannelLogic(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest,
     ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
-
-    // internal fun setHidden(hidden: Boolean) {
-    //     channelStateLogic.toggleHidden(hidden)
-    // }
 
     internal fun updateDataFromChannel(
         channel: Channel,
