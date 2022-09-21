@@ -26,6 +26,9 @@ import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 
+/**
+ * Implementation for [QueryChannelListener] that handles database update.
+ */
 internal class QueryChannelListenerDatabase(private val repos: RepositoryFacade) : QueryChannelListener {
 
     override suspend fun onQueryChannelPrecondition(
@@ -41,6 +44,14 @@ internal class QueryChannelListenerDatabase(private val repos: RepositoryFacade)
          */
     }
 
+    /**
+     * Updates the database of the SDK once the query for channel is complete successfully.
+     *
+     * @param result Result<Channel>
+     * @param channelType String
+     * @param channelId String
+     * @param request [QueryChannelRequest]
+     */
     override suspend fun onQueryChannelResult(
         result: Result<Channel>,
         channelType: String,
