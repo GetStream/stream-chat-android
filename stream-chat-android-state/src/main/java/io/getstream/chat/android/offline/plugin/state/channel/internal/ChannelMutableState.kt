@@ -40,7 +40,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -137,13 +136,7 @@ internal class ChannelMutableState(
     /** Channel config data */
     override val channelConfig: StateFlow<Config> = _channelConfig
 
-    override val messages: StateFlow<List<Message>> = _insideSearch.flatMapLatest {
-        if (it) {
-            cachedMessages.map { it.values.toList() }
-        } else {
-            sortedMessages
-        }
-    }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+    override val messages: StateFlow<List<Message>> = sortedVisibleMessages
 
     override val messagesState: StateFlow<MessagesState> = _messagesState
     override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages.map { it.values })
@@ -221,7 +214,6 @@ internal class ChannelMutableState(
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = _channelConfig.value
         channel.unreadCount = unreadCount.value
-        // TODO not good, needs to take into account the cached messages
         channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
 
@@ -479,7 +471,7 @@ internal class ChannelMutableState(
 
     private fun cacheMessages() {
         cachedMessages.value = mapOf()
-        cachedMessages.value = cachedMessages.value + visibleMessages.value
+        cachedMessages.value = cachedMessages.value + sortedVisibleMessages.value.associateBy(Message::id)
     }
 
     /**
