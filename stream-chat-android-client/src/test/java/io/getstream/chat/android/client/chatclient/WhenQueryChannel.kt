@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.asCall
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
@@ -36,6 +37,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class WhenQueryChannel : BaseChatClientTest() {
 
     @Test
@@ -89,7 +91,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
             mock()
         }.get()
 
-        sut.queryChannel("channelType", "channelId", QueryChannelRequest()).await()
+        sut.queryChannel("channelType", "channelId", QueryChannelRequest(), skipDatabaseFetch = false).await()
 
         list `should be equal to` listOf(1, 2, 3, 4)
     }
