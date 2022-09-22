@@ -56,14 +56,14 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
-) : ChannelStateLogicProvider, QueryChannelsLogicProvider {
+) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    override fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
+    internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
             val queryChannelsStateLogic = QueryChannelsStateLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
@@ -72,12 +72,12 @@ internal class LogicRegistry internal constructor(
             )
 
             val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
-                repos,
-                repos,
-                repos,
-                repos,
-                repos,
-                repos
+                queryChannelsRepository = repos,
+                channelConfigRepository = repos,
+                channelRepository = repos,
+                messageRepository = repos,
+                userRepository = repos,
+                repositoryFacade = repos
             )
 
             QueryChannelsLogic(
@@ -91,7 +91,7 @@ internal class LogicRegistry internal constructor(
     }
 
     /** Returns [QueryChannelsLogic] accordingly to [QueryChannelsRequest]. */
-    override fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
+    internal fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
         queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
 
     /** Returns [ChannelLogic] by channelType and channelId combination. */
