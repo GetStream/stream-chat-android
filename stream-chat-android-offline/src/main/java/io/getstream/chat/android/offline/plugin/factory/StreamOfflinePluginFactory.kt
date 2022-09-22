@@ -175,21 +175,16 @@ public class StreamOfflinePluginFactory(
 
         return OfflinePlugin(
             activeUser = user,
-            queryChannelsListener = statePlugin,
             queryChannelListener = queryChannelListener,
             threadQueryListener = NoOpThreadQueryStateListener(),
-            channelMarkReadListener = statePlugin,
             editMessageListener = editMessageListener,
             hideChannelListener = hideChannelListener,
-            markAllReadListener = statePlugin,
             deleteReactionListener = deleteReactionListener,
             sendReactionListener = sendReactionListener,
             deleteMessageListener = deleteMessageListener,
             sendMessageListener = sendMessageListener,
-            sendGiphyListener = statePlugin,
             shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = queryMembersListener,
-            typingEventListener = statePlugin,
             createChannelListener = createChannelListener,
             childResolver = statePlugin
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
