@@ -12,12 +12,12 @@ There are a few necessary steps to follow to integrate video calling capabilitie
 
 Follow the steps below to produce this app that allows your users to make video calls:
 
-1. Set up an account for 100ms
+1. Setting up an account for 100ms
 2. Stream Dashboard integration
-3. Configure Dependencies
-4. Implement VideoCallViewModel
-5. Implement a Video Call Screen
-6. Implement Custom Call Messages Using Custom Attachment
+3. Configure dependencies
+4. Implement a ViewModel for video calls
+5. Implement video call layouts
+6. Implement custom call messages using custom attachments
 
 :::note
 This tutorial assumes you already use [Stream Chat SDK for Android](https://getstream.io/chat/sdk/android/) in your Android project. So you will not cover how to set up the Stream Chat SDK in this tutorial. For more information, check out the [Android Chat Messaging Tutorial](https://getstream.io/tutorials/android-chat/) guide.
@@ -40,7 +40,7 @@ From here, click the **Go to Dashboard** button at the bottom. After completing 
 
 You will come back to the Dashboard later, but we will move on to other steps next.
 
-## 2. Stream Dashboard integration
+## 2. Stream Dashboard Integration
 
 In order for the integration of 100ms to work there needs to be a server component handling token generation and more. Normally this would require a custom server implementation but Stream offers first-class integration for 100ms relieving you of these duties.
 
@@ -97,7 +97,7 @@ implementation "io.getstream:stream-chat-android-ui-components:5.10.0"
 
 Now, let’s build a video call screen with the 100ms SDK.
 
-## 4. Implement VideoCallViewModel
+## 4. Implement a ViewModel for Video Calls
 
 We will implement a `VideoCallViewModel`, which includes all video-relevant behaviors, such as creating a dynamic call, requesting an authentication token, connecting to a video call, and toggling the mic or video. 
 
@@ -311,7 +311,7 @@ Let’s break down each method one by one:
 
 For more details about override methods from `HMSUpdateListener`, check out the [100ms official Join Room guideline](https://www.100ms.live/docs/android/v2/features/Join).
 
-## 5. Implement a Video Call Screen
+## 5. Implement Video Call Layouts
 Now you’ll implement a video call screen like the below:
 ![Video Call Screen](../../../assets/video-integration-call.jpg)
 
@@ -713,7 +713,7 @@ But you may face an unresolved IDE error for the `ChannelViewModel` if you build
 
 We implemented a basic form of a video call with 100ms SDK. Now let’s create custom call messages that represent video call messages with Stream chat’s custom attachment.
 
-## 6. Implement Custom Call Messages Using Custom Attachment
+## 6. Implement Custom Call Messages Using Custom Attachments
 
 Now, let’s integrate the video call into your chat screen with the custom attachment. You will show a custom UI for call messages in the message list that will look like this:
 
