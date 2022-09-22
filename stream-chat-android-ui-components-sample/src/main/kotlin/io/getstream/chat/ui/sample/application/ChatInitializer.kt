@@ -28,6 +28,8 @@ import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFacto
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import io.getstream.chat.android.pushprovider.xiaomi.XiaomiPushDeviceGenerator
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
@@ -62,6 +64,16 @@ class ChatInitializer(private val context: Context) {
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
+        val statePluginFactory = StreamStatePluginFactory(
+            config = StatePluginConfig(
+                backgroundSyncEnabled = config.backgroundSyncEnabled,
+                userPresence = config.userPresence,
+                uploadAttachmentsNetworkType = config.uploadAttachmentsNetworkType,
+                useSequentialEventHandler = config.useSequentialEventHandler,
+            ),
+            appContext = context
+        )
+
         val offlinePlugin = StreamOfflinePluginFactory(
             Config(
                 userPresence = true,
@@ -76,6 +88,7 @@ class ChatInitializer(private val context: Context) {
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
+            .withPlugin(statePluginFactory)
             .debugRequests(true)
             .build()
 

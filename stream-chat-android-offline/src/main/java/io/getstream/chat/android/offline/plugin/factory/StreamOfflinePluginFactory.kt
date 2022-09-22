@@ -112,7 +112,7 @@ public class StreamOfflinePluginFactory(
         }
 
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
-        
+
         InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
             logger.i { "[onUserDisconnected] user.id: '${it?.id}'" }
             clearCachedInstance()
