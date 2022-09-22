@@ -4,9 +4,9 @@ package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.events.ChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.client.events.EventHandlingResult
+import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.setup.state.ClientState

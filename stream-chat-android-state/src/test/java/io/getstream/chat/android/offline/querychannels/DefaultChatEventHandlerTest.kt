@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.querychannels
 
-import io.getstream.chat.android.client.events.EventHandlingResult
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
@@ -30,6 +29,7 @@ import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.client.test.randomNotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
