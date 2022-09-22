@@ -257,17 +257,4 @@ internal class ChannelStateLogicTest {
         channelStateLogic.propagateChannelQuery(channel, filteringRequest)
         verify(mutableState).upsertMessages(any())
     }
-
-    @Test
-    fun `given a scroll messages come while inside search, messages should be added`() {
-        _insideSearch.value = true
-
-        val randomMessage = randomMessage()
-        val channel: Channel = randomChannel(messages = listOf(randomMessage))
-        val filteringRequest = QueryChannelPaginationRequest(1)
-            .withMessages(Pagination.GREATER_THAN, randomString(), 1)
-
-        channelStateLogicImpl.propagateChannelQuery(channel, filteringRequest)
-        verify(mutableState).rawMessages = any()
-    }
 }

@@ -162,6 +162,7 @@ internal class MessageListViewModelTest {
                 whenever(it.endOfNewerMessages) doReturn MutableStateFlow(true)
                 whenever(it.toChannel()) doReturn Channel(type = CHANNEL_TYPE, id = CHANNEL_ID)
                 whenever(it.unreadCount) doReturn MutableStateFlow(0)
+                whenever(it.insideSearch) doReturn (MutableStateFlow(false))
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
             whenever(stateRegistry.scope) doReturn testCoroutines.scope
