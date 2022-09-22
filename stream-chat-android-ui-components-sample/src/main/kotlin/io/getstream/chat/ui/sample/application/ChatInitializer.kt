@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
+import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
@@ -64,16 +65,6 @@ class ChatInitializer(private val context: Context) {
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                backgroundSyncEnabled = config.backgroundSyncEnabled,
-                userPresence = config.userPresence,
-                uploadAttachmentsNetworkType = config.uploadAttachmentsNetworkType,
-                useSequentialEventHandler = config.useSequentialEventHandler,
-            ),
-            appContext = context
-        )
-
         val offlinePlugin = StreamOfflinePluginFactory(
             Config(
                 userPresence = true,
@@ -83,12 +74,21 @@ class ChatInitializer(private val context: Context) {
             context
         )
 
+        val statePluginFactory = StreamStatePluginFactory(
+            config = StatePluginConfig(
+                backgroundSyncEnabled = true,
+                userPresence = true,
+                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+                useSequentialEventHandler = true,
+            ),
+            appContext = context
+        )
+
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
-            .withPlugin(offlinePlugin)
-            .withPlugin(statePluginFactory)
+            .withPlugins(offlinePlugin, statePluginFactory)
             .debugRequests(true)
             .build()
 

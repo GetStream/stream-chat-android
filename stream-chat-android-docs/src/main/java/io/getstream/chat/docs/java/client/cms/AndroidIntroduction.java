@@ -27,6 +27,8 @@ import io.getstream.chat.android.offline.model.message.attachments.UploadAttachm
 import io.getstream.chat.android.offline.plugin.configuration.Config;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState;
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig;
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
 import kotlinx.coroutines.flow.StateFlow;
 
 public class AndroidIntroduction {
@@ -40,12 +42,16 @@ public class AndroidIntroduction {
         // Step 1 - Set up the OfflinePlugin for offline storage
         Config config = new Config(true, true, true, UploadAttachmentsNetworkType.NOT_ROAMING);
         StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(config, applicationContext);
+        StreamStatePluginFactory streamStatePluginFactory = new StreamStatePluginFactory(
+                new StatePluginConfig(true, true, UploadAttachmentsNetworkType.NOT_ROAMING, true),
+                applicationContext
+        );
 
         // Step 2 - Set up the client, together with offline plugin, for API calls
         ChatClient client = new ChatClient.Builder(apiKey, applicationContext)
                 // Change log level
                 .logLevel(ChatLogLevel.ALL)
-                .withPlugin(offlinePluginFactory)
+                .withPlugins(offlinePluginFactory, streamStatePluginFactory)
                 .build();
 
         // Step 3 - Authenticate and connect the user

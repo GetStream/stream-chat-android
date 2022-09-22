@@ -25,9 +25,12 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
+import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
 /**
  * A helper class that is responsible for initializing the SDK and connecting/disconnecting
@@ -65,11 +68,21 @@ object ChatHelper {
             context
         )
 
+        val statePluginFactory = StreamStatePluginFactory(
+            config = StatePluginConfig(
+                backgroundSyncEnabled = true,
+                userPresence = true,
+                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+                useSequentialEventHandler = true,
+            ),
+            appContext = context
+        )
+
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
         ChatClient.Builder(apiKey, context)
             .notifications(notificationConfig, notificationHandler)
-            .withPlugin(offlinePlugin)
+            .withPlugins(offlinePlugin, statePluginFactory)
             .logLevel(logLevel)
             .build()
     }

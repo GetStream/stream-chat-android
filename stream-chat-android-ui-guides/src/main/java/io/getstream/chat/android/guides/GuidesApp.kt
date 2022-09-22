@@ -19,8 +19,11 @@ package io.getstream.chat.android.guides
 import android.app.Application
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
 class GuidesApp : Application() {
 
@@ -31,8 +34,19 @@ class GuidesApp : Application() {
             config = Config(),
             appContext = this
         )
+
+        val statePluginFactory = StreamStatePluginFactory(
+            config = StatePluginConfig(
+                backgroundSyncEnabled = true,
+                userPresence = true,
+                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+                useSequentialEventHandler = true,
+            ),
+            appContext = this
+        )
+
         ChatClient.Builder("qx5us2v6xvmh", this)
-            .withPlugin(offlinePluginFactory)
+            .withPlugins(offlinePluginFactory, statePluginFactory)
             .logLevel(ChatLogLevel.NOTHING)
             .build()
     }
