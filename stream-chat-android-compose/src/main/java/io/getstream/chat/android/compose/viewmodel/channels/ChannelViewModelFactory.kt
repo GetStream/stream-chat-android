@@ -20,7 +20,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.events.ChatEventHandler
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 
@@ -37,9 +39,9 @@ import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHan
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  */
 public class ChannelViewModelFactory(
-    private val chatClient: ChatClient,
-    private val querySort: QuerySorter<Channel>,
-    private val filters: FilterObject?,
+    private val chatClient: ChatClient = ChatClient.instance(),
+    private val querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
+    private val filters: FilterObject? = null,
     private val channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
