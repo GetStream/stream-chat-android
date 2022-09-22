@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.events.ChatEventHandler
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 
 /**
