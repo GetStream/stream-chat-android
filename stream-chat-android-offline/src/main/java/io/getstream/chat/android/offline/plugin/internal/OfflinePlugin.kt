@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.state.plugin.internal.StateAwarePlugin
-import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import kotlin.reflect.KClass
 
 /**
@@ -52,8 +51,6 @@ import kotlin.reflect.KClass
  * @param createChannelListener [CreateChannelListener]
  * @param activeUser User associated with [OfflinePlugin] instance.
  * @param provideDependency Resolves dependency within [OfflinePlugin].
- * @param childResolver Resolves dependency within [StatePlugin]. Will be removed when [StatePlugin]
- * gets separated from [OfflinePlugin].
  */
 @Suppress("LongParameterList")
 internal class OfflinePlugin(
@@ -70,7 +67,6 @@ internal class OfflinePlugin(
     private val queryMembersListener: QueryMembersListener,
     private val createChannelListener: CreateChannelListener,
     @Deprecated("Delete this when StatePlugin will be separated from OfflinePlugin")
-    private val childResolver: DependencyResolver,
     private val provideDependency: (KClass<*>) -> Any? = { null },
 ) : StateAwarePlugin,
     DependencyResolver,
@@ -89,5 +85,4 @@ internal class OfflinePlugin(
     @Suppress("UNCHECKED_CAST")
     @InternalStreamChatApi
     override fun <T : Any> resolveDependency(klass: KClass<T>): T? = provideDependency(klass) as? T
-        ?: childResolver.resolveDependency(klass)
 }
