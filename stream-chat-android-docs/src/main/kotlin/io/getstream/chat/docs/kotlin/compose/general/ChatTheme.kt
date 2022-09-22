@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/general-customization/chat-theme/#usage)
@@ -25,8 +26,11 @@ private object ChatThemeUsageSnippet {
             setContent {
                 ChatTheme {
                     MessagesScreen(
-                        channelId = "messaging:123",
-                        messageLimit = 30,
+                        viewModelFactory = MessagesViewModelFactory(
+                            context = this,
+                            channelId = "messaging:123",
+                            messageLimit = 30
+                        ),
                         onBackPressed = { finish() },
                         onHeaderActionClick = {}
                     )
@@ -58,8 +62,10 @@ private object ChatThemeCustomizationSnippet {
                     )
                 ) {
                     MessagesScreen(
-                        channelId = "messaging:123",
-                        messageLimit = 30,
+                        viewModelFactory = MessagesViewModelFactory(
+                            context = this,
+                            channelId = "messaging:123",
+                        ),
                         onBackPressed = { finish() },
                         onHeaderActionClick = {}
                     )
