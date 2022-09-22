@@ -69,10 +69,14 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the way the [ChannelsScreen](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
+- Improved the way the [MessagesScreen](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Changed the way ChannelsScreen and MessagesScreen components are built. Instead of exposing a ton of parameters for customization, we now expose a ViewModelFactory that accepts them. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
+- Using this new approach you can reuse and connect to ViewModels from the outside, if you want to power custom behavior. Make sure to check out our documentation regarding these components. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
 
 ### ❌ Removed
 
