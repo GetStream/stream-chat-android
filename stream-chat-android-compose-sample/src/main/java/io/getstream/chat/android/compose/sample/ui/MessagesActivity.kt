@@ -78,7 +78,7 @@ class MessagesActivity : BaseConnectedActivity() {
     private val factory by lazy {
         MessagesViewModelFactory(
             context = this,
-            channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
+            channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
         )
     }
