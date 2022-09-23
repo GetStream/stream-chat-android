@@ -176,7 +176,7 @@ public fun MessagesScreen(
                     .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
-                lazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
+                messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                     listViewModel.openMessageThread(message)

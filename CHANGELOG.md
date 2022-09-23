@@ -22,6 +22,7 @@
 
 ### ❌ Removed
 
+
 ## stream-chat-android-offline
 ### 🐞 Fixed
 
@@ -82,6 +83,7 @@
 
 ### ✅ Added
 - Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Added `MessageLazyListState` to replace the default `LazyListState`. `MessageLazyListState` is used to track the scroll position of the message list as well as the focused message offset. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ⚠️ Changed
 - Changed the way ChannelsScreen and MessagesScreen components are built. Instead of exposing a ton of parameters for customization, we now expose a ViewModelFactory that accepts them. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)

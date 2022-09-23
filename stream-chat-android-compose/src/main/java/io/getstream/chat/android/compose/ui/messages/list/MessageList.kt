@@ -20,7 +20,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -50,8 +49,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * the operations.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
- * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
- * scroll state.
+ * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
+ * scroll state and focused message offset.
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
@@ -78,7 +77,7 @@ public fun MessageList(
     viewModel: MessageListViewModel,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    lazyListState: LazyListState =
+    messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
@@ -100,7 +99,7 @@ public fun MessageList(
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(
             messagesState = viewModel.currentMessagesState,
-            lazyListState = lazyListState,
+            messagesLazyListState = messagesLazyListState,
             scrollToBottom = onScrollToBottomClicked,
         )
     },
@@ -121,7 +120,7 @@ public fun MessageList(
         modifier = modifier,
         contentPadding = contentPadding,
         currentState = viewModel.currentMessagesState,
-        lazyListState = lazyListState,
+        messagesLazyListState = messagesLazyListState,
         onMessagesStartReached = onMessagesStartReached,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
@@ -208,8 +207,8 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param currentState The state of the component, represented by [MessagesState].
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
- * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
- * scroll state.
+ * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
+ * scroll state and focused message offset.
  * @param onMessagesStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
@@ -235,7 +234,8 @@ public fun MessageList(
     currentState: MessagesState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    lazyListState: LazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
+    messagesLazyListState: MessagesLazyListState =
+        rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
@@ -252,7 +252,7 @@ public fun MessageList(
     helperContent: @Composable BoxScope.() -> Unit = {
         DefaultMessagesHelperContent(
             messagesState = currentState,
-            lazyListState = lazyListState,
+            messagesLazyListState = messagesLazyListState,
             scrollToBottom = onScrollToBottom
         )
     },
@@ -277,7 +277,7 @@ public fun MessageList(
             modifier = modifier,
             contentPadding = contentPadding,
             messagesState = currentState,
-            lazyListState = lazyListState,
+            messagesLazyListState = messagesLazyListState,
             onMessagesStartReached = onMessagesStartReached,
             onLastVisibleMessageChanged = onLastVisibleMessageChanged,
             onScrolledToBottom = onScrolledToBottom,
