@@ -170,7 +170,7 @@ internal class ChannelLogic(
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult = ChatClient.instance()
-            .queryChannel(mutableState.channelType, mutableState.channelId, request, skipDatabaseFetch = true)
+            .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
             .await()
 
         return when {

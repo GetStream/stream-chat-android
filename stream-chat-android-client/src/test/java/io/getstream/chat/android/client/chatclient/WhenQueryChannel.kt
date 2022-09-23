@@ -91,7 +91,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
             mock()
         }.get()
 
-        sut.queryChannel("channelType", "channelId", QueryChannelRequest(), skipDatabaseFetch = false).await()
+        sut.queryChannel("channelType", "channelId", QueryChannelRequest(), skipOnRequest = false).await()
 
         list `should be equal to` listOf(1, 2, 3, 4)
     }
