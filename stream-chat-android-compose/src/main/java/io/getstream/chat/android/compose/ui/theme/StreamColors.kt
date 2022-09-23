@@ -45,6 +45,8 @@ import io.getstream.chat.android.compose.R
  * @param giphyMessageBackground Used as a background for the ephemeral giphy messages.
  * @param threadSeparatorGradientStart Used as a start color for vertical gradient background in a thread separator.
  * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
+ * @param ownMessageText Used for message text color for the current user. [textHighEmphasis] by default.
+ * @param otherMessageText Used for message text color for other users. [textHighEmphasis] by default.
  */
 @Immutable
 public data class StreamColors(
@@ -68,6 +70,8 @@ public data class StreamColors(
     public val giphyMessageBackground: Color,
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
+    public val ownMessageText: Color = textHighEmphasis,
+    public val otherMessageText: Color = textHighEmphasis
 ) {
 
     public companion object {
@@ -98,6 +102,8 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
+            ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis),
+            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis)
         )
 
         /**
@@ -127,6 +133,8 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background_dark),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
+            ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark),
+            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark)
         )
     }
 }
