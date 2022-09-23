@@ -20,22 +20,30 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
-internal class QueryChannelListenerImpl(private val logic: LogicRegistry) : QueryChannelListener {
+/**
+ * This class act as an composition of multiple [QueryChannelListener]. This is only necessary
+ * along StatePlugin lives inside OfflinePlugin. When both plugins are separated, this class can
+ * and should be deleted.
+ */
+internal class QueryChannelListenerComposite(
+    private val queryChannelListenerList: List<QueryChannelListener>,
+) : QueryChannelListener {
 
     override suspend fun onQueryChannelPrecondition(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> {
+        return queryChannelListenerList.map { listener ->
+            listener.onQueryChannelPrecondition(channelType, channelId, request)
+        }.foldResults()
+    }
 
-    override suspend fun onQueryChannelRequest(
-        channelType: String,
-        channelId: String,
-        request: QueryChannelRequest,
-    ) {
-        logic.channel(channelType, channelId).onQueryChannelRequest(channelType, channelId, request)
+    override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
+        queryChannelListenerList.forEach { listener ->
+            listener.onQueryChannelRequest(channelType, channelId, request)
+        }
     }
 
     override suspend fun onQueryChannelResult(
@@ -44,6 +52,8 @@ internal class QueryChannelListenerImpl(private val logic: LogicRegistry) : Quer
         channelId: String,
         request: QueryChannelRequest,
     ) {
-        logic.channel(channelType, channelId).onQueryChannelResult(result, channelType, channelId, request)
+        queryChannelListenerList.forEach { listener ->
+            listener.onQueryChannelResult(result, channelType, channelId, request)
+        }
     }
 }
