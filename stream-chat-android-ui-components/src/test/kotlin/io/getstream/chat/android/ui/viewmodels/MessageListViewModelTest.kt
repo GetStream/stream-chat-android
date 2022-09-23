@@ -286,6 +286,8 @@ internal class MessageListViewModelTest {
                 whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)
                 whenever(it.toChannel()) doReturn Channel(type = CHANNEL_TYPE, id = CHANNEL_ID)
                 whenever(it.endOfNewerMessages) doReturn MutableStateFlow(false)
+                whenever(it.loading) doReturn MutableStateFlow(true)
+                whenever(it.unreadCount) doReturn MutableStateFlow(0)
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
             whenever(stateRegistry.scope) doReturn testCoroutines.scope
@@ -356,7 +358,8 @@ internal class MessageListViewModelTest {
                 MessageListItem.MessageItem(
                     message = message,
                     showMessageFooter = index == this.size - 1,
-                    positions = listOf(position)
+                    positions = listOf(position),
+                    isMessageRead = false
                 )
             }
         }

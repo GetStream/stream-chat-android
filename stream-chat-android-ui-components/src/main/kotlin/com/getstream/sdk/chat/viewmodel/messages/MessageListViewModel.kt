@@ -49,6 +49,7 @@ import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onSubscription
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
@@ -197,8 +198,13 @@ public class MessageListViewModel(
     init {
         val listState = messageListController.listState
             .onSubscription { State.Loading }
-            .map { State.Result(it.toMessageListItemWrapper()) }
-            .asLiveData()
+            .map {
+                if (it.isLoading) {
+                    State.Loading
+                } else {
+                    State.Result(it.toMessageListItemWrapper())
+                }
+            }.asLiveData()
         stateMerger.addSource(listState) { stateMerger.value = it }
     }
 

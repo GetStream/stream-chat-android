@@ -204,13 +204,13 @@ public class MessageListController(
     /**
      * Current state of the message list.
      */
-    private val _messageListState: MutableStateFlow<MessageListState> = MutableStateFlow(MessageListState())
+    private val _messageListState: MutableStateFlow<MessageListState> = MutableStateFlow(MessageListState(isLoading = true))
     public val messageListState: StateFlow<MessageListState> = _messageListState
 
     /**
      * Current state of the thread message list.
      */
-    private val _threadListState: MutableStateFlow<MessageListState> = MutableStateFlow(MessageListState())
+    private val _threadListState: MutableStateFlow<MessageListState> = MutableStateFlow(MessageListState(isLoading = true))
     public val threadListState: StateFlow<MessageListState> = _threadListState
 
     /**
@@ -222,7 +222,7 @@ public class MessageListController(
         } else {
             _messageListState
         }
-    }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = MessageListState())
+    }.stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = MessageListState(isLoading = true))
 
     /**
      * State of the list depending of the mode, thread or normal.
@@ -341,8 +341,8 @@ public class MessageListController(
                 when (state) {
                     is MessagesState.Loading,
                     is MessagesState.NoQueryActive,
+                    is MessagesState.OfflineNoResults,
                     -> _messageListState.value.copy(isLoading = true)
-                    MessagesState.OfflineNoResults -> _messageListState.value.copy(isLoading = false)
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
                         isLoadingNewerMessages = false,
@@ -502,7 +502,7 @@ public class MessageListController(
         reads: List<ChannelUserRead>,
         deletedMessageVisibility: DeletedMessageVisibility,
         dateSeparatorHandler: DateSeparatorHandler,
-        messageFooterVisibility: MessageFooterVisibility
+        messageFooterVisibility: MessageFooterVisibility,
     ): List<MessageListItem> {
         val parentMessageId = (_mode.value as? MessageMode.Thread)?.parentMessage?.id
         val currentUser = user.value
