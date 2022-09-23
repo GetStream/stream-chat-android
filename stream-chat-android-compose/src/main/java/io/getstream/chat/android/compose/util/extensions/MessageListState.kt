@@ -7,13 +7,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 /**
  * Converts common [MessageListState] to compose [MessagesState].
  *
- * @param focusedMessageOffsetState The offset state for focused message to be centered in the screen.
- *
  * @return Compose [MessagesState] derived from common [MessageListState].
  */
-internal fun MessageListState.toComposeState(
-    focusedMessageOffsetState: MutableStateFlow<Int?> = MutableStateFlow(null)
-): MessagesState {
+internal fun MessageListState.toComposeState(): MessagesState {
     return MessagesState(
         isLoading = isLoading,
         isLoadingMore = isLoadingOlderMessages || isLoadingNewerMessages,
@@ -26,7 +22,6 @@ internal fun MessageListState.toComposeState(
         isLoadingMoreOldMessages = isLoadingOlderMessages,
         messageItems = messages.reversed().map { it.toMessageListItemState() },
         newMessageState = newMessageState?.toComposeState(),
-        selectedMessageState = selectedMessageState?.toComposeState(),
-        focusedMessageOffsetState = focusedMessageOffsetState
+        selectedMessageState = selectedMessageState?.toComposeState()
     )
 }

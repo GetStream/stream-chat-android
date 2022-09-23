@@ -99,22 +99,15 @@ public class MessageListViewModel(
         get() = if (isInThread) threadMessagesState else messagesState
 
     /**
-     * Offset of a focused message needed to show it in the center of the screen.
-     */
-    private val focusedMessagesOffsetState: MutableStateFlow<Int?> = MutableStateFlow(0)
-
-    /**
      * State of the screen, for [MessageMode.Normal].
      */
-    private val messagesState: MessagesState by messageListController.messageListState
-        .map { it.toComposeState(focusedMessagesOffsetState) }
+    private val messagesState: MessagesState by messageListController.messageListState.map { it.toComposeState() }
         .asState(viewModelScope, MessagesState())
 
     /**
      * State of the screen, for [MessageMode.Thread].
      */
-    private val threadMessagesState: MessagesState by messageListController.threadListState
-        .map { it.toComposeState(focusedMessagesOffsetState) }
+    private val threadMessagesState: MessagesState by messageListController.threadListState.map { it.toComposeState() }
         .asState(viewModelScope, MessagesState())
 
     /**
