@@ -140,7 +140,8 @@ internal class QueryChannelsStateLogic(
             logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
                 channel,
                 shouldRefreshMessages = false,
-                scrollUpdate = false
+                scrollUpdate = false,
+                skipMessages = false
             )
         }
     }
