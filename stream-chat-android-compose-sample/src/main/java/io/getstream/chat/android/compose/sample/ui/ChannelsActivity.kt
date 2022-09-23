@@ -90,6 +90,7 @@ class ChannelsActivity : BaseConnectedActivity() {
         setContent {
             ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 ChannelsScreen(
+                    viewModelFactory = factory,
                     title = stringResource(id = R.string.app_name),
                     isShowingHeader = true,
                     isShowingSearch = true,

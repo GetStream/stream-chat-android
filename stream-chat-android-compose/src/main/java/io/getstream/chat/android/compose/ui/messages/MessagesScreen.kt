@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages
 
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -47,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -58,10 +55,8 @@ import io.getstream.chat.android.common.model.DeleteMessage
 import io.getstream.chat.android.common.model.EditMessage
 import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.common.state.Delete
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.Flag
-import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
@@ -89,60 +84,34 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 /**
  * Default root Messages screen component, that provides the necessary ViewModels and
  * connects all the data handling operations, as well as some basic actions, like back pressed handling.
  *
  * Because this screen can be shown only if there is an active/selected Channel, the user must provide
- * a [channelId] in order to load up all the data. Otherwise, we can't show the UI.
+ * a [viewModelFactory] that contains the channel ID, in order to load up all the data. Otherwise, we can't show the UI.
  *
- * @param channelId The ID of the opened/active Channel.
- * @param messageLimit The limit of messages per query.
+ * @param viewModelFactory The factory used to build ViewModels and power the behavior.
+ * You can customize the behavior of the list through its parameters. For default behavior,
+ * simply create an instance and pass in just the channel ID and the context.
  * @param showHeader If we're showing the header or not.
- * @param enforceUniqueReactions If we need to enforce unique reactions or not.
- * @param showSystemMessages If we should show system messages or not.
- * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
- * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
- * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
- * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
  */
 @Suppress("LongMethod")
-@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 public fun MessagesScreen(
-    channelId: String,
-    messageLimit: Int = MessageListViewModel.DefaultMessageLimit,
+    viewModelFactory: MessagesViewModelFactory,
     showHeader: Boolean = true,
-    enforceUniqueReactions: Boolean = true,
-    showSystemMessages: Boolean = true,
-    deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
-    messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
-    threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
 ) {
-    val factory = buildViewModelFactory(
-        context = LocalContext.current,
-        channelId = channelId,
-        enforceUniqueReactions = enforceUniqueReactions,
-        messageLimit = messageLimit,
-        showSystemMessages = showSystemMessages,
-        deletedMessageVisibility = deletedMessageVisibility,
-        messageFooterVisibility = messageFooterVisibility,
-        dateSeparatorHandler = dateSeparatorHandler,
-        threadDateSeparatorHandler = threadDateSeparatorHandler
-    )
-
-    val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
-    val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = factory)
+    val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
+    val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
     val attachmentsPickerViewModel =
-        viewModel(AttachmentsPickerViewModel::class.java, factory = factory)
+        viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
 
     val backAction = {
         val isInThread = listViewModel.isInThread
@@ -208,7 +177,7 @@ public fun MessagesScreen(
                     .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
-                lazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
+                messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(MessageMode.Thread(message))
                     listViewModel.openMessageThread(message)
@@ -560,42 +529,4 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
             onDismiss = { listViewModel.dismissMessageAction(flagAction) }
         )
     }
-}
-
-/**
- * Builds the [MessagesViewModelFactory] required to run the Conversation/Messages screen.
- *
- * @param context Used to build the [ClipboardManager].
- * @param channelId The current channel ID, to load the messages from.
- * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
- * @param messageLimit The limit when loading messages.
- * @param showSystemMessages If we should show system messages or not. * @param deletedMessageVisibility The behavior of deleted messages in the list.
- * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
- * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
- * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
- * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
- * */
-@ExperimentalCoroutinesApi
-private fun buildViewModelFactory(
-    context: Context,
-    channelId: String,
-    enforceUniqueReactions: Boolean,
-    messageLimit: Int,
-    showSystemMessages: Boolean,
-    deletedMessageVisibility: DeletedMessageVisibility,
-    messageFooterVisibility: MessageFooterVisibility,
-    dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
-    threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
-): MessagesViewModelFactory {
-    return MessagesViewModelFactory(
-        context = context,
-        channelId = channelId,
-        enforceUniqueReactions = enforceUniqueReactions,
-        messageLimit = messageLimit,
-        showSystemMessages = showSystemMessages,
-        deletedMessageVisibility = deletedMessageVisibility,
-        messageFooterVisibility = messageFooterVisibility,
-        dateSeparatorHandler = dateSeparatorHandler,
-        threadDateSeparatorHandler = threadDateSeparatorHandler
-    )
 }

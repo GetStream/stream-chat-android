@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.utils.internal
+package io.getstream.chat.android.client.query.request
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /* Default filter to include FilterObject in a channel by its cid
 *
@@ -27,8 +28,9 @@ import io.getstream.chat.android.client.models.Channel
 * @param offset - the offset to be included with the filter.
 * @param limit - the filter to be included with the filter.
 */
-internal object ChannelFilterRequest {
-    suspend fun ChatClient.filterWithOffset(
+@InternalStreamChatApi
+public object ChannelFilterRequest {
+    public suspend fun ChatClient.filterWithOffset(
         filter: FilterObject,
         offset: Int,
         limit: Int

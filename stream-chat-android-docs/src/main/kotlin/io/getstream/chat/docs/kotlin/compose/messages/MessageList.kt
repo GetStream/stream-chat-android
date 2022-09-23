@@ -130,7 +130,7 @@ private object MessageListControllingScrollStateSnippet {
 
                     MessageList(
                         viewModel = listViewModel,
-                        lazyListState = myListState,
+                        messagesLazyListState = myListState,
                     )
                 }
             }
