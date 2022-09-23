@@ -40,6 +40,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
 
 ### ❌ Removed
 
