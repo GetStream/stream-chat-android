@@ -30,7 +30,7 @@
     <ID>LongMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
     <ID>LongMethod:AvatarStyle.kt$AvatarStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle</ID>
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
-    <ID>LongMethod:ChannelAvatarView.kt$ChannelAvatarView$private fun createImageViews(length: Int): List&lt;ImageView></ID>
+    <ID>LongMethod:ChannelAvatarView.kt$ChannelAvatarView$private fun createImageViews(count: Int): List&lt;ImageView></ID>
     <ID>LongMethod:ChannelListViewStyle.kt$ChannelListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelListViewStyle</ID>
     <ID>LongMethod:FileAttachmentViewStyle.kt$FileAttachmentViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): GiphyMediaAttachmentViewStyle</ID>
@@ -89,7 +89,6 @@
     <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$*</ID>
     <ID>MaxLineLength:AvatarDecorator.kt$AvatarDecorator$setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)</ID>
     <ID>MaxLineLength:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle$*</ID>
-    <ID>MaxLineLength:ChannelAvatarView.kt$ChannelAvatarView$placeholderDrawable = AvatarPlaceholderDrawable(context, user[i].initials, avatarStyle.groupAvatarInitialText)</ID>
     <ID>MaxLineLength:ChannelListPayloadDiff.kt$ChannelListPayloadDiff$return nameChanged || avatarViewChanged || usersChanged || lastMessageChanged || readStateChanged || unreadCountChanged || extraDataChanged</ID>
     <ID>MaxLineLength:ChannelListView.kt$ChannelListView$is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel</ID>
     <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$*</ID>

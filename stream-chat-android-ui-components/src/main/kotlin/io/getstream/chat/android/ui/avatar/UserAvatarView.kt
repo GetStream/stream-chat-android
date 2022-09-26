@@ -44,21 +44,21 @@ public class UserAvatarView : ShapeableImageView {
     private lateinit var avatarStyle: AvatarStyle
 
     /**
-     * A [Paint] that will be used to draw the indicator outline.
+     * [Paint] that will be used to draw the indicator outline.
      */
     private val onlineIndicatorOutlinePaint = Paint().apply {
         style = Paint.Style.FILL
     }
 
     /**
-     * A [Paint] that will be used to draw the indicator.
+     * [Paint] that will be used to draw the indicator.
      */
     private val onlineIndicatorPaint = Paint().apply {
         style = Paint.Style.FILL
     }
 
     /**
-     * A [Paint] that will be used to draw the border.
+     * [Paint] that will be used to draw the border.
      */
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
@@ -88,14 +88,14 @@ public class UserAvatarView : ShapeableImageView {
     }
 
     /**
-     * Sets [User] to show avatar for.
+     * Sets the [User] we want to show the avatar for.
      *
      * @param user The user to display the avatar for.
      */
     public fun setUser(user: User) {
         load(
             data = user.image,
-            placeholderDrawable = AvatarPlaceholderDrawable(context, user.initials, avatarStyle.avatarInitialText)
+            placeholderDrawable = AvatarPlaceholderDrawable(context, user.initials, avatarStyle.avatarInitialsTextStyle)
         )
         this.online = user.online
         invalidate()

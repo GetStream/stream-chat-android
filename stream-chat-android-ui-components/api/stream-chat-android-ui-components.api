@@ -797,10 +797,10 @@ public final class io/getstream/chat/android/ui/avatar/AvatarStyle {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAvatarBorderColor ()I
 	public final fun getAvatarBorderWidth ()I
-	public final fun getAvatarInitialText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getAvatarInitialsTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getAvatarShape ()Lio/getstream/chat/android/ui/avatar/AvatarShape;
 	public final fun getBorderRadius ()F
-	public final fun getGroupAvatarInitialText ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getGroupAvatarInitialsTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getOnlineIndicatorBorderColor ()I
 	public final fun getOnlineIndicatorColor ()I
 	public final fun getOnlineIndicatorEnabled ()Z

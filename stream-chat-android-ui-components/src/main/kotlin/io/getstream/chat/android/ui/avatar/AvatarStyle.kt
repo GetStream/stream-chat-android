@@ -37,8 +37,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 public data class AvatarStyle(
     @Px public val avatarBorderWidth: Int,
     @ColorInt public val avatarBorderColor: Int,
-    public val avatarInitialText: TextStyle,
-    public val groupAvatarInitialText: TextStyle,
+    public val avatarInitialsTextStyle: TextStyle,
+    public val groupAvatarInitialsTextStyle: TextStyle,
     public val onlineIndicatorEnabled: Boolean,
     public val onlineIndicatorPosition: OnlineIndicatorPosition,
     @ColorInt public val onlineIndicatorColor: Int,
@@ -65,7 +65,7 @@ public data class AvatarStyle(
                     context.getColorCompat(R.color.stream_ui_black)
                 )
 
-                val avatarInitialText = TextStyle.Builder(it)
+                val avatarInitialsTextStyle = TextStyle.Builder(it)
                     .size(
                         R.styleable.AvatarView_streamUiAvatarTextSize,
                         context.getDimension(R.dimen.stream_ui_avatar_initials)
@@ -84,7 +84,7 @@ public data class AvatarStyle(
                     )
                     .build()
 
-                val groupAvatarInitialText = TextStyle.Builder(it)
+                val groupAvatarInitialsTextStyle = TextStyle.Builder(it)
                     .size(
                         R.styleable.AvatarView_streamUiGroupAvatarTextSize,
                         context.getDimension(R.dimen.stream_ui_group_avatar_initials)
@@ -133,8 +133,8 @@ public data class AvatarStyle(
                 return AvatarStyle(
                     avatarBorderWidth = avatarBorderWidth,
                     avatarBorderColor = avatarBorderColor,
-                    avatarInitialText = avatarInitialText,
-                    groupAvatarInitialText = groupAvatarInitialText,
+                    avatarInitialsTextStyle = avatarInitialsTextStyle,
+                    groupAvatarInitialsTextStyle = groupAvatarInitialsTextStyle,
                     onlineIndicatorEnabled = onlineIndicatorEnabled,
                     onlineIndicatorPosition = onlineIndicatorPosition,
                     onlineIndicatorColor = onlineIndicatorColor,

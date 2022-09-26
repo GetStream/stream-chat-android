@@ -48,7 +48,7 @@ public class ChannelAvatarView : ViewGroup {
     private lateinit var avatarStyle: AvatarStyle
 
     /**
-     * A [Paint] that will be used to draw the border.
+     * [Paint] that will be used to draw the border.
      */
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
@@ -93,7 +93,7 @@ public class ChannelAvatarView : ViewGroup {
     }
 
     /**
-     * Sets [Channel] to show avatar for.
+     * Sets the [Channel] for which we want to show the avatar.
      *
      * @param channel The channel to show the avatar for.
      * @param currentUser The currently logged in user.
@@ -121,7 +121,7 @@ public class ChannelAvatarView : ViewGroup {
                 showUserAvatar(user)
             }
             /**
-             * If the channel has two members and one of the is the current user - we show the other
+             * If the channel has two members and one of them is the current user - we show the other
              * member's image or initials.
              */
             memberCount == 2 && members.any { it.user.id == currentUser?.id } -> {
@@ -148,7 +148,11 @@ public class ChannelAvatarView : ViewGroup {
     private fun showChannelAvatar(channel: Channel) {
         createImageViews(1).first().load(
             channel.image,
-            placeholderDrawable = AvatarPlaceholderDrawable(context, channel.initials, avatarStyle.avatarInitialText)
+            placeholderDrawable = AvatarPlaceholderDrawable(
+                context = context,
+                initials = channel.initials,
+                initialsTextStyle = avatarStyle.avatarInitialsTextStyle
+            )
         )
     }
 
@@ -177,20 +181,20 @@ public class ChannelAvatarView : ViewGroup {
                 placeholderDrawable = AvatarPlaceholderDrawable(
                     context,
                     user[i].initials,
-                    avatarStyle.groupAvatarInitialText
+                    avatarStyle.groupAvatarInitialsTextStyle
                 )
             )
         }
     }
 
     /**
-     * Creates necessary amount of [ImageView] to render the avatar.
+     * Creates necessary amount of [ImageView]s to render the avatar.
      */
-    private fun createImageViews(length: Int): List<ImageView> {
+    private fun createImageViews(count: Int): List<ImageView> {
         removeAllViews()
 
-        val imageViews: MutableList<ShapeableImageView> = ArrayList(length)
-        for (i in 0 until length) {
+        val imageViews: MutableList<ShapeableImageView> = ArrayList(count)
+        for (i in 0 until count) {
             ShapeableImageView(context).apply {
                 scaleType = ImageView.ScaleType.CENTER_CROP
                 addView(this)
@@ -200,7 +204,7 @@ public class ChannelAvatarView : ViewGroup {
 
         when (avatarStyle.avatarShape) {
             AvatarShape.CIRCLE -> {
-                when (length) {
+                when (count) {
                     1 -> {
                         imageViews[0].shapeAppearanceModel = ShapeAppearanceModel().toBuilder()
                             .setAllCornerSizes(RelativeCornerSize(0.5f))
@@ -246,7 +250,7 @@ public class ChannelAvatarView : ViewGroup {
                 }
             }
             AvatarShape.ROUND_RECT -> {
-                when (length) {
+                when (count) {
                     1 -> {
                         imageViews[0].shapeAppearanceModel = ShapeAppearanceModel().toBuilder()
                             .setAllCornerSizes(AbsoluteCornerSize(avatarStyle.borderRadius))
