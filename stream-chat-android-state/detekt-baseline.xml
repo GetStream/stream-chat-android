@@ -70,10 +70,5 @@
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
     <ID>UnusedPrivateMember:UploadAttachmentsIntegrationTests.kt$UploadAttachmentsIntegrationTests$private val currentUser = randomUser()</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _currentRequest = MutableStateFlow&lt;QueryChannelsRequest?>(null)</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _endOfChannels = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _loading = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _loadingMore = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _recoveryNeeded: MutableStateFlow&lt;Boolean> = MutableStateFlow(false)</ID>
   </CurrentIssues>
 </SmellBaseline>

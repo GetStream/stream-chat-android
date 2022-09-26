@@ -39,7 +39,7 @@ internal class SendGiphyListenerState(private val logic: LogicRegistry) : SendGi
         if (result.isSuccess) {
             val message = result.data()
             logic.channelFromMessage(message)?.stateLogic()?.deleteMessage(message)
-            logic.threadFromMessage(message)?.stateLogic()?.removeLocalMessage(message)
+            logic.threadFromMessage(message)?.stateLogic()?.deleteMessage(message)
         }
     }
 }

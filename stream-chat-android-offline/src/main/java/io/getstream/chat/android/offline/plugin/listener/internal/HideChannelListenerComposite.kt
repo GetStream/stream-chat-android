@@ -37,9 +37,7 @@ internal class HideChannelListenerComposite(
     ): Result<Unit> {
         return hideChannelListenerList.map { listener ->
             listener.onHideChannelPrecondition(channelType, channelId, clearHistory)
-        }.fold(Result.success(Unit)) { acc, result ->
-            if (acc.isError) acc else result
-        }
+        }.foldResults()
     }
 
     override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) {

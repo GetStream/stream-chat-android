@@ -14,14 +14,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Reviewed requests parameters. `connectionId` is now sent only if necessary. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
 
 ### ✅ Added
 
 ### ⚠️ Changed
 
 ### ❌ Removed
-- 🚨 Breaking change: Removed `connectionId` parameter from `FileUploader` methods. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -42,6 +40,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Separated `QueryChannelListenerState` into state and databased focused classes. [#4188](https://github.com/GetStream/stream-chat-android/pull/4188)
+- Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
 
 ### ❌ Removed
 
@@ -71,6 +71,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the way the [ChannelsScreen](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
+- Improved the way the [MessagesScreen](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
 - Improved automatic reloading of non-cached images when regaining network connection. The improvements are visible in the messages list and the new media gallery called `MediaGalleryPreviewActivity`. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 
 ### ✅ Added
@@ -81,6 +83,8 @@
 - Added the ability to turn off video previews (thumbnails) via `ChatTheme.videoThumbnailsEnabled`. Video previews are a paid feature and as such you can turn them off. They are on by default and the pricing can be found [here](https://getstream.io/chat/pricing/). [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 
 ### ⚠️ Changed
+- Changed the way ChannelsScreen and MessagesScreen components are built. Instead of exposing a ton of parameters for customization, we now expose a ViewModelFactory that accepts them. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
+- Using this new approach you can reuse and connect to ViewModels from the outside, if you want to power custom behavior. Make sure to check out our documentation regarding these components. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
 - 🚨 Breaking change: `MessageAttachmentsContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
 - 🚨 Breaking change: `QuotedMessageAttachmentContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
 - 🚨 Breaking change: `MessageContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
@@ -138,6 +142,22 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# September 21th, 2022 - 5.11.0
+## stream-chat-android-client
+### ⬆️ Improved
+- Reviewed requests parameters. `connectionId` is now sent only if necessary. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
+
+### ❌ Removed
+- 🚨 Breaking change: Removed `connectionId` parameter from `FileUploader` methods. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
+
+## stream-chat-android-state
+### ⚠️ Changed
+- Divided QueryChannelLogic into state and database. [#4156](https://github.com/GetStream/stream-chat-android/pull/4156)
+
+## stream-chat-android-compose
+### ✅ Added
+- Added `ownMessageText` and `otherMessageText` to `StreamColors` to enable message text customization. If you have been using `StreamColors.textHighEmphasis` to customize the color of the message texts, we recommend switching to the new attributes instead. [#4175](https://github.com/GetStream/stream-chat-android/pull/4175)
 
 # September 13th, 2022 - 5.10.0
 ## stream-chat-android-client

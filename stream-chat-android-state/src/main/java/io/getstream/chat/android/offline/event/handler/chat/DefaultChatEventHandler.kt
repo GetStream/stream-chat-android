@@ -111,7 +111,7 @@ public open class DefaultChatEventHandler(
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    protected fun removeIfCurrentUserLeftChannel(cid: String, member: Member): EventHandlingResult {
+    private fun removeIfCurrentUserLeftChannel(cid: String, member: Member): EventHandlingResult {
         return if (member.getUserId() != clientState.user.value?.id) {
             EventHandlingResult.Skip
         } else {

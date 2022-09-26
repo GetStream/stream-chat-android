@@ -45,6 +45,8 @@ import io.getstream.chat.android.compose.R
  * @param giphyMessageBackground Used as a background for the ephemeral giphy messages.
  * @param threadSeparatorGradientStart Used as a start color for vertical gradient background in a thread separator.
  * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
+ * @param ownMessageText Used for message text color for the current user. [textHighEmphasis] by default.
+ * @param otherMessageText Used for message text color for other users. [textHighEmphasis] by default.
  * @param imageBackgroundMessageList Used to set the background colour of images inside the message list.
  * Most visible in placeholders before the images are loaded.
  * @param imageBackgroundMediaGalleryPicker Used to set the background colour of images inside the media gallery picker
@@ -76,6 +78,8 @@ public data class StreamColors(
     public val giphyMessageBackground: Color,
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
+    public val ownMessageText: Color = textHighEmphasis,
+    public val otherMessageText: Color = textHighEmphasis,
     public val imageBackgroundMessageList: Color,
     public val imageBackgroundMediaGalleryPicker: Color,
     public val videoBackgroundMessageList: Color,
@@ -110,6 +114,8 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
+            ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis),
+            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis),
             imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
             videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
@@ -143,6 +149,8 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background_dark),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
+            ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark),
+            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark),
             imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
             videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),

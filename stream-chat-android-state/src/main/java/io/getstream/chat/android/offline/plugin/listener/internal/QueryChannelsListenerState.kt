@@ -26,26 +26,33 @@ import io.getstream.chat.android.offline.model.querychannels.pagination.internal
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
 /**
- * [QueryChannelsListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * [QueryChannelsListener] implementation for [StatePlugin].
  * Handles querying the channel offline and managing local state updates.
  *
- * @param logic [LogicRegistry] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * This class is considered to handle state. Although this class interacts with the database, it doesn't make sense
+ * to use it only with the database and not state module. Therefore this class is considered as a state class and should
+ * be initialized inside `StreamStatePluginFactory`. It is important to noticed that this class will be affected
+ * by the inclusion/exclusion of the offline plugin. When using offline plugin, the database will be
+ * used to update the state of the SDK, but when not, the state will be updated only with the results of the internet
+ * request.
+ *
+ * @param logic [LogicRegistry] provided by the [StreamStatePluginFactory].
  */
-internal class QueryChannelsListenerImpl(private val logic: LogicRegistry) : QueryChannelsListener {
+internal class QueryChannelsListenerState(private val logicProvider: LogicRegistry) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
         return Result.success(Unit)
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
-        logic.queryChannels(request).run {
-            onQueryChannelsRequest(request)
+        logicProvider.queryChannels(request).run {
+            setCurrentRequest(request)
             queryOffline(request.toPagination())
         }
     }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        logic.queryChannels(request).onQueryChannelsResult(result, request)
+        logicProvider.queryChannels(request).onQueryChannelsResult(result, request)
     }
 
     private companion object {
