@@ -28,7 +28,7 @@ import org.junit.Test
 class UserAvatarTest : ComposeScreenshotTest() {
 
     @Test
-    fun uerAvatarForUserWithoutImage() = runScreenshotTest {
+    fun userAvatarForUserWithoutImage() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1().copy(image = ""),
@@ -38,7 +38,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
     }
 
     @Test
-    fun uerAvatarForUserWithImage() = runScreenshotTest {
+    fun userAvatarForUserWithImage() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
@@ -48,7 +48,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithTopEndIndicator() = runScreenshotTest {
+    fun userAvatarForOnlineUserWithTopEndIndicator() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
@@ -58,7 +58,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithBottomEndIndicator() = runScreenshotTest {
+    fun userAvatarForOnlineUserWithBottomEndIndicator() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
@@ -68,7 +68,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithTopStartIndicator() = runScreenshotTest {
+    fun userAvatarForOnlineUserWithTopStartIndicator() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
@@ -78,7 +78,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithBottomStartIndicator() = runScreenshotTest {
+    fun userAvatarForOnlineUserWithBottomStartIndicator() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),

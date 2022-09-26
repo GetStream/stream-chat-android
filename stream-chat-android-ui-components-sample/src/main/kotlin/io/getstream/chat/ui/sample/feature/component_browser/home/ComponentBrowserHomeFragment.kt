@@ -42,10 +42,6 @@ class ComponentBrowserHomeFragment : Fragment() {
     private var _binding: FragmentComponentBrowserHomeBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -87,7 +83,7 @@ class ComponentBrowserHomeFragment : Fragment() {
     }
 
     private fun setupAvatarView() {
-        binding.avatarView.setChannelData(randomChannel(listOf(randomMember())))
+        binding.channelAvatarView.setChannel(randomChannel(listOf(randomMember())))
         binding.avatarViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment)
         }

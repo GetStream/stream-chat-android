@@ -52,8 +52,8 @@
         tools:text="Last seen a year ago"
         />
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginTop="16dp"
@@ -72,7 +72,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/avatarView"
+        app:layout_constraintTop_toBottomOf="@id/userAvatarView"
         app:optionIcon="@drawable/ic_member"
         app:optionText="@string/chat_group_info_user_option_view_info"
         tools:visibility="visible"

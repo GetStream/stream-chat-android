@@ -3,33 +3,25 @@
 package io.getstream.chat.docs.kotlin.ui.general
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.BitmapDrawable
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import coil.imageLoader
-import coil.request.ImageRequest
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.utils.DateFormatter
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.MimeTypeIconProvider
 import io.getstream.chat.android.ui.SupportedReactions
-import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
-import io.getstream.chat.android.ui.avatar.AvatarStyle
 import io.getstream.chat.android.ui.common.ChannelNameFormatter
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.docs.R
-import io.getstream.chat.docs.kotlin.ui.utility.GrayscaleTransformation
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -70,28 +62,6 @@ private class ChatUiSnippets {
                 mimeType.contains("video") -> R.drawable.stream_ui_ic_file_mov
                 // Generic icon for other files
                 else -> R.drawable.stream_ui_ic_file
-            }
-        }
-    }
-
-    /**
-     * [Customizing Avatar](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#customizing-avatar)
-     */
-    fun customizingAvatar() {
-        ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
-            override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
-                val imageResult = context.imageLoader.execute(
-                    ImageRequest.Builder(context)
-                        .data(user.image)
-                        .apply {
-                            if (!user.online) {
-                                transformations(GrayscaleTransformation())
-                            }
-                        }
-                        .build()
-                )
-
-                return (imageResult.drawable as? BitmapDrawable)?.bitmap
             }
         }
     }

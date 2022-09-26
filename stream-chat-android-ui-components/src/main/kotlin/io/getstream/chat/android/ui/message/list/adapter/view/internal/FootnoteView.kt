@@ -28,7 +28,7 @@ import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.avatar.AvatarView
+import io.getstream.chat.android.ui.avatar.UserAvatarView
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
@@ -116,11 +116,11 @@ internal class FootnoteView : ConstraintLayout {
     }
 
     private fun setupUserAvatars(isMine: Boolean, threadParticipants: List<User>) {
-        fun applyUser(user: User?, avatarView: AvatarView) {
+        fun applyUser(user: User?, userAvatarView: UserAvatarView) {
             if (user != null) {
-                avatarView.setUserData(user)
+                userAvatarView.setUser(user)
             } else {
-                avatarView.isVisible = false
+                userAvatarView.isVisible = false
             }
         }
 

@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.avatar.AvatarView
+import io.getstream.chat.android.ui.avatar.UserAvatarView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
@@ -43,8 +43,8 @@ internal class AvatarDecorator(
         viewHolder: CustomAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
-        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+        controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
     }
 
     /**
@@ -57,8 +57,8 @@ internal class AvatarDecorator(
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
-        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+        controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
     }
 
     /**
@@ -71,8 +71,8 @@ internal class AvatarDecorator(
         viewHolder: FileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
-        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+        controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
     }
 
     /**
@@ -85,8 +85,8 @@ internal class AvatarDecorator(
         viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
-        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+        controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
     }
 
     /**
@@ -99,8 +99,8 @@ internal class AvatarDecorator(
         viewHolder: MessagePlainTextViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
-        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+        controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
     }
 
     /**
@@ -113,8 +113,8 @@ internal class AvatarDecorator(
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
-        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+        controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
     }
 
     /**
@@ -132,25 +132,25 @@ internal class AvatarDecorator(
      * @param data The item that holds all the information.
      */
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
-        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
-        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+        controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
     }
 
-    private fun setupAvatar(avatarView: AvatarView, data: MessageListItem.MessageItem) {
+    private fun setupAvatar(avatarView: UserAvatarView, data: MessageListItem.MessageItem) {
         val shouldShow = showAvatarPredicate.shouldShow(data)
 
         avatarView.isVisible = shouldShow
 
         if (shouldShow) {
-            avatarView.setUserData(data.message.user)
+            avatarView.setUser(data.message.user)
         }
     }
 
-    private fun getAvatarView(myAvatar: AvatarView, theirAvatar: AvatarView, isMine: Boolean): AvatarView {
+    private fun getAvatarView(myAvatar: UserAvatarView, theirAvatar: UserAvatarView, isMine: Boolean): UserAvatarView {
         return if (isMine) myAvatar else theirAvatar
     }
 
-    private fun controlVisibility(myAvatar: AvatarView, theirAvatar: AvatarView, isMine: Boolean) {
+    private fun controlVisibility(myAvatar: UserAvatarView, theirAvatar: UserAvatarView, isMine: Boolean) {
         theirAvatar.isVisible = !isMine
         myAvatar.isVisible = isMine
     }

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.avatar.internal
+package io.getstream.chat.android.ui.avatar
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.avatar.AvatarStyle
+/**
+ * Determines the shape of the avatar image in [UserAvatarView] and [ChannelAvatarView].
+ */
+public enum class AvatarShape(public val value: Int) {
+    /**
+     * Circle cropped image.
+     */
+    CIRCLE(0),
 
-internal sealed class Avatar(open val avatarStyle: AvatarStyle) {
-    data class UserAvatar(
-        val user: User,
-        override val avatarStyle: AvatarStyle
-    ) : Avatar(avatarStyle)
-
-    data class ChannelAvatar(
-        val channel: Channel,
-        override val avatarStyle: AvatarStyle
-    ) : Avatar(avatarStyle)
+    /**
+     * Round rect cropped image.
+     */
+    ROUND_RECT(1)
 }

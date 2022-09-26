@@ -23,8 +23,8 @@
     android:background="?attr/selectableItemBackground"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="?attr/streamUiMentionPreviewItemAvatarStyle"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
@@ -48,7 +48,7 @@
         android:textDirection="locale"
         app:layout_constraintBottom_toTopOf="@+id/messageLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintStart_toEndOf="@+id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@tools:sample/full_names"

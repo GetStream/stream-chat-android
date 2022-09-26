@@ -62,10 +62,12 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `UserAvatarView` and `ChannelAvatarView` to replace `AvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
