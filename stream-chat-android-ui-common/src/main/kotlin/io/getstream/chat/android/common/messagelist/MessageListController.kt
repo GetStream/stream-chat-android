@@ -330,6 +330,8 @@ public class MessageListController(
                 _dateSeparatorHandler,
                 _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
+                channelState.loadingOlderMessages,
+                channelState.loadingNewerMessages
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = (data[1] as List<*>).map { it as ChannelUserRead }
@@ -337,6 +339,8 @@ public class MessageListController(
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
                 val deletedMessageVisibility = data[4] as DeletedMessageVisibility
                 val messageFooterVisibility = data[5] as MessageFooterVisibility
+                val loadingOlderMessages = data[6] as Boolean
+                val loadingNewerMessages = data[7] as Boolean
 
                 when (state) {
                     is MessagesState.Loading,
@@ -345,8 +349,8 @@ public class MessageListController(
                     -> _messageListState.value.copy(isLoading = true)
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
-                        isLoadingNewerMessages = false,
-                        isLoadingOlderMessages = false,
+                        isLoadingOlderMessages = loadingOlderMessages,
+                        isLoadingNewerMessages = loadingNewerMessages,
                         messages = groupMessages(
                             messages = filterMessagesToShow(
                                 messages = state.messages,
