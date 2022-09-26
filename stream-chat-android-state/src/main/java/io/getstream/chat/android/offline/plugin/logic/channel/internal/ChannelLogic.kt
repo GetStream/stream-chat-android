@@ -214,6 +214,7 @@ internal class ChannelLogic(
      * @return [Result] of [Channel] with fetched messages.
      */
     internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+        mutableState.setLoadingNewerMessages(true)
         return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
@@ -226,6 +227,7 @@ internal class ChannelLogic(
      * @return [Result] of [Channel] with fetched messages.
      */
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
+        mutableState.setLoadingOlderMessages(true)
         return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
     }
 
