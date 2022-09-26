@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.utils.Result
 
 /**
  * Implementation of [Plugin] dedicated to be used when many modules are combined into one that shouldn't/can't be
- * separated from each other. 
+ * separated from each other.
  */
 internal class CombinedPlugin(
     private val threadQueryListenerFull: ThreadQueryListenerFull,
@@ -41,7 +41,7 @@ internal class CombinedPlugin(
         result: Result<List<Message>>,
         messageId: String,
         firstId: String,
-        limit: Int
+        limit: Int,
     ) {
         threadQueryListenerFull.onGetRepliesMoreResult(result, messageId, firstId, limit)
     }
