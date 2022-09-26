@@ -54,7 +54,7 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -132,9 +132,9 @@ class MessagesActivity : BaseConnectedActivity() {
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)
                     },
-                    onImagePreviewResult = { result ->
+                    onMediaGalleryPreviewResult = { result ->
                         when (result?.resultType) {
-                            ImagePreviewResultType.QUOTE -> {
+                            MediaGalleryPreviewResultType.QUOTE -> {
                                 val message = listViewModel.getMessageWithId(result.messageId)
 
                                 if (message != null) {
@@ -142,7 +142,7 @@ class MessagesActivity : BaseConnectedActivity() {
                                 }
                             }
 
-                            ImagePreviewResultType.SHOW_IN_CHAT -> {
+                            MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
                             }
                             null -> Unit
                         }

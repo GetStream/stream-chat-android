@@ -30,8 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
-import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
@@ -61,7 +61,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -86,8 +86,8 @@ public fun MessageList(
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
     onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToSelectedMessage(it) },
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
-        if (it?.resultType == ImagePreviewResultType.SHOW_IN_CHAT) {
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
+        if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.focusMessage(it.messageId)
         }
     },
@@ -103,7 +103,7 @@ public fun MessageList(
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItem = messageListItem,
-            onImagePreviewResult = onImagePreviewResult,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
@@ -122,7 +122,7 @@ public fun MessageList(
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
         onScrolledToBottom = onScrollToBottom,
-        onImagePreviewResult = onImagePreviewResult,
+        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         itemContent = itemContent,
         helperContent = helperContent,
         loadingMoreContent = loadingMoreContent,
@@ -136,7 +136,7 @@ public fun MessageList(
  * The default message container item.
  *
  * @param messageListItem The state of the message list item.
- * @param onImagePreviewResult Handler when the user receives a result from the Image Preview.
+ * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions.
@@ -146,7 +146,7 @@ public fun MessageList(
 @Composable
 internal fun DefaultMessageContainer(
     messageListItem: MessageListItemState,
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
@@ -159,7 +159,7 @@ internal fun DefaultMessageContainer(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
-        onImagePreviewResult = onImagePreviewResult,
+        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
     )
 }
@@ -210,7 +210,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onThreadClick Handler for when the user taps on a message with an active thread.
  * @param onLongItemClick Handler for when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
- * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
+ * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
@@ -233,7 +233,7 @@ public fun MessageList(
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
@@ -249,7 +249,7 @@ public fun MessageList(
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
-            onImagePreviewResult = onImagePreviewResult,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
         )
     },

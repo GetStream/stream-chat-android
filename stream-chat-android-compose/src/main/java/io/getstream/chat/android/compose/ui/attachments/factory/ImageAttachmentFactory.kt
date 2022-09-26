@@ -30,6 +30,15 @@ import io.getstream.chat.android.compose.ui.util.isMedia
  * An [AttachmentFactory] that validates attachments as images and uses [ImageAttachmentContent] to
  * build the UI for the message.
  */
+@Deprecated(
+    message = "Deprecated in favor of `MediaAttachmentFactory`. The new factory is able to" +
+        "preview video content as well as images and has access to the new and improved media gallery.",
+    replaceWith = ReplaceWith(
+        expression = "MediaAttachmentFactory()",
+        "io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory"
+    ),
+    level = DeprecationLevel.WARNING
+)
 @Suppress("FunctionName")
 public fun ImageAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.all { it.isMedia() } },

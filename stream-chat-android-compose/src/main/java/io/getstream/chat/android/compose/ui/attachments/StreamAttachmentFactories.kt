@@ -20,8 +20,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
@@ -69,7 +69,7 @@ public object StreamAttachmentFactories {
             giphySizingMode = giphySizingMode,
             contentScale = contentScale,
         ),
-        ImageAttachmentFactory(),
+        MediaAttachmentFactory(),
         FileAttachmentFactory(),
     )
 

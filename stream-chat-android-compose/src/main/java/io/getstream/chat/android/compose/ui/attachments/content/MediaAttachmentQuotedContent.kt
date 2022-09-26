@@ -17,16 +17,27 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.uiutils.constant.AttachmentType
 
 /**
  * Builds an image attachment for a quoted message which is composed from a singe attachment previewing the attached
@@ -35,23 +46,32 @@ import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
  * @param attachment The attachment we wish to show to users.
  * @param modifier Modifier for styling.
  */
-@Deprecated(
-    message = "Deprecated in favor of 'MediaAttachmentQuotedContent'. The new function is able to display previews" +
-        "for videos as well as images.",
-    replaceWith = ReplaceWith(
-        expression = "MediaAttachmentQuotedContent",
-        "io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentQuotedContent"
-    ),
-    level = DeprecationLevel.WARNING
-)
 @Composable
-public fun ImageAttachmentQuotedContent(
+public fun MediaAttachmentQuotedContent(
     attachment: Attachment,
     modifier: Modifier = Modifier,
 ) {
-    val imagePainter = rememberStreamImagePainter(attachment.imagePreviewUrl)
+    val isImageContent = attachment.type == AttachmentType.IMAGE || attachment.type == AttachmentType.IMGUR
+    val isVideo = attachment.type == AttachmentType.VIDEO
+    val isGiphy = attachment.type == AttachmentType.GIPHY
 
-    Image(
+    val backgroundColor =
+        if (isImageContent || isGiphy) {
+            ChatTheme.colors.imageBackgroundMessageList
+        } else {
+            ChatTheme.colors.videoBackgroundMessageList
+        }
+
+    val data =
+        if (isImageContent || isGiphy || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
+            attachment.imagePreviewUrl
+        } else {
+            null
+        }
+
+    val imagePainter = rememberStreamImagePainter(data = data)
+
+    Box(
         modifier = modifier
             .padding(
                 start = ChatTheme.dimens.quotedMessageAttachmentStartPadding,
@@ -61,8 +81,27 @@ public fun ImageAttachmentQuotedContent(
             )
             .size(ChatTheme.dimens.quotedMessageAttachmentPreviewSize)
             .clip(ChatTheme.shapes.quotedAttachment),
-        painter = imagePainter,
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
+        contentAlignment = Alignment.Center
+    ) {
+
+        Image(
+            modifier = Modifier
+                .fillMaxSize(1f)
+                .background(backgroundColor),
+            painter = imagePainter,
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+
+        if (isVideo) {
+            PlayButton(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .shadow(6.dp, shape = CircleShape)
+                    .background(color = Color.White, shape = CircleShape)
+                    .fillMaxWidth(0.8f)
+                    .aspectRatio(1f)
+            )
+        }
+    }
 }

@@ -115,3 +115,53 @@ public fun rememberStreamImagePainter(
         filterQuality = filterQuality
     )
 }
+
+/**
+ * Wrapper around the [coil.compose.rememberAsyncImagePainter] that plugs in our [LocalStreamImageLoader] singleton
+ * that can be used to customize all image loading requests, like adding headers, interceptors and similar.
+ *
+ * @param model The [ImageRequest] used to load the given image.
+ * @param placeholderPainter The painter used as a placeholder, while loading.
+ * @param errorPainter The painter used when the request fails.
+ * @param fallbackPainter The painter used as a fallback, in case the data is null.
+ * @param onLoading Handler when the loading starts.
+ * @param onSuccess Handler when the request is successful.
+ * @param onError Handler when the request fails.
+ * @param contentScale The scaling model to use for the image.
+ * @param filterQuality The quality algorithm used when scaling the image.
+ *
+ * @return The [AsyncImagePainter] that remembers the request and the image that we want to show.
+ */
+@Composable
+public fun rememberStreamImagePainter(
+    model: ImageRequest,
+    placeholderPainter: Painter? = null,
+    errorPainter: Painter? = null,
+    fallbackPainter: Painter? = errorPainter,
+    onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
+    onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
+    onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
+    contentScale: ContentScale = ContentScale.Fit,
+    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
+): AsyncImagePainter {
+    return rememberAsyncImagePainter(
+        model = model,
+        imageLoader = LocalStreamImageLoader.current,
+        placeholder = placeholderPainter,
+        error = errorPainter,
+        fallback = fallbackPainter,
+        contentScale = contentScale,
+        onSuccess = onSuccess,
+        onError = onError,
+        onLoading = onLoading,
+        filterQuality = filterQuality,
+    )
+}
+
+/**
+ * Used to change a parameter set on Coil requests in order
+ * to force Coil into retrying a request.
+ *
+ * See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
+ */
+internal const val RetryHash: String = "retry_hash"
