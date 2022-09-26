@@ -371,6 +371,9 @@ internal class ChannelStateLogic(
         }
 
         mutableState.setChannelConfig(channel.config)
+
+        mutableState.setLoadingOlderMessages(false)
+        mutableState.setLoadingNewerMessages(false)
     }
 
     private fun upsertCachedMessages(messages: List<Message>) {
