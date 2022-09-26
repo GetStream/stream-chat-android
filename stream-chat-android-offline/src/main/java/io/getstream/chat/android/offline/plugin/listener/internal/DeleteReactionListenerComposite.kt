@@ -51,8 +51,6 @@ internal class DeleteReactionListenerComposite(
     override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> {
         return deleteReactionListenerList.map { listener ->
             listener.onDeleteReactionPrecondition(currentUser)
-        }.fold(Result.success(Unit)) { acc, result ->
-            if (acc.isError) acc else result
-        }
+        }.foldResults()
     }
 }

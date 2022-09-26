@@ -29,5 +29,9 @@
             android:name=".ui.attachments.preview.MediaPreviewActivity"
             android:exported="false"
             />
+        <activity
+            android:name=".ui.attachments.preview.MediaGalleryPreviewActivity"
+            android:exported="false"
+            />
     </application>
 </manifest>

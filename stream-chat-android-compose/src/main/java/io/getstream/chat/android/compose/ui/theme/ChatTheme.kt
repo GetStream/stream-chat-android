@@ -100,6 +100,12 @@ private val LocalPermissionManagerProvider = compositionLocalOf<List<PermissionH
 private val LocalAttachmentsPickerTabFactories = compositionLocalOf<List<AttachmentsPickerTabFactory>> {
     error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
+    error(
+        "No videoThumbnailsEnabled Boolean provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme."
+    )
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -123,6 +129,7 @@ private val LocalAttachmentsPickerTabFactories = compositionLocalOf<List<Attachm
  * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param permissionHandlers Handlers for various permissions.
  * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
+ * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed in video previews.
  * @param content The content shown within the theme wrapper.
  */
 @OptIn(ExperimentalPermissionsApi::class)
@@ -154,6 +161,7 @@ public fun ChatTheme(
         listOf(rememberPermissionState(permission = Manifest.permission.WRITE_EXTERNAL_STORAGE))
     ).onEach { if (it is DownloadPermissionHandler) it.ObservePermissionChanges() },
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
+    videoThumbnailsEnabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -178,6 +186,7 @@ public fun ChatTheme(
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
         LocalPermissionManagerProvider provides permissionHandlers,
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
+        LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
     ) {
         content()
     }
@@ -301,11 +310,19 @@ public object ChatTheme {
         get() = LocalPermissionManagerProvider.current
 
     /**
-     *
      * Retrieves the current list of [AttachmentsPickerTabFactory] at the call site's position in the hierarchy.
      */
     public val attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>
         @Composable
         @ReadOnlyComposable
         get() = LocalAttachmentsPickerTabFactories.current
+
+    /**
+     * Retrieves the value of [Boolean] dictating whether video thumbnails are enabled at the call site's
+     * position in the hierarchy.
+     */
+    public val videoThumbnailsEnabled: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalVideoThumbnailsEnabled.current
 }

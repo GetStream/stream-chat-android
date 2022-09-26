@@ -35,6 +35,15 @@ import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
  * @param attachment The attachment we wish to show to users.
  * @param modifier Modifier for styling.
  */
+@Deprecated(
+    message = "Deprecated in favor of 'MediaAttachmentQuotedContent'. The new function is able to display previews" +
+        "for videos as well as images.",
+    replaceWith = ReplaceWith(
+        expression = "MediaAttachmentQuotedContent",
+        "io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentQuotedContent"
+    ),
+    level = DeprecationLevel.WARNING
+)
 @Composable
 public fun ImageAttachmentQuotedContent(
     attachment: Attachment,

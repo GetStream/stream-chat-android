@@ -31,7 +31,6 @@ public class io/getstream/chat/android/offline/event/handler/chat/DefaultChatEve
 	public fun handleChannelEvent (Lio/getstream/chat/android/client/events/HasChannel;Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	public fun handleCidEvent (Lio/getstream/chat/android/client/events/CidEvent;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	protected final fun removeIfChannelExists (Ljava/lang/String;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
-	protected final fun removeIfCurrentUserLeftChannel (Ljava/lang/String;Lio/getstream/chat/android/client/models/Member;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 }
 
 public abstract class io/getstream/chat/android/offline/event/handler/chat/EventHandlingResult {
@@ -348,5 +347,46 @@ public final class io/getstream/chat/android/state/plugin/configuration/StatePlu
 public final class io/getstream/chat/android/state/plugin/factory/StreamStatePluginFactory : io/getstream/chat/android/client/plugin/factory/PluginFactory {
 	public fun <init> (Lio/getstream/chat/android/state/plugin/configuration/StatePluginConfig;Landroid/content/Context;)V
 	public fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/plugin/Plugin;
+}
+
+public final class io/getstream/chat/android/state/plugin/internal/StateAwarePlugin$DefaultImpls {
+	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onCreateChannelPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onCreateChannelRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onCreateChannelResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onDeleteReactionPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onDeleteReactionRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onDeleteReactionResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGetRepliesMorePrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGetRepliesMoreRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGetRepliesMoreResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGetRepliesPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGetRepliesRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGetRepliesResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGiphySendResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;)V
+	public static fun onHideChannelPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onHideChannelRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onHideChannelResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMarkAllReadRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMessageDeletePrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMessageDeleteRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMessageDeleteResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMessageEditRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMessageEditResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMessageSendResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelsPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelsRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelsResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryMembersResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onSendReactionPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onSendReactionRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onSendReactionResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onShuffleGiphyResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onTypingEventPrecondition (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onTypingEventRequest (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
+	public static fun onTypingEventResult (Lio/getstream/chat/android/state/plugin/internal/StateAwarePlugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
 }
 

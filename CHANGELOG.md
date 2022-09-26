@@ -14,14 +14,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Reviewed requests parameters. `connectionId` is now sent only if necessary. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
 
 ### ✅ Added
 
 ### ⚠️ Changed
 
 ### ❌ Removed
-- 🚨 Breaking change: Removed `connectionId` parameter from `FileUploader` methods. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -42,6 +40,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Separated `QueryChannelListenerState` into state and databased focused classes. [#4188](https://github.com/GetStream/stream-chat-android/pull/4188)
+- Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
 
 ### ❌ Removed
 
@@ -71,10 +71,30 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved the way the [ChannelsScreen](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
+- Improved the way the [MessagesScreen](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
+- Improved automatic reloading of non-cached images when regaining network connection. The improvements are visible in the messages list and the new media gallery called `MediaGalleryPreviewActivity`. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 
 ### ✅ Added
+- Added a new gallery called `MediaGalleryPreviewActivity`. This gallery is an upgrade over `ImagePreviewActivity` as it has the capability to reproduce videos as well as images, automatically reloads non-cached images upon regaining network connection and works in offline mode. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Added `MediaAttachmentContent`. The new composable is an improvement over `ImageAttachmentContent` as it has the ability to preview both videos and images and has access to the new and improved media gallery and the ability to tile more than 4 previews by modifying the parameter `maximumNumberOfPreviewedItems`. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Added `MediaAttachmentFactory`. The new factory is an improvement over `ImageAttachmentFactory`. The new factory hs the ability to preview videos and the ability to tile more than 4 previews in a group by changing the value of the parameter `maximumNumberOfPreviewedItems`. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Added parameters `attachmentsContentVideoMaxHeight`, `attachmentsContentMediaGridSpacing`, `attachmentsContentVideoWidth`, `attachmentsContentGroupPreviewWidth` and `attachmentsContentGroupPreviewHeight` to `StreamDimens`. These parameters are meant for more finer grained control over how media previews are displayed in the message list. For the best aesthetic outcome, the width of these should be equal to the value in `StreamDimens.messageItemMaxWidth`. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Added the ability to turn off video previews (thumbnails) via `ChatTheme.videoThumbnailsEnabled`. Video previews are a paid feature and as such you can turn them off. They are on by default and the pricing can be found [here](https://getstream.io/chat/pricing/). [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 
 ### ⚠️ Changed
+- Changed the way ChannelsScreen and MessagesScreen components are built. Instead of exposing a ton of parameters for customization, we now expose a ViewModelFactory that accepts them. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
+- Using this new approach you can reuse and connect to ViewModels from the outside, if you want to power custom behavior. Make sure to check out our documentation regarding these components. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
+- 🚨 Breaking change: `MessageAttachmentsContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
+- 🚨 Breaking change: `QuotedMessageAttachmentContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
+- 🚨 Breaking change: `MessageContent` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
+- 🚨 Breaking change: `MessageContainer` function parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` has been replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
+- 🚨 Breaking change: Both bound (with `MessageListViewModel` as a parameter) and unbound `MessageList` Composable functions have had parameter `onImagePreviewResult: (ImagePreviewResult?) -> Unit` replaced with `onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit`. Functionally `ImagePreviewResult` and `MediaGalleryPreviewResult` are the same, the only difference is the activity they are returned from so changes should be minimal.
+- Video previews are now automatically displayed. These are a paid feature and can be turned off via `ChatTheme.videoThumbnailsEnabled`. If you are interested in the pricing before making a decision, you can find it [here](https://getstream.io/chat/pricing/). [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Started the deprecation process for `ImagePreviewActivity`, please use `MediaGalleryPreviewActivity` as it has all the functionality of the previous gallery while adding additional features such as video playback and offline capabilities. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Started the deprecation process for `ImageAttachmentFactory`, please use `MediaAttachmentFactory` as it has all the functionality of the previous factory while adding additional features such as displaying video previews modifiable number of tiles in a group preview. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Started the deprecation process for `ImageAttachmentContent`, please use `MediaAttachmentContent` as it has all the functionality of the previous component while adding additional features such as displaying video previous and modifiable number of tiles in a group preview. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Started the deprecation process for `ImageAttachmentQuotedContent`, please use `MediaAttachmentQuotedContent` as it retains all of the previous functionality while adding the ability to preview video attachments. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 
 ### ❌ Removed
 
@@ -82,6 +102,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- The default factory for previewing video and image attachment now is `MediaAttachmentFactory`. It holds numerous improvements, the biggest of which are the ability to reload the image intelligently if the image wasn't loaded and network connection is re-established and the access to the new and improved media gallery. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 
 ### ✅ Added
 
@@ -121,6 +142,22 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# September 21th, 2022 - 5.11.0
+## stream-chat-android-client
+### ⬆️ Improved
+- Reviewed requests parameters. `connectionId` is now sent only if necessary. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
+
+### ❌ Removed
+- 🚨 Breaking change: Removed `connectionId` parameter from `FileUploader` methods. [#4138](https://github.com/GetStream/stream-chat-android/pull/4138)
+
+## stream-chat-android-state
+### ⚠️ Changed
+- Divided QueryChannelLogic into state and database. [#4156](https://github.com/GetStream/stream-chat-android/pull/4156)
+
+## stream-chat-android-compose
+### ✅ Added
+- Added `ownMessageText` and `otherMessageText` to `StreamColors` to enable message text customization. If you have been using `StreamColors.textHighEmphasis` to customize the color of the message texts, we recommend switching to the new attributes instead. [#4175](https://github.com/GetStream/stream-chat-android/pull/4175)
 
 # September 13th, 2022 - 5.10.0
 ## stream-chat-android-client

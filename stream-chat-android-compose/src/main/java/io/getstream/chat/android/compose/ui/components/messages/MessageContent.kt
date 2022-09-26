@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTextContent
@@ -41,7 +41,7 @@ import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onGiphyActionClick Handler for Giphy actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onImagePreviewResult Handler when selecting images in the default content.
+ * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param giphyEphemeralContent Composable that represents the default Giphy message content.
  * @param deletedMessageContent Composable that represents the default content of a deleted message.
  * @param regularMessageContent Composable that represents the default regular message content, such as attachments and
@@ -54,7 +54,7 @@ public fun MessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
         DefaultMessageGiphyContent(
             message = message,
@@ -68,7 +68,7 @@ public fun MessageContent(
         DefaultMessageContent(
             message = message,
             onLongItemClick = onLongItemClick,
-            onImagePreviewResult = onImagePreviewResult,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick
         )
     },
@@ -125,21 +125,21 @@ internal fun DefaultMessageDeletedContent(
  *
  * @param message The message to show.
  * @param onLongItemClick Handler when the item is long clicked.
- * @param onImagePreviewResult Handler when selecting images in the default content.
+ * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onQuotedMessageClick Handler for quoted message click action.
  */
 @Composable
 internal fun DefaultMessageContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit,
 ) {
     Column {
         MessageAttachmentsContent(
             message = message,
             onLongItemClick = onLongItemClick,
-            onImagePreviewResult = onImagePreviewResult,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         )
 
         if (message.text.isNotEmpty()) {

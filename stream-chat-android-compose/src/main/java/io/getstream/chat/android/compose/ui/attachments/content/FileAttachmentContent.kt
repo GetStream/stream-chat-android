@@ -52,6 +52,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.uiutils.constant.AttachmentType
 
 /**
  * Builds a file attachment message which shows a list of files.
@@ -197,17 +198,24 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
  */
 @Composable
 public fun FileAttachmentImage(attachment: Attachment) {
-    val isImage = attachment.type == "image"
+    val isImage = attachment.type == AttachmentType.IMAGE
+    val isVideoWithThumbnails = attachment.type == AttachmentType.VIDEO && ChatTheme.videoThumbnailsEnabled
 
-    val painter = if (isImage) {
-        val dataToLoad = attachment.imageUrl ?: attachment.upload
+    val painter = when {
+        isImage -> {
+            val dataToLoad = attachment.imageUrl ?: attachment.upload
 
-        rememberStreamImagePainter(dataToLoad)
-    } else {
-        painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
+            rememberStreamImagePainter(dataToLoad)
+        }
+        isVideoWithThumbnails -> {
+            val dataToLoad = attachment.thumbUrl ?: attachment.upload
+
+            rememberStreamImagePainter(dataToLoad)
+        }
+        else -> painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
     }
 
-    val shape = if (isImage) ChatTheme.shapes.imageThumbnail else null
+    val shape = if (isImage || isVideoWithThumbnails) ChatTheme.shapes.imageThumbnail else null
 
     val imageModifier = Modifier.size(height = 40.dp, width = 35.dp).let { baseModifier ->
         if (shape != null) baseModifier.clip(shape) else baseModifier
@@ -217,6 +225,6 @@ public fun FileAttachmentImage(attachment: Attachment) {
         modifier = imageModifier,
         painter = painter,
         contentDescription = null,
-        contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit
+        contentScale = if (isImage || isVideoWithThumbnails) ContentScale.Crop else ContentScale.Fit
     )
 }

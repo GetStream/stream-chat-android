@@ -80,7 +80,7 @@ internal class SendMessageInterceptorImpl(
 
         // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
         // Update flow for currently running queries
-        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannel(channel.cid) }
+        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannelState(channel.cid) }
 
         if (preparedMessage.replyMessageId != null) {
             channel.replyMessage(null)

@@ -29,10 +29,11 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLo
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
-import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogicImpl
+import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogic
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsStateLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.toMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.toMutableState
@@ -62,20 +63,35 @@ internal class LogicRegistry internal constructor(
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
+    internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsLogic(
+            val queryChannelsStateLogic = QueryChannelsStateLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
+                stateRegistry,
+                this
+            )
+
+            val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
+                queryChannelsRepository = repos,
+                channelConfigRepository = repos,
+                channelRepository = repos,
+                messageRepository = repos,
+                userRepository = repos,
+                repositoryFacade = repos
+            )
+
+            QueryChannelsLogic(
+                filter,
+                sort,
                 client,
-                repos,
-                this,
-                stateRegistry
+                queryChannelsStateLogic,
+                queryChannelsDatabaseLogic,
             )
         }
     }
 
     /** Returns [QueryChannelsLogic] accordingly to [QueryChannelsRequest]. */
-    fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
+    internal fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
         queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
 
     /** Returns [ChannelLogic] by channelType and channelId combination. */
@@ -96,6 +112,10 @@ internal class LogicRegistry internal constructor(
                 channelStateLogic = stateLogic,
             )
         }
+    }
+
+    fun channelState(channelType: String, channelId: String): ChannelStateLogic {
+        return channel(channelType, channelId).stateLogic()
     }
 
     fun channelFromMessageId(messageId: String): ChannelLogic? {
@@ -155,8 +175,8 @@ internal class LogicRegistry internal constructor(
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
     fun thread(messageId: String): ThreadLogic {
         return threads.getOrPut(messageId) {
-            val mutableState = stateRegistry.thread(messageId).toMutableState()
-            val stateLogic = ThreadStateLogicImpl(mutableState)
+            val mutableState = stateRegistry.mutableThread(messageId)
+            val stateLogic = ThreadStateLogic(mutableState)
             ThreadLogic(stateLogic)
         }
     }

@@ -13,6 +13,7 @@ import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.docs.R
 
 /**
@@ -30,7 +31,10 @@ private object ProvidingCustomReactionsSnippet {
                 // Provide a factory with custom reactions
                 ChatTheme(reactionIconFactory = CustomReactionIconFactory()) {
                     MessagesScreen(
-                        channelId = channelId,
+                        viewModelFactory = MessagesViewModelFactory(
+                            context = this,
+                            channelId = channelId,
+                        ),
                         onBackPressed = { finish() },
                         onHeaderActionClick = {}
                     )

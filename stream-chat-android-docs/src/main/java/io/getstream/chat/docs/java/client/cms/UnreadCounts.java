@@ -83,7 +83,7 @@ public class UnreadCounts {
             // Get channel
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
-            client.queryChannel("channel-type", "channel-id", queryChannelRequest).enqueue((result) -> {
+            client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // readState is the list of read states for each user on the channel
                     List<ChannelUserRead> readState = result.data().getRead();
@@ -97,7 +97,7 @@ public class UnreadCounts {
             // Get channel
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
-            client.queryChannel("channel-type", "channel-id", queryChannelRequest).enqueue((result) -> {
+            client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // Unread count for current user
                     Integer unreadCount = result.data().getUnreadCount();
@@ -116,7 +116,7 @@ public class UnreadCounts {
                 return;
             }
 
-            client.queryChannel("channel-type", "channel-id", queryChannelRequest).enqueue((result) -> {
+            client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // Unread mentions
                     Channel channel = result.data();
