@@ -91,7 +91,6 @@ import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
-import io.getstream.chat.android.client.interceptor.Interceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -274,8 +273,6 @@ internal constructor(
     @PublishedApi
     internal var plugins: List<Plugin> = emptyList()
 
-    private var interceptors: MutableList<Interceptor> = mutableListOf()
-
     /**
      * Resolves dependency [T] within the provided plugin [P].
      *
@@ -363,16 +360,6 @@ internal constructor(
                 ?.mergePartially(user)
             else -> null
         }
-    }
-
-    @InternalStreamChatApi
-    public fun addInterceptor(interceptor: Interceptor) {
-        this.interceptors.add(interceptor)
-    }
-
-    @InternalStreamChatApi
-    public fun removeAllInterceptors() {
-        this.interceptors.clear()
     }
 
     /**
@@ -1500,26 +1487,28 @@ internal constructor(
         return CoroutineCall(userScope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
-            interceptors.fold(Result.success(message)) { message, interceptor ->
-                if (message.isSuccess) {
-                    interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
-                } else message
-            }.flatMapSuspend { newMessage ->
-                api.sendMessage(channelType, channelId, newMessage)
-                    .retry(userScope, retryPolicy)
-                    .doOnResult(userScope) { result ->
-                        logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
-                        plugins.forEach { listener ->
-                            logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                            listener.onMessageSendResult(
-                                result,
-                                channelType,
-                                channelId,
-                                newMessage
-                            )
-                        }
-                    }.await()
-            }
+            plugins
+                .flatMap { it.interceptors }
+                .fold(Result.success(message)) { message, interceptor ->
+                    if (message.isSuccess) {
+                        interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
+                    } else message
+                }.flatMapSuspend { newMessage ->
+                    api.sendMessage(channelType, channelId, newMessage)
+                        .retry(userScope, retryPolicy)
+                        .doOnResult(userScope) { result ->
+                            logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
+                            plugins.forEach { listener ->
+                                logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                                listener.onMessageSendResult(
+                                    result,
+                                    channelType,
+                                    channelId,
+                                    newMessage
+                                )
+                            }
+                        }.await()
+                }
         }
     }
 

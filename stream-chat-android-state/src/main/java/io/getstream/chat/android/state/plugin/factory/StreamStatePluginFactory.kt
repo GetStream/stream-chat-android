@@ -163,7 +163,6 @@ public class StreamStatePluginFactory(
         )
 
         chatClient.apply {
-            addInterceptor(sendMessageInterceptor)
             addErrorHandlers(
                 OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories(repositoryFacade)
                     .map { factory -> factory.create() }
@@ -198,7 +197,6 @@ public class StreamStatePluginFactory(
         InitializationCoordinator.getOrCreate().run {
             addUserDisconnectedListener {
                 sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
-                chatClient.removeAllInterceptors()
                 stateRegistry.clear()
                 logic.clear()
                 clientState.clearState()
