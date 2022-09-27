@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.internal
 
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.interceptor.Interceptor
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.DependencyResolver
@@ -61,6 +62,7 @@ import kotlin.reflect.KClass
 @Suppress("LongParameterList")
 public class StatePlugin(
     override val interceptors: List<Interceptor>,
+    override val errorHandlers: List<ErrorHandler>,
     internal val activeUser: User,
     private val queryChannelsListener: QueryChannelsListener,
     private val queryChannelListener: QueryChannelListener,

@@ -289,7 +289,8 @@ internal constructor(
     /**
      * Error handlers for API calls.
      */
-    private var errorHandlers: List<ErrorHandler> = emptyList()
+    private val errorHandlers: List<ErrorHandler>
+        get() = plugins.flatMap { it.errorHandlers }.sorted()
 
     init {
         eventsObservable.subscribeSuspend { event ->
@@ -360,17 +361,6 @@ internal constructor(
                 ?.mergePartially(user)
             else -> null
         }
-    }
-
-    /**
-     * Adds a list of error handlers.
-     * @see [ErrorHandler]
-     *
-     * @param errorHandlers A list of handlers to add.
-     */
-    @InternalStreamChatApi
-    public fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
-        this.errorHandlers = errorHandlers.sorted()
     }
 
     //region Set user

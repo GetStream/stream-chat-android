@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.internal
 
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.interceptor.Interceptor
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.DependencyResolver
@@ -82,6 +83,7 @@ internal class OfflinePlugin(
     CreateChannelListener by createChannelListener {
 
     override val interceptors: List<Interceptor> = emptyList()
+    override val errorHandlers: List<ErrorHandler> = emptyList()
 
     @Suppress("UNCHECKED_CAST")
     @InternalStreamChatApi

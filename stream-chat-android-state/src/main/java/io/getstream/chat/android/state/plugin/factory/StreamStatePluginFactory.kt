@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
 import io.getstream.chat.android.client.models.User
@@ -162,12 +163,10 @@ public class StreamStatePluginFactory(
             state = stateRegistry,
         )
 
-        chatClient.apply {
-            addErrorHandlers(
-                OfflineErrorHandlerFactoriesProvider.createErrorHandlerFactories(repositoryFacade)
-                    .map { factory -> factory.create() }
-            )
-        }
+        val errorHandlers: List<ErrorHandler> =
+            OfflineErrorHandlerFactoriesProvider
+                .createErrorHandlerFactories(repositoryFacade)
+                .map { factory -> factory.create() }
 
         val syncManager = SyncManager(
             currentUserId = user.id,
@@ -216,6 +215,7 @@ public class StreamStatePluginFactory(
 
         return StatePlugin(
             interceptors = listOf(sendMessageInterceptor),
+            errorHandlers = errorHandlers,
             activeUser = user,
             queryChannelListener = QueryChannelListenerState(logic),
             queryChannelsListener = QueryChannelsListenerState(logic),
