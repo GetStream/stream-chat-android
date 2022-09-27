@@ -135,7 +135,11 @@ internal class ChannelLogic(
                 ChatError("Another request to watch this channel is in progress. Ignoring this request.")
             )
         }
-        return runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
+        return runChannelQuery(
+            QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence).apply {
+                shouldRefresh = true
+            }
+        )
     }
 
     /**
@@ -175,7 +179,6 @@ internal class ChannelLogic(
             ChatClient.instance()
                 .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
                 .await()
-
 
         return when {
             onlineResult.isSuccess -> onlineResult
