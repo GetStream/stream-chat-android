@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
@@ -51,7 +50,6 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -103,12 +101,6 @@ public class StreamOfflinePluginFactory(
     @Suppress("LongMethod")
     private fun createOfflinePlugin(user: User): OfflinePlugin {
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
-
-        InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
-            logger.i { "[onUserDisconnected] user.id: '${it?.id}'" }
-            _scope?.cancel()
-            _scope = null
-        }
 
         val chatClient = ChatClient.instance()
         val clientState = chatClient.clientState

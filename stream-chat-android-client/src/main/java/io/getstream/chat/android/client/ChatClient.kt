@@ -1148,6 +1148,7 @@ internal constructor(
 
         notifications.onLogout()
         getCurrentUser().let(initializationCoordinator::userDisconnected)
+        plugins.forEach { it.onUserDisconnected() }
         if (ToggleService.isSocketExperimental().not()) {
             socketStateService.onDisconnectRequested()
             userStateService.onLogout()

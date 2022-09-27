@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
@@ -41,7 +40,6 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.job
 
@@ -146,19 +144,6 @@ public class StreamStatePluginFactory(
             sideEffect = syncManager::awaitSyncing
         )
         eventHandler.startListening()
-
-        InitializationCoordinator.getOrCreate().run {
-            addUserDisconnectedListener {
-                sendMessageInterceptor.cancelJobs() // Clear all jobs that are observing attachments.
-                stateRegistry.clear()
-                logic.clear()
-                clientState.clearState()
-                globalState.clearState()
-                syncManager.stop()
-                eventHandler.stopListening()
-                scope.cancel()
-            }
-        }
 
         if (config.backgroundSyncEnabled) {
             chatClient.setPushNotificationReceivedListener { channelType, channelId ->
