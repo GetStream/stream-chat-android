@@ -3844,10 +3844,6 @@ public final class io/getstream/chat/android/client/query/pagination/AnyChannelP
 	public static final fun isRequestingMoreThanLastMessage (Lio/getstream/chat/android/client/query/pagination/AnyChannelPaginationRequest;)Z
 }
 
-public final class io/getstream/chat/android/client/setup/InitializationCoordinator$Companion {
-	public final fun getOrCreate ()Lio/getstream/chat/android/client/setup/InitializationCoordinator;
-}
-
 public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
 	public abstract fun clearState ()V
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;

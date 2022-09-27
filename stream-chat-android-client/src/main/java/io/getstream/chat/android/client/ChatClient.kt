@@ -135,7 +135,6 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.setup.state.internal.toMutableState
@@ -208,7 +207,6 @@ internal constructor(
     private val clientScope: ClientScope,
     private val userScope: UserScope,
     internal val retryPolicy: RetryPolicy,
-    private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
     private val chatSocketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
@@ -1147,7 +1145,6 @@ internal constructor(
         userScope.coroutineContext.cancelChildren()
 
         notifications.onLogout()
-        getCurrentUser().let(initializationCoordinator::userDisconnected)
         plugins.forEach { it.onUserDisconnected() }
         if (ToggleService.isSocketExperimental().not()) {
             socketStateService.onDisconnectRequested()
