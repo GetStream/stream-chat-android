@@ -30,7 +30,7 @@ include (
 
 buildCache {
 	local {
-		enabled = false
+		enabled = !System.getenv().containsKey("CI")
 		removeUnusedEntriesAfterDays = 7
 	}
 	Properties localProperties = new Properties()
