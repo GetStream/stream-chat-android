@@ -75,7 +75,7 @@ public class StreamStatePluginFactory(
     private val appContext: Context,
 ) : PluginFactory {
 
-    private var cachedStatePluginInstance: StatePlugin? = null
+    private var cachedStatePluginInstances: MutableMap<String, StatePlugin> = mutableMapOf()
 
     private val logger = StreamLog.getLogger("Chat:StatePluginFactory")
 
@@ -84,25 +84,8 @@ public class StreamStatePluginFactory(
      *
      * @return The [Plugin] instance.
      */
-    override fun get(user: User): Plugin = getOrCreateStatePlugin(user)
-
-    /**
-     * Tries to get cached [StatePlugin] instance for the user if it exists or
-     * creates the new [StatePlugin] and initialized its dependencies.
-     *
-     * This method must be called after the user is set in the SDK.
-     */
-    private fun getOrCreateStatePlugin(user: User): StatePlugin {
-        val cachedPlugin = cachedStatePluginInstance
-
-        if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
-            logger.i { "OfflinePlugin for the user is already initialized. Returning cached instance." }
-            return cachedPlugin
-        } else {
-            clearCachedInstance()
-        }
-        return createStatePlugin(user).also { offlinePlugin -> cachedStatePluginInstance = offlinePlugin }
-    }
+    override fun get(user: User): Plugin =
+        cachedStatePluginInstances.getOrPut(user.id) { createStatePlugin(user) }
 
     private fun createStatePlugin(user: User): StatePlugin {
         val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
@@ -202,7 +185,6 @@ public class StreamStatePluginFactory(
                 globalState.clearState()
                 syncManager.stop()
                 eventHandler.stopListening()
-                clearCachedInstance()
                 scope.cancel()
             }
         }
@@ -271,9 +253,5 @@ public class StreamStatePluginFactory(
             syncedEvents = syncedEvents,
             sideEffect = sideEffect,
         )
-    }
-
-    private fun clearCachedInstance() {
-        cachedStatePluginInstance = null
     }
 }
