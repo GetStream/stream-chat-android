@@ -105,6 +105,15 @@ public class StatePlugin internal constructor(
 
     override val interceptors: List<Interceptor> = listOf(sendMessageInterceptor)
 
+    override fun onUserDisconnected() {
+        sendMessageInterceptor.cancelJobs()
+        stateRegistry.clear()
+        logic.clear()
+        clientState.clearState()
+        syncManager.stop()
+        eventHandler.stopListening()
+    }
+
     @Suppress("UNCHECKED_CAST")
     @InternalStreamChatApi
     public override fun <T : Any> resolveDependency(klass: KClass<T>): T? = when (klass) {

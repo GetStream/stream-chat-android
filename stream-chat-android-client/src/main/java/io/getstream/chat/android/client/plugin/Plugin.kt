@@ -279,4 +279,6 @@ public interface Plugin :
         channelId: String,
         memberIds: List<String>,
     ): Result<Unit> = Result.success(Unit)
+
+    public fun onUserDisconnected()
 }

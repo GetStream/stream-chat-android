@@ -84,6 +84,7 @@ internal class OfflinePlugin(
 
     override val interceptors: List<Interceptor> = emptyList()
     override val errorHandlers: List<ErrorHandler> = emptyList()
+    override fun onUserDisconnected() { /* No-Op */ }
 
     @Suppress("UNCHECKED_CAST")
     @InternalStreamChatApi
