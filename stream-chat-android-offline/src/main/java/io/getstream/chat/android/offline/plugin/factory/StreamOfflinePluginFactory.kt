@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
+import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -56,6 +57,8 @@ import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionLi
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerComposite
+import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
@@ -151,6 +154,8 @@ public class StreamOfflinePluginFactory(
 
         val queryChannelListener = getQueryChannelListener(repositoryFacade, statePlugin)
 
+        val threadQueryListener = getThreadQueryListener(repositoryFacade, statePlugin)
+
         val editMessageListener = getEditMessageListener(clientState, repositoryFacade, statePlugin)
         val hideChannelListener: HideChannelListener = getHideChannelListener(repositoryFacade, statePlugin)
         val deleteReactionListener: DeleteReactionListener = getDeleteReactionListener(
@@ -175,7 +180,7 @@ public class StreamOfflinePluginFactory(
             activeUser = user,
             queryChannelsListener = statePlugin,
             queryChannelListener = queryChannelListener,
-            threadQueryListener = statePlugin,
+            threadQueryListener = threadQueryListener,
             channelMarkReadListener = statePlugin,
             editMessageListener = editMessageListener,
             hideChannelListener = hideChannelListener,
@@ -219,6 +224,15 @@ public class StreamOfflinePluginFactory(
         val queryChannelListenerDatabase = QueryChannelListenerDatabase(repositoryFacade)
 
         return QueryChannelListenerComposite(listOf(statePlugin, queryChannelListenerDatabase))
+    }
+
+    private fun getThreadQueryListener(
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin,
+    ): ThreadQueryListener {
+        val queryChannelListenerDatabase = ThreadQueryListenerDatabase(repositoryFacade, repositoryFacade)
+
+        return ThreadQueryListenerComposite(listOf(queryChannelListenerDatabase, statePlugin))
     }
 
     private fun getEditMessageListener(
