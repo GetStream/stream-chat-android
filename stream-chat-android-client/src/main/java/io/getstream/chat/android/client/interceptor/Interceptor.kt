@@ -16,10 +16,30 @@
 
 package io.getstream.chat.android.client.interceptor
 
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Interceptor is used to intercept [ChatClient] API requests and potentially modifies the original request.
  */
 @InternalStreamChatApi
-public interface Interceptor
+public interface Interceptor {
+
+    /**
+     * Intercept the message before sending it to the API.
+     *
+     * @param channelType The type of the channel in which message is sent.
+     * @param channelId The id of the the channel in which message is sent.
+     * @param message Message to be sent.
+     * @param isRetrying If this message is being retried instead of a new message.
+     *
+     * @return [Result] of [Message] after intercepting.
+     */
+    public suspend fun interceptMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        isRetrying: Boolean
+    ): Result<Message>
+}

@@ -30,7 +30,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
-import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
+import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptor
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerState
@@ -144,7 +144,7 @@ public class StreamStatePluginFactory(
             coroutineScope = scope,
         )
 
-        val sendMessageInterceptor = SendMessageInterceptorImpl(
+        val sendMessageInterceptor = SendMessageInterceptor(
             context = appContext,
             logic = logic,
             clientState = clientState,

@@ -92,7 +92,6 @@ import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.Interceptor
-import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -1497,12 +1496,11 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
 
         return CoroutineCall(userScope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
-            sendMessageInterceptors.fold(Result.success(message)) { message, interceptor ->
+            interceptors.fold(Result.success(message)) { message, interceptor ->
                 if (message.isSuccess) {
                     interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
                 } else message
