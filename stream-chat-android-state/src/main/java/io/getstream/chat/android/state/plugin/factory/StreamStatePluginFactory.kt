@@ -52,7 +52,6 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMuta
 import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
-import io.getstream.chat.android.offline.utils.internal.ChannelMarkReadHelper
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.logging.StreamLog
@@ -141,11 +140,6 @@ public class StreamStatePluginFactory(
             prepareMessageLogic = PrepareMessageLogicFactory().create()
         )
 
-        val channelMarkReadHelper = ChannelMarkReadHelper(
-            logic = logic,
-            state = stateRegistry,
-        )
-
         val errorHandlers: List<ErrorHandler> =
             OfflineErrorHandlerFactoriesProvider
                 .createErrorHandlerFactories(repositoryFacade)
@@ -201,10 +195,10 @@ public class StreamStatePluginFactory(
             queryChannelListener = QueryChannelListenerState(logic),
             queryChannelsListener = QueryChannelsListenerState(logic),
             threadQueryListener = ThreadQueryListenerState(logic, repositoryFacade),
-            channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
+            channelMarkReadListener = ChannelMarkReadListenerState(stateRegistry),
             editMessageListener = EditMessageListenerState(logic, clientState),
             hideChannelListener = HideChannelListenerState(logic),
-            markAllReadListener = MarkAllReadListenerState(logic, stateRegistry.scope, channelMarkReadHelper),
+            markAllReadListener = MarkAllReadListenerState(logic, stateRegistry),
             deleteReactionListener = DeleteReactionListenerState(logic, clientState),
             sendReactionListener = SendReactionListenerState(logic, clientState),
             deleteMessageListener = DeleteMessageListenerState(logic, clientState),
