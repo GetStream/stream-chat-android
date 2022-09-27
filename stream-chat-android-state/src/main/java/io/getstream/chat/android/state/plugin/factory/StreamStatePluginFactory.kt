@@ -217,6 +217,7 @@ public class StreamStatePluginFactory(
         }
 
         return StatePlugin(
+            interceptors = listOf(sendMessageInterceptor),
             activeUser = user,
             queryChannelListener = QueryChannelListenerState(logic),
             queryChannelsListener = QueryChannelsListenerState(logic),
