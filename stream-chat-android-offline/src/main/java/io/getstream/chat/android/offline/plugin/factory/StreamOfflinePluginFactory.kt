@@ -67,7 +67,7 @@ public class StreamOfflinePluginFactory(
 ) : PluginFactory, RepositoryFactory.Provider {
 
     private val logger = StreamLog.getLogger("Chat:OfflinePluginFactory")
-    private var cachedOfflinePluginInstance: OfflinePlugin? = null
+    private var cachedOfflinePluginInstances: MutableMap<String, OfflinePlugin> = mutableMapOf()
     private val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
         StreamLog.e("StreamOfflinePlugin", throwable) {
             "[uncaughtCoroutineException] throwable: $throwable, context: $context"
@@ -91,7 +91,8 @@ public class StreamOfflinePluginFactory(
      *
      * @return The [Plugin] instance.
      */
-    override fun get(user: User): Plugin = getOrCreateOfflinePlugin(user)
+    override fun get(user: User): Plugin =
+        cachedOfflinePluginInstances.getOrPut(user.id) { createOfflinePlugin(user) }
 
     /**
      * Tries to get cached [OfflinePlugin] instance for the user if it exists or
@@ -100,22 +101,11 @@ public class StreamOfflinePluginFactory(
      * This method must be called after the user is set in the SDK.
      */
     @Suppress("LongMethod")
-    private fun getOrCreateOfflinePlugin(user: User): OfflinePlugin {
-        logger.i { "[getOrCreateOfflinePlugin] user.id: '${user.id}'" }
-        val cachedPlugin = cachedOfflinePluginInstance
-
-        if (cachedPlugin != null && cachedPlugin.activeUser.id == user.id) {
-            logger.i { "OfflinePlugin for the user is already initialized. Returning cached instance." }
-            return cachedPlugin
-        } else {
-            clearCachedInstance()
-        }
-
+    private fun createOfflinePlugin(user: User): OfflinePlugin {
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
         InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
             logger.i { "[onUserDisconnected] user.id: '${it?.id}'" }
-            clearCachedInstance()
             _scope?.cancel()
             _scope = null
         }
@@ -187,7 +177,7 @@ public class StreamOfflinePluginFactory(
             shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = queryMembersListener,
             createChannelListener = createChannelListener,
-        ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
+        )
     }
 
     private fun ensureScope(user: User): CoroutineScope {
@@ -207,10 +197,6 @@ public class StreamOfflinePluginFactory(
                 logger.v { "[ensureScope] reuse existing scope: '${user.id}'" }
             }
         }
-    }
-
-    private fun clearCachedInstance() {
-        cachedOfflinePluginInstance = null
     }
 
     private fun createDatabase(
