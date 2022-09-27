@@ -26,8 +26,8 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.logging.StreamLog
 
 /**
- * ThreadQueryListenerFull handles both state and database. It uses, if available, the database
- * to update, if available, the state.
+ * ThreadQueryListenerState handles both state in the SDK. It uses, if available, the database
+ * to update the state.
  *
  * @param logic [LogicRegistry] Optional class to handle state updates
  * @param messageRepository [MessageRepository] Optional to handle database updates related to messages
