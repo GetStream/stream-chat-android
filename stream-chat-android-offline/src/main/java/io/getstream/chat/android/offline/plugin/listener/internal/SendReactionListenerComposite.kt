@@ -56,8 +56,6 @@ internal class SendReactionListenerComposite(
     override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return sendReactionListenerList.map { listener ->
             listener.onSendReactionPrecondition(currentUser, reaction)
-        }.fold(Result.success(Unit)) { acc, result ->
-            if (acc.isError) acc else result
-        }
+        }.foldResults()
     }
 }

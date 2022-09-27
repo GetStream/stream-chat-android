@@ -103,7 +103,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Z)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun queryChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
@@ -1255,10 +1256,6 @@ public abstract class io/getstream/chat/android/client/events/ChatEvent {
 	public abstract fun getType ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/client/events/ChatEventHandler {
-	public abstract fun handleChatEvent (Lio/getstream/chat/android/client/events/ChatEvent;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/events/EventHandlingResult;
-}
-
 public abstract class io/getstream/chat/android/client/events/CidEvent : io/getstream/chat/android/client/events/ChatEvent {
 	public abstract fun getChannelId ()Ljava/lang/String;
 	public abstract fun getChannelType ()Ljava/lang/String;
@@ -1330,46 +1327,6 @@ public final class io/getstream/chat/android/client/events/ErrorEvent : io/getst
 	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatError;
 	public fun getRawCreatedAt ()Ljava/lang/String;
 	public fun getType ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class io/getstream/chat/android/client/events/EventHandlingResult {
-}
-
-public final class io/getstream/chat/android/client/events/EventHandlingResult$Add : io/getstream/chat/android/client/events/EventHandlingResult {
-	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
-	public final fun copy (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/events/EventHandlingResult$Add;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/EventHandlingResult$Add;Lio/getstream/chat/android/client/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/EventHandlingResult$Add;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/events/EventHandlingResult$Remove : io/getstream/chat/android/client/events/EventHandlingResult {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/client/events/EventHandlingResult$Remove;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/EventHandlingResult$Remove;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/EventHandlingResult$Remove;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCid ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/events/EventHandlingResult$Skip : io/getstream/chat/android/client/events/EventHandlingResult {
-	public static final field INSTANCE Lio/getstream/chat/android/client/events/EventHandlingResult$Skip;
-}
-
-public final class io/getstream/chat/android/client/events/EventHandlingResult$WatchAndAdd : io/getstream/chat/android/client/events/EventHandlingResult {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/client/events/EventHandlingResult$WatchAndAdd;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/EventHandlingResult$WatchAndAdd;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/EventHandlingResult$WatchAndAdd;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCid ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

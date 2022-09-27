@@ -169,8 +169,8 @@ private class MentionsViewHolder(
         this.item = item
 
         // Workaround for race condition caused by Coil trying to load stale avatar on layout.
-        binding.avatarView.doOnLayout {
-            binding.avatarView.setUserData(item)
+        binding.userAvatarView.doOnLayout {
+            binding.userAvatarView.setUser(item)
         }
         binding.usernameTextView.text = item.name
         binding.mentionNameTextView.text = String.format(mentionTemplateText, item.name.lowercase())

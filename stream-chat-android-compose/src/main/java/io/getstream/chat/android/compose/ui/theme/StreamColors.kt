@@ -47,6 +47,14 @@ import io.getstream.chat.android.compose.R
  * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
  * @param ownMessageText Used for message text color for the current user. [textHighEmphasis] by default.
  * @param otherMessageText Used for message text color for other users. [textHighEmphasis] by default.
+ * @param imageBackgroundMessageList Used to set the background colour of images inside the message list.
+ * Most visible in placeholders before the images are loaded.
+ * @param imageBackgroundMediaGalleryPicker Used to set the background colour of images inside the media gallery picker
+ * in the media gallery preview screen. Most visible in placeholders before the images are loaded.
+ * @param imageBackgroundMessageList Used to set the background colour of videos inside the message list.
+ * Most visible in placeholders before the video previews are loaded.
+ * @param imageBackgroundMediaGalleryPicker Used to set the background colour of videos inside the media gallery picker
+ * in the media gallery preview screen. Most visible in placeholders before the videos previews are loaded.
  */
 @Immutable
 public data class StreamColors(
@@ -71,7 +79,11 @@ public data class StreamColors(
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
     public val ownMessageText: Color = textHighEmphasis,
-    public val otherMessageText: Color = textHighEmphasis
+    public val otherMessageText: Color = textHighEmphasis,
+    public val imageBackgroundMessageList: Color,
+    public val imageBackgroundMediaGalleryPicker: Color,
+    public val videoBackgroundMessageList: Color,
+    public val videoBackgroundMediaGalleryPicker: Color,
 ) {
 
     public companion object {
@@ -103,7 +115,11 @@ public data class StreamColors(
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
             ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis),
-            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis)
+            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis),
+            imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
+            imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
+            videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
+            videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
         )
 
         /**
@@ -134,7 +150,11 @@ public data class StreamColors(
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
             ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark),
-            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark)
+            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark),
+            imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
+            imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
+            videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
+            videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
         )
     }
 }

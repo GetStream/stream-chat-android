@@ -22,8 +22,8 @@
     android:layout_height="wrap_content"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="?attr/streamUiMessageOptionsAvatarStyle"
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginTop="@dimen/stream_ui_spacing_small"
@@ -56,7 +56,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/avatarView"
+        app:layout_constraintTop_toBottomOf="@id/userAvatarView"
         tools:text="User"
         />
 

@@ -2,26 +2,33 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexCondition:MediaAttachmentQuotedContent.kt$isImageContent || isGiphy || (isVideo &amp;&amp; ChatTheme.videoThumbnailsEnabled)</ID>
+    <ID>ComplexCondition:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$data != null &amp;&amp; page == pagerState.currentPage &amp;&amp; mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &amp;&amp; painter.state is AsyncImagePainter.State.Error</ID>
     <ID>ComplexCondition:MessageItem.kt$!messageItem.isMine &amp;&amp; ( messageItem.shouldShowFooter || messageItem.groupPosition == Bottom || messageItem.groupPosition == None )</ID>
     <ID>ComplexCondition:MessageOptions.kt$((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; !selectedMessage.isGiphy()</ID>
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
+    <ID>ComplexMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
     <ID>ComplexCondition:Messages.kt$!startOfMessages &amp;&amp; index == 0 &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ComplexMethod:MessageListViewModel.kt$MessageListViewModel$private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, ): List&lt;MessageListItemState></ID>
     <ID>ComplexMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>ComplexMethod:Messages.kt$@Composable public fun Messages( messagesState: MessagesState, lazyListState: LazyListState, onMessagesStartReached: () -> Unit, onLastVisibleMessageChanged: (Message) -> Unit, onScrolledToBottom: () -> Unit, onMessagesEndReached: (String) -> Unit, onScrollToBottom: (() -> Unit) -> Unit, modifier: Modifier = Modifier, contentPadding: PaddingValues = PaddingValues(vertical = 16.dp), helperContent: @Composable BoxScope.() -> Unit = { DefaultMessagesHelperContent( messagesState = messagesState, lazyListState = lazyListState, scrollToBottom = onScrollToBottom ) }, loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() }, itemContent: @Composable (MessageListItemState) -> Unit, )</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
+    <ID>LargeClass:ImagePreviewActivity.kt$ImagePreviewActivity : AppCompatActivity</ID>
+    <ID>LargeClass:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
     <ID>LongMethod:GiphyMessageContent.kt$@Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:GroupAvatar.kt$@Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
-    <ID>LongMethod:ImageAttachmentContent.kt$@OptIn(ExperimentalFoundationApi::class) @Composable public fun ImageAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:ImageAttachmentContent.kt$@OptIn(ExperimentalFoundationApi::class) @Composable @Deprecated( message = "Deprecated in favor of 'MediaAttachmentContent'. The new function " + "is able to preview videos as well as images and has access to the new and improved" + "media gallery.", replaceWith = ReplaceWith( expression = "MediaAttachmentContent()", "io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent", ), level = DeprecationLevel.WARNING ) public fun ImageAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
+    <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun MediaGalleryItem( index: Int, attachment: Attachment, user: User, pagerState: PagerState, )</ID>
+    <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun VideoPreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, onPlaybackError: () -> Unit, )</ID>
     <ID>LongMethod:MessageComposer.kt$@Composable internal fun DefaultComposerIntegrations( messageInputState: MessageComposerState, onAttachmentsClick: () -> Unit, onCommandsClick: () -> Unit, ownCapabilities: Set&lt;String>, )</ID>
     <ID>LongMethod:MessageListViewModel.kt$MessageListViewModel$private fun observeMessages()</ID>
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:Messages.kt$@Composable public fun Messages( messagesState: MessagesState, lazyListState: LazyListState, onMessagesStartReached: () -> Unit, onLastVisibleMessageChanged: (Message) -> Unit, onScrolledToBottom: () -> Unit, onMessagesEndReached: (String) -> Unit, onScrollToBottom: (() -> Unit) -> Unit, modifier: Modifier = Modifier, contentPadding: PaddingValues = PaddingValues(vertical = 16.dp), helperContent: @Composable BoxScope.() -> Unit = { DefaultMessagesHelperContent( messagesState = messagesState, lazyListState = lazyListState, scrollToBottom = onScrollToBottom ) }, loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() }, itemContent: @Composable (MessageListItemState) -> Unit, )</ID>
     <ID>LongMethod:StreamTypography.kt$StreamTypography.Companion$public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography</ID>
+    <ID>LongParameterList:MediaGalleryPreviewActivityAttachmentState.kt$MediaGalleryPreviewActivityAttachmentState$( val name: String?, val url: String?, val thumbUrl: String?, val imageUrl: String?, val assetUrl: String?, val originalWidth: Int?, val originalHeight: Int?, val type: String?, )</ID>
     <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, )</ID>
-    <ID>LongParameterList:MessageContainer.kt$( messageItem: MessageItemState, onLongItemClick: (Message) -> Unit, onReactionsClick: (Message) -> Unit = {}, onThreadClick: (Message) -> Unit, onGiphyActionClick: (GiphyAction) -> Unit, onQuotedMessageClick: (Message) -> Unit, onImagePreviewResult: (ImagePreviewResult?) -> Unit, )</ID>
-    <ID>LongParameterList:MessageList.kt$( messageListItem: MessageListItemState, onImagePreviewResult: (ImagePreviewResult?) -> Unit, onThreadClick: (Message) -> Unit, onLongItemClick: (Message) -> Unit, onReactionsClick: (Message) -> Unit = {}, onGiphyActionClick: (GiphyAction) -> Unit, onQuotedMessageClick: (Message) -> Unit, )</ID>
     <ID>LongParameterList:Messages.kt$( messagesState: MessagesState, lazyListState: LazyListState, onMessagesStartReached: () -> Unit, onLastVisibleMessageChanged: (Message) -> Unit, onScrolledToBottom: () -> Unit, onMessagesEndReached: (String) -> Unit, onScrollToBottom: (() -> Unit) -> Unit, modifier: Modifier = Modifier, contentPadding: PaddingValues = PaddingValues(vertical = 16.dp), helperContent: @Composable BoxScope.() -> Unit = { DefaultMessagesHelperContent( messagesState = messagesState, lazyListState = lazyListState, scrollToBottom = onScrollToBottom ) }, loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() }, itemContent: @Composable (MessageListItemState) -> Unit, )</ID>
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
     <ID>MagicNumber:FileAttachmentContent.kt$0.85f</ID>
@@ -29,6 +36,11 @@
     <ID>MagicNumber:ImageAttachmentContent.kt$3</ID>
     <ID>MagicNumber:ImageAttachmentContent.kt$4</ID>
     <ID>MagicNumber:ImagePreviewActivity.kt$ImagePreviewActivity$8f</ID>
+    <ID>MagicNumber:MediaAttachmentFactory.kt$0.25f</ID>
+    <ID>MagicNumber:MediaAttachmentQuotedContent.kt$0.8f</ID>
+    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.2f</ID>
+    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$8f</ID>
+    <ID>MagicNumber:MediaPreviewPlaceHolder.kt$0.4f</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
     <ID>MagicNumber:Messages.kt$5</ID>
     <ID>MagicNumber:SearchInput.kt$8f</ID>
@@ -39,5 +51,6 @@
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
     <ID>MaxLineLength:MessagesViewModelFactory.kt$MessagesViewModelFactory$private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold)</ID>
     <ID>ReturnCount:MessageListViewModel.kt$MessageListViewModel$public fun updateLastSeenMessage(message: Message)</ID>
+    <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -29,6 +29,7 @@
     <ID>LongMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
     <ID>LongMethod:AvatarStyle.kt$AvatarStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle</ID>
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
+    <ID>LongMethod:ChannelAvatarView.kt$ChannelAvatarView$private fun createImageViews(count: Int): List&lt;ImageView></ID>
     <ID>LongMethod:ChannelListViewStyle.kt$ChannelListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelListViewStyle</ID>
     <ID>LongMethod:FileAttachmentViewStyle.kt$FileAttachmentViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): GiphyMediaAttachmentViewStyle</ID>
@@ -49,10 +50,9 @@
     <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, )</ID>
     <ID>LongParameterList:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle$( public val progressIcon: Drawable, public val giphyIcon: Drawable, public val placeholderIcon: Drawable, @ColorInt public val imageBackgroundColor: Int, public val giphyType: GiphyInfoType, public val scaleType: ImageView.ScaleType, public val sizingMode: GiphySizingMode, public val width: Int, public val height: Int, public val dimensionRatio: Float, )</ID>
     <ID>MagicNumber:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$500</ID>
-    <ID>MagicNumber:AvatarBitmapCombiner.kt$AvatarBitmapCombiner$3</ID>
-    <ID>MagicNumber:AvatarBitmapFactory.kt$AvatarBitmapFactory$4</ID>
-    <ID>MagicNumber:AvatarView.kt$AvatarView$10f</ID>
-    <ID>MagicNumber:AvatarView.kt$AvatarView$8f</ID>
+    <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$0.5f</ID>
+    <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$3</ID>
+    <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$4</ID>
     <ID>MagicNumber:ChannelItemSwipeListener.kt$ChannelItemSwipeListener$100</ID>
     <ID>MagicNumber:ChannelViewHolder.kt$ChannelViewHolder$99</ID>
     <ID>MagicNumber:EditReactionsView.kt$EditReactionsView$5</ID>
@@ -70,6 +70,9 @@
     <ID>MagicNumber:MessageOptionsUserReactionOrientation.kt$MessageOptionsUserReactionOrientation.BY_USER_INVERTED$3</ID>
     <ID>MagicNumber:TypingIndicatorAnimationView.kt$TypingDrawable$0.5f</ID>
     <ID>MagicNumber:TypingIndicatorAnimationView.kt$TypingDrawable$255</ID>
+    <ID>MagicNumber:UserAvatarView.kt$UserAvatarView$0.5f</ID>
+    <ID>MagicNumber:UserAvatarView.kt$UserAvatarView$10f</ID>
+    <ID>MagicNumber:UserAvatarView.kt$UserAvatarView$8f</ID>
     <ID>MaxLineLength:AttachmentActivity.kt$AttachmentActivity$Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()</ID>
     <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) }</ID>
     <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$showInChatOptionHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) }</ID>
@@ -83,7 +86,7 @@
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerFileAttachmentsNoFilesTextFontAssets</ID>
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerMediaAttachmentNoMediaTextFontAssets</ID>
     <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$*</ID>
-    <ID>MaxLineLength:AvatarView.kt$AvatarView$*</ID>
+    <ID>MaxLineLength:AvatarDecorator.kt$AvatarDecorator$setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)</ID>
     <ID>MaxLineLength:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle$*</ID>
     <ID>MaxLineLength:ChannelListPayloadDiff.kt$ChannelListPayloadDiff$return nameChanged || avatarViewChanged || usersChanged || lastMessageChanged || readStateChanged || unreadCountChanged || extraDataChanged</ID>
     <ID>MaxLineLength:ChannelListView.kt$ChannelListView$is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel</ID>

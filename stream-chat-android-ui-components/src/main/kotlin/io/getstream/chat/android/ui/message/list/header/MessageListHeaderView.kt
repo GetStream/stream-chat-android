@@ -55,15 +55,15 @@ public class MessageListHeaderView : FrameLayout {
     }
 
     public fun setAvatar(channel: Channel) {
-        binding.avatarView.setChannelData(channel)
+        binding.channelAvatarView.setChannel(channel)
     }
 
     public fun setAvatarClickListener(listener: OnClickListener) {
-        binding.avatarView.setOnClickListener { listener.onClick() }
+        binding.channelAvatarView.setOnClickListener { listener.onClick() }
     }
 
     public fun hideAvatar() {
-        binding.avatarView.isInvisible = true
+        binding.channelAvatarView.isInvisible = true
     }
 
     public fun showBackButtonBadge(text: String) {
@@ -151,7 +151,7 @@ public class MessageListHeaderView : FrameLayout {
         style = MessageListHeaderViewStyle(context, attrs)
 
         configBackground()
-        configUserAvatar()
+        configChannelAvatar()
         configTitle()
         configBackButton()
         configOfflineLabel()
@@ -168,8 +168,8 @@ public class MessageListHeaderView : FrameLayout {
         binding.separator.background = style.separatorBackgroundDrawable
     }
 
-    private fun configUserAvatar() {
-        binding.avatarView.apply {
+    private fun configChannelAvatar() {
+        binding.channelAvatarView.apply {
             isInvisible = !style.showUserAvatar
             isClickable = style.showUserAvatar
         }

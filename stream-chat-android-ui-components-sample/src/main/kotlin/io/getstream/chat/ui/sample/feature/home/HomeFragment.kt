@@ -35,7 +35,7 @@ import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.utils.internal.toggle.dialog.ToggleDialogFragment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.avatar.AvatarView
+import io.getstream.chat.android.ui.avatar.UserAvatarView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.ui.sample.BuildConfig
@@ -56,7 +56,7 @@ class HomeFragment : Fragment() {
     private val homeViewModel: HomeViewModel by viewModels()
     private val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 
-    private lateinit var avatarView: AvatarView
+    private lateinit var userAvatarView: UserAvatarView
     private lateinit var nameTextView: TextView
 
     override fun onCreateView(
@@ -193,7 +193,7 @@ class HomeFragment : Fragment() {
         binding.navigationView.setupWithNavController(findNavController())
 
         val header = binding.navigationView.getHeaderView(0)
-        avatarView = header.findViewById(R.id.avatarView)
+        userAvatarView = header.findViewById(R.id.userAvatarView)
         nameTextView = header.findViewById(R.id.nameTextView)
 
         binding.navigationView.setNavigationItemSelectedListener { item ->
@@ -228,6 +228,6 @@ class HomeFragment : Fragment() {
         }
 
         nameTextView.text = state.user.name
-        avatarView.setUserData(state.user)
+        userAvatarView.setUser(state.user)
     }
 }

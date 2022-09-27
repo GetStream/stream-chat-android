@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.avatar.internal
+package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.avatar.AvatarStyle
+import io.getstream.chat.android.client.utils.Result
 
-internal sealed class Avatar(open val avatarStyle: AvatarStyle) {
-    data class UserAvatar(
-        val user: User,
-        override val avatarStyle: AvatarStyle
-    ) : Avatar(avatarStyle)
-
-    data class ChannelAvatar(
-        val channel: Channel,
-        override val avatarStyle: AvatarStyle
-    ) : Avatar(avatarStyle)
+internal fun List<Result<Unit>>.foldResults(): Result<Unit> {
+    return fold(Result.success(Unit)) { acc, result ->
+        if (acc.isError) acc else result
+    }
 }

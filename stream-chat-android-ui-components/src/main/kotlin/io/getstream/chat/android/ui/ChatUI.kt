@@ -20,7 +20,6 @@ import android.content.Context
 import com.getstream.sdk.chat.images.ImageHeadersProvider
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.DateFormatter
-import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
 import io.getstream.chat.android.ui.common.ChannelNameFormatter
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
@@ -74,11 +73,6 @@ public object ChatUI {
             textView.text = messageItem.message.text
         }
     }
-
-    /**
-     * Allows intercepting and providing custom bitmap displayed with AvatarView.
-     */
-    public var avatarBitmapFactory: AvatarBitmapFactory by lazyVar { AvatarBitmapFactory(appContext) }
 
     /**
      * Allows overriding default set of message reactions available.
