@@ -291,7 +291,6 @@ public final class io/getstream/chat/android/offline/plugin/state/querychannels/
 public abstract interface class io/getstream/chat/android/offline/plugin/state/querychannels/QueryChannelsState {
 	public abstract fun getChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelsStateData ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getChatEventHandler ()Lio/getstream/chat/android/offline/event/handler/chat/ChatEventHandler;
 	public abstract fun getChatEventHandlerFactory ()Lio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;
 	public abstract fun getCurrentRequest ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getEndOfChannels ()Lkotlinx/coroutines/flow/StateFlow;
@@ -301,7 +300,6 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/q
 	public abstract fun getNextPageRequest ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getRecoveryNeeded ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getSort ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
-	public abstract fun setChatEventHandler (Lio/getstream/chat/android/offline/event/handler/chat/ChatEventHandler;)V
 	public abstract fun setChatEventHandlerFactory (Lio/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory;)V
 }
 

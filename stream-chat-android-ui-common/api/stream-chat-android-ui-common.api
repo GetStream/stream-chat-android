@@ -155,7 +155,6 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageFooterVisibili
 public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
-	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/ChatClient;)Z
 }
 
@@ -334,10 +333,6 @@ public final class io/getstream/chat/android/common/state/MessageMode$MessageThr
 
 public final class io/getstream/chat/android/common/state/MessageMode$Normal : io/getstream/chat/android/common/state/MessageMode {
 	public static final field INSTANCE Lio/getstream/chat/android/common/state/MessageMode$Normal;
-}
-
-public final class io/getstream/chat/android/common/state/MuteUser : io/getstream/chat/android/common/state/MessageAction {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public final class io/getstream/chat/android/common/state/Pin : io/getstream/chat/android/common/state/MessageAction {

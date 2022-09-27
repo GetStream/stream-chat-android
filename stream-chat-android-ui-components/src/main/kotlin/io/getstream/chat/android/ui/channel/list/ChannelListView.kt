@@ -378,28 +378,6 @@ public class ChannelListView : FrameLayout {
         this.loadingView.isVisible = true
     }
 
-    @Deprecated(
-        message = "Deprecated in favor of new logic for setChannels. To set the loading item call set channels with" +
-            "the loading item already in the list. Show loading more function is race condition prone, which can" +
-            "cause the list to apply an old state of channels.",
-        level = DeprecationLevel.ERROR,
-    )
-    public fun showLoadingMore() {
-        @Suppress("DEPRECATION_ERROR")
-        this.simpleChannelListView.showLoadingMore(true)
-    }
-
-    @Deprecated(
-        message = "Deprecated in favor of new logic for setChannels. To set the loading item call set channels" +
-            "without the loading item already in the list. Hide loading more function is race condition prone, which" +
-            "can cause the list to apply an old state of channels.",
-        level = DeprecationLevel.ERROR,
-    )
-    public fun hideLoadingMore() {
-        @Suppress("DEPRECATION_ERROR")
-        this.simpleChannelListView.showLoadingMore(false)
-    }
-
     private fun showEmptyStateView() {
         this.emptyStateView.isVisible = true
     }
