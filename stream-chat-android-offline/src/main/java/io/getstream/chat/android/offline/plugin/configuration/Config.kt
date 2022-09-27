@@ -32,5 +32,6 @@ public data class Config @JvmOverloads constructor(
     public val userPresence: Boolean = true,
     public val persistenceEnabled: Boolean = true,
     public val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+    @Deprecated("No longer relevant since sequential is the only implementation left.")
     public val useSequentialEventHandler: Boolean = true,
 )
