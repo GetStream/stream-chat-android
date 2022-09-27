@@ -18,7 +18,6 @@ package io.getstream.chat.android.state.plugin.internal
 
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.interceptor.Interceptor
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
@@ -56,14 +55,12 @@ import kotlin.reflect.KClass
  * @param shuffleGiphyListener [ShuffleGiphyListener]
  * @param sendMessageListener [SendMessageListener]
  * @param typingEventListener [TypingEventListener]
- * @param activeUser User associated with [StatePlugin] instance.
  */
 @InternalStreamChatApi
 @Suppress("LongParameterList")
 public class StatePlugin(
     override val interceptors: List<Interceptor>,
     override val errorHandlers: List<ErrorHandler>,
-    internal val activeUser: User,
     private val queryChannelsListener: QueryChannelsListener,
     private val queryChannelListener: QueryChannelListener,
     private val threadQueryListener: ThreadQueryListener,
