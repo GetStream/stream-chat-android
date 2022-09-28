@@ -47,8 +47,6 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyLi
 import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
-import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -75,14 +73,7 @@ public class StreamOfflinePluginFactory(
             "[uncaughtCoroutineException] throwable: $throwable, context: $context"
         }
     }
-    private val statePluginFactory = StreamStatePluginFactory(
-        config = StatePluginConfig(
-            backgroundSyncEnabled = config.backgroundSyncEnabled,
-            userPresence = config.userPresence,
-            uploadAttachmentsNetworkType = config.uploadAttachmentsNetworkType,
-        ),
-        appContext = appContext
-    )
+
     @Volatile
     private var _scope: CoroutineScope? = null
 
@@ -121,10 +112,6 @@ public class StreamOfflinePluginFactory(
         }
 
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
-
-        val scope = ensureScope(user)
-
-        val statePlugin = statePluginFactory.createStatePlugin(user, scope)
 
         InitializationCoordinator.getOrCreate().addUserDisconnectedListener {
             logger.i { "[onUserDisconnected] user.id: '${it?.id}'" }
@@ -189,23 +176,17 @@ public class StreamOfflinePluginFactory(
 
         return OfflinePlugin(
             activeUser = user,
-            queryChannelsListener = statePlugin,
             queryChannelListener = queryChannelListener,
             threadQueryListener = threadQueryListener,
-            channelMarkReadListener = statePlugin,
             editMessageListener = editMessageListener,
             hideChannelListener = hideChannelListener,
-            markAllReadListener = statePlugin,
             deleteReactionListener = deleteReactionListener,
             sendReactionListener = sendReactionListener,
             deleteMessageListener = deleteMessageListener,
             sendMessageListener = sendMessageListener,
-            sendGiphyListener = statePlugin,
             shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = queryMembersListener,
-            typingEventListener = statePlugin,
             createChannelListener = createChannelListener,
-            childResolver = statePlugin
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
     }
 
