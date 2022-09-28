@@ -42,8 +42,6 @@ class GettingStarted {
                 persistenceEnabled = true,
                 // An enumeration of various network types used as a constraint inside upload attachments worker.
                 uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-                // Whether the SDK will use a new sequential event handling mechanism.
-                useSequentialEventHandler = false,
             ),
             appContext = context,
         )

@@ -44,6 +44,7 @@
 - Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
 
 ### ❌ Removed
+- Removed `EventHandlerImpl` from the codebase. [#4207](https://github.com/GetStream/stream-chat-android/pull/4207)
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed

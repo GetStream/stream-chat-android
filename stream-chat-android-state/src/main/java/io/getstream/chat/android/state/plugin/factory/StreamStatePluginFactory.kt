@@ -31,7 +31,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
-import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerState
@@ -187,7 +186,6 @@ public class StreamStatePluginFactory(
 
         val eventHandler: EventHandler = createEventHandler(
             user = user,
-            useSequentialEventHandler = config.useSequentialEventHandler,
             scope = scope,
             client = chatClient,
             logicRegistry = logic,
@@ -260,7 +258,6 @@ public class StreamStatePluginFactory(
     @Suppress("LongMethod", "LongParameterList")
     private fun createEventHandler(
         user: User,
-        useSequentialEventHandler: Boolean,
         scope: CoroutineScope,
         client: ChatClient,
         logicRegistry: LogicRegistry,
@@ -270,29 +267,17 @@ public class StreamStatePluginFactory(
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
     ): EventHandler {
-        return when (useSequentialEventHandler) {
-            true -> EventHandlerSequential(
-                scope = scope,
-                currentUserId = user.id,
-                subscribeForEvents = { listener -> client.subscribe(listener) },
-                logicRegistry = logicRegistry,
-                stateRegistry = stateRegistry,
-                mutableGlobalState = mutableGlobalState,
-                repos = repos,
-                syncedEvents = syncedEvents,
-                sideEffect = sideEffect,
-            )
-            else -> EventHandlerImpl(
-                scope = scope,
-                currentUserId = user.id,
-                subscribeForEvents = { listener -> client.subscribe(listener) },
-                logic = logicRegistry,
-                state = stateRegistry,
-                mutableGlobalState = mutableGlobalState,
-                repos = repos,
-                syncedEvents = syncedEvents
-            )
-        }
+        return EventHandlerSequential(
+            scope = scope,
+            currentUserId = user.id,
+            subscribeForEvents = { listener -> client.subscribe(listener) },
+            logicRegistry = logicRegistry,
+            stateRegistry = stateRegistry,
+            mutableGlobalState = mutableGlobalState,
+            repos = repos,
+            syncedEvents = syncedEvents,
+            sideEffect = sideEffect,
+        )
     }
 
     private fun clearCachedInstance() {

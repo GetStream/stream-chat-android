@@ -66,7 +66,6 @@ class ChatInitializer(private val context: Context) {
             Config(
                 userPresence = true,
                 persistenceEnabled = true,
-                useSequentialEventHandler = true
             ),
             context
         )
