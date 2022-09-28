@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.utils.internal
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 
 /**
