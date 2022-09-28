@@ -1,3 +1,4 @@
+import io.getstream.chat.android.Configuration
 import io.getstream.chat.android.Dependencies
 
 apply plugin: 'com.android.application'
@@ -12,6 +13,7 @@ apply from: "${rootDir}/scripts/android.gradle"
 
 android {
     defaultConfig {
+        targetSdk Configuration.sampleTargetSdk
         applicationId "io.getstream.chat.ui.sample"
         versionCode sampleAppVersionCode
         versionName sampleAppVersionName
@@ -57,7 +59,7 @@ android {
         debug {
             versionNameSuffix "-DEBUG"
             applicationIdSuffix ".debug"
-            testCoverageEnabled true
+            testCoverageEnabled false
             debuggable true
             minifyEnabled false
             shrinkResources false
@@ -141,7 +143,7 @@ dependencies {
     implementation project(":stream-chat-android-pushprovider-firebase")
     implementation project(":stream-chat-android-pushprovider-huawei")
     implementation project(":stream-chat-android-pushprovider-xiaomi")
-    implementation files('libs/MiPush_SDK_Client_4_8_2.jar')
+    implementation files('../libraries/external/MiPush_SDK_Client_5_0_6-G_3rd.aar')
 
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
@@ -173,4 +175,6 @@ dependencies {
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
     androidTestImplementation Dependencies.navigationTest
+
+    detektPlugins(Dependencies.detektFormatting)
 }

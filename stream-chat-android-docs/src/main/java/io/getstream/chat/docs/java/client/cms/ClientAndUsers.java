@@ -72,7 +72,7 @@ public class ClientAndUsers {
          * @see <a href="https://getstream.io/chat/docs/init_and_users/?language=java#websocket-connections">Websocket Connections</a>
          */
         public void disconnect() {
-            ChatClient.instance().disconnect();
+            ChatClient.instance().disconnect(true).enqueue();
         }
     }
 
@@ -112,11 +112,6 @@ public class ClientAndUsers {
                 }
             };
             client.connectUser(user, tokenProvider).enqueue(result -> { /* ... */ });
-        }
-
-        public void loggingOutAndSwitchingUsers(User user, String token) {
-            client.disconnect();
-            client.connectUser(user, token).enqueue(result -> { /* ... */ });
         }
     }
 
@@ -202,8 +197,13 @@ public class ClientAndUsers {
             User user = new User();
             String token = "token";
 
-            client.disconnect();
-            client.connectUser(user, token).enqueue(result -> { /* ... */ });
+            client.disconnect(true).enqueue(disconnectResult -> {
+                if (disconnectResult.isSuccess()) {
+                    client.connectUser(user, token).enqueue(loginResult -> { /* ... */ });
+                } else {
+                    // Handle result.error()
+                }
+            });
         }
     }
 }

@@ -83,7 +83,7 @@ class UserViewHolder(
     fun bindUser(user: SampleUser) {
         itemView.apply {
             binding.nameTextView.text = user.name
-            binding.avatarImageView.setUserData(
+            binding.userAvatarView.setUser(
                 User().apply {
                     image = user.image
                     name = user.name

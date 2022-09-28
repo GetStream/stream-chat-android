@@ -45,4 +45,6 @@ dependencies {
     // Tests
     testImplementation Dependencies.junitJupiterApi
     testRuntimeOnly Dependencies.junitJupiterEngine
+
+    detektPlugins(Dependencies.detektFormatting)
 }

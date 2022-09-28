@@ -39,44 +39,6 @@ import java.io.File
 import java.time.Instant
 import java.util.Date
 
-internal fun randomUser(
-    id: String = randomString(),
-    name: String = randomString(),
-    image: String = randomString(),
-    role: String = randomString(),
-    invisible: Boolean = randomBoolean(),
-    banned: Boolean = randomBoolean(),
-    devices: List<Device> = mutableListOf(),
-    online: Boolean = randomBoolean(),
-    createdAt: Date? = null,
-    updatedAt: Date? = null,
-    lastActive: Date? = null,
-    totalUnreadCount: Int = positiveRandomInt(),
-    unreadChannels: Int = positiveRandomInt(),
-    mutes: List<Mute> = mutableListOf(),
-    teams: List<String> = listOf(),
-    channelMutes: List<ChannelMute> = emptyList(),
-    extraData: MutableMap<String, Any> = mutableMapOf()
-): User = User(
-    id,
-    name,
-    image,
-    role,
-    invisible,
-    banned,
-    devices,
-    online,
-    createdAt,
-    updatedAt,
-    lastActive,
-    totalUnreadCount,
-    unreadChannels,
-    mutes,
-    teams,
-    channelMutes,
-    extraData
-)
-
 internal fun createUser(
     id: String = randomString(),
     name: String = randomString(),
@@ -190,13 +152,12 @@ internal fun createCommand(
 
 internal fun createMember(
     user: User = createUser(),
-    role: String = randomString(),
     createdAt: Date? = randomDate(),
     updatedAt: Date? = randomDate(),
     isInvited: Boolean = randomBoolean(),
     inviteAcceptedAt: Date? = randomDate(),
     inviteRejectedAt: Date? = randomDate()
-): Member = Member(user, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
+): Member = Member(user, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
 
 internal fun createMembers(
     size: Int = positiveRandomInt(10),

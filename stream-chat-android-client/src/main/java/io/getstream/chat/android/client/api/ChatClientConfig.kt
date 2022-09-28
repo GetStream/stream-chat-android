@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.internal.DistinctChatApi
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.ChatLoggerConfig
 
 /**
  * A config to setup the [ChatClient] behavior.
@@ -40,7 +40,7 @@ public class ChatClientConfig @JvmOverloads constructor(
     public var cdnHttpUrl: String,
     public var wssUrl: String,
     public val warmUp: Boolean,
-    public val loggerConfig: ChatLogger.Config,
+    public val loggerConfig: ChatLoggerConfig,
     public var distinctApiCalls: Boolean = true,
     public val debugRequests: Boolean
 ) {

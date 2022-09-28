@@ -77,11 +77,6 @@ public class Delete(message: Message) : MessageAction(message)
 public class Flag(message: Message) : MessageAction(message)
 
 /**
- * Mutes or unmutes the user who sent the message.
- */
-public class MuteUser(message: Message) : MessageAction(message)
-
-/**
  * User-customizable action, with any number of extra properties.
  *
  * @param extraProperties Map of key-value pairs that let you store extra data for this action.

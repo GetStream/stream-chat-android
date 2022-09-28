@@ -21,10 +21,10 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.AppSettings
@@ -39,8 +39,13 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.VideoCallInfo
+import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.utils.ProgressCallback
+import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 
@@ -52,10 +57,20 @@ internal interface ChatApi {
     fun appSettings(): Call<AppSettings>
 
     @CheckResult
-    fun sendFile(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>
+    fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback? = null,
+    ): Call<UploadedFile>
 
     @CheckResult
-    fun sendImage(channelType: String, channelId: String, file: File, callback: ProgressCallback? = null): Call<String>
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback? = null,
+    ): Call<UploadedImage>
 
     @CheckResult
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
@@ -82,7 +97,7 @@ internal interface ChatApi {
         offset: Int?,
         limit: Int?,
         next: String?,
-        sort: QuerySort<Message>?,
+        sort: QuerySorter<Message>?,
     ): Call<SearchMessagesResult>
 
     @CheckResult
@@ -176,7 +191,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>>
 
@@ -303,7 +318,7 @@ internal interface ChatApi {
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member>,
     ): Call<List<Member>>
 
@@ -351,7 +366,7 @@ internal interface ChatApi {
     @CheckResult
     fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySort<BannedUsersSort>,
+        sort: QuerySorter<BannedUsersSort>,
         offset: Int?,
         limit: Int?,
         createdAtAfter: Date?,
@@ -359,6 +374,12 @@ internal interface ChatApi {
         createdAtBefore: Date?,
         createdAtBeforeOrEqual: Date?,
     ): Call<List<BannedUser>>
+
+    @CheckResult
+    fun createVideoCall(channelId: String, channelType: String, callId: String, callType: String): Call<VideoCallInfo>
+
+    @CheckResult
+    fun getVideoCallToken(callId: String): Call<VideoCallToken>
 
     @CheckResult
     fun sendEvent(
@@ -372,7 +393,10 @@ internal interface ChatApi {
     fun translate(messageId: String, language: String): Call<Message>
 
     @CheckResult
-    fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
+    fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>>
+
+    @CheckResult
+    fun downloadFile(fileUrl: String): Call<ResponseBody>
 
     fun warmUp()
 }

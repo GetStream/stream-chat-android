@@ -42,7 +42,7 @@ import java.util.Date
  * @param mutes A list of users muted by the current user.
  * @param extraData A map of custom fields for the user.
  */
-@Entity(tableName = "stream_chat_user")
+@Entity(tableName = USER_ENTITY_TABLE_NAME)
 internal data class UserEntity(
     @PrimaryKey val id: String,
     val originalId: String = "",
@@ -58,3 +58,5 @@ internal data class UserEntity(
     val mutes: List<String> = emptyList(),
     val extraData: Map<String, Any> = emptyMap()
 )
+
+internal const val USER_ENTITY_TABLE_NAME = "stream_chat_user"

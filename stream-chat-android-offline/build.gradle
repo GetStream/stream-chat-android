@@ -39,7 +39,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            testCoverageEnabled true
+            testCoverageEnabled false
         }
     }
 }
@@ -57,6 +57,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(":stream-chat-android-client")
+    api project(":stream-chat-android-state")
 
     // Kotlin
     implementation Dependencies.kotlinReflect
@@ -73,10 +74,13 @@ dependencies {
 
     // Serialization
     implementation Dependencies.moshi
+    implementation Dependencies.moshiKotlin
+    implementation Dependencies.moshiAdapters
     ksp Dependencies.moshiCodegen
 
     // Tests
     testImplementation project(":stream-chat-android-test")
+    testImplementation project(":stream-chat-android-client-test")
     testImplementation Dependencies.moshiKotlin
 
     testImplementation Dependencies.junitJupiterApi
@@ -94,7 +98,6 @@ dependencies {
     testImplementation Dependencies.coroutinesTest
 
     testImplementation Dependencies.robolectric
-    testImplementation Dependencies.dotenv
 
     testImplementation Dependencies.kfixture
     testImplementation Dependencies.kluent
@@ -109,4 +112,6 @@ dependencies {
     androidTestImplementation Dependencies.kluent
     androidTestImplementation Dependencies.mockito
     androidTestImplementation Dependencies.mockitoKotlin
+
+    detektPlugins(Dependencies.detektFormatting)
 }

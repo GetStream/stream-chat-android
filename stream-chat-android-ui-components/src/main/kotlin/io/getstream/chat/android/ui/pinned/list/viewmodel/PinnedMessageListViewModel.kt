@@ -21,12 +21,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.call.await
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -94,7 +93,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
      */
     public val errorEvents: LiveData<Event<Unit>> = _errorEvents
 
-    private val logger = ChatLogger.get("PinnedMessageListViewModel")
+    private val logger = StreamLog.getLogger("Chat:PinnedMessageListViewModel")
 
     init {
         scope.launch {
@@ -118,11 +117,11 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
             val currentState = _state.value!!
 
             if (!currentState.canLoadMore) {
-                logger.logD("No more messages to load")
+                logger.d { "No more messages to load" }
                 return@launch
             }
             if (currentState.isLoading) {
-                logger.logD("Already loading")
+                logger.d { "Already loading" }
                 return@launch
             }
 
@@ -143,11 +142,11 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
     private suspend fun fetchServerResults() {
         val currentState = _state.value!!
 
-        logger.logD("Getting pinned messages (cid: $cid, before: ${currentState.nextDate}, limit: $QUERY_LIMIT)")
+        logger.d { "Getting pinned messages (cid: $cid, before: ${currentState.nextDate}, limit: $QUERY_LIMIT)" }
 
         val result = channelClient.getPinnedMessages(
             limit = QUERY_LIMIT,
-            sort = QuerySort.desc(Message::pinnedAt),
+            sort = QuerySortByField.descByName("pinned_at"),
             pagination = PinnedMessagesPagination.BeforeDate(
                 date = currentState.nextDate,
                 inclusive = false,
@@ -157,7 +156,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
 
         if (result.isSuccess) {
             val messages = result.data()
-            logger.logD("Got ${messages.size} messages")
+            logger.d { "Got ${messages.size} messages" }
             _state.value = currentState.copy(
                 results = (currentState.results + messages).filter { it.id.isNotEmpty() },
                 isLoading = false,
@@ -166,7 +165,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
                 nextDate = messages.lastOrNull()?.pinnedAt ?: currentState.nextDate
             )
         } else {
-            logger.logD("Error ${result.error().message}")
+            logger.d { "Error ${result.error().message}" }
             _state.value = currentState.copy(
                 isLoading = false,
                 canLoadMore = true,

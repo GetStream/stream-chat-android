@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
@@ -68,7 +69,7 @@ internal class ChatSocketTest {
             socketFactory,
             networkStateProvider,
             chatParser,
-            testCoroutines.scope
+            UserTestScope(testCoroutines.scope)
         )
         chatSocket.addListener(socketListener)
     }
@@ -91,7 +92,13 @@ internal class ChatSocketTest {
 
         chatSocket.connectUser(randomUser(), isAnonymous = false)
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo ChatSocket.State.DisconnectedTemporarily(
+            ChatNetworkError.create(
+                description = "Network is not available",
+                streamCode = ChatErrorCode.SOCKET_FAILURE.code,
+                statusCode = -1
+            )
+        )
     }
 
     @Test
@@ -121,7 +128,13 @@ internal class ChatSocketTest {
 
         chatSocket.connectUser(randomUser(), isAnonymous = true)
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
+        chatSocket.state shouldBeEqualTo ChatSocket.State.DisconnectedTemporarily(
+            ChatNetworkError.create(
+                description = "Network is not available",
+                streamCode = ChatErrorCode.SOCKET_FAILURE.code,
+                statusCode = -1
+            )
+        )
     }
 
     @Test
@@ -151,7 +164,7 @@ internal class ChatSocketTest {
         chatSocket.onSocketError(networkError)
 
         // Socket was recreated
-        verify(socketFactory, times(2)).createSocket(
+        verify(socketFactory, times(1)).createSocket(
             any(),
             org.mockito.kotlin.check {
                 it `should be equal to` SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, user)

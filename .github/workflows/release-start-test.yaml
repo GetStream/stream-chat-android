@@ -1,0 +1,45 @@
+name: ReleaseStartTest
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_bump_minor_version: 
+        type: boolean
+      skip_version_bump:
+        type: boolean
+      skip_changelog_update:
+        type: boolean
+      skip_github_release:
+        type: boolean
+
+jobs:
+  start_release:
+    name: Start Release
+    runs-on: ubuntu-latest
+    environment: 'publish'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          ref: release-test
+      - name: Minor version bump
+        if: "${{ github.event.inputs.force_bump_minor_version == 'true' && github.event.inputs.skip_version_bump != 'true' }}"
+        run: ./gradlew minor-bump
+      - name: Version bump
+        if: "${{ github.event.inputs.force_bump_minor_version != 'true' && github.event.inputs.skip_version_bump != 'true' }}"
+        run: ./gradlew version-bump
+      - name: Parse release section in changelog
+        if: "${{ github.event.inputs.skip_changelog_update != 'true' }}"
+        run: ./gradlew changelog-release-section
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v8
+        with:
+          add: '["CHANGELOG.md", "buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt"]'
+          message: "AUTOMATION: Version Bump and CHANGELOG Update"
+          default_author: github_actions
+          push: false
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: release-test

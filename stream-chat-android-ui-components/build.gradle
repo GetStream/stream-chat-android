@@ -1,5 +1,5 @@
-import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.Configuration
+import io.getstream.chat.android.Dependencies
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
@@ -38,6 +38,12 @@ android {
             }
         }
     }
+
+    sourceSets {
+        all {
+            it.java.srcDir "src/$it.name/kotlin"
+        }
+    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
@@ -54,6 +60,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(":stream-chat-android-ui-common")
+    implementation project(":stream-chat-android-ui-utils")
 
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxActivityKtx
@@ -72,6 +79,7 @@ dependencies {
     implementation Dependencies.stfalconImageViewer
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.keyboardVisibilityEvent
+    implementation Dependencies.dexter
 
     // Tests
     testImplementation project(":stream-chat-android-test")
@@ -82,4 +90,7 @@ dependencies {
     testRuntimeOnly Dependencies.junitVintageEngine
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.androidxArchCoreTest
+
+    detektPlugins(Dependencies.detektFormatting)
 }

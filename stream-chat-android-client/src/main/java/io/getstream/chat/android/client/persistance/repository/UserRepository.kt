@@ -78,4 +78,9 @@ public interface UserRepository {
      * Returns flow of latest updated users.
      */
     public fun observeLatestUsers(): StateFlow<Map<String, User>>
+
+    /**
+     * Clear users of this repository.
+     */
+    public suspend fun clear()
 }

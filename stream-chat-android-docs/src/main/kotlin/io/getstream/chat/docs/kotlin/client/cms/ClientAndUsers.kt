@@ -59,7 +59,7 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
          * @see <a href="https://getstream.io/chat/docs/init_and_users/?language=java#websocket-connections">Websocket Connections</a>
          */
         fun disconnect() {
-            ChatClient.instance().disconnect()
+            ChatClient.instance().disconnect(flushPersistence = false).enqueue { /* ... */ }
         }
     }
 
@@ -100,11 +100,6 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
                 override fun loadToken(): String = yourTokenService.getToken(user)
             }
             client.connectUser(user, tokenProvider).enqueue { /* ... */ }
-        }
-
-        fun loggingOutAndSwitchingUsers(user: User, token: String) {
-            client.disconnect()
-            client.connectUser(user, token).enqueue { /* ... */ }
         }
     }
 
@@ -194,8 +189,13 @@ class ClientAndUsers(val context: Context, val client: ChatClient, val yourToken
             val user = User()
             val token = "token"
 
-            client.disconnect()
-            client.connectUser(user, token).enqueue { /* ... */ }
+            client.disconnect(flushPersistence = false).enqueue { disconnectResult ->
+                if (disconnectResult.isSuccess) {
+                    client.connectUser(user, token).enqueue { /* ... */ }
+                } else {
+                    // Handle result.error()
+                }
+            }
         }
     }
 }

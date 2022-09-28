@@ -28,11 +28,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.utils.Utils
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
@@ -226,16 +224,13 @@ public open class ChannelListFragment : Fragment() {
      * Default filter for channels. Override the method to provide custom filter.
      */
     protected open fun getFilter(): FilterObject? {
-        return Filters.and(
-            Filters.eq("type", "messaging"),
-            Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-        )
+        return null
     }
 
     /**
      * Default query sort for channels. Override the method to provide custom sort.
      */
-    protected open fun getSort(): QuerySort<Channel> {
+    protected open fun getSort(): QuerySorter<Channel> {
         return ChannelListViewModel.DEFAULT_SORT
     }
 

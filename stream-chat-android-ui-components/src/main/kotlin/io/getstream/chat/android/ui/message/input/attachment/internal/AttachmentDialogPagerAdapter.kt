@@ -18,29 +18,43 @@ package io.getstream.chat.android.ui.message.input.attachment.internal
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
-import io.getstream.chat.android.ui.message.input.attachment.camera.internal.CameraAttachmentFragment
-import io.getstream.chat.android.ui.message.input.attachment.file.internal.FileAttachmentFragment
-import io.getstream.chat.android.ui.message.input.attachment.media.internal.MediaAttachmentFragment
+import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabListener
 
-internal class AttachmentDialogPagerAdapter(fragment: Fragment, private val style: MessageInputViewStyle) :
-    FragmentStateAdapter(fragment) {
+/**
+ * An adapter that handles the creation of tabs for the attachment picker.
+ *
+ * @param style Style for [MessageInputView].
+ * @param attachmentsPickerTabFactories The list of factories for the tabs in the attachment picker.
+ * @param attachmentsPickerTabListener The listener invoked when attachments are selected in the tab.
+ */
+internal class AttachmentDialogPagerAdapter(
+    fragment: Fragment,
+    private val style: MessageInputViewStyle,
+    private val attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>,
+    private val attachmentsPickerTabListener: AttachmentsPickerTabListener,
+) : FragmentStateAdapter(fragment) {
 
+    /**
+     * Creates a new Fragment with the tab content.
+     *
+     * @param position The position of the page.
+     * @return A new Fragment with the tab content.
+     */
     override fun createFragment(position: Int): Fragment {
-        return when (position) {
-            PAGE_MEDIA_ATTACHMENT -> MediaAttachmentFragment.newInstance(style)
-            PAGE_FILE_ATTACHMENT -> FileAttachmentFragment.newInstance(style)
-            PAGE_CAMERA_ATTACHMENT -> CameraAttachmentFragment.newInstance(style.attachmentSelectionDialogStyle)
-            else -> throw IllegalArgumentException("Can not create page for position $position")
+        return if (position < attachmentsPickerTabFactories.count()) {
+            attachmentsPickerTabFactories[position].createTabFragment(style, attachmentsPickerTabListener)
+        } else {
+            throw IllegalArgumentException("Can not create page for position $position")
         }
     }
 
-    override fun getItemCount(): Int = PAGE_COUNT
-
-    companion object {
-        const val PAGE_MEDIA_ATTACHMENT: Int = 0
-        const val PAGE_FILE_ATTACHMENT: Int = 1
-        const val PAGE_CAMERA_ATTACHMENT: Int = 2
-        const val PAGE_COUNT: Int = 3
-    }
+    /**
+     * Returns the total number of tabs in the attachment picker.
+     *
+     * @return The total number of tabs in the attachment picker.
+     */
+    override fun getItemCount(): Int = attachmentsPickerTabFactories.count()
 }

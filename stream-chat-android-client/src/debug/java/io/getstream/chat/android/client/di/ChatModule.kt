@@ -17,14 +17,15 @@
 package io.getstream.chat.android.client.di
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import okhttp3.OkHttpClient
-import java.util.concurrent.Executor
 
 /**
  * Debug implementation of [BaseChatModule].
@@ -34,22 +35,24 @@ import java.util.concurrent.Executor
  */
 internal class ChatModule(
     appContext: Context,
+    scope: UserScope,
     config: ChatClientConfig,
     notificationsHandler: NotificationHandler,
     notificationConfig: NotificationConfig,
     uploader: FileUploader?,
     tokenManager: TokenManager,
-    callbackExecutor: Executor?,
     customOkHttpClient: OkHttpClient?,
+    lifecycle: Lifecycle,
 ) : BaseChatModule(
     appContext,
+    scope,
     config,
     notificationsHandler,
     notificationConfig,
     uploader,
     tokenManager,
-    callbackExecutor,
     customOkHttpClient,
+    lifecycle,
 ) {
 
     override fun clientBuilder(

@@ -16,12 +16,17 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
 @Suppress("TooManyFunctions")
 public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
 
     override var state: Boolean = false
     override var watch: Boolean = false
     override var presence: Boolean = false
+
+    @InternalStreamChatApi
+    public var shouldRefresh: Boolean = false
 
     public val messages: MutableMap<String, Any> = mutableMapOf()
     public val watchers: MutableMap<String, Any> = mutableMapOf()
@@ -85,6 +90,14 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
             keys.contains(Pagination.LESS_THAN_OR_EQUAL.toString())
     }
 
+    public fun isFilteringAroundIdMessages(): Boolean {
+        if (messages.isEmpty()) {
+            return false
+        }
+        val keys = messages.keys
+        return keys.contains(Pagination.AROUND_ID.toString())
+    }
+
     /**
      * Returns offset of watchers for a requested channel.
      */
@@ -134,6 +147,32 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         } else {
             null
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is QueryChannelRequest) return false
+        if (state != other.state) return false
+        if (watch != other.watch) return false
+        if (presence != other.presence) return false
+        if (shouldRefresh != other.shouldRefresh) return false
+        if (messages != other.messages) return false
+        if (watchers != other.watchers) return false
+        if (members != other.members) return false
+        if (data != other.data) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = state.hashCode()
+        result = 31 * result + watch.hashCode()
+        result = 31 * result + presence.hashCode()
+        result = 31 * result + shouldRefresh.hashCode()
+        result = 31 * result + messages.hashCode()
+        result = 31 * result + watchers.hashCode()
+        result = 31 * result + members.hashCode()
+        result = 31 * result + data.hashCode()
+        return result
     }
 
     private companion object {

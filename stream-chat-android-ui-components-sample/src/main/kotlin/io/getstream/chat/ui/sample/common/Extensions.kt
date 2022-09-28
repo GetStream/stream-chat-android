@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.ui.sample.common
 
 import android.app.Activity
 import android.content.Context
+import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -37,7 +36,6 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.ui.sample.R
 
 fun Activity.showToast(text: String) {
@@ -80,14 +78,14 @@ fun NavController.navigateSafely(directions: NavDirections) {
     currentDestination?.getAction(directions.actionId)?.let { navigate(directions) }
 }
 
-fun NavController.navigateSafely(@IdRes resId: Int) {
+fun NavController.navigateSafely(@IdRes resId: Int, args: Bundle? = null) {
     if (currentDestination?.id != resId) {
-        navigate(resId, null)
+        navigate(resId, args)
     }
 }
 
-fun Fragment.navigateSafely(@IdRes resId: Int) {
-    findNavController().navigateSafely(resId)
+fun Fragment.navigateSafely(@IdRes resId: Int, args: Bundle? = null) {
+    findNavController().navigateSafely(resId, args)
 }
 
 fun Fragment.navigateSafely(directions: NavDirections) {
@@ -122,9 +120,6 @@ fun BottomNavigationView.setBadgeNumber(@IdRes menuItemId: Int, badgeNumber: Int
         number = badgeNumber
     }
 }
-
-val Member.isOwner: Boolean
-    get() = role == "owner"
 
 const val CHANNEL_ARG_DRAFT = "draft"
 

@@ -23,6 +23,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.util.PatternsCompat
+import com.getstream.sdk.chat.utils.extensions.isMine
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -36,7 +38,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  */
 @Composable
 internal fun buildAnnotatedMessageText(message: Message): AnnotatedString {
-    return buildAnnotatedMessageText(message.text)
+    return buildAnnotatedMessageText(message.text, message.isMine(ChatClient.instance()))
 }
 
 /**
@@ -44,18 +46,19 @@ internal fun buildAnnotatedMessageText(message: Message): AnnotatedString {
  * if there are any links available.
  *
  * @param text The message text to style.
+ * @param isOwnMessage Whether the message is the current user's message or not.
  *
  * @return The annotated String, with clickable links, if applicable.
  */
 @Composable
-internal fun buildAnnotatedMessageText(text: String): AnnotatedString {
+internal fun buildAnnotatedMessageText(text: String, isOwnMessage: Boolean): AnnotatedString {
     return buildAnnotatedString {
         // First we add the whole text to the [AnnotatedString] and style it as a regular text.
         append(text)
         addStyle(
             SpanStyle(
                 fontStyle = ChatTheme.typography.body.fontStyle,
-                color = ChatTheme.colors.textHighEmphasis
+                color = if (isOwnMessage) ChatTheme.colors.ownMessageText else ChatTheme.colors.otherMessageText
             ),
             start = 0,
             end = text.length

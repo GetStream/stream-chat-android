@@ -22,12 +22,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -38,7 +40,6 @@ import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
@@ -49,6 +50,7 @@ import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -70,13 +72,13 @@ import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.logging.StreamLog
+import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -106,7 +108,7 @@ import java.util.concurrent.TimeUnit
  * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  */
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass", "TooManyFunctions")
 public class MessageListViewModel(
     public val chatClient: ChatClient,
     private val channelId: String,
@@ -204,19 +206,19 @@ public class MessageListViewModel(
     /**
      * Gives us information about the online state of the device.
      */
-    public val connectionState: StateFlow<ConnectionState> by chatClient.globalState::connectionState
+    public val connectionState: StateFlow<ConnectionState> by chatClient.clientState::connectionState
 
     /**
      * Gives us information about the online state of the device.
      */
     public val isOnline: Flow<Boolean>
-        get() = chatClient.globalState.connectionState.map { it == ConnectionState.CONNECTED }
+        get() = chatClient.clientState.connectionState.map { it == ConnectionState.CONNECTED }
 
     /**
      * Gives us information about the logged in user state.
      */
     public val user: StateFlow<User?>
-        get() = chatClient.globalState.user
+        get() = chatClient.clientState.user
 
     /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
@@ -229,6 +231,11 @@ public class MessageListViewModel(
      * [NewMessageState] for the screen.
      */
     private var lastLoadedMessage: Message? = null
+
+    /**
+     * Represents the last loaded message in the thread, for comparison when determining the NewMessage
+     */
+    private var lastLoadedThreadMessage: Message? = null
 
     /**
      * Represents the latest message we've seen in the channel.
@@ -246,9 +253,9 @@ public class MessageListViewModel(
     private var scrollToMessage: Message? = null
 
     /**
-     * Instance of [ChatLogger] to log exceptional and warning cases in behavior.
+     * Instance of [TaggedLogger] to log exceptional and warning cases in behavior.
      */
-    private val logger = ChatLogger.get("MessageListViewModel")
+    private val logger = StreamLog.getLogger("Chat:MessageListViewModel")
 
     /**
      * Sets up the core data loading operations - such as observing the current channel and loading
@@ -256,15 +263,16 @@ public class MessageListViewModel(
      */
     init {
         observeTypingUsers()
+        observeMessages()
         observeChannel()
     }
 
     /**
-     * Starts observing the current channel. We observe the 'messagesState', 'user' and 'endOfOlderMessages'
-     * states, as well as build the `newMessageState` using [getNewMessageState] and combine it
-     * into a [MessagesState] that holds all the information required for the screen.
+     * Starts observing the messages in the current channel. We observe the 'messagesState', 'user' and
+     * 'endOfOlderMessages' states, as well as build the `newMessageState` using [getNewMessageState]
+     * and combine it into a [MessagesState] that holds all the information required for the screen.
      */
-    private fun observeChannel() {
+    private fun observeMessages() {
         viewModelScope.launch {
             channelState.filterNotNull().collectLatest { channelState ->
                 combine(channelState.messagesState, user, channelState.reads) { state, user, reads ->
@@ -305,7 +313,7 @@ public class MessageListViewModel(
                             newLastMessage?.id != lastLoadedMessage?.id
 
                         messagesState = if (hasNewMessage) {
-                            val newMessageState = getNewMessageState(newLastMessage)
+                            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
 
                             newState.copy(
                                 newMessageState = newMessageState,
@@ -322,13 +330,6 @@ public class MessageListViewModel(
                         }
 
                         lastLoadedMessage = newLastMessage
-                        channelState.toChannel().let { channel ->
-                            chatClient.notifications.dismissChannelNotifications(
-                                channelType = channel.type,
-                                channelId = channel.id
-                            )
-                            setCurrentChannel(channel)
-                        }
                     }
             }
         }
@@ -341,6 +342,30 @@ public class MessageListViewModel(
         viewModelScope.launch {
             channelState.filterNotNull().flatMapLatest { it.typing }.collect {
                 typingUsers = it.users
+            }
+        }
+    }
+
+    /**
+     * Starts observing the current [Channel] created from [ChannelState]. It emits new data when either
+     * channel data, member count or online member count updates.
+     */
+    private fun observeChannel() {
+        viewModelScope.launch {
+            channelState.filterNotNull().flatMapLatest { state ->
+                combine(
+                    state.channelData,
+                    state.membersCount,
+                    state.watcherCount,
+                ) { _, _, _ ->
+                    state.toChannel()
+                }
+            }.collect { channel ->
+                chatClient.notifications.dismissChannelNotifications(
+                    channelType = channel.type,
+                    channelId = channel.id
+                )
+                setCurrentChannel(channel)
             }
         }
     }
@@ -382,8 +407,7 @@ public class MessageListViewModel(
      *
      * @param lastMessage Last message in the list, used for comparison.
      */
-    private fun getNewMessageState(lastMessage: Message?): NewMessageState? {
-        val lastLoadedMessage = lastLoadedMessage
+    private fun getNewMessageState(lastMessage: Message?, lastLoadedMessage: Message?): NewMessageState? {
         val currentUser = user.value
 
         return if (lastMessage != null && lastLoadedMessage != null && lastMessage.id != lastLoadedMessage.id) {
@@ -481,7 +505,14 @@ public class MessageListViewModel(
         }
 
         val (channelType, id) = channelId.cidToTypeAndId()
-        chatClient.markRead(channelType, id).enqueue()
+
+        val latestMessage: MessageItemState? = currentMessagesState.messageItems.firstOrNull { messageItem ->
+            messageItem is MessageItemState
+        } as? MessageItemState
+
+        if (currentMessage.id == latestMessage?.message?.id) {
+            chatClient.markRead(channelType, id).enqueue()
+        }
     }
 
     /**
@@ -496,7 +527,7 @@ public class MessageListViewModel(
      * Triggered when the user loads more data by reaching the end of the current messages.
      */
     public fun loadMore() {
-        if (chatClient.globalState.isOffline()) return
+        if (chatClient.clientState.isOffline) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
@@ -522,7 +553,7 @@ public class MessageListViewModel(
             ).enqueue()
         } else {
             threadMessagesState = threadMessagesState.copy(isLoadingMore = false)
-            logger.logW("Thread state must be not null for offline plugin thread load more!")
+            logger.w { "Thread state must be not null for offline plugin thread load more!" }
         }
     }
 
@@ -533,9 +564,9 @@ public class MessageListViewModel(
      */
     private fun loadMessage(message: Message) {
         val cid = channelState.value?.cid
-        if (cid == null || chatClient.globalState.isOffline()) return
+        if (cid == null || chatClient.clientState.isOffline) return
 
-        chatClient.loadMessageById(cid, message.id, DefaultMessageLimit, DefaultMessageLimit).enqueue()
+        chatClient.loadMessageById(cid, message.id).enqueue()
     }
 
     /**
@@ -546,10 +577,18 @@ public class MessageListViewModel(
     public fun selectMessage(message: Message?) {
         if (message != null) {
             changeSelectMessageState(
-                SelectedMessageOptionsState(
-                    message = message,
-                    ownCapabilities = ownCapabilities.value
-                )
+                if (message.isModerationFailed(chatClient)) {
+                    SelectedMessageFailedModerationState(
+                        message = message,
+                        ownCapabilities = ownCapabilities.value
+                    )
+                } else {
+                    SelectedMessageOptionsState(
+                        message = message,
+                        ownCapabilities = ownCapabilities.value
+                    )
+                }
+
             )
         }
     }
@@ -647,7 +686,6 @@ public class MessageListViewModel(
                 messageActions = messageActions + messageAction
             }
             is Copy -> copyMessage(messageAction.message)
-            is MuteUser -> updateUserMute(messageAction.message.user)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)
             else -> {
@@ -707,7 +745,14 @@ public class MessageListViewModel(
                     currentUser = user,
                     parentMessageId = threadId
                 )
-            }.collect { newState -> threadMessagesState = newState }
+            }.collect { newState ->
+                val newLastMessage =
+                    (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
+                threadMessagesState = newState.copy(
+                    newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
+                )
+                lastLoadedThreadMessage = newLastMessage
+            }
         }
     }
 
@@ -869,18 +914,112 @@ public class MessageListViewModel(
     }
 
     /**
-     * Mutes or unmutes the user that sent a particular message.
+     * Mutes the given user inside this channel.
      *
-     * @param user The user to mute or unmute.
+     * @param userId The ID of the user to be muted.
+     * @param timeout The period of time for which the user will
+     * be muted, expressed in minutes. A null value signifies that
+     * the user will be muted for an indefinite time.
      */
-    private fun updateUserMute(user: User) {
-        val isUserMuted = chatClient.globalState.muted.value.any { it.target.id == user.id }
+    public fun muteUser(
+        userId: String,
+        timeout: Int? = null,
+    ) {
+        chatClient.muteUser(userId, timeout)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to mute the user"
 
-        if (isUserMuted) {
-            chatClient.unmuteUser(user.id)
-        } else {
-            chatClient.muteUser(user.id)
-        }.enqueue()
+                StreamLog.e("MessageListViewModel.muteUser") { errorMessage }
+            })
+    }
+
+    /**
+     * Unmutes the given user inside this channel.
+     *
+     * @param userId The ID of the user to be unmuted.
+     */
+    public fun unmuteUser(userId: String) {
+        chatClient.unmuteUser(userId)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unmute the user"
+
+                StreamLog.e("MessageListViewModel.unMuteUser") { errorMessage }
+            })
+    }
+
+    /**
+     * Bans the given user inside this channel.
+     *
+     * @param userId The ID of the user to be banned.
+     * @param reason The reason for banning the user.
+     * @param timeout The period of time for which the user will
+     * be banned, expressed in minutes. A null value signifies that
+     * the user will be banned for an indefinite time.
+     */
+    public fun banUser(
+        userId: String,
+        reason: String? = null,
+        timeout: Int? = null,
+    ) {
+        chatClient.channel(channelId).banUser(userId, reason, timeout)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to ban the user"
+
+                StreamLog.e("MessageListViewModel.banUser") { errorMessage }
+            })
+    }
+
+    /**
+     * Unbans the given user inside this channel.
+     *
+     * @param userId The ID of the user to be unbanned.
+     */
+    public fun unbanUser(userId: String) {
+        chatClient.channel(channelId).unbanUser(userId)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unban the user"
+
+                StreamLog.e("MessageListViewModel.unban") { errorMessage }
+            })
+    }
+
+    /**
+     * Shadow bans the given user inside this channel.
+     *
+     * @param userId The ID of the user to be shadow banned.
+     * @param reason The reason for shadow banning the user.
+     * @param timeout The period of time for which the user will
+     * be shadow banned, expressed in minutes. A null value signifies that
+     * the user will be shadow banned for an indefinite time.
+     */
+    public fun shadowBanUser(
+        userId: String,
+        reason: String? = null,
+        timeout: Int? = null,
+    ) {
+        chatClient.channel(channelId).shadowBanUser(userId, reason, timeout)
+            .enqueue(onError = { chatError ->
+                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to shadow ban the user"
+
+                StreamLog.e("MessageListViewModel.shadowBanUser") { errorMessage }
+            })
+    }
+
+    /**
+     * Removes the shaddow ban for the given user inside
+     * this channel.
+     *
+     * @param userId The ID of the user for which the shadow
+     * ban is removed.
+     */
+    public fun removeShadowBanFromUser(userId: String) {
+        chatClient.channel(channelId).removeShadowBan(userId)
+            .enqueue(onError = { chatError ->
+                val errorMessage =
+                    chatError.message ?: chatError.cause?.message ?: "Unable to remove the user shadow ban"
+
+                StreamLog.e("MessageListViewModel.removeShadowBanFromUser") { errorMessage }
+            })
     }
 
     /**

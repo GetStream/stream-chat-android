@@ -225,6 +225,10 @@ internal class MessageInputFieldView : FrameLayout {
         binding.commandBadge.setTextStyle(testStyle)
     }
 
+    fun setInputType(inputType: Int) {
+        binding.messageEditText.inputType = inputType
+    }
+
     /**
      * Changes mode to command.
      */

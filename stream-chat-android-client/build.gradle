@@ -29,7 +29,7 @@ android {
             consumerProguardFiles 'consumer-proguard-rules.pro'
         }
         debug {
-            testCoverageEnabled true
+            testCoverageEnabled false
             consumerProguardFiles 'consumer-proguard-rules.pro'
         }
     }
@@ -58,13 +58,15 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(':stream-chat-android-core')
-    debugApi project(":libraries:logging:stream-logger-android")
+    api project(":libraries:logging:stream-logger-android")
+    debugApi project(":libraries:logging:stream-logger-android-init")
 
     implementation Dependencies.kotlinReflect
 
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxLifecycleProcess
+    implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.workRuntimeKtx
     implementation Dependencies.constraintLayout
     implementation Dependencies.coroutinesCore
@@ -81,7 +83,9 @@ dependencies {
 
     // Tests
     testImplementation project(':stream-chat-android-test')
+    testImplementation project(":stream-chat-android-client-test")
     testImplementation Dependencies.androidxTestJunit
+    testImplementation Dependencies.androidxLifecycleTesting
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
@@ -99,4 +103,17 @@ dependencies {
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
     androidTestImplementation Dependencies.androidxTestJunit
+
+    detektPlugins(Dependencies.detektFormatting)
 }
+
+/* Uncomment if the Dokka page per module is required
+tasks.withType(dokkaHtmlPartial.getClass()) {
+    dokkaSourceSets {
+        named("main") {
+            moduleName.set("LLC")
+            includes.from("DokkaModule.md")
+        }
+    }
+}
+*/

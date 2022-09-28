@@ -22,6 +22,8 @@ import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -45,7 +47,6 @@ internal class StreamFileUploaderTest {
     private val channelType = "channelType"
     private val channelId = "channelId"
     private val userId = "userId"
-    private val connectionId = "connectionId"
     private val url = "url"
 
     private val progressCallback = object : ProgressCallback {
@@ -68,17 +69,16 @@ internal class StreamFileUploaderTest {
 
     @Test
     fun `Should send file to api when sending file without progress callback`() {
-        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
+        whenever(retrofitCdnApi.sendFile(any(), any(), any(), anyOrNull())).thenReturn(
+            RetroSuccess(UploadFileResponse(file = "file", thumb_url = "thumb_url")).toRetrofitCall()
         )
 
-        streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
+        streamFileUploader.sendFile(channelType, channelId, userId, File(""))
 
         verify(retrofitCdnApi).sendFile(
             eq(channelType),
             eq(channelId),
             file = any(),
-            eq(connectionId),
             eq(null),
         )
     }
@@ -86,37 +86,38 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should return result containing file when successfully sent file without progress callback`() {
         val file = "file"
-        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
+        val thumbUrl = "thumb_url"
+
+        whenever(retrofitCdnApi.sendFile(any(), any(), any(), anyOrNull())).thenReturn(
+            RetroSuccess(UploadFileResponse(file = file, thumb_url = thumbUrl)).toRetrofitCall()
         )
 
-        val result = streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
+        val result = streamFileUploader.sendFile(channelType, channelId, userId, File(""))
 
-        result.data() shouldBeEqualTo file
+        result.data() shouldBeEqualTo UploadedFile(file = file, thumbUrl = thumbUrl)
     }
 
     @Test
     fun `Should return result containing error when sending file without progress callback failed`() {
-        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), anyOrNull())).thenReturn(
+        whenever(retrofitCdnApi.sendFile(any(), any(), any(), anyOrNull())).thenReturn(
             RetroError<UploadFileResponse>(500).toRetrofitCall()
         )
 
-        val result = streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
+        val result = streamFileUploader.sendFile(channelType, channelId, userId, File(""))
 
         result.isError.shouldBeTrue()
     }
 
     @Test
     fun `Should send file to api when sending file with progress callback`() {
-        whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
+        whenever(retrofitCdnApi.sendFile(any(), any(), any(), anyOrNull())).thenReturn(
+            RetroSuccess(UploadFileResponse(file = "file", thumb_url = "thumb_url")).toRetrofitCall()
         )
 
         streamFileUploader.sendFile(
             channelType,
             channelId,
             userId,
-            connectionId,
             File(""),
             progressCallback
         )
@@ -125,24 +126,22 @@ internal class StreamFileUploaderTest {
             eq(channelType),
             eq(channelId),
             file = any(),
-            eq(connectionId),
             eq(progressCallback),
         )
     }
 
     @Test
     fun `Should send image to api when sending image without progress callback`() {
-        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
+        whenever(retrofitCdnApi.sendImage(any(), any(), any(), anyOrNull())).thenReturn(
+            RetroSuccess(UploadFileResponse(file = "file", thumb_url = "thumb_url")).toRetrofitCall()
         )
 
-        streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
+        streamFileUploader.sendImage(channelType, channelId, userId, File(""))
 
         verify(retrofitCdnApi).sendImage(
             eq(channelType),
             eq(channelId),
             file = any(),
-            eq(connectionId),
             eq(null),
         )
     }
@@ -150,37 +149,38 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should return result containing file when successfully sent image without progress callback`() {
         val file = "file"
-        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
+        val thumbUrl: String? = null
+
+        whenever(retrofitCdnApi.sendImage(any(), any(), any(), anyOrNull())).thenReturn(
+            RetroSuccess(UploadFileResponse(file = file, thumb_url = thumbUrl)).toRetrofitCall()
         )
 
-        val result = streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
+        val result = streamFileUploader.sendImage(channelType, channelId, userId, File(""))
 
-        result.data() shouldBeEqualTo file
+        result.data() shouldBeEqualTo UploadedImage(file = file)
     }
 
     @Test
     fun `Should return containing error when sending image without progress callback failed`() {
-        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), anyOrNull())).thenReturn(
+        whenever(retrofitCdnApi.sendImage(any(), any(), any(), anyOrNull())).thenReturn(
             RetroError<UploadFileResponse>(500).toRetrofitCall()
         )
 
-        val result = streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
+        val result = streamFileUploader.sendImage(channelType, channelId, userId, File(""))
 
         result.isError.shouldBeTrue()
     }
 
     @Test
     fun `Should send image to api when sending image with progress callback`() {
-        whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), anyOrNull())).thenReturn(
-            RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
+        whenever(retrofitCdnApi.sendImage(any(), any(), any(), anyOrNull())).thenReturn(
+            RetroSuccess(UploadFileResponse(file = "file", thumb_url = "thumb_url")).toRetrofitCall()
         )
 
         streamFileUploader.sendImage(
             channelType,
             channelId,
             userId,
-            connectionId,
             File(""),
             progressCallback
         )
@@ -189,39 +189,36 @@ internal class StreamFileUploaderTest {
             eq(channelType),
             eq(channelId),
             file = any(),
-            eq(connectionId),
             eq(progressCallback),
         )
     }
 
     @Test
     fun `Should call api delete file when deleting file`() {
-        whenever(retrofitCdnApi.deleteFile(any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.deleteFile(any(), any(), any())).thenReturn(
             RetroSuccess(CompletableResponse()).toRetrofitCall()
         )
 
-        streamFileUploader.deleteFile(channelType, channelId, userId, connectionId, url)
+        streamFileUploader.deleteFile(channelType, channelId, userId, url)
 
         verify(retrofitCdnApi).deleteFile(
             eq(channelType),
             eq(channelId),
-            eq(connectionId),
             eq(url),
         )
     }
 
     @Test
     fun `Should call api delete image when deleting image`() {
-        whenever(retrofitCdnApi.deleteImage(any(), any(), any(), any())).thenReturn(
+        whenever(retrofitCdnApi.deleteImage(any(), any(), any())).thenReturn(
             RetroSuccess(CompletableResponse()).toRetrofitCall()
         )
 
-        streamFileUploader.deleteImage(channelType, channelId, userId, connectionId, url)
+        streamFileUploader.deleteImage(channelType, channelId, userId, url)
 
         verify(retrofitCdnApi).deleteImage(
             eq(channelType),
             eq(channelId),
-            eq(connectionId),
             eq(url),
         )
     }

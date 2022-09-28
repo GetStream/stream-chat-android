@@ -22,10 +22,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
@@ -161,7 +160,7 @@ class AddChannelViewModel : ViewModel() {
         private const val USERS_LIMIT = 30
         private const val CHANNEL_MESSAGING_TYPE = "messaging"
 
-        private val USERS_QUERY_SORT = QuerySort.asc(User::name)
+        private val USERS_QUERY_SORT = QuerySortByField.ascByName<User>("name")
 
         private const val FIELD_NAME = "name"
         private const val FIELD_ID = "id"

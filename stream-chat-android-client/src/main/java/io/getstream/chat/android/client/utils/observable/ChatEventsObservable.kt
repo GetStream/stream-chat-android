@@ -24,24 +24,27 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import java.util.Date
+import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 internal class ChatEventsObservable(
     private val socket: ChatSocket,
     private val waitConnection: FlowCollector<Result<ConnectionData>>,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val chatSocketExperimental: ChatSocketExperimental,
 ) {
 
-    private val logger = ChatLogger.get("EventsObservable")
+    private val logger = StreamLog.getLogger("Chat:EventsObservable")
 
     private var subscriptions = setOf<EventSubscription>()
     private var eventsMapper = EventsMapper(this)
@@ -73,7 +76,11 @@ internal class ChatEventsObservable(
 
     private fun checkIfEmpty() {
         if (subscriptions.isEmpty()) {
-            socket.removeListener(eventsMapper)
+            if (ToggleService.isSocketExperimental()) {
+                chatSocketExperimental.removeListener(eventsMapper)
+            } else {
+                socket.removeListener(eventsMapper)
+            }
         }
     }
 
@@ -82,6 +89,13 @@ internal class ChatEventsObservable(
         listener: ChatEventListener<ChatEvent>,
     ): Disposable {
         return addSubscription(SubscriptionImpl(filter, listener))
+    }
+
+    fun subscribeSuspend(
+        filter: (ChatEvent) -> Boolean = { true },
+        listener: ChatEventSuspendListener<ChatEvent>,
+    ): Disposable {
+        return addSubscription(SuspendSubscription(scope, filter, listener))
     }
 
     fun subscribeSingle(
@@ -98,12 +112,20 @@ internal class ChatEventsObservable(
     private fun addSubscription(subscription: EventSubscription): Disposable {
         if (subscriptions.isEmpty()) {
             // add listener to socket events only once
-            socket.addListener(eventsMapper)
+            if (ToggleService.isSocketExperimental()) {
+                chatSocketExperimental.addListener(eventsMapper)
+            } else {
+                socket.addListener(eventsMapper)
+            }
         }
 
         subscriptions = subscriptions + subscription
 
         return subscription
+    }
+
+    internal fun interface ChatEventSuspendListener<EventT : ChatEvent> {
+        suspend fun onEvent(event: EventT)
     }
 
     /**
@@ -112,7 +134,7 @@ internal class ChatEventsObservable(
     private class EventsMapper(private val observable: ChatEventsObservable) : SocketListener() {
 
         override fun onConnecting() {
-            observable.onNext(ConnectingEvent(EventType.CONNECTION_CONNECTING, Date()))
+            observable.onNext(ConnectingEvent(EventType.CONNECTION_CONNECTING, Date(), null))
         }
 
         override fun onConnected(event: ConnectedEvent) {
@@ -120,7 +142,14 @@ internal class ChatEventsObservable(
         }
 
         override fun onDisconnected(cause: DisconnectCause) {
-            observable.onNext(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), cause))
+            observable.onNext(
+                DisconnectedEvent(
+                    EventType.CONNECTION_DISCONNECTED,
+                    createdAt = Date(),
+                    disconnectCause = cause,
+                    rawCreatedAt = null
+                )
+            )
         }
 
         override fun onEvent(event: ChatEvent) {
@@ -128,7 +157,14 @@ internal class ChatEventsObservable(
         }
 
         override fun onError(error: ChatError) {
-            observable.onNext(ErrorEvent(EventType.CONNECTION_ERROR, Date(), error))
+            observable.onNext(
+                ErrorEvent(
+                    EventType.CONNECTION_ERROR,
+                    createdAt = Date(),
+                    error = error,
+                    rawCreatedAt = null
+                )
+            )
         }
     }
 }

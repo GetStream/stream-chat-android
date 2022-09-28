@@ -11,6 +11,7 @@
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.a0DwMMb0V1Lona_1dIB7a4GtNl4oQ_WCp-W-UP3_CUQ"</ID>
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG1pdHJpaSJ9._j7pM2kqj46ztls0tG1DiUMl45l54VOLvl8jp5VCmZU"</ID>
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.WKqTjU6fHHjtFej-sUqS2ml3Rvdqn4Ptrf7jfKqzFgU"</ID>
+    <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXQifQ.MVoS7rCos7o3D7fkUcCFHVThKrN0sAaENupmXHYX3vw"</ID>
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.d-7AREGaSirn7TjxwLyAUvOU-nz2_LL5oMTycZvcnQc"</ID>
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ.2_5Hae3LKjVSfA0gQxXlZn54Bq6xDlhjPx2J7azUNB4"</ID>
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoib2xlZyJ9.ZucjlxjiNewCORdCLwpKwZw2nNtRC_Bv17TjHlitdLU"</ID>
@@ -22,8 +23,8 @@
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.7Y4QCvc42Km8ETLdCQT5ynjiKVbZZbuN0XTiGxJNU6k"</ID>
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.lNaWC2Opyq6gmV50a2BGxK-5gm5mwCpefnUA30_k9YA"</ID>
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGhpZXJyeSJ9.hZi4pBPt2v2HSoS-7Yn7Ll2a1twhs763MlRGFAday2c"</ID>
-    <ID>ReturnCount:UserCredentialsRepository.kt$UserCredentialsRepository$ fun loadUserCredentials(): UserCredentials?</ID>
-    <ID>UnusedPrivateMember:ChannelsActivity.kt$ChannelsActivity$ @Composable private fun MyCustomUi()</ID>
-    <ID>UnusedPrivateMember:ChannelsActivity.kt$ChannelsActivity$ @Composable private fun MyCustomUiSimplified()</ID>
+    <ID>ReturnCount:UserCredentialsRepository.kt$UserCredentialsRepository$fun loadUserCredentials(): UserCredentials?</ID>
+    <ID>UnusedPrivateMember:ChannelsActivity.kt$ChannelsActivity$@Composable private fun MyCustomUi()</ID>
+    <ID>UnusedPrivateMember:ChannelsActivity.kt$ChannelsActivity$@Composable private fun MyCustomUiSimplified()</ID>
   </CurrentIssues>
 </SmellBaseline>

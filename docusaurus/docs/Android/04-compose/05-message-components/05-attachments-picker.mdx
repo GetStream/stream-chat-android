@@ -91,11 +91,13 @@ You can customize the `AttachmentsPicker` using the following parameters:
 fun AttachmentsPicker(
     ..., // ViewModel and action handlers
     modifier: Modifier = Modifier,
+    tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 )
 ```
 
 * `modifier`: Allows you to customize the root content component of the picker and change its size, padding and more.
+* `tabFactories`: Used to customize the tabs shown in the picker.
 * `shape`: Allows you to override the `AttachmentsPicker` shape.
 
 Here's an example of a fullscreen `AttachmentsPicker` dialog:
@@ -119,3 +121,66 @@ This snippet will provide the following UI:
 ![The AttachmentsPicker Component](../../assets/compose_custom_attachments_picker_component.png)
 
 As you can see, the `AttachmentsPicker` component now occupies the whole screen.
+
+Now let's see how to use the `tabFactories` parameter to replace the media capture tab in the picker with a custom one.
+
+We'll need to create a custom `AttachmentsPickerTabFactory` for our custom tab and implement the methods to render the icon and the content of the tab:
+
+```kotlin
+class AttachmentsPickerCustomTabFactory: AttachmentsPickerTabFactory {
+
+    override val attachmentsPickerMode: AttachmentsPickerMode
+        get() = CustomPickerMode()
+
+    @Composable
+    override fun pickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_custom_tab),
+            contentDescription = "Custom tab",
+            tint = when {
+                isSelected -> ChatTheme.colors.primaryAccent
+                isEnabled -> ChatTheme.colors.textLowEmphasis
+                else -> ChatTheme.colors.disabled
+            },
+        )
+    }
+
+    @Composable
+    override fun pickerTabContent(
+        attachments: List<AttachmentPickerItemState>,
+        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                style = ChatTheme.typography.title3Bold,
+                text = "Custom tab",
+                color = ChatTheme.colors.textHighEmphasis,
+            )
+        }
+    }
+}
+```
+
+Next, we'll remove the factory for the media capture tab, add a factory for our custom tab and pass the resulting factory list to the picker:
+
+```kotlin
+val defaultTabFactories = AttachmentsPickerTabFactories.defaultFactories(mediaCaptureTabEnabled = false)
+val customTabFactories = listOf(AttachmentsPickerCustomTabFactory())
+val tabFactories = defaultTabFactories + customTabFactories
+
+AttachmentsPicker(
+    ...
+    tabFactories = tabFactories
+)
+```
+
+The code above will produce the following UI:
+
+![The AttachmentsPicker Tabs](../../assets/compose_custom_attachments_picker_tabs.png)
+
+As you can see, the media capture option is removed and the custom tab is visible on the screen, but it only shows a small text element. Our example is very simple, but you can create custom tabs that handle audio recordings, location sharing, calendar invites and much more.

@@ -16,28 +16,50 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.layout.ContentScale
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamDimens
+import io.getstream.chat.android.ui.utils.GiphyInfoType
+import io.getstream.chat.android.ui.utils.GiphySizingMode
 
 /**
  * An [AttachmentFactory] that validates and shows Giphy attachments using [GiphyAttachmentContent].
  *
  * Has no "preview content", given that this attachment only exists after being sent.
+ *
+ * @param giphyInfoType Used to modify the quality and dimensions of the rendered
+ * Giphy attachments.
+ * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
+ * makes the container capable of adaptive resizing and ignore
+ * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
+ * dimensions, however you can still clip maximum dimensions using [StreamDimens.attachmentsContentGiphyMaxWidth]
+ * and [StreamDimens.attachmentsContentGiphyMaxHeight].
+ *
+ * Setting it to fixed size mode will make it respect all given dimensions.
+ * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+ *
+ * @return Returns an instance of [AttachmentFactory] that is used to handle Giphys.
  */
 @Suppress("FunctionName")
-public fun GiphyAttachmentFactory(): AttachmentFactory = AttachmentFactory(
-    canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
-    content = @Composable { modifier, state ->
-        GiphyAttachmentContent(
-            modifier = modifier.size(
-                width = ChatTheme.dimens.attachmentsContentGiphyWidth,
-                height = ChatTheme.dimens.attachmentsContentGiphyHeight
-            ),
-            attachmentState = state
-        )
-    },
-)
+public fun GiphyAttachmentFactory(
+    giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
+    giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
+    contentScale: ContentScale = ContentScale.Crop,
+): AttachmentFactory =
+    AttachmentFactory(
+        canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
+        content = @Composable { modifier, state ->
+            GiphyAttachmentContent(
+                modifier = modifier.wrapContentSize(),
+                attachmentState = state,
+                giphyInfoType = giphyInfoType,
+                giphySizingMode = giphySizingMode,
+                contentScale = contentScale,
+            )
+        },
+    )

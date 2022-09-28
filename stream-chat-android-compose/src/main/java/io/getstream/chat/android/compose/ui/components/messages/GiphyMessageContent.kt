@@ -64,7 +64,10 @@ public fun GiphyMessageContent(
     modifier: Modifier = Modifier,
     onGiphyActionClick: (GiphyAction) -> Unit = {},
 ) {
-    Column(modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,7 +105,7 @@ public fun GiphyMessageContent(
         MessageAttachmentsContent(
             message = message,
             onLongItemClick = {},
-            onImagePreviewResult = {},
+            onMediaGalleryPreviewResult = {},
         )
 
         Spacer(

@@ -28,6 +28,33 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorStateList
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.style.TextStyle
 
+/**
+ * Style for [AttachmentSelectionDialogFragment].
+ *
+ * @param pictureAttachmentIcon The icon for the image attachments tab.
+ * @param fileAttachmentIcon The icon for the file attachments tab.
+ * @param cameraAttachmentIcon The icon for the camera attachments tab.
+ * @param allowAccessToGalleryText The text to request required permissions on the image attachments tab.
+ * @param allowAccessToFilesText The text to request required permissions on the file attachments tab.
+ * @param allowAccessToCameraText The text to request required permissions on the camera attachments tab.
+ * @param allowAccessToGalleryIcon The icon above the permissions text on the image attachments tab.
+ * @param allowAccessToFilesIcon The icon above the permissions text on the file attachments tab.
+ * @param allowAccessToCameraIcon The icon above the permissions text on the camera attachments tab.
+ * @param grantPermissionsTextStyle The text style used for all the buttons used to request required permissions.
+ * @param recentFilesTextStyle The text style of the recent files text on the file attachments tab.
+ * @param recentFilesText The text above the file list on the file attachments tab.
+ * @param fileManagerIcon The icon for a button to pick files from file manager.
+ * @param videoDurationTextStyle The text style used for video duration caption in each tile.
+ * @param videoIconDrawable The icon used for video files.
+ * @param videoIconVisible If the video icon is displayed.
+ * @param videoLengthLabelVisible If the video duration caption is displayed.
+ * @param backgroundColor The background color of the picker.
+ * @param attachButtonIcon The icon for the submit selected attachments button.
+ * @param toggleButtonColorStateList The color selector that will be applied to each tab button.
+ * @param mediaAttachmentsTabEnabled If the media attachments tab is displayed in the picker.
+ * @param fileAttachmentsTabEnabled If the file attachments tab is displayed in the picker..
+ * @param cameraAttachmentsTabEnabled If the media capture tab is displayed in the picker.
+ */
 public data class AttachmentSelectionDialogStyle(
     val pictureAttachmentIcon: Drawable,
     val fileAttachmentIcon: Drawable,
@@ -48,7 +75,10 @@ public data class AttachmentSelectionDialogStyle(
     val videoLengthLabelVisible: Boolean,
     @ColorInt val backgroundColor: Int,
     val attachButtonIcon: Drawable,
-    val toggleButtonColorStateList: ColorStateList?
+    val toggleButtonColorStateList: ColorStateList?,
+    val mediaAttachmentsTabEnabled: Boolean,
+    val fileAttachmentsTabEnabled: Boolean,
+    val cameraAttachmentsTabEnabled: Boolean,
 ) {
     public companion object {
         /**
@@ -86,7 +116,10 @@ public data class AttachmentSelectionDialogStyle(
                 videoLengthLabelVisible = true,
                 backgroundColor = context.getColorCompat(R.color.stream_ui_white_smoke),
                 attachButtonIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!,
-                toggleButtonColorStateList = context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)
+                toggleButtonColorStateList = context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button),
+                mediaAttachmentsTabEnabled = true,
+                fileAttachmentsTabEnabled = true,
+                cameraAttachmentsTabEnabled = true,
             )
         }
     }

@@ -17,6 +17,7 @@ apply from: "${rootDir}/scripts/android.gradle"
 android {
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
+        consumerProguardFiles 'consumer-proguard-rules.pro'
     }
 
     resourcePrefix 'stream_'
@@ -53,6 +54,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(":stream-chat-android-offline")
+    implementation project(":stream-chat-android-ui-utils")
 
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAnnotations
@@ -69,9 +71,8 @@ dependencies {
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
 
-    implementation Dependencies.dexter
-
     testImplementation project(":stream-chat-android-test")
+    testImplementation Dependencies.kotlinReflect
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
@@ -85,4 +86,6 @@ dependencies {
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.coroutinesTest
+
+    detektPlugins(Dependencies.detektFormatting)
 }

@@ -140,6 +140,7 @@
     <string name="stream_compose_storage_permission_title">Read storage permission missing!</string>
     <string name="stream_compose_grant_permission">Give permission</string>
     <string name="stream_compose_remaining_images_count">+%1$d</string>
+    <string name="stream_compose_remaining_media_attachments_count">+%1$d</string>
     <string name="stream_compose_attachment_gallery_share">Share Image</string>
     <string name="stream_compose_giphy_label">GIPHY</string>
     <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
@@ -158,8 +159,23 @@
     <string name="stream_compose_image_preview_share">Share</string>
     <string name="stream_compose_image_preview_photos">Photos</string>
 
+    <!--  Media Gallery Preview  -->
+    <string name="stream_compose_media_gallery_preview_options">Media options</string>
+    <string name="stream_compose_media_gallery_preview_reply">Reply</string>
+    <string name="stream_compose_media_gallery_preview_show_in_chat">Show in chat</string>
+    <string name="stream_compose_media_gallery_preview_save_image">Save media</string>
+    <string name="stream_compose_media_gallery_preview_delete">Delete</string>
+    <string name="stream_compose_media_gallery_preview_share">Share</string>
+    <string name="stream_compose_media_gallery_preview_photos">Photos</string>
+    <string name="stream_compose_media_gallery_preview_preparing">Preparing...</string>
+    <string name="stream_compose_media_gallery_preview_could_not_share_attachment">Could not share attachment</string>
+    <string name="stream_compose_media_gallery_share_large_file_prompt_title">Large file</string>
+    <string name="stream_compose_media_gallery_share_large_file_prompt_message">In order to share it %.2f MB needs to be downloaded.</string>
+
     <!-- Content Description -->
     <string name="stream_compose_cd_channel_item" translatable="false">Channel item</string>
+    <string name="stream_compose_cd_message_item" translatable="false">Message item</string>
     <string name="stream_compose_cd_message_input" translatable="false">Message input</string>
     <string name="stream_compose_cd_send_button" translatable="false">Send button</string>
+    <string name="stream_compose_cd_play_button" translatable="false">Play button</string>
 </resources>

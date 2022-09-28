@@ -22,14 +22,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
+import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.QueryConfig
@@ -37,11 +37,12 @@ import io.getstream.chat.android.compose.state.channels.list.Cancel
 import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
-import io.getstream.chat.android.offline.model.connection.ConnectionState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,14 +65,16 @@ import kotlinx.coroutines.launch
  * @param channelLimit How many channels we fetch per page.
  * @param memberLimit How many members are fetched for each channel item when loading channels.
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
+ * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  */
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
-    initialSort: QuerySort<Channel>,
+    initialSort: QuerySorter<Channel>,
     initialFilters: FilterObject?,
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
+    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
 ) : ViewModel() {
 
     /**
@@ -82,9 +85,9 @@ public class ChannelListViewModel(
     private val logger = StreamLog.getLogger("ChannelListVM")
 
     /**
-     * State flow that keeps the value of the current [QuerySort] for channels.
+     * State flow that keeps the value of the current [QuerySorter] for channels.
      */
-    private val querySortFlow: MutableStateFlow<QuerySort<Channel>> = MutableStateFlow(initialSort)
+    private val querySortFlow: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(initialSort)
 
     /**
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
@@ -123,12 +126,12 @@ public class ChannelListViewModel(
     /**
      * The state of our network connection - if we're online, connecting or offline.
      */
-    public val connectionState: StateFlow<ConnectionState> = chatClient.globalState.connectionState
+    public val connectionState: StateFlow<ConnectionState> = chatClient.clientState.connectionState
 
     /**
      * The state of the currently logged in user.
      */
-    public val user: StateFlow<User?> = chatClient.globalState.user
+    public val user: StateFlow<User?> = chatClient.clientState.user
 
     /**
      * Gives us the information about the list of channels mutes by the current user.
@@ -139,7 +142,7 @@ public class ChannelListViewModel(
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
     private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
+        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
     }
 
     /**
@@ -191,7 +194,11 @@ public class ChannelListViewModel(
                 )
 
                 logger.d { "Querying channels as state" }
-                queryChannelsState = chatClient.queryChannelsAsState(queryChannelsRequest, viewModelScope)
+                queryChannelsState = chatClient.queryChannelsAsState(
+                    request = queryChannelsRequest,
+                    chatEventHandlerFactory = chatEventHandlerFactory,
+                    coroutineScope = viewModelScope,
+                )
                 observeChannels(searchQuery = query)
             }
     }
@@ -303,7 +310,7 @@ public class ChannelListViewModel(
      *
      * Use this if you need to support runtime sort changes, through custom sort UI.
      */
-    public fun setQuerySort(querySort: QuerySort<Channel>) {
+    public fun setQuerySort(querySort: QuerySorter<Channel>) {
         this.querySortFlow.tryEmit(value = querySort)
     }
 
@@ -313,7 +320,7 @@ public class ChannelListViewModel(
     public fun loadMore() {
         logger.d { "Loading more channels" }
 
-        if (chatClient.globalState.isOffline()) return
+        if (chatClient.clientState.isOffline) return
         val currentConfig = QueryConfig(
             filters = filterFlow.value ?: return,
             querySort = querySortFlow.value

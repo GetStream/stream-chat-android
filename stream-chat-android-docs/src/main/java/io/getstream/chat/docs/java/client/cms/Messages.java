@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
-import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
@@ -98,6 +98,20 @@ public class Messages {
             });
         }
 
+        public void partialUpdateAMessage() {
+            // Update some field of the message
+            message.setText("my updated text");
+
+            // Send the message to the channel
+            channelClient.updateMessage(message).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Message updatedMessage = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
         /**
          * @see <a href="https://getstream.io/chat/docs/send_message/?language=java#delete-a-message">Delete A Message</a>
          */
@@ -138,8 +152,8 @@ public class Messages {
             channelClient.sendImage(imageFile).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Successful upload, you can now attach this image
-                    // to an message that you then send to a channel
-                    String imageUrl = result.data();
+                    // to a message that you then send to a channel
+                    String imageUrl = result.data().getFile();
 
                     Attachment attachment = new Attachment();
                     attachment.setType("image");
@@ -177,6 +191,19 @@ public class Messages {
                     .fileUploader(new MyFileUploader())
                     .build();
         }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#deleting-files-and-images">Deleting Files and Images</a>
+     */
+    void deleteFileOrImage(){
+        ChannelClient channelClient = client.channel("messaging", "general");
+
+        // Deletes the image
+        channelClient.deleteImage("{{ url of uploaded image }}").enqueue();
+
+        // Deletes the file
+        channelClient.deleteFile("{{ url of uploaded file }}").enqueue();
     }
 
     /**
@@ -401,7 +428,7 @@ public class Messages {
 
         public void paginateOverAllPinnedMessages() {
             // List the first page of pinned messages, pinned before now, of the channel with descending direction (newest on top)
-            channelClient.getPinnedMessages(10, new QuerySort<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
+            channelClient.getPinnedMessages(10,  QuerySortByField.descByName("pinnedAt"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             List<Message> pinnedMessages = result.data();
@@ -413,7 +440,7 @@ public class Messages {
             // You can use a pinnedAt date retrieved from the previous request to get the next page
             Date nextDate = new Date();
             // List the next page of pinned messages
-            channelClient.getPinnedMessages(10, new QuerySort<Message>().desc("pinned_at"), new PinnedMessagesPagination.BeforeDate(nextDate, false))
+            channelClient.getPinnedMessages(10, QuerySortByField.descByName("pinnedAt"), new PinnedMessagesPagination.BeforeDate(nextDate, false))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
                             List<Message> pinnedMessages = result.data();

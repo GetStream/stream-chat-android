@@ -21,14 +21,12 @@ import io.getstream.chat.android.client.models.User as UserModel
 internal sealed class UserState {
     object NotSet : UserState()
     class UserSet(val user: UserModel) : UserState()
-    sealed class Anonymous : UserState() {
-        object Pending : Anonymous()
-        class AnonymousUserSet(val anonymousUser: UserModel) : Anonymous()
-    }
+
+    class AnonymousUserSet(val anonymousUser: UserModel) : UserState()
 
     internal fun userOrError(): UserModel = when (this) {
         is UserSet -> user
-        is Anonymous.AnonymousUserSet -> anonymousUser
+        is AnonymousUserSet -> anonymousUser
         else -> error("This state doesn't contain user!")
     }
 }

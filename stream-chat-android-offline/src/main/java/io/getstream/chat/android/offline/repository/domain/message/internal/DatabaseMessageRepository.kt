@@ -51,6 +51,18 @@ internal class DatabaseMessageRepository(
     }
 
     /**
+     * Select messages for a thread in a desired page.
+     *
+     * @param messageId String.
+     * @param limit limit of messages
+     */
+    override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> {
+        return messageDao.messagesForThread(messageId, limit)
+            .map { it.toModel(getUser, ::selectMessage) }
+            .filterReactions()
+    }
+
+    /**
      * Selects messages by IDs.
      *
      * @param messageIds A list of [Message.id] as query specification.
@@ -153,6 +165,11 @@ internal class DatabaseMessageRepository(
         return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectMessage) }
     }
 
+    override suspend fun clear() {
+        messageCache.evictAll()
+        messageDao.deleteAll()
+    }
+
     private suspend fun selectMessagesEntitiesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
@@ -178,6 +195,7 @@ internal class DatabaseMessageRepository(
                 Pagination.LESS_THAN -> {
                     messageDao.messagesForChannelOlderThan(cid, messageLimit, messageTime)
                 }
+                Pagination.AROUND_ID -> emptyList()
             }
         } else {
             messageDao.messagesForChannel(cid, pagination?.messageLimit ?: DEFAULT_MESSAGE_LIMIT)

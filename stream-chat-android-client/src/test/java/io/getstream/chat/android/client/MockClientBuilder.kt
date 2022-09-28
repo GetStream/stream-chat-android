@@ -16,24 +16,27 @@
 
 package io.getstream.chat.android.client
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.helpers.QueryChannelsPostponeHelper
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestScope
 import org.mockito.Mockito
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -45,8 +48,11 @@ import java.util.Date
  */
 @ExperimentalCoroutinesApi
 internal class MockClientBuilder(
-    private val testCoroutineScope: TestScope,
+    private val testCoroutineExtension: TestCoroutineExtension,
 ) {
+
+    private val streamDateFormatter = StreamDateFormatter()
+
     val userId = "jc"
     val connectionId = "connection-id"
     val apiKey = "api-key"
@@ -55,9 +61,12 @@ internal class MockClientBuilder(
     val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
     val serverErrorCode = 500
     val user = User().apply { id = userId }
+    val createdAt = Date()
+    val rawCreatedAt = streamDateFormatter.format(createdAt)
     val connectedEvent = ConnectedEvent(
         EventType.HEALTH_CHECK,
-        Date(),
+        createdAt,
+        rawCreatedAt,
         user,
         connectionId
     )
@@ -76,10 +85,12 @@ internal class MockClientBuilder(
             "cdn.http",
             "socket.url",
             false,
-            ChatLogger.Config(ChatLogLevel.NOTHING, null),
+            Mother.chatLoggerConfig(),
             false,
             false
         )
+
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutineExtension.dispatcher)
 
         val tokenUtil: TokenUtils = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
@@ -91,7 +102,11 @@ internal class MockClientBuilder(
 
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val queryChannelsPostponeHelper = QueryChannelsPostponeHelper(socketStateService, testCoroutineScope)
+        val clientScope = ClientTestScope(testCoroutineExtension.scope)
+        val userScope = UserTestScope(clientScope)
+        val callPostponeHelper = CallPostponeHelper(userScope) {
+            socketStateService.awaitConnection()
+        }
         client = ChatClient(
             config,
             api,
@@ -99,13 +114,19 @@ internal class MockClientBuilder(
             notificationsManager,
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
-            queryChannelsPostponeHelper = queryChannelsPostponeHelper,
+            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtil,
-            scope = testCoroutineScope,
+            clientScope = clientScope,
+            userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
+            chatSocketExperimental = mock(),
+            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
+            pluginFactories = emptyList(),
+            repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            clientState = mock()
         )
 
         client.connectUser(user, token).enqueue()

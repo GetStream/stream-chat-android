@@ -22,9 +22,19 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.api2.endpoint.ChannelApi
+import io.getstream.chat.android.client.api2.endpoint.ConfigApi
+import io.getstream.chat.android.client.api2.endpoint.DeviceApi
+import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
+import io.getstream.chat.android.client.api2.endpoint.GeneralApi
+import io.getstream.chat.android.client.api2.endpoint.GuestApi
+import io.getstream.chat.android.client.api2.endpoint.MessageApi
+import io.getstream.chat.android.client.api2.endpoint.ModerationApi
+import io.getstream.chat.android.client.api2.endpoint.UserApi
+import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
@@ -61,10 +71,14 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartial
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
+import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
+import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
+import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
@@ -72,7 +86,6 @@ import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
@@ -85,12 +98,18 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.VideoCallInfo
+import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
+import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
@@ -108,27 +127,33 @@ constructor(
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
     private val configApi: ConfigApi,
+    private val callApi: VideoCallApi,
+    private val fileDownloadApi: FileDownloadApi,
     private val coroutineScope: CoroutineScope,
 ) : ChatApi {
 
-    val logger = ChatLogger.get("MoshiChatApi")
+    private val logger = StreamLog.getLogger("Chat:MoshiChatApi")
 
+    @Volatile
     private var userId: String = ""
         get() {
             if (field == "") {
-                logger.logE("userId accessed before being set. Did you forget to call ChatClient.connectUser()?")
+                logger.e { "userId accessed before being set. Did you forget to call ChatClient.connectUser()?" }
             }
             return field
         }
+
+    @Volatile
     private var connectionId: String = ""
         get() {
             if (field == "") {
-                logger.logE("connectionId accessed before being set. Did you forget to call ChatClient.connectUser()?")
+                logger.e { "connectionId accessed before being set. Did you forget to call ChatClient.connectUser()?" }
             }
             return field
         }
 
     override fun setConnection(userId: String, connectionId: String) {
+        logger.d { "[setConnection] userId: '$userId', connectionId: '$connectionId'" }
         this.userId = userId
         this.connectionId = connectionId
     }
@@ -141,7 +166,6 @@ constructor(
         return messageApi.sendMessage(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             message = MessageRequest(message.toDto()),
         ).map { response -> response.message.toDomain() }
     }
@@ -149,7 +173,6 @@ constructor(
     override fun updateMessage(message: Message): Call<Message> {
         return messageApi.updateMessage(
             messageId = message.id,
-            connectionId = connectionId,
             message = MessageRequest(message.toDto()),
         ).map { response -> response.message.toDomain() }
     }
@@ -157,7 +180,6 @@ constructor(
     override fun partialUpdateMessage(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Message> {
         return messageApi.partialUpdateMessage(
             messageId = messageId,
-            connectionId = connectionId,
             body = PartialUpdateMessageRequest(set, unset)
         ).map { response -> response.message.toDomain() }
     }
@@ -165,14 +187,12 @@ constructor(
     override fun getMessage(messageId: String): Call<Message> {
         return messageApi.getMessage(
             messageId = messageId,
-            connectionId = connectionId,
         ).map { response -> response.message.toDomain() }
     }
 
     override fun deleteMessage(messageId: String, hard: Boolean): Call<Message> {
         return messageApi.deleteMessage(
             messageId = messageId,
-            connectionId = connectionId,
             hard = if (hard) true else null
         ).map { response -> response.message.toDomain() }
     }
@@ -184,7 +204,6 @@ constructor(
     ): Call<List<Reaction>> {
         return messageApi.getReactions(
             messageId = messageId,
-            connectionId = connectionId,
             offset = offset,
             limit = limit,
         ).map { response -> response.reactions.map(DownstreamReactionDto::toDomain) }
@@ -193,7 +212,6 @@ constructor(
     override fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
         return messageApi.sendReaction(
             messageId = reaction.messageId,
-            connectionId = connectionId,
             request = ReactionRequest(
                 reaction = reaction.toDto(),
                 enforce_unique = enforceUnique,
@@ -208,13 +226,11 @@ constructor(
         return messageApi.deleteReaction(
             messageId = messageId,
             reactionType = reactionType,
-            connectionId = connectionId,
         ).map { response -> response.message.toDomain() }
     }
 
     override fun addDevice(device: Device): Call<Unit> {
         return deviceApi.addDevices(
-            connectionId = connectionId,
             request = AddDeviceRequest(
                 device.token,
                 device.pushProvider.key,
@@ -224,16 +240,11 @@ constructor(
     }
 
     override fun deleteDevice(device: Device): Call<Unit> {
-        return deviceApi.deleteDevice(
-            deviceId = device.token,
-            connectionId = connectionId,
-        ).toUnitCall()
+        return deviceApi.deleteDevice(deviceId = device.token).toUnitCall()
     }
 
     override fun getDevices(): Call<List<Device>> {
-        return deviceApi.getDevices(
-            connectionId = connectionId,
-        ).map { response -> response.devices.map(DeviceDto::toDomain) }
+        return deviceApi.getDevices().map { response -> response.devices.map(DeviceDto::toDomain) }
     }
 
     override fun muteCurrentUser(): Call<Mute> {
@@ -252,7 +263,6 @@ constructor(
         timeout: Int?,
     ): Call<Mute> {
         return moderationApi.muteUser(
-            connectionId = connectionId,
             body = MuteUserRequest(
                 target_id = userId,
                 user_id = this.userId,
@@ -263,7 +273,6 @@ constructor(
 
     override fun unmuteUser(userId: String): Call<Unit> {
         return moderationApi.unmuteUser(
-            connectionId = this.connectionId,
             body = MuteUserRequest(
                 target_id = userId,
                 user_id = this.userId,
@@ -278,7 +287,6 @@ constructor(
         expiration: Int?,
     ): Call<Unit> {
         return moderationApi.muteChannel(
-            connectionId = connectionId,
             body = MuteChannelRequest(
                 channel_cid = "$channelType:$channelId",
                 expiration = expiration
@@ -291,7 +299,6 @@ constructor(
         channelId: String,
     ): Call<Unit> {
         return moderationApi.unmuteChannel(
-            connectionId = connectionId,
             body = MuteChannelRequest(
                 channel_cid = "$channelType:$channelId",
                 expiration = null
@@ -304,14 +311,13 @@ constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback?,
-    ): Call<String> {
+    ): Call<UploadedFile> {
         return CoroutineCall(coroutineScope) {
             if (callback != null) {
                 fileUploader.sendFile(
                     channelType = channelType,
                     channelId = channelId,
                     userId = userId,
-                    connectionId = connectionId,
                     file = file,
                     callback
                 )
@@ -320,7 +326,6 @@ constructor(
                     channelType = channelType,
                     channelId = channelId,
                     userId = userId,
-                    connectionId = connectionId,
                     file = file,
                 )
             }
@@ -332,14 +337,13 @@ constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback?,
-    ): Call<String> {
+    ): Call<UploadedImage> {
         return CoroutineCall(coroutineScope) {
             if (callback != null) {
                 fileUploader.sendImage(
                     channelType = channelType,
                     channelId = channelId,
                     userId = userId,
-                    connectionId = connectionId,
                     file = file,
                     callback
                 )
@@ -348,7 +352,6 @@ constructor(
                     channelType = channelType,
                     channelId = channelId,
                     userId = userId,
-                    connectionId = connectionId,
                     file = file
                 )
             }
@@ -361,7 +364,6 @@ constructor(
                 channelType = channelType,
                 channelId = channelId,
                 userId = userId,
-                connectionId = connectionId,
                 url = url
             )
             Result(Unit)
@@ -374,7 +376,6 @@ constructor(
                 channelType = channelType,
                 channelId = channelId,
                 userId = userId,
-                connectionId = connectionId,
                 url = url
             )
             Result(Unit)
@@ -394,17 +395,11 @@ constructor(
         unflag(mutableMapOf("target_message_id" to messageId))
 
     private fun flag(body: MutableMap<String, String>): Call<Flag> {
-        return moderationApi.flag(
-            connectionId = connectionId,
-            body = body
-        ).map { response -> response.flag.toDomain() }
+        return moderationApi.flag(body = body).map { response -> response.flag.toDomain() }
     }
 
     private fun unflag(body: MutableMap<String, String>): Call<Flag> {
-        return moderationApi.unflag(
-            connectionId = connectionId,
-            body = body
-        ).map { response -> response.flag.toDomain() }
+        return moderationApi.unflag(body = body).map { response -> response.flag.toDomain() }
     }
 
     override fun banUser(
@@ -416,7 +411,6 @@ constructor(
         shadow: Boolean,
     ): Call<Unit> {
         return moderationApi.banUser(
-            connectionId = connectionId,
             body = BanUserRequest(
                 target_user_id = targetId,
                 timeout = timeout,
@@ -435,7 +429,6 @@ constructor(
         shadow: Boolean,
     ): Call<Unit> {
         return moderationApi.unbanUser(
-            connectionId = connectionId,
             targetUserId = targetId,
             channelId = channelId,
             channelType = channelType,
@@ -445,7 +438,7 @@ constructor(
 
     override fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySort<BannedUsersSort>,
+        sort: QuerySorter<BannedUsersSort>,
         offset: Int?,
         limit: Int?,
         createdAtAfter: Date?,
@@ -454,7 +447,6 @@ constructor(
         createdAtBeforeOrEqual: Date?,
     ): Call<List<BannedUser>> {
         return moderationApi.queryBannedUsers(
-            connectionId = connectionId,
             payload = QueryBannedUsersRequest(
                 filter_conditions = filter.toMap(),
                 sort = sort.toDto(),
@@ -495,7 +487,6 @@ constructor(
         return channelApi.updateCooldown(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = UpdateCooldownRequest.create(cooldownTimeInSeconds),
         ).map(this::flattenChannel)
     }
@@ -513,7 +504,7 @@ constructor(
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         return channelApi.getPinnedMessages(
@@ -536,7 +527,6 @@ constructor(
         return channelApi.updateChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = UpdateChannelRequest(extraData, updateMessage?.toDto()),
         ).map(this::flattenChannel)
     }
@@ -550,7 +540,6 @@ constructor(
         return channelApi.updateChannelPartial(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = UpdateChannelPartialRequest(set, unset),
         ).map(this::flattenChannel)
     }
@@ -562,7 +551,6 @@ constructor(
         return channelApi.showChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = emptyMap(),
         ).toUnitCall()
     }
@@ -575,7 +563,6 @@ constructor(
         return channelApi.hideChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = HideChannelRequest(clearHistory),
         ).toUnitCall()
     }
@@ -588,7 +575,6 @@ constructor(
         return channelApi.truncateChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = TruncateChannelRequest(message = systemMessage?.toDto())
         ).map(this::flattenChannel)
     }
@@ -597,7 +583,6 @@ constructor(
         return channelApi.rejectInvite(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = RejectInviteRequest(),
         ).map(this::flattenChannel)
     }
@@ -610,7 +595,6 @@ constructor(
         return channelApi.acceptInvite(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             body = AcceptInviteRequest.create(userId = userId, message = message),
         ).map(this::flattenChannel)
     }
@@ -619,7 +603,6 @@ constructor(
         return channelApi.deleteChannel(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
         ).map(this::flattenChannel)
     }
 
@@ -627,28 +610,24 @@ constructor(
         return channelApi.markRead(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             request = MarkReadRequest(messageId),
         ).toUnitCall()
     }
 
     override fun markAllRead(): Call<Unit> {
-        return channelApi.markAllRead(
-            connectionId = connectionId,
-        ).toUnitCall()
+        return channelApi.markAllRead().toUnitCall()
     }
 
     override fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>,
-        message: Message?,
+        systemMessage: Message?,
     ): Call<Channel> {
         return channelApi.addMembers(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
-            body = AddMembersRequest(members, message?.toDto()),
+            body = AddMembersRequest(members, systemMessage?.toDto()),
         ).map(this::flattenChannel)
     }
 
@@ -656,13 +635,12 @@ constructor(
         channelType: String,
         channelId: String,
         members: List<String>,
-        message: Message?,
+        systemMessage: Message?,
     ): Call<Channel> {
         return channelApi.removeMembers(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
-            body = RemoveMembersRequest(members, message?.toDto()),
+            body = RemoveMembersRequest(members, systemMessage?.toDto()),
         ).map(this::flattenChannel)
     }
 
@@ -683,7 +661,6 @@ constructor(
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return messageApi.getReplies(
             messageId = messageId,
-            connectionId = connectionId,
             limit = limit,
         ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
     }
@@ -691,7 +668,6 @@ constructor(
     override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> {
         return messageApi.getRepliesMore(
             messageId = messageId,
-            connectionId = connectionId,
             limit = limit,
             firstId = firstId,
         ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
@@ -700,7 +676,6 @@ constructor(
     override fun sendAction(request: DomainSendActionRequest): Call<Message> {
         return messageApi.sendAction(
             messageId = request.messageId,
-            connectionId = connectionId,
             request = SendActionRequest(
                 channel_id = request.channelId,
                 message_id = request.messageId,
@@ -740,7 +715,6 @@ constructor(
     override fun translate(messageId: String, language: String): Call<Message> {
         return messageApi.translate(
             messageId = messageId,
-            connectionId = connectionId,
             request = TranslateMessageRequest(language),
         ).map { response -> response.message.toDomain() }
     }
@@ -754,7 +728,7 @@ constructor(
             next = request.next,
             sort = request.sort,
         )
-        return generalApi.searchMessages(connectionId, newRequest)
+        return generalApi.searchMessages(newRequest)
             .map { response ->
                 response.results.map { resp ->
                     resp.message.toDomain().apply {
@@ -771,7 +745,7 @@ constructor(
         offset: Int?,
         limit: Int?,
         next: String?,
-        sort: QuerySort<Message>?,
+        sort: QuerySorter<Message>?,
     ): Call<SearchMessagesResult> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
             filter_conditions = channelFilter.toMap(),
@@ -781,7 +755,7 @@ constructor(
             next = next,
             sort = sort?.toDto(),
         )
-        return generalApi.searchMessages(connectionId, newRequest)
+        return generalApi.searchMessages(newRequest)
             .map { response ->
                 val results = response.results
 
@@ -801,8 +775,10 @@ constructor(
     }
 
     override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
-        if (connectionId.isEmpty()) return noConnectionIdError()
-
+        if (connectionId.isEmpty()) {
+            logger.w { "[queryChannels] rejected (no connectionId)" }
+            return noConnectionIdError()
+        }
         val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
             filter_conditions = query.filter.toMap(),
             offset = query.offset,
@@ -868,7 +844,7 @@ constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member>,
     ): Call<List<Member>> {
         val request = io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(
@@ -881,10 +857,25 @@ constructor(
             members = members.map(Member::toDto),
         )
 
-        return generalApi.queryMembers(
-            connectionId,
-            request,
-        ).map { response -> response.members.map(DownstreamMemberDto::toDomain) }
+        return generalApi.queryMembers(request)
+            .map { response -> response.members.map(DownstreamMemberDto::toDomain) }
+    }
+
+    override fun createVideoCall(
+        channelId: String,
+        channelType: String,
+        callId: String,
+        callType: String,
+    ): Call<VideoCallInfo> {
+        return callApi.createCall(
+            channelId = channelId,
+            channelType = channelType,
+            request = VideoCallCreateRequest(id = callId, type = callType)
+        ).map(CreateVideoCallResponse::toDomain)
+    }
+
+    override fun getVideoCallToken(callId: String): Call<VideoCallToken> {
+        return callApi.getCallToken(callId, VideoCallTokenRequest(callId)).map(VideoCallTokenResponse::toDomain)
     }
 
     override fun sendEvent(
@@ -899,19 +890,19 @@ constructor(
         return channelApi.sendEvent(
             channelType = channelType,
             channelId = channelId,
-            connectionId = connectionId,
             request = SendEventRequest(map),
         ).map { response -> response.event.toDomain() }
     }
 
-    override fun getSyncHistory(
-        channelIds: List<String>,
-        lastSyncAt: Date,
-    ): Call<List<ChatEvent>> {
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> {
         return generalApi.getSyncHistory(
             body = SyncHistoryRequest(channelIds, lastSyncAt),
             connectionId = connectionId,
         ).map { response -> response.events.map(ChatEventDto::toDomain) }
+    }
+
+    override fun downloadFile(fileUrl: String): Call<ResponseBody> {
+        return fileDownloadApi.downloadFile(fileUrl)
     }
 
     override fun warmUp() {
@@ -919,6 +910,6 @@ constructor(
     }
 
     private fun <T : Any> noConnectionIdError(): ErrorCall<T> {
-        return ErrorCall(ChatError("setUser is either not called or not finished"))
+        return ErrorCall(coroutineScope, ChatError("setUser is either not called or not finished"))
     }
 }

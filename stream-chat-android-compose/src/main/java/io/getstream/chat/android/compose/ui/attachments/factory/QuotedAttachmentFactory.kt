@@ -19,13 +19,14 @@ package io.getstream.chat.android.compose.ui.attachments.factory
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentQuotedContent
-import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentQuotedContent
-import io.getstream.chat.android.compose.ui.util.hasLink
-import io.getstream.chat.android.compose.ui.util.isFile
+import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentQuotedContent
 import io.getstream.chat.android.compose.ui.util.isMedia
+import io.getstream.chat.android.uiutils.constant.AttachmentType
+import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.uiutils.extension.isFile
 
 /**
- * An [AttachmentFactory] that validates attachments as files and uses [ImageAttachmentQuotedContent] in case the
+ * An [AttachmentFactory] that validates attachments as files and uses [MediaAttachmentQuotedContent] in case the
  * attachment is a media attachment or [FileAttachmentQuotedContent] in case the attachment is a file to build the UI
  * for the quoted message.
  */
@@ -40,11 +41,12 @@ public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
         val attachment = attachmentState.message.attachments.first()
 
         val isFile = attachment.isFile()
+        val isVideo = attachment.type == AttachmentType.VIDEO
         val isImage = attachment.isMedia()
         val isLink = attachment.hasLink()
 
         when {
-            isImage || isLink -> ImageAttachmentQuotedContent(modifier = modifier, attachment = attachment)
+            isImage || isVideo || isLink -> MediaAttachmentQuotedContent(modifier = modifier, attachment = attachment)
             isFile -> FileAttachmentQuotedContent(modifier = modifier, attachment = attachment)
         }
     }

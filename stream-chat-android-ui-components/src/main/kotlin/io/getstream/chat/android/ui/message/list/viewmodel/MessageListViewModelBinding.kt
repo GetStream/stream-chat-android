@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 @file:JvmName("MessageListViewModelBinding")
 
 package io.getstream.chat.android.ui.message.list.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
+import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BlockUser
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BottomEndRegionReached
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DownloadAttachment
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
@@ -30,14 +29,11 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Flag
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.GiphyActionSelected
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MessageReaction
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MuteUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
-import io.getstream.chat.android.ui.message.list.DeletedMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.MessageListView
 
 /**
@@ -58,24 +54,15 @@ public fun MessageListViewModel.bindView(
     enforceUniqueReactions: Boolean = true,
 ) {
 
-    view.deletedMessageListItemPredicateLiveData.observe(lifecycleOwner) { messageListItemPredicate ->
-        if (messageListItemPredicate != null) {
-            val deletedMessageVisibility = when (messageListItemPredicate) {
-                DeletedMessageListItemPredicate.NotVisibleToAnyone ->
-                    DeletedMessageVisibility.ALWAYS_HIDDEN
-                DeletedMessageListItemPredicate.VisibleToAuthorOnly ->
-                    DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
-                else -> DeletedMessageVisibility.ALWAYS_VISIBLE
-            }
-
-            setDeletedMessageVisibility(deletedMessageVisibility)
-        }
+    deletedMessageVisibility.observe(lifecycleOwner) {
+        view.setDeletedMessageVisibility(it)
     }
 
     channel.observe(lifecycleOwner) {
         view.init(it)
     }
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
+    view.setBottomEndRegionReachedHandler { messageId -> onEvent(BottomEndRegionReached(messageId)) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
@@ -89,11 +76,12 @@ public fun MessageListViewModel.bindView(
     view.setMessageReactionHandler { message, reactionType ->
         onEvent(MessageReaction(message, reactionType, enforceUnique = enforceUniqueReactions))
     }
-    view.setUserMuteHandler { onEvent(MuteUser(it)) }
-    view.setUserUnmuteHandler { onEvent(MessageListViewModel.Event.UnmuteUser(it)) }
-    view.setUserBlockHandler { user, cid -> onEvent(BlockUser(user, cid)) }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
-    view.setAttachmentDownloadHandler { downloadAttachmentCall -> onEvent(DownloadAttachment(downloadAttachmentCall)) }
+    view.setAttachmentDownloadHandler { downloadAttachmentCall ->
+        PermissionChecker().checkWriteStoragePermissions(view) {
+            onEvent(DownloadAttachment(downloadAttachmentCall))
+        }
+    }
     view.setReplyMessageClickListener { messageId -> onEvent(MessageListViewModel.Event.ShowMessage(messageId)) }
 
     ownCapabilities.observe(lifecycleOwner) {
@@ -120,6 +108,7 @@ public fun MessageListViewModel.bindView(
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
+    insideSearch.observe(lifecycleOwner, view::shouldRequestMessagesAtBottom)
 
     view.setAttachmentReplyOptionClickHandler { result ->
         onEvent(MessageListViewModel.Event.ReplyAttachment(result.cid, result.messageId))

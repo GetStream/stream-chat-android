@@ -25,8 +25,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.logging.StreamLog
 
 internal class NotificationMessageReceiver : BroadcastReceiver() {
 
@@ -130,6 +132,8 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             }
     }
 
+    private val logger = StreamLog.getLogger("NotificationMessageReceiver")
+
     override fun onReceive(context: Context, intent: Intent) {
         val channelType = intent.getStringExtra(KEY_CHANNEL_TYPE) ?: return
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
@@ -142,7 +146,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                 )
             }
             ACTION_REPLY -> {
-                RemoteInput.getResultsFromIntent(intent).getCharSequence(KEY_TEXT_REPLY)?.let { message ->
+                RemoteInput.getResultsFromIntent(intent)?.getCharSequence(KEY_TEXT_REPLY)?.let { message ->
                     replyText(
                         channelId,
                         channelType,
@@ -155,7 +159,12 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
     }
 
     private fun markAsRead(messageId: String, channelId: String, channelType: String) {
-        if (!ChatClient.isInitialized) return
+        if (!ChatClient.isInitialized) {
+            logger.d {
+                "[markAsRead] ChatClient is not initialized, returning."
+            }
+            return
+        }
 
         ChatClient.instance().markMessageRead(channelType, channelId, messageId).enqueue()
     }
@@ -165,16 +174,19 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         type: String,
         messageChars: CharSequence,
     ) {
-        if (!ChatClient.isInitialized) return
-
-        val currentUser = ChatClient.instance().getCurrentUser() ?: return
+        if (!ChatClient.isInitialized) {
+            logger.d {
+                "[replyText] ChatClient is not initialized, returning."
+            }
+            return
+        }
 
         ChatClient.instance().sendMessage(
             channelType = type,
             channelId = channelId,
             message = Message().apply {
                 text = messageChars.toString()
-                user = currentUser
+                cid = (type to channelId).toCid()
             }
         ).enqueue()
     }

@@ -45,7 +45,7 @@ internal class MessagePlainTextViewHolder(
     init {
         binding.run {
             listeners?.let { container ->
-                root.setOnClickListener {
+                messageContainer.setOnClickListener {
                     container.messageClickListener.onMessageClick(data.message)
                 }
                 reactionsView.setReactionClickListener {
@@ -54,16 +54,16 @@ internal class MessagePlainTextViewHolder(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
-                root.setOnLongClickListener {
+                messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
-                avatarView.setOnClickListener {
+                userAvatarView.setOnClickListener {
                     container.userClickListener.onUserClick(data.message.user)
                 }
                 LongClickFriendlyLinkMovementMethod.set(
                     textView = messageText,
-                    longClickTarget = root,
+                    longClickTarget = messageContainer,
                     onLinkClicked = container.linkClickListener::onLinkClick
                 )
             }

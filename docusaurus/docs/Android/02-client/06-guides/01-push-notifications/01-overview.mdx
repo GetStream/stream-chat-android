@@ -93,8 +93,25 @@ class MyNotificationHandler(private val context: Context) : NotificationHandler 
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
+    override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) {
+        when (status) {
+            NotificationPermissionStatus.REQUESTED -> {
+                // invoked when POST_NOTIFICATIONS permission is requested
+            }
+            NotificationPermissionStatus.GRANTED -> {
+                // invoked when POST_NOTIFICATIONS permission is granted
+            }
+            NotificationPermissionStatus.DENIED -> {
+                // invoked when POST_NOTIFICATIONS permission is denied
+            }
+            NotificationPermissionStatus.RATIONALE_NEEDED -> {
+                // invoked when POST_NOTIFICATIONS permission requires rationale
+            }
+        }
+    }
+
     override fun showNotification(channel: Channel, message: Message) {
-        NotificationCompat.Builder(context, notificationChannelId)
+        val notification = NotificationCompat.Builder(context, notificationChannelId)
             ... // Configure your own notification
             .build()
         notificationManager.notify(notificationId, notification)
@@ -144,4 +161,4 @@ Device(
 )
 ```
 
-If you are using any of the artifacts integration we support, you can configure it by an extra attribute on the constructor of the `PushProviderGenerator` class implementation.
+If you are using any of the artifacts integration we support, you can set them by adding an extra attribute on the constructor of the `PushProviderGenerator` class implementation.

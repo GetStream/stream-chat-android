@@ -43,7 +43,7 @@ internal class MentionViewHolder(
     override fun bindItem(item: SuggestionListItem.MentionItem) {
         val user = item.user
         binding.apply {
-            avatarView.setUserData(user)
+            userAvatarView.setUser(user)
             usernameTextView.text = user.name
             mentionNameTextView.text = itemView.context.getString(
                 R.string.stream_ui_mention,

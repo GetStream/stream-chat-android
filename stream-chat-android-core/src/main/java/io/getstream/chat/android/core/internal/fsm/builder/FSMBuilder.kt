@@ -26,6 +26,7 @@ public class FSMBuilder<STATE : Any, EVENT : Any> {
     private lateinit var _initialState: STATE
     public val stateFunctions: MutableMap<KClass<out STATE>, Map<KClass<out EVENT>, StateFunction<STATE, EVENT>>> =
         mutableMapOf()
+
     private var _defaultHandler: (STATE, EVENT) -> STATE = { s, _ -> s }
 
     @FSMBuilderMarker

@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api2.optimisation.hash.ChannelQueryKey
 import io.getstream.chat.android.client.api2.optimisation.hash.GetPinnedMessagesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetReactionsHash
@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
@@ -45,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Suppress("UNCHECKED_CAST")
 internal class DistinctChatApi(
+    private val scope: CoroutineScope,
     internal val delegate: ChatApi,
 ) : ChatApi by delegate {
 
@@ -98,7 +100,7 @@ internal class DistinctChatApi(
         channelType: String,
         channelId: String,
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         val uniqueKey = GetPinnedMessagesHash(channelType, channelId, limit, sort, pagination).hashCode()
@@ -121,7 +123,7 @@ internal class DistinctChatApi(
 
     override fun queryBannedUsers(
         filter: FilterObject,
-        sort: QuerySort<BannedUsersSort>,
+        sort: QuerySorter<BannedUsersSort>,
         offset: Int?,
         limit: Int?,
         createdAtAfter: Date?,
@@ -162,7 +164,7 @@ internal class DistinctChatApi(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member>,
     ): Call<List<Member>> {
         val uniqueKey = QueryMembersHash(channelType, channelId, offset, limit, filter, sort, members)
@@ -180,7 +182,7 @@ internal class DistinctChatApi(
         callBuilder: () -> Call<T>,
     ): Call<T> {
         return distinctCalls[uniqueKey] as? DistinctCall<T>
-            ?: DistinctCall(callBuilder, uniqueKey) {
+            ?: DistinctCall(scope = scope, callBuilder = callBuilder) {
                 distinctCalls.remove(uniqueKey)
             }.also {
                 distinctCalls[uniqueKey] = it

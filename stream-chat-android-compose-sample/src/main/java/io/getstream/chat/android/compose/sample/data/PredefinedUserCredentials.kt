@@ -146,6 +146,15 @@ object PredefinedUserCredentials {
         UserCredentials(
             apiKey = API_KEY,
             user = User().apply {
+                id = "kanat"
+                name = "Kanat"
+                image = "https://ca.slack-edge.com/T02RM6X6B-U034NG4FPNG-688fab30cc42-72"
+            },
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXQifQ.MVoS7rCos7o3D7fkUcCFHVThKrN0sAaENupmXHYX3vw"
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User().apply {
                 id = "qatest1"
                 name = "QA Test 1"
                 image = "https://getstream.imgix.net/images/random_svg/QT.png"

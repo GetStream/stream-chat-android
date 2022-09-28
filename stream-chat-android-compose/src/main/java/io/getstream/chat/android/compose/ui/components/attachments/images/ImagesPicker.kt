@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.attachments.images
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -27,9 +25,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -45,14 +43,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
-import coil.fetch.VideoFrameUriFetcher
+import coil.compose.AsyncImage
+import coil.decode.VideoFrameDecoder
+import coil.request.ImageRequest
 import coil.request.videoFrameMillis
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
 private const val DefaultNumberOfPicturesPerRow = 3
@@ -65,7 +65,6 @@ private const val DefaultNumberOfPicturesPerRow = 3
  * @param onImageSelected Handler when the user clicks on any image item.
  * @param modifier Modifier for styling.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImagesPicker(
     images: List<AttachmentPickerItemState>,
@@ -80,7 +79,7 @@ public fun ImagesPicker(
 ) {
     LazyVerticalGrid(
         modifier = modifier,
-        cells = GridCells.Fixed(DefaultNumberOfPicturesPerRow),
+        columns = GridCells.Fixed(DefaultNumberOfPicturesPerRow),
         contentPadding = PaddingValues(1.dp)
     ) {
         items(images) { imageItem -> itemContent(imageItem) }
@@ -101,15 +100,15 @@ internal fun DefaultImagesPickerItem(
     val attachmentMetaData = imageItem.attachmentMetaData
     val isVideo = attachmentMetaData.type == ModelType.attach_video
 
-    val painter = rememberImagePainter(
-        data = attachmentMetaData.uri.toString(),
-        builder = {
+    val imageRequest = ImageRequest.Builder(LocalContext.current)
+        .data(attachmentMetaData.uri.toString())
+        .apply {
             if (isVideo) {
                 videoFrameMillis(VideoFrameMillis)
-                fetcher(VideoFrameUriFetcher(LocalContext.current))
+                decoderFactory(VideoFrameDecoder.Factory())
             }
         }
-    )
+        .build()
 
     Box(
         modifier = Modifier
@@ -121,11 +120,14 @@ internal fun DefaultImagesPickerItem(
                 onClick = { onImageSelected(imageItem) }
             )
     ) {
-        Image(
+        AsyncImage(
+            model = imageRequest,
+            imageLoader = LocalStreamImageLoader.current,
             modifier = Modifier.fillMaxSize(),
-            painter = painter,
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            onSuccess = {
+            }
         )
 
         if (imageItem.isSelected) {

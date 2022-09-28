@@ -15,14 +15,13 @@
     limitations under the License.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="36dp"
-    android:height="36dp"
-    android:viewportWidth="36"
-    android:viewportHeight="36"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
     >
     <path
-        android:fillColor="@color/stream_ui_attachment_tab_button"
-        android:fillType="evenOdd"
-        android:pathData="M27,11H18.414L16.414,9H9C8.7348,9 8.4804,9.1054 8.2929,9.2929C8.1054,9.4804 8,9.7348 8,10V26C8,26.2652 8.1054,26.5196 8.2929,26.7071C8.4804,26.8946 8.7348,27 9,27H27C27.2652,27 27.5196,26.8946 27.7071,26.7071C27.8946,26.5196 28,26.2652 28,26V12C28,11.7348 27.8946,11.4804 27.7071,11.2929C27.5196,11.1054 27.2652,11 27,11ZM10,25V13H26V25H10Z"
+        android:fillColor="#747881"
+        android:pathData="M20,6H12L10,4H4C2.9,4 2.01,4.9 2.01,6L2,18C2,19.1 2.9,20 4,20H20C21.1,20 22,19.1 22,18V8C22,6.9 21.1,6 20,6ZM20,18H4V8H20V18Z"
         />
 </vector>

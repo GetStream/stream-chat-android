@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.sample
 
 import android.content.Context
+import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -24,7 +25,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
@@ -34,13 +34,15 @@ import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerat
  * a user. Under the hood, it persists the user so that we are able to connect automatically
  * next time the app is launched.
  */
-@OptIn(InternalStreamChatApi::class)
 object ChatHelper {
+
+    private const val TAG = "ChatHelper"
 
     /**
      * Initializes the SDK with the given API key.
      */
     fun initializeSdk(context: Context, apiKey: String) {
+        Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
         )
@@ -54,7 +56,13 @@ object ChatHelper {
             }
         )
 
-        val offlinePlugin = StreamOfflinePluginFactory(Config(userPresence = true, persistenceEnabled = true), context)
+        val offlinePlugin = StreamOfflinePluginFactory(
+            Config(
+                userPresence = true,
+                persistenceEnabled = true,
+            ),
+            context
+        )
 
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
@@ -73,24 +81,29 @@ object ChatHelper {
         onSuccess: () -> Unit = {},
         onError: (ChatError) -> Unit = {},
     ) {
-
-        ChatClient.instance().connectUser(userCredentials.user, userCredentials.token)
-            .enqueue { result ->
-                if (result.isSuccess) {
-                    ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
-                    onSuccess()
-                } else {
-                    onError(result.error())
-                }
+        ChatClient.instance().run {
+            if (getCurrentUser() == null) {
+                connectUser(userCredentials.user, userCredentials.token)
+                    .enqueue { result ->
+                        if (result.isSuccess) {
+                            ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
+                            onSuccess()
+                        } else {
+                            onError(result.error())
+                        }
+                    }
+            } else {
+                onSuccess()
             }
+        }
     }
 
     /**
      * Logs out the user and removes their credentials from the persistent storage.
      */
-    fun disconnectUser() {
+    suspend fun disconnectUser() {
         ChatApp.credentialsRepository.clearCredentials()
 
-        ChatClient.instance().disconnect()
+        ChatClient.instance().disconnect(false).await()
     }
 }

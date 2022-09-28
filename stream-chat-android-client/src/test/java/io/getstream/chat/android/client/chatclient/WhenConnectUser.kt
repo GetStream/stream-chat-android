@@ -18,15 +18,17 @@ package io.getstream.chat.android.client.chatclient
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.await
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -46,25 +48,25 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
     @Test
     fun `Given user set and socket in idle state and user with the same id Should return an error`() = runTest {
-        val listener: (User) -> Unit = mock()
+        val pluginFactory: PluginFactory = mock()
         val user = Mother.randomUser { id = "userId" }
         val sut = Fixture()
             .givenUserAndToken(user, "token")
             .givenIdleConnectionState()
             .givenUserSetState(Mother.randomUser { id = "userId" })
-            .givenPreSetUserListener(listener)
+            .givenPluginFactory(pluginFactory)
             .get()
 
         val result = sut.connectUser(user, "token").await()
 
-        verify(userStateService, times(2)).state
+        verify(userStateService, times(3)).state
         verify(userStateService).onLogout()
         verify(socket).disconnect()
         verifyNoMoreInteractions(socket)
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
-        verifyNoInteractions(listener)
-        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
+        verifyNoInteractions(pluginFactory)
+        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you haven't connected a user already."))
     }
 
     @Test
@@ -92,7 +94,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(user, "token").enqueue()
 
-        verify(userStateService).onSetUser(user)
+        verify(userStateService).onSetUser(user, false)
     }
 
     @Test
@@ -137,20 +139,20 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
     @Test
     fun `Given user not set Should invoke pre set listeners`() {
-        val listener: (User) -> Unit = mock()
+        val pluginFactory: PluginFactory = mock()
         val sut = Fixture()
             .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
             .givenUserNotSetState()
-            .givenPreSetUserListener(listener)
+            .givenPluginFactory(pluginFactory)
             .get()
 
         sut.connectUser(Mother.randomUser { id = "userId" }, "token").enqueue()
 
-        verify(listener).invoke(argThat { id == "userId" })
+        verify(pluginFactory).get(argThat { id == "userId" })
     }
 
     @Test
-    fun `Given user set and user with different id Should call init connection listener with error`() {
+    fun `Given user set and user with different id Should call init connection listener with error`() = runTest {
         val connectionDataCallback: Call.Callback<ConnectionData> = mock()
         val sut = Fixture()
             .givenUserAndToken(Mother.randomUser { id = "userId" }, "token")
@@ -158,7 +160,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
             .get()
 
         sut.connectUser(Mother.randomUser { id = "userId2" }, "token").enqueue(connectionDataCallback)
-
+        delay(100L)
         verify(connectionDataCallback).onResult(argThat { isError })
     }
 
@@ -184,11 +186,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         }
 
         fun givenAnonymousUserSetState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.AnonymousUserSet(Mother.randomUser())
-        }
-
-        fun givenAnonymousPendingState() = apply {
-            whenever(userStateService.state) doReturn UserState.Anonymous.Pending
+            whenever(userStateService.state) doReturn UserState.AnonymousUserSet(Mother.randomUser())
         }
 
         fun givenUserNotSetState() = apply {
@@ -199,12 +197,14 @@ internal class WhenConnectUser : BaseChatClientTest() {
             whenever(config.warmUp) doReturn true
         }
 
-        fun givenPreSetUserListener(listener: (User) -> Unit) = apply {
-            initializationCoordinator.addUserConnectedListener(listener)
+        fun givenPluginFactory(pluginFactory: PluginFactory) = apply {
+            pluginFactories.clear()
+            pluginFactories.add(pluginFactory)
         }
 
         fun givenUserAndToken(user: User, token: String) = apply {
             whenever(tokenUtils.getUserId(token)) doReturn user.id
+            whenever(clientState.user) doReturn MutableStateFlow(user)
         }
 
         fun clearSocketInvocations() = apply {

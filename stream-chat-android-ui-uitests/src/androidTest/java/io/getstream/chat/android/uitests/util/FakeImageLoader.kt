@@ -19,16 +19,19 @@ package io.getstream.chat.android.uitests.util
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import coil.ComponentRegistry
 import coil.ImageLoader
-import coil.bitmap.BitmapPool
 import coil.decode.DataSource
+import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.DefaultRequestOptions
 import coil.request.Disposable
+import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.ImageResult
 import coil.request.SuccessResult
 import io.getstream.chat.android.uitests.R
+import kotlinx.coroutines.CompletableDeferred
 
 /**
  * A fake implementation of [ImageLoader] which returns [Drawable]s from resources.
@@ -44,54 +47,58 @@ class FakeImageLoader(
         AVATAR_RAFAL to R.drawable.avatar_rafal,
         AVATAR_FILIP to R.drawable.avatar_filip,
         AVATAR_BELAL to R.drawable.avatar_belal,
-        AVATAR_USER to R.drawable.avatar_user,
     ),
 ) : ImageLoader {
 
-    private val disposable = object : Disposable {
-        override val isDisposed get() = true
-        override fun dispose() {}
-        override suspend fun await() {}
-    }
-
     override val defaults = DefaultRequestOptions()
-
-    // Optionally, you can add a custom fake memory cache implementation.
-    override val memoryCache get() = throw UnsupportedOperationException()
-
-    override val bitmapPool = BitmapPool(0)
+    override val components = ComponentRegistry()
+    override val memoryCache: MemoryCache? get() = null
+    override val diskCache: DiskCache? get() = null
 
     override fun enqueue(request: ImageRequest): Disposable {
         // Always call onStart before onSuccess.
-        request.target?.onStart(placeholder = createDrawable(context, request))
-        request.target?.onSuccess(result = createDrawable(context, request))
-        return disposable
+        request.target?.onStart(request.placeholder)
+        val result = createDrawable(context, request)
+        if (result != null) {
+            request.target?.onSuccess(result)
+        }
+        return object : Disposable {
+            override val job = CompletableDeferred(newResult(request, result))
+            override val isDisposed get() = true
+            override fun dispose() {}
+        }
     }
 
     override suspend fun execute(request: ImageRequest): ImageResult {
-        return SuccessResult(
-            drawable = createDrawable(context, request),
-            request = request,
-            metadata = ImageResult.Metadata(
-                memoryCacheKey = MemoryCache.Key(""),
-                isSampled = false,
-                dataSource = DataSource.MEMORY_CACHE,
-                isPlaceholderMemoryCacheKeyPresent = false
-            )
-        )
+        return newResult(request, createDrawable(context, request))
     }
+
+    private fun newResult(request: ImageRequest, drawable: Drawable?): ImageResult {
+        return if (drawable != null) {
+            SuccessResult(
+                drawable = drawable,
+                request = request,
+                dataSource = DataSource.MEMORY_CACHE
+            )
+        } else {
+            ErrorResult(
+                drawable = null,
+                request = request,
+                throwable = Exception()
+            )
+        }
+    }
+
+    override fun newBuilder() = throw UnsupportedOperationException()
 
     override fun shutdown() {}
 
-    override fun newBuilder() = ImageLoader.Builder(context)
-
-    private fun createDrawable(context: Context, request: ImageRequest): Drawable {
-        val data = request.data
-        val avatarUrl = if (data is String) data else AVATAR_USER
+    private fun createDrawable(context: Context, request: ImageRequest): Drawable? {
+        val avatarUrl = request.data as String
 
         return ContextCompat.getDrawable(
             context,
-            userAvatars.getOrDefault(avatarUrl, R.drawable.avatar_user)
+            userAvatars[avatarUrl] ?: return null
         )!!
     }
 
@@ -101,6 +108,5 @@ class FakeImageLoader(
         const val AVATAR_RAFAL: String = "https://example.com/rafal.jpeg"
         const val AVATAR_FILIP: String = "https://example.com/filip.jpeg"
         const val AVATAR_BELAL: String = "https://example.com/belal.jpeg"
-        const val AVATAR_USER: String = "https://example.com/user.jpeg"
     }
 }

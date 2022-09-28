@@ -43,9 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
@@ -66,16 +63,12 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
  * Default root Channel screen component, that provides the necessary ViewModel.
  *
  * It can be used without most parameters for default behavior, that can be tweaked if necessary.
- *
- * @param filters Default filters for channels. By passing in `null` to the ViewModel, we show messaging channels
- * where the current user is a member.
- * @param querySort Default query sort for channels.
+ * @param viewModelFactory The factory used to build the ViewModels and power the behavior.
+ * You can use the default implementation by not passing in an instance yourself, or you
+ * can customize the behavior using its parameters.
  * @param title Header title.
  * @param isShowingHeader If we show the header or hide it.
  * @param isShowingSearch If we show the search input or hide it.
- * @param channelLimit The limit of channels queried per page.
- * @param memberLimit The limit of members requested per channel.
- * @param messageLimit The limit of messages requested per channel item.
  * @param onHeaderActionClick Handler for the default header action.
  * @param onHeaderAvatarClick Handle for when the user clicks on the header avatar.
  * @param onItemClick Handler for Channel item clicks.
@@ -84,15 +77,12 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
  */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
+@Suppress("LongMethod")
 public fun ChannelsScreen(
-    filters: FilterObject? = null,
-    querySort: QuerySort<Channel> = QuerySort.desc("last_updated"),
+    viewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     isShowingSearch: Boolean = false,
-    channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
-    memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
-    messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
     onHeaderActionClick: () -> Unit = {},
     onHeaderAvatarClick: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
@@ -101,14 +91,7 @@ public fun ChannelsScreen(
 ) {
     val listViewModel: ChannelListViewModel = viewModel(
         ChannelListViewModel::class.java,
-        factory = ChannelViewModelFactory(
-            chatClient = ChatClient.instance(),
-            querySort = querySort,
-            filters = filters,
-            channelLimit = channelLimit,
-            memberLimit = memberLimit,
-            messageLimit = messageLimit
-        )
+        factory = viewModelFactory
     )
 
     val selectedChannel by listViewModel.selectedChannel
@@ -139,7 +122,6 @@ public fun ChannelsScreen(
                     )
                 }
             }
-
         ) {
             Column(
                 modifier = Modifier
@@ -171,9 +153,9 @@ public fun ChannelsScreen(
             }
         }
 
-        val selectedChannel = selectedChannel ?: Channel()
+        val channel = selectedChannel ?: Channel()
         AnimatedVisibility(
-            visible = selectedChannel.cid.isNotEmpty(),
+            visible = channel.cid.isNotEmpty(),
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
         ) {
@@ -190,9 +172,9 @@ public fun ChannelsScreen(
                             animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
                         )
                     ),
-                selectedChannel = selectedChannel,
+                selectedChannel = channel,
                 currentUser = user,
-                isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
+                isMuted = listViewModel.isChannelMuted(channel.cid),
                 onChannelOptionClick = { action ->
                     when (action) {
                         is ViewInfo -> onViewChannelInfoAction(action.channel)

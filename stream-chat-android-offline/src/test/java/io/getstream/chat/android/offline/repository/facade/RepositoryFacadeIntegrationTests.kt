@@ -18,13 +18,13 @@ package io.getstream.chat.android.offline.repository.facade
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.test.randomChannelInfo
+import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.client.test.randomReaction
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
-import io.getstream.chat.android.offline.randomChannelInfo
-import io.getstream.chat.android.offline.randomMessage
-import io.getstream.chat.android.offline.randomReaction
-import io.getstream.chat.android.offline.randomUser
 import io.getstream.chat.android.test.randomString
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
@@ -38,7 +38,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
 
     @Test
     fun `Given a message in the database When persisting the updated message Should store the update`(): Unit =
-        runBlocking {
+        runTest {
             val id = randomString()
             val originalMessage = randomMessage(id = id)
             val updatedText = randomString()
@@ -53,7 +53,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
         }
 
     @Test
-    fun `Given a message When persisting the message Should store required fields`(): Unit = runBlocking {
+    fun `Given a message When persisting the message Should store required fields`(): Unit = runTest {
         val message = randomMessage(
             user = randomUser(
                 // ignoring fields that are not persisted on purpose
@@ -78,7 +78,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
 
     @Test
     fun `Given a message with theirs reaction When querying message Should return massage without own reactions`(): Unit =
-        runBlocking {
+        runTest {
             val messageId = randomString()
             val theirsUser = randomUser(
                 // ignoring fields that are not persisted on purpose
@@ -110,7 +110,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
 
     @Test
     fun `Given a message with deleted own reaction When querying message Should return massage without own reactions`(): Unit =
-        runBlocking {
+        runTest {
             val messageId = randomString()
             val mineDeletedReaction = randomReaction(
                 messageId = messageId,
@@ -135,7 +135,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
 
     @Test
     fun `Given a message without channel info When querying message Should return message with null channel info`() =
-        runBlocking {
+        runTest {
             val message = randomMessage(channelInfo = null)
 
             repositoryFacade.insertMessages(listOf(message), cache = false)
@@ -146,7 +146,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
 
     @Test
     fun `Given a message with channel info When querying message Should return message with the same channel info`(): Unit =
-        runBlocking {
+        runTest {
             val channelInfo = randomChannelInfo()
             val message = randomMessage(channelInfo = channelInfo)
 

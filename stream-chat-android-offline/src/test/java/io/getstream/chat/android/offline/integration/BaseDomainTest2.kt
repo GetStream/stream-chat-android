@@ -25,8 +25,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.testing.WorkManagerTestInitHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -36,22 +36,23 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.client.test.SynchronizedCoroutineTest
+import io.getstream.chat.android.client.test.utils.TestDataHelper
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.offline.SynchronizedCoroutineTest
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.offline.repository.builder.internal.RepositoryFacade
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
-import io.getstream.chat.android.offline.utils.TestDataHelper
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.After
@@ -71,6 +72,7 @@ import java.util.concurrent.Executors
  */
 @ExperimentalCoroutinesApi
 internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
+    private val streamDateFormatter = StreamDateFormatter()
 
     /** a realistic set of chat data, please only add to this, don't update */
     var data = TestDataHelper()
@@ -107,7 +109,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
     }
 
     @After
-    open fun tearDown() = runBlocking {
+    open fun tearDown() = runTest {
         db.close()
     }
 
@@ -130,10 +132,13 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
     }
 
     private fun createClientMock(isConnected: Boolean = true): ChatClient {
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
         val connectedEvent = if (isConnected) {
-            ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
+            ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, data.user1, data.connection1)
         } else {
-            DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+            DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
         }
 
         val queryChannelsResult = Result.success(listOf(data.channel1))
@@ -157,10 +162,10 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
                     override fun dispose() {}
                 }
             }
-            on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
+            on { getSyncHistory(any(), any<Date>()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(queryChannelsResult)
             on { queryChannelsInternal(any()) } doReturn TestCall(queryChannelsResult)
-            on { queryChannelInternal(any(), any(), any()) } doReturn TestCall(queryChannelResult)
+            on { queryChannel(any(), any(), any(), any()) } doReturn TestCall(queryChannelResult)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any(), any(), any()) } doReturn TestCall(
@@ -185,11 +190,11 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
             // and have to simply use runBlocking instead
             .setTransactionExecutor(Executors.newSingleThreadExecutor())
-            .setQueryExecutor(testCoroutines.ioDispatcher.asExecutor())
+            .setQueryExecutor(Dispatchers.IO.asExecutor())
             .build()
     }
 
-    private fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runBlocking {
+    private fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runTest {
         val context = ApplicationProvider.getApplicationContext() as Context
 
         repos = RepositoryFacade.create(
@@ -205,12 +210,9 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             data.user1Token
         ).enqueue()
 
-        // manually configure the user since client is mocked
-        GlobalMutableState.getOrCreate()._user.value = data.user1
-
         repos.insertChannelConfig(ChannelConfig("messaging", data.config1))
         repos.insertUsers(data.userMap.values.toList())
 
-        query = QueryChannelsSpec(data.filter1, QuerySort())
+        query = QueryChannelsSpec(data.filter1, QuerySortByField())
     }
 }

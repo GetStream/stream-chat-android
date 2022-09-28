@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
@@ -33,7 +32,6 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
 
-@OptIn(InternalStreamChatApi::class)
 class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
@@ -42,9 +40,9 @@ class ChatInitializer(private val context: Context) {
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
             newMessageIntent = {
-                messageId: String,
-                channelType: String,
-                channelId: String,
+                    messageId: String,
+                    channelType: String,
+                    channelId: String,
                 ->
                 HostActivity.createLaunchIntent(context, messageId, channelType, channelId)
             }
@@ -60,10 +58,17 @@ class ChatInitializer(private val context: Context) {
                         ApplicationConfigurator.XIAOMI_APP_KEY,
                     ),
                 ),
+                requestPermissionOnAppLaunch = { true }
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val offlinePlugin = StreamOfflinePluginFactory(Config(userPresence = true, persistenceEnabled = true), context)
+        val offlinePlugin = StreamOfflinePluginFactory(
+            Config(
+                userPresence = true,
+                persistenceEnabled = true,
+            ),
+            context
+        )
 
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)

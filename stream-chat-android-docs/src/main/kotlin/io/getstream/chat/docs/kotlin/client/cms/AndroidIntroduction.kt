@@ -3,7 +3,8 @@ package io.getstream.chat.docs.kotlin.client.cms
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.Channel
@@ -15,7 +16,6 @@ import io.getstream.chat.android.offline.model.message.attachments.UploadAttachm
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class AndroidIntroduction {
@@ -47,10 +47,8 @@ class AndroidIntroduction {
         // Step 3 - Authenticate and connect the user
         val user = User(
             id = "summer-brook-2",
-            extraData = mutableMapOf(
-                "name" to "Paranoid Android",
-                "image" to "https://bit.ly/2TIt8NR",
-            ),
+            name = "Paranoid Android",
+            image = "https://bit.ly/2TIt8NR",
         )
         client.connectUser(
             user = user,
@@ -126,7 +124,7 @@ class AndroidIntroduction {
             Filters.eq("type", "messaging"),
             Filters.`in`("members", "john"),
         )
-        val sort = QuerySort<Channel>().desc("last_message_at")
+    val sort = QuerySortByField<Channel>().descByName("lastMessageAt")
 
         val request = QueryChannelsRequest(
             filter = filter,

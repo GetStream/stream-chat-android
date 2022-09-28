@@ -20,6 +20,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.ui.sample.R
 
 sealed class ChatInfoItem {
@@ -30,7 +31,7 @@ sealed class ChatInfoItem {
             else -> this::class.java.simpleName
         }
 
-    data class MemberItem(val member: Member) : ChatInfoItem()
+    data class MemberItem(val member: Member, val createdBy: User) : ChatInfoItem()
     data class MembersSeparator(val membersToShow: Int) : ChatInfoItem()
     data class ChannelName(val name: String) : ChatInfoItem()
     object Separator : ChatInfoItem()

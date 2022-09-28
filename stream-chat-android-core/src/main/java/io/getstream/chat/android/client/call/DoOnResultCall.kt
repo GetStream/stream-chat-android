@@ -17,31 +17,47 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 internal class DoOnResultCall<T : Any>(
     private val originalCall: Call<T>,
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
     private val consumer: suspend (Result<T>) -> Unit,
 ) : Call<T> {
 
-    private var job: Job? = null
+    private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
 
-    override fun execute(): Result<T> = runBlocking {
-        originalCall.execute().also { consumer(it) }
-    }
+    override fun execute(): Result<T> = runBlocking { await() }
 
     override fun enqueue(callback: Call.Callback<T>) {
-        originalCall.enqueue { result ->
-            job = scope.launch { consumer(result) }
-            callback.onResult(result)
+        callScope.launch {
+            originalCall.enqueue { result ->
+                callScope.launch {
+                    withContext(DispatcherProvider.Main) {
+                        callback.onResult(result)
+                    }
+                    consumer(result)
+                }
+            }
         }
     }
 
     override fun cancel() {
-        job?.cancel()
+        originalCall.cancel()
+        callScope.coroutineContext.cancelChildren()
+    }
+
+    override suspend fun await(): Result<T> = Call.runCatching {
+        withContext(callScope.coroutineContext) {
+            originalCall.await().also { consumer(it) }
+        }
     }
 }

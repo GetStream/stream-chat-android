@@ -34,6 +34,7 @@ import kotlin.properties.Delegates
 internal class MessageListScrollHelper(
     private val recyclerView: RecyclerView,
     private val scrollButtonView: ScrollButtonView,
+    private val disableScrollWhenShowingDialog: Boolean,
     private val callback: MessageReadListener,
 ) {
     internal var alwaysScrollToBottom: Boolean by Delegates.notNull()
@@ -46,6 +47,8 @@ internal class MessageListScrollHelper(
 
     private var lastSeenMessageInChannel: MessageListItem? = null
     private var lastSeenMessageInThread: MessageListItem? = null
+
+    internal var unreadCountEnabled: Boolean = true
 
     /**
      * True when the latest message is visible.
@@ -84,7 +87,9 @@ internal class MessageListScrollHelper(
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
 
-                    stopScrollIfPopupShown(recyclerView)
+                    if (disableScrollWhenShowingDialog) {
+                        stopScrollIfPopupShown(recyclerView)
+                    }
                 }
 
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -181,6 +186,8 @@ internal class MessageListScrollHelper(
     }
 
     private fun refreshUnreadCount() {
+        if (!unreadCountEnabled) return
+
         var unreadCount = 0
         for (i in currentList.lastIndex downTo getLastSeenItemPosition() + 1) {
             if (currentList[i].isValid()) {

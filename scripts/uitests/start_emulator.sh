@@ -18,7 +18,7 @@ if $ANDROID_HOME/platform-tools/adb devices -l | grep -q emulator; then
 fi
 
 echo "Starting emulator..."
-echo "no" | $ANDROID_HOME/emulator/emulator "-avd" "Pixel_API_26" "-no-audio" "-no-boot-anim" "-gpu" "swiftshader_indirect" "-camera-back" "none" "-camera-front" "none" &
+echo "no" | $ANDROID_HOME/emulator/emulator "-avd" "Pixel_API_26" "-no-window" "-no-audio" "-no-boot-anim" "-gpu" "swiftshader_indirect" "-camera-back" "none" "-camera-front" "none" &
 echo "Emulator started!"
 
 echo "Waiting for emulator..."

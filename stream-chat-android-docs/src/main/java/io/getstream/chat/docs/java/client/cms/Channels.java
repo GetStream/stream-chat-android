@@ -3,25 +3,29 @@ package io.getstream.chat.docs.java.client.cms;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.NeutralFilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
-import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent;
 import io.getstream.chat.android.client.events.UserStartWatchingEvent;
 import io.getstream.chat.android.client.events.UserStopWatchingEvent;
 import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
 import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelCapabilities;
 import io.getstream.chat.android.client.models.ChannelMute;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Member;
@@ -101,7 +105,7 @@ public class Channels {
             );
             int offset = 0;
             int limit = 10;
-            QuerySort<Channel> sort = new QuerySort<Channel>().desc("last_message_at");
+            QuerySortByField<Channel> sort = QuerySortByField.descByName("lastMessageAt");
             int messageLimit = 0;
             int memberLimit = 0;
 
@@ -321,7 +325,7 @@ public class Channels {
             );
             int offset = 0;
             int limit = 10;
-            QuerySort<Channel> sort = new QuerySort<Channel>().desc("last_message_at");
+            QuerySortByField<Channel> sort = QuerySortByField.descByName("lastMessageAt");
             int messageLimit = 0;
             int memberLimit = 0;
 
@@ -362,7 +366,7 @@ public class Channels {
             FilterObject filter = Filters.in("members", "thierry");
             int offset = 0;
             int limit = 10;
-            QuerySort<Channel> sort = new QuerySort<>();
+            QuerySorter<Channel> sort = new QuerySortByField<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -392,12 +396,40 @@ public class Channels {
      * @see <a href="https://getstream.io/chat/docs/query_members/?language=java">Querying Members</a>
      */
     class QueryingMembers {
+
+        public void paginationAndOrdering() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+            int offset = 0;
+            int limit = 10;
+            FilterObject filterByName = Filters.neutral();
+
+            // paginate by user_id in descending order
+            QuerySorter<Member> sort = QuerySortByField.descByName("userId");
+            channelClient.queryMembers(offset, limit, filterByName, sort, emptyList()).enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<Member> members = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+
+            // paginate by created at in ascending order
+            QuerySorter<Member> createdAtSort = QuerySortByField.ascByName("createdAt");
+            channelClient.queryMembers(offset, limit, filterByName, createdAtSort, emptyList()).enqueue(result -> {
+                if (result.isSuccess()) {
+                    List<Member> members = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
         public void queryingMembers() {
             ChannelClient channelClient = client.channel("messaging", "general");
 
             int offset = 0; // Use this value for pagination
             int limit = 10;
-            QuerySort<Member> sort = new QuerySort<>();
+            QuerySortByField<Member> sort = new QuerySortByField<>();
 
             // Channel members can be queried with various filters
             // 1. Create the filter, e.g query members by user name
@@ -434,9 +466,9 @@ public class Channels {
             // Query all the members
             FilterObject filterByNone = NeutralFilterObject.INSTANCE;
 
-            // We can order the results too with QuerySort param
+            // We can order the results too with QuerySortByField param
             // Here example to order results by member created at descending
-            QuerySort<Member> createdAtDescendingSort = new QuerySort<Member>().desc("created_at");
+            QuerySortByField<Member> createdAtDescendingSort = QuerySortByField.descByName("createdAt");
         }
     }
 
@@ -465,6 +497,27 @@ public class Channels {
                                 .withMessages(LESS_THAN, lastMessage.getId(), pageSize);
                         // ...
                     }
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/channel_capabilities/?language=java">Capabilities</a>
+     */
+    class Capabilities {
+        public void frontendCapabilities() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            channelClient.query(new QueryChannelRequest()).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+
+                    Set<String> capabilities = channel.getOwnCapabilities();
+                    boolean userCanDeleteOwnMessage = capabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE);
+                    boolean userCanUpdateAnyMessage = capabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE);
                 } else {
                     // Handle result.error()
                 }
@@ -529,7 +582,7 @@ public class Channels {
             FilterObject filter = Filters.eq("invite", "accepted");
             int offset = 0;
             int limit = 10;
-            QuerySort<Channel> sort = new QuerySort<>();
+            QuerySorter<Channel> sort = new QuerySortByField<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -550,7 +603,7 @@ public class Channels {
             FilterObject filter = Filters.eq("invite", "rejected");
             int offset = 0;
             int limit = 10;
-            QuerySort<Channel> sort = new QuerySort<>();
+            QuerySorter<Channel> sort = new QuerySortByField<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -571,7 +624,7 @@ public class Channels {
             FilterObject filter = Filters.eq("invite", "pending");
             int offset = 0;
             int limit = 10;
-            QuerySort<Channel> sort = new QuerySort<>();
+            QuerySorter<Channel> sort = new QuerySortByField<>();
             int messageLimit = 0;
             int memberLimit = 0;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
@@ -654,7 +707,7 @@ public class Channels {
                 // Executing a channels query with either of the filters
                 int offset = 0;
                 int limit = 10;
-                QuerySort<Channel> sort = new QuerySort<>();
+                QuerySorter<Channel> sort = new QuerySortByField<>();
                 int messageLimit = 0;
                 int memberLimit = 0;
                 client.queryChannels(new QueryChannelsRequest(
@@ -713,6 +766,42 @@ public class Channels {
             channelClient.hide(true).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Channel is hidden
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+    }
+
+    /**
+     * @see <a href="https://getstream.io/chat/docs/android/disabling_channels/?language=java">Disabling Channels</a>
+     */
+    class DisablingChannels {
+
+        public void freeze() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+            Map<String, Object> set = new HashMap<>();
+            set.put("freeze", true);
+            List<String> unset = new ArrayList<>();
+
+            channelClient.updatePartial(set, unset).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+        public void unfreeze() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+            Map<String, Object> set = new HashMap<>();
+            List<String> unset = new ArrayList<>();
+            unset.add("freeze");
+
+            channelClient.updatePartial(set, unset).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
                 } else {
                     // Handle result.error()
                 }

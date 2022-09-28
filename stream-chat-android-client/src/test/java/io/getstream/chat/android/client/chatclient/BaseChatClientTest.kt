@@ -16,31 +16,40 @@
 
 package io.getstream.chat.android.client.chatclient
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
+import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.InitializationCoordinator
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.TestCoroutineRule
-import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.mock
 
-@ExtendWith(value = [TestCoroutineExtension::class])
 internal open class BaseChatClientTest {
-    @get:Rule
-    val coroutineRule = TestCoroutineRule()
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     @Mock
     protected lateinit var socketStateService: SocketStateService
@@ -62,13 +71,19 @@ internal open class BaseChatClientTest {
     @Mock
     protected lateinit var api: ChatApi
 
+    protected val clientState = mock<ClientState>()
+
     protected val initializationCoordinator = InitializationCoordinator.create()
 
     protected lateinit var chatClient: ChatClient
     internal val tokenUtils: TokenUtils = mock()
+    internal val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
     @BeforeEach
     fun before() {
+        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
+        val clientScope = ClientTestScope(testCoroutines.scope)
+        val userScope = UserTestScope(clientScope)
         MockitoAnnotations.openMocks(this)
         plugins = mutableListOf()
         chatClient = ChatClient(
@@ -78,15 +93,24 @@ internal open class BaseChatClientTest {
             notifications = mock(),
             tokenManager = tokenManager,
             socketStateService = socketStateService,
-            queryChannelsPostponeHelper = mock(),
+            callPostponeHelper = CallPostponeHelper(userScope) {
+                socketStateService.awaitConnection()
+            },
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
-            scope = coroutineRule.scope,
+            clientScope = clientScope,
+            userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),
+            chatSocketExperimental = mock(),
+            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
+            pluginFactories = pluginFactories,
+            repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            clientState = clientState
         )
+
         Mockito.reset(
             socketStateService,
             userStateService,

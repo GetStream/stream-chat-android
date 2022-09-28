@@ -25,6 +25,32 @@
         <attr name="streamUiGiphyMediaAttachmentPlaceHolderIcon" format="reference" />
         <!-- Media attachment background color -->
         <attr name="streamUiGiphyMediaAttachmentImageBackgroundColor" format="color|reference" />
+        <!-- Determines the sizing strategy of Giphy containers -->
+        <attr name="streamUiGiphyMediaAttachmentSizingMode" format="enum">
+            <!-- Automatically sizes the container according to the available
+             width and height while respecting the original Giphy aspect ratio.
+
+             Choosing this value makes the container ignore attributes
+             'streamUiGiphyMediaAttachmentWidth', 'streamUiGiphyMediaAttachmentHeight' and
+             'streamUiDimensionRatio'. -->
+            <enum name="adaptive" value="0" />
+            <!-- Applies a fixed size to the Giphy container. You can provide these
+            by passing in values to 'streamUiGiphyMediaAttachmentWidth',
+             'streamUiGiphyMediaAttachmentHeight' and  'streamUiDimensionRatio'. -->
+            <enum name="fixed_size" value="1" />
+        </attr>
+        <!-- Represents a ratio of width/ height. -->
+        <attr name="streamUiGiphyMediaAttachmentDimensionRatio" format="float" />
+        <!-- The width of the Giphy Container. -->
+        <attr name="streamUiGiphyMediaAttachmentWidth" format="dimension">
+            <!-- The view should be as big as its parent (minus padding). -->
+            <enum name="match_parent" value="-1" />
+        </attr>
+        <!-- The height of the Giphy Container. -->
+        <attr name="streamUiGiphyMediaAttachmentHeight" format="dimension">
+            <!-- The view should be as big as its parent (minus padding). -->
+            <enum name="match_parent" value="-1" />
+        </attr>
         <!-- Sets the Giphy type -->
         <attr name="streamUiGiphyMediaAttachmentGiphyType" format="enum">
             <enum name="original" value="0" />

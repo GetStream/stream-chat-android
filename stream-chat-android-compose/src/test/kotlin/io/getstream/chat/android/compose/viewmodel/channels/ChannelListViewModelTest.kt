@@ -22,12 +22,14 @@ import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
@@ -40,7 +42,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -52,6 +54,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @ExperimentalCoroutinesApi
+@ExtendWith(TestCoroutineExtension::class)
 internal class ChannelListViewModelTest {
 
     @Test
@@ -264,10 +267,11 @@ internal class ChannelListViewModelTest {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelClient: ChannelClient = mock(),
-        private val initialSort: QuerySort<Channel> = querySort,
+        private val initialSort: QuerySorter<Channel> = querySort,
         private val initialFilters: FilterObject? = queryFilter,
     ) {
         private val globalState: GlobalMutableState = mock()
+        private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
 
         init {
@@ -276,10 +280,11 @@ internal class ChannelListViewModelTest {
 
             whenever(chatClient.channel(any())) doReturn channelClient
             whenever(chatClient.channel(any(), any())) doReturn channelClient
+            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
@@ -287,7 +292,7 @@ internal class ChannelListViewModelTest {
         }
 
         fun givenIsOffline(isOffline: Boolean = false) = apply {
-            whenever(globalState.isOffline()) doReturn isOffline
+            whenever(clientState.isOffline) doReturn isOffline
         }
 
         fun givenChannelsQuery(channels: List<Channel> = emptyList()) = apply {
@@ -335,15 +340,12 @@ internal class ChannelListViewModelTest {
     }
 
     companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
 
         private val queryFilter = Filters.and(
             Filters.eq("type", "messaging"),
             Filters.`in`("members", "jc")
         )
-        private val querySort = QuerySort.desc<Channel>("last_updated")
+        private val querySort = QuerySortByField.descByName<Channel>("lastUpdated")
 
         private val channel1: Channel = Channel().apply {
             type = "messaging"

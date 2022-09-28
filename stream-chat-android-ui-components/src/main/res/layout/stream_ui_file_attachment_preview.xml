@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/stream_ui_message_composer_file_attachment_width"
+    android:layout_height="@dimen/stream_ui_message_composer_attachment_height"
+    android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
+    android:background="@drawable/stream_ui_shape_selected_media_round"
+    >
+
+    <ImageView
+        android:id="@+id/fileThumbImageView"
+        android:layout_width="@dimen/stream_ui_attachment_dialog_file_type_width"
+        android:layout_height="@dimen/stream_ui_attachment_dialog_file_type_height"
+        android:layout_marginStart="8dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/stream_ui_ic_file_csv"
+        />
+
+    <TextView
+        android:id="@+id/fileNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
+        app:layout_constraintBottom_toTopOf="@id/fileSizeTextView"
+        app:layout_constraintEnd_toStartOf="@id/removeButton"
+        app:layout_constraintStart_toEndOf="@id/fileThumbImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="SlimAaron.pdf"
+        />
+
+    <TextView
+        android:id="@+id/fileSizeTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fileThumbImageView"
+        app:layout_constraintTop_toBottomOf="@id/fileNameTextView"
+        tools:text="123 KB"
+        />
+
+    <ImageButton
+        android:id="@+id/removeButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/stream_ui_circle_white"
+        android:backgroundTint="@color/stream_ui_overlay_dark"
+        android:cropToPadding="true"
+        android:padding="6dp"
+        android:scaleType="center"
+        android:src="@drawable/stream_ui_ic_close_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

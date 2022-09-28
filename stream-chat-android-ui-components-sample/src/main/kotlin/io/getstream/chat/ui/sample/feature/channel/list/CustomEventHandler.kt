@@ -20,74 +20,62 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MemberAddedEvent
-import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.offline.event.handler.chat.BaseChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.flow.StateFlow
 
 class CustomChatEventHandlerFactory : ChatEventHandlerFactory() {
-    override fun chatEventHandler(channels: StateFlow<List<Channel>?>) = CustomChatEventHandler(channels)
+    override fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>) = CustomChatEventHandler(channels)
 }
 
-class CustomChatEventHandler(private val channels: StateFlow<List<Channel>?>) : BaseChatEventHandler() {
+class CustomChatEventHandler(channels: StateFlow<Map<String, Channel>?>) :
+    DefaultChatEventHandler(channels, ChatClient.instance().clientState) {
 
-    override fun handleNotificationAddedToChannelEvent(
-        event: NotificationAddedToChannelEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = addIfChannelIsAbsentAndNotDraft(channels, event.channel)
+    override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
+        return when (event) {
+            is MemberAddedEvent -> addIfCurrentUserJoinedAndChannelIsNotDraft(cachedChannel, event.member)
+            else -> super.handleCidEvent(event, filter, cachedChannel)
+        }
+    }
 
-    override fun handleMemberAddedEvent(
-        event: MemberAddedEvent,
-        filter: FilterObject,
-        cachedChannel: Channel?,
-    ): EventHandlingResult = addIfChannelIsAbsentAndNotDraft(channels, cachedChannel)
+    override fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
+        return when (event) {
+            is NotificationAddedToChannelEvent -> watchIfChannelIsNotDraft(event.channel)
+            is ChannelUpdatedEvent -> handleChannelUpdate(event.channel)
+            is ChannelUpdatedByUserEvent -> handleChannelUpdate(event.channel)
+            else -> super.handleChannelEvent(event, filter)
+        }
+    }
 
-    override fun handleChannelUpdatedByUserEvent(
-        event: ChannelUpdatedByUserEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = handleChannelUpdate(event.channel)
-
-    override fun handleChannelUpdatedEvent(
-        event: ChannelUpdatedEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = handleChannelUpdate(event.channel)
-
-    override fun handleNotificationMessageNewEvent(
-        event: NotificationMessageNewEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = addIfChannelIsAbsentAndNotDraft(channels, event.channel)
-
-    override fun handleMemberRemovedEvent(
-        event: MemberRemovedEvent,
-        filter: FilterObject,
-        cachedChannel: Channel?,
-    ): EventHandlingResult = handleMemberRemoval(channels, cachedChannel, event.member)
-
-    override fun handleNotificationRemovedFromChannelEvent(
-        event: NotificationRemovedFromChannelEvent,
-        filter: FilterObject,
-    ): EventHandlingResult = handleMemberRemoval(channels, event.channel, event.member)
-
-    private fun addIfChannelIsAbsentAndNotDraft(
-        channels: StateFlow<List<Channel>?>,
-        channel: Channel?,
-    ): EventHandlingResult {
-        val channelsList = channels.value
-        return if (isChannelNullOrDraft(channel) ||
-            channelsList == null ||
-            channelsList.any { it.cid == channel!!.cid }
-        ) {
+    private fun addIfCurrentUserJoinedAndChannelIsNotDraft(channel: Channel?, member: Member): EventHandlingResult {
+        return if (isChannelNullOrDraft(channel)) {
             EventHandlingResult.Skip
         } else {
-            EventHandlingResult.Add(channel!!)
+            addIfCurrentUserJoinedChannel(channel, member)
+        }
+    }
+
+    private fun watchIfChannelIsNotDraft(channel: Channel): EventHandlingResult {
+        return if (isChannelNullOrDraft(channel)) {
+            EventHandlingResult.Skip
+        } else {
+            EventHandlingResult.WatchAndAdd(channel.cid)
+        }
+    }
+
+    private fun addIfChannelIsNotDraft(channel: Channel?): EventHandlingResult {
+        return if (isChannelNullOrDraft(channel)) {
+            EventHandlingResult.Skip
+        } else {
+            addIfChannelIsAbsent(channel)
         }
     }
 
@@ -99,33 +87,9 @@ class CustomChatEventHandler(private val channels: StateFlow<List<Channel>?>) : 
         }
 
         return if (hasMember) {
-            addIfChannelIsAbsentAndNotDraft(channels, channel)
+            addIfChannelIsNotDraft(channel)
         } else {
-            removeIfChannelIsPresent(channels, channel)
-        }
-    }
-
-    private fun handleMemberRemoval(
-        channels: StateFlow<List<Channel>?>,
-        cachedChannel: Channel?,
-        member: Member,
-    ): EventHandlingResult {
-        val currentUserId = ChatClient.instance().getCurrentUser()?.id
-        val removedMemberId = member.getUserId()
-
-        return if (currentUserId == removedMemberId) {
-            removeIfChannelIsPresent(channels, cachedChannel)
-        } else {
-            EventHandlingResult.Skip
-        }
-    }
-
-    private fun removeIfChannelIsPresent(channels: StateFlow<List<Channel>?>, channel: Channel?): EventHandlingResult {
-        val channelsList = channels.value
-        return if (channel != null && channelsList != null && channelsList.any { it.cid == channel.cid }) {
-            EventHandlingResult.Remove(channel.cid)
-        } else {
-            EventHandlingResult.Skip
+            removeIfChannelExists(channel.cid)
         }
     }
 }

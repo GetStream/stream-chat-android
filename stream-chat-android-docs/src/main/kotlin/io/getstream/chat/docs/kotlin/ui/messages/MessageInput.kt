@@ -29,7 +29,7 @@ import java.io.File
 /**
  * [Message Input](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-input/)
  */
-private class MessageInputViewSnippets() : Fragment() {
+private class MessageInputViewSnippets : Fragment() {
 
     private lateinit var messageInputView: MessageInputView
 
@@ -51,17 +51,11 @@ private class MessageInputViewSnippets() : Fragment() {
         messageInputView.setOnSendButtonClickListener {
             // Handle send button click
         }
-        messageInputView.setTypingListener(
-            object : MessageInputView.TypingListener {
-                override fun onKeystroke() {
-                    // Handle keystroke case
-                }
-
-                override fun onStopTyping() {
-                    // Handle stop typing case
-                }
-            }
-        )
+        // This needs to be commented out or the docs module build will fail
+        /*
+        messageInputView.setTypingUpdatesBuffer(
+            // Your custom implementation of TypingUpdatesBuffer
+        )*/
         messageInputView.setMaxMessageLengthHandler { messageText, messageLength, maxMessageLength, maxMessageLengthExceeded ->
             if (maxMessageLengthExceeded) {
                 // Show custom max-length error

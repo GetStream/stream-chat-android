@@ -48,16 +48,16 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.avatarViewSmall.setUserData(randomUser())
-        binding.avatarViewMedium.setUserData(randomUser())
-        binding.avatarViewLarge.setUserData(randomUser())
+        binding.avatarViewSmall.setUser(randomUser())
+        binding.avatarViewMedium.setUser(randomUser())
+        binding.avatarViewLarge.setUser(randomUser())
 
-        binding.avatarView1.setChannelData(
+        binding.avatarView1.setChannel(
             randomChannel(
                 listOf(randomMember())
             ),
         )
-        binding.avatarView2.setChannelData(
+        binding.avatarView2.setChannel(
             randomChannel(
                 listOf(
                     randomMember(),
@@ -65,7 +65,7 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
                 )
             ),
         )
-        binding.avatarView3.setChannelData(
+        binding.avatarView3.setChannel(
             randomChannel(
                 listOf(
                     randomMember(),
@@ -74,7 +74,7 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
                 )
             )
         )
-        binding.avatarView4.setChannelData(
+        binding.avatarView4.setChannel(
             randomChannel(
                 listOf(
                     randomMember(),
@@ -85,7 +85,7 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
             )
         )
 
-        binding.avatarViewMissing1.setChannelData(
+        binding.avatarViewMissing1.setChannel(
             randomChannel(
                 listOf(
                     randomMember(),
@@ -95,7 +95,7 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
                 )
             )
         )
-        binding.avatarViewMissing2.setChannelData(
+        binding.avatarViewMissing2.setChannel(
             randomChannel(
                 listOf(
                     randomMember(),
@@ -105,7 +105,7 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
                 )
             )
         )
-        binding.avatarViewMissing3.setChannelData(
+        binding.avatarViewMissing3.setChannel(
             randomChannel(
                 listOf(
                     randomMember(),
@@ -115,7 +115,7 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
                 )
             )
         )
-        binding.avatarViewMissing4.setChannelData(
+        binding.avatarViewMissing4.setChannel(
             randomChannel(
                 listOf(randomMember(withImage = false))
             )
@@ -125,43 +125,43 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
         val user2 = randomUser(isOnline = true)
         val user3 = randomUser(isOnline = true)
         binding.avatarViewSmallIndicator.apply {
-            setUserData(user1)
+            setUser(user1)
         }
         binding.avatarViewMediumIndicator.apply {
-            setUserData(user2)
+            setUser(user2)
         }
         binding.avatarViewLargeIndicator.apply {
-            setUserData(user3)
+            setUser(user3)
         }
         binding.avatarViewIndicatorTopLeft.apply {
-            setUserData(user2)
+            setUser(user2)
         }
         binding.avatarViewIndicatorBottomLeft.apply {
-            setUserData(user2)
+            setUser(user2)
         }
         binding.avatarViewIndicatorTopRight.apply {
-            setUserData(user2)
+            setUser(user2)
         }
         binding.avatarViewIndicatorBottomRight.apply {
-            setUserData(user2)
+            setUser(user2)
         }
         binding.avatarViewSmallIndicatorBorder.apply {
-            setUserData(user1)
+            setUser(user1)
         }
         binding.avatarViewMediumIndicatorBorder.apply {
-            setUserData(user2)
+            setUser(user2)
         }
         binding.avatarViewLargeIndicatorBorder.apply {
-            setUserData(user3)
+            setUser(user3)
         }
         binding.avatarViewSmallColors.apply {
-            setUserData(user1)
+            setUser(user1)
         }
         binding.avatarViewMediumColors.apply {
-            setUserData(user2)
+            setUser(user2)
         }
         binding.avatarViewLargeColors.apply {
-            setUserData(user3)
+            setUser(user3)
         }
     }
 }

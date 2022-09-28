@@ -24,12 +24,14 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * Intercepts [ChatApi] calls and validates [CustomObject.extraData] keys to prevent passing reserved names.
  */
 @Suppress("TooManyFunctions")
 internal class ExtraDataValidator(
+    private val scope: CoroutineScope,
     private val delegate: ChatApi,
 ) : ChatApi by delegate {
 
@@ -81,6 +83,7 @@ internal class ExtraDataValidator(
         return when (obj == null || reserved == null) {
             true -> this
             else -> ErrorCall(
+                scope,
                 ChatError(
                     message = obj.composeErrorMessage(reserved)
                 )
@@ -93,6 +96,7 @@ internal class ExtraDataValidator(
         return when (reserved.isEmpty()) {
             true -> this
             else -> ErrorCall(
+                scope,
                 ChatError(
                     message = obj.composeErrorMessage(reserved)
                 )
@@ -107,6 +111,7 @@ internal class ExtraDataValidator(
         return when (reserved.isEmpty()) {
             true -> this
             else -> ErrorCall(
+                scope,
                 ChatError(
                     message = "'extraData' contains reserved keys: ${reserved.joinToString()}"
                 )

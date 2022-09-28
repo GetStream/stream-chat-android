@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -164,6 +165,7 @@ public fun MessageComposer(
             validationErrors = it.validationErrors,
             attachments = it.attachments,
             ownCapabilities = it.ownCapabilities,
+            isInEditMode = it.action is Edit,
             onSendMessage = { input, attachments ->
                 val message = viewModel.buildNewMessage(input, attachments)
 
@@ -284,11 +286,12 @@ public fun MessageComposer(
             validationErrors = it.validationErrors,
             attachments = it.attachments,
             onSendMessage = onSendMessage,
-            ownCapabilities = messageComposerState.ownCapabilities
+            ownCapabilities = messageComposerState.ownCapabilities,
+            isInEditMode = it.action is Edit
         )
     },
 ) {
-    val (_, attachments, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
     val snackbarHostState = remember { SnackbarHostState() }
 
     MessageInputValidationError(
@@ -333,7 +336,7 @@ public fun MessageComposer(
             mentionPopupContent(mentionSuggestions)
         }
 
-        if (commandSuggestions.isNotEmpty() && attachments.isEmpty()) {
+        if (commandSuggestions.isNotEmpty()) {
             commandPopupContent(commandSuggestions)
         }
     }
@@ -499,20 +502,22 @@ internal fun DefaultComposerIntegrations(
                 ChatTheme.colors.disabled
             }
 
-            IconButton(
-                modifier = Modifier
-                    .size(32.dp)
-                    .padding(4.dp),
-                enabled = isCommandsButtonEnabled,
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_command),
-                        contentDescription = null,
-                        tint = commandsButtonTint,
-                    )
-                },
-                onClick = onCommandsClick
-            )
+            AnimatedVisibility(visible = messageInputState.hasCommands) {
+                IconButton(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(4.dp),
+                    enabled = isCommandsButtonEnabled,
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_command),
+                            contentDescription = null,
+                            tint = commandsButtonTint,
+                        )
+                    },
+                    onClick = onCommandsClick
+                )
+            }
         }
     } else {
         Spacer(modifier = Modifier.width(12.dp))
@@ -549,7 +554,7 @@ internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  */
 @Composable
-public fun RowScope.DefaultComposerInputContent(
+private fun RowScope.DefaultComposerInputContent(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
@@ -585,13 +590,14 @@ internal fun DefaultMessageComposerTrailingContent(
     attachments: List<Attachment>,
     validationErrors: List<ValidationError>,
     ownCapabilities: Set<String>,
+    isInEditMode: Boolean,
     onSendMessage: (String, List<Attachment>) -> Unit,
 ) {
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
     val description = stringResource(id = R.string.stream_compose_cd_send_button)
 
-    if (coolDownTime > 0) {
+    if (coolDownTime > 0 && !isInEditMode) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
         IconButton(
@@ -657,12 +663,13 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
         }
 
         val context = LocalContext.current
-        val stringOk = stringResource(id = R.string.stream_compose_ok)
         LaunchedEffect(validationErrors.size) {
-            if (firstValidationError is ValidationError.ContainsLinksWhenNotAllowed) {
+            if (firstValidationError is ValidationError.ContainsLinksWhenNotAllowed ||
+                firstValidationError is ValidationError.AttachmentSizeExceeded
+            ) {
                 snackbarHostState.showSnackbar(
                     message = errorMessage,
-                    actionLabel = stringOk,
+                    actionLabel = context.getString(R.string.stream_compose_ok),
                     duration = SnackbarDuration.Indefinite
                 )
             } else {

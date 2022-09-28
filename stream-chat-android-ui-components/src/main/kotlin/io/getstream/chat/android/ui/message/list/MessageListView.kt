@@ -27,7 +27,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.lifecycle.MutableLiveData
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
@@ -39,6 +39,7 @@ import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.extensions.activity
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.showToast
 import com.getstream.sdk.chat.view.EndlessMessageListScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -52,11 +53,26 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.model.ModeratedMessageOption
+import io.getstream.chat.android.common.state.Copy
+import io.getstream.chat.android.common.state.CustomAction
+import io.getstream.chat.android.common.state.Delete
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.common.state.Pin
+import io.getstream.chat.android.common.state.React
+import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.Resend
+import io.getstream.chat.android.common.state.ThreadReply
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.ui.common.extensions.internal.copyToClipboard
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
@@ -64,7 +80,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.isGiphy
 import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
-import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
@@ -75,11 +90,14 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.gallery.toAttachment
+import io.getstream.chat.android.ui.message.dialog.ModeratedMessageDialogFragment
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.AttachmentDownloadHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.BottomEndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmDeleteMessageHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMessageHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.CustomActionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EnterThreadListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ErrorEventHandler
@@ -100,15 +118,14 @@ import io.getstream.chat.android.ui.message.list.MessageListView.MessageReplyHan
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageRetryListener
 import io.getstream.chat.android.ui.message.list.MessageListView.MessageUnpinHandler
+import io.getstream.chat.android.ui.message.list.MessageListView.ModeratedMessageLongClickListener
+import io.getstream.chat.android.ui.message.list.MessageListView.ModeratedMessageOptionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ReplyMessageClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadStartHandler
-import io.getstream.chat.android.ui.message.list.MessageListView.UserBlockHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
-import io.getstream.chat.android.ui.message.list.MessageListView.UserMuteHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserReactionClickListener
-import io.getstream.chat.android.ui.message.list.MessageListView.UserUnmuteHandler
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
@@ -118,12 +135,14 @@ import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFac
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelper
-import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDialogFragment
-import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
+import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItem
+import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItemsFactory
+import io.getstream.chat.android.ui.message.list.options.message.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import io.getstream.chat.android.common.state.Flag as FlagAction
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
@@ -169,6 +188,9 @@ public class MessageListView : ConstraintLayout {
     private var endRegionReachedHandler = EndRegionReachedHandler {
         throw IllegalStateException("endRegionReachedHandler must be set.")
     }
+    private var bottomEndRegionReachedHandler = BottomEndRegionReachedHandler {
+        throw IllegalStateException("bottomEndRegionReachedHandler must be set.")
+    }
     private var lastMessageReadHandler = LastMessageReadHandler {
         throw IllegalStateException("lastMessageReadHandler must be set.")
     }
@@ -205,14 +227,8 @@ public class MessageListView : ConstraintLayout {
     private var messageReactionHandler = MessageReactionHandler { _, _ ->
         throw IllegalStateException("onMessageReactionHandler must be set.")
     }
-    private var userMuteHandler = UserMuteHandler {
-        throw IllegalStateException("onMuteUserHandler must be set.")
-    }
-    private var userUnmuteHandler = UserUnmuteHandler {
-        throw IllegalStateException("onUnmuteUserHandler must be set.")
-    }
-    private var userBlockHandler = UserBlockHandler { _, _ ->
-        throw IllegalStateException("onBlockUserHandler must be set.")
+    private var customActionHandler = CustomActionHandler { _, _ ->
+        throw IllegalStateException("onCustomActionHandler must be set.")
     }
     private var messageReplyHandler = MessageReplyHandler { _, _ ->
         throw IllegalStateException("onReplyMessageHandler must be set")
@@ -294,16 +310,15 @@ public class MessageListView : ConstraintLayout {
         }.let(::showToast)
     }
 
+    private var moderatedMessageOptionHandler = ModeratedMessageOptionHandler { _, _ ->
+        throw IllegalStateException("onModeratedMessageOptionSelected must be set")
+    }
+
     private var messageListItemPredicate: MessageListItemPredicate = HiddenMessageListItemPredicate
     private var messageListItemTransformer: MessageListItemTransformer = MessageListItemTransformer { it }
     private var showAvatarPredicate: ShowAvatarPredicate = DefaultShowAvatarPredicate()
 
-    @Suppress("DEPRECATION_ERROR")
-    private var deletedMessageListItemPredicate: MessageListItemPredicate =
-        DeletedMessageListItemPredicate.VisibleToEveryone
-
-    internal var deletedMessageListItemPredicateLiveData: MutableLiveData<MessageListItemPredicate?> =
-        MutableLiveData(null)
+    private var deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
 
     private lateinit var loadMoreListener: EndlessMessageListScrollListener
 
@@ -328,64 +343,90 @@ public class MessageListView : ConstraintLayout {
         }
 
     /**
-     * Provides a default long click handler for all messages. Based on the configuration options we have and the message
-     * type, we show different kind of options.
+     * Provides a default long click handler for all non moderated messages. Based on the configuration options we have
+     * and the message type, we show different kind of options.
      *
      * We also disable editing of certain messages, like Giphy messages.
      */
     private val defaultMessageLongClickListener =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                val style = requireStyle()
-                val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
-                val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
+                if (message.isModerationFailed(ChatClient.instance())) {
+                    moderatedMessageLongClickListener?.onModeratedMessageLongClick(message)
+                } else {
+                    val style = requireStyle()
+                    val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
+                    val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
 
-                MessageOptionsDialogFragment
-                    .newMessageOptionsInstance(
-                        message,
-                        MessageOptionsView.Configuration(
-                            viewStyle = viewStyle,
-                            channelConfig = channel.config,
-                            hasTextToCopy = message.text.isNotBlank(),
-                            suppressThreads = adapter.isThread || message.isInThread(),
-                            ownCapabilities = ownCapabilities
-                        ),
-                        viewStyle,
-                        messageListItemViewHolderFactory,
-                        messageBackgroundFactory,
-                        attachmentFactoryManager,
-                        showAvatarPredicate
+                    val messageOptionItems = messageOptionItemsFactory.createMessageOptionItems(
+                        selectedMessage = message,
+                        currentUser = ChatUI.currentUserProvider.getCurrentUser(),
+                        isInThread = adapter.isThread || message.isInThread(),
+                        ownCapabilities = ownCapabilities,
+                        style = viewStyle
                     )
-                    .apply {
-                        setReactionClickHandler { message, reactionType ->
-                            messageReactionHandler.onMessageReaction(message, reactionType)
+
+                    showMessageOptionsDialog(fragmentManager, message, messageOptionItems)
+                }
+            }
+        }
+
+    /**
+     * Show message options dialog for the given set of message options.
+     *
+     * @param fragmentManager The FragmentManager this dialog fragment will be added to.
+     * @param message The selected message.
+     * @param messageOptionItems The list of message options to display.
+     * @param reactionClickListener The callback to be invoked on reaction item click.
+     * @param optionClickListener The callback to be invoked on option item click.
+     */
+    @ExperimentalStreamChatApi
+    public fun showMessageOptionsDialog(
+        fragmentManager: FragmentManager,
+        message: Message,
+        messageOptionItems: List<MessageOptionItem>,
+        reactionClickListener: (Message, String) -> Unit = { message: Message, reactionType: String ->
+            messageReactionHandler.onMessageReaction(message, reactionType)
+        },
+        optionClickListener: (MessageAction) -> Unit = { messageAction: MessageAction ->
+            handleMessageAction(messageAction)
+        }
+    ) {
+        MessageOptionsDialogFragment.newInstance(
+            context = context,
+            optionsDialogType = MessageOptionsDialogFragment.OptionsDialogType.MESSAGE_OPTIONS,
+            message = message,
+            style = requireStyle(),
+            messageListItemViewHolderFactory = messageListItemViewHolderFactory,
+            messageBackgroundFactory = messageBackgroundFactory,
+            attachmentFactoryManager = attachmentFactoryManager,
+            showAvatarPredicate = showAvatarPredicate,
+            messageOptionItems = messageOptionItems,
+        )
+            .apply {
+                setReactionClickListener { message, reactionType ->
+                    reactionClickListener(message, reactionType)
+                }
+                setMessageOptionClickListener { messageAction ->
+                    optionClickListener(messageAction)
+                }
+            }
+            .show(fragmentManager, MessageOptionsDialogFragment.TAG)
+    }
+
+    /**
+     * Provides long click listener for moderated messages. By default opens the [ModeratedMessageDialogFragment].
+     */
+    private var moderatedMessageLongClickListener: ModeratedMessageLongClickListener? =
+        ModeratedMessageLongClickListener { message ->
+            context.getFragmentManager()?.let { fragmentManager ->
+                ModeratedMessageDialogFragment.newInstance(message).apply {
+                    setDialogSelectionHandler(object : ModeratedMessageDialogFragment.DialogSelectionHandler {
+                        override fun onModeratedOptionSelected(message: Message, action: ModeratedMessageOption) {
+                            moderatedMessageOptionHandler.onModeratedMessageOptionSelected(message, action)
                         }
-                        setConfirmDeleteMessageClickHandler { message, callback ->
-                            confirmDeleteMessageHandler.onConfirmDeleteMessage(
-                                message,
-                                callback::onConfirmDeleteMessage
-                            )
-                        }
-                        setConfirmFlagMessageClickHandler { message, callback ->
-                            confirmFlagMessageHandler.onConfirmFlagMessage(message, callback)
-                        }
-                        setMessageOptionsHandlers(
-                            MessageOptionsDialogFragment.MessageOptionsHandlers(
-                                threadReplyHandler = threadStartHandler,
-                                retryHandler = messageRetryHandler,
-                                editClickHandler = messageEditHandler,
-                                flagClickHandler = messageFlagHandler,
-                                pinClickHandler = messagePinHandler,
-                                unpinClickHandler = messageUnpinHandler,
-                                muteClickHandler = userMuteHandler,
-                                unmuteClickHandler = userUnmuteHandler,
-                                blockClickHandler = userBlockHandler,
-                                deleteClickHandler = messageDeleteHandler,
-                                replyClickHandler = messageReplyHandler,
-                            )
-                        )
-                    }
-                    .show(fragmentManager, MessageOptionsDialogFragment.TAG)
+                    })
+                }.show(fragmentManager, ModeratedMessageDialogFragment.TAG)
             }
         }
     private val defaultMessageRetryListener =
@@ -470,25 +511,21 @@ public class MessageListView : ConstraintLayout {
     private val defaultReactionViewClickListener =
         ReactionViewClickListener { message: Message ->
             context.getFragmentManager()?.let {
-                MessageOptionsDialogFragment.newReactionOptionsInstance(
-                    message,
-                    MessageOptionsView.Configuration(
-                        viewStyle = requireStyle(),
-                        channelConfig = channel.config,
-                        hasTextToCopy = false, // No effect when displaying reactions
-                        suppressThreads = false, // No effect when displaying reactions
-                        ownCapabilities = ownCapabilities
-                    ),
-                    requireStyle(),
-                    messageListItemViewHolderFactory,
-                    messageBackgroundFactory,
-                    attachmentFactoryManager,
-                    showAvatarPredicate
+                MessageOptionsDialogFragment.newInstance(
+                    context = context,
+                    optionsDialogType = MessageOptionsDialogFragment.OptionsDialogType.REACTION_OPTIONS,
+                    message = message,
+                    style = requireStyle(),
+                    messageListItemViewHolderFactory = messageListItemViewHolderFactory,
+                    messageBackgroundFactory = messageBackgroundFactory,
+                    attachmentFactoryManager = attachmentFactoryManager,
+                    showAvatarPredicate = showAvatarPredicate,
+                    messageOptionItems = emptyList()
                 ).apply {
-                    setReactionClickHandler { message, reactionType ->
+                    setReactionClickListener { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
                     }
-                    setUserReactionClickHandler { message, user, reaction ->
+                    setUserReactionClickListener { message, user, reaction ->
                         userReactionClickListener.onUserReactionClick(message, user, reaction)
                     }
                 }
@@ -529,6 +566,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentFactoryManager: AttachmentFactoryManager
     private lateinit var messageBackgroundFactory: MessageBackgroundFactory
+    private lateinit var messageOptionItemsFactory: MessageOptionItemsFactory
 
     public constructor(context: Context) : this(context, null, 0)
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -592,6 +630,7 @@ public class MessageListView : ConstraintLayout {
         scrollHelper = MessageListScrollHelper(
             recyclerView = binding.chatMessagesRV,
             scrollButtonView = binding.scrollToBottomButton,
+            disableScrollWhenShowingDialog = messageListViewStyle?.disableScrollWhenShowingDialog ?: true
         ) {
             lastMessageReadHandler.onLastMessageRead()
         }
@@ -608,13 +647,29 @@ public class MessageListView : ConstraintLayout {
                 R.styleable.MessageListView_streamUiLoadMoreThreshold,
                 LOAD_MORE_THRESHOLD,
             ).also { loadMoreThreshold ->
-                loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold) {
+                val loadMoreAtTop = {
                     endRegionReachedHandler.onEndRegionReached()
                 }
+                val loadMoreAtBottom = {
+                    val lastId = adapter.currentList
+                        .asSequence()
+                        .filterIsInstance<MessageListItem.MessageItem>()
+                        .lastOrNull()
+                        ?.message
+                        ?.id
+
+                    bottomEndRegionReachedHandler.onBottomEndRegionReached(lastId)
+                }
+
+                loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold, loadMoreAtTop, loadMoreAtBottom)
             }
 
             val style = requireStyle()
             binding.scrollToBottomButton.setScrollButtonViewStyle(style.scrollButtonViewStyle)
+            (binding.scrollToBottomButton.layoutParams as? LayoutParams)?.let { layoutParams ->
+                layoutParams.bottomMargin = style.scrollButtonBottomMargin
+                layoutParams.marginEnd = style.scrollButtonEndMargin
+            }
             scrollHelper.scrollToBottomButtonEnabled = style.scrollButtonViewStyle.scrollButtonEnabled
             scrollHelper.alwaysScrollToBottom = style.scrollButtonBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
         }
@@ -730,13 +785,17 @@ public class MessageListView : ConstraintLayout {
             messageBackgroundFactory = MessageBackgroundFactoryImpl(requireStyle().itemStyle)
         }
 
+        if (::messageOptionItemsFactory.isInitialized.not()) {
+            messageOptionItemsFactory = MessageOptionItemsFactory.defaultFactory(context)
+        }
+
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
             dateFormatter = messageDateFormatter,
             isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
-            messageBackgroundFactory,
-            deletedMessageListItemPredicate,
+            messageBackgroundFactory = messageBackgroundFactory,
+            deletedMessageVisibility = deletedMessageVisibility,
             isCurrentUserBanned = { channel.isCurrentUserBanned() },
         )
 
@@ -787,6 +846,14 @@ public class MessageListView : ConstraintLayout {
      */
     public fun hideLoadingView() {
         loadingViewContainer.isVisible = false
+    }
+
+    /**
+     * Enables fetch for messages at the bottom.
+     */
+    public fun shouldRequestMessagesAtBottom(shouldRequest: Boolean) {
+        loadMoreListener.fetchAtBottom(shouldRequest)
+        scrollHelper.unreadCountEnabled = !shouldRequest
     }
 
     /**
@@ -882,24 +949,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Enables or disables the user blocking feature.
-     *
-     * @param enabled True if user blocking is enabled, false otherwise.
-     */
-    public fun setBlockUserEnabled(enabled: Boolean) {
-        messageListViewStyle = requireStyle().copy(blockEnabled = enabled)
-    }
-
-    /**
-     * Enables or disables the user muting feature.
-     *
-     * @param enabled True if user muting is enabled, false otherwise.
-     */
-    public fun setMuteUserEnabled(enabled: Boolean) {
-        messageListViewStyle = requireStyle().copy(muteEnabled = enabled)
-    }
-
-    /**
      * Enables or disables the message flagging feature.
      *
      * @param enabled True if user muting is enabled, false otherwise.
@@ -962,6 +1011,19 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Allows clients to set a custom implementation of [MessageOptionItemsFactory]. Use this
+     * method if you want to change the message options on the message options overlay.
+     *
+     * @param messageOptionItemsFactory The custom factory that provides option items for the message options overlay.
+     */
+    public fun setMessageOptionItemsFactory(messageOptionItemsFactory: MessageOptionItemsFactory) {
+        check(isAdapterInitialized().not()) {
+            "Adapter was already initialized, please set MessageOptionItemsFactory first"
+        }
+        this.messageOptionItemsFactory = messageOptionItemsFactory
+    }
+
+    /**
      * Allows clients to set a custom implementation of [DateFormatter] to format the message date.
      *
      * @param messageDateFormatter The formatter that is used to format the message date.
@@ -1016,29 +1078,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Used to specify visibility of the deleted [MessageListItem.MessageItem] elements.
-     *
-     * @param deletedMessageListItemPredicate An instance of [MessageListItemPredicate]. You can pass one of the following objects:
-     * [DeletedMessageListItemPredicate.VisibleToEveryone], [DeletedMessageListItemPredicate.NotVisibleToAnyone], or [DeletedMessageListItemPredicate.VisibleToAuthorOnly].
-     * Alternatively you can pass your custom implementation by implementing the [MessageListItemPredicate] interface.
-     */
-    @Deprecated(
-        message = "Filtering deleted messages should be performed in the ViewModel.",
-        replaceWith = ReplaceWith(
-            "MessageListViewModel().setDeletedMessagesVisibility(MessageListViewModel.DeletedMessagesVisibility)",
-            "com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel"
-        ),
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setDeletedMessageListItemPredicate(deletedMessageListItemPredicate: MessageListItemPredicate) {
-        check(isAdapterInitialized().not()) {
-            "Adapter was already initialized, please set MessageListItemPredicate first"
-        }
-        this.deletedMessageListItemPredicate = deletedMessageListItemPredicate
-        this.deletedMessageListItemPredicateLiveData.value = this.deletedMessageListItemPredicate
-    }
-
-    /**
      * Allows clients to set an instance of [AttachmentFactoryManager] that holds
      * a list of custom attachment factories. Use this method to create a custom
      * content view for the message attachments.
@@ -1073,13 +1112,7 @@ public class MessageListView : ConstraintLayout {
         CoroutineScope(DispatcherProvider.IO).launch {
             val filteredList = listItem.items
                 .filter(messageListItemPredicate::predicate)
-                .filter { item ->
-                    if (item is MessageListItem.MessageItem && item.message.isDeleted()) {
-                        deletedMessageListItemPredicate.predicate(item)
-                    } else {
-                        true
-                    }
-                }.let(messageListItemTransformer::transform)
+                .let(messageListItemTransformer::transform)
 
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
@@ -1163,6 +1196,17 @@ public class MessageListView : ConstraintLayout {
     public fun setMessageLongClickListener(messageLongClickListener: MessageLongClickListener?) {
         listenerContainer.messageLongClickListener =
             messageLongClickListener ?: defaultMessageLongClickListener
+    }
+
+    /**
+     * Sets the moderated message long click listener to be used by MessageListView.
+     *
+     * @param moderatedMessageLongClickListener The listener to use. If null, the default will be used instead.
+     */
+    public fun setModeratedMessageLongClickListener(
+        moderatedMessageLongClickListener: ModeratedMessageLongClickListener?,
+    ) {
+        this.moderatedMessageLongClickListener = moderatedMessageLongClickListener
     }
 
     /**
@@ -1272,6 +1316,20 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the handler used when the bottom end region is reached. This runs whe list of messages in this
+     * view becomes non linear and it will be called until it becomes linear again.
+     *
+     * @param bottomEndRegionReachedHandler The handler to use.
+     */
+    public fun setBottomEndRegionReachedHandler(bottomEndRegionReachedHandler: BottomEndRegionReachedHandler) {
+        this.bottomEndRegionReachedHandler = bottomEndRegionReachedHandler
+    }
+
+    public fun interface BottomEndRegionReachedHandler {
+        public fun onBottomEndRegionReached(messageId: String?)
+    }
+
+    /**
      * Sets the handler used when the last message is read.
      *
      * @param lastMessageReadHandler The handler to use.
@@ -1371,30 +1429,12 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Sets the handler used when the user is going to be muted.
+     * Set the handler used when the custom action is going to be executed.
      *
-     * @param userMuteHandler The handler to use.
+     * @param customActionHandler The handler to use.
      */
-    public fun setUserMuteHandler(userMuteHandler: UserMuteHandler) {
-        this.userMuteHandler = userMuteHandler
-    }
-
-    /**
-     * Sets the handler used when the user is going to be unmuted.
-     *
-     * @param userUnmuteHandler The handler to use.
-     */
-    public fun setUserUnmuteHandler(userUnmuteHandler: UserUnmuteHandler) {
-        this.userUnmuteHandler = userUnmuteHandler
-    }
-
-    /**
-     * Sets the handler used when the user is going to be blocked in the channel.
-     *
-     * @param userBlockHandler The handler to use.
-     */
-    public fun setUserBlockHandler(userBlockHandler: UserBlockHandler) {
-        this.userBlockHandler = userBlockHandler
+    public fun setCustomActionHandler(customActionHandler: CustomActionHandler) {
+        this.customActionHandler = customActionHandler
     }
 
     /**
@@ -1447,7 +1487,9 @@ public class MessageListView : ConstraintLayout {
      *
      * @param handler The handler to use.
      */
-    public fun setAttachmentShowInChatOptionClickHandler(handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler) {
+    public fun setAttachmentShowInChatOptionClickHandler(
+        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler
+    ) {
         this._attachmentShowInChatOptionClickHandler = handler
     }
 
@@ -1477,6 +1519,84 @@ public class MessageListView : ConstraintLayout {
     public fun setErrorEventHandler(handler: ErrorEventHandler) {
         this.errorEventHandler = handler
     }
+
+    /**
+     * Sets the value used to filter deleted messages.
+     *
+     * Use this only if you are using your own ViewModel, if you are using our [MessageListViewModel]
+     * setting this is a part of the binding process and re-setting it manually will introduce
+     * bugs.
+     * @see DeletedMessageVisibility
+     *
+     * @param deletedMessageVisibility Changes the visibility of deleted messages.
+     */
+    @InternalStreamChatApi
+    public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
+        if (this.deletedMessageVisibility != deletedMessageVisibility) {
+            check(!isAdapterInitialized()) {
+                "Adapter was already initialized, please set DeletedMessageVisibility first. " +
+                    "If you are using MessageListViewModel, please set the visibility before binding " +
+                    "it to MessageListView."
+            }
+            this.deletedMessageVisibility = deletedMessageVisibility
+        }
+    }
+
+    /**
+     * Sets the handler used when the user interacts with [ModeratedMessageDialogFragment].
+     *
+     * @param handler The handler to use.
+     */
+    public fun setModeratedMessageHandler(handler: ModeratedMessageOptionHandler) {
+        this.moderatedMessageOptionHandler = handler
+    }
+
+    /**
+     * Handles the selected [messageAction].
+     *
+     * @param messageAction The newly selected action.
+     */
+    private fun handleMessageAction(messageAction: MessageAction) {
+        val message = messageAction.message
+        val style = requireStyle()
+
+        when (messageAction) {
+            is Resend -> messageRetryHandler.onMessageRetry(message)
+            is Reply -> messageReplyHandler.onMessageReply(message.cid, message)
+            is ThreadReply -> threadStartHandler.onStartThread(message)
+            is Copy -> context.copyToClipboard(message.text)
+            is Edit -> messageEditHandler.onMessageEdit(message)
+            is Pin -> {
+                if (message.pinned) {
+                    messageUnpinHandler.onMessageUnpin(message)
+                } else {
+                    messagePinHandler.onMessagePin(message)
+                }
+            }
+            is Delete -> {
+                if (style.deleteConfirmationEnabled) {
+                    confirmDeleteMessageHandler.onConfirmDeleteMessage(message) {
+                        messageDeleteHandler.onMessageDelete(message)
+                    }
+                } else {
+                    messageDeleteHandler.onMessageDelete(message)
+                }
+            }
+            is FlagAction -> {
+                if (style.flagMessageConfirmationEnabled) {
+                    confirmFlagMessageHandler.onConfirmFlagMessage(message) {
+                        messageFlagHandler.onMessageFlag(message)
+                    }
+                } else {
+                    messageFlagHandler.onMessageFlag(message)
+                }
+            }
+            is CustomAction -> customActionHandler.onCustomAction(message, messageAction.extraProperties)
+            is React -> {
+                // Handled by a separate handler.
+            }
+        }
+    }
     //endregion
 
     //region Listener declarations
@@ -1498,6 +1618,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface MessageLongClickListener {
         public fun onMessageLongClick(message: Message)
+    }
+
+    public fun interface ModeratedMessageLongClickListener {
+        public fun onModeratedMessageLongClick(message: Message)
     }
 
     public fun interface ThreadClickListener {
@@ -1608,16 +1732,8 @@ public class MessageListView : ConstraintLayout {
         public fun onSendGiphy(message: Message, action: GiphyAction)
     }
 
-    public fun interface UserMuteHandler {
-        public fun onUserMute(user: User)
-    }
-
-    public fun interface UserUnmuteHandler {
-        public fun onUserUnmute(user: User)
-    }
-
-    public fun interface UserBlockHandler {
-        public fun onUserBlock(user: User, cid: String)
+    public fun interface CustomActionHandler {
+        public fun onCustomAction(message: Message, extraProperties: Map<String, Any>)
     }
 
     public fun interface AttachmentDownloadHandler {
@@ -1626,6 +1742,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ErrorEventHandler {
         public fun onErrorEvent(errorEvent: MessageListViewModel.ErrorEvent)
+    }
+
+    public fun interface ModeratedMessageOptionHandler {
+        public fun onModeratedMessageOptionSelected(message: Message, moderatedMessageOption: ModeratedMessageOption)
     }
     //endregion
 

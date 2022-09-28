@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.ui.common.extensions.getLastSeenText
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.getColorFromRes
-import io.getstream.chat.ui.sample.common.isOwner
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupMemberItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupNameItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoMemberItemBinding
@@ -53,10 +52,10 @@ class ChatInfoMemberViewHolder(private val binding: ChatInfoMemberItemBinding) :
     override fun bind(item: ChatInfoItem.MemberItem) {
         with(item.member) {
             if (user.image.isNotEmpty()) {
-                binding.memberAvatar.isInvisible = false
-                binding.memberAvatar.setUserData(user)
+                binding.userAvatarView.isInvisible = false
+                binding.userAvatarView.setUser(user)
             } else {
-                binding.memberAvatar.isInvisible = true
+                binding.userAvatarView.isInvisible = true
             }
             binding.memberUsername.text = user.name
             binding.memberOnlineIndicator.isVisible = user.online
@@ -131,10 +130,12 @@ class ChatInfoGroupMemberViewHolder(
     override fun bind(item: ChatInfoItem.MemberItem) {
         with(item.member) {
             member = this
-            binding.userAvatar.setUserData(user)
+            binding.userAvatarView.setUser(user)
             binding.nameTextView.text = user.name
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
-            binding.ownerTextView.isVisible = item.member.isOwner
+
+            val isOwner = item.member.user.id == item.createdBy.id
+            binding.ownerTextView.isVisible = isOwner
         }
     }
 }

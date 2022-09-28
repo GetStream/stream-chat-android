@@ -16,14 +16,22 @@
 
 package io.getstream.chat.android.offline.repository.database.converter
 
+import io.getstream.chat.android.client.test.utils.TestDataHelper
 import io.getstream.chat.android.offline.repository.database.converter.internal.ExtraDataConverter
-import io.getstream.chat.android.offline.utils.TestDataHelper
+import io.getstream.chat.android.test.TestLoggingHelper
+import io.getstream.chat.android.test.multiMapOf
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.Before
 import org.junit.Test
 
 internal class ExtraDataConverterTest {
 
     val data = TestDataHelper()
+
+    @Before
+    fun setUp() {
+        TestLoggingHelper.initialize()
+    }
 
     @Test
     fun testNullEncoding() {
@@ -39,5 +47,32 @@ internal class ExtraDataConverterTest {
         val output = converter.mapToString(data.extraData1)
         val converted = converter.stringToMap(output)
         converted shouldBeEqualTo data.extraData1
+    }
+
+    @Test
+    fun testDeserializeDuplicateEntries() {
+        val converter = ExtraDataConverter()
+        val json = """
+            {
+                "name": "John",
+                "name": "John"
+            }
+        """.trimIndent()
+        val converted = converter.stringToMap(json)
+        converted shouldBeEqualTo mapOf("name" to "John")
+    }
+
+    @Test
+    fun testSerializeDuplicateEntries() {
+        val converter = ExtraDataConverter()
+        val map = multiMapOf(
+            "name" to "John",
+            "name" to "John",
+        )
+        map.size shouldBeEqualTo 2
+        val converted = converter.mapToString(map)
+        converted shouldBeEqualTo """
+            {"name":"John"}
+        """.trimIndent()
     }
 }

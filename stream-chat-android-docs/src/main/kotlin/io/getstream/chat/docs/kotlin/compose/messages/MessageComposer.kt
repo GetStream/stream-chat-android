@@ -3,6 +3,7 @@
 package io.getstream.chat.docs.kotlin.compose.messages
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -122,6 +123,34 @@ private object MessageComposerHandlingActionsSnippet {
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * [Handling Typing Updates](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-composer/#handling-actions)
+ */
+private object HandlingTypingUpdatesSnippet {
+
+    class MyActivity : AppCompatActivity() {
+        val factory by lazy {
+            MessagesViewModelFactory(
+                context = this,
+                channelId = "messaging:123",
+            )
+        }
+
+        val composerViewModel = factory.create(MessageComposerViewModel::class.java)
+
+        override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+            super.onCreate(savedInstanceState, persistentState)
+
+            // This needs to be commented out or the docs module build will fail
+            /*
+            composerViewModel.setTypingUpdatesBuffer(
+                // Your custom implementation of TypingUpdatesBuffer
+            )
+            */
         }
     }
 }

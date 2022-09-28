@@ -17,7 +17,9 @@
 package io.getstream.chat.android.common.composer
 
 import com.getstream.sdk.chat.utils.AttachmentConstants
-import com.getstream.sdk.chat.utils.extensions.containsLinks
+import com.getstream.sdk.chat.utils.extensions.isModerationFailed
+import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
+import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -37,7 +39,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.uiutils.extension.containsLinks
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -67,6 +71,7 @@ import java.util.regex.Pattern
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
 @Suppress("TooManyFunctions")
 public class MessageComposerController(
@@ -89,16 +94,21 @@ public class MessageComposerController(
     /**
      * Buffers typing updates.
      *
-     * @see [TypingUpdateBuffer]
+     * @see [DefaultTypingUpdatesBuffer]
      */
-    private val typingUpdateBuffer = TypingUpdateBuffer()
+    public var typingUpdatesBuffer: TypingUpdatesBuffer = DefaultTypingUpdatesBuffer(
+        onTypingStarted = ::sendKeystrokeEvent,
+        onTypingStopped = ::sendStopTypingEvent,
+        coroutineScope = scope
+    )
 
     /**
      * Holds information about the current state of the [Channel].
      */
     public val channelState: Flow<ChannelState> = chatClient.watchChannelAsState(
         cid = channelId,
-        messageLimit = DefaultMessageLimit
+        messageLimit = DefaultMessageLimit,
+        coroutineScope = scope
     ).filterNotNull()
 
     /**
@@ -142,6 +152,22 @@ public class MessageComposerController(
      * ever read directly.
      */
     private val canSendLinks = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_LINKS) }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false
+        )
+
+    /**
+     * Signals if the user needs to wait before sending the next message.
+     *
+     * Depending on roles & permissions setup in the dashboard, some user groups are allowed
+     * to send messages instantly even if the slow mode is enabled for the channel.
+     *
+     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
+     * ever read directly.
+     */
+    private val isSlowModeActive = ownCapabilities.map { it.contains(ChannelCapabilities.SLOW_MODE) }
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
@@ -228,10 +254,12 @@ public class MessageComposerController(
     public val messageActions: MutableStateFlow<Set<MessageAction>> = MutableStateFlow(mutableSetOf())
 
     /**
-     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit] or [Reply] action.
+     * Represents a Flow that holds the last active [MessageAction] that is either the [Edit], [Reply].
      */
     public val lastActiveAction: Flow<MessageAction?>
-        get() = messageActions.map { actions -> actions.lastOrNull { it is Edit || it is Reply } }
+        get() = messageActions.map { actions ->
+            actions.lastOrNull { it is Edit || it is Reply }
+        }
 
     /**
      * Gets the active [Edit] or [Reply] action, whichever is last, to show on the UI.
@@ -275,6 +303,7 @@ public class MessageComposerController(
         channelState.flatMapLatest { it.channelConfig }.onEach {
             maxMessageLength = it.maxMessageLength
             commands = it.commands
+            state.value = state.value.copy(hasCommands = commands.isNotEmpty())
         }.launchIn(scope)
 
         channelState.flatMapLatest { it.members }.onEach { members ->
@@ -342,7 +371,7 @@ public class MessageComposerController(
         this.input.value = value
 
         if (canSendTypingUpdates.value) {
-            typingUpdateBuffer.onTypingEvent()
+            typingUpdatesBuffer.onKeystroke()
         }
         handleMentionSuggestions()
         handleCommandSuggestions()
@@ -454,27 +483,34 @@ public class MessageComposerController(
     }
 
     /**
-     * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing
-     * message, or we send a new message, using [ChatClient].
+     * Sends a given message using our Stream API. Based on [isInEditMode], we either edit an existing message, or we
+     * send a new message, using [ChatClient]. In case the message is a moderated message the old one is deleted before
+     * the replacing one is sent.
      *
      * It also dismisses any current message actions.
      *
      * @param message The message to send.
      */
     public fun sendMessage(message: Message) {
-        val sendMessageCall = if (isInEditMode) {
+        val activeMessage = activeAction?.message ?: message
+
+        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(chatClient)) {
             getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             val (channelType, channelId) = message.cid.cidToTypeAndId()
+
+            if (activeMessage.isModerationFailed(chatClient)) {
+                chatClient.deleteMessage(activeMessage.id, true).enqueue()
+            }
+
             chatClient.sendMessage(channelType, channelId, message)
         }
 
         dismissMessageActions()
         clearData()
-        handleCooldownTimer()
 
-        sendMessageCall.enqueue()
+        sendMessageCall.enqueueAndHandleSlowMode()
     }
 
     /**
@@ -495,12 +531,12 @@ public class MessageComposerController(
         val activeAction = activeAction
 
         val trimmedMessage = message.trim()
-        val actionMessage = activeAction?.message ?: Message()
+        val activeMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
         val mentions = filterMentions(selectedMentions, trimmedMessage)
 
-        return if (isInEditMode) {
-            actionMessage.copy(
+        return if (isInEditMode && !activeMessage.isModerationFailed(chatClient)) {
+            activeMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),
                 mentionedUsersIds = mentions
@@ -553,7 +589,7 @@ public class MessageComposerController(
      * Cancels any pending work when the parent ViewModel is about to be destroyed.
      */
     public fun onCleared() {
-        typingUpdateBuffer.clearTypingUpdates()
+        typingUpdatesBuffer.clear()
         scope.cancel()
     }
 
@@ -633,6 +669,14 @@ public class MessageComposerController(
     }
 
     /**
+     * Dismisses the suggestions popup above the message composer.
+     */
+    public fun dismissSuggestionsPopup() {
+        mentionSuggestions.value = emptyList()
+        commandSuggestions.value = emptyList()
+    }
+
+    /**
      * Shows the mention suggestion list popup if necessary.
      */
     private fun handleMentionSuggestions() {
@@ -651,7 +695,7 @@ public class MessageComposerController(
     private fun handleCommandSuggestions() {
         val containsCommand = CommandPattern.matcher(messageText).find()
 
-        commandSuggestions.value = if (containsCommand) {
+        commandSuggestions.value = if (containsCommand && selectedAttachments.value.isEmpty()) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
         } else {
@@ -660,17 +704,28 @@ public class MessageComposerController(
     }
 
     /**
-     * Shows cooldown countdown timer instead of send button when slow mode is enabled.
+     * Executes the message Call and shows cooldown countdown timer instead of send button
+     * when slow mode is enabled.
      */
-    private fun handleCooldownTimer() {
-        if (cooldownInterval > 0) {
+    private fun Call<Message>.enqueueAndHandleSlowMode() {
+        if (cooldownInterval > 0 && isSlowModeActive.value && !isInEditMode) {
             cooldownTimerJob?.cancel()
-            cooldownTimerJob = scope.launch {
-                for (timeRemaining in cooldownInterval downTo 0) {
-                    cooldownTimer.value = timeRemaining
-                    delay(OneSecond)
+
+            cooldownTimer.value = cooldownInterval
+            enqueue {
+                if (it.isSuccess || !chatClient.clientState.isNetworkAvailable) {
+                    cooldownTimerJob = scope.launch {
+                        for (timeRemaining in cooldownInterval downTo 0) {
+                            cooldownTimer.value = timeRemaining
+                            delay(OneSecond)
+                        }
+                    }
+                } else {
+                    cooldownTimer.value = 0
                 }
             }
+        } else {
+            enqueue()
         }
     }
 
@@ -681,6 +736,24 @@ public class MessageComposerController(
      */
     private fun getEditMessageCall(message: Message): Call<Message> {
         return chatClient.updateMessage(message)
+    }
+
+    /**
+     * Makes an API call signaling that a typing event has occurred.
+     */
+    private fun sendKeystrokeEvent() {
+        val (type, id) = channelId.cidToTypeAndId()
+
+        chatClient.keystroke(type, id, parentMessageId).enqueue()
+    }
+
+    /**
+     * Makes an API call signaling that a stop typing event has occurred.
+     */
+    private fun sendStopTypingEvent() {
+        val (type, id) = channelId.cidToTypeAndId()
+
+        chatClient.stopTyping(type, id, parentMessageId).enqueue()
     }
 
     private companion object {
@@ -704,88 +777,6 @@ public class MessageComposerController(
          */
         private const val DefaultMessageLimit: Int = 30
 
-        private const val DefaultTypingUpdateIntervalMillis = 3000L
         private const val OneSecond = 1000L
-    }
-
-    /**
-     * A class designed to buffer typing updates.
-     * It works by sending the initial keystroke event and
-     * delaying for [delayInterval] before sending a stop typing
-     * event.
-     *
-     * Every subsequent keystroke will cancel the previous work
-     * and reset the time before sending a stop typing event.
-     *
-     * @param delayInterval The interval between the sending the
-     * keystroke event and the stop typing event.
-     */
-    private inner class TypingUpdateBuffer(private val delayInterval: Long = DefaultTypingUpdateIntervalMillis) {
-
-        /**
-         * If the user is currently typing or not.
-         *
-         * Sends out a typing related event on every value
-         * change.
-         */
-        private var isTyping: Boolean = false
-            set(value) {
-                field = value
-                handleTypingEvent(isTyping)
-            }
-
-        /**
-         * Holds the currently running job.
-         */
-        var job: Job? = null
-
-        /**
-         * Used to send a stop typing event after a
-         * set amount of time dictated by [delayInterval].
-         */
-        private suspend fun startTypingTimer() {
-            delay(delayInterval)
-            clearTypingUpdates()
-        }
-
-        /**
-         * Sets the value of [isTyping] only if there is
-         * a change in state in order to not create unnecessary events.
-         *
-         * It also resets the job to stop typing events after delay, debouncing keystrokes.
-         */
-        fun onTypingEvent() {
-            if (!isTyping) {
-                isTyping = true
-            }
-            job?.cancel()
-            job = scope.launch { startTypingTimer() }
-        }
-
-        /**
-         * Sets [isTyping] to false.
-         *
-         * Useful for clearing the state manually and in [onCleared].
-         */
-        fun clearTypingUpdates() {
-            isTyping = false
-        }
-
-        /**
-         * Sends the `typing.start` or `typing.stop` event depending on the [isTyping] parameter.
-         *
-         * The `typing.start` event is sent if more than 3 seconds passed since the last keystroke.
-         * The `typing.stop` is automatically sent when the user stops typing for 5 seconds.
-         *
-         * @param isTyping If the user is currently typing.
-         */
-        private fun handleTypingEvent(isTyping: Boolean) {
-            val (type, id) = channelId.cidToTypeAndId()
-            if (isTyping) {
-                chatClient.keystroke(type, id, parentMessageId)
-            } else {
-                chatClient.stopTyping(type, id, parentMessageId)
-            }.enqueue()
-        }
     }
 }

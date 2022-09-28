@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.AttributeSet
+import android.view.Gravity
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
 import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
@@ -58,11 +59,6 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property pinIcon Icon for pin message option. Default value is [R.drawable.stream_ui_ic_pin].
  * @property unpinIcon Icon for unpin message option. Default value is [R.drawable.stream_ui_ic_unpin].
  * @property pinMessageEnabled Enables/disables pin message feature. Disabled by default.
- * @property muteIcon Icon for mute option. Default value is [R.drawable.stream_ui_ic_mute].
- * @property unmuteIcon Icon for the unmute option. Default value is [R.drawable.stream_ui_ic_umnute].
- * @property muteEnabled Enables/disables "mute user" option.
- * @property blockIcon Icon for block option. Default value is [R.drawable.stream_ui_ic_user_block].
- * @property blockEnabled Enables/disables "block user" option.
  * @property deleteIcon Icon for delete message option. Default value is [R.drawable.stream_ui_ic_delete].
  * @property deleteMessageEnabled Enables/disables delete message feature. Enabled by default.
  * @property copyTextEnabled Enables/disables copy text feature. Enabled by default.
@@ -80,6 +76,12 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property messagesStart Messages start at the bottom or top of the screen. Default: bottom.
  * @property threadMessagesStart Thread messages start at the bottom or top of the screen. Default: bottom.
  * @property messageOptionsUserReactionAlignment Alignment of the message options user reaction bubble. Default value is [MessageOptionsUserReactionAlignment.BY_USER].
+ * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
+ * @property scrollButtonEndMargin Defines the end margin of the scroll button.
+ * @property disableScrollWhenShowingDialog Enables/disables scroll while a dialog is shown over the message list.
+ * @property optionsOverlayEditReactionsMargin Defines the margin between the selected message and the edit reactions bubble on the options overlay.
+ * @property optionsOverlayUserReactionsMargin Defines the margin between the selected message and the user reaction list on the options overlay.
+ * @property optionsOverlayMessageOptionsMargin Defines the margin between the selected message and the message option list on the options overlay.
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -102,11 +104,6 @@ public data class MessageListViewStyle(
     val pinIcon: Int,
     val unpinIcon: Int,
     val pinMessageEnabled: Boolean,
-    val muteIcon: Int,
-    val unmuteIcon: Int,
-    val muteEnabled: Boolean,
-    val blockIcon: Int,
-    val blockEnabled: Boolean,
     val deleteIcon: Int,
     val deleteMessageEnabled: Boolean,
     val copyTextEnabled: Boolean,
@@ -124,34 +121,32 @@ public data class MessageListViewStyle(
     public val messagesStart: Int,
     public val threadMessagesStart: Int,
     public val messageOptionsUserReactionAlignment: Int,
+    public val scrollButtonBottomMargin: Int,
+    public val scrollButtonEndMargin: Int,
+    public val disableScrollWhenShowingDialog: Boolean,
+    public val optionsOverlayEditReactionsMargin: Int,
+    public val optionsOverlayUserReactionsMargin: Int,
+    public val optionsOverlayMessageOptionsMargin: Int,
 ) {
 
-    internal companion object {
+    public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
         private val DEFAULT_SCROLL_BUTTON_ELEVATION = 3.dpToPx().toFloat()
+        private val DEFAULT_SCROLL_BUTTON_MARGIN = 6.dpToPx()
+        private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN = 2.dpToPx()
+        private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION = DEFAULT_SCROLL_BUTTON_ELEVATION
+        private val DEFAULT_EDIT_REACTIONS_MARGIN = 0.dpToPx()
+        private val DEFAULT_USER_REACTIONS_MARGIN = 8.dpToPx()
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN = 24.dpToPx()
 
-        private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
-            return TextStyle.Builder(typedArray)
-                .color(
-                    R.styleable.MessageListView_streamUiEmptyStateTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
-                )
-                .size(
-                    R.styleable.MessageListView_streamUiEmptyStateTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium)
-                )
-                .font(
-                    R.styleable.MessageListView_streamUiEmptyStateTextFontAssets,
-                    R.styleable.MessageListView_streamUiEmptyStateTextFont,
-                )
-                .style(
-                    R.styleable.MessageListView_streamUiEmptyStateTextStyle,
-                    Typeface.NORMAL
-                )
-                .build()
-        }
+        /**
+         * Creates an [MessageListViewStyle] instance with the default values.
+         *
+         * @param context The context to load resources.
+         */
+        public fun createDefault(context: Context): MessageListViewStyle = invoke(context, null)
 
-        operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle {
+        internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MessageListView,
@@ -160,32 +155,45 @@ public data class MessageListViewStyle(
             ).use { attributes ->
                 val scrollButtonViewStyle = ScrollButtonViewStyle.Builder(context, attributes)
                     .scrollButtonEnabled(
-                        R.styleable.MessageListView_streamUiScrollButtonEnabled,
-                        true
+                        scrollButtonEnabledStyleableId = R.styleable.MessageListView_streamUiScrollButtonEnabled,
+                        defaultValue = true
                     )
                     .scrollButtonUnreadEnabled(
+                        scrollButtonUnreadEnabledStyleableId =
                         R.styleable.MessageListView_streamUiScrollButtonUnreadEnabled,
-                        true
+                        defaultValue = true
                     )
                     .scrollButtonColor(
-                        R.styleable.MessageListView_streamUiScrollButtonColor,
-                        context.getColorCompat(R.color.stream_ui_white)
+                        scrollButtonColorStyleableId = R.styleable.MessageListView_streamUiScrollButtonColor,
+                        defaultValue = context.getColorCompat(R.color.stream_ui_white)
                     )
                     .scrollButtonRippleColor(
+                        scrollButtonRippleColorStyleableId =
                         R.styleable.MessageListView_streamUiScrollButtonRippleColor,
-                        context.getColorCompat(R.color.stream_ui_white_smoke)
+                        defaultColor = context.getColorCompat(R.color.stream_ui_white_smoke)
                     )
                     .scrollButtonBadgeColor(
                         R.styleable.MessageListView_streamUiScrollButtonBadgeColor,
-                        context.getColorCompat(R.color.stream_ui_accent_blue)
                     )
                     .scrollButtonElevation(
-                        R.styleable.MessageListView_streamUiScrollButtonElevation,
-                        DEFAULT_SCROLL_BUTTON_ELEVATION
+                        scrollButtonElevation = R.styleable.MessageListView_streamUiScrollButtonElevation,
+                        defaultElevation = DEFAULT_SCROLL_BUTTON_ELEVATION
                     )
                     .scrollButtonIcon(
-                        R.styleable.MessageListView_streamUiScrollButtonIcon,
-                        context.getDrawableCompat(R.drawable.stream_ui_ic_down)
+                        scrollButtonIconStyleableId = R.styleable.MessageListView_streamUiScrollButtonIcon,
+                        defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_down)
+                    ).scrollButtonBadgeGravity(
+                        scrollButtonBadgeGravity = R.styleable.MessageListView_streamUiScrollButtonBadgeGravity,
+                        defaultGravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
+                    ).scrollButtonBadgeIcon(
+                        scrollButtonBadgeIcon = R.styleable.MessageListView_streamUiScrollButtonBadgeIcon,
+                        defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_shape_scroll_button_badge)
+                    ).scrollButtonBadgeElevation(
+                        scrollButtonBadgeElevation = R.styleable.MessageListView_streamUiScrollButtonBadgeElevation,
+                        defaultElevation = DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION
+                    ).scrollButtonBadgeInternalMargin(
+                        scrollButtonInternalMargin = R.styleable.MessageListView_streamUIScrollButtonInternalMargin,
+                        defaultMargin = DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN
                     ).build()
 
                 val scrollButtonBehaviour = MessageListView.NewMessagesBehaviour.parseValue(
@@ -194,6 +202,18 @@ public data class MessageListViewStyle(
                         MessageListView.NewMessagesBehaviour.COUNT_UPDATE.value
                     )
                 )
+
+                val scrollButtonMarginBottom =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiScrollButtonBottomMargin,
+                        DEFAULT_SCROLL_BUTTON_MARGIN
+                    )
+
+                val scrollButtonMarginEnd =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiScrollButtonEndMargin,
+                        DEFAULT_SCROLL_BUTTON_MARGIN
+                    )
 
                 val reactionsEnabled = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiReactionsEnabled,
@@ -212,6 +232,7 @@ public data class MessageListViewStyle(
                     .messageLinkTextColorTheirs(R.styleable.MessageListView_streamUiMessageLinkColorTheirs)
                     .reactionsEnabled(R.styleable.MessageListView_streamUiReactionsEnabled)
                     .linkDescriptionMaxLines(R.styleable.MessageListView_streamUiLinkDescriptionMaxLines)
+                    .systemMessageGravity(R.styleable.MessageListView_streamUiSystemMessageAlignment)
                     .build()
 
                 val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)
@@ -249,21 +270,6 @@ public data class MessageListViewStyle(
                     R.drawable.stream_ui_ic_flag,
                 )
 
-                val muteIcon = attributes.getResourceId(
-                    R.styleable.MessageListView_streamUiMuteOptionIcon,
-                    R.drawable.stream_ui_ic_mute
-                )
-
-                val unmuteIcon = attributes.getResourceId(
-                    R.styleable.MessageListView_streamUiUnmuteOptionIcon,
-                    R.drawable.stream_ui_ic_umnute,
-                )
-
-                val blockIcon = attributes.getResourceId(
-                    R.styleable.MessageListView_streamUiBlockOptionIcon,
-                    R.drawable.stream_ui_ic_user_block,
-                )
-
                 val deleteIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiDeleteOptionIcon,
                     R.drawable.stream_ui_ic_delete,
@@ -283,10 +289,6 @@ public data class MessageListViewStyle(
 
                 val pinMessageEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiPinMessageEnabled, false)
-
-                val muteEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiMuteUserEnabled, true)
-
-                val blockEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiBlockUserEnabled, true)
 
                 val copyTextEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
@@ -401,9 +403,34 @@ public data class MessageListViewStyle(
                     MessageOptionsUserReactionAlignment.BY_USER.value
                 )
 
+                val disableScrollWhenShowingDialog = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiDisableScrollWhenShowingDialog,
+                    true
+                )
+
+                val optionsOverlayEditReactionsMargin =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMargin,
+                        DEFAULT_EDIT_REACTIONS_MARGIN
+                    )
+
+                val optionsOverlayUserReactionsMargin =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMargin,
+                        DEFAULT_USER_REACTIONS_MARGIN
+                    )
+
+                val optionsOverlayMessageOptionsMargin =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMargin,
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN
+                    )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
+                    scrollButtonBottomMargin = scrollButtonMarginBottom,
+                    scrollButtonEndMargin = scrollButtonMarginEnd,
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
                     giphyViewHolderStyle = giphyViewHolderStyle,
@@ -420,11 +447,6 @@ public data class MessageListViewStyle(
                     pinIcon = pinIcon,
                     unpinIcon = unpinIcon,
                     pinMessageEnabled = pinMessageEnabled,
-                    muteIcon = muteIcon,
-                    unmuteIcon = unmuteIcon,
-                    muteEnabled = muteEnabled,
-                    blockIcon = blockIcon,
-                    blockEnabled = blockEnabled,
                     deleteIcon = deleteIcon,
                     copyTextEnabled = copyTextEnabled,
                     retryMessageEnabled = retryMessageEnabled,
@@ -444,8 +466,33 @@ public data class MessageListViewStyle(
                     messagesStart = messagesStart,
                     threadMessagesStart = threadMessagesStart,
                     messageOptionsUserReactionAlignment = messageOptionsUserReactionAlignment,
+                    disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
+                    optionsOverlayEditReactionsMargin = optionsOverlayEditReactionsMargin,
+                    optionsOverlayUserReactionsMargin = optionsOverlayUserReactionsMargin,
+                    optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
+        }
+
+        private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
+            return TextStyle.Builder(typedArray)
+                .color(
+                    R.styleable.MessageListView_streamUiEmptyStateTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .size(
+                    R.styleable.MessageListView_streamUiEmptyStateTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiEmptyStateTextFontAssets,
+                    R.styleable.MessageListView_streamUiEmptyStateTextFont,
+                )
+                .style(
+                    R.styleable.MessageListView_streamUiEmptyStateTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
         }
     }
 }

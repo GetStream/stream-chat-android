@@ -118,12 +118,8 @@ public class MediaAttachmentGridView : FrameLayout {
 
     private fun setDateText(attachmentGalleryItems: List<AttachmentGalleryItem>) {
         val createdAt = attachmentGalleryItems[dateScrollListener.lastVisibleItemPosition].createdAt
-        if (createdAt != null) {
-            binding.dateContainer.isVisible = true
-            binding.dateTextView.text = dateFormat.format(createdAt)
-        } else {
-            binding.dateContainer.isVisible = false
-        }
+        binding.dateContainer.isVisible = true
+        binding.dateTextView.text = dateFormat.format(createdAt)
     }
 
     private class MediaDateScrollListener(

@@ -11,6 +11,7 @@ apply from: "${rootDir}/scripts/detekt-compose.gradle"
 
 android {
     defaultConfig {
+        targetSdk io.getstream.chat.android.Configuration.sampleTargetSdk
         applicationId "io.getstream.chat.android.compose.sample"
         versionCode sampleAppVersionCode
         versionName sampleAppVersionName
@@ -67,7 +68,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE
+        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
     }
 
     lintOptions {
@@ -109,4 +110,6 @@ dependencies {
     // Firebase
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
+
+    detektPlugins(Dependencies.detektFormatting)
 }

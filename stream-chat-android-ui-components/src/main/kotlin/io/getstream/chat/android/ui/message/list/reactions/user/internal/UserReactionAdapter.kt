@@ -76,7 +76,7 @@ internal class UserReactionAdapter(
         }
 
         private fun bindUserAvatar() {
-            binding.avatarView.setUserData(userReactionItem.user)
+            binding.userAvatarView.setUser(userReactionItem.user)
         }
 
         private fun bindUserName() {

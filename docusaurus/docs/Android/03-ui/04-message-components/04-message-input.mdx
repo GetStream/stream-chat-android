@@ -45,25 +45,24 @@ viewModel.bindView(messageInputView, viewLifecycleOwner)
 
 ## Handling Actions 
 
-Actions can be handled by setting listeners on this view. For example, you can handle clicks of the send button or when the user starts and stops typing:
+Actions can be handled by setting listeners on this view. For example, you can handle clicks of the send button:
 
 ```kotlin
 messageInputView.setOnSendButtonClickListener {
     // Handle send button click
 }
+```
 
-messageInputView.setTypingListener(
-    object : MessageInputView.TypingListener {
-        override fun onKeystroke() {
-            // Handle keystroke case
-        }
+Typing updates should be sent sparingly as a way of saving valuable API calls. Luckily, we offer such behavior out of the box by using our [`DefaultTypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer.kt) in order to intelligently make start and stop typing API calls.
 
-        override fun onStopTyping() {
-            // Handle stop typing case
-        }
-    }
+If you want to implement your own buffering mechanism you can pass in an implementation of the [`TypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer.kt) interface instead:
+
+```kotlin
+messageInputView.setTypingUpdatesBuffer(
+    // Your custom implementation of TypingUpdatesBuffer
 )
 ```
+
 
 You can show a custom error when the maximum message length is exceeded:
 

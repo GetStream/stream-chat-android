@@ -20,7 +20,6 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.databinding.StreamUiItemLinkAttachmentBinding
@@ -30,6 +29,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * ViewHolder used for displaying messages that contain link attachments
@@ -93,7 +93,7 @@ internal class LinkAttachmentsViewHolder(
     private fun initializeListeners() {
         binding.run {
             listeners?.let { container ->
-                root.setOnClickListener {
+                messageContainer.setOnClickListener {
                     container.messageClickListener.onMessageClick(data.message)
                 }
                 reactionsView.setReactionClickListener {
@@ -102,15 +102,19 @@ internal class LinkAttachmentsViewHolder(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
-                root.setOnLongClickListener {
+                messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
-                avatarView.setOnClickListener {
+                userAvatarView.setOnClickListener {
                     container.userClickListener.onUserClick(data.message.user)
                 }
                 linkAttachmentView.setLinkPreviewClickListener {
                     listeners.linkClickListener.onLinkClick(it)
+                }
+                linkAttachmentView.setOnLongClickListener {
+                    container.messageLongClickListener.onMessageLongClick(data.message)
+                    true
                 }
             }
         }
@@ -123,7 +127,7 @@ internal class LinkAttachmentsViewHolder(
         listeners?.let { container ->
             LongClickFriendlyLinkMovementMethod.set(
                 textView = binding.messageText,
-                longClickTarget = binding.root,
+                longClickTarget = binding.messageContainer,
                 onLinkClicked = container.linkClickListener::onLinkClick
             )
         }

@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
+import io.getstream.logging.StreamLog
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeout
 
 internal class SocketStateService {
-    private val logger = ChatLogger.get("SocketStateService")
+    private val logger = StreamLog.getLogger("Chat:SocketStateService")
 
     fun onConnected(connectionId: String) {
         stateMachine.sendEvent(ClientStateEvent.ConnectedEvent(connectionId))
@@ -47,7 +49,7 @@ internal class SocketStateService {
             initialState(SocketState.Idle)
 
             defaultHandler { state, event ->
-                logger.logE("Cannot handle event $event while being in inappropriate state $this")
+                logger.e { "Cannot handle event $event while being in inappropriate state: $state" }
                 state
             }
 
@@ -78,11 +80,38 @@ internal class SocketStateService {
     internal val state
         get() = stateMachine.state
 
+    internal val stateFlow
+        get() = stateMachine.stateFlow
+
+    /**
+     * Awaits until [SocketState.Connected] is set.
+     *
+     * @param timeoutInMillis Timeout time in milliseconds.
+     */
+    internal suspend fun awaitConnection(timeoutInMillis: Long = DEFAULT_CONNECTION_TIMEOUT) {
+        awaitState<SocketState.Connected>(timeoutInMillis)
+    }
+
+    /**
+     * Awaits until specified [SocketState] is set.
+     *
+     * @param timeoutInMillis Timeout time in milliseconds.
+     */
+    internal suspend inline fun <reified T : SocketState> awaitState(timeoutInMillis: Long) {
+        withTimeout(timeoutInMillis) {
+            stateMachine.stateFlow.first { it is T }
+        }
+    }
+
     private sealed class ClientStateEvent {
         object ConnectionRequested : ClientStateEvent()
         data class ConnectedEvent(val connectionId: String) : ClientStateEvent()
         object DisconnectRequestedEvent : ClientStateEvent()
         object DisconnectedEvent : ClientStateEvent()
         object ForceDisconnect : ClientStateEvent()
+    }
+
+    private companion object {
+        private const val DEFAULT_CONNECTION_TIMEOUT = 60_000L
     }
 }

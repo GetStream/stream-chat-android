@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:id="@+id/container"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="24dp"
+        android:background="@drawable/stream_ui_white_shape_8dp_corners"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/stream_ui_ic_flag"
+            app:tint="@color/stream_ui_accent_blue"
+            />
+
+        <TextView
+            style="@style/StreamUiTextAppearance.HeadlineBold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@string/stream_ui_moderation_dialog_title"
+            />
+
+        <TextView
+            style="@style/StreamUiTextAppearance.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:text="@string/stream_ui_moderation_dialog_description"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/stream_ui_divider"
+            />
+
+        <TextView
+            android:id="@+id/sendAnyway"
+            style="@style/StreamUiTextAppearance.Body"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="@string/stream_ui_moderation_dialog_send"
+            android:textColor="@color/stream_ui_accent_blue"
+            android:background="?attr/selectableItemBackground"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/stream_ui_divider"
+            />
+
+        <TextView
+            android:id="@+id/editMessage"
+            style="@style/StreamUiTextAppearance.Body"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="@string/stream_ui_moderation_dialog_edit"
+            android:textColor="@color/stream_ui_accent_blue"
+            android:background="?attr/selectableItemBackground"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/stream_ui_divider"
+            />
+
+        <TextView
+            android:id="@+id/deleteMessage"
+            style="@style/StreamUiTextAppearance.Body"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="@string/stream_ui_moderation_dialog_delete"
+            android:textColor="@color/stream_ui_accent_blue"
+            android:background="?attr/selectableItemBackground"
+            />
+
+    </LinearLayout>
+
+</FrameLayout>

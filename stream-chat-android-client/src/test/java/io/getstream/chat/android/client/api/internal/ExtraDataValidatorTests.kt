@@ -21,21 +21,35 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeFalse
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 internal class ExtraDataValidatorTests {
 
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
     private val chatApi: ChatApi = mock()
-    private val validator = ExtraDataValidator(chatApi)
+    private lateinit var validator: ExtraDataValidator
+
+    @BeforeEach
+    fun setup() {
+        validator = ExtraDataValidator(testCoroutines.scope, chatApi)
+    }
 
     @Test
-    fun testUpdateChannel() {
+    fun testUpdateChannel() = runTest {
         /* Given */
         val channel: Channel = mock()
         val channelId = "channel-id"
@@ -51,7 +65,7 @@ internal class ExtraDataValidatorTests {
             channelType = channelType,
             extraData = extraData,
             updateMessage = updateMessage
-        ).execute()
+        ).await()
 
         /* Then */
         println("[testUpdateChannel] error.message: \"${result.error().message}\"")
@@ -60,7 +74,7 @@ internal class ExtraDataValidatorTests {
     }
 
     @Test
-    fun testUpdateChannelPartial() {
+    fun testUpdateChannelPartial() = runTest {
         /* Given */
         val channel: Channel = mock()
         val channelId = "channel-id"
@@ -76,7 +90,7 @@ internal class ExtraDataValidatorTests {
             channelType = channelType,
             set = set,
             unset = unset
-        ).execute()
+        ).await()
 
         /* Then */
         println("[testUpdateChannelPartial] error.message: \"${result.error().message}\"")
@@ -85,7 +99,7 @@ internal class ExtraDataValidatorTests {
     }
 
     @Test
-    fun testUpdateMessage() {
+    fun testUpdateMessage() = runTest {
         /* Given */
         val message: Message = mock()
         val extraData: MutableMap<String, Any> = mutableMapOf("cid" to "another-cid")
@@ -94,7 +108,7 @@ internal class ExtraDataValidatorTests {
         whenever(chatApi.updateMessage(message)) doReturn message.asCall()
 
         /* When */
-        val result: Result<Message> = validator.updateMessage(message).execute()
+        val result: Result<Message> = validator.updateMessage(message).await()
 
         /* Then */
         println("[testUpdateMessage] error.message: \"${result.error().message}\"")
@@ -103,7 +117,7 @@ internal class ExtraDataValidatorTests {
     }
 
     @Test
-    fun testPartialUpdateMessage() {
+    fun testPartialUpdateMessage() = runTest {
         /* Given */
         val messageId = "message-id"
         val message: Message = mock()
@@ -113,7 +127,7 @@ internal class ExtraDataValidatorTests {
         whenever(chatApi.partialUpdateMessage(messageId, set, unset)) doReturn message.asCall()
 
         /* When */
-        val result: Result<Message> = validator.partialUpdateMessage(messageId, set, unset).execute()
+        val result: Result<Message> = validator.partialUpdateMessage(messageId, set, unset).await()
 
         /* Then */
         println("[testPartialUpdateMessage] error.message: \"${result.error().message}\"")
@@ -122,7 +136,7 @@ internal class ExtraDataValidatorTests {
     }
 
     @Test
-    fun testUpdateUsers() {
+    fun testUpdateUsers() = runTest {
         /* Given */
         val user: User = mock()
         val users = listOf(user)
@@ -134,7 +148,7 @@ internal class ExtraDataValidatorTests {
         whenever(chatApi.updateUsers(users)) doReturn users.asCall()
 
         /* When */
-        val result: Result<List<User>> = validator.updateUsers(users).execute()
+        val result: Result<List<User>> = validator.updateUsers(users).await()
 
         /* Then */
         println("[testUpdateUsers] error.message: \"${result.error().message}\"")
@@ -144,7 +158,7 @@ internal class ExtraDataValidatorTests {
     }
 
     @Test
-    fun testPartialUpdateUser() {
+    fun testPartialUpdateUser() = runTest {
         /* Given */
         val userId = "user-id"
         val user: User = mock()
@@ -156,7 +170,7 @@ internal class ExtraDataValidatorTests {
         whenever(chatApi.partialUpdateUser(userId, set, unset)) doReturn user.asCall()
 
         /* When */
-        val result: Result<User> = validator.partialUpdateUser(userId, set, unset).execute()
+        val result: Result<User> = validator.partialUpdateUser(userId, set, unset).await()
 
         /* Then */
         println("[testPartialUpdateUser] error.message: \"${result.error().message}\"")

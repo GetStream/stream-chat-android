@@ -33,3 +33,11 @@ jobs:
         with:
           name: screenshots
           path: ${{ github.workspace }}/stream-chat-android-ui-uitests/screenshots/
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: "Update screenshots"
+          title: "Update screenshots"
+          delete-branch: true
+          reviewers: GetStream/android-developers-ui
+          branch: update-screenshots

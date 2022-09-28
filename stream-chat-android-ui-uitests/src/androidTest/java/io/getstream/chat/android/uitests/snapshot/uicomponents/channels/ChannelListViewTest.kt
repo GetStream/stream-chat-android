@@ -160,7 +160,6 @@ class ChannelListViewTest : ScreenshotTest {
                     ChannelListItem.LoadingMoreItem,
                 )
             )
-            showLoadingMore()
         }
     }
 

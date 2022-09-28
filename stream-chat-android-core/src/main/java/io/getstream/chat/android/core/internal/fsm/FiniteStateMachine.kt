@@ -20,6 +20,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilder
 import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilderMarker
 import io.getstream.chat.android.core.internal.fsm.builder.StateFunction
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -41,23 +43,18 @@ public class FiniteStateMachine<S : Any, E : Any>(
     private val defaultEventHandler: (S, E) -> S,
 ) {
     private val mutex = Mutex()
-    private var _state: S = initialState
+    private val _state: MutableStateFlow<S> = MutableStateFlow(initialState)
 
-    private suspend inline fun <T> Mutex.withLockIfNotLocked(action: () -> T): T {
-        return if (isLocked.not()) {
-            withLock { action() }
-        } else {
-            action()
-        }
-    }
+    /**
+     * The current state as [StateFlow].
+     */
+    public val stateFlow: StateFlow<S> = _state
 
     /**
      * The current state.
      */
     public val state: S
-        get() = runBlocking {
-            mutex.withLockIfNotLocked { _state }
-        }
+        get() = _state.value
 
     /**
      * Sends an event to the state machine. The entry point to change state.
@@ -65,9 +62,9 @@ public class FiniteStateMachine<S : Any, E : Any>(
     public fun sendEvent(event: E) {
         runBlocking {
             mutex.withLock {
-                val currentState = _state
+                val currentState = _state.value
                 val handler = stateFunctions[currentState::class]?.get(event::class) ?: defaultEventHandler
-                _state = handler(currentState, event)
+                _state.value = handler(currentState, event)
             }
         }
     }

@@ -26,7 +26,7 @@ import io.getstream.chat.android.offline.model.message.attachments.UploadAttachm
  * @param persistenceEnabled Whether the data should be stored in the DB.
  * @param uploadAttachmentsNetworkType An enumeration of various network types used as a constraint inside upload attachments worker.
  */
-public data class Config(
+public data class Config @JvmOverloads constructor(
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
     public val persistenceEnabled: Boolean = true,

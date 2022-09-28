@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
 import java.util.Date
 
 /**
@@ -58,4 +59,23 @@ public data class User(
     val teams: List<String> = listOf(),
     val channelMutes: List<ChannelMute> = emptyList(),
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
-) : CustomObject
+) : CustomObject, ComparableFieldProvider {
+
+    override fun getComparableField(fieldName: String): Comparable<*>? {
+        return when (fieldName) {
+            "id" -> id
+            "role" -> role
+            "name" -> name
+            "image" -> image
+            "invisible" -> invisible
+            "banned" -> banned
+            "online" -> online
+            "totalUnreadCount" -> totalUnreadCount
+            "unreadChannels" -> unreadChannels
+            "createdAt" -> createdAt
+            "updatedAt" -> updatedAt
+            "lastActive" -> lastActive
+            else -> extraData[fieldName] as? Comparable<*>
+        }
+    }
+}

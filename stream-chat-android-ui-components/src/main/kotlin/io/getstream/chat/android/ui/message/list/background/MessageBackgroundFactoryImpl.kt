@@ -27,8 +27,8 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
-import io.getstream.chat.android.ui.common.extensions.internal.hasLink
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Default drawer of background of message items.

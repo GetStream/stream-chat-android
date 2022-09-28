@@ -5,10 +5,9 @@ package io.getstream.chat.docs.kotlin.client.docusaurus
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
@@ -57,7 +56,7 @@ class Offline {
         val chatClient = ChatClient.instance()
 
         val filter = Filters.eq("type", "messaging")
-        val sort = QuerySort.desc<Channel>("last_updated")
+        val sort = QuerySortByField.descByName<Channel>("lastUpdated")
         private val queryChannelsRequest = QueryChannelsRequest(filter = Filters.eq("type", "messaging"), limit = 30)
 
         fun accessStates() {
@@ -90,90 +89,6 @@ class Offline {
                     messageLimit = 30,
                     coroutineScope = scope
                 )
-        }
-    }
-
-    /**
-     * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/chatdomain-migration/">ChatDomain Migration</a>
-     */
-    inner class Migration {
-        val chatClient = ChatClient.instance()
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/chatdomain-migration/#requesting-data">Requesting Data</a>
-         */
-        fun sendMessage() {
-            val cid = "channel-cid"
-            val messageText = "Hey there!"
-
-            val message = Message(cid = cid, text = messageText)
-
-            // Old approach
-            /*
-            chatDomain.sendMessage(message).enqueue { result ->
-                if (result.isSuccess) {
-                    // Handle success
-                } else {
-                    // Handler error
-                }
-            }
-            */
-
-            // New approach
-            chatClient.channel(cid).sendMessage(message).enqueue { result ->
-                if (result.isSuccess) {
-                    // Handle success
-                } else {
-                    // Handle error
-                }
-            }
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/chatdomain-migration/#other-changes">Other changes</a>
-         */
-        fun otherChanges() {
-            // Old approach of update message
-            /*
-            val messageToUpdate = Message(text = "Updated text")
-            ChatDomain.instance().editMessage(messageToUpdate).enqueue { result ->
-                if (result.isSuccess) {
-                    // Handle success
-                } else {
-                    // Handle error
-                }
-            }*/
-
-            // New approach of updating message
-            val messageToUpdate = Message(text = "Updated text")
-            ChatClient.instance().updateMessage(messageToUpdate).enqueue { result ->
-                if (result.isSuccess) {
-                    // Handle success
-                } else {
-                    // Handle error
-                }
-            }
-
-            // Old approach of leaving channel
-            /*ChatDomain.instance().leaveChannel(cid).enqueue { result ->
-                if (result.isSuccess) {
-                    // Handle success
-                } else {
-                    // Handle error
-                }
-            }*/
-
-            val cid = "cid"
-            // New approach of leaving channel
-            chatClient.getCurrentUser()?.let { currentUser ->
-                ChatClient.instance().channel(cid).removeMembers(listOf(currentUser.id)).enqueue { result ->
-                    if (result.isSuccess) {
-                        // Handle success
-                    } else {
-                        // Handle error
-                    }
-                }
-            }
         }
     }
 }

@@ -23,9 +23,10 @@ import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -84,6 +85,8 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -339,7 +342,7 @@ public class ChannelClient internal constructor(
     @JvmOverloads
     public fun queryBannedUsers(
         filter: FilterObject? = null,
-        sort: QuerySort<BannedUsersSort> = QuerySort.asc(BannedUsersSort::createdAt),
+        sort: QuerySorter<BannedUsersSort> = QuerySortByField.ascByName("created_at"),
         offset: Int? = null,
         limit: Int? = null,
         createdAtAfter: Date? = null,
@@ -416,7 +419,7 @@ public class ChannelClient internal constructor(
      * @param file The file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded file
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the file was successfully uploaded.
      *
      * @see FileUploader
@@ -424,7 +427,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun sendFile(file: File, callback: ProgressCallback? = null): Call<String> {
+    public fun sendFile(file: File, callback: ProgressCallback? = null): Call<UploadedFile> {
         return client.sendFile(channelType, channelId, file, callback)
     }
 
@@ -438,7 +441,7 @@ public class ChannelClient internal constructor(
      * @param file The image file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] having data equal to the URL of the uploaded image
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedImage]
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -447,7 +450,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun sendImage(file: File, callback: ProgressCallback? = null): Call<String> {
+    public fun sendImage(file: File, callback: ProgressCallback? = null): Call<UploadedImage> {
         return client.sendImage(channelType, channelId, file, callback)
     }
 
@@ -763,7 +766,7 @@ public class ChannelClient internal constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort<Member>,
+        sort: QuerySorter<Member>,
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
@@ -812,7 +815,7 @@ public class ChannelClient internal constructor(
     @CheckResult
     public fun getPinnedMessages(
         limit: Int,
-        sort: QuerySort<Message>,
+        sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
     ): Call<List<Message>> {
         return client.getPinnedMessages(

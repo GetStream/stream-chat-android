@@ -163,31 +163,9 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         scrollListener.setPaginationEnabled(enabled)
     }
 
-    fun setChannels(channels: List<ChannelListItem>) {
-        requireAdapter().submitList(channels)
-    }
-
-    fun showLoadingMore(show: Boolean) {
-        requireAdapter().let { adapter ->
-            val currentList = adapter.currentList
-            val loadingMore = currentList.contains(ChannelListItem.LoadingMoreItem)
-            val showLoadingMore = show && !loadingMore
-            val hideLoadingMore = !show && loadingMore
-
-            val updatedList = when {
-                showLoadingMore -> currentList + ChannelListItem.LoadingMoreItem
-
-                // we should never have more than one loading item, but just in case
-                hideLoadingMore -> currentList.filterIsInstance(ChannelListItem.ChannelItem::class.java)
-
-                else -> currentList
-            }
-
-            adapter.submitList(updatedList) {
-                if (showLoadingMore) {
-                    layoutManager.scrollToPosition(updatedList.size - 1)
-                }
-            }
+    fun setChannels(channels: List<ChannelListItem>, commitCallback: () -> Unit) {
+        requireAdapter().submitList(channels) {
+            commitCallback()
         }
     }
 

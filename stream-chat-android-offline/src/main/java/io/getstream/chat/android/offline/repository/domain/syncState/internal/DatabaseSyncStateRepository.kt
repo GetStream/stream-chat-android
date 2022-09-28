@@ -41,4 +41,8 @@ internal class DatabaseSyncStateRepository(private val syncStateDao: SyncStateDa
     override suspend fun selectSyncState(userId: String): SyncState? {
         return syncStateDao.select(userId)?.toModel()
     }
+
+    override suspend fun clear() {
+        syncStateDao.deleteAll()
+    }
 }

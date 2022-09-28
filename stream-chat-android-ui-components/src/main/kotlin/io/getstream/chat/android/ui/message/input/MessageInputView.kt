@@ -37,10 +37,9 @@ import androidx.lifecycle.lifecycleScope
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.extensions.activity
-import com.getstream.sdk.chat.utils.extensions.containsLinks
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
+import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import com.google.android.material.snackbar.Snackbar
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
@@ -75,6 +74,8 @@ import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.suggestion.list.adapter.SuggestionListItemViewHolderFactory
 import io.getstream.chat.android.ui.suggestion.list.internal.SuggestionListPopupWindow
 import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
+import io.getstream.chat.android.uiutils.extension.containsLinks
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -85,7 +86,7 @@ import java.io.File
 import kotlin.properties.Delegates
 
 public class MessageInputView : ConstraintLayout {
-    private val logger = ChatLogger.get("MessageInputView")
+    private val logger = StreamLog.getLogger("Chat:MessageInputView")
 
     public var inputMode: InputMode by Delegates.observable(InputMode.Normal) { _, previousValue, newValue ->
         configSendAlsoToChannelCheckbox()
@@ -110,7 +111,11 @@ public class MessageInputView : ConstraintLayout {
     private var commandsEnabled: Boolean = true
 
     private var onSendButtonClickListener: OnMessageSendButtonClickListener? = null
-    private var typingListener: TypingListener? = null
+
+    /**
+     * Used to buffer typing updates in order to conserve API calls.
+     */
+    private var typingUpdatesBuffer: TypingUpdatesBuffer? = null
     private var isKeyboardListenerRegistered: Boolean = false
 
     private var maxMessageLength: Int = Integer.MAX_VALUE
@@ -131,6 +136,7 @@ public class MessageInputView : ConstraintLayout {
     private var canUseCommands = false
     private var canSendLinks = false
     private var canSendTypingUpdates = false
+    private var hasCommands: Boolean = false
 
     /**
      * Changes value only when the new value
@@ -273,8 +279,11 @@ public class MessageInputView : ConstraintLayout {
         this.onSendButtonClickListener = listener
     }
 
-    public fun setTypingListener(listener: TypingListener?) {
-        this.typingListener = listener
+    /**
+     * Sets the typing updates buffer.
+     */
+    public fun setTypingUpdatesBuffer(buffer: TypingUpdatesBuffer) {
+        typingUpdatesBuffer = buffer
     }
 
     /**
@@ -287,6 +296,7 @@ public class MessageInputView : ConstraintLayout {
 
     public fun setCommands(commands: List<Command>) {
         suggestionListController?.commands = commands
+        hasCommands = commands.isNotEmpty()
         refreshControlsState()
     }
 
@@ -438,7 +448,7 @@ public class MessageInputView : ConstraintLayout {
 
         setBackgroundColor(messageInputViewStyle.backgroundColor)
         configAttachmentButton()
-        configLightningButton()
+        configCommandsButton()
         configTextInput()
         configSendButton()
         configSendAlsoToChannelCheckbox()
@@ -506,8 +516,10 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun consumeHasBigFile(hasBigFile: Boolean) {
-        bigFileSelectionListener?.handleBigFileSelected(hasBigFile) ?: if (hasBigFile) {
-            alertBigFileSendAttempt()
+        bigFileSelectionListener?.handleBigFileSelected(hasBigFile) ?: let {
+            if (hasBigFile) {
+                alertBigFileSendAttempt()
+            }
         }
     }
 
@@ -622,6 +634,7 @@ public class MessageInputView : ConstraintLayout {
     }
 
     private fun configAttachmentButton() {
+        binding.attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled
         binding.attachmentsButton.setImageDrawable(messageInputViewStyle.attachButtonIcon)
         binding.attachmentsButton.setBorderlessRipple(messageInputViewStyle.attachmentButtonRippleColor)
 
@@ -705,7 +718,7 @@ public class MessageInputView : ConstraintLayout {
         binding.sendMessageButtonDisabled.setImageDrawable(drawable)
     }
 
-    private fun configLightningButton() {
+    private fun configCommandsButton() {
         binding.commandsButton.setImageDrawable(messageInputViewStyle.commandsButtonIcon)
         binding.commandsButton.setBorderlessRipple(messageInputViewStyle.commandButtonRippleColor)
 
@@ -829,6 +842,7 @@ public class MessageInputView : ConstraintLayout {
             setInputFieldScrollBarEnabled(messageInputViewStyle.messageInputScrollbarEnabled)
             setInputFieldScrollbarFadingEnabled(messageInputViewStyle.messageInputScrollbarFadingEnabled)
             setCustomBackgroundDrawable(messageInputViewStyle.editTextBackgroundDrawable)
+            setInputType(messageInputViewStyle.messageInputInputType)
 
             messageInputViewStyle.messageInputTextStyle.apply(binding.messageEditText)
 
@@ -863,16 +877,14 @@ public class MessageInputView : ConstraintLayout {
                 }
             }
         } catch (e: Exception) {
-            logger.logE("Failed to register keyboard listener", e)
+            logger.e(e) { "Failed to register keyboard listener" }
         }
     }
 
     private fun handleKeyStroke() {
         if (canSendTypingUpdates) {
             if (binding.messageInputFieldView.messageText.isNotEmpty()) {
-                typingListener?.onKeystroke()
-            } else {
-                typingListener?.onStopTyping()
+                typingUpdatesBuffer?.onKeystroke()
             }
         }
     }
@@ -902,7 +914,8 @@ public class MessageInputView : ConstraintLayout {
 
             attachmentsButton.isVisible =
                 messageInputViewStyle.attachButtonEnabled && !isCommandMode && !isEditMode && canSendAttachments
-            commandsButton.isVisible = shouldShowCommandsButton() && !isCommandMode && canUseCommands
+            commandsButton.isVisible = messageInputViewStyle.commandsButtonEnabled &&
+                shouldShowCommandsButton() && !isCommandMode && canUseCommands && hasCommands
             commandsButton.isEnabled = !hasContent && !isEditMode
             setSendMessageButtonEnabled(hasValidContent)
         }
@@ -938,15 +951,16 @@ public class MessageInputView : ConstraintLayout {
      * @param canSend If the user is given the ability to send messages.
      */
     private fun setCanSendMessages(canSend: Boolean) {
-        binding.commandsButton.isVisible = canSend
-        binding.attachmentsButton.isVisible = canSend
+        binding.commandsButton.isVisible = messageInputViewStyle.commandsEnabled && canSend && hasCommands
+        binding.attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && canSend
 
         canSendAttachments = canSend
         canUseCommands = canSend
 
         if (canSend) {
             enableSendButton()
-            binding.messageInputFieldView.binding.messageEditText.setHint(R.string.stream_ui_message_input_hint)
+            binding.messageInputFieldView
+                .binding.messageEditText.hint = messageInputViewStyle.messageInputTextStyle.hint
         } else {
             disableSendButton()
             binding.messageInputFieldView.binding.messageEditText.setHint(
@@ -966,14 +980,13 @@ public class MessageInputView : ConstraintLayout {
      * @param canSend If the user is given the ability to send attachments.
      */
     private fun setCanSendAttachments(canSend: Boolean) {
-        binding.attachmentsButton.isVisible = canSend
+        binding.attachmentsButton.isVisible = messageInputViewStyle.attachButtonEnabled && canSend
         canSendAttachments = canSend
     }
 
     private fun shouldShowCommandsButton(): Boolean {
         val isEditMode = binding.messageInputFieldView.mode is MessageInputFieldView.Mode.EditMessageMode
 
-        val hasCommands = suggestionListController?.commands?.isNotEmpty() ?: false
         return hasCommands && messageInputViewStyle.commandsButtonEnabled && commandsEnabled && !isEditMode
     }
 
@@ -1221,6 +1234,7 @@ public class MessageInputView : ConstraintLayout {
         )
 
         public fun editMessage(oldMessage: Message, newMessageText: String)
+
         public fun dismissReply()
     }
 
@@ -1248,11 +1262,6 @@ public class MessageInputView : ConstraintLayout {
             maxMessageLength: Int,
             maxMessageLengthExceeded: Boolean,
         )
-    }
-
-    public interface TypingListener {
-        public fun onKeystroke()
-        public fun onStopTyping()
     }
 
     @FunctionalInterface

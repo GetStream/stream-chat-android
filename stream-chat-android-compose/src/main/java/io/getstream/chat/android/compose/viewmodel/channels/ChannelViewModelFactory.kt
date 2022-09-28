@@ -20,8 +20,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 
 /**
  * Builds the factory that contains all the dependencies required for the Channels Screen.
@@ -33,14 +36,16 @@ import io.getstream.chat.android.client.models.Channel
  * @param channelLimit How many channels we fetch per page.
  * @param memberLimit How many members are fetched for each channel item when loading channels.
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
+ * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  */
 public class ChannelViewModelFactory(
-    private val chatClient: ChatClient,
-    private val querySort: QuerySort<Channel>,
-    private val filters: FilterObject?,
+    private val chatClient: ChatClient = ChatClient.instance(),
+    private val querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
+    private val filters: FilterObject? = null,
     private val channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
+    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
@@ -51,7 +56,8 @@ public class ChannelViewModelFactory(
                 initialFilters = filters,
                 channelLimit = channelLimit,
                 messageLimit = messageLimit,
-                memberLimit = memberLimit
+                memberLimit = memberLimit,
+                chatEventHandlerFactory = chatEventHandlerFactory,
             )
         }
     )
