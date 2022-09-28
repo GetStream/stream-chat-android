@@ -86,7 +86,7 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     private fun configUserAvatar(typedArray: TypedArray) {
         val showAvatar = typedArray.getBoolean(R.styleable.ChannelListHeaderView_streamUiShowUserAvatar, true)
-        binding.userAvatar.apply {
+        binding.userAvatarView.apply {
             isInvisible = !showAvatar
             isClickable = showAvatar
         }
@@ -187,7 +187,7 @@ public class ChannelListHeaderView : ConstraintLayout {
      * @param user A user that will represent the avatar in the header.
      */
     public fun setUser(user: User) {
-        binding.userAvatar.setUserData(user)
+        binding.userAvatarView.setUser(user)
     }
 
     /**
@@ -256,7 +256,7 @@ public class ChannelListHeaderView : ConstraintLayout {
      * the current user.
      */
     public fun setOnUserAvatarClickListener(listener: UserAvatarClickListener) {
-        binding.userAvatar.setOnClickListener { listener.onUserAvatarClick() }
+        binding.userAvatarView.setOnClickListener { listener.onUserAvatarClick() }
     }
 
     /**
@@ -268,7 +268,7 @@ public class ChannelListHeaderView : ConstraintLayout {
 
     @InternalStreamChatApi
     public fun setOnUserAvatarLongClickListener(listener: () -> Unit) {
-        binding.userAvatar.setOnLongClickListener {
+        binding.userAvatarView.setOnLongClickListener {
             listener()
             true
         }

@@ -358,7 +358,7 @@ internal class MessageComposerViewModelTest {
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
-            whenever(chatClient.queryChannel(any(), any(), any())) doReturn channel.asCall()
+            whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
         }
 
         fun givenChannelState(

@@ -63,6 +63,16 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+@Deprecated(
+    message = "Deprecated in favor of 'MediaAttachmentContent'. The new function " +
+        "is able to preview videos as well as images and has access to the new and improved" +
+        "media gallery.",
+    replaceWith = ReplaceWith(
+        expression = "MediaAttachmentContent()",
+        "io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent",
+    ),
+    level = DeprecationLevel.WARNING
+)
 public fun ImageAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,

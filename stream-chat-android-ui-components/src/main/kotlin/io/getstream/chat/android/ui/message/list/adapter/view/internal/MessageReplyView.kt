@@ -83,7 +83,7 @@ internal class MessageReplyView : FrameLayout {
     }
 
     private fun setUserAvatar(message: Message) {
-        binding.replyAvatarView.setUserData(message.user)
+        binding.replyAvatarView.setUser(message.user)
         binding.replyAvatarView.isVisible = true
     }
 

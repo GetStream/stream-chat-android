@@ -142,7 +142,7 @@ internal class ImageAttachmentViewHolder(
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
-                avatarView.setOnClickListener {
+                userAvatarView.setOnClickListener {
                     container.userClickListener.onUserClick(data.message.user)
                 }
                 imageAttachmentView.attachmentClickListener = AttachmentClickListener { attachment ->

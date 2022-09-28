@@ -124,6 +124,16 @@ import kotlin.math.abs
  * Shows an image preview, where we can page through image items, zoom in and perform various actions.
  */
 @OptIn(ExperimentalPagerApi::class)
+@Deprecated(
+    message = "Deprecated in favour of 'MediaGalleryPreviewActivity'. The new activity is able to" +
+        "reproduce video content as well as images and features a number of improvements such as " +
+        "automatic reloading upon regaining network connection and more.",
+    replaceWith = ReplaceWith(
+        expression = "MediaGalleryPreviewActivity",
+        "io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewActivity"
+    ),
+    level = DeprecationLevel.WARNING
+)
 public class ImagePreviewActivity : AppCompatActivity() {
 
     /**
@@ -950,6 +960,16 @@ public class ImagePreviewActivity : AppCompatActivity() {
          * @param messageId The ID of the message to explore the images of.
          * @param attachmentPosition The initial position of the clicked image.
          */
+        @Deprecated(
+            message = "Deprecated in favour of 'MediaGalleryPreviewActivity.getIntent'. The new activity is able to" +
+                "reproduce video content as well as images and features a number of improvements such as " +
+                "automatic reloading upon regaining network connection and more.",
+            replaceWith = ReplaceWith(
+                expression = "MediaGalleryPreviewActivity.getIntent()",
+                "io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewActivity.getIntent"
+            ),
+            level = DeprecationLevel.WARNING
+        )
         public fun getIntent(context: Context, messageId: String, attachmentPosition: Int): Intent {
             return Intent(context, ImagePreviewActivity::class.java).apply {
                 putExtra(KeyMessageId, messageId)

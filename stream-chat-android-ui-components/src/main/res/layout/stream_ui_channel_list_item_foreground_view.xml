@@ -23,8 +23,8 @@
     android:background="@drawable/stream_ui_foreground_channel_list"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.avatar.ChannelAvatarView
+        android:id="@+id/channelAvatarView"
         style="?attr/streamUiChannelListItemAvatarStyle"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
@@ -46,7 +46,7 @@
         android:textDirection="locale"
         app:layout_constraintBottom_toTopOf="@+id/lastMessageLabel"
         app:layout_constraintEnd_toStartOf="@+id/muteIcon"
-        app:layout_constraintStart_toEndOf="@+id/avatarView"
+        app:layout_constraintStart_toEndOf="@+id/channelAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Gebruiker, Usuario, Benutzer"
