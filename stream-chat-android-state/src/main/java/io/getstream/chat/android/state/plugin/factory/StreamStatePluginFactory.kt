@@ -20,13 +20,11 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -45,7 +43,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListe
 import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerFull
+import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -218,15 +216,11 @@ public class StreamStatePluginFactory(
             }
         }
 
-        val getMessageFun: suspend (String) -> Result<Message> = { messageId: String ->
-            chatClient.getMessage(messageId).await()
-        }
-
         return StatePlugin(
             activeUser = user,
             queryChannelListener = QueryChannelListenerState(logic),
             queryChannelsListener = QueryChannelsListenerState(logic),
-            threadQueryListener = ThreadQueryListenerFull(logic, repositoryFacade, repositoryFacade, getMessageFun),
+            threadQueryListener = ThreadQueryListenerState(logic, repositoryFacade),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
             editMessageListener = EditMessageListenerState(logic, clientState),
             hideChannelListener = HideChannelListenerState(logic),
