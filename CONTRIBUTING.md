@@ -122,59 +122,67 @@ If this is your first time opening a PR for a Stream repo, please read our [pull
 
 It's also important to note that **before we merge** your pull request, please don't forget to [sign Stream's CLA (Contributor License Agreement](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform). 📝
 
-### PR Semantics 🦄 TODOODODODOOD -> leftover
+### PR Semantics 🦄
 
-Our team uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) when coding and creating PRs. This standard makes it easy for our team to review and identify commits in our repo quickly.
+Our team uses simple, descriptive commits when coding and creating PRs. We try to make as many smaller commits as possible, to keep the history clean. This standard makes it easy for our team to review and identify commits in our repo quickly.
 
-While we don't expect developers to follow the specification down to every commit message, we enforce semantics on PR titles.
+While we don't expect developers to follow the specification down to every commit message, we enforce semantics on the PR structure.
 
-PR titles should follow the format below:
+PR titles should follow the format: `<issue-number> - <PR-short-description>`. Furthermore, we have a very detailed structure in our PRs that helps us maintain quality of our SDK. It also helps us clearly communicate changes within each PR, that's outlined in the [PR template](https://github.com/GetStream/stream-chat-android/blob/main/.github/pull_request_template.md).
 
-```jsx
-<type>[optional scope]: <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-1. **fix:** a commit of the *type* `fix` patches a bug in your codebase (this correlates with **`[PATCH](http://semver.org/#summary)`** in Semantic Versioning).
-2. **feat:** a commit of the *type* `feat` introduces a new feature to the codebase (this correlates with **`[MINOR](http://semver.org/#summary)`** in Semantic Versioning).
-3. **BREAKING CHANGE:** a commit that has a footer `BREAKING CHANGE:`, or appends a `!` after the type/scope, introduces a breaking API change (correlating with **`[MAJOR](http://semver.org/#summary)`** in Semantic Versioning). A BREAKING CHANGE can be part of commits of any *type*.
-4. *types* other than `fix:` and `feat:` are allowed, for example **[@commitlint/config-conventional](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional)** (based on the **[the Angular convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines)**) recommends `build:`, `chore:`, `ci:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`, and others.
-5. *footers* other than `BREAKING CHANGE: <description>` may be provided and follow a convention similar to **[git trailer format](https://git-scm.com/docs/git-interpret-trailers)**.
+* **Goal**: This describes what we're trying to achieve in the PR. Use this section to give more context and also [link to a GitHub issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue) if possible.
+* **Implementation details**: Used to give more technical context and description about the changes. Use this section to explain the changes in detail and why you decided on that approach.
+* **UI Changes**: This section is used to add relevant before/after images and/or videos for the change. Only useful if the change has any UI impact, like design changes, or visual behavior fixes, e.g. loading of items.
+* **Testing**: You can explain the steps to test the PR here. Include as much information and as clear steps to reproduce previous and new behavior and/or UI. We also provide git patches which can be used to trigger new behavior or bugs, if it's not easily reproducible otherwise.
+* **Contributor Checklist**: This part is for you, the contributor, to check off as you create a PR. It has two sections.
+  * **General**: Make sure that all the items are checked off and that the PR is created, assigned and people are notified appropriately.
+  * **Code & documentation**: Make sure that all required documentation is up to date, that the code is tested and the changes are easily comparable in the PR.
+* **Reviewer Checklist**: This section is for reviewers. You typically don't check anything off here, only remove items which don't make sense for the PR. E.g. remove "Bugs validated" if there are no bugfixes in the PR.
 
 ### Testing
 
-At Stream, we value testing. Every PR should include passing tests for existing and new features. To run our test suite locally, you can use the following *melos* command:
+At Stream, we value testing. Every PR should include passing tests for existing and new features. To run our test suite locally, you can use the Gradle tasks. We also run several other layers of testing:
+* CI/CD Unit tests suite.
+* CI/CD UI Tests suite.
+* CI/CD Snapshot tests suite.
 
-```bash
-> melos run test:dart
-> melos run test:flutter
-```
+All these are used to cross-compare behavior across versions of the SDK and changes, to make sure nothing is broken.
 
-### Our Process // TODO review & update/expand
+### Our Process
 
 By default, our development branch is `develop`. Contributors should create new PRs based on `develop` when working on new features.
 
 Develop is merged into **main** after the team performs various automated and QA tests on the branch. Main can be considered our stable branch — it represents the latest published release on Maven Central.
 
+Additionally, we might have another branch for older major versions of the SDK, such as v3, v4, v5 and so on. **We only keep up to two major versions at any time**, one which is currently being worked on, and the previous version which we only update with the most important bugfixes or critical issues.
+
+Whenever you can, **we recommend migrating to the latest major version**, as it has running releases in a stable cadence of ~2 weeks, with patch versions in between, if required.
+
+
 ---
 
 # Versioning Policy
 
-All of the Stream Chat packages follow [semantic versioning (semver)](https://semver.org/).
+The Android SDK doesn't follow strict semantic versioning. Our versioning and breaking/deprecation policies are [well documented](https://getstream.io/chat/docs/sdk/android/basics/dependencies/#versioning) and follow common Android principles.
 
-See our [versioning policy documentation](https://getstream.io/chat/docs/sdk/flutter/basics/versioning_policy/) for more information.
+We try to avoid breaking changes whenever possible. We heavily rely on [Deprecated annotations](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deprecated/) to slowly deprecate broken behavior or things we improve, in a non-breaking way.
 
-// TODO - deprecations and our lifecycle
+For most things, you won't have to migrate immediately, only after a 2-4 weeks' notice about the functionality being changed or removed. Note that this time period depends on the scope of the feature and severity of the change.
+
+In the meantime, if you want to test our latest changes, without waiting for the next release, or to prepare for the next major version, you can use our [snapshot builds](https://getstream.io/chat/docs/sdk/android/basics/dependencies/#snapshot-builds).
+
+These allow you to follow everything developers have merged to **develop** and to test it against your SDK use case.
 
 ---
 
-# Styleguides 💅 // TODO Compose guidelines
+# Styleguides 💅
 
 ![image](https://user-images.githubusercontent.com/20601437/124241186-d17a8680-db1b-11eb-9a21-3df305674ca9.png)
 
-We use style guides and lint checks to keep our code consistent and maintain best practices. Our team uses Dart's built-in analyzer for linting and enforcing code styles. The full list of analyzer rules can be found below.
+> (Please don't use the first example)
 
-## Lint/Detekt Rule 📖 // TODO
+We use style guides and lint checks to keep our code consistent and maintain best practices. We have a couple of layers of checks for both code structure, clarity and complexity:
+* **Lint + Spotless**: We use Spotless in pair with Android and Kotlin Lint options to make sure our codebase is clean and nicely formatted. These checks run with every commit and fix any issues you might've caused. You can also run these checks manually, using `./gradlew spotlessApply`.
+* **Detekt**: To maintain our codebase in terms of simplicity, conciseness, optimizations and more, we use Detekt. It points out various issues, such as magic numbers, overly complex functions, long pieces of code and more. It also runs with each commit, but you can run it yourself, using `./gradlew detekt` or `./gradlew detektBaseline` if you cannot fix issues Detekt lists out immediately.
+
+Bear in mind that if these tools are not satisfied, the CI/CD actions will fail and the PR won't be cleared for merge until every check passes.
