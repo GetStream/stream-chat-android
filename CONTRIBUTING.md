@@ -139,6 +139,8 @@ PR titles should follow the format: `<issue-number> - <PR-short-description>`. F
   * **Code & documentation**: Make sure that all required documentation is up to date, that the code is tested and the changes are easily comparable in the PR.
 * **Reviewer Checklist**: This section is for reviewers. You typically don't check anything off here, only remove items which don't make sense for the PR. E.g. remove "Bugs validated" if there are no bugfixes in the PR.
 
+If you're looking for a great example of a PR with all the sections filled correctly, check out our [PR on Compose Video thumbnails](https://github.com/GetStream/stream-chat-android/pull/4096).
+
 ### Testing
 
 At Stream, we value testing. Every PR should include passing tests for existing and new features. To run our test suite locally, you can use the Gradle tasks. We also run several other layers of testing:
