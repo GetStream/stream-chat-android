@@ -40,7 +40,7 @@ import java.util.Date
  * @param channelRepository [ChannelRepository] to cache intermediate data and final result of channels.
  * @param userRepository [UserRepository] Requests users from database.
  */
-internal class CreateChannelListenerImpl(
+internal class CreateChannelListenerDatabase(
     private val clientState: ClientState,
     private val channelRepository: ChannelRepository,
     private val userRepository: UserRepository,
