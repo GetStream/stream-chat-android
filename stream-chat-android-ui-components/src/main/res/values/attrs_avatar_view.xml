@@ -34,6 +34,20 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <!-- Text size of the AvatarView's initials letters in group avatar -->
+        <attr name="streamUiGroupAvatarTextSize" format="dimension|reference" />
+        <!-- A color of the AvatarView's initials letters in group avatar -->
+        <attr name="streamUiGroupAvatarTextColor" format="color|reference" />
+        <!-- Font name of the AvatarView's initials letters in group avatar -->
+        <attr name="streamUiGroupAvatarTextFont" format="reference" />
+        <!-- Font assets reference for the AvatarView's initials letters in group avatar -->
+        <attr name="streamUiGroupAvatarTextFontAssets" format="string" />
+        <!-- Text style of the AvatarView's initials letters in group avatar -->
+        <attr name="streamUiGroupAvatarTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
         <!-- Sets the visibility of the online indicator -->
         <attr name="streamUiAvatarOnlineIndicatorEnabled" format="boolean" />
         <!-- Sets the position of the online indicator -->
@@ -47,9 +61,10 @@
         <attr name="streamUiAvatarOnlineIndicatorColor" format="color|reference" />
         <!-- Border color of the online indicator -->
         <attr name="streamUiAvatarOnlineIndicatorBorderColor" format="color|reference" />
+        <!-- Avatar shapes -->
         <attr name="streamUiAvatarShape" format="enum">
             <enum name="circle" value="0"/>
-            <enum name="square" value="1"/>
+            <enum name="round_rect" value="1"/>
         </attr>
         <attr name="streamUiAvatarBorderRadius" format="dimension|reference"/>
     </declare-styleable>

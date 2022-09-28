@@ -135,7 +135,7 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
         fun render(member: User) {
             binding.memberContainer.setOnClickListener { memberClickListener?.onMemberClicked(member) }
             binding.memberNameTextView.text = member.name
-            binding.memberAvatar.setUserData(member)
+            binding.userAvatarView.setUser(member)
         }
     }
 }

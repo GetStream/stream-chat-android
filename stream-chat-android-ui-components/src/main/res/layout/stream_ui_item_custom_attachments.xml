@@ -116,8 +116,8 @@
         app:layout_constraintTop_toTopOf="@id/reactionsSpace"
         />
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="?attr/streamUiMessageListItemAvatarStyle"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -166,14 +166,14 @@
         android:layout_height="24dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/messageContainer"
-        app:layout_constraintEnd_toStartOf="@id/avatarMineView"
+        app:layout_constraintEnd_toStartOf="@id/userAvatarMineView"
         tools:ignore="ContentDescription"
         tools:src="@drawable/stream_ui_ic_warning"
         tools:visibility="visible"
         />
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarMineView"
+    <io.getstream.chat.android.ui.avatar.UserAvatarView
+        android:id="@+id/userAvatarMineView"
         style="?attr/streamUiMessageListItemAvatarStyle"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"

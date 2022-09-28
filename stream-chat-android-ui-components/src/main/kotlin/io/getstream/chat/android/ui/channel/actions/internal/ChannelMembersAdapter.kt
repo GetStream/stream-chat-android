@@ -63,7 +63,7 @@ internal class ChannelMembersAdapter(
             val user = member.user
 
             binding.apply {
-                avatarView.setUserData(user)
+                userAvatarView.setUser(user)
                 userNameTextView.text = user.name
             }
         }

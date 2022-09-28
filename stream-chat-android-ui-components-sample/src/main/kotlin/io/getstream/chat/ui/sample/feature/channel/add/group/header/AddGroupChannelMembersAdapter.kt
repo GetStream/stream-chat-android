@@ -61,7 +61,7 @@ class AddGroupChannelMembersAdapter :
 
         fun bind(user: User) {
             member = user
-            binding.memberAvatar.setUserData(user)
+            binding.userAvatarView.setUser(user)
             binding.memberNameTextView.text = user.name
         }
     }

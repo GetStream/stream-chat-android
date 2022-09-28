@@ -92,7 +92,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             }
 
             itemForegroundView.apply {
-                avatarView.setOnClickListener {
+                channelAvatarView.setOnClickListener {
                     when {
                         channel.isDirectMessaging() -> currentUser.value?.let(userClickListener::onClick)
                         else -> channelClickListener.onClick(channel)
@@ -240,7 +240,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView() {
-        avatarView.setChannelData(channel)
+        channelAvatarView.setChannel(channel)
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabelAndTimestamp(

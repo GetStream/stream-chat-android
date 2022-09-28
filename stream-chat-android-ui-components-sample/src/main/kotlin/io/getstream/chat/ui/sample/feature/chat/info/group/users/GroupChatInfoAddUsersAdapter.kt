@@ -64,7 +64,7 @@ class GroupChatInfoAddUsersAdapter : ListAdapter<User, GroupChatInfoAddUsersAdap
 
         fun bind(user: User) {
             this.user = user
-            binding.userAvatarView.setUserData(user)
+            binding.userAvatarView.setUser(user)
             binding.userNameTextView.text = user.name
         }
     }

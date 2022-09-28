@@ -57,8 +57,8 @@
                 android:textColor="@color/stream_ui_text_color_primary"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
-                android:id="@+id/avatarView"
+            <io.getstream.chat.android.ui.avatar.ChannelAvatarView
+                android:id="@+id/channelAvatarView"
                 style="@style/StreamUiGroupActionsAvatarStyle"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
