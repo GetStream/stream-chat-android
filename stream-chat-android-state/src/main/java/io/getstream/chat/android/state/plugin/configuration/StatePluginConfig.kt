@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.configuration
 
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 
 /**
  * Provides a configuration for [io.getstream.chat.android.state.plugin.internal.StatePlugin].

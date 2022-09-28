@@ -2830,6 +2830,10 @@ internal constructor(
             pluginFactories.add(pluginFactory)
         }
 
+        public fun withPlugins(vararg pluginFactoryArgs: PluginFactory): Builder = apply {
+            pluginFactories.addAll(pluginFactoryArgs)
+        }
+
         /**
          * Overrides a default, based on shared preferences implementation for [UserCredentialStorage].
          */
