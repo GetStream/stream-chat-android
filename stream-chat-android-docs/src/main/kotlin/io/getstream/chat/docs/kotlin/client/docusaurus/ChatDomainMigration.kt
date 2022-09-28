@@ -34,7 +34,6 @@ class ChatDomainMigration {
                 userPresence = true,
                 persistenceEnabled = true,
                 uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-                useSequentialEventHandler = false,
             ),
             appContext = context,
         )

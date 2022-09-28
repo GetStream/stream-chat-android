@@ -92,7 +92,6 @@ public class StreamOfflinePluginFactory(
             backgroundSyncEnabled = config.backgroundSyncEnabled,
             userPresence = config.userPresence,
             uploadAttachmentsNetworkType = config.uploadAttachmentsNetworkType,
-            useSequentialEventHandler = config.useSequentialEventHandler,
         ),
         appContext = appContext
     )

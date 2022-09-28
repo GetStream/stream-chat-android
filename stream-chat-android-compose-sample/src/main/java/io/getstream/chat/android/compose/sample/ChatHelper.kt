@@ -60,7 +60,6 @@ object ChatHelper {
             Config(
                 userPresence = true,
                 persistenceEnabled = true,
-                useSequentialEventHandler = true,
             ),
             context
         )
