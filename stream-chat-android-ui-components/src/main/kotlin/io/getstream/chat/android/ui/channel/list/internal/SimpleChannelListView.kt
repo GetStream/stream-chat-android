@@ -169,36 +169,6 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         }
     }
 
-    @Deprecated(
-        message = "Deprecated in favor of new logic for setChannels. To set the loading item call set channels with" +
-            "the loading item already in the list. Show loading more function is race condition prone, which can" +
-            "cause the list to apply an old state of channels.",
-        level = DeprecationLevel.ERROR,
-    )
-    fun showLoadingMore(show: Boolean) {
-        requireAdapter().let { adapter ->
-            val currentList = adapter.currentList
-            val loadingMore = currentList.contains(ChannelListItem.LoadingMoreItem)
-            val showLoadingMore = show && !loadingMore
-            val hideLoadingMore = !show && loadingMore
-
-            val updatedList = when {
-                showLoadingMore -> currentList + ChannelListItem.LoadingMoreItem
-
-                // we should never have more than one loading item, but just in case
-                hideLoadingMore -> currentList.filterIsInstance(ChannelListItem.ChannelItem::class.java)
-
-                else -> currentList
-            }
-
-            adapter.submitList(updatedList) {
-                if (showLoadingMore) {
-                    layoutManager.scrollToPosition(updatedList.size - 1)
-                }
-            }
-        }
-    }
-
     fun hasChannels(): Boolean {
         return requireAdapter().itemCount > 0
     }

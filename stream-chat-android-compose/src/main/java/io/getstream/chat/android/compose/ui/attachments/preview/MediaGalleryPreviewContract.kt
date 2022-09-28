@@ -23,7 +23,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 
 /**
- * The contract used to start the [ImagePreviewActivity] given a message ID and the position of the clicked attachment.
+ * The contract used to start the [MediaGalleryPreviewActivity]
+ * given a message ID and the position of the clicked attachment.
  */
 public class MediaGalleryPreviewContract :
     ActivityResultContract<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>() {

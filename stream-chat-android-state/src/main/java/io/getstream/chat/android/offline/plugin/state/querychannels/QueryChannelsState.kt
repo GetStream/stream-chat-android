@@ -53,13 +53,6 @@ public interface QueryChannelsState {
     /** The channels loaded state. See [ChannelsStateData]. */
     public val channelsStateData: StateFlow<ChannelsStateData>
 
-    @Deprecated(
-        message = "Use chatEventHandlerFactory instead",
-        level = DeprecationLevel.ERROR,
-    )
-    /** Instance of [ChatEventHandler] that handles logic of event handling for this [QueryChannelsState]. */
-    public var chatEventHandler: ChatEventHandler?
-
     /**
      * Factory that produces [ChatEventHandler], which decides whether the set of channels should be updated.
      */
