@@ -3,15 +3,15 @@
 This page shows you how to integrate [Agora](https://www.agora.io/en/) into Stream Chat SDK for implementing video call features.
 
 ## Introduction
-Video calls have become immensely popular since the onset of the pandemic. Today, we take a look at how you can use the service of [Agora](https://www.agora.io/en/) to integrate video calls into the Stream Chat SDK.
+Video calls have become immensely popular since the onset of the pandemic. Today, we take a look at how you can use the service of **[Agora](https://www.agora.io/en/)** to integrate video calls into the Stream Chat SDK.
 
-Agora is an infrastructure provider for live, interactive voice and video. They offer native SDKs for mobile platforms, cross-platform frameworks, and the web and allow for simple integration with very few lines of code. They cover a wide range of use cases such as video conferencing, interactive live-streaming, real-time messaging, and many more.
+**Agora** is an infrastructure provider for live, interactive voice and video. They offer native SDKs for mobile platforms, cross-platform frameworks, and the web and allow for simple integration with very few lines of code. They cover a wide range of use cases such as video conferencing, interactive live-streaming, real-time messaging, and many more.
 
 You must complete quite a few steps to create the final product. We will cover all of them to help you create a well-integrated, fully functional, and reusable solution in the end.
 
 Follow the steps below to produce this app that allows your users to make video calls:
 
-1. Setting up an account for Agora
+1. Setting up an account for **Agora**
 2. Stream Dashboard integration
 3. Configure dependencies and permissions
 4. Implement a ViewModel for video calls
@@ -33,7 +33,7 @@ Once you have these two available you can continue with this guide.
 
 ## 2. Stream Dashboard integration
 
-In order for the integration of agora to work there needs to be a server component handling token generation and more. Normally this would require a custom server implementation but Stream offers first-class integration for agora relieving you of these duties.
+In order for the integration of **Agora** to work there needs to be a server component handling token generation and more. Normally this would require a custom server implementation but Stream offers first-class integration for **Agora** relieving you of these duties.
 
 There are only a few setup steps to go through in the Stream dashboard and this guide details all of them:
 
@@ -48,9 +48,9 @@ This is the screen that you navigated to:
 
 First, it is necessary to enable the integration through the toggle in the top right (red arrow in the image below). Make sure that you can see the green **Agora Enabled** badge at the top.
 
-Next, it is necessary to enter the credentials from the agora console. This is the place you need to enter the aforementioned `app id` and `app certificate` from the agora console.
+Next, it is necessary to enter the credentials from the **Agora** console. This is the place you need to enter the aforementioned `app id` and `app certificate` from the **Agora** console.
 
-![View of the Stream Dashboard when the agora video integration was enabled.](../../assets/agora-guide-after.png)
+![View of the Stream Dashboard when the **Agora** video integration was enabled.](../../assets/agora-guide-after.png)
 
 With these steps being taken, the Stream Chat SDK will use these credentials internally to initiate calls without you needing to take additional steps.
 
@@ -142,7 +142,7 @@ class VideoCallViewModel constructor(
 }
 ```
 
-As you can see from the sample above, you need to create `RtcEngineConfig` with the App ID that you’ve already got from your Agora Dashboard and `IRtcEngineEventHandler` that listens for the remote host joining the channel. 
+As you can see from the sample above, you need to create `RtcEngineConfig` with the App ID that you’ve already got from your **Agora** Dashboard and `IRtcEngineEventHandler` that listens for the remote host joining the channel. 
 
 Next, you can create a new video call with an unique call id and get a video call token with Stream chat SDK like the below:
 
@@ -165,7 +165,7 @@ private suspend fun getVideoCallToken(callId: String): String = withContext(Disp
 }
 ```
 
-Stream chat SDK provides video integration APIs for Agora, so you can create a new video call and get a video call token from the Stream server without building your own backend service.
+Stream chat SDK provides video integration APIs for **Agora**, so you can create a new video call and get a video call token from the Stream server without building your own backend service.
 
 Next, you should create a new function called `createVideoCallOrJoin` that receives the` onCreateRoom` lambda function to pass the result as an instance of `AgoraCall` like the below:
 
@@ -569,7 +569,7 @@ The end result will look like this:
 
 But you may face an unresolved IDE error for the `ChannelViewModel` if you build your project now. You’ll cover it in the following sections.
 
-We implemented a basic form of a video call with the agora SDK. Now let’s create custom call messages that represent video call messages with Stream chat’s custom attachment.
+We implemented a basic form of a video call with the **Agora** SDK. Now let’s create custom call messages that represent video call messages with Stream chat’s custom attachment.
 
 ## 6. Implement Custom Call Messages Using Custom Attachments
 
@@ -790,9 +790,9 @@ Let’s break down each method one by one:
 
 - **leaveOnCall**: Leave a call and update the call attachment to be ended up. This method should be called if there are no participants on the video call.
 ## Conclusion
-This concludes how you integrate video calls in your chat application with the Agora SDK. You can utilize video calls in comprehensive ways such as group calls, screen sharing, live streams, and much more.
+This concludes how you integrate video calls in your chat application with the **Agora** SDK. You can utilize video calls in comprehensive ways such as group calls, screen sharing, live streams, and much more.
 To learn more about each SDK, check out the materials below:
 
-- [Start a Video Call with Agora  SDK](https://docs.agora.io/en/video-call-4.x/start_call_android_ng?platform=Android).
+- [Start a Video Call with Agora SDK](https://docs.agora.io/en/video-call-4.x/start_call_android_ng?platform=Android).
 - [Stream Chat SDK’s UI Components](https://getstream.io/chat/docs/sdk/android/).
 
