@@ -190,6 +190,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun okHttpClient (Lokhttp3/OkHttpClient;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun retryPolicy (Lio/getstream/chat/android/client/utils/retry/RetryPolicy;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withPlugin (Lio/getstream/chat/android/client/plugin/factory/PluginFactory;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun withPlugins ([Lio/getstream/chat/android/client/plugin/factory/PluginFactory;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withRepositoryFactoryProvider (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 
@@ -3265,6 +3266,16 @@ public final class io/getstream/chat/android/client/models/TypingEvent {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/models/UploadAttachmentsNetworkType : java/lang/Enum {
+	public static final field CONNECTED Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
+	public static final field METERED Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
+	public static final field NOT_ROAMING Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
+	public static final field UNMETERED Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
+	public final fun toNetworkType ()Landroidx/work/NetworkType;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
+	public static fun values ()[Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
+}
+
 public final class io/getstream/chat/android/client/models/UploadedFile {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -3953,6 +3964,9 @@ public final class io/getstream/chat/android/client/utils/TimeProvider {
 }
 
 public final class io/getstream/chat/android/client/utils/UserUtilsKt {
+}
+
+public final class io/getstream/chat/android/client/utils/channel/ChannelUtilsKt {
 }
 
 public final class io/getstream/chat/android/client/utils/internal/ChatErrorMapperKt {
