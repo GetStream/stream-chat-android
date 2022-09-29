@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.handlers
 import android.Manifest
 import android.content.Context
 import android.os.Build
+import android.os.Environment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.getstream.sdk.chat.utils.extensions.onPermissionRequested
@@ -128,7 +129,9 @@ public class DownloadPermissionHandler(
     }
 
     override fun onHandleRequest(payload: Map<String, Any>) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P || permissionState.status.isGranted) {
+        if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.P && !Environment.isExternalStorageLegacy()) ||
+            permissionState.status.isGranted
+        ) {
             onPermissionGranted(payload)
             lastPayload = null
         } else {
