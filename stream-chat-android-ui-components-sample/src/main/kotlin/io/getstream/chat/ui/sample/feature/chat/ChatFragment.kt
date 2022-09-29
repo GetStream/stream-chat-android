@@ -217,21 +217,24 @@ class ChatFragment : Fragment() {
                 deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
             )
             bindView(binding.messageListView, viewLifecycleOwner)
-            setDateSeparatorHandler(DateSeparatorHandler { previousMessage, message ->
-                if (previousMessage == null) {
-                    true
-                } else {
-                    shouldShowDateSeparator(calendar, previousMessage, message)
+            setDateSeparatorHandler(
+                DateSeparatorHandler { previousMessage, message ->
+                    if (previousMessage == null) {
+                        true
+                    } else {
+                        shouldShowDateSeparator(calendar, previousMessage, message)
+                    }
                 }
-
-            })
-            setThreadDateSeparatorHandler(DateSeparatorHandler { previousMessage, message ->
-                if (previousMessage == null) {
-                    false
-                } else {
-                    shouldShowDateSeparator(calendar, previousMessage, message)
+            )
+            setThreadDateSeparatorHandler(
+                DateSeparatorHandler { previousMessage, message ->
+                    if (previousMessage == null) {
+                        false
+                    } else {
+                        shouldShowDateSeparator(calendar, previousMessage, message)
+                    }
                 }
-            })
+            )
             state.observe(viewLifecycleOwner) {
                 when (it) {
                     is MessageListViewModel.State.Loading -> Unit

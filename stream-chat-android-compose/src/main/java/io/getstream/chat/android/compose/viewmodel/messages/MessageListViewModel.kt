@@ -44,8 +44,8 @@ import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
 import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
+import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
 import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
 import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphyCommon
 

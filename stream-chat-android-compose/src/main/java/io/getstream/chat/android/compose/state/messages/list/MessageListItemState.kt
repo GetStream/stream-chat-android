@@ -52,7 +52,7 @@ public data class SystemMessageState(val message: Message) : MessageListItemStat
  *
  * @param users The list of [User]s currently typing.
  */
-public data class TypingItemState(val users: List<User>): MessageListItemState()
+public data class TypingItemState(val users: List<User>) : MessageListItemState()
 
 /**
  * Represents each message item we show in the list of messages.

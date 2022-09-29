@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.common.messagelist
 
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
@@ -189,7 +205,8 @@ public class MessageListController(
     private val _errorEvents: MutableStateFlow<ErrorEvent?> = MutableStateFlow(null)
     public val errorEvents: StateFlow<ErrorEvent?> = _errorEvents
 
-    // TODO separate unreads to message list unreads and thread unreads after https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
+    // TODO separate unreads to message list unreads and thread unreads after
+    //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
     public val unreadCount: StateFlow<Int> = channelState.filterNotNull()
         .flatMapLatest { it.unreadCount }
         .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = 0)
@@ -324,6 +341,7 @@ public class MessageListController(
     /**
      * Start observing messages for a given channel, groups and filers them to be show on the ui.
      */
+    @Suppress("MagicNumber")
     private fun observeMessagesListState() {
         channelState.filterNotNull().flatMapLatest { channelState ->
             combine(
@@ -402,7 +420,8 @@ public class MessageListController(
             _messageListState.value = _messageListState.value.copy(currentUser = it)
         }.launchIn(scope)
 
-        // TODO separate unreads to message list unreads and thread unreads after https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
+        // TODO separate unreads to message list unreads and thread unreads after
+        //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
         unreadCount.onEach {
             _messageListState.value = _messageListState.value.copy(unreadCount = it)
         }.launchIn(scope)
@@ -425,6 +444,7 @@ public class MessageListController(
      * @param endOfOlderMessages State flow of flag which show if we reached the end of available messages.
      * @param reads State flow source of read states.
      */
+    @Suppress("MagicNumber")
     private fun observeThreadMessagesState(
         threadId: String,
         messages: StateFlow<List<Message>>,
@@ -484,7 +504,8 @@ public class MessageListController(
                 _threadListState.value = _threadListState.value.copy(endOfOldMessagesReached = it)
             }.launchIn(this)
 
-            // TODO separate unreads to message list unreads and thread unreads after https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
+            // TODO separate unreads to message list unreads and thread unreads after
+            //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
             unreadCount.onEach {
                 _threadListState.value = _messageListState.value.copy(unreadCount = it)
             }.launchIn(scope)
@@ -996,7 +1017,7 @@ public class MessageListController(
             .enqueue(
                 onError = { chatError ->
                     logger.e {
-                        "Could not delete message: ${chatError.message}, Hard: ${hard}. " +
+                        "Could not delete message: ${chatError.message}, Hard: $hard. " +
                             "Cause: ${chatError.cause?.message}. If you're using OfflinePlugin, the message " +
                             "should be deleted in the database and it will be deleted in the backend when " +
                             "the SDK sync its information."
@@ -1027,7 +1048,8 @@ public class MessageListController(
         cid.cidToTypeAndId().let { (channelType, channelId) ->
             val mode = _mode.value
             if (mode is MessageMode.Thread) {
-                // TODO sort out thread unreads when https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
+                // TODO sort out thread unreads when
+                //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
                 // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
             } else {
                 chatClient.markRead(channelType, channelId).enqueue(
@@ -1209,9 +1231,11 @@ public class MessageListController(
      * @return [Message] with the request id or null if the message is not in the list.
      */
     public fun getMessageWithId(messageId: String): Message? {
-        return (_messageListState.value.messages.firstOrNull {
-            it is MessageItem && it.message.id == messageId
-        } as? MessageItem)?.message
+        return (
+            _messageListState.value.messages.firstOrNull {
+                it is MessageItem && it.message.id == messageId
+            } as? MessageItem
+            )?.message
     }
 
     /**

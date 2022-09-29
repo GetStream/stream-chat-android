@@ -33,7 +33,9 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
+import io.getstream.chat.android.common.messagelist.MessagePositionHandler
 import io.getstream.chat.android.common.model.messsagelist.MessageItem
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
@@ -42,19 +44,16 @@ import io.getstream.chat.android.common.state.messagelist.MessageFocused
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
-import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
-import io.getstream.chat.android.common.messagelist.MessagePositionHandler
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onSubscription
-import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
 import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
 import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphyCommon
+import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 /**
  * View model class for [io.getstream.chat.android.ui.message.list.MessageListView].
