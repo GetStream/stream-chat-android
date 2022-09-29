@@ -298,6 +298,8 @@ internal constructor(
 
     public var logicRegistry: ChannelStateLogicProvider? = null
 
+    private lateinit var attachmentsSender: AttachmentsSender
+
     init {
         eventsObservable.subscribeSuspend { event ->
             when (event) {
@@ -1514,11 +1516,9 @@ internal constructor(
         channelId: String,
         message: Message,
         isRetrying: Boolean = false,
-        context: Context, // Fix this
-        networkType: UploadAttachmentsNetworkType, // Fix this
     ): Call<Message> {
         return CoroutineCall(userScope) {
-            sendAttachments(channelType, channelId, message, isRetrying, context, networkType)
+            sendAttachments(channelType, channelId, message, isRetrying)
                 .flatMapSuspend { newMessage ->
                     doSendMessage(channelType, channelId, newMessage)
                 }
@@ -1549,8 +1549,6 @@ internal constructor(
         channelId: String,
         message: Message,
         isRetrying: Boolean = false,
-        context: Context, // Fix this
-        networkType: UploadAttachmentsNetworkType, // Fix this
     ): Result<Message> {
         val prepareMessageLogic = PrepareMessageLogicImpl(clientState, logicRegistry)
 
@@ -1558,8 +1556,8 @@ internal constructor(
             prepareMessageLogic.prepareMessage(message, channelId, channelType, user)
         } ?: message
 
-        return AttachmentsSender(context, networkType, clientState, repositoryFacade, repositoryFacade, clientScope)
-            .sendAttachments(preparedMessage, channelType, channelId, isRetrying)
+        return attachmentsSender
+            .sendAttachments(preparedMessage, channelType, channelId, isRetrying, repositoryFacade)
     }
 
     /**
@@ -2985,7 +2983,14 @@ internal constructor(
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
                 clientState = ClientStateImpl(module.networkStateProvider)
-            )
+            ).apply {
+                attachmentsSender = AttachmentsSender(
+                    appContext,
+                    UploadAttachmentsNetworkType.NOT_ROAMING,
+                    clientState,
+                    clientScope
+                )
+            }
         }
 
         private fun setupStreamLog() {
