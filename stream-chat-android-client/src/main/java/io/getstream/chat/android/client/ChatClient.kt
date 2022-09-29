@@ -1520,27 +1520,28 @@ internal constructor(
         return CoroutineCall(userScope) {
             sendAttachments(channelType, channelId, message, isRetrying, context, networkType)
                 .flatMapSuspend { newMessage ->
-                    api.sendMessage(channelType, channelId, newMessage)
-                        .retry(userScope, retryPolicy)
-                        .doOnStart(userScope) {
-                            plugins.forEach { listener ->
-                                listener.onMessageSendRequest(channelType, channelId, newMessage)
-                            }
-                        }
-                        .doOnResult(userScope) { result ->
-                            logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
-                            plugins.forEach { listener ->
-                                logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                                listener.onMessageSendResult(
-                                    result,
-                                    channelType,
-                                    channelId,
-                                    newMessage
-                                )
-                            }
-                        }.await()
+                    doSendMessage(channelType, channelId, newMessage)
                 }
         }
+    }
+
+    private suspend fun doSendMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+    ): Result<Message> {
+        return api.sendMessage(channelType, channelId, message)
+            .retry(userScope, retryPolicy)
+            .doOnStart(userScope) {
+                plugins.forEach { listener -> listener.onMessageSendRequest(channelType, channelId, message) }
+            }
+            .doOnResult(userScope) { result ->
+                logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
+                plugins.forEach { listener ->
+                    logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                    listener.onMessageSendResult(result, channelType, channelId, message)
+                }
+            }.await()
     }
 
     private suspend fun sendAttachments(
