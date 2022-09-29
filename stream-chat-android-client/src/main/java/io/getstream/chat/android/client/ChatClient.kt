@@ -2820,16 +2820,6 @@ internal constructor(
             repositoryFactoryProvider = provider
         }
 
-        /**
-         * Adds a plugin factory to be used by the client.
-         * @see [PluginFactory]
-         *
-         * @param pluginFactory The factory to be added.
-         */
-        public fun withPlugin(pluginFactory: PluginFactory): Builder = apply {
-            pluginFactories.add(pluginFactory)
-        }
-
         public fun withPlugins(vararg pluginFactoryArgs: PluginFactory): Builder = apply {
             pluginFactories.addAll(pluginFactoryArgs)
         }

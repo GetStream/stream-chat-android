@@ -51,7 +51,7 @@ class DokkaRoot {
         )
 
         val client = ChatClient.Builder(apiKey, applicationContext)
-            .withPlugin(offlinePluginFactory)
+            .withPlugins(offlinePluginFactory)
             .build()
     }
 
