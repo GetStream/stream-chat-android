@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUploader
+import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomFile

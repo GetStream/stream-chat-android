@@ -1,8 +1,11 @@
 package io.getstream.chat.android.client.attachment
 
+import android.content.Context
+import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -14,6 +17,8 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 internal class AttachmentsSender(
+    private val context: Context,
+    private val networkType: UploadAttachmentsNetworkType,
     private val clientState: ClientState,
     private val attachmentRepository: AttachmentRepository,
     private val messageRepository: MessageRepository,
