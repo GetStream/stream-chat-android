@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.interceptor.message
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
@@ -29,7 +30,7 @@ public class PrepareMessageLogicFactory {
     /**
      * Creates a new instance of [PrepareMessageLogic]
      */
-    public fun create(): PrepareMessageLogic {
-        return PrepareMessageLogicImpl(ChatClient.instance().clientState)
+    public fun create(channelStateLogicProvider: ChannelStateLogicProvider): PrepareMessageLogic {
+        return PrepareMessageLogicImpl(ChatClient.instance().clientState, channelStateLogicProvider)
     }
 }

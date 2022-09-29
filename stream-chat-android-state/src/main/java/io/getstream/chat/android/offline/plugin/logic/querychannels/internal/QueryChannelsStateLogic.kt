@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.logging.StreamLog

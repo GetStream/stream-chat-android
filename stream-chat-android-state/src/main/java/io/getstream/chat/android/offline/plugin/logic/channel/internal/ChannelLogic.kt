@@ -76,7 +76,7 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.logging.StreamLog
 import java.util.Date

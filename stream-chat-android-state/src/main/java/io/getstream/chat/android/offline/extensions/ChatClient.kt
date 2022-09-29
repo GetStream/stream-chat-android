@@ -42,7 +42,7 @@ import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHan
 import io.getstream.chat.android.offline.extensions.internal.logic
 import io.getstream.chat.android.offline.extensions.internal.requestsAsState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState

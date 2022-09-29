@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.channel
 
-import io.getstream.chat.android.client.channel.state.ChannelMessagesState
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.models.Message
 
 public interface ChannelMessagesUpdateLogic {
@@ -9,5 +9,7 @@ public interface ChannelMessagesUpdateLogic {
 
     public fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false)
 
-    public fun listenForChannelState(): ChannelMessagesState
+    public fun listenForChannelState(): ChannelState
+
+    public fun replyMessage(repliedMessage: Message?)
 }

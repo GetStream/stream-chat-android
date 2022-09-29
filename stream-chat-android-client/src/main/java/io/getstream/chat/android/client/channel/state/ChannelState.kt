@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.plugin.state.channel
+package io.getstream.chat.android.client.channel.state
 
-import io.getstream.chat.android.client.channel.state.ChannelMessagesState
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesState
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.channel.ChannelData
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
 /** State container with reactive data of a channel.*/
-public interface ChannelState: ChannelMessagesState {
+public interface ChannelState {
     /** Type of this channel.*/
     public val channelType: String
 
@@ -41,6 +41,8 @@ public interface ChannelState: ChannelMessagesState {
 
     /** A replied message state in this channel. By default is null. There is a value if you're replying some message.*/
     public val repliedMessage: StateFlow<Message?>
+
+    public val messages: StateFlow<List<Message>>
 
     /** Strong typed state of message collection of this channel. See [MessagesState] for more details.*/
     public val messagesState: StateFlow<MessagesState>

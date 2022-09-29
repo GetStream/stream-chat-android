@@ -1509,7 +1509,36 @@ internal constructor(
         }
     }
 
-    internal suspend fun sendAttachments(
+    public fun sendMessage2(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        isRetrying: Boolean = false,
+        context: Context, // Fix this
+        networkType: UploadAttachmentsNetworkType, // Fix this
+    ): Call<Message> {
+        return CoroutineCall(userScope) {
+            sendAttachments(channelType, channelId, message, isRetrying, context, networkType)
+                .flatMapSuspend { newMessage ->
+                    api.sendMessage(channelType, channelId, newMessage)
+                        .retry(userScope, retryPolicy)
+                        .doOnResult(userScope) { result ->
+                            logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
+                            plugins.forEach { listener ->
+                                logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                                listener.onMessageSendResult(
+                                    result,
+                                    channelType,
+                                    channelId,
+                                    newMessage
+                                )
+                            }
+                        }.await()
+                }
+        }
+    }
+
+    private suspend fun sendAttachments(
         channelType: String,
         channelId: String,
         message: Message,
@@ -1517,14 +1546,14 @@ internal constructor(
         context: Context, // Fix this
         networkType: UploadAttachmentsNetworkType, // Fix this
     ): Result<Message> {
-        val prepareMessageLogic = PrepareMessageLogicImpl(clientState)
+        val prepareMessageLogic = PrepareMessageLogicImpl(clientState, logicRegistry)
 
         val preparedMessage = getCurrentUser()?.let { user ->
             prepareMessageLogic.prepareMessage(message, channelId, channelType, user)
         } ?: message
 
         return AttachmentsSender(context, networkType, clientState, repositoryFacade, repositoryFacade, clientScope)
-            .uploadAttachments(preparedMessage, channelType, channelId)
+            .sendAttachments(preparedMessage, channelType, channelId, isRetrying)
     }
 
     /**

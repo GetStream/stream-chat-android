@@ -23,7 +23,7 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest

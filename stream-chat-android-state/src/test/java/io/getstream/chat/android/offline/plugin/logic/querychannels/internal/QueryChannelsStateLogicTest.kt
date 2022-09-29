@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.test.randomCID
 import org.amshove.kluent.`should contain same`
