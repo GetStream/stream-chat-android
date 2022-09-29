@@ -383,6 +383,7 @@ internal constructor(
         val isAnonymous = user == anonUser
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
+        plugins.forEach { it.onUserSet(user) }
 
         return when {
             tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {

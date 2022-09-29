@@ -280,5 +280,7 @@ public interface Plugin :
         memberIds: List<String>,
     ): Result<Unit> = Result.success(Unit)
 
+    public fun onUserSet(user: User)
+
     public fun onUserDisconnected()
 }

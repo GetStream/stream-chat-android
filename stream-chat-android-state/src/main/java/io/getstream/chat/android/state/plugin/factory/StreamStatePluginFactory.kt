@@ -130,7 +130,6 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             userPresence = config.userPresence,
         )
-        syncManager.start()
 
         val eventHandler: EventHandler = createEventHandler(
             user = user,
@@ -143,7 +142,6 @@ public class StreamStatePluginFactory(
             syncedEvents = syncManager.syncedEvents,
             sideEffect = syncManager::awaitSyncing
         )
-        eventHandler.startListening()
 
         if (config.backgroundSyncEnabled) {
             chatClient.setPushNotificationReceivedListener { channelType, channelId ->
