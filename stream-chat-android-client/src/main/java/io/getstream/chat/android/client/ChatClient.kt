@@ -94,7 +94,6 @@ import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.Interceptor
-import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
@@ -1483,32 +1482,34 @@ internal constructor(
         isRetrying: Boolean = false,
     ): Call<Message> {
 
-        return CoroutineCall(userScope) {
-            // Message is first prepared i.e. all its attachments are uploaded and message is updated with
-            // these attachments.
-            plugins
-                .flatMap { it.interceptors }
-                .fold(Result.success(message)) { message, interceptor ->
-                    if (message.isSuccess) {
-                        interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
-                    } else message
-                }.flatMapSuspend { newMessage ->
-                    api.sendMessage(channelType, channelId, newMessage)
-                        .retry(userScope, retryPolicy)
-                        .doOnResult(userScope) { result ->
-                            logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
-                            plugins.forEach { listener ->
-                                logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                                listener.onMessageSendResult(
-                                    result,
-                                    channelType,
-                                    channelId,
-                                    newMessage
-                                )
-                            }
-                        }.await()
-                }
-        }
+        // return CoroutineCall(userScope) {
+        //     // Message is first prepared i.e. all its attachments are uploaded and message is updated with
+        //     // these attachments.
+        //     plugins
+        //         .flatMap { it.interceptors }
+        //         .fold(Result.success(message)) { message, interceptor ->
+        //             if (message.isSuccess) {
+        //                 interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
+        //             } else message
+        //         }.flatMapSuspend { newMessage ->
+        //             api.sendMessage(channelType, channelId, newMessage)
+        //                 .retry(userScope, retryPolicy)
+        //                 .doOnResult(userScope) { result ->
+        //                     logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
+        //                     plugins.forEach { listener ->
+        //                         logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+        //                         listener.onMessageSendResult(
+        //                             result,
+        //                             channelType,
+        //                             channelId,
+        //                             newMessage
+        //                         )
+        //                     }
+        //                 }.await()
+        //         }
+        // }
+
+        return sendMessage2(channelType, channelId, message, isRetrying)
     }
 
     public fun sendMessage2(
@@ -2986,7 +2987,7 @@ internal constructor(
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     appContext,
-                    UploadAttachmentsNetworkType.NOT_ROAMING,
+                    UploadAttachmentsNetworkType.NOT_ROAMING, //Todo: fix this!!
                     clientState,
                     clientScope
                 )
