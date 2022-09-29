@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -59,7 +60,7 @@ internal class ChannelStateLogic(
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
     coroutineScope: CoroutineScope,
-) {
+) : ChannelMessagesUpdateLogic {
 
     /**
      * Used to prune stale active typing events when the sender
@@ -75,7 +76,7 @@ internal class ChannelStateLogic(
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state without changing it.
      */
-    fun listenForChannelState(): ChannelState {
+    override fun listenForChannelState(): ChannelState {
         return mutableState
     }
 
@@ -190,7 +191,7 @@ internal class ChannelStateLogic(
      *
      * @param message The message to be added or updated.
      */
-    fun upsertMessage(message: Message) {
+    override fun upsertMessage(message: Message) {
         upsertMessages(listOf(message), false)
     }
 
@@ -201,7 +202,7 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false): Unit =
+    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean): Unit =
         when (shouldRefreshMessages) {
             true -> mutableState.setMessages(messages)
             false -> {

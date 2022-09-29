@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.plugin.logic.internal
+package io.getstream.chat.android.client.channel.state
 
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 
 /**
  * Provider for state {ChannelStateLogic}
  */
-internal interface ChannelStateLogicProvider {
+public interface ChannelStateLogicProvider {
 
     /**
      * Provides [ChannelStateLogic] for the channelType and channelId
@@ -29,5 +29,5 @@ internal interface ChannelStateLogicProvider {
      * @param channelType String
      * @param channelId String
      */
-    fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic
+    public fun channelStateLogic(channelType: String, channelId: String): ChannelMessagesUpdateLogic
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.message.attachments.internal
+package io.getstream.chat.android.client.attachment
 
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
@@ -24,9 +24,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File
 
-internal class AttachmentUploader(
-    private val client: ChatClient = ChatClient.instance(),
-) {
+internal class AttachmentUploader(private val client: ChatClient = ChatClient.instance()) {
 
     /**
      * Uploads the given attachment.
@@ -39,7 +37,7 @@ internal class AttachmentUploader(
      *
      * @return The resulting uploaded attachment.
      */
-    internal suspend fun uploadAttachment(
+    suspend fun uploadAttachment(
         channelType: String,
         channelId: String,
         attachment: Attachment,

@@ -59,6 +59,7 @@ import io.getstream.chat.android.client.call.share
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -87,7 +88,6 @@ import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
@@ -121,6 +121,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
@@ -294,6 +295,8 @@ internal constructor(
      */
     private val errorHandlers: List<ErrorHandler>
         get() = plugins.flatMap { it.errorHandlers }.sorted()
+
+    public var logicRegistry: ChannelStateLogicProvider? = null
 
     init {
         eventsObservable.subscribeSuspend { event ->
@@ -1511,6 +1514,8 @@ internal constructor(
         channelId: String,
         message: Message,
         isRetrying: Boolean = false,
+        context: Context, // Fix this
+        networkType: UploadAttachmentsNetworkType, // Fix this
     ): Result<Message> {
         val prepareMessageLogic = PrepareMessageLogicImpl(clientState)
 
@@ -1518,7 +1523,7 @@ internal constructor(
             prepareMessageLogic.prepareMessage(message, channelId, channelType, user)
         } ?: message
 
-        return AttachmentsSender(clientState, repositoryFacade, repositoryFacade, clientScope)
+        return AttachmentsSender(context, networkType, clientState, repositoryFacade, repositoryFacade, clientScope)
             .uploadAttachments(preparedMessage, channelType, channelId)
     }
 

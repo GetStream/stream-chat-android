@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsAndroidWorker
+import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

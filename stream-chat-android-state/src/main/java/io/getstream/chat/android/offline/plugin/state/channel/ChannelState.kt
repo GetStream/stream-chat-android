@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.state.channel
 
+import io.getstream.chat.android.client.channel.state.ChannelMessagesState
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
@@ -28,7 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
 /** State container with reactive data of a channel.*/
-public interface ChannelState {
+public interface ChannelState: ChannelMessagesState {
     /** Type of this channel.*/
     public val channelType: String
 
@@ -40,9 +41,6 @@ public interface ChannelState {
 
     /** A replied message state in this channel. By default is null. There is a value if you're replying some message.*/
     public val repliedMessage: StateFlow<Message?>
-
-    /** The message collection of this channel. */
-    public val messages: StateFlow<List<Message>>
 
     /** Strong typed state of message collection of this channel. See [MessagesState] for more details.*/
     public val messagesState: StateFlow<MessagesState>

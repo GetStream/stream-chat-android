@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.message.attachments.internal
+package io.getstream.chat.android.client.attachment.worker
 
 import android.content.Context
 import androidx.work.Constraints
@@ -26,11 +26,9 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.extensions.internal.logic
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.UUID
 
-internal class UploadAttachmentsAndroidWorker(
+public class UploadAttachmentsAndroidWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
@@ -46,7 +44,7 @@ internal class UploadAttachmentsAndroidWorker(
         return UploadAttachmentsWorker(
             channelType = channelType,
             channelId = channelId,
-            channelStateLogic = LogicRegistry.get().channelStateLogic(channelType, channelId),
+            channelStateLogic = chatClient.logicRegistry?.channelStateLogic(channelType, channelId),
             messageRepository = repositoryFacade,
             chatClient = chatClient
         ).uploadAttachmentsForMessage(
@@ -56,12 +54,12 @@ internal class UploadAttachmentsAndroidWorker(
         }
     }
 
-    internal companion object {
+    public companion object {
         private const val DATA_MESSAGE_ID = "message_id"
         private const val DATA_CHANNEL_TYPE = "channel_type"
         private const val DATA_CHANNEL_ID = "channel_id"
 
-        internal fun start(
+        public fun start(
             context: Context,
             channelType: String,
             channelId: String,
@@ -93,7 +91,7 @@ internal class UploadAttachmentsAndroidWorker(
          * @param context Context of the application.
          * @param workId UUID of the enqueued work.
          */
-        internal fun stop(context: Context, workId: UUID) {
+        public fun stop(context: Context, workId: UUID) {
             WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }
