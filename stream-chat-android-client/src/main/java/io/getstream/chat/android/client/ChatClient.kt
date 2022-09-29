@@ -1561,6 +1561,11 @@ internal constructor(
                 .flatMapSuspend { newMessage ->
                     api.sendMessage(channelType, channelId, newMessage)
                         .retry(userScope, retryPolicy)
+                        .doOnStart(userScope) {
+                            plugins.forEach { listener ->
+                                listener.onMessageSendRequest(channelType, channelId, newMessage)
+                            }
+                        }
                         .doOnResult(userScope) { result ->
                             logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
                             plugins.forEach { listener ->

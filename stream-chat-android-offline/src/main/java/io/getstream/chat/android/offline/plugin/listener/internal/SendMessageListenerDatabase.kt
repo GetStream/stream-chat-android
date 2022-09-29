@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
@@ -40,7 +41,14 @@ private const val TAG = "Chat:SendMessageHandlerDB"
 internal class SendMessageListenerDatabase(
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository,
+    private val channelRepository: ChannelRepository
 ) : SendMessageListener {
+
+    override suspend fun onMessageSendRequest(channelType: String, channelId: String, message: Message) {
+        // we insert early to ensure we don't lose messages
+        messageRepository.insertMessage(message)
+        channelRepository.updateLastMessageForChannel(message.cid, message)
+    }
 
     /**
      * Side effect to be invoked when the original request is completed with a response. This method updates the

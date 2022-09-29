@@ -38,6 +38,16 @@ private const val TAG = "Chat:SendMessageHandler"
  */
 internal class SendMessageListenerState(private val logic: LogicRegistry) : SendMessageListener {
 
+    override suspend fun onMessageSendRequest(channelType: String, channelId: String, message: Message) {
+        val channel = logic.channel(channelType, channelId)
+
+        channel.upsertMessage(message)
+        logic.threadFromMessage(message)?.upsertMessage(message)
+
+        // Update flow for currently running queries
+        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannelState(channel.cid) }
+    }
+
     /**
      * Side effect to be invoked when the original request is completed with a response. This method updates the state
      * of the SDK.
