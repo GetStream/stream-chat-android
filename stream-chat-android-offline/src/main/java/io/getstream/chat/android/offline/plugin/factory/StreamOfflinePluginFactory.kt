@@ -140,7 +140,11 @@ public class StreamOfflinePluginFactory(
             userRepository = repositoryFacade
         )
 
-        val sendMessageListener: SendMessageListener = SendMessageListenerDatabase(repositoryFacade, repositoryFacade)
+        val sendMessageListener: SendMessageListener = SendMessageListenerDatabase(
+            repositoryFacade,
+            repositoryFacade,
+            repositoryFacade
+        )
 
         val shuffleGiphyListener: ShuffleGiphyListener = ShuffleGiphyListenerDatabase(
             userRepository = repositoryFacade,
