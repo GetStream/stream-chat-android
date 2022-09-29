@@ -116,7 +116,7 @@ public fun ChatClient.watchChannelAsState(
     cid: String,
     messageLimit: Int,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
-    skipMessages: Boolean = false
+    skipMessages: Boolean = false,
 ): StateFlow<ChannelState?> {
     return getStateOrNull(coroutineScope) {
         requestsAsState(coroutineScope).watchChannel(cid, messageLimit, skipMessages)
@@ -342,24 +342,16 @@ private suspend fun ChatClient.loadMessageByIdInternal(
  *
  * @return Executable async [Call] responsible for loading the newest messages.
  */
+@CheckResult
 public fun ChatClient.loadNewestMessages(cid: String, messageLimit: Int, userPresence: Boolean = true): Call<Channel> {
     return CoroutineCall(state.scope) {
-        loadNewestMessagesInternal(cid, messageLimit, userPresence)
+        val cidValidationResult = validateCidWithResult(cid)
+        if (!cidValidationResult.isSuccess) {
+            cidValidationResult.error().toResultError()
+        } else {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            logic.channel(channelType = channelType, channelId = channelId)
+                .watch(messageLimit, userPresence)
+        }
     }
-}
-
-@CheckResult
-internal suspend fun ChatClient.loadNewestMessagesInternal(
-    cid: String,
-    messageLimit: Int,
-    userPresence: Boolean,
-): Result<Channel> {
-    val cidValidationResult = validateCidWithResult(cid)
-    if (!cidValidationResult.isSuccess) {
-        return cidValidationResult.error().toResultError()
-    }
-
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    return logic.channel(channelType = channelType, channelId = channelId)
-        .watch(messageLimit, userPresence)
 }

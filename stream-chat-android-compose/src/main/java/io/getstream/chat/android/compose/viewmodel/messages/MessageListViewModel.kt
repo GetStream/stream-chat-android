@@ -1256,13 +1256,9 @@ public class MessageListViewModel(
      * loaded from the API.
      */
     public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit, scrollToBottom: () -> Unit) {
-        if (isInThread) {
+        if (isInThread || currentMessagesState.startOfMessages) {
             scrollToBottom()
         } else {
-            if (currentMessagesState.startOfMessages) {
-                scrollToBottom()
-                return
-            }
             chatClient.loadNewestMessages(channelId, messageLimit).enqueue {
                 if (it.isSuccess) {
                     scrollToBottom()
