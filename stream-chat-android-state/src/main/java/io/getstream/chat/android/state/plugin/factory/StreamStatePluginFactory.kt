@@ -107,6 +107,8 @@ public class StreamStatePluginFactory(
             coroutineScope = scope,
         )
 
+        chatClient.logicRegistry = logic
+
         val sendMessageInterceptor = SendMessageInterceptor(
             context = appContext,
             logic = logic,

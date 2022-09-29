@@ -25,6 +25,12 @@ import io.getstream.chat.android.client.utils.Result
  */
 public interface SendMessageListener {
 
+    public suspend fun onMessageSendRequest(
+        channelType: String,
+        channelId: String,
+        message: Message,
+    )
+
     /**
      * Side effect to be invoked when the original request is completed with a response.
      *
