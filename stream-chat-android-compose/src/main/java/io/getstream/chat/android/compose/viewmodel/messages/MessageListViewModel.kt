@@ -78,7 +78,7 @@ import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
@@ -286,15 +286,15 @@ public class MessageListViewModel(
                     channelState.endOfNewerMessages
                 ) { state, user, reads, unreadCount, endOfNewerMessages ->
                     when (state) {
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.NoQueryActive,
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Loading,
+                        is io.getstream.chat.android.client.models.MessagesState.NoQueryActive,
+                        is io.getstream.chat.android.client.models.MessagesState.Loading,
                         -> messagesState.copy(isLoading = true)
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.OfflineNoResults ->
+                        is io.getstream.chat.android.client.models.MessagesState.OfflineNoResults ->
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = emptyList(),
                             )
-                        is io.getstream.chat.android.offline.plugin.state.channel.MessagesState.Result -> {
+                        is io.getstream.chat.android.client.models.MessagesState.Result -> {
                             messagesState.copy(
                                 isLoading = false,
                                 messageItems = groupMessages(

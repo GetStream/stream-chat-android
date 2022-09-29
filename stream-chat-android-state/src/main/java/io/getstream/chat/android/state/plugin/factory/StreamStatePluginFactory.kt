@@ -109,7 +109,7 @@ public class StreamStatePluginFactory(
             scope = scope,
             networkType = config.uploadAttachmentsNetworkType,
             user = user,
-            prepareMessageLogic = PrepareMessageLogicFactory().create()
+            prepareMessageLogic = PrepareMessageLogicFactory().create(logic)
         )
 
         val syncManager = SyncManager(

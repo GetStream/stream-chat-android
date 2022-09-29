@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.attachment
 import android.content.Context
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
@@ -28,6 +29,35 @@ internal class AttachmentsSender(
     private var jobsMap: Map<String, Job> = emptyMap()
     private val uploadIds = mutableMapOf<String, UUID>()
 
+    internal suspend fun sendAttachments(
+        message: Message,
+        channelType: String,
+        channelId: String,
+        isRetrying: Boolean,
+    ): Result<Message> {
+        return if (!isRetrying) {
+            if (message.hasPendingAttachments()) {
+                uploadAttachments(message, channelType, channelId)
+            } else {
+                Result.success(message)
+            }
+        } else {
+            retryMessage(message, channelType, channelId)
+        }
+    }
+
+    /**
+     * Tries to upload attachments of this [message] without preparing.
+     *
+     * It is used when we have some messages already pending in database (due to any non permanent error)
+     *
+     * @param message [Message] to be retried.
+     *
+     * @return [Result] having message with latest attachments state or error if there was any.
+     */
+    private suspend fun retryMessage(message: Message, channelType: String, channelId: String): Result<Message> =
+        uploadAttachments(message, channelType, channelId)
+
     /**
      * Uploads the attachment of this message if there is any pending attachments and return the updated message.
      *
@@ -35,7 +65,7 @@ internal class AttachmentsSender(
      *
      * @return [Result] having message with latest attachments state or error if there was any.
      */
-    internal suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
+    private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
         return if (clientState.isNetworkAvailable) {
             waitForAttachmentsToBeSent(message, channelType, channelId)
         } else {

@@ -26,10 +26,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
-import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
+import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.models.MessagesState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall

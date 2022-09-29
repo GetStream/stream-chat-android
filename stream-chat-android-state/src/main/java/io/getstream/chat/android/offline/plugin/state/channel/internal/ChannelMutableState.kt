@@ -29,9 +29,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.utils.date.inOffsetWith
-import io.getstream.chat.android.offline.model.channel.ChannelData
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
+import io.getstream.chat.android.client.models.ChannelData
+import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.models.MessagesState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

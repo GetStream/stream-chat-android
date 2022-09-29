@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.channel
+package io.getstream.chat.android.client.models
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import java.util.Date
 
 /**
@@ -79,7 +74,7 @@ public data class ChannelData(
      * @param channel The [Channel] object to convert.
      * @param currentOwnCapabilities Set of existing own capabilities stored for the Channel.
      */
-    internal constructor(channel: Channel, currentOwnCapabilities: Set<String>) : this(
+    public constructor(channel: Channel, currentOwnCapabilities: Set<String>) : this(
         type = channel.type,
         id = channel.id,
         name = channel.name,
@@ -109,7 +104,7 @@ public data class ChannelData(
      *
      * @return A [Channel] object.
      */
-    internal fun toChannel(
+    public fun toChannel(
         messages: List<Message>,
         cachedLatestMessages: List<Message>,
         members: List<Member>,

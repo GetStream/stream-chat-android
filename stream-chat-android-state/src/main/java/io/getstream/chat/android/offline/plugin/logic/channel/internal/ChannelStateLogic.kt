@@ -34,8 +34,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
-import io.getstream.chat.android.offline.model.channel.ChannelData
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
@@ -327,7 +327,7 @@ internal class ChannelStateLogic(
      *
      * @param repliedMessage The message that contains the reply.
      */
-    fun replyMessage(repliedMessage: Message?) {
+    override fun replyMessage(repliedMessage: Message?) {
         mutableState.setRepliedMessage(repliedMessage)
     }
 
