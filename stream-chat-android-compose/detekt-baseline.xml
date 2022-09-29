@@ -12,11 +12,9 @@
     <ID>ComplexMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
-    <ID>LargeClass:ImagePreviewActivity.kt$ImagePreviewActivity : AppCompatActivity</ID>
     <ID>LargeClass:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
     <ID>LongMethod:GiphyMessageContent.kt$@Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:GroupAvatar.kt$@Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
-    <ID>LongMethod:ImageAttachmentContent.kt$@OptIn(ExperimentalFoundationApi::class) @Composable @Deprecated( message = "Deprecated in favor of 'MediaAttachmentContent'. The new function " + "is able to preview videos as well as images and has access to the new and improved" + "media gallery.", replaceWith = ReplaceWith( expression = "MediaAttachmentContent()", "io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent", ), level = DeprecationLevel.WARNING ) public fun ImageAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun MediaGalleryItem( index: Int, attachment: Attachment, user: User, pagerState: PagerState, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun VideoPreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, onPlaybackError: () -> Unit, )</ID>
@@ -30,9 +28,6 @@
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
     <ID>MagicNumber:FileAttachmentContent.kt$0.85f</ID>
     <ID>MagicNumber:FilesPicker.kt$6f</ID>
-    <ID>MagicNumber:ImageAttachmentContent.kt$3</ID>
-    <ID>MagicNumber:ImageAttachmentContent.kt$4</ID>
-    <ID>MagicNumber:ImagePreviewActivity.kt$ImagePreviewActivity$8f</ID>
     <ID>MagicNumber:MediaAttachmentFactory.kt$0.25f</ID>
     <ID>MagicNumber:MediaAttachmentQuotedContent.kt$0.8f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.2f</ID>
