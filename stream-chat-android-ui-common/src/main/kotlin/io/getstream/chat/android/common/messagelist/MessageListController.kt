@@ -23,6 +23,7 @@ import io.getstream.chat.android.common.model.messsagelist.MessageItem
 import io.getstream.chat.android.common.model.messsagelist.MessageListItem
 import io.getstream.chat.android.common.model.messsagelist.SystemMessageItem
 import io.getstream.chat.android.common.model.messsagelist.ThreadSeparatorItem
+import io.getstream.chat.android.common.model.messsagelist.TypingItem
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -204,13 +205,15 @@ public class MessageListController(
     /**
      * Current state of the message list.
      */
-    private val _messageListState: MutableStateFlow<MessageListState> = MutableStateFlow(MessageListState(isLoading = true))
+    private val _messageListState: MutableStateFlow<MessageListState> =
+        MutableStateFlow(MessageListState(isLoading = true))
     public val messageListState: StateFlow<MessageListState> = _messageListState
 
     /**
      * Current state of the thread message list.
      */
-    private val _threadListState: MutableStateFlow<MessageListState> = MutableStateFlow(MessageListState(isLoading = true))
+    private val _threadListState: MutableStateFlow<MessageListState> =
+        MutableStateFlow(MessageListState(isLoading = true))
     public val threadListState: StateFlow<MessageListState> = _threadListState
 
     /**
@@ -330,27 +333,23 @@ public class MessageListController(
                 _dateSeparatorHandler,
                 _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
-                channelState.loadingOlderMessages,
-                channelState.loadingNewerMessages
+                typingUsers
             ) { data ->
                 val state = data[0] as MessagesState
-                val reads = (data[1] as List<*>).map { it as ChannelUserRead }
+                val reads = data[1] as List<ChannelUserRead>
                 val showSystemMessages = data[2] as Boolean
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
                 val deletedMessageVisibility = data[4] as DeletedMessageVisibility
                 val messageFooterVisibility = data[5] as MessageFooterVisibility
-                val loadingOlderMessages = data[6] as Boolean
-                val loadingNewerMessages = data[7] as Boolean
+                val typingUsers = data[6] as List<User>
 
                 when (state) {
                     is MessagesState.Loading,
                     is MessagesState.NoQueryActive,
-                    is MessagesState.OfflineNoResults,
                     -> _messageListState.value.copy(isLoading = true)
+                    is MessagesState.OfflineNoResults -> _messageListState.value.copy(isLoading = false)
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
-                        isLoadingOlderMessages = loadingOlderMessages,
-                        isLoadingNewerMessages = loadingNewerMessages,
                         messages = groupMessages(
                             messages = filterMessagesToShow(
                                 messages = state.messages,
@@ -361,7 +360,8 @@ public class MessageListController(
                             reads = reads,
                             dateSeparatorHandler = dateSeparatorHandler,
                             deletedMessageVisibility = deletedMessageVisibility,
-                            messageFooterVisibility = messageFooterVisibility
+                            messageFooterVisibility = messageFooterVisibility,
+                            typingUsers = typingUsers
                         ),
                     )
                 }
@@ -407,9 +407,13 @@ public class MessageListController(
             _messageListState.value = _messageListState.value.copy(unreadCount = it)
         }.launchIn(scope)
 
-        typingUsers.onEach {
-            _messageListState.value = _messageListState.value.copy(typingUsers = it)
-        }
+        channelState.filterNotNull().flatMapLatest { it.loadingOlderMessages }.onEach {
+            _messageListState.value = _messageListState.value.copy(isLoadingOlderMessages = it)
+        }.launchIn(scope)
+
+        channelState.filterNotNull().flatMapLatest { it.loadingNewerMessages }.onEach {
+            _messageListState.value = _messageListState.value.copy(isLoadingNewerMessages = it)
+        }.launchIn(scope)
     }
 
     /**
@@ -435,6 +439,7 @@ public class MessageListController(
                 _threadDateSeparatorHandler,
                 _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
+                typingUsers
             ) { data ->
                 val messages = (data[0] as List<*>).map { it as Message }
                 val reads = (data[1] as List<*>).map { it as ChannelUserRead }
@@ -442,6 +447,7 @@ public class MessageListController(
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
                 val deletedMessageVisibility = data[4] as DeletedMessageVisibility
                 val messageFooterVisibility = data[5] as MessageFooterVisibility
+                val typingUsers = (data[6] as List<*>).map { it as User }
 
                 _threadListState.value.copy(
                     isLoading = false,
@@ -455,11 +461,10 @@ public class MessageListController(
                         reads = reads,
                         dateSeparatorHandler = dateSeparatorHandler,
                         deletedMessageVisibility = deletedMessageVisibility,
-                        messageFooterVisibility = messageFooterVisibility
+                        messageFooterVisibility = messageFooterVisibility,
+                        typingUsers = typingUsers
                     ),
                     parentMessageId = threadId,
-                    isLoadingNewerMessages = false,
-                    isLoadingOlderMessages = false,
                     endOfNewMessagesReached = true
                 )
             }.collect { newState ->
@@ -497,6 +502,7 @@ public class MessageListController(
      * @param deletedMessageVisibility Determines visibility of deleted messages.
      * @param dateSeparatorHandler Handler used to determine when the date separator should be visible.
      * @param messageFooterVisibility Determines when the message footer should be visible.
+     * @param typingUsers The list of the users currently typing.
      *
      * @return A list of [MessageListItem]s, each containing a position.
      */
@@ -507,6 +513,7 @@ public class MessageListController(
         deletedMessageVisibility: DeletedMessageVisibility,
         dateSeparatorHandler: DateSeparatorHandler,
         messageFooterVisibility: MessageFooterVisibility,
+        typingUsers: List<User>,
     ): List<MessageListItem> {
         val parentMessageId = (_mode.value as? MessageMode.Thread)?.parentMessage?.id
         val currentUser = user.value
@@ -582,6 +589,10 @@ public class MessageListController(
                     )
                 )
             }
+        }
+
+        if (typingUsers.isNotEmpty()) {
+            groupedMessages.add(TypingItem(typingUsers))
         }
 
         return groupedMessages
@@ -1016,7 +1027,7 @@ public class MessageListController(
         cid.cidToTypeAndId().let { (channelType, channelId) ->
             val mode = _mode.value
             if (mode is MessageMode.Thread) {
-                // TODO
+                // TODO sort out thread unreads when https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
                 // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
             } else {
                 chatClient.markRead(channelType, channelId).enqueue(

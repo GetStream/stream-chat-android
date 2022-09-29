@@ -1,16 +1,22 @@
 package com.getstream.sdk.chat.messages
 
+import com.getstream.sdk.chat.createMessage
+import com.getstream.sdk.chat.createMessageList
+import com.getstream.sdk.chat.utils.extensions.isDeleted
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.messagelist.MessageListState
-import io.getstream.chat.android.offline.extensions.loadMessageById
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItem
+import io.getstream.chat.android.common.model.messsagelist.MessageItem
+import io.getstream.chat.android.common.model.messsagelist.TypingItem
+import io.getstream.chat.android.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.common.state.messagelist.MessagePosition
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -18,21 +24,17 @@ import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.createDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.internal.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.Date
 
 @ExperimentalCoroutinesApi
 internal class MessageListControllerTests {
@@ -52,89 +54,234 @@ internal class MessageListControllerTests {
             endOfNewMessagesReached = true,
         )
 
-        assertEquals(expectedResult, controller.messageListState.value)
-    }
-
-    @Test
-    fun `Given messageId on initialization Should load the message`() {
-        val chatClient: ChatClient = mock()
-
-        Fixture(chatClient = chatClient)
-            .givenCurrentUser()
-            .givenChannelQuery()
-            .givenNotifications()
-            .givenChannelState()
-            .get(messageId = message1.id)
-
-        verify(chatClient, times(2)).loadMessageById(CID, message1.id)
+        controller.messageListState.value `should be equal to` expectedResult
     }
 
     // test typing indicator logic
     @Test
-    fun `Given current user is typing Should exclude the current user`() {
+    fun `Given other users are typing When there are no messages Should return only the typing indicator`() = runTest {
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenNotifications()
+            .givenChannelState(
+                typingUsers = listOf(user2)
+            )
+            .get()
+
+        val expectedResult = MessageListState(
+            currentUser = user1,
+            endOfNewMessagesReached = true,
+            messages = listOf(
+                TypingItem(listOf(user2))
+            )
+        )
+
+        controller.messageListState.value `should be equal to` expectedResult
     }
 
     @Test
-    fun `Given other users are typing When there are no messages Should return only the typing indicator`() {
-    }
+    fun `Given other users are typing When there are messages Should add typing indicator to end`() = runTest {
+        val messageState = MessagesState.Result(createMessageList())
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenNotifications()
+            .givenChannelState(
+                messageState = messageState,
+                typingUsers = listOf(user2)
+            )
+            .get(dateSeparatorHandler = { _, _ -> false })
 
-    @Test
-    fun `Given other users are typing When there are messages Should add typing indicator to end`() {
-    }
+        val expectedLastItem = TypingItem(listOf(user2))
+        val lastItem = controller.messageListState.value.messages.last()
 
-    // test how we merge read state
-    @Test
-    fun `Last message should contain the read state`() {
-    }
-
-    @Test
-    fun `First message should contain the read state`() {
+        lastItem `should be equal to` expectedLastItem
     }
 
     // test message grouping
     @Test
-    fun `Given regular message followed and preceded by current user message When grouping messages Should add middle position to message`() {
-    }
+    fun `Given regular message followed and preceded by current user message When grouping messages Should add middle position to message`() =
+        runTest {
+            val messages = createMessageList(3) { createMessage(user = user1) }
+            val messageState = MessagesState.Result(messages)
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenNotifications()
+                .givenChannelState(messageState = messageState)
+                .get(dateSeparatorHandler = { _, _ -> false })
+
+            val expectedPosition = listOf(MessagePosition.MIDDLE)
+            val messagePosition = (controller.messageListState.value.messages[1] as MessageItem).groupPosition
+
+            messagePosition `should be equal to` expectedPosition
+        }
 
     @Test
-    fun `Given regular message followed by other user message When grouping messages Should add top and bottom positions to messages`() {
-    }
+    fun `Given regular message followed and preceded by other user message When grouping messages Should add top and bottom positions to messages`() =
+        runTest {
+            var message = 0
+            val messages = createMessageList(3) {
+                message++
+                createMessage(user = if (message % 2 == 0) user1 else user2)
+            }
+            val messageState = MessagesState.Result(messages)
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenNotifications()
+                .givenChannelState(messageState = messageState)
+                .get(dateSeparatorHandler = { _, _ -> false })
+
+            val expectedPosition = listOf(MessagePosition.TOP, MessagePosition.BOTTOM)
+            val messagePosition = (controller.messageListState.value.messages[1] as MessageItem).groupPosition
+
+            messagePosition `should be equal to` expectedPosition
+        }
 
     @Test
-    fun `Given regular message followed by system message When grouping messages Should add bottom position to the regular message`() {
-    }
+    fun `Given regular message followed by system message When grouping messages Should add bottom position to the regular message`() =
+        runTest {
+            var message = 0
+            val messages = createMessageList(3) {
+                message++
+                createMessage(user = if (message % 2 == 0) user1 else user2)
+            }
+            val messageState = MessagesState.Result(messages)
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenNotifications()
+                .givenChannelState(messageState = messageState)
+                .get(dateSeparatorHandler = { _, _ -> false })
+
+            val expectedPosition = listOf(MessagePosition.TOP, MessagePosition.BOTTOM)
+            val messagePosition = (controller.messageListState.value.messages[1] as MessageItem).groupPosition
+
+            messagePosition `should be equal to` expectedPosition
+        }
 
     // test date separators
     @Test
-    fun `Given date separators with time difference Should add 3 date separators`() {
+    fun `Given date separators with time difference Should add 3 date separators`() = runTest {
+        var message = 0
+        val messages = createMessageList(3) {
+            message++
+            createMessage(createdAt = createDate(2022, 5, message))
+        }
+        val messageState = MessagesState.Result(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenNotifications()
+            .givenChannelState(messageState = messageState)
+            .get()
+
+        val dateSeparatorCount = controller.messageListState.value.messages.count { it is DateSeparatorItem }
+
+        dateSeparatorCount `should be equal to` 3
     }
 
     @Test
-    fun `Given no date separators Should not add date separators`() {
-    }
+    fun `Given handler returns no date separators Should not add date separators`() = runTest {
+        var message = 0
+        val messages = createMessageList(3) {
+            message++
+            createMessage(createdAt = createDate(2022, 5, message))
+        }
+        val messageState = MessagesState.Result(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenNotifications()
+            .givenChannelState(messageState = messageState)
+            .get(dateSeparatorHandler = { _, _ -> false })
 
-    // test typing action
-    @Test
-    fun `When the user is the only one typing, no broadcast is made`() {
+        val dateSeparatorCount = controller.messageListState.value.messages.count { it is DateSeparatorItem }
+
+        dateSeparatorCount `should be equal to` 0
     }
 
     // deleted visibility
     @Test
-    fun `When deleted visibility is never When grouping messages Should not add any deleted messages`() {
+    fun `When deleted visibility is never When grouping messages Should not add any deleted messages`() = runTest {
+        var message = 0
+        val messages = createMessageList {
+            message++
+            createMessage(deletedAt = if (message % 2 == 0) createDate() else null)
+        }
+        val messageState = MessagesState.Result(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenNotifications()
+            .givenChannelState(messageState = messageState)
+            .get(deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN)
+
+        val deletedMessageCount = controller.messageListState.value.messages.count { it is MessageItem && it.message.isDeleted() }
+        deletedMessageCount `should be equal to` 0
     }
 
     @Test
-    fun `When deleted visibility is always When grouping messages Should add all deleted messages`() {
+    fun `When deleted visibility is always When grouping messages Should add all deleted messages`() = runTest {
+        var message = 0
+        val messages = createMessageList {
+            message++
+            createMessage(deletedAt = if (message % 2 == 0) createDate() else null)
+        }
+        val messageState = MessagesState.Result(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenNotifications()
+            .givenChannelState(messageState = messageState)
+            .get()
+
+        val messagesCount = controller.messageListState.value.messages.count { it is MessageItem }
+        messagesCount `should be equal to` 10
     }
 
     @Test
-    fun `When deleted visibility is current user When grouping messages Should add only users deleted messages`() {
-    }
+    fun `When deleted visibility is current user When grouping messages Should not see other users deleted messages`() = runTest {
+        var message = 0
+        val messages = createMessageList {
+            message++
+            createMessage(deletedAt = if (message % 2 == 0) createDate() else null)
+        }
+        val messageState = MessagesState.Result(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenNotifications()
+            .givenChannelState(messageState = messageState)
+            .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
+
+        val deletedMessageCount = controller.messageListState.value.messages.count { it is MessageItem && it.message.isDeleted() }
+        deletedMessageCount `should be equal to` 0
+        }
 
     // footer visibility
     @Test
-    fun `When footer visibility is with time difference When message is after specified time Show message footer`() {
-    }
+    fun `When footer visibility is with time difference When message is after specified time Show message footer`() =
+        runTest {
+            var message = 0
+            val messages = createMessageList(3) {
+                message++
+                createMessage(createdAt = createDate(2022, 5, message))
+            }
+            val messageState = MessagesState.Result(messages)
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenNotifications()
+                .givenChannelState(messageState = messageState)
+                .get(dateSeparatorHandler = { _, _ -> false })
+
+            val dateSeparatorCount = controller.messageListState.value.messages.count { it is MessageItem && it.showMessageFooter }
+
+            dateSeparatorCount `should be equal to` 3
+        }
 
     private class Fixture(
         private val chatClient: ChatClient = mock(),
@@ -156,16 +303,11 @@ internal class MessageListControllerTests {
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
-            whenever(chatClient.queryChannel(any(), any(), any())) doReturn channel.asCall()
-            whenever(chatClient.queryChannelInternal(any(), any(), any())) doReturn channel.asCall()
+            whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
         }
 
         fun givenNotifications() = apply {
             whenever(chatClient.notifications) doReturn mock()
-        }
-
-        fun givenSendReaction() = apply {
-            whenever(chatClient.sendReaction(any(), any(), any())) doReturn Reaction().asCall()
         }
 
         fun givenChannelState(
@@ -176,6 +318,7 @@ internal class MessageListControllerTests {
             messageState: MessagesState = MessagesState.Result(
                 messages = emptyList()
             ),
+            typingUsers: List<User> = listOf(),
         ) = apply {
             val channelState: ChannelState = mock {
                 whenever(it.cid) doReturn CID
@@ -183,7 +326,7 @@ internal class MessageListControllerTests {
                 whenever(it.channelConfig) doReturn MutableStateFlow(Config())
                 whenever(it.members) doReturn MutableStateFlow(listOf())
                 whenever(it.messagesState) doReturn MutableStateFlow(messageState)
-                whenever(it.typing) doReturn MutableStateFlow(TypingEvent(channelId, emptyList()))
+                whenever(it.typing) doReturn MutableStateFlow(TypingEvent(channelId, typingUsers))
                 whenever(it.reads) doReturn MutableStateFlow(listOf())
                 whenever(it.endOfOlderMessages) doReturn MutableStateFlow(false)
                 whenever(it.endOfNewerMessages) doReturn MutableStateFlow(true)
@@ -197,12 +340,16 @@ internal class MessageListControllerTests {
             whenever(stateRegistry.scope) doReturn testCoroutines.scope
         }
 
-        fun get(messageId: String? = null): MessageListController {
+        fun get(
+            dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
+            deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
+        ): MessageListController {
             return MessageListController(
                 cid = channelId,
                 chatClient = chatClient,
                 clipboardHandler = mock(),
-                messageId = messageId
+                dateSeparatorHandler = dateSeparatorHandler,
+                deletedMessageVisibility = deletedMessageVisibility
             )
         }
     }
@@ -217,8 +364,6 @@ internal class MessageListControllerTests {
         private const val CID = "messaging:123"
 
         private val user1 = User(id = "Jc", name = "Jc Miñarro")
-        private val message1 = Message(id = "message-id-1", createdAt = Date())
-        private val message2 = Message(id = "message-id-2", createdAt = Date())
-        private val reaction1 = Reaction("message-id-1", "like", 1).apply { user = user1 }
+        private val user2 = User(id = "NotJc", name = "Not Jc Miñarro")
     }
 }

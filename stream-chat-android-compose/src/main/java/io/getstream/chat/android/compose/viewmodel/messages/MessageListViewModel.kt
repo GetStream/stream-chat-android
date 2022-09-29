@@ -42,7 +42,6 @@ import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.compose.util.extensions.toComposeState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
@@ -55,6 +54,7 @@ import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphy
  *
  * @param chatClient Used to connect to the API.
  * @param channelId The ID of the channel to load the messages for.
+ * @param messageId The id of the [Message] we wish to scroll to when initializing the messages list.
  * @param clipboardHandler Used to copy data from message actions to the clipboard.
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param enforceUniqueReactions Enables or disables unique message reactions per user.
@@ -70,6 +70,7 @@ public class MessageListViewModel(
     public val chatClient: ChatClient,
     private val channelId: String,
     private val clipboardHandler: ClipboardHandler,
+    private val messageId: String? = null,
     private val messageLimit: Int = DefaultMessageLimit,
     private val enforceUniqueReactions: Boolean = true,
     private val showSystemMessages: Boolean = true,
@@ -79,6 +80,7 @@ public class MessageListViewModel(
     private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
     private val messageListController: MessageListController = MessageListController(
         cid = channelId,
+        messageId = messageId,
         chatClient = chatClient,
         deletedMessageVisibility = deletedMessageVisibility,
         showSystemMessages = showSystemMessages,

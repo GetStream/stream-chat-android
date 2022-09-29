@@ -18,7 +18,6 @@ import io.getstream.chat.android.common.state.messagelist.SelectedMessageState
  * @param currentUser The current logged in [User].
  * @param parentMessageId The [Message] id if we are in a thread, null otherwise.
  * @param unreadCount Count of unread messages in channel or thread.
- * @param typingUsers The list of the users currently typing a message.
  * @param newMessageState The [NewMessageState] of the newly received message.
  * @param selectedMessageState The current [SelectedMessageState].
  */
@@ -32,7 +31,6 @@ public data class MessageListState(
     public val currentUser: User? = User(),
     public val parentMessageId: String? = null,
     public val unreadCount: Int = 0,
-    public val typingUsers: List<User> = emptyList(),
     public val newMessageState: NewMessageState? = null,
     public val selectedMessageState: SelectedMessageState? = null,
 )

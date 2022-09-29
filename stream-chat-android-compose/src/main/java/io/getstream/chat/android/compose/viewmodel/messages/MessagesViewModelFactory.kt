@@ -50,6 +50,7 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 public class MessagesViewModelFactory(
     private val context: Context,
     private val channelId: String,
+    private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val enforceUniqueReactions: Boolean = true,
     private val messageLimit: Int = MessageListViewModel.DefaultMessageLimit,
@@ -80,6 +81,7 @@ public class MessagesViewModelFactory(
             MessageListViewModel(
                 chatClient = chatClient,
                 channelId = channelId,
+                messageId = messageId,
                 messageLimit = messageLimit,
                 enforceUniqueReactions = enforceUniqueReactions,
                 clipboardHandler =
