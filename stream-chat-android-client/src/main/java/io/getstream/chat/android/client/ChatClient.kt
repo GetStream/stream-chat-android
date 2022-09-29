@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdenti
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.doOnResult
@@ -86,11 +87,15 @@ import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
+import io.getstream.chat.android.client.interceptor.Interceptor
+import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
+import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -1499,6 +1504,22 @@ internal constructor(
                         }.await()
                 }
         }
+    }
+
+    internal suspend fun sendAttachments(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        isRetrying: Boolean = false,
+    ): Result<Message> {
+        val prepareMessageLogic = PrepareMessageLogicImpl(clientState)
+
+        val preparedMessage = getCurrentUser()?.let { user ->
+            prepareMessageLogic.prepareMessage(message, channelId, channelType, user)
+        } ?: message
+
+        return AttachmentsSender(clientState, repositoryFacade, repositoryFacade, clientScope)
+            .uploadAttachments(preparedMessage, channelType, channelId)
     }
 
     /**
