@@ -7,8 +7,7 @@ import io.getstream.chat.android.client.extensions.internal.hasPendingAttachment
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.CoroutineScope
@@ -21,8 +20,6 @@ internal class AttachmentsSender(
     private val context: Context,
     private val networkType: UploadAttachmentsNetworkType,
     private val clientState: ClientState,
-    private val attachmentRepository: AttachmentRepository,
-    private val messageRepository: MessageRepository,
     private val scope: CoroutineScope,
 ) {
 
@@ -34,15 +31,16 @@ internal class AttachmentsSender(
         channelType: String,
         channelId: String,
         isRetrying: Boolean,
+        repositoryFacade: RepositoryFacade,
     ): Result<Message> {
         return if (!isRetrying) {
             if (message.hasPendingAttachments()) {
-                uploadAttachments(message, channelType, channelId)
+                uploadAttachments(message, channelType, channelId, repositoryFacade)
             } else {
                 Result.success(message)
             }
         } else {
-            retryMessage(message, channelType, channelId)
+            retryMessage(message, channelType, channelId, repositoryFacade)
         }
     }
 
@@ -55,8 +53,13 @@ internal class AttachmentsSender(
      *
      * @return [Result] having message with latest attachments state or error if there was any.
      */
-    private suspend fun retryMessage(message: Message, channelType: String, channelId: String): Result<Message> =
-        uploadAttachments(message, channelType, channelId)
+    private suspend fun retryMessage(
+        message: Message,
+        channelType: String,
+        channelId: String,
+        repositoryFacade: RepositoryFacade,
+    ): Result<Message> =
+        uploadAttachments(message, channelType, channelId, repositoryFacade)
 
     /**
      * Uploads the attachment of this message if there is any pending attachments and return the updated message.
@@ -65,9 +68,14 @@ internal class AttachmentsSender(
      *
      * @return [Result] having message with latest attachments state or error if there was any.
      */
-    private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
+    private suspend fun uploadAttachments(
+        message: Message,
+        channelType: String,
+        channelId: String,
+        repositoryFacade: RepositoryFacade,
+    ): Result<Message> {
         return if (clientState.isNetworkAvailable) {
-            waitForAttachmentsToBeSent(message, channelType, channelId)
+            waitForAttachmentsToBeSent(message, channelType, channelId, repositoryFacade)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)
             Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
@@ -83,6 +91,7 @@ internal class AttachmentsSender(
         newMessage: Message,
         channelType: String,
         channelId: String,
+        repositoryFacade: RepositoryFacade,
     ): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
         var allAttachmentsUploaded = false
@@ -90,12 +99,12 @@ internal class AttachmentsSender(
 
         jobsMap = jobsMap + (
             newMessage.id to scope.launch {
-                attachmentRepository.observeAttachmentsForMessage(newMessage.id)
+                repositoryFacade.observeAttachmentsForMessage(newMessage.id)
                     .filterNot(Collection<Attachment>::isEmpty)
                     .collect { attachments ->
                         when {
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
-                                messageToBeSent = messageRepository.selectMessage(newMessage.id) ?: newMessage.copy(
+                                messageToBeSent = repositoryFacade.selectMessage(newMessage.id) ?: newMessage.copy(
                                     attachments = attachments.toMutableList()
                                 )
                                 allAttachmentsUploaded = true
