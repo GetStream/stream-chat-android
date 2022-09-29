@@ -8,7 +8,11 @@ These are guidelines and don't have to be followed to a letter, if you're lookin
 
 # If I have a question, do I need to read this guide? 💬
 
-Not really! This guide is focused on contributions, so if you have questions, want to report a bug or want to request a new feature, use our [Android Chat SDK Task and Bug Report](https://github.com/GetStream/stream-chat-android/issues/new/choose) templates.
+Not really! This guide is focused on contributions, so if you have questions, want to report a bug or want to request a new feature, there are two ways you can raise the questions:
+- Look into [our Discussions]() and see if someone had already asked the same question and if there's been any reasoning why we support or don't support a specific feature.
+- Use our [Android Chat SDK Task and Bug Report](https://github.com/GetStream/stream-chat-android/issues/new/choose) templates to open an issue.
+
+> **Note**: Sometimes there are duplicate issues or a question has been answered in discussions, so we recommend looking into both first and doing a bit of research, rather than immediately opening tasks.
 
 We'll do our best to respond as soon as possible and provide you with guidance and the more details you can provide, the easier it is for us to understand what you need help with!
 
@@ -27,6 +31,7 @@ If you haven't already, make sure to read our [README](https://github.com/GetStr
 - `stream-chat-android-client`: Holds all the code connected to the **low-level-client**, used to request data from and send information to the API.
 - `stream-chat-android-offline`: As an addition to the **client** module, you can use **offline** to introduce persistence and caching to your app.
 - `stream-chat-android-ui-common`: Common UI-related code and utility functions.
+- `stream-chat-android-state`: Module that contains common state-related API and functionality, such as syncing and persisting state and various messages.
 
 - `stream-chat-android-compose-sample`: The main sample app featuring the Compose SDK. 
 - `stream-chat-android-compose`: Our Compose SDK that features channels and messages components, as well as other utilities.
@@ -59,6 +64,13 @@ Let's go over the process for each of these items!
 ## Opening issues & bug reports 🐛
 
 Using the GitHub repository and project management system, you can open issues in any public repo. Before filing bugs, take a look at our existing backlog. For common items or reports, there might be an existing ticket on GitHub.
+
+Additionally, as we're fully open source, we have two main projects that we use for opening Issues, planning Milestones and organizing work for each quarter:
+
+* [Android UI Team Planning](https://github.com/orgs/GetStream/projects/6/views/1): Project for any work **within the UI scope** of the SDK.
+  * This includes providing new user-facing functionality, new UI components, improving the design, exposing more customization, building new features that the user can interface with and more.
+* [Android Core Team Planning](https://github.com/orgs/GetStream/projects/7/views/1): Project for any work **within the Core scope** of the SDK.
+  * This includes any low-level-client features and functionality, as well as improvements to our persistence and networking layers. 
 
 To quickly narrow down the number of tickets on Github, try filtering based on the label that best suites the bug or a part of our SDK.
 
