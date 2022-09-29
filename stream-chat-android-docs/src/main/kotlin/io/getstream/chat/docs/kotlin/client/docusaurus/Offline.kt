@@ -46,7 +46,7 @@ class Offline {
             appContext = context,
         )
 
-        ChatClient.Builder(apiKey, context).withPlugin(offlinePluginFactory).build()
+        ChatClient.Builder(apiKey, context).withPlugins(offlinePluginFactory).build()
     }
 
     /**
