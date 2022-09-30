@@ -83,7 +83,7 @@ internal class OfflinePlugin(
     SendMessageListener by sendMessageListener,
     QueryMembersListener by queryMembersListener,
     CreateChannelListener by createChannelListener,
-    SendAttachmentListener by sendAttachmentListener{
+    SendAttachmentListener by sendAttachmentListener {
 
     override val interceptors: List<MessageInterceptor> = emptyList()
     override val errorHandlers: List<ErrorHandler> = emptyList()

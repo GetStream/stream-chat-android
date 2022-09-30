@@ -300,7 +300,7 @@ internal constructor(
 
     public var logicRegistry: ChannelStateLogicProvider? = null
 
-    private lateinit var attachmentsSender: AttachmentsSender
+    internal lateinit var attachmentsSender: AttachmentsSender
 
     init {
         eventsObservable.subscribeSuspend { event ->
