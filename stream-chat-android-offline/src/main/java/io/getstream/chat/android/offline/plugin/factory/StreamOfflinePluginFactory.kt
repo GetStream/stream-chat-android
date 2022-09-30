@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -40,6 +41,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageLis
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.SendAttachmentsListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerDatabase
@@ -141,7 +143,10 @@ public class StreamOfflinePluginFactory(
         val sendMessageListener: SendMessageListener = SendMessageListenerDatabase(
             repositoryFacade,
             repositoryFacade,
-            repositoryFacade
+        )
+
+        val sendAttachmentListener: SendAttachmentListener = SendAttachmentsListenerDatabase(
+            repositoryFacade, repositoryFacade
         )
 
         val shuffleGiphyListener: ShuffleGiphyListener = ShuffleGiphyListenerDatabase(
@@ -168,6 +173,7 @@ public class StreamOfflinePluginFactory(
             sendReactionListener = sendReactionListener,
             deleteMessageListener = deleteMessageListener,
             sendMessageListener = sendMessageListener,
+            sendAttachmentListener = sendAttachmentListener,
             shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = queryMembersListener,
             createChannelListener = createChannelListener,
