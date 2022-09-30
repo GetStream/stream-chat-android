@@ -194,7 +194,7 @@ public open class MessageListFragment : Fragment() {
 
         messageListViewModel.mode.observe(viewLifecycleOwner) {
             when (it) {
-                is MessageMode.Thread -> {
+                is MessageMode.MessageThread -> {
                     messageListHeaderViewModel.setActiveThread(it.parentMessage)
                     messageInputViewModel.setActiveThread(it.parentMessage)
                 }

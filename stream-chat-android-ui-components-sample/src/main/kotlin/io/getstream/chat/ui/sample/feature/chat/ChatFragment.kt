@@ -158,7 +158,7 @@ class ChatFragment : Fragment() {
             bindView(binding.messageInputView, viewLifecycleOwner)
             messageListViewModel.mode.observe(viewLifecycleOwner) {
                 when (it) {
-                    is MessageMode.Thread -> {
+                    is MessageMode.MessageThread -> {
                         headerViewModel.setActiveThread(it.parentMessage)
                         messageInputViewModel.setActiveThread(it.parentMessage)
                     }
@@ -178,9 +178,9 @@ class ChatFragment : Fragment() {
             bindView(binding.messageComposerView, viewLifecycleOwner)
             messageListViewModel.mode.observe(viewLifecycleOwner) {
                 when (it) {
-                    is MessageMode.Thread -> {
+                    is MessageMode.MessageThread -> {
                         headerViewModel.setActiveThread(it.parentMessage)
-                        messageComposerViewModel.setMessageMode(MessageMode.Thread(it.parentMessage))
+                        messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
                     }
                     is MessageMode.Normal -> {
                         headerViewModel.resetThread()

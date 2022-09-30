@@ -100,8 +100,8 @@ public fun Messages(
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
-    val endOfMessages = messagesState.endOfMessages
-    val startOfMessages = messagesState.startOfMessages
+    val endOfMessages = messagesState.oldestMessageLoaded
+    val startOfMessages = messagesState.newestMessageLoaded
     val isLoadingMoreNewMessages = messagesState.isLoadingMoreNewMessages
     val isLoadingMoreOldMessages = messagesState.isLoadingMoreOldMessages
 
@@ -225,7 +225,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val messages = messagesState.messageItems
     val newMessageState = messagesState.newMessageState
-    val areNewestMessagesLoaded = messagesState.startOfMessages
+    val areNewestMessagesLoaded = messagesState.newestMessageLoaded
     val isMessageInThread = messagesState.parentMessageId != null
 
     val coroutineScope = rememberCoroutineScope()

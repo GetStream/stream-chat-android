@@ -49,7 +49,7 @@ public fun interface MessagePositionHandler {
          * @return The default implementation of [MessagePositionHandler].
          */
         @Suppress("MaxLineLength")
-        internal fun defaultHandler(): MessagePositionHandler {
+        public fun defaultHandler(): MessagePositionHandler {
             return MessagePositionHandler {
                     prevMessage: Message?,
                     message: Message,

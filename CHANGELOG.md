@@ -47,7 +47,6 @@
 ### ⚠️ Changed
 - Separated `QueryChannelListenerState` into state and databased focused classes. [#4188](https://github.com/GetStream/stream-chat-android/pull/4188)
 - Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
-- Changed the logic how the end of pages is determined inside `ChannelLogic.onQueryChannelResult`. Added loadNewestMessages in `ChannelLogic`. Added check to prevent upserting new messages if newest page isn't loaded to avoid breaking pagination. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ❌ Removed
 
@@ -57,6 +56,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageListController` which generalizes message list state and actions, exposing them to each of the SDK-s ViewModels. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ### ⚠️ Changed
 
@@ -111,6 +111,7 @@
 - Started the deprecation process for `ImageAttachmentQuotedContent`, please use `MediaAttachmentQuotedContent` as it retains all of the previous functionality while adding the ability to preview video attachments. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 
 ### ❌ Removed
+ - Removed `MessageMode` in favor of ui-common `MessageMode`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed

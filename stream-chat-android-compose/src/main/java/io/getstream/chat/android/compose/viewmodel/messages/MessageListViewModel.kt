@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.viewmodel.messages
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
@@ -31,7 +30,6 @@ import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.compose.handlers.ClipboardHandler
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.NewMessageState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
@@ -52,44 +50,11 @@ import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphy
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
  *
- * @param chatClient Used to connect to the API.
- * @param channelId The ID of the channel to load the messages for.
- * @param messageId The id of the [Message] we wish to scroll to when initializing the messages list.
- * @param clipboardHandler Used to copy data from message actions to the clipboard.
- * @param messageLimit The limit of messages being fetched with each page od data.
- * @param enforceUniqueReactions Enables or disables unique message reactions per user.
- * @param showSystemMessages Enables or disables system messages in the list.
- * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
- * @param messageFooterVisibility Determines when the message footer should be visible.
- * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
- * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  * @param messageListController Controller used to relay the logic and fetch the state.
  */
 @Suppress("TooManyFunctions", "LargeClass", "TooManyFunctions")
 public class MessageListViewModel(
-    public val chatClient: ChatClient,
-    private val channelId: String,
-    private val clipboardHandler: ClipboardHandler,
-    private val messageId: String? = null,
-    private val messageLimit: Int = DefaultMessageLimit,
-    private val enforceUniqueReactions: Boolean = true,
-    private val showSystemMessages: Boolean = true,
-    private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
-    private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
-    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
-    private val messageListController: MessageListController = MessageListController(
-        cid = channelId,
-        messageId = messageId,
-        chatClient = chatClient,
-        deletedMessageVisibility = deletedMessageVisibility,
-        showSystemMessages = showSystemMessages,
-        messageFooterVisibility = messageFooterVisibility,
-        enforceUniqueReactions = enforceUniqueReactions,
-        clipboardHandler = { clipboardHandler.copyMessage(it) },
-        dateSeparatorHandler = dateSeparatorHandler,
-        threadDateSeparatorHandler = threadDateSeparatorHandler
-    ),
+    private val messageListController: MessageListController
 ) : ViewModel() {
 
     /**
@@ -107,7 +72,7 @@ public class MessageListViewModel(
         .asState(viewModelScope, MessagesState())
 
     /**
-     * State of the screen, for [MessageMode.Thread].
+     * State of the screen, for [MessageMode.MessageThread].
      */
     private val threadMessagesState: MessagesState by messageListController.threadListState.map { it.toComposeState() }
         .asState(viewModelScope, MessagesState())

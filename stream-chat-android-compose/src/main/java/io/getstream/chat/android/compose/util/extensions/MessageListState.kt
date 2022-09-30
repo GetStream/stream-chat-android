@@ -28,11 +28,11 @@ internal fun MessageListState.toComposeState(): MessagesState {
     return MessagesState(
         isLoading = isLoading,
         isLoadingMore = isLoadingOlderMessages || isLoadingNewerMessages,
-        endOfMessages = endOfOldMessagesReached,
+        oldestMessageLoaded = endOfOldMessagesReached,
         currentUser = currentUser,
         parentMessageId = parentMessageId,
         unreadCount = unreadCount,
-        startOfMessages = endOfNewMessagesReached,
+        newestMessageLoaded = endOfNewMessagesReached,
         isLoadingMoreNewMessages = isLoadingNewerMessages,
         isLoadingMoreOldMessages = isLoadingOlderMessages,
         messageItems = messages.reversed().map { it.toMessageListItemState() },

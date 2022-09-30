@@ -75,9 +75,9 @@ class MessagesActivity : AppCompatActivity() {
 
         messageListViewModel.mode.observe(this) {
             when (it) {
-                is MessageMode.Thread -> {
+                is MessageMode.MessageThread -> {
                     messageListHeaderViewModel.setActiveThread(it.parentMessage)
-                    messageComposerViewModel.setMessageMode(MessageMode.Thread(it.parentMessage))
+                    messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
                 }
                 is MessageMode.Normal -> {
                     messageListHeaderViewModel.resetThread()

@@ -113,6 +113,7 @@ import io.getstream.chat.android.common.state.Flag as FlagMessage
  * @param enforceUniqueReactions Determines whether the user can send only a single or multiple reactions to a message.
  * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
  * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
+ * @param messagePositionHandler Determines the position of the message inside a group.
  */
 public class MessageListController(
     private val cid: String,
@@ -125,6 +126,7 @@ public class MessageListController(
     private val enforceUniqueReactions: Boolean = true,
     private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
     private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
+    private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
 ) {
 
     /**
@@ -154,13 +156,12 @@ public class MessageListController(
     /**
      * Gives us information about the online state of the device.
      */
-    public val connectionState: StateFlow<ConnectionState> by chatClient.clientState::connectionState
+    public val connectionState: StateFlow<ConnectionState> = chatClient.clientState.connectionState
 
     /**
      * Gives us information about the logged in user state.
      */
-    public val user: StateFlow<User?>
-        get() = chatClient.clientState.user
+    public val user: StateFlow<User?> = chatClient.clientState.user
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -194,10 +195,10 @@ public class MessageListController(
     public val mode: StateFlow<MessageMode> = _mode
 
     /**
-     * Gives us information if we're currently in the [MessageMode.Thread] mode.
+     * Gives us information if we're currently in the [MessageMode.MessageThread] mode.
      */
     public val isInThread: Boolean
-        get() = _mode.value is MessageMode.Thread
+        get() = _mode.value is MessageMode.MessageThread
 
     /**
      * Emits error events.
@@ -237,7 +238,7 @@ public class MessageListController(
      * Current state of the message list depending on the [MessageMode] the list is in.
      */
     public val listState: StateFlow<MessageListState> = _mode.flatMapLatest {
-        if (it is MessageMode.Thread) {
+        if (it is MessageMode.MessageThread) {
             _threadListState
         } else {
             _messageListState
@@ -271,15 +272,16 @@ public class MessageListController(
     /**
      * [MessagePositionHandler] that determines the message position inside the group.
      */
-    private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
+    private var _messagePositionHandler: MutableStateFlow<MessagePositionHandler> =
+        MutableStateFlow(MessagePositionHandler.defaultHandler())
 
     /**
-     * Evaluates whether date separators should be added to the message list.
+     * Evaluates whether and when date separators should be added to the message list.
      */
     private val _dateSeparatorHandler: MutableStateFlow<DateSeparatorHandler> = MutableStateFlow(dateSeparatorHandler)
 
     /**
-     * Evaluates whether thread separators should be added to the message list.
+     * Evaluates whether and when thread date separators should be added to the message list.
      */
     private val _threadDateSeparatorHandler: MutableStateFlow<DateSeparatorHandler> =
         MutableStateFlow(threadDateSeparatorHandler)
@@ -351,6 +353,7 @@ public class MessageListController(
                 _dateSeparatorHandler,
                 _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
+                _messagePositionHandler,
                 typingUsers
             ) { data ->
                 val state = data[0] as MessagesState
@@ -359,7 +362,8 @@ public class MessageListController(
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
                 val deletedMessageVisibility = data[4] as DeletedMessageVisibility
                 val messageFooterVisibility = data[5] as MessageFooterVisibility
-                val typingUsers = data[6] as List<User>
+                val messagePositionHandler = data[6] as MessagePositionHandler
+                val typingUsers = data[7] as List<User>
 
                 when (state) {
                     is MessagesState.Loading,
@@ -379,6 +383,7 @@ public class MessageListController(
                             dateSeparatorHandler = dateSeparatorHandler,
                             deletedMessageVisibility = deletedMessageVisibility,
                             messageFooterVisibility = messageFooterVisibility,
+                            messagePositionHandler = messagePositionHandler,
                             typingUsers = typingUsers
                         ),
                     )
@@ -459,15 +464,17 @@ public class MessageListController(
                 _threadDateSeparatorHandler,
                 _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
+                _messagePositionHandler,
                 typingUsers
             ) { data ->
-                val messages = (data[0] as List<*>).map { it as Message }
-                val reads = (data[1] as List<*>).map { it as ChannelUserRead }
+                val messages = data[0] as List<Message>
+                val reads = data[1] as List<ChannelUserRead>
                 val showSystemMessages = data[2] as Boolean
                 val dateSeparatorHandler = data[3] as DateSeparatorHandler
                 val deletedMessageVisibility = data[4] as DeletedMessageVisibility
                 val messageFooterVisibility = data[5] as MessageFooterVisibility
-                val typingUsers = (data[6] as List<*>).map { it as User }
+                val messagePositionHandler = data[6] as MessagePositionHandler
+                val typingUsers = data[7] as List<User>
 
                 _threadListState.value.copy(
                     isLoading = false,
@@ -482,6 +489,7 @@ public class MessageListController(
                         dateSeparatorHandler = dateSeparatorHandler,
                         deletedMessageVisibility = deletedMessageVisibility,
                         messageFooterVisibility = messageFooterVisibility,
+                        messagePositionHandler = messagePositionHandler,
                         typingUsers = typingUsers
                     ),
                     parentMessageId = threadId,
@@ -523,6 +531,7 @@ public class MessageListController(
      * @param deletedMessageVisibility Determines visibility of deleted messages.
      * @param dateSeparatorHandler Handler used to determine when the date separator should be visible.
      * @param messageFooterVisibility Determines when the message footer should be visible.
+     * @param messagePositionHandler Determines the message position inside a group of messages.
      * @param typingUsers The list of the users currently typing.
      *
      * @return A list of [MessageListItem]s, each containing a position.
@@ -534,9 +543,10 @@ public class MessageListController(
         deletedMessageVisibility: DeletedMessageVisibility,
         dateSeparatorHandler: DateSeparatorHandler,
         messageFooterVisibility: MessageFooterVisibility,
+        messagePositionHandler: MessagePositionHandler,
         typingUsers: List<User>,
     ): List<MessageListItem> {
-        val parentMessageId = (_mode.value as? MessageMode.Thread)?.parentMessage?.id
+        val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
         val groupedMessages = mutableListOf<MessageListItem>()
         val lastRead = reads
@@ -681,19 +691,15 @@ public class MessageListController(
      * @param scrollToBottom Handler that notifies when the message has been loaded.
      */
     public fun scrollToBottom(messageLimit: Int = DEFAULT_MESSAGES_LIMIT, scrollToBottom: () -> Unit) {
-        if (_mode.value is MessageMode.Thread) {
+        if (isInThread || channelState.value?.endOfNewerMessages?.value == true) {
             scrollToBottom()
         } else {
-            if (channelState.value?.endOfNewerMessages?.value == true) {
-                scrollToBottom()
-            } else {
-                chatClient.loadNewestMessages(cid, messageLimit).enqueue { result ->
-                    if (result.isSuccess) {
-                        scrollToBottom()
-                    } else {
-                        val error = result.error()
-                        logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
-                    }
+            chatClient.loadNewestMessages(cid, messageLimit).enqueue { result ->
+                if (result.isSuccess) {
+                    scrollToBottom()
+                } else {
+                    val error = result.error()
+                    logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
                 }
             }
         }
@@ -707,13 +713,7 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = DEFAULT_MESSAGES_LIMIT) {
-        if (_mode.value !is MessageMode.Normal ||
-            chatClient.clientState.isOffline ||
-            channelState.value?.endOfNewerMessages?.value == true
-        ) return
-
-        _messageListState.value = _messageListState.value.copy(isLoadingNewerMessages = true)
-
+        if (isInThread || chatClient.clientState.isOffline || channelState.value?.endOfNewerMessages?.value == true) return
         chatClient.loadNewerMessages(cid, baseMessageId, messageLimit).enqueue()
     }
 
@@ -729,33 +729,33 @@ public class MessageListController(
             when (this) {
                 is MessageMode.Normal -> {
                     if (channelState.value?.endOfOlderMessages?.value == true) return
-                    _messageListState.value = _messageListState.value.copy(isLoadingOlderMessages = true)
                     chatClient.loadOlderMessages(cid, messageLimit).enqueue()
                 }
-                is MessageMode.Thread -> threadLoadMore(this)
+                is MessageMode.MessageThread -> threadLoadMore(this)
             }
         }
     }
 
     /**
-     * Load older messages for the specified thread [MessageMode.Thread.parentMessage].
+     * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
      *
      * @param threadMode Current thread mode containing information about the thread.
      */
-    private fun threadLoadMore(threadMode: MessageMode.Thread) {
+    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
         if (threadMode.threadState != null) {
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
                 limit = DEFAULT_MESSAGES_LIMIT,
             ).enqueue()
+            _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = true)
         } else {
             logger.w { "Thread state must be not null for offline plugin thread load more!" }
         }
     }
 
     /**
-     *  Changes the current [_mode] to be [MessageMode.Thread] and uses [ChatClient] to get the [ThreadState] for
+     *  Changes the current [_mode] to be [MessageMode.MessageThread] and uses [ChatClient] to get the [ThreadState] for
      *  the current thread.
      *
      * @param parentMessage The message with the thread we want to observe.
@@ -764,7 +764,7 @@ public class MessageListController(
         val channelState = channelState.value ?: return
         _messageActions.value = _messageActions.value + Reply(parentMessage)
         val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
-        _mode.value = MessageMode.Thread(parentMessage, state)
+        _mode.value = MessageMode.MessageThread(parentMessage, state)
         observeThreadMessagesState(
             threadId = state.parentId,
             messages = state.messages,
@@ -1047,7 +1047,7 @@ public class MessageListController(
     public fun markLastMessageRead() {
         cid.cidToTypeAndId().let { (channelType, channelId) ->
             val mode = _mode.value
-            if (mode is MessageMode.Thread) {
+            if (mode is MessageMode.MessageThread) {
                 // TODO sort out thread unreads when
                 //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
                 // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
@@ -1403,7 +1403,7 @@ public class MessageListController(
      * @param messagePositionHandler The [MessagePositionHandler] to be used when grouping the list.
      */
     public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandler) {
-        this.messagePositionHandler = messagePositionHandler
+        _messagePositionHandler.value = messagePositionHandler
     }
 
     /**

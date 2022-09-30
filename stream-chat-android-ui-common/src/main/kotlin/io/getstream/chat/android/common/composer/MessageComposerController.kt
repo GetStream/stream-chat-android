@@ -243,7 +243,7 @@ public class MessageComposerController(
     private var cooldownInterval: Int = 0
 
     /**
-     * Current message mode, either [MessageMode.Normal] or [MessageMode.Thread]. Used to determine if we're
+     * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
      * sending a thread reply or a regular message.
      */
     public val messageMode: MutableStateFlow<MessageMode> = MutableStateFlow(MessageMode.Normal)
@@ -278,7 +278,7 @@ public class MessageComposerController(
      * Gets the parent message id if we are in thread mode, or null otherwise.
      */
     private val parentMessageId: String?
-        get() = (messageMode.value as? MessageMode.Thread)?.parentMessage?.id
+        get() = (messageMode.value as? MessageMode.MessageThread)?.parentMessage?.id
 
     /**
      * Gets the current text input in the message composer.
@@ -290,7 +290,7 @@ public class MessageComposerController(
      * Gives us information if the composer is in the "thread" mode.
      */
     private val isInThread: Boolean
-        get() = messageMode.value is MessageMode.Thread
+        get() = messageMode.value is MessageMode.MessageThread
 
     /**
      * Represents the selected mentions based on the message suggestion list.
@@ -411,7 +411,7 @@ public class MessageComposerController(
     public fun performMessageAction(messageAction: MessageAction) {
         when (messageAction) {
             is ThreadReply -> {
-                setMessageMode(MessageMode.Thread(messageAction.message))
+                setMessageMode(MessageMode.MessageThread(messageAction.message))
             }
             is Reply -> {
                 messageActions.value = messageActions.value + messageAction

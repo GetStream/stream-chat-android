@@ -76,8 +76,8 @@ private object MessageComposerUsageSnippet : Fragment() {
             // Integrate MessageComposerView with MessageListView
             messageListViewModel.mode.observe(viewLifecycleOwner) {
                 when (it) {
-                    is MessageMode.Thread -> {
-                        messageComposerViewModel.setMessageMode(MessageMode.Thread(it.parentMessage))
+                    is MessageMode.MessageThread -> {
+                        messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
                     }
                     is MessageMode.Normal -> {
                         messageComposerViewModel.leaveThread()

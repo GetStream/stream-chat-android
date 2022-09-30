@@ -148,7 +148,7 @@ class MessagesActivity : AppCompatActivity() {
                         .fillMaxSize(),
                     viewModel = messageListViewModel,
                     onThreadClick = { message ->
-                        composerViewModel.setMessageMode(MessageMode.Thread(message))
+                        composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         messageListViewModel.openMessageThread(message)
                     },
                     onLongItemClick = {

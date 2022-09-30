@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
@@ -60,42 +59,12 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * Responsible for updating the list of messages.
  * Can be bound to the view using [MessageListViewModel.bindView] function.
  *
- * @param cid The full channel id, i.e. "messaging:123"
- * @param chatClient Entry point for all low-level operations.
- * @param clientState Client state of SDK that contains information such as the current user and connection state.
- * such as the current user, connection state, unread counts etc.
- * @param deletedVisibility Determines the visibility of deleted messages.
- * @param footerVisibility Determines the visibility of message footer.
- * @param showSystemMessages Whether we will show the system messages or not.
- * @param enforceUniqueReactions Enables or disables unique message reactions per user.
- * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
- * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  * @param messageListController Controller used to relay the logic and fetch the state.
  */
 @Suppress("TooManyFunctions")
 public class MessageListViewModel(
-    private val cid: String,
-    private val messageId: String? = null,
-    private val chatClient: ChatClient = ChatClient.instance(),
-    private val clientState: ClientState = chatClient.clientState,
-    private val deletedVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
-    private val footerVisibility: MessageFooterVisibility = MessageFooterVisibility.LastInGroup,
-    private val showSystemMessages: Boolean = true,
-    private val enforceUniqueReactions: Boolean = true,
-    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
-    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
-    private val messageListController: MessageListController = MessageListController(
-        cid = cid,
-        messageId = messageId,
-        chatClient = chatClient,
-        deletedMessageVisibility = deletedVisibility,
-        showSystemMessages = showSystemMessages,
-        messageFooterVisibility = footerVisibility,
-        enforceUniqueReactions = enforceUniqueReactions,
-        clipboardHandler = { },
-        dateSeparatorHandler = dateSeparatorHandler,
-        threadDateSeparatorHandler = threadDateSeparatorHandler
-    ),
+    private val messageListController: MessageListController,
+    private val chatClient: ChatClient = ChatClient.instance()
 ) : ViewModel() {
 
     /**
@@ -411,7 +380,7 @@ public class MessageListViewModel(
                 is MessageMode.Normal -> {
                     stateMerger.postValue(State.NavigateUp)
                 }
-                is MessageMode.Thread -> {
+                is MessageMode.MessageThread -> {
                     onNormalModeEntered()
                 }
             }

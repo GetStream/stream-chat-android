@@ -92,7 +92,7 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
      * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
-        val isThreadModeActive = state.messageMode is MessageMode.Thread
+        val isThreadModeActive = state.messageMode is MessageMode.MessageThread
         binding.alsoSendToChannelCheckBox.isVisible = style.alsoSendToChannelCheckboxVisible && isThreadModeActive
         binding.alsoSendToChannelCheckBox.isChecked = state.alsoSendToChannel
     }

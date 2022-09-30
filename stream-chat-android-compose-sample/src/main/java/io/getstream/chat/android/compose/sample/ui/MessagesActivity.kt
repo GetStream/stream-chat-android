@@ -129,7 +129,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     viewModel = listViewModel,
                     messagesLazyListState = if (listViewModel.isInThread) rememberMessageListState() else lazyListState,
                     onThreadClick = { message ->
-                        composerViewModel.setMessageMode(MessageMode.Thread(message))
+                        composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)
                     },
                     onMediaGalleryPreviewResult = { result ->

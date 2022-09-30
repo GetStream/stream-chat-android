@@ -24,29 +24,28 @@ import io.getstream.chat.android.compose.state.messages.list.MessageListItemStat
  *
  * @param isLoading If we're loading (initial load).
  * @param isLoadingMore If we're loading more data (pagination).
- * @param endOfMessages If we're at the end of messages (to stop pagination).
+ * @param oldestMessageLoaded If we're at the end of messages (to stop pagination).
  * @param messageItems Message items to represent in the list.
  * @param selectedMessageState The state that represents the currently selected message or message reactions.
  * @param currentUser The data of the current user, required for various UI states.
  * @param newMessageState The state that represents any new messages.
  * @param parentMessageId The id of the parent message - if we're in a thread.
  * @param unreadCount The count of messages we haven't read yet.
- * @param startOfMessages If we're ate the start of messages (to stop pagination).
- * @param startOfMessages If we're ate the start of messages (to stop pagination).
+ * @param newestMessageLoaded If we're ate the start of messages (to stop pagination).
  * @param isLoadingMoreOldMessages If we're loading older messages.
  * @param isLoadingMoreNewMessages If we're loading newer messages.
  */
 public data class MessagesState(
     val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
-    val endOfMessages: Boolean = false,
+    val oldestMessageLoaded: Boolean = false,
     val messageItems: List<MessageListItemState> = emptyList(),
     val selectedMessageState: SelectedMessageState? = null,
     val currentUser: User? = null,
     val newMessageState: NewMessageState? = null,
     val parentMessageId: String? = null,
     val unreadCount: Int = 0,
-    val startOfMessages: Boolean = false,
+    val newestMessageLoaded: Boolean = false,
     val isLoadingMoreOldMessages: Boolean = false,
     val isLoadingMoreNewMessages: Boolean = false,
 )
