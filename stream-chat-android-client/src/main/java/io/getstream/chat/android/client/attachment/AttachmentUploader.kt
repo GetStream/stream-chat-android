@@ -87,6 +87,7 @@ internal class AttachmentUploader(private val client: ChatClient = ChatClient.in
      *
      * @return The resulting uploaded attachment.
      */
+    @Suppress("LongParameterList")
     private suspend fun uploadImage(
         channelType: String,
         channelId: String,
@@ -135,6 +136,7 @@ internal class AttachmentUploader(private val client: ChatClient = ChatClient.in
      *
      * @return The resulting uploaded attachment.
      */
+    @Suppress("LongParameterList")
     private suspend fun uploadFile(
         channelType: String,
         channelId: String,
