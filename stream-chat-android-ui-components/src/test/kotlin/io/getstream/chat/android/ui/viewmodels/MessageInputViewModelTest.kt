@@ -18,17 +18,17 @@ package io.getstream.chat.android.ui.viewmodels
 
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesState
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.models.MessagesState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension

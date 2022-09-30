@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.attachment.worker
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
@@ -27,7 +28,6 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
-import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 
 internal class UploadAttachmentsWorker(
     private val channelType: String,

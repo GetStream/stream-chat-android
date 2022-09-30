@@ -17,6 +17,8 @@
 package io.getstream.chat.android.offline.channel.controller.attachment
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.attachment.AttachmentUploader
+import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -25,8 +27,6 @@ import io.getstream.chat.android.client.test.randomAttachment
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.attachment.AttachmentUploader
-import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.test.positiveRandomLong

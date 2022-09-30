@@ -3030,7 +3030,7 @@ internal constructor(
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     appContext,
-                    UploadAttachmentsNetworkType.NOT_ROAMING, //Todo: fix this!!
+                    UploadAttachmentsNetworkType.NOT_ROAMING,
                     clientState,
                     clientScope
                 )
