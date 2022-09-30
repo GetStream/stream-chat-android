@@ -713,7 +713,11 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = DEFAULT_MESSAGES_LIMIT) {
-        if (isInThread || chatClient.clientState.isOffline || channelState.value?.endOfNewerMessages?.value == true) return
+        if (isInThread ||
+            chatClient.clientState.isOffline ||
+            channelState.value?.endOfNewerMessages?.value == true
+        ) return
+
         chatClient.loadNewerMessages(cid, baseMessageId, messageLimit).enqueue()
     }
 

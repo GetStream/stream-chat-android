@@ -271,12 +271,12 @@ public final class io/getstream/chat/android/compose/state/messages/MessagesStat
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/MessagesState;ZZZLjava/util/List;Lio/getstream/chat/android/compose/state/messages/SelectedMessageState;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;IZZZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/MessagesState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
-	public final fun getEndOfMessages ()Z
 	public final fun getMessageItems ()Ljava/util/List;
 	public final fun getNewMessageState ()Lio/getstream/chat/android/compose/state/messages/NewMessageState;
+	public final fun getNewestMessageLoaded ()Z
+	public final fun getOldestMessageLoaded ()Z
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getSelectedMessageState ()Lio/getstream/chat/android/compose/state/messages/SelectedMessageState;
-	public final fun getStartOfMessages ()Z
 	public final fun getUnreadCount ()I
 	public fun hashCode ()I
 	public final fun isLoading ()Z
@@ -2190,8 +2190,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/compose/handlers/ClipboardHandler;Ljava/lang/String;IZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/MessageListController;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/compose/handlers/ClipboardHandler;Ljava/lang/String;IZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/MessageListController;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/common/messagelist/MessageListController;)V
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
 	public static synthetic fun banUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public final fun clearNewMessageState ()V
@@ -2203,7 +2202,6 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun flagMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun focusMessage (Ljava/lang/String;)V
 	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
-	public final fun getChatClient ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getCurrentMessagesState ()Lio/getstream/chat/android/compose/state/messages/MessagesState;
 	public final fun getDeletedMessageVisibilityState ()Lio/getstream/chat/android/common/state/DeletedMessageVisibility;
@@ -2250,8 +2248,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;)V
-	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/common/util/ClipboardHandler;ZIJZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/MessagePositionHandler;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/common/util/ClipboardHandler;ZIJZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/MessagePositionHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

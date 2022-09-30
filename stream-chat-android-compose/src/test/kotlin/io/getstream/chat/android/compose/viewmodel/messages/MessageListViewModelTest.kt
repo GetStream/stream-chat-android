@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.offline.model.channel.ChannelData
@@ -171,9 +172,12 @@ internal class MessageListViewModelTest {
 
         fun get(): MessageListViewModel {
             return MessageListViewModel(
-                chatClient = chatClient,
-                channelId = channelId,
-                clipboardHandler = mock(),
+                MessageListController(
+                    chatClient = chatClient,
+                    cid = channelId,
+                    clipboardHandler = mock(),
+                )
+
             )
         }
     }

@@ -41,7 +41,6 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
  * @param channelId The current channel ID, to load the messages from.
  * @param chatClient The client to use for API calls.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
- * @param messageLimit The limit when loading messages.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
  * @param showSystemMessages If we should show system message items in the list.
@@ -59,7 +58,6 @@ public class MessagesViewModelFactory(
     private val clipboardHandler: ClipboardHandler =
         ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
     private val enforceUniqueReactions: Boolean = true,
-    private val messageLimit: Int = MessageListViewModel.DefaultMessageLimit,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val showSystemMessages: Boolean = true,
