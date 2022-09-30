@@ -71,10 +71,23 @@ public fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
     return giphyInfoMap?.let { map ->
         GiphyInfo(
             url = map["url"] ?: "",
-            width = map["width"]?.toInt() ?: Utils.dpToPx(GIPHY_INFO_DEFAULT_WIDTH_DP),
-            height = map["height"]?.toInt() ?: Utils.dpToPx(GIPHY_INFO_DEFAULT_HEIGHT_DP)
+            width = getGiphySize(map, "width", Utils.dpToPx(GIPHY_INFO_DEFAULT_WIDTH_DP)),
+            height = getGiphySize(map, "height", Utils.dpToPx(GIPHY_INFO_DEFAULT_HEIGHT_DP))
         )
     }
+}
+
+/**
+ * Returns specified size for the giphy.
+ *
+ * @param map Map containing giphy size.
+ * @param size The size we need.
+ * @param defaultValue Default value if the size can't be parsed.
+ *
+ * @return The requested giphy [size].
+ */
+private fun getGiphySize(map: Map<String, String>, size: String, defaultValue: Int): Int {
+    return if (!map[size].isNullOrBlank()) map[size]?.toInt() ?: defaultValue else defaultValue
 }
 
 /**
