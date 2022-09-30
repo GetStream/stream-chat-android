@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.plugin.listeners
+package io.getstream.chat.android.offline.utils
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.chat.android.test.randomFile
+import java.util.UUID
 
-public interface SendAttachmentListener {
-
-    public suspend fun onAttachmentSendRequest(
-        channelType: String,
-        channelId: String,
-        message: Message,
-    )
-}
+internal fun randomAttachmentsWithFile(
+    size: Int = positiveRandomInt(10),
+    creationFunction: (Int) -> Attachment = {
+        Attachment(upload = randomFile()).apply {
+            uploadId = "upload_id_${UUID.randomUUID()}"
+        }
+    },
+): List<Attachment> = (1..size).map(creationFunction)
