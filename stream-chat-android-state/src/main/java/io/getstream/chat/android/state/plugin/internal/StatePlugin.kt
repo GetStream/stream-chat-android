@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
@@ -49,6 +50,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelLis
 import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelsListenerState
+import io.getstream.chat.android.offline.plugin.listener.internal.SendAttachmentListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
@@ -98,7 +100,8 @@ public class StatePlugin internal constructor(
     SendGiphyListener by SendGiphyListenerState(logic),
     ShuffleGiphyListener by ShuffleGiphyListenerState(logic),
     SendMessageListener by SendMessageListenerState(logic),
-    TypingEventListener by TypingEventListenerState(stateRegistry) {
+    TypingEventListener by TypingEventListenerState(stateRegistry),
+    SendAttachmentListener by SendAttachmentListenerState(logic) {
 
     override val errorHandlers: List<ErrorHandler> = OfflineErrorHandlerFactoriesProvider
         .createErrorHandlerFactories(repositoryFacade)

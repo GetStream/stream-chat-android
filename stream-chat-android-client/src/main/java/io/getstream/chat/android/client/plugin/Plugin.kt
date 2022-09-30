@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
@@ -61,6 +62,7 @@ public interface Plugin :
     ShuffleGiphyListener,
     DeleteMessageListener,
     SendMessageListener,
+    SendAttachmentListener,
     EditMessageListener,
     QueryChannelListener,
     QueryChannelsListener,
@@ -279,6 +281,10 @@ public interface Plugin :
         channelId: String,
         memberIds: List<String>,
     ): Result<Unit> = Result.success(Unit)
+
+    override suspend fun onAttachmentSendRequest(channelType: String, channelId: String, message: Message) {
+        /* No-Op */
+    }
 
     public fun onUserSet(user: User)
 

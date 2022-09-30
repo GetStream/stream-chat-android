@@ -41,14 +41,7 @@ private const val TAG = "Chat:SendMessageHandlerDB"
 internal class SendMessageListenerDatabase(
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository,
-    private val channelRepository: ChannelRepository
 ) : SendMessageListener {
-
-    override suspend fun onMessageSendRequest(channelType: String, channelId: String, message: Message) {
-        // we insert early to ensure we don't lose messages
-        messageRepository.insertMessage(message)
-        channelRepository.updateLastMessageForChannel(message.cid, message)
-    }
 
     /**
      * Side effect to be invoked when the original request is completed with a response. This method updates the

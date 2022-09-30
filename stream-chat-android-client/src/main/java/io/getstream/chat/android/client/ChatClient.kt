@@ -1533,9 +1533,6 @@ internal constructor(
     ): Result<Message> {
         return api.sendMessage(channelType, channelId, message)
             .retry(userScope, retryPolicy)
-            .doOnStart(userScope) {
-                plugins.forEach { listener -> listener.onMessageSendRequest(channelType, channelId, message) }
-            }
             .doOnResult(userScope) { result ->
                 logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
                 plugins.forEach { listener ->
@@ -1556,6 +1553,8 @@ internal constructor(
         val preparedMessage = getCurrentUser()?.let { user ->
             prepareMessageLogic.prepareMessage(message, channelId, channelType, user)
         } ?: message
+
+        plugins.forEach { listener -> listener.onAttachmentSendRequest(channelType, channelId, preparedMessage) }
 
         return attachmentsSender
             .sendAttachments(preparedMessage, channelType, channelId, isRetrying, repositoryFacade)
