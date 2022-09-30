@@ -1,3 +1,8 @@
+# September 30th, 2022 - 5.11.1
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fixed giphy size parsing. [#4222](https://github.com/GetStream/stream-chat-android/pull/4222)
+
 # September 21th, 2022 - 5.11.0
 ## stream-chat-android-client
 ### ⬆️ Improved
