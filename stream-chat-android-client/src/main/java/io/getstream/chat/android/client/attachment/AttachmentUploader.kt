@@ -22,9 +22,11 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 
-internal class AttachmentUploader(private val client: ChatClient = ChatClient.instance()) {
+@InternalStreamChatApi
+public class AttachmentUploader(private val client: ChatClient = ChatClient.instance()) {
 
     /**
      * Uploads the given attachment.
@@ -37,7 +39,8 @@ internal class AttachmentUploader(private val client: ChatClient = ChatClient.in
      *
      * @return The resulting uploaded attachment.
      */
-    suspend fun uploadAttachment(
+    @InternalStreamChatApi
+    public suspend fun uploadAttachment(
         channelType: String,
         channelId: String,
         attachment: Attachment,
