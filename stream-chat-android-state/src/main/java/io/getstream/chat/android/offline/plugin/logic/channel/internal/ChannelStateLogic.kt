@@ -186,7 +186,7 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Upsert messages in the channel.
+     * Upsert members in the channel.
      *
      * @param message The message to be added or updated.
      */
@@ -199,9 +199,9 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Upsert messages in the channel.
+     * Upsert members in the channel.
      *
-     * @param messages the list of [Message] to be upserted.
+     * @param messages the list of [Message] to be upserted
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */

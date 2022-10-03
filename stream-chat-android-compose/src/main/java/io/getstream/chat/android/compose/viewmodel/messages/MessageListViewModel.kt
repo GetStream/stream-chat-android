@@ -158,7 +158,7 @@ public class MessageListViewModel(
      * @param messageId The id of the newest [Message] inside the messages list.
      * @param messageLimit The limit of messages to be loaded in the page.
      */
-    public fun loadNewerMessages(messageId: String, messageLimit: Int = DefaultMessageLimit) {
+    public fun loadNewerMessages(messageId: String, messageLimit: Int = messageListController.messageLimit) {
         messageListController.loadNewerMessages(messageId, messageLimit)
     }
 
@@ -168,7 +168,7 @@ public class MessageListViewModel(
      *
      * @param messageLimit The limit of messages to be loaded in the page.
      */
-    public fun loadOlderMessages(messageLimit: Int = DefaultMessageLimit) {
+    public fun loadOlderMessages(messageLimit: Int = messageListController.messageLimit) {
         messageListController.loadOlderMessages(messageLimit)
     }
 
@@ -410,7 +410,7 @@ public class MessageListViewModel(
      * @param scrollToBottom Notifies the ui to scroll to the bottom if the newest messages are in the list or have been
      * loaded from the API.
      */
-    public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit, scrollToBottom: () -> Unit) {
+    public fun scrollToBottom(messageLimit: Int = messageListController.messageLimit, scrollToBottom: () -> Unit) {
         messageListController.scrollToBottom(messageLimit, scrollToBottom)
     }
 
@@ -470,12 +470,5 @@ public class MessageListViewModel(
      */
     public fun setAreSystemMessagesVisible(showSystemMessages: Boolean) {
         messageListController.setAreSystemMessagesVisible(showSystemMessages)
-    }
-
-    internal companion object {
-        /**
-         * The default limit for messages count in requests.
-         */
-        internal const val DefaultMessageLimit: Int = 30
     }
 }

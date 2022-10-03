@@ -39,7 +39,10 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
  * Currently builds the [MessageComposerViewModel], [MessageListViewModel] and [AttachmentsPickerViewModel].
  * @param context Used to build the [ClipboardManager].
  * @param channelId The current channel ID, to load the messages from.
+ * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param chatClient The client to use for API calls.
+ * @param messageLimit The limit of the messages to load in a single page.
+ * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
@@ -55,6 +58,7 @@ public class MessagesViewModelFactory(
     private val channelId: String,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val clipboardHandler: ClipboardHandler =
         ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
     private val enforceUniqueReactions: Boolean = true,
@@ -88,6 +92,7 @@ public class MessagesViewModelFactory(
                     cid = channelId,
                     clipboardHandler = clipboardHandler,
                     messageId = messageId,
+                    messageLimit = messageLimit,
                     chatClient = chatClient,
                     enforceUniqueReactions = enforceUniqueReactions,
                     showSystemMessages = showSystemMessages,

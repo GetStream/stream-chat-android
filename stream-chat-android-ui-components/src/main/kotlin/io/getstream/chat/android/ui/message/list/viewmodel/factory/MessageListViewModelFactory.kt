@@ -35,7 +35,9 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageInputViewModel.
  *
  * @param cid The current channel ID, to load the messages from.
+ * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param chatClient The client to use for API calls.
+ * @param messageLimit The limit of the messages to load in a single page.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
@@ -54,6 +56,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val enforceUniqueReactions: Boolean = true,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
@@ -73,6 +76,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 messageListController = MessageListController(
                     cid = cid,
                     clipboardHandler = {},
+                    messageLimit = messageLimit,
                     messageId = messageId,
                     chatClient = chatClient,
                     enforceUniqueReactions = enforceUniqueReactions,

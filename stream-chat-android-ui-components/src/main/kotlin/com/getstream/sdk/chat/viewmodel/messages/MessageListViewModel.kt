@@ -302,7 +302,7 @@ public class MessageListViewModel(
      * @param messageLimit The limit of messages to load when loading newest messages.
      * @param scrollToBottom The handler that notifies when the data has been loaded to scroll to the bottom.
      */
-    public fun scrollToBottom(messageLimit: Int = DEFAULT_MESSAGES_LIMIT, scrollToBottom: () -> Unit) {
+    public fun scrollToBottom(messageLimit: Int = messageListController.messageLimit, scrollToBottom: () -> Unit) {
         messageListController.scrollToBottom(messageLimit, scrollToBottom)
     }
 
@@ -363,7 +363,10 @@ public class MessageListViewModel(
      * @param baseMessageId The id of the currently newest loaded [Message].
      * @param messageLimit The limit of messages to be loaded in the next page.
      */
-    private fun onBottomEndRegionReached(baseMessageId: String?, messageLimit: Int = DEFAULT_MESSAGES_LIMIT) {
+    private fun onBottomEndRegionReached(
+        baseMessageId: String?,
+        messageLimit: Int = messageListController.messageLimit
+    ) {
         if (baseMessageId != null) {
             messageListController.loadNewerMessages(baseMessageId, messageLimit)
         } else {
@@ -665,12 +668,5 @@ public class MessageListViewModel(
          * @param attachment The attachment to be deleted.
          */
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
-    }
-
-    internal companion object {
-        /**
-         * The default limit of messages to load.
-         */
-        const val DEFAULT_MESSAGES_LIMIT = 30
     }
 }

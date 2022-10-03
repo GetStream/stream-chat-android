@@ -63,6 +63,7 @@ import io.getstream.chat.android.common.state.messagelist.SelectedMessageReactio
 import io.getstream.chat.android.common.state.messagelist.SelectedMessageReactionsState
 import io.getstream.chat.android.common.state.messagelist.SelectedMessageState
 import io.getstream.chat.android.common.util.ClipboardHandler
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
@@ -106,6 +107,7 @@ import io.getstream.chat.android.common.state.Flag as FlagMessage
  * @param cid The channel id in the format messaging:123.
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param messageId The message id to which we want to scroll to when opening the message list.
+ * @param messageLimit The limit of messages being fetched with each page od data.
  * @param chatClient The client used to communicate with the API.
  * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list.
  * @param showSystemMessages Determines if the system messages should be shown or not.
@@ -119,6 +121,7 @@ public class MessageListController(
     private val cid: String,
     private val clipboardHandler: ClipboardHandler,
     private val messageId: String? = null,
+    public val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
@@ -148,9 +151,8 @@ public class MessageListController(
     public val channelState: StateFlow<ChannelState?> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            messageLimit = if (messageId != null) 0 else messageLimit,
             coroutineScope = scope,
-            skipMessages = messageId != null
         )
 
     /**
@@ -690,7 +692,7 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      * @param scrollToBottom Handler that notifies when the message has been loaded.
      */
-    public fun scrollToBottom(messageLimit: Int = DEFAULT_MESSAGES_LIMIT, scrollToBottom: () -> Unit) {
+    public fun scrollToBottom(messageLimit: Int = this.messageLimit, scrollToBottom: () -> Unit) {
         if (isInThread || channelState.value?.endOfNewerMessages?.value == true) {
             scrollToBottom()
         } else {
@@ -712,7 +714,7 @@ public class MessageListController(
      * @param baseMessageId The id of the most new [Message] inside the messages list.
      * @param messageLimit The size of the message list page to load.
      */
-    public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = DEFAULT_MESSAGES_LIMIT) {
+    public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = this.messageLimit) {
         if (isInThread ||
             chatClient.clientState.isOffline ||
             channelState.value?.endOfNewerMessages?.value == true
@@ -726,7 +728,7 @@ public class MessageListController(
      *
      * @param messageLimit The size of the message list page to load.
      */
-    public fun loadOlderMessages(messageLimit: Int = DEFAULT_MESSAGES_LIMIT) {
+    public fun loadOlderMessages(messageLimit: Int = this.messageLimit) {
         if (chatClient.clientState.isOffline) return
 
         _mode.value.run {
@@ -744,13 +746,14 @@ public class MessageListController(
      * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
      *
      * @param threadMode Current thread mode containing information about the thread.
+     * @param messageLimit The size of the message list page to load.
      */
-    private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
+    private fun threadLoadMore(threadMode: MessageMode.MessageThread, messageLimit: Int = this.messageLimit) {
         if (threadMode.threadState != null) {
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
-                limit = DEFAULT_MESSAGES_LIMIT,
+                limit = messageLimit,
             ).enqueue()
             _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = true)
         } else {
@@ -763,11 +766,12 @@ public class MessageListController(
      *  the current thread.
      *
      * @param parentMessage The message with the thread we want to observe.
+     * @param messageLimit The size of the message list page to load.
      */
-    public fun enterThreadMode(parentMessage: Message) {
+    public fun enterThreadMode(parentMessage: Message, messageLimit: Int = this.messageLimit) {
         val channelState = channelState.value ?: return
         _messageActions.value = _messageActions.value + Reply(parentMessage)
-        val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
+        val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit)
         _mode.value = MessageMode.MessageThread(parentMessage, state)
         observeThreadMessagesState(
             threadId = state.parentId,
@@ -1522,15 +1526,16 @@ public class MessageListController(
         public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
     }
 
-    internal companion object {
+    public companion object {
         /**
          * The default limit of messages to load.
          */
-        const val DEFAULT_MESSAGES_LIMIT = 30
+        @InternalStreamChatApi
+        public const val DEFAULT_MESSAGES_LIMIT: Int = 30
 
         /**
          * Time after which the focus from message will be removed
          */
-        const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
+        internal const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
     }
 }
