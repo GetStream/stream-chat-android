@@ -70,9 +70,8 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            messageLimit = 0,
             coroutineScope = viewModelScope,
-            skipMessages = true
         ).filterNotNull()
 
     /**
@@ -413,13 +412,5 @@ public class MessageInputViewModel @JvmOverloads constructor(
     override fun onCleared() {
         super.onCleared()
         typingUpdatesBuffer.clear()
-    }
-
-    private companion object {
-
-        /**
-         * The default limit for messages that will be requested.
-         */
-        private const val DEFAULT_MESSAGES_LIMIT: Int = 30
     }
 }

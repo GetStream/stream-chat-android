@@ -229,7 +229,7 @@ internal class ChannelStateLogicTest {
             shouldRefreshMessages = false,
             scrollUpdate = false,
             isNotificationUpdate = false,
-            skipMessages = true
+            messageLimit = 30
         )
 
         _messages `should be equal to` emptyMap()

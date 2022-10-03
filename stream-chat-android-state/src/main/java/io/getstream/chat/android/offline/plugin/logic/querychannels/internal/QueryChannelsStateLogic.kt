@@ -141,7 +141,7 @@ internal class QueryChannelsStateLogic(
                 channel,
                 shouldRefreshMessages = false,
                 scrollUpdate = false,
-                skipMessages = false
+                messageLimit = 0
             )
         }
     }

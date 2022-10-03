@@ -47,9 +47,8 @@ public class TypingIndicatorViewModel(
     private val channelState: StateFlow<ChannelState?> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            messageLimit = 0,
             coroutineScope = viewModelScope,
-            skipMessages = true
         )
 
     /**
@@ -59,12 +58,4 @@ public class TypingIndicatorViewModel(
         channelState.filterNotNull().flatMapLatest { it.typing }.map { typingEvent ->
             typingEvent.users
         }.asLiveData()
-
-    private companion object {
-
-        /**
-         * The default limit for messages that will be requested.
-         */
-        private const val DEFAULT_MESSAGES_LIMIT: Int = 30
-    }
 }

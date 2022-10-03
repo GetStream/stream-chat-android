@@ -54,9 +54,8 @@ public class MessageListHeaderViewModel(
     private val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            messageLimit = 0,
             coroutineScope = viewModelScope,
-            skipMessages = true
         ).filterNotNull()
 
     /**
@@ -126,13 +125,5 @@ public class MessageListHeaderViewModel(
      */
     public fun resetThread() {
         _activeThread.postValue(null)
-    }
-
-    private companion object {
-
-        /**
-         * The default limit for messages that will be requested.
-         */
-        private const val DEFAULT_MESSAGES_LIMIT: Int = 30
     }
 }
