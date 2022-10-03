@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 
 private const val DEFAULT_BITMAP_QUALITY = 90
@@ -218,10 +217,9 @@ public object StreamFileUtil {
                 if (response.isSuccess) {
                     // write the response to a file
                     response.data().byteStream().use { inputStream ->
-                        val fileOutputStream = FileOutputStream(file)
-
-                        inputStream.copyTo(fileOutputStream)
-                        fileOutputStream.close()
+                        file.outputStream().use { outputStream ->
+                            inputStream.copyTo(outputStream)
+                        }
                     }
 
                     Result(data = getUriForFile(context, file))
