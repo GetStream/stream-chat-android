@@ -187,7 +187,7 @@ internal class MessageListScrollHelper(
 
         if (isThreadStart) {
             layoutManager.scrollToPosition(0)
-        } else if (shouldScrollToBottom(isInitialList, areNewestMessagesLoaded)) {
+        } else if (shouldScrollToBottom(isInitialList, areNewestMessagesLoaded, hasNewMessages)) {
             layoutManager.scrollToPosition(currentList.lastIndex)
             callback.onLastMessageRead()
         }
@@ -204,8 +204,11 @@ internal class MessageListScrollHelper(
     private fun shouldScrollToBottom(
         isInitialList: Boolean,
         areNewestMessagesLoaded: Boolean,
+        hasNewMessages: Boolean
     ): Boolean {
-        return areNewestMessagesLoaded && (isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom)
+        return hasNewMessages &&
+            areNewestMessagesLoaded &&
+            (isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom)
     }
 
     private fun isLastMessageMine(): Boolean {

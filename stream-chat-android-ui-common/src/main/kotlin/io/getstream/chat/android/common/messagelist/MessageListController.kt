@@ -129,7 +129,7 @@ public class MessageListController(
     private val enforceUniqueReactions: Boolean = true,
     private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
     private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
-    private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
+    private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
 ) {
 
     /**
@@ -398,21 +398,14 @@ public class MessageListController(
             val newLastMessage =
                 (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
 
-            val hasNewMessage = lastLoadedMessage != null &&
-                _messageListState.value.messages.isNotEmpty() &&
-                newLastMessage?.id != lastLoadedMessage?.id
-
-            _messageListState.value = if (hasNewMessage) {
-                newState.copy(newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage))
-            } else {
-                newState
-            }
+            _messageListState.value = newState.copy(
+                newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+            )
+            lastLoadedMessage = newLastMessage
 
             _messageListState.value.messages.firstOrNull {
                 it is MessageItem && it.message.id == scrollToMessage?.id
             }?.let { focusMessage((it as MessageItem).message.id) }
-
-            lastLoadedMessage = newLastMessage
         }.launchIn(scope)
 
         channelState.filterNotNull().flatMapLatest { it.endOfOlderMessages }.onEach {
