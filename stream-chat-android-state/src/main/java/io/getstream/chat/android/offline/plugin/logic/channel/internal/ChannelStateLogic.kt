@@ -338,13 +338,14 @@ internal class ChannelStateLogic(
      * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
      * when the user is searching in the channel.
      * @param isNotificationUpdate Whether the message list update is due to a new notification.
+     * @param messageLimit The request message limit. If limit is 0 will skip upserting messages.
      */
     fun updateDataFromChannel(
         channel: Channel,
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
-        skipMessages: Boolean
+        messageLimit: Int
     ) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
@@ -358,16 +359,18 @@ internal class ChannelStateLogic(
         upsertMembers(channel.members)
         upsertWatchers(channel.watchers, channel.watcherCount)
 
-        if (!skipMessages && shouldUpsertMessages(
-                isNotificationUpdate = isNotificationUpdate,
-                isInsideSearch = mutableState.insideSearch.value,
-                isScrollUpdate = scrollUpdate,
-                shouldRefreshMessages = shouldRefreshMessages
-            )
-        ) {
-            upsertMessages(channel.messages, shouldRefreshMessages)
-        } else {
-            upsertCachedMessages(channel.messages)
+        if (messageLimit != 0) {
+            if (shouldUpsertMessages(
+                    isNotificationUpdate = isNotificationUpdate,
+                    isInsideSearch = mutableState.insideSearch.value,
+                    isScrollUpdate = scrollUpdate,
+                    shouldRefreshMessages = shouldRefreshMessages
+                )
+            ) {
+                upsertMessages(channel.messages, shouldRefreshMessages)
+            } else {
+                upsertCachedMessages(channel.messages)
+            }
         }
 
         mutableState.setChannelConfig(channel.config)
@@ -434,7 +437,7 @@ internal class ChannelStateLogic(
         val noMoreMessages = request.messagesLimit() > channel.messages.size
         val isNotificationUpdate = request.isNotificationUpdate
 
-        if (!isNotificationUpdate) {
+        if (!isNotificationUpdate && request.messagesLimit() != 0) {
             searchLogic.handleMessageBounds(request, noMoreMessages)
             mutableState.recoveryNeeded = false
 
@@ -446,7 +449,7 @@ internal class ChannelStateLogic(
             shouldRefreshMessages = request.shouldRefresh,
             scrollUpdate = request.isFilteringMessages(),
             isNotificationUpdate = request.isNotificationUpdate,
-            skipMessages = request.skipMessages
+            messageLimit = request.messagesLimit()
         )
     }
 

@@ -107,9 +107,8 @@ public class MessageComposerController(
      */
     public val channelState: Flow<ChannelState> = chatClient.watchChannelAsState(
         cid = channelId,
-        messageLimit = DefaultMessageLimit,
+        messageLimit = 0,
         coroutineScope = scope,
-        skipMessages = true
     ).filterNotNull()
 
     /**
@@ -772,11 +771,6 @@ public class MessageComposerController(
          * The regex pattern used to check if the message ends with incomplete command.
          */
         private val CommandPattern = Pattern.compile("^/[a-z]*$")
-
-        /**
-         * The default limit for messages count in requests.
-         */
-        private const val DefaultMessageLimit: Int = 30
 
         private const val OneSecond = 1000L
     }

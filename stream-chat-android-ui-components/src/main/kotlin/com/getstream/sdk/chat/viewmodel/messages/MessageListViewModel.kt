@@ -96,9 +96,8 @@ public class MessageListViewModel(
     public val channelState: StateFlow<ChannelState?> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            messageLimit = if (messageId == null) DEFAULT_MESSAGES_LIMIT else 0,
             coroutineScope = viewModelScope,
-            skipMessages = messageId != null
         )
 
     /**

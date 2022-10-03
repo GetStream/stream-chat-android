@@ -29,8 +29,6 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     public var shouldRefresh: Boolean = false
     @InternalStreamChatApi
     public var isNotificationUpdate: Boolean = false
-    @InternalStreamChatApi
-    public var skipMessages: Boolean = false
 
     public val messages: MutableMap<String, Any> = mutableMapOf()
     public val watchers: MutableMap<String, Any> = mutableMapOf()
@@ -173,7 +171,6 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         if (members != other.members) return false
         if (data != other.data) return false
         if (isNotificationUpdate != other.isNotificationUpdate) return false
-        if (skipMessages != other.skipMessages) return false
         return true
     }
 
@@ -187,7 +184,6 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         result = 31 * result + members.hashCode()
         result = 31 * result + data.hashCode()
         result = 31 * result + isNotificationUpdate.hashCode()
-        result = 31 * result + skipMessages.hashCode()
         return result
     }
 

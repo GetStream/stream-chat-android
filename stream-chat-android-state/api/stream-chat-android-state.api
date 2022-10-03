@@ -100,8 +100,7 @@ public final class io/getstream/chat/android/offline/extensions/ChatClientExtens
 	public static final fun setMessageForReply (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun watchChannelAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lkotlinx/coroutines/flow/StateFlow;
 	public static final fun watchChannelAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;)Lkotlinx/coroutines/flow/StateFlow;
-	public static final fun watchChannelAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;Z)Lkotlinx/coroutines/flow/StateFlow;
-	public static synthetic fun watchChannelAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;ZILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
+	public static synthetic fun watchChannelAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
 }
 
 public final class io/getstream/chat/android/offline/model/channel/ChannelData {
