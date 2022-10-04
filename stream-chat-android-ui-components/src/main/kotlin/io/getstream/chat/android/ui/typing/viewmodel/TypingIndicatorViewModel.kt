@@ -35,10 +35,13 @@ import kotlinx.coroutines.flow.map
  *
  * @param cid The full channel id, i.e. "messaging:123".
  * @param chatClient The main entry point for all low-level chat operations.
+ * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
+ * queries executed on screen initialization.
  */
 public class TypingIndicatorViewModel(
     cid: String,
     chatClient: ChatClient = ChatClient.instance(),
+    messageId: String? = null,
 ) : ViewModel() {
 
     /**
@@ -47,7 +50,7 @@ public class TypingIndicatorViewModel(
     private val channelState: StateFlow<ChannelState?> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = 0,
+            messageLimit = if (messageId != null) 0 else DEFAULT_MESSAGES_LIMIT,
             coroutineScope = viewModelScope,
         )
 
@@ -58,4 +61,12 @@ public class TypingIndicatorViewModel(
         channelState.filterNotNull().flatMapLatest { it.typing }.map { typingEvent ->
             typingEvent.users
         }.asLiveData()
+
+    private companion object {
+
+        /**
+         * The default limit for messages that will be requested.
+         */
+        private const val DEFAULT_MESSAGES_LIMIT: Int = 30
+    }
 }

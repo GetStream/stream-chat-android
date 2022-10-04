@@ -78,6 +78,8 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * Can be bound to the view using [MessageListViewModel.bindView] function.
  *
  * @param cid The full channel id, i.e. "messaging:123"
+ * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
+ * queries executed on screen initialization.
  * @param chatClient Entry point for all low-level operations.
  * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.

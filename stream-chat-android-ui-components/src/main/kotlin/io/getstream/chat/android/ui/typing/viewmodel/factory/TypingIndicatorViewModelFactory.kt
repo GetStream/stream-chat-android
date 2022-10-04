@@ -26,12 +26,14 @@ import io.getstream.chat.android.ui.typing.viewmodel.TypingIndicatorViewModel
  *
  * @param cid The channel id in the format messaging:123.
  * @param chatClient The [ChatClient] instance.
+ * @param messageId The id of the message we wish to focus to. Used to limit the number of channel queries as well.
  *
  * @see TypingIndicatorViewModel
  */
 public class TypingIndicatorViewModelFactory(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val messageId: String? = null
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -40,13 +42,14 @@ public class TypingIndicatorViewModelFactory(
         }
 
         @Suppress("UNCHECKED_CAST")
-        return TypingIndicatorViewModel(cid, chatClient) as T
+        return TypingIndicatorViewModel(cid, chatClient, messageId) as T
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
     public class Builder @SinceKotlin("99999.9") constructor() {
         private var cid: String? = null
         private var chatClient: ChatClient? = null
+        private var messageId: String? = null
 
         /**
          * Sets the channel id in the format messaging:123.
@@ -63,12 +66,20 @@ public class TypingIndicatorViewModelFactory(
         }
 
         /**
+         * Sets the messageId of the [Message] we wish to scroll to.
+         */
+        public fun messageId(messageId: String?): Builder = apply {
+            this.messageId = messageId
+        }
+
+        /**
          * Builds [TypingIndicatorViewModelFactory] instance.
          */
         public fun build(): ViewModelProvider.Factory {
             return TypingIndicatorViewModelFactory(
                 cid = cid ?: error("Channel cid should not be null"),
                 chatClient = chatClient ?: ChatClient.instance(),
+                messageId = messageId
             )
         }
     }

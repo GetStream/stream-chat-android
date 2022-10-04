@@ -41,11 +41,14 @@ import kotlinx.coroutines.flow.map
  * @param chatClient An instance of the low level chat client.
  * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state...
+ * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
+ * queries executed on screen initialization.
  */
 public class MessageListHeaderViewModel(
     cid: String,
     chatClient: ChatClient = ChatClient.instance(),
     clientState: ClientState = chatClient.clientState,
+    messageId: String? = null
 ) : ViewModel() {
 
     /**
@@ -54,7 +57,7 @@ public class MessageListHeaderViewModel(
     private val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = 0,
+            messageLimit = if (messageId != null) 0 else DEFAULT_MESSAGES_LIMIT,
             coroutineScope = viewModelScope,
         ).filterNotNull()
 
@@ -125,5 +128,13 @@ public class MessageListHeaderViewModel(
      */
     public fun resetThread() {
         _activeThread.postValue(null)
+    }
+
+    private companion object {
+
+        /**
+         * The default limit for messages that will be requested.
+         */
+        private const val DEFAULT_MESSAGES_LIMIT: Int = 30
     }
 }

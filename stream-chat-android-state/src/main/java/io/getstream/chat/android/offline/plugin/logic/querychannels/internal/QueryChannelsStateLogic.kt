@@ -138,9 +138,7 @@ internal class QueryChannelsStateLogic(
         mutableState.setChannels(existingChannels + channels.map { it.cid to it })
         channels.forEach { channel ->
             logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
-                channel,
-                shouldRefreshMessages = false,
-                scrollUpdate = false,
+                channel = channel,
                 messageLimit = channel.messages.size
             )
         }

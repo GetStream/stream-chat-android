@@ -57,7 +57,7 @@ internal class ChannelActionsViewModel(
     val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = 0,
+            messageLimit = DEFAULT_MESSAGE_LIMIT,
             coroutineScope = viewModelScope,
         ).filterNotNull()
 
@@ -165,5 +165,13 @@ internal class ChannelActionsViewModel(
      */
     sealed class Action {
         data class UpdateMembers(val members: List<Member>) : Action()
+    }
+
+    private companion object {
+
+        /**
+         * The default limit for messages count in requests.
+         */
+        private const val DEFAULT_MESSAGE_LIMIT: Int = 0
     }
 }

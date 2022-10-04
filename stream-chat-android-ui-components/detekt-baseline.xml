@@ -146,6 +146,7 @@
     <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$if</ID>
     <ID>MaxLineLength:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$return</ID>
     <ID>MaxLineLength:MessageListViewModelFactory.kt$MessageListViewModelFactory$?:</ID>
+    <ID>MaxLineLength:MessageListViewModelFactory.kt$MessageListViewModelFactory$MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid, messageId = messageId)) }</ID>
     <ID>MaxLineLength:MessageListViewStyle.kt$MessageListViewStyle$*</ID>
     <ID>MaxLineLength:MessageReplyStyle.kt$MessageReplyStyle$*</ID>
     <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$setStrokeTint(style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper))</ID>
