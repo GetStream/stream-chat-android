@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.utils.internal.generateChannelIdIfNeeded
+import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import java.util.Date
 
 /**
@@ -40,7 +40,7 @@ import java.util.Date
  * @param channelRepository [ChannelRepository] to cache intermediate data and final result of channels.
  * @param userRepository [UserRepository] Requests users from database.
  */
-internal class CreateChannelListenerImpl(
+internal class CreateChannelListenerDatabase(
     private val clientState: ClientState,
     private val channelRepository: ChannelRepository,
     private val userRepository: UserRepository,
