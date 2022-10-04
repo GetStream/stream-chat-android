@@ -35,7 +35,7 @@ import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.StateFlow
 
-private const val MESSAGE_LIMIT = 30
+private const val MESSAGE_LIMIT = 1
 private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
