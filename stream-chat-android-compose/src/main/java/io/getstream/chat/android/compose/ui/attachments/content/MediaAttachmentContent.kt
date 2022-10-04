@@ -384,6 +384,8 @@ internal fun MediaAttachmentContentItem(
                                 videoThumbnailsEnabled = areVideosEnabled
                             )
                         )
+                    } else {
+                        onLongItemClick(message)
                     }
                 },
                 onLongClick = { onLongItemClick(message) }
