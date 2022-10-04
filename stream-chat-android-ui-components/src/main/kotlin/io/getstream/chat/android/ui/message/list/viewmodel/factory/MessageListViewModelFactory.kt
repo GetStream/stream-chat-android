@@ -69,8 +69,9 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
-        MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid, chatClient) },
-        MessageInputViewModel::class.java to { MessageInputViewModel(cid, chatClient) },
+        MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid, messageId = messageId) },
+        MessageInputViewModel::class.java to { MessageInputViewModel(cid, messageId = messageId) },
+        MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid, messageId = messageId)) },
         MessageListViewModel::class.java to {
             MessageListViewModel(
                 messageListController = MessageListController(

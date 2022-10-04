@@ -197,7 +197,13 @@ internal class ChannelLogic(
             if (request.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
-                updateDataFromLocalChannel(channel, request.isNotificationUpdate, request.messagesLimit())
+                updateDataFromLocalChannel(
+                    localChannel = channel,
+                    isNotificationUpdate = request.isNotificationUpdate,
+                    messageLimit = request.messagesLimit(),
+                    scrollUpdate = request.isFilteringMessages() && !request.isFilteringAroundIdMessages(),
+                    shouldRefreshMessages = request.shouldRefresh
+                )
             }
         }
     }
@@ -205,15 +211,18 @@ internal class ChannelLogic(
     private fun updateDataFromLocalChannel(
         localChannel: Channel,
         isNotificationUpdate: Boolean,
-        messageLimit: Int
+        messageLimit: Int,
+        scrollUpdate: Boolean,
+        shouldRefreshMessages: Boolean,
     ) {
         localChannel.hidden?.let(channelStateLogic::toggleHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateDataFromChannel(
             localChannel,
-            scrollUpdate = true,
+            scrollUpdate = scrollUpdate,
             isNotificationUpdate = isNotificationUpdate,
-            messageLimit = messageLimit
+            messageLimit = messageLimit,
+            shouldRefreshMessages = shouldRefreshMessages
         )
     }
 
@@ -241,10 +250,10 @@ internal class ChannelLogic(
     ) {
         channelStateLogic.updateDataFromChannel(
             channel,
+            messageLimit,
             shouldRefreshMessages,
             scrollUpdate,
             isNotificationUpdate,
-            messageLimit
         )
     }
 
