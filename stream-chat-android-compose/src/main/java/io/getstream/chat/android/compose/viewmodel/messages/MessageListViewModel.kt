@@ -1264,6 +1264,9 @@ public class MessageListViewModel(
                     scrollToBottom()
                 }
             }
+            if (chatClient.clientState.isOffline) {
+                scrollToBottom()
+            }
         }
     }
 

@@ -708,6 +708,9 @@ public class MessageListViewModel(
                     logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
                 }
             }
+            if (chatClient.clientState.isOffline) {
+                scrollToBottom()
+            }
         }
     }
 

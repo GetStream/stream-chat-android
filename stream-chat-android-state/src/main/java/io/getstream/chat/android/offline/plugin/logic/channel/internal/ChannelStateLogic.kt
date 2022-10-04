@@ -342,10 +342,10 @@ internal class ChannelStateLogic(
      */
     fun updateDataFromChannel(
         channel: Channel,
+        messageLimit: Int,
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
-        messageLimit: Int
     ) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
@@ -404,8 +404,9 @@ internal class ChannelStateLogic(
         isScrollUpdate: Boolean,
         shouldRefreshMessages: Boolean
     ): Boolean {
-        return (!isNotificationUpdate || mutableState.endOfNewerMessages.value) &&
-            (!isInsideSearch || isScrollUpdate || shouldRefreshMessages)
+        // upsert message if refresh is requested, on scroll updates and on notification updates when outside search
+        // not to create gaps in message history
+        return shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch)
     }
 
     /**
@@ -445,7 +446,7 @@ internal class ChannelStateLogic(
         }
 
         updateDataFromChannel(
-            channel,
+            channel = channel,
             shouldRefreshMessages = request.shouldRefresh,
             scrollUpdate = request.isFilteringMessages(),
             isNotificationUpdate = request.isNotificationUpdate,

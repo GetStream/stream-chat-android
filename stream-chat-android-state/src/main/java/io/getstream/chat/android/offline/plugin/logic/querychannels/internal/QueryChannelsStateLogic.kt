@@ -141,7 +141,7 @@ internal class QueryChannelsStateLogic(
                 channel,
                 shouldRefreshMessages = false,
                 scrollUpdate = false,
-                messageLimit = 0
+                messageLimit = channel.messages.size
             )
         }
     }
