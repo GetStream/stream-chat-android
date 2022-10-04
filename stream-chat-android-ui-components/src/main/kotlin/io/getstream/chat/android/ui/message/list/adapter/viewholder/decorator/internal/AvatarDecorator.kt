@@ -100,8 +100,8 @@ internal class AvatarDecorator(
         viewHolder: MediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
-        controlVisibility(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine)
-        setupAvatar(getAvatarView(viewHolder.binding.avatarMineView, viewHolder.binding.avatarView, data.isMine), data)
+        controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
     }
 
     /**

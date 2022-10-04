@@ -144,7 +144,7 @@ internal class MediaAttachmentsViewHolder(
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
                 }
-                avatarView.setOnClickListener {
+                userAvatarView.setOnClickListener {
                     container.userClickListener.onUserClick(data.message.user)
                 }
                 mediaAttachmentView.attachmentClickListener = AttachmentClickListener { attachment ->
