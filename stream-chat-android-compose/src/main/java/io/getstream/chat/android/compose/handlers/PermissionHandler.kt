@@ -129,7 +129,7 @@ public class DownloadPermissionHandler(
     }
 
     override fun onHandleRequest(payload: Map<String, Any>) {
-        if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.P && !Environment.isExternalStorageLegacy()) ||
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !Environment.isExternalStorageLegacy()) ||
             permissionState.status.isGranted
         ) {
             onPermissionGranted(payload)
