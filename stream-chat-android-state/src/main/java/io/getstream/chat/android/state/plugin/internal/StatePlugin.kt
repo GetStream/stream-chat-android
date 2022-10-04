@@ -17,7 +17,7 @@
 package io.getstream.chat.android.state.plugin.internal
 
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.interceptor.Interceptor
+import io.getstream.chat.android.client.interceptor.MessageInterceptor
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.DependencyResolver
@@ -109,7 +109,7 @@ public class StatePlugin internal constructor(
         eventHandler.startListening()
     }
 
-    override val interceptors: List<Interceptor> = listOf(sendMessageInterceptor)
+    override val interceptors: List<MessageInterceptor> = listOf(sendMessageInterceptor)
 
     override fun onUserDisconnected() {
         sendMessageInterceptor.cancelJobs()

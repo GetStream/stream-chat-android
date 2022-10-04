@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.plugin.internal
 
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.interceptor.Interceptor
+import io.getstream.chat.android.client.interceptor.MessageInterceptor
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
@@ -82,7 +82,7 @@ internal class OfflinePlugin(
     QueryMembersListener by queryMembersListener,
     CreateChannelListener by createChannelListener {
 
-    override val interceptors: List<Interceptor> = emptyList()
+    override val interceptors: List<MessageInterceptor> = emptyList()
     override val errorHandlers: List<ErrorHandler> = emptyList()
     override fun onUserSet(user: User) { /* No-Op */ }
 

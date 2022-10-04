@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.interceptor.Interceptor
+import io.getstream.chat.android.client.interceptor.MessageInterceptor
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -70,7 +70,7 @@ public interface Plugin :
     ChannelMarkReadListener,
     CreateChannelListener {
 
-    public val interceptors: List<Interceptor>
+    public val interceptors: List<MessageInterceptor>
     public val errorHandlers: List<ErrorHandler>
 
     override suspend fun onQueryMembersResult(
