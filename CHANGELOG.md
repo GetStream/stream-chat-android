@@ -3,6 +3,13 @@
 ### 🐞 Fixed
 - Fixed displaying messages with failed image attachments. [#4234](https://github.com/GetStream/stream-chat-android/pull/4234)
 
+### ⬆️ Improved
+- Improved asking for `WRITE_EXTERNAL_STORAGE` permission. The permission won't be requested starting from Android Q unless legacy external storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Improved requesting `WRITE_EXTERNAL_STORAGE` permission when legacy storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
+
 # September 30th, 2022 - 5.11.1
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
