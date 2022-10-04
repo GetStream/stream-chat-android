@@ -478,7 +478,7 @@ internal class ChannelMutableState(
      * Updates the cached messages with new messages.
      */
     fun updateCachedMessages(messages: Map<String, Message>) {
-        cachedMessages.value = cachedMessages.value + messages
+        cachedMessages.value = messages
     }
 
     private companion object {
