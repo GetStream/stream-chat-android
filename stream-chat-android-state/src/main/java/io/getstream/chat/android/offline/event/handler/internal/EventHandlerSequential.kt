@@ -57,6 +57,8 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -78,6 +80,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
@@ -85,6 +88,7 @@ import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPa
 import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.logging.StreamLog
@@ -185,6 +189,38 @@ internal class EventHandlerSequential(
         logger.i { "[stopListening] no args" }
         eventsDisposable.dispose()
         scope.coroutineContext.job.cancelChildren()
+    }
+
+    private suspend fun handleChatEvents(eventList: List<ChatEvent>, queryChannelsLogic: QueryChannelsLogic) {
+        eventList.forEach { event -> handleChatEvent(event, queryChannelsLogic) }
+    }
+
+    private suspend fun handleChatEvent(event: ChatEvent, queryChannelsLogic: QueryChannelsLogic) {
+        // update the info for that channel from the channel repo
+        logger.i { "[handleEvent] event: $event" }
+
+        when (val handlingResult = queryChannelsLogic.parseChatEventResult(event)) {
+            is EventHandlingResult.Add -> queryChannelsLogic.addChannel(handlingResult.channel)
+            is EventHandlingResult.WatchAndAdd -> queryChannelsLogic.watchAndAddChannel(handlingResult.cid)
+            is EventHandlingResult.Remove -> queryChannelsLogic.removeChannel(handlingResult.cid)
+            is EventHandlingResult.Skip -> Unit
+        }
+
+        if (event is MarkAllReadEvent) {
+            queryChannelsLogic.refreshAllChannelsState()
+        }
+
+        if (event is CidEvent) {
+            // skip events that are typically not impacting the query channels overview
+            if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
+                return
+            }
+            queryChannelsLogic.refreshChannelState(event.cid)
+        }
+
+        if (event is UserPresenceChangedEvent) {
+            queryChannelsLogic.refreshMembersStateForUser(event.user)
+        }
     }
 
     /**
@@ -312,7 +348,9 @@ internal class EventHandlerSequential(
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
         logicRegistry.getActiveQueryChannelsLogic().map { channelsLogic ->
-            scope.async { channelsLogic.handleEvents(sortedEvents) }
+            scope.async {
+                handleChatEvents(sortedEvents, channelsLogic)
+            }
         }.awaitAll()
     }
 

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.LiveData
@@ -512,19 +510,6 @@ public class MessageListViewModel(
                     onError = { chatError ->
                         logger.e { "Could not unmute user: ${chatError.message}" }
                         _errorEvents.postValue(EventWrapper(ErrorEvent.UnmuteUserError(chatError)))
-                    }
-                )
-            }
-            is Event.BlockUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.shadowBanUser(
-                    targetId = event.user.id,
-                    reason = null,
-                    timeout = null,
-                ).enqueue(
-                    onError = { chatError ->
-                        logger.e { "Could not block user: ${chatError.message}" }
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
                     }
                 )
             }
@@ -1056,24 +1041,6 @@ public class MessageListViewModel(
          * @param user The user to be unmuted.
          */
         public data class UnmuteUser(val user: User) : Event()
-
-        /**
-         * When the user blocks another user.
-         *
-         * @param user The user to be blocked.
-         * @param cid The full channel id, i.e. "messaging:123".
-         */
-        @Deprecated(
-            message = "Deprecated in order to make the action more explicit." +
-                "Use `MessageListViewModel.ShadowBanUser` if you want to keep the same functionality " +
-                "(shadow banning) or `MessageListViewModel.BanUser` if you want to ban a user.",
-            replaceWith = ReplaceWith(
-                "ShadowBanUser",
-                "package com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.ShadowBanUser"
-            ),
-            level = DeprecationLevel.ERROR,
-        )
-        public data class BlockUser(val user: User, val cid: String) : Event()
 
         /**
          * When the user bans another user.

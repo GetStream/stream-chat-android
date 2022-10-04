@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
  * menu.
  * @param selectedChannelMenuUserItemAvatarSize The size of a member avatar in the selected channel menu.
  * @param attachmentsContentImageWidth The width of image attachments in the message list.
- * @param attachmentsContentImageGridSpacing The spacing between image tiles in the message list.
  * @param attachmentsContentGiphyWidth The with of Giphy attachments in the message list.
  * @param attachmentsContentGiphyHeight The height of Giphy attachments in the message list.
  * @param attachmentsContentLinkWidth The with of link attachments in the message list.
@@ -76,6 +75,15 @@ import androidx.compose.ui.unit.dp
  *  re-sizing itself in order to follow its aspect ratio.
  * @param attachmentsContentGiphyMaxHeight The maximum height a Giphy attachment will expand to while automatically
  *  re-sizing itself in order to follow its aspect ratio.
+ *  re-sizing itself in order to obey its aspect ratio.
+ * @param attachmentsContentVideoMaxHeight The maximum height video attachment will expand to while automatically
+ *  re-sizing itself in order to obey its aspect ratio.
+ * @param attachmentsContentMediaGridSpacing The spacing between media preview tiles in the message list.
+ * @param attachmentsContentVideoWidth The width of media attachment previews in the message list.
+ * @param attachmentsContentGroupPreviewWidth The width of the container displaying media previews tiled in
+ * a group in the message list.
+ * @param attachmentsContentGroupPreviewHeight The height of the container displaying media previews tiled in
+ * a group in the message list.
  */
 @Immutable
 public data class StreamDimens(
@@ -86,7 +94,6 @@ public data class StreamDimens(
     public val selectedChannelMenuUserItemHorizontalPadding: Dp,
     public val selectedChannelMenuUserItemAvatarSize: Dp,
     public val attachmentsContentImageWidth: Dp,
-    public val attachmentsContentImageGridSpacing: Dp,
     public val attachmentsContentGiphyWidth: Dp,
     public val attachmentsContentGiphyHeight: Dp,
     public val attachmentsContentLinkWidth: Dp,
@@ -124,6 +131,11 @@ public data class StreamDimens(
     public val attachmentsContentImageMaxHeight: Dp,
     public val attachmentsContentGiphyMaxWidth: Dp = attachmentsContentGiphyWidth,
     public val attachmentsContentGiphyMaxHeight: Dp = attachmentsContentGiphyHeight,
+    public val attachmentsContentVideoMaxHeight: Dp,
+    public val attachmentsContentMediaGridSpacing: Dp,
+    public val attachmentsContentVideoWidth: Dp,
+    public val attachmentsContentGroupPreviewWidth: Dp,
+    public val attachmentsContentGroupPreviewHeight: Dp,
 ) {
 
     public companion object {
@@ -140,7 +152,6 @@ public data class StreamDimens(
             selectedChannelMenuUserItemHorizontalPadding = 8.dp,
             selectedChannelMenuUserItemAvatarSize = 64.dp,
             attachmentsContentImageWidth = 250.dp,
-            attachmentsContentImageGridSpacing = 2.dp,
             attachmentsContentGiphyWidth = 250.dp,
             attachmentsContentGiphyHeight = 200.dp,
             attachmentsContentLinkWidth = 250.dp,
@@ -176,6 +187,11 @@ public data class StreamDimens(
             groupAvatarInitialsXOffset = 1.5.dp,
             groupAvatarInitialsYOffset = 2.5.dp,
             attachmentsContentImageMaxHeight = 600.dp,
+            attachmentsContentVideoMaxHeight = 400.dp,
+            attachmentsContentMediaGridSpacing = 2.dp,
+            attachmentsContentVideoWidth = 250.dp,
+            attachmentsContentGroupPreviewWidth = 250.dp,
+            attachmentsContentGroupPreviewHeight = 250.dp,
         )
     }
 }

@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/#usage)
@@ -76,17 +77,19 @@ private object ChannelsScreenCustomizationSnippet {
             setContent {
                 ChatTheme {
                     ChannelsScreen(
-                        filters = Filters.and(
-                            Filters.eq("type", "messaging"),
-                            Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+                        viewModelFactory = ChannelViewModelFactory(
+                            filters = Filters.and(
+                                Filters.eq("type", "messaging"),
+                                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+                            ),
+                            querySort = QuerySortByField.descByName("last_updated"),
+                            channelLimit = 30,
+                            memberLimit = 30,
+                            messageLimit = 1
                         ),
-                        querySort = QuerySortByField.descByName("last_updated"),
                         title = "Stream Chat",
                         isShowingHeader = true,
-                        isShowingSearch = true,
-                        channelLimit = 30,
-                        memberLimit = 30,
-                        messageLimit = 1
+                        isShowingSearch = true
                     )
                 }
             }

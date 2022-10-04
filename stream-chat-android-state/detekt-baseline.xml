@@ -12,10 +12,8 @@
     <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanOrEqualsFilterArguments()</ID>
     <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
     <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
-    <ID>ComplexMethod:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
     <ID>ComplexMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateGlobalState(batchEvent: BatchEvent)</ID>
     <ID>ComplexMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
-    <ID>EmptyFunctionBlock:EventHandlerImpl.kt$EventHandlerImpl.Companion.&lt;no name provided>${}</ID>
     <ID>ForbiddenComment:ChatClientStateCalls.kt$ChatClientStateCalls$// todo: Fix this!!</ID>
     <ID>ForbiddenComment:EventBatchUpdate.kt$EventBatchUpdate$// TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour</ID>
     <ID>ForbiddenComment:SendMessageInterceptorImpl.kt$SendMessageInterceptorImpl$// TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach</ID>
@@ -30,7 +28,6 @@
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanOrEqualsFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
-    <ID>LongMethod:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
     <ID>LongMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
     <ID>LongParameterList:AttachmentUploader.kt$AttachmentUploader$( channelType: String, channelId: String, file: File, progressCallback: ProgressCallback?, attachment: Attachment, mimeType: String, attachmentType: AttachmentType, )</ID>
@@ -50,8 +47,6 @@
     <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()</ID>
     <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$randomChannel(members = (List(positiveRandomInt(10)) { randomMember() } + randomMember(randomUser(id = memberId))).shuffled())</ID>
     <ID>MaxLineLength:DeleteReactionErrorHandlerImpl.kt$DeleteReactionErrorHandlerImpl$*</ID>
-    <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
-    <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$*</ID>
     <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:Mapper.kt$internal</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
@@ -62,7 +57,6 @@
     <ID>MaxLineLength:SyncManager.kt$SyncManager$*</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$/** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */</ID>
     <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
-    <ID>NestedBlockDepth:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateGlobalState(batchEvent: BatchEvent)</ID>
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
@@ -70,10 +64,5 @@
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
     <ID>UnusedPrivateMember:UploadAttachmentsIntegrationTests.kt$UploadAttachmentsIntegrationTests$private val currentUser = randomUser()</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _currentRequest = MutableStateFlow&lt;QueryChannelsRequest?>(null)</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _endOfChannels = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _loading = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _loadingMore = MutableStateFlow(false)</ID>
-    <ID>VariableNaming:QueryChannelsMutableState.kt$QueryChannelsMutableState$internal val _recoveryNeeded: MutableStateFlow&lt;Boolean> = MutableStateFlow(false)</ID>
   </CurrentIssues>
 </SmellBaseline>

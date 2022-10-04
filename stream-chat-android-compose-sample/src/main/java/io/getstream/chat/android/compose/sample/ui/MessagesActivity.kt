@@ -54,7 +54,7 @@ import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
@@ -78,7 +78,7 @@ class MessagesActivity : BaseConnectedActivity() {
     private val factory by lazy {
         MessagesViewModelFactory(
             context = this,
-            channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
+            channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
         )
     }
@@ -90,13 +90,14 @@ class MessagesActivity : BaseConnectedActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
 
         setContent {
             ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 MessagesScreen(
-                    channelId = channelId,
-                    onBackPressed = { finish() },
+                    viewModelFactory = factory,
+                    onBackPressed = {
+                        finish()
+                    },
                     onHeaderActionClick = {}
                 )
 
@@ -131,9 +132,9 @@ class MessagesActivity : BaseConnectedActivity() {
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)
                     },
-                    onImagePreviewResult = { result ->
+                    onMediaGalleryPreviewResult = { result ->
                         when (result?.resultType) {
-                            ImagePreviewResultType.QUOTE -> {
+                            MediaGalleryPreviewResultType.QUOTE -> {
                                 val message = listViewModel.getMessageWithId(result.messageId)
 
                                 if (message != null) {
@@ -141,7 +142,7 @@ class MessagesActivity : BaseConnectedActivity() {
                                 }
                             }
 
-                            ImagePreviewResultType.SHOW_IN_CHAT -> {
+                            MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
                             }
                             null -> Unit
                         }

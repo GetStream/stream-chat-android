@@ -19,8 +19,11 @@ package io.getstream.chat.android.uitests.app
 import android.app.Application
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
 class ChatApp : Application() {
 
@@ -31,8 +34,18 @@ class ChatApp : Application() {
             config = Config(),
             appContext = this
         )
+
+        val statePluginFactory = StreamStatePluginFactory(
+            config = StatePluginConfig(
+                backgroundSyncEnabled = true,
+                userPresence = true,
+                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+            ),
+            appContext = this
+        )
+
         ChatClient.Builder("hrwwzsgrzapv", this)
-            .withPlugin(offlinePluginFactory)
+            .withPlugins(offlinePluginFactory, statePluginFactory)
             .logLevel(ChatLogLevel.NOTHING)
             .build()
     }

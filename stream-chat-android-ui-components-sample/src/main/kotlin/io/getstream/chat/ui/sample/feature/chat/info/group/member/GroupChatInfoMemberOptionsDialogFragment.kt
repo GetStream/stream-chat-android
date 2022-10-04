@@ -80,7 +80,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
         binding.apply {
             userNameTextView.text = user.name
             lastSeenTextView.text = user.getLastSeenText(requireContext())
-            avatarView.setUserData(user)
+            userAvatarView.setUser(user)
             optionViewInfo.setOnOptionClickListener {
                 findNavController().navigateSafely(
                     GroupChatInfoFragmentDirections.actionOpenChatInfo(

@@ -28,6 +28,7 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.isMine
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -76,14 +77,14 @@ internal class MessageReplyView : FrameLayout {
      */
     fun setMessage(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         setUserAvatar(message)
-        setAvatarPosition(message.isMine())
+        setAvatarPosition(message.isMine(ChatClient.instance()))
         setReplyBackground(message, isMine, style)
         setAttachmentImage(message)
         setReplyText(message, isMine, style)
     }
 
     private fun setUserAvatar(message: Message) {
-        binding.replyAvatarView.setUserData(message.user)
+        binding.replyAvatarView.setUser(message.user)
         binding.replyAvatarView.isVisible = true
     }
 
@@ -132,7 +133,7 @@ internal class MessageReplyView : FrameLayout {
             context,
             REPLY_CORNER_RADIUS,
             0f,
-            message.isMine(),
+            message.isMine(ChatClient.instance()),
             true
         )
 
@@ -147,7 +148,7 @@ internal class MessageReplyView : FrameLayout {
                     }
                     setTint(color)
                 }
-                message.isMine() -> {
+                message.isMine(ChatClient.instance()) -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     val color = if (isMine) {
                         style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)

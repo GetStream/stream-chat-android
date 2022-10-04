@@ -35,16 +35,6 @@ public interface ClientState {
     /**
      * The state of the initialization process of the SDK.
      */
-    @Deprecated(
-        message = "Use ClientState.initializationState instead",
-        replaceWith = ReplaceWith("initializationState"),
-        level = DeprecationLevel.ERROR,
-    )
-    public val initialized: StateFlow<Boolean>
-
-    /**
-     * The state of the initialization process of the SDK.
-     */
     public val initializationState: StateFlow<InitializationState>
 
     /**

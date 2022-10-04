@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#usage)
@@ -22,7 +23,12 @@ private object MessagesScreenUsageSnippet {
 
             setContent {
                 ChatTheme {
-                    MessagesScreen(channelId = channelId)
+                    MessagesScreen(
+                        viewModelFactory = MessagesViewModelFactory(
+                            context = this,
+                            channelId = channelId
+                        )
+                    )
                 }
             }
         }
@@ -44,7 +50,10 @@ private object MessagesScreenHandlingActionsSnippet {
             setContent {
                 ChatTheme {
                     MessagesScreen(
-                        channelId = channelId,
+                        viewModelFactory = MessagesViewModelFactory(
+                            context = this,
+                            channelId = channelId
+                        ),
                         onBackPressed = { finish() }, // Navigation handler
                         onHeaderActionClick = { channel ->
                             // Show channel info
@@ -71,12 +80,15 @@ private object MessagesScreenCustomizationSnippet {
             setContent {
                 ChatTheme {
                     MessagesScreen(
-                        channelId = channelId,
-                        messageLimit = 30,
+                        viewModelFactory = MessagesViewModelFactory(
+                            context = this,
+                            channelId = channelId,
+                            messageLimit = 30,
+                            enforceUniqueReactions = true,
+                            showDateSeparators = true,
+                            showSystemMessages = true
+                        ),
                         showHeader = true,
-                        enforceUniqueReactions = true,
-                        showDateSeparators = true,
-                        showSystemMessages = true,
                     )
                 }
             }

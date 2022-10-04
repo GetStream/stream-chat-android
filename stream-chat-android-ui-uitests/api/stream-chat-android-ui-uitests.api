@@ -125,13 +125,22 @@ public final class io/getstream/chat/android/uitests/databinding/FragmentCompone
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/FragmentComponentBrowserViewReactionsViewBinding;
 }
 
-public final class io/getstream/chat/android/uitests/databinding/ViewAvatarBinding : androidx/viewbinding/ViewBinding {
-	public final field avatarView Lio/getstream/chat/android/ui/avatar/AvatarView;
-	public static fun bind (Landroid/view/View;)Lio/getstream/chat/android/uitests/databinding/ViewAvatarBinding;
+public final class io/getstream/chat/android/uitests/databinding/ViewChannelAvatarBinding : androidx/viewbinding/ViewBinding {
+	public final field channelAvatarView Lio/getstream/chat/android/ui/avatar/ChannelAvatarView;
+	public static fun bind (Landroid/view/View;)Lio/getstream/chat/android/uitests/databinding/ViewChannelAvatarBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Lio/getstream/chat/android/ui/avatar/AvatarView;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/android/uitests/databinding/ViewAvatarBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/ViewAvatarBinding;
+	public fun getRoot ()Lio/getstream/chat/android/ui/avatar/ChannelAvatarView;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/android/uitests/databinding/ViewChannelAvatarBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/ViewChannelAvatarBinding;
+}
+
+public final class io/getstream/chat/android/uitests/databinding/ViewUserAvatarBinding : androidx/viewbinding/ViewBinding {
+	public final field userAvatarView Lio/getstream/chat/android/ui/avatar/UserAvatarView;
+	public static fun bind (Landroid/view/View;)Lio/getstream/chat/android/uitests/databinding/ViewUserAvatarBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Lio/getstream/chat/android/ui/avatar/UserAvatarView;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lio/getstream/chat/android/uitests/databinding/ViewUserAvatarBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lio/getstream/chat/android/uitests/databinding/ViewUserAvatarBinding;
 }
 
 public final class io/getstream/chat/android/uitests/snapshot/uicomponents/reactions/ComponentBrowserViewReactionsFragmentKt {
