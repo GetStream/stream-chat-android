@@ -39,7 +39,7 @@ import io.getstream.chat.android.common.state.messagelist.SelectedMessageState
  */
 public data class MessageListState(
     public val messages: List<MessageListItem> = emptyList(),
-    public val endOfNewMessagesReached: Boolean = false,
+    public val endOfNewMessagesReached: Boolean = true,
     public val endOfOldMessagesReached: Boolean = false,
     public val isLoading: Boolean = false,
     public val isLoadingNewerMessages: Boolean = false,
