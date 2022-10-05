@@ -1,3 +1,8 @@
+# UNRELEASED CHANGELOG
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed displaying messages with failed image attachments. [#4234](https://github.com/GetStream/stream-chat-android/pull/4234)
+
 # September 30th, 2022 - 5.11.1
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
