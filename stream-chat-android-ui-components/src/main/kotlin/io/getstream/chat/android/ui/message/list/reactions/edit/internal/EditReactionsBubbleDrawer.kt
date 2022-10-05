@@ -64,6 +64,8 @@ internal class EditReactionsBubbleDrawer(
         bubbleHeight: Int,
         isMyMessage: Boolean,
         isSingleReaction: Boolean,
+        messageAnchorPosition: Float,
+        canvasBounds: IntRange,
     ) {
         this.bubbleWidth = bubbleWidth
         this.bubbleHeight = bubbleHeight
@@ -72,10 +74,11 @@ internal class EditReactionsBubbleDrawer(
 
         val bubblePaint = if (isMyMessage) bubblePaintMine else bubblePaintTheirs
         val isRtl = context.isRtlLayout
+        val finalBubblePosition = if (messageAnchorPosition.toInt() in canvasBounds) messageAnchorPosition else canvas.width / 2f
 
         drawBubbleRoundRect(canvas, bubblePaint)
-        drawLargeTailBubble(canvas, bubblePaint, isRtl)
-        drawSmallTailBubble(canvas, bubblePaint, isRtl)
+        drawLargeTailBubble(canvas, bubblePaint, isRtl, finalBubblePosition)
+        drawSmallTailBubble(canvas, bubblePaint, isRtl, finalBubblePosition)
     }
 
     /**
@@ -103,12 +106,13 @@ internal class EditReactionsBubbleDrawer(
      * @param paint [Paint].
      * @param isRtl If the bubble should be drawn with inverted direction.
      */
-    private fun drawLargeTailBubble(canvas: Canvas, paint: Paint, isRtl: Boolean) {
+    private fun drawLargeTailBubble(canvas: Canvas, paint: Paint, isRtl: Boolean, bubbleTailPosition: Float) {
         val offset = editReactionsViewStyle.largeTailBubbleOffset.toFloat().let { bubbleOffset ->
             parseOffset(isRtl, isMyMessage, bubbleOffset)
         }
+
         canvas.drawCircle(
-            (bubbleWidth / 2).toFloat() + offset,
+            offset + bubbleTailPosition,
             largeTailBubbleInitialPosition() + editReactionsViewStyle.largeTailBubbleCyOffset.toFloat(),
             editReactionsViewStyle.largeTailBubbleRadius.toFloat(),
             paint
@@ -143,13 +147,13 @@ internal class EditReactionsBubbleDrawer(
      * @param paint [Paint].
      * @param isRtl If the bubble should be drawn with inverted direction.
      */
-    private fun drawSmallTailBubble(canvas: Canvas, paint: Paint, isRtl: Boolean) {
+    private fun drawSmallTailBubble(canvas: Canvas, paint: Paint, isRtl: Boolean, bubbleTailPosition: Float) {
         val offset = editReactionsViewStyle.smallTailBubbleOffset.toFloat().let { bubbleOffset ->
             parseOffset(isRtl, isMyMessage, bubbleOffset)
         }
 
         canvas.drawCircle(
-            bubbleWidth / 2 + offset,
+            offset + bubbleTailPosition,
             largeTailBubbleInitialPosition() +
                 editReactionsViewStyle.largeTailBubbleRadius.toFloat() +
                 editReactionsViewStyle.smallTailBubbleCyOffset.toFloat(),

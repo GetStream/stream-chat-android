@@ -33,7 +33,6 @@
             android:id="@+id/editReactionsView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginStart="@dimen/stream_ui_spacing_small"
             android:layout_marginEnd="@dimen/stream_ui_spacing_small"
             />
@@ -61,8 +60,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/stream_ui_spacing_small"
-            android:layout_marginEnd="@dimen/stream_ui_spacing_small"
             android:layout_marginTop="@dimen/stream_ui_spacing_small"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_small"
             android:visibility="gone"
             />
 

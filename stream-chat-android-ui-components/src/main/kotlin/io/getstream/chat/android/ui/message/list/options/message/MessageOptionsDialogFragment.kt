@@ -239,6 +239,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 start = style.optionsOverlayEditReactionsMarginStart,
                 end = style.optionsOverlayEditReactionsMarginEnd
             )
+            (params as? LinearLayout.LayoutParams)?.gravity = if (messageItem.isMine) Gravity.END else Gravity.START
         }
     }
 
@@ -323,7 +324,6 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
      * Positions the reactions bubble near the message bubble according to the design.
      */
     private fun anchorReactionsViewToMessageView() {
-        val reactionsWidth = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_total_width)
         val reactionsOffset = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_horizontal_offset)
 
         when (val viewHolder = viewHolder) {
@@ -336,12 +336,13 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             else -> null
         }?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {
-                val maxTranslation = messageContainer.width / 2 - reactionsWidth / 2
-                editReactionsView.translationX = if (messageItem.isMine) {
-                    left - messageContainer.width / 2 - reactionsOffset
-                } else {
-                    right - messageContainer.width / 2 + reactionsOffset
-                }.coerceIn(-maxTranslation, maxTranslation).toFloat()
+                editReactionsView.positionBubbleTail(
+                    if (messageItem.isMine) {
+                        left - reactionsOffset - editReactionsView.left
+                    } else {
+                        right + reactionsOffset
+                    }.toFloat()
+                )
             }
         }
     }
