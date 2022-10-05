@@ -1,7 +1,15 @@
 # UNRELEASED CHANGELOG
 ## stream-chat-android-ui-components
+### ✅ Added
+- Added `*MarginTop`, `*MarginBottom`, `*MarginStart` and `*MarginEnd` respectively, for each major piece of the MessageOptionsDialogFragment UI. [#4240](https://github.com/GetStream/stream-chat-android/pull/4240)
+- You can now override each of the margins for the `EditReactionsView`, `MessageOptionsView` and `UserReactionsView`. [#4240](https://github.com/GetStream/stream-chat-android/pull/4240)
+
 ### 🐞 Fixed
 - Fixed displaying messages with failed image attachments. [#4234](https://github.com/GetStream/stream-chat-android/pull/4234)
+
+### ⚠️ Changed
+- Changed the way `MessageOptionsDialogFragment` margins are exposed for specific Views. Instead of just one vertical margin, we now expose all four directions for each major piece of the dialog. [#4240](https://github.com/GetStream/stream-chat-android/pull/4240)
+- Because of this, there were three refactor/rename changes for the parameters you might have to update, if you're overriding the margins. [#4240](https://github.com/GetStream/stream-chat-android/pull/4240)
 
 # September 30th, 2022 - 5.11.1
 ## stream-chat-android-ui-common
