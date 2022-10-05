@@ -31,7 +31,7 @@ import io.getstream.chat.android.compose.state.messages.list.MessageListItemStat
  * @param newMessageState The state that represents any new messages.
  * @param parentMessageId The id of the parent message - if we're in a thread.
  * @param unreadCount The count of messages we haven't read yet.
- * @param startOfMessages If we're ate the start of messages (to stop pagination).
+ * @param startOfMessages If we're at the start of messages (to stop pagination).
  * @param isLoadingMoreOldMessages If we're loading older messages.
  * @param isLoadingMoreNewMessages If we're loading newer messages.
  */
