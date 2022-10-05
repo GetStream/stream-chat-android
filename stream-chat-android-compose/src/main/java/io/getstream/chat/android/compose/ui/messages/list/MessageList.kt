@@ -54,14 +54,14 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
- * @param onMessagesStartReached Handler for pagination when the end of the oldest messages has been reached.
+ * @param onMessagesPageStartReached Handler for pagination when the end of the oldest messages has been reached.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
- * @param onMessagesEndReached Handler for pagination when the end of newest messages have been reached.
+ * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
@@ -82,7 +82,7 @@ public fun MessageList(
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
-    onMessagesStartReached: () -> Unit = { viewModel.loadOlderMessages() },
+    onMessagesPageStartReached: () -> Unit = { viewModel.loadOlderMessages() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
@@ -92,7 +92,7 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
-    onMessagesEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
+    onMessagesPageEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
     onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
@@ -121,7 +121,7 @@ public fun MessageList(
         contentPadding = contentPadding,
         currentState = viewModel.currentMessagesState,
         messagesLazyListState = messagesLazyListState,
-        onMessagesStartReached = onMessagesStartReached,
+        onMessagesStartReached = onMessagesPageStartReached,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
@@ -133,7 +133,7 @@ public fun MessageList(
         loadingContent = loadingContent,
         emptyContent = emptyContent,
         onQuotedMessageClick = onQuotedMessageClick,
-        onMessagesEndReached = onMessagesEndReached,
+        onMessagesEndReached = onMessagesPageEndReached,
         onScrollToBottom = onScrollToBottomClicked,
     )
 }

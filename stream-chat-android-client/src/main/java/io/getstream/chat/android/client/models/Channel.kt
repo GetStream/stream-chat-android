@@ -53,7 +53,7 @@ import java.util.Date
  * in the events.
  * @param membership Represents relationship of the current user to this channel.
  * @param extraData A map of custom fields for the channel.
- * @param cachedMessages The list of cached messages if the regular list does not contain the newest loaded messages.
+ * @param cachedLatestMessages The list of cached messages if the regular list does not contain the newest messages.
  * @param isInsideSearch When the channel is inside search, eg. searching from the channel list for a message or when
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
  */
@@ -85,7 +85,7 @@ public data class Channel(
     var pinnedMessages: List<Message> = mutableListOf(),
     var ownCapabilities: Set<String> = setOf(),
     var membership: Member? = null,
-    var cachedMessages: List<Message> = emptyList(),
+    var cachedLatestMessages: List<Message> = emptyList(),
     var isInsideSearch: Boolean = false,
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 ) : CustomObject, ComparableFieldProvider {

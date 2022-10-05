@@ -220,7 +220,7 @@ internal class ChannelStateLogicTest {
     fun `given inside search should not upsert messages when messages are not coming from scroll update`() {
         _insideSearch.value = true
         whenever(mutableState.visibleMessages) doReturn MutableStateFlow(_messages)
-        whenever(mutableState.cachedMessages) doReturn MutableStateFlow(emptyMap())
+        whenever(mutableState.cachedLatestMessages) doReturn MutableStateFlow(emptyMap())
 
         val message = randomMessage()
 

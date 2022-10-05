@@ -52,7 +52,7 @@ internal class MessageListScrollHelper(
 
     internal var unreadCountEnabled: Boolean = true
 
-    private var areNewestMessagesLoaded: Boolean = false
+    private var areNewestMessagesLoaded: Boolean = true
 
     private var bottomOffset: Int = 0
 

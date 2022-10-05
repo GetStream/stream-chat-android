@@ -34,7 +34,7 @@ import io.getstream.chat.android.uiutils.constant.MessageType
  */
 public fun Channel.getPreviewMessage(currentUser: User?): Message? =
     if (isInsideSearch) {
-        cachedMessages
+        cachedLatestMessages
     } else {
         messages
     }.asSequence()

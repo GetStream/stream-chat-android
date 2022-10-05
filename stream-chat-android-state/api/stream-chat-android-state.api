@@ -127,7 +127,7 @@ public final class io/getstream/chat/android/offline/model/channel/ChannelData {
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;Ljava/util/List;Z)Lio/getstream/chat/android/offline/model/channel/ChannelData;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/model/channel/ChannelData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/String;Ljava/util/Map;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;Ljava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/offline/model/channel/ChannelData;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCachedMessages ()Ljava/util/List;
+	public final fun getCachedLatestMessages ()Ljava/util/List;
 	public final fun getChannelId ()Ljava/lang/String;
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCooldown ()I
@@ -147,7 +147,7 @@ public final class io/getstream/chat/android/offline/model/channel/ChannelData {
 	public final fun getUpdatedAt ()Ljava/util/Date;
 	public fun hashCode ()I
 	public final fun isUserAbleTo (Ljava/lang/String;)Z
-	public final fun setCachedMessages (Ljava/util/List;)V
+	public final fun setCachedLatestMessages (Ljava/util/List;)V
 	public final fun setChannelId (Ljava/lang/String;)V
 	public final fun setCid (Ljava/lang/String;)V
 	public final fun setCooldown (I)V

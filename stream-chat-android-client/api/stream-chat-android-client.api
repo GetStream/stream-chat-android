@@ -2464,7 +2464,7 @@ public final class io/getstream/chat/android/client/models/Channel : io/getstrea
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/client/models/Config;Lio/getstream/chat/android/client/models/User;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;Ljava/util/List;ZLjava/util/Map;)Lio/getstream/chat/android/client/models/Channel;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/Channel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/client/models/Config;Lio/getstream/chat/android/client/models/User;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/Set;Lio/getstream/chat/android/client/models/Member;Ljava/util/List;ZLjava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/Channel;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCachedMessages ()Ljava/util/List;
+	public final fun getCachedLatestMessages ()Ljava/util/List;
 	public final fun getCid ()Ljava/lang/String;
 	public fun getComparableField (Ljava/lang/String;)Ljava/lang/Comparable;
 	public final fun getConfig ()Lio/getstream/chat/android/client/models/Config;
@@ -2500,7 +2500,7 @@ public final class io/getstream/chat/android/client/models/Channel : io/getstrea
 	public fun hashCode ()I
 	public final fun isInsideSearch ()Z
 	public fun putExtraValue (Ljava/lang/String;Ljava/lang/Object;)V
-	public final fun setCachedMessages (Ljava/util/List;)V
+	public final fun setCachedLatestMessages (Ljava/util/List;)V
 	public final fun setCid (Ljava/lang/String;)V
 	public final fun setConfig (Lio/getstream/chat/android/client/models/Config;)V
 	public final fun setCreatedAt (Ljava/util/Date;)V
