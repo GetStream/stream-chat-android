@@ -27,7 +27,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.core.view.updateMargins
+import androidx.core.view.updateMarginsRelative
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
@@ -233,7 +233,12 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             }
 
             val params = (layoutParams as ViewGroup.MarginLayoutParams)
-            params.updateMargins(bottom = style.optionsOverlayEditReactionsMargin)
+            params.updateMarginsRelative(
+                bottom = style.optionsOverlayEditReactionsMarginBottom,
+                top = style.optionsOverlayEditReactionsMarginTop,
+                start = style.optionsOverlayEditReactionsMarginStart,
+                end = style.optionsOverlayEditReactionsMarginEnd
+            )
         }
     }
 
@@ -272,7 +277,12 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             }
 
             val params = (layoutParams as ViewGroup.MarginLayoutParams)
-            params.updateMargins(top = style.optionsOverlayUserReactionsMargin)
+            params.updateMarginsRelative(
+                top = style.optionsOverlayUserReactionsMarginTop,
+                bottom = style.optionsOverlayUserReactionsMarginBottom,
+                start = style.optionsOverlayUserReactionsMarginStart,
+                end = style.optionsOverlayUserReactionsMarginEnd
+            )
         }
     }
 
@@ -300,7 +310,12 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             }
 
             val params = (layoutParams as ViewGroup.MarginLayoutParams)
-            params.updateMargins(top = style.optionsOverlayMessageOptionsMargin)
+            params.updateMarginsRelative(
+                top = style.optionsOverlayMessageOptionsMarginTop,
+                bottom = style.optionsOverlayMessageOptionsMarginBottom,
+                start = style.optionsOverlayMessageOptionsMarginStart,
+                end = style.optionsOverlayMessageOptionsMarginEnd
+            )
         }
     }
 

@@ -406,7 +406,7 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <!-- Options overly dialog -->
+        <!-- Options overlay dialog -->
         <attr name="streamUiOptionsOverlayDimColor" format="color" />
 
         <!-- Giphy view holder -->
@@ -512,10 +512,26 @@
         <attr name="streamUiDisableScrollWhenShowingDialog" format="boolean" />
 
         <!-- The margin between the selected message and the edit reactions bubble on the options overlay. -->
-        <attr name="streamUiOptionsOverlayEditReactionsMargin" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayEditReactionsMarginBottom" format="dimension|reference" />
+        <!-- The margin between the edit reactions bubble on the options overlay and the parent. -->
+        <attr name="streamUiOptionsOverlayEditReactionsMarginTop" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayEditReactionsMarginStart" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayEditReactionsMarginEnd" format="dimension|reference" />
+
         <!-- The margin between the selected message and the user reaction list on the options overlay. -->
-        <attr name="streamUiOptionsOverlayUserReactionsMargin" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayUserReactionsMarginTop" format="dimension|reference" />
+        <!-- The margin between the message option list and the user reaction list on the options overlay. -->
+        <attr name="streamUiOptionsOverlayUserReactionsMarginBottom" format="dimension|reference" />
+        <!-- The margin between the user reaction list on the options overlay and the parent. -->
+        <attr name="streamUiOptionsOverlayUserReactionsMarginStart" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayUserReactionsMarginEnd" format="dimension|reference" />
+
         <!-- The margin between the selected message and the message option list on the options overlay. -->
-        <attr name="streamUiOptionsOverlayMessageOptionsMargin" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayMessageOptionsMarginTop" format="dimension|reference" />
+        <!-- The margin between the message option list on the options overlay and the parent. -->
+        <attr name="streamUiOptionsOverlayMessageOptionsMarginBottom" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayMessageOptionsMarginStart" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayMessageOptionsMarginEnd" format="dimension|reference" />
+
     </declare-styleable>
 </resources>
