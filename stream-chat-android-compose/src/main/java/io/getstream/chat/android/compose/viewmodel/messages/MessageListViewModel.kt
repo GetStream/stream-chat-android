@@ -306,12 +306,12 @@ public class MessageListViewModel(
                                     reads = reads,
                                 ),
                                 isLoadingMore = false,
-                                endOfMessages = channelState.endOfOlderMessages.value,
-                                startOfMessages = endOfNewerMessages,
+                                oldestMessageLoaded = channelState.endOfOlderMessages.value,
+                                newestMessageLoaded = endOfNewerMessages,
                                 currentUser = user,
                                 isLoadingMoreNewMessages = false,
                                 isLoadingMoreOldMessages = false,
-                                unreadCount = unreadCount ?: messagesState.unreadCount
+                                unreadCount = unreadCount
                             )
                         }
                     }
@@ -545,7 +545,7 @@ public class MessageListViewModel(
      * @param messageId The id of the newest [Message] inside the messages list.
      */
     public fun loadNewerMessages(messageId: String) {
-        if (chatClient.clientState.isOffline || messagesState.startOfMessages) return
+        if (chatClient.clientState.isOffline || messagesState.newestMessageLoaded) return
 
         if (messageMode is MessageMode.Normal) {
             messagesState = messagesState.copy(isLoadingMore = true, isLoadingMoreNewMessages = true)
@@ -558,7 +558,7 @@ public class MessageListViewModel(
      * of a thread.
      */
     public fun loadOlderMessages() {
-        if (chatClient.clientState.isOffline || messagesState.endOfMessages) return
+        if (chatClient.clientState.isOffline || messagesState.oldestMessageLoaded) return
         val messageMode = messageMode
 
         if (messageMode is MessageMode.MessageThread) {
@@ -770,11 +770,12 @@ public class MessageListViewModel(
                         reads = reads,
                     ),
                     isLoadingMore = false,
-                    endOfMessages = endOfOlderMessages,
+                    oldestMessageLoaded = endOfOlderMessages,
                     currentUser = user,
                     parentMessageId = threadId,
                     isLoadingMoreOldMessages = false,
-                    isLoadingMoreNewMessages = false
+                    isLoadingMoreNewMessages = false,
+                    newestMessageLoaded = true
                 )
             }.collect { newState ->
                 val newLastMessage =
@@ -1135,7 +1136,7 @@ public class MessageListViewModel(
      * or "New Message" actions in the list or simply scrolls to the bottom.
      */
     public fun clearNewMessageState() {
-        if (!messagesState.startOfMessages) return
+        if (!messagesState.newestMessageLoaded) return
         threadMessagesState = threadMessagesState.copy(newMessageState = null, unreadCount = 0)
 
         messagesState = messagesState.copy(newMessageState = null, unreadCount = 0)
@@ -1256,7 +1257,7 @@ public class MessageListViewModel(
      * loaded from the API.
      */
     public fun scrollToBottom(messageLimit: Int = DefaultMessageLimit, scrollToBottom: () -> Unit) {
-        if (isInThread || currentMessagesState.startOfMessages) {
+        if (isInThread || currentMessagesState.newestMessageLoaded) {
             scrollToBottom()
         } else {
             chatClient.loadNewestMessages(channelId, messageLimit).enqueue {

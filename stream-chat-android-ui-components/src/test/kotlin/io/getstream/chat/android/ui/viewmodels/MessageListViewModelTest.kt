@@ -93,7 +93,8 @@ internal class MessageListViewModelTest {
                 ) + messageItems,
                 hasNewMessages = false,
                 isTyping = false,
-                isThread = false
+                isThread = false,
+                areNewestMessagesLoaded = true
             )
         )
 
@@ -284,7 +285,7 @@ internal class MessageListViewModelTest {
                 whenever(it.endOfOlderMessages) doReturn MutableStateFlow(false)
                 whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)
                 whenever(it.toChannel()) doReturn Channel(type = CHANNEL_TYPE, id = CHANNEL_ID)
-                whenever(it.endOfNewerMessages) doReturn MutableStateFlow(false)
+                whenever(it.endOfNewerMessages) doReturn MutableStateFlow(true)
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
             whenever(stateRegistry.scope) doReturn testCoroutines.scope

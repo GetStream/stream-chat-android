@@ -194,7 +194,7 @@ internal class ChannelStateLogic(
         if (mutableState.visibleMessages.value.containsKey(message.id) || !mutableState.insideSearch.value) {
             upsertMessages(listOf(message))
         } else {
-            mutableState.updateCachedMessages(parseCachedMessages(listOf(message)))
+            mutableState.updateCachedLatestMessages(parseCachedMessages(listOf(message)))
         }
     }
 
@@ -380,11 +380,11 @@ internal class ChannelStateLogic(
     }
 
     private fun upsertCachedMessages(messages: List<Message>) {
-        mutableState.updateCachedMessages(parseCachedMessages(messages))
+        mutableState.updateCachedLatestMessages(parseCachedMessages(messages))
     }
 
     private fun parseCachedMessages(messages: List<Message>): Map<String, Message> {
-        val currentMessages = mutableState.cachedMessages.value
+        val currentMessages = mutableState.cachedLatestMessages.value
         return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
             .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
             .associateBy(Message::id)

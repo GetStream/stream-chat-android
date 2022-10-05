@@ -93,7 +93,7 @@ private object MessageListHandlingActionsSnippet {
                         onThreadClick = { message -> },
                         onLongItemClick = { message -> },
                         onReactionsClick = { message -> },
-                        onMessagesStartReached = { },
+                        onMessagesPageStartReached = { },
                         onLastVisibleMessageChanged = { message -> },
                         onScrollToBottom = { },
                         onGiphyActionClick = { giphyAction -> },

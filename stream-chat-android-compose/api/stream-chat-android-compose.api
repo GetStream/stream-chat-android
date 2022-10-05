@@ -271,12 +271,12 @@ public final class io/getstream/chat/android/compose/state/messages/MessagesStat
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/MessagesState;ZZZLjava/util/List;Lio/getstream/chat/android/compose/state/messages/SelectedMessageState;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/compose/state/messages/NewMessageState;Ljava/lang/String;IZZZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/MessagesState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
-	public final fun getEndOfMessages ()Z
 	public final fun getMessageItems ()Ljava/util/List;
 	public final fun getNewMessageState ()Lio/getstream/chat/android/compose/state/messages/NewMessageState;
+	public final fun getNewestMessageLoaded ()Z
+	public final fun getOldestMessageLoaded ()Z
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getSelectedMessageState ()Lio/getstream/chat/android/compose/state/messages/SelectedMessageState;
-	public final fun getStartOfMessages ()Z
 	public final fun getUnreadCount ()I
 	public fun hashCode ()I
 	public final fun isLoading ()Z
