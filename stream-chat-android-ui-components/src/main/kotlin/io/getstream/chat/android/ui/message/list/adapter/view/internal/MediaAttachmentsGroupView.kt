@@ -70,6 +70,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         defStyleRes
     )
 
+    @Suppress("MagicNumber")
     fun showAttachments(attachments: List<Attachment>) {
         val media =
             attachments.filter { attachment ->
