@@ -71,6 +71,8 @@ internal class FileAttachmentsViewHolder(
         binding.fileAttachmentsView.setPadding(4.dpToPx())
     }
 
+    override fun messageContainerView(): View = binding.messageContainer
+
     /**
      * Binds the data to the view.
      */

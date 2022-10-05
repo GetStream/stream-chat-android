@@ -38,6 +38,10 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
 
     private var highlightAnimation: ValueAnimator? = null
 
+    public open fun messageContainerView(): View? {
+        return null
+    }
+
     /**
      * Workaround to allow a downcast of the MessageListItem to T.
      */
