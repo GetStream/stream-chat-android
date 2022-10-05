@@ -30,16 +30,16 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 /**
- * Style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.ImageAttachmentView].
+ * Style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView].
  * Use this class together with [TransformStyle.imageAttachmentStyleTransformer] to change styles programmatically.
  *
  * @param progressIcon Animated progress drawable. Default value is [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
- * @param placeholderIcon Displayed while the image is Loading.
+ * @param placeholderIcon Displayed while the media preview is Loading.
  * @param imageBackgroundColor Image background. Default value is [R.color.stream_ui_grey].
  * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
  * @param moreCountTextStyle Appearance for "more count" text.
  */
-public data class ImageAttachmentViewStyle(
+public data class MediaAttachmentViewStyle(
     public val progressIcon: Drawable,
     public val placeholderIcon: Drawable,
     @ColorInt val imageBackgroundColor: Int,
@@ -48,9 +48,9 @@ public data class ImageAttachmentViewStyle(
 ) {
     internal companion object {
         /**
-         * Fetches styled attributes and returns them wrapped inside of [ImageAttachmentViewStyle].
+         * Fetches styled attributes and returns them wrapped inside of [MediaAttachmentViewStyle].
          */
-        operator fun invoke(context: Context, attrs: AttributeSet?): ImageAttachmentViewStyle {
+        operator fun invoke(context: Context, attrs: AttributeSet?): MediaAttachmentViewStyle {
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.ImageAttachmentView,
@@ -93,7 +93,7 @@ public data class ImageAttachmentViewStyle(
                     a.getDrawable(R.styleable.ImageAttachmentView_streamUiImageAttachmentPlaceHolderIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
-                return ImageAttachmentViewStyle(
+                return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
                     imageBackgroundColor = imageBackgroundColor,
                     moreCountOverlayColor = moreCountOverlayColor,

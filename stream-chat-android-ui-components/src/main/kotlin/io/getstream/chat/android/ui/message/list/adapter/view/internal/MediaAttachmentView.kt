@@ -22,42 +22,44 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
-import io.getstream.chat.android.ui.databinding.StreamUiImageAttachmentViewBinding
-import io.getstream.chat.android.ui.message.list.adapter.view.ImageAttachmentViewStyle
+import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
+import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
 
 /**
- * View used to display image attachments.
+ * View used to display image and video attachments.
  *
  * Giphy images are handled by a separate View.
  * @see GiphyMediaAttachmentView
  */
-internal class ImageAttachmentView : ConstraintLayout {
+internal class MediaAttachmentView : ConstraintLayout {
     /**
-     * Handles image attachment clicks.
+     * Handles clicks on media attachment previews.
      */
     var attachmentClickListener: AttachmentClickListener? = null
 
     /**
-     * Handles image attachment long clicks.
+     * Handles media attachment long clicks.
      */
     var attachmentLongClickListener: AttachmentLongClickListener? = null
 
     /**
-     * Binding for [R.layout.stream_ui_image_attachment_view].
+     * Binding for [R.layout.stream_ui_media_attachment_view].
      */
-    internal val binding: StreamUiImageAttachmentViewBinding =
-        StreamUiImageAttachmentViewBinding.inflate(streamThemeInflater).also {
+    internal val binding: StreamUiMediaAttachmentViewBinding =
+        StreamUiMediaAttachmentViewBinding.inflate(streamThemeInflater).also {
             it.root.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             val padding = 1.dpToPx()
             it.root.setPadding(padding, padding, padding, padding)
@@ -69,9 +71,9 @@ internal class ImageAttachmentView : ConstraintLayout {
         }
 
     /**
-     * Style applied to [ImageAttachmentView].
+     * Style applied to [MediaAttachmentView].
      */
-    private lateinit var style: ImageAttachmentViewStyle
+    private lateinit var style: MediaAttachmentViewStyle
 
     constructor(context: Context) : this(context, null, 0)
 
@@ -86,24 +88,31 @@ internal class ImageAttachmentView : ConstraintLayout {
     }
 
     private fun init(attrs: AttributeSet?) {
-        style = ImageAttachmentViewStyle(context, attrs)
+        style = MediaAttachmentViewStyle(context, attrs)
         binding.loadingProgressBar.indeterminateDrawable = style.progressIcon
         binding.moreCountLabel.setTextStyle(style.moreCountTextStyle)
     }
 
     /**
-     * Displays the images in a message. Displays a count saying how many more
-     * images the message contains in case they don't all fit in the preview.
+     * Displays the media previews in a message. Displays a count saying how many more
+     * media attachments the message contains in case they don't all fit in the preview.
      */
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
-        val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: attachment.upload ?: return
+        val url =
+            if (attachment.type == ModelType.attach_image ||
+                (attachment.type == ModelType.attach_video && ChatUI.videoThumbnailsEnabled)
+            ) {
+                attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: attachment.upload ?: return
+            } else {
+                null
+            }
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
                 showMoreCount(andMoreCount)
             }
         }
 
-        showImage(url) {
+        showMediaPreview(url) {
             showMore()
         }
 
@@ -122,11 +131,11 @@ internal class ImageAttachmentView : ConstraintLayout {
     }
 
     /**
-     * Loads the images.
+     * Loads the media preview.
      */
-    private fun showImage(imageUrl: Any, onCompleteCallback: () -> Unit) {
+    private fun showMediaPreview(mediaUrl: Any?, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
-            data = imageUrl,
+            data = mediaUrl,
             placeholderDrawable = style.placeholderIcon,
             onStart = { showLoading(true) },
             onComplete = {
@@ -137,7 +146,7 @@ internal class ImageAttachmentView : ConstraintLayout {
     }
 
     /**
-     * Displays how many more images the message contains that are not
+     * Displays how many more media attachments the message contains that are not
      * able to fit inside the preview.
      */
     private fun showMoreCount(andMoreCount: Int) {
@@ -147,9 +156,9 @@ internal class ImageAttachmentView : ConstraintLayout {
     }
 
     /**
-     * Creates and sets the shape of the image/s container.
+     * Creates and sets the shape of the media preview containers.
      */
-    fun setImageShapeByCorners(
+    fun setMediaPreviewShapeByCorners(
         topLeft: Float,
         topRight: Float,
         bottomRight: Float,
@@ -161,15 +170,15 @@ internal class ImageAttachmentView : ConstraintLayout {
             .setBottomRightCornerSize(bottomRight)
             .setBottomLeftCornerSize(bottomLeft)
             .build()
-            .let(this::setImageShape)
+            .let(this::setMediaPreviewShape)
     }
 
     /**
-     * Applies the shape to the image/s container. Also sets the container
+     * Applies the shape to the media preview containers. Also sets the container
      * background color and the overlay color for the label that displays
-     * how many more images there are in a message.
+     * how many more media attachments there are in a message.
      */
-    private fun setImageShape(shapeAppearanceModel: ShapeAppearanceModel) {
+    private fun setMediaPreviewShape(shapeAppearanceModel: ShapeAppearanceModel) {
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(style.imageBackgroundColor)
@@ -181,7 +190,7 @@ internal class ImageAttachmentView : ConstraintLayout {
 
     companion object {
         /**
-         * When all images in a message are able to fit in the preview.
+         * When all media attachments in a message are able to fit in the preview.
          */
         private const val NO_MORE_COUNT = 0
     }

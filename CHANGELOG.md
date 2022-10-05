@@ -71,6 +71,7 @@
 
 ### ⚠️ Changed
 - The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been deprecated in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
+- `ImageAttachmentViewStyle` has been replaced by `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 
 ### ❌ Removed
 - Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)

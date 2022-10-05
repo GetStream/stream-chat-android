@@ -35,6 +35,7 @@ import com.google.android.material.shape.CornerSize
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
@@ -45,10 +46,10 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceModelFactory
 import io.getstream.chat.android.uiutils.extension.hasLink
 
-internal class ImageAttachmentsGroupView : ConstraintLayout {
+internal class MediaAttachmentsGroupView : ConstraintLayout {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
-    private val maxImageAttachmentHeight: Int by lazy {
+    private val maxMediaAttachmentHeight: Int by lazy {
         (displayMetrics().heightPixels * MAX_HEIGHT_PERCENTAGE).toInt()
     }
 
@@ -70,59 +71,67 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
     )
 
     fun showAttachments(attachments: List<Attachment>) {
-        val images =
-            attachments.filter { attachment -> !attachment.hasLink() && attachment.type == ModelType.attach_image }
-        when (images.size) {
+        val media =
+            attachments.filter { attachment ->
+                !attachment.hasLink() && (
+                    attachment.type == ModelType.attach_image ||
+                        attachment.type == ModelType.attach_video
+                    )
+            }
+        when (media.size) {
             0 -> Unit
-            1 -> showOne(images.first())
-            2 -> showTwo(images.first(), images[1])
-            3 -> showThree(images.first(), images[1], images[2])
+            1 -> showOne(media.first())
+            2 -> showTwo(media.first(), media[1])
+            3 -> showThree(media.first(), media[1], media[2])
             else -> showFour(
-                images.first(),
-                images[1],
-                images[2],
-                images[3],
-                images.size - MAX_PREVIEW_COUNT
+                media.first(),
+                media[1],
+                media[2],
+                media[3],
+                media.size - MAX_PREVIEW_COUNT
             )
         }
-        (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToImages)
+        (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToMediaPreviews)
     }
 
     private fun showOne(first: Attachment) {
         removeAllViews()
-        val imageAttachmentView = createImageAttachmentView()
-        addView(imageAttachmentView)
-        state = State.OneView(imageAttachmentView)
+        val mediaAttachmentView = createMediaAttachmentView()
+        addView(mediaAttachmentView)
+        state = State.OneView(mediaAttachmentView)
         ConstraintSet().apply {
-            constrainMaxHeight(imageAttachmentView.id, maxImageAttachmentHeight)
-            constrainWidth(imageAttachmentView.id, ViewGroup.LayoutParams.MATCH_PARENT)
-            constrainViewToParentBySide(imageAttachmentView, ConstraintSet.LEFT)
-            constrainViewToParentBySide(imageAttachmentView, ConstraintSet.RIGHT)
-            constrainViewToParentBySide(imageAttachmentView, ConstraintSet.TOP)
-            constrainViewToParentBySide(imageAttachmentView, ConstraintSet.BOTTOM)
+            constrainMaxHeight(mediaAttachmentView.id, maxMediaAttachmentHeight)
+            constrainWidth(mediaAttachmentView.id, ViewGroup.LayoutParams.MATCH_PARENT)
+            constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.LEFT)
+            constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.RIGHT)
+            constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.TOP)
+            constrainViewToParentBySide(mediaAttachmentView, ConstraintSet.BOTTOM)
 
-            val imageWidth = first.originalWidth?.toFloat()
-            val imageHeight = first.originalHeight?.toFloat()
+            val mediaWidth = first.originalWidth?.toFloat()
+            val mediaHeight = first.originalHeight?.toFloat()
 
-            // Used to set a dimension ratio before we load an image
+            // Used to set a dimension ratio before we load the media
             // so that message positions don't jump after we load it.
-            if (imageWidth != null && imageHeight != null) {
-                val ratio = (imageWidth / imageHeight).toString()
-                this.setDimensionRatio(imageAttachmentView.id, ratio)
-            } else {
-                constrainHeight(imageAttachmentView.id, LayoutParams.WRAP_CONTENT)
+            when {
+                mediaWidth != null && mediaHeight != null -> {
+                    val ratio = (mediaWidth / mediaHeight).toString()
+                    this.setDimensionRatio(mediaAttachmentView.id, ratio)
+                }
+                first.type == ModelType.attach_video && !ChatUI.videoThumbnailsEnabled ->
+                    this.setDimensionRatio(mediaAttachmentView.id, "1")
+                else -> constrainHeight(mediaAttachmentView.id, LayoutParams.WRAP_CONTENT)
             }
 
-            applyTo(this@ImageAttachmentsGroupView)
+            applyTo(this@MediaAttachmentsGroupView)
         }
 
-        imageAttachmentView.showAttachment(first)
+        mediaAttachmentView.showAttachment(first)
     }
 
     private fun showTwo(first: Attachment, second: Attachment) {
         removeAllViews()
-        val viewOne = createImageAttachmentView().also { addView(it) }
-        val viewTwo = createImageAttachmentView().also { addView(it) }
+        val viewOne = createMediaAttachmentView().also { addView(it) }
+        val viewTwo = createMediaAttachmentView().also { addView(it) }
         state = State.TwoViews(viewOne, viewTwo)
         ConstraintSet().apply {
             setupMinHeight(viewOne, false)
@@ -132,7 +141,7 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
             constrainViewToParentBySide(viewOne, ConstraintSet.BOTTOM)
             constrainViewToParentBySide(viewTwo, ConstraintSet.BOTTOM)
             horizontalChainInParent(viewOne, viewTwo)
-            applyTo(this@ImageAttachmentsGroupView)
+            applyTo(this@MediaAttachmentsGroupView)
         }
         viewOne.showAttachment(first)
         viewTwo.showAttachment(second)
@@ -140,9 +149,9 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
 
     private fun showThree(first: Attachment, second: Attachment, third: Attachment) {
         removeAllViews()
-        val viewOne = createImageAttachmentView().also { addView(it) }
-        val viewTwo = createImageAttachmentView().also { addView(it) }
-        val viewThree = createImageAttachmentView().also { addView(it) }
+        val viewOne = createMediaAttachmentView().also { addView(it) }
+        val viewTwo = createMediaAttachmentView().also { addView(it) }
+        val viewThree = createMediaAttachmentView().also { addView(it) }
         state = State.ThreeViews(viewOne, viewTwo, viewThree)
         ConstraintSet().apply {
             setupMinHeight(viewTwo, true)
@@ -152,7 +161,7 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
             verticalChainInParent(viewTwo, viewThree)
             connect(viewOne.id, ConstraintSet.TOP, viewTwo.id, ConstraintSet.TOP)
             connect(viewOne.id, ConstraintSet.BOTTOM, viewThree.id, ConstraintSet.BOTTOM)
-            applyTo(this@ImageAttachmentsGroupView)
+            applyTo(this@MediaAttachmentsGroupView)
         }
         viewOne.showAttachment(first)
         viewTwo.showAttachment(second)
@@ -167,10 +176,10 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
         andMoreCount: Int = 0,
     ) {
         removeAllViews()
-        val viewOne = createImageAttachmentView().also { addView(it) }
-        val viewTwo = createImageAttachmentView().also { addView(it) }
-        val viewThree = createImageAttachmentView().also { addView(it) }
-        val viewFour = createImageAttachmentView().also { addView(it) }
+        val viewOne = createMediaAttachmentView().also { addView(it) }
+        val viewTwo = createMediaAttachmentView().also { addView(it) }
+        val viewThree = createMediaAttachmentView().also { addView(it) }
+        val viewFour = createMediaAttachmentView().also { addView(it) }
         state = State.FourViews(viewOne, viewTwo, viewThree, viewFour)
         ConstraintSet().apply {
             setupMinHeight(viewOne, true)
@@ -181,7 +190,7 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
             horizontalChainInParent(viewThree, viewFour)
             verticalChainInParent(viewOne, viewThree)
             verticalChainInParent(viewTwo, viewFour)
-            applyTo(this@ImageAttachmentsGroupView)
+            applyTo(this@MediaAttachmentsGroupView)
         }
         viewOne.showAttachment(first)
         viewTwo.showAttachment(second)
@@ -192,36 +201,36 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
     override fun setBackground(background: Drawable) {
         super.setBackground(background)
         if (background is MaterialShapeDrawable) {
-            applyToImages(background.shapeAppearanceModel)
+            applyToMediaPreviews(background.shapeAppearanceModel)
         }
     }
 
-    private fun applyToImages(shapeAppearanceModel: ShapeAppearanceModel) {
+    private fun applyToMediaPreviews(shapeAppearanceModel: ShapeAppearanceModel) {
         val topLeftCorner = shapeAppearanceModel.getCornerSize(ShapeAppearanceModel::getTopLeftCornerSize)
         val topRightCorner = shapeAppearanceModel.getCornerSize(ShapeAppearanceModel::getTopRightCornerSize)
         val bottomRightCorner = shapeAppearanceModel.getCornerSize(ShapeAppearanceModel::getBottomRightCornerSize)
         val bottomLeftCorner = shapeAppearanceModel.getCornerSize(ShapeAppearanceModel::getBottomLeftCornerSize)
         when (val stateCopy = state) {
-            is State.OneView -> stateCopy.view.setImageShapeByCorners(
+            is State.OneView -> stateCopy.view.setMediaPreviewShapeByCorners(
                 topLeftCorner,
                 topRightCorner,
                 bottomRightCorner,
                 bottomLeftCorner
             )
             is State.TwoViews -> {
-                stateCopy.viewOne.setImageShapeByCorners(topLeftCorner, 0f, 0f, bottomLeftCorner)
-                stateCopy.viewTwo.setImageShapeByCorners(0f, topRightCorner, bottomRightCorner, 0f)
+                stateCopy.viewOne.setMediaPreviewShapeByCorners(topLeftCorner, 0f, 0f, bottomLeftCorner)
+                stateCopy.viewTwo.setMediaPreviewShapeByCorners(0f, topRightCorner, bottomRightCorner, 0f)
             }
             is State.ThreeViews -> {
-                stateCopy.viewOne.setImageShapeByCorners(topLeftCorner, 0f, 0f, bottomLeftCorner)
-                stateCopy.viewTwo.setImageShapeByCorners(0f, topRightCorner, 0f, 0f)
-                stateCopy.viewThree.setImageShapeByCorners(0f, 0f, bottomRightCorner, 0f)
+                stateCopy.viewOne.setMediaPreviewShapeByCorners(topLeftCorner, 0f, 0f, bottomLeftCorner)
+                stateCopy.viewTwo.setMediaPreviewShapeByCorners(0f, topRightCorner, 0f, 0f)
+                stateCopy.viewThree.setMediaPreviewShapeByCorners(0f, 0f, bottomRightCorner, 0f)
             }
             is State.FourViews -> {
-                stateCopy.viewOne.setImageShapeByCorners(topLeftCorner, 0f, 0f, 0f)
-                stateCopy.viewTwo.setImageShapeByCorners(0f, topRightCorner, 0f, 0f)
-                stateCopy.viewThree.setImageShapeByCorners(0f, 0f, 0f, bottomLeftCorner)
-                stateCopy.viewFour.setImageShapeByCorners(0f, 0f, bottomRightCorner, 0f)
+                stateCopy.viewOne.setMediaPreviewShapeByCorners(topLeftCorner, 0f, 0f, 0f)
+                stateCopy.viewTwo.setMediaPreviewShapeByCorners(0f, topRightCorner, 0f, 0f)
+                stateCopy.viewThree.setMediaPreviewShapeByCorners(0f, 0f, 0f, bottomLeftCorner)
+                stateCopy.viewFour.setMediaPreviewShapeByCorners(0f, 0f, bottomRightCorner, 0f)
             }
             else -> Unit
         }
@@ -232,8 +241,8 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
             .getOrDefault(0f)
     }
 
-    private fun createImageAttachmentView(): ImageAttachmentView {
-        return ImageAttachmentView(context).also {
+    private fun createMediaAttachmentView(): MediaAttachmentView {
+        return MediaAttachmentView(context).also {
             it.id = generateViewId()
             it.attachmentClickListener = attachmentClickListener
             it.attachmentLongClickListener = attachmentLongClickListener
@@ -259,19 +268,19 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
 
     private sealed class State {
         object Empty : State()
-        data class OneView(val view: ImageAttachmentView) : State()
-        data class TwoViews(val viewOne: ImageAttachmentView, val viewTwo: ImageAttachmentView) : State()
+        data class OneView(val view: MediaAttachmentView) : State()
+        data class TwoViews(val viewOne: MediaAttachmentView, val viewTwo: MediaAttachmentView) : State()
         data class ThreeViews(
-            val viewOne: ImageAttachmentView,
-            val viewTwo: ImageAttachmentView,
-            val viewThree: ImageAttachmentView,
+            val viewOne: MediaAttachmentView,
+            val viewTwo: MediaAttachmentView,
+            val viewThree: MediaAttachmentView,
         ) : State()
 
         data class FourViews(
-            val viewOne: ImageAttachmentView,
-            val viewTwo: ImageAttachmentView,
-            val viewThree: ImageAttachmentView,
-            val viewFour: ImageAttachmentView,
+            val viewOne: MediaAttachmentView,
+            val viewTwo: MediaAttachmentView,
+            val viewThree: MediaAttachmentView,
+            val viewFour: MediaAttachmentView,
         ) : State()
     }
 
