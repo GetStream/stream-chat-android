@@ -120,13 +120,16 @@ internal class MessageListScrollHelper(
      * @return Whether the scroll to bottom button should be visible or not.
      */
     private fun shouldScrollToBottomBeVisible(bottomOffset: Int): Boolean {
-        if (adapter.itemCount == 0) return false
-        if (!areNewestMessagesLoaded) return true
+        return when {
+            adapter.itemCount == 0 -> false
+            !areNewestMessagesLoaded -> true
+            else -> {
+                val hasInvisibleUnreadMessage = !isAtBottom
+                val hasScrolledUpEnough = bottomOffset > SCROLL_BUTTON_VISIBILITY_THRESHOLD
 
-        val hasInvisibleUnreadMessage = !isAtBottom
-        val hasScrolledUpEnough = bottomOffset > SCROLL_BUTTON_VISIBILITY_THRESHOLD
-
-        return hasInvisibleUnreadMessage || hasScrolledUpEnough
+                hasInvisibleUnreadMessage || hasScrolledUpEnough
+            }
+        }
     }
 
     /**
