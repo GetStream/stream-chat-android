@@ -305,16 +305,17 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         val reactionsWidth = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_total_width)
         val reactionsOffset = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_horizontal_offset)
 
-        viewHolder.messageContainerView()?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
-            with(binding) {
-                val maxTranslation = messageContainer.width / 2 - reactionsWidth / 2
-                editReactionsView.translationX = if (messageItem.isMine) {
-                    left - messageContainer.width / 2 - reactionsOffset
-                } else {
-                    right - messageContainer.width / 2 + reactionsOffset
-                }.coerceIn(-maxTranslation, maxTranslation).toFloat()
+        viewHolder.messageContainerView()
+            ?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
+                with(binding) {
+                    val maxTranslation = messageContainer.width / 2 - reactionsWidth / 2
+                    editReactionsView.translationX = if (messageItem.isMine) {
+                        left - messageContainer.width / 2 - reactionsOffset
+                    } else {
+                        right - messageContainer.width / 2 + reactionsOffset
+                    }.coerceIn(-maxTranslation, maxTranslation).toFloat()
+                }
             }
-        }
     }
 
     /**
