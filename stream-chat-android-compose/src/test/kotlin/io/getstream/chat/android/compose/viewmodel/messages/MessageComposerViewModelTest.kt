@@ -371,6 +371,7 @@ internal class MessageComposerViewModelTest {
         ) = apply {
             val channelState: ChannelState = mock {
                 whenever(it.channelData) doReturn MutableStateFlow(channelData)
+                whenever(it.lastSentMessageDate) doReturn MutableStateFlow(null)
                 whenever(it.channelConfig) doReturn MutableStateFlow(config)
                 whenever(it.members) doReturn MutableStateFlow(members)
             }
