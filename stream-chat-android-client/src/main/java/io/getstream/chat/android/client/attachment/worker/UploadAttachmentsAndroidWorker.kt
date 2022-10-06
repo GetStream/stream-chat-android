@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import java.util.UUID
 
-public class UploadAttachmentsAndroidWorker(
+internal class UploadAttachmentsAndroidWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
@@ -54,12 +54,12 @@ public class UploadAttachmentsAndroidWorker(
         }
     }
 
-    public companion object {
+    companion object {
         private const val DATA_MESSAGE_ID = "message_id"
         private const val DATA_CHANNEL_TYPE = "channel_type"
         private const val DATA_CHANNEL_ID = "channel_id"
 
-        public fun start(
+        fun start(
             context: Context,
             channelType: String,
             channelId: String,
@@ -91,7 +91,7 @@ public class UploadAttachmentsAndroidWorker(
          * @param context Context of the application.
          * @param workId UUID of the enqueued work.
          */
-        public fun stop(context: Context, workId: UUID) {
+        fun stop(context: Context, workId: UUID) {
             WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }
