@@ -1511,46 +1511,7 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for sending a message.
      */
-    @CheckResult
-    @JvmOverloads
     public fun sendMessage(
-        channelType: String,
-        channelId: String,
-        message: Message,
-        isRetrying: Boolean = false,
-    ): Call<Message> {
-
-        // return CoroutineCall(userScope) {
-        //     // Message is first prepared i.e. all its attachments are uploaded and message is updated with
-        //     // these attachments.
-        //     plugins
-        //         .flatMap { it.interceptors }
-        //         .fold(Result.success(message)) { message, interceptor ->
-        //             if (message.isSuccess) {
-        //                 interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
-        //             } else message
-        //         }.flatMapSuspend { newMessage ->
-        //             api.sendMessage(channelType, channelId, newMessage)
-        //                 .retry(userScope, retryPolicy)
-        //                 .doOnResult(userScope) { result ->
-        //                     logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
-        //                     plugins.forEach { listener ->
-        //                         logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-        //                         listener.onMessageSendResult(
-        //                             result,
-        //                             channelType,
-        //                             channelId,
-        //                             newMessage
-        //                         )
-        //                     }
-        //                 }.await()
-        //         }
-        // }
-
-        return sendMessage2(channelType, channelId, message, isRetrying)
-    }
-
-    public fun sendMessage2(
         channelType: String,
         channelId: String,
         message: Message,
