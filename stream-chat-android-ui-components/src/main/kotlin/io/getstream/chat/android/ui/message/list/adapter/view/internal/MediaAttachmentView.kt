@@ -91,6 +91,29 @@ internal class MediaAttachmentView : ConstraintLayout {
         style = MediaAttachmentViewStyle(context, attrs)
         binding.loadingProgressBar.indeterminateDrawable = style.progressIcon
         binding.moreCountLabel.setTextStyle(style.moreCountTextStyle)
+        setupPlayIcon()
+    }
+
+    /**
+     * Sets up the play icon overlaid above video attachment previews
+     * by pulling relevant values from [MediaAttachmentViewStyle].
+     **/
+    private fun setupPlayIcon() {
+        with(binding.playIconCardView) {
+            elevation = style.playVideoIconElevation
+            setCardBackgroundColor(style.playVideoIconBackgroundColor)
+            radius = style.playVideoIconCornerRadius
+        }
+
+        with(binding.playIconImageView) {
+            setImageDrawable(style.playVideoIcon)
+            setPaddingRelative(
+                style.playVideoIconPaddingStart,
+                style.playVideoIconPaddingTop,
+                style.playVideoIconPaddingEnd,
+                style.playVideoIconPaddingBottom
+            )
+        }
     }
 
     /**
@@ -112,8 +135,16 @@ internal class MediaAttachmentView : ConstraintLayout {
             }
         }
 
-        showMediaPreview(url) {
+        showMediaPreview(
+            mediaUrl = url,
+            showImagePlaceholder = attachment.type == ModelType.attach_image
+        ) {
             showMore()
+            if (attachment.type == ModelType.attach_video) {
+                binding.playIconImageView.visibility = VISIBLE
+            } else {
+                binding.playIconImageView.visibility = GONE
+            }
         }
 
         setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
@@ -133,10 +164,22 @@ internal class MediaAttachmentView : ConstraintLayout {
     /**
      * Loads the media preview.
      */
-    private fun showMediaPreview(mediaUrl: Any?, onCompleteCallback: () -> Unit) {
+    private fun showMediaPreview(
+        mediaUrl: Any?,
+        showImagePlaceholder: Boolean,
+        onCompleteCallback: () -> Unit,
+    ) {
+        val placeholder = if (showImagePlaceholder) {
+            style.placeholderIcon.mutate().apply {
+                this.setTint(style.placeholderIconTint)
+            }
+        } else {
+            null
+        }
+
         binding.imageView.load(
             data = mediaUrl,
-            placeholderDrawable = style.placeholderIcon,
+            placeholderDrawable = placeholder,
             onStart = { showLoading(true) },
             onComplete = {
                 showLoading(false)
@@ -179,7 +222,12 @@ internal class MediaAttachmentView : ConstraintLayout {
      * how many more media attachments there are in a message.
      */
     private fun setMediaPreviewShape(shapeAppearanceModel: ShapeAppearanceModel) {
+        // TODO - add as a customizable point to the relevant style
+        binding.imageView.setContentPadding(1, 1, 1, 1)
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
+        binding.imageView.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            setTint(style.imageBackgroundColor)
+        }
         binding.loadImage.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(style.imageBackgroundColor)
         }

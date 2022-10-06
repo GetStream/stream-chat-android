@@ -36,16 +36,48 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param progressIcon Animated progress drawable. Default value is
  * [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
  * @param placeholderIcon Displayed while the media preview is Loading.
- * @param imageBackgroundColor Image background. Default value is [R.color.stream_ui_grey].
+ * @param placeholderIconTint The tint applied to the placeholder icon displayed before a media
+ * attachment preview was loaded or after loading had failed.
+ * Default value is [R.drawable.stream_ui_picture_placeholder].
+ * @param imageBackgroundColor Controls the background color of image attachment previews.
+ * Default value is [R.color.stream_ui_grey].
+ * @param videoBackgroundColor Controls the background color of video attachment previews.
+ * Default value is [R.color.stream_ui_grey].
  * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
  * @param moreCountTextStyle Appearance for "more count" text.
+ * @param playVideoIcon The icon overlaid above previews of video attachments.
+ * Default value is [R.drawable.stream_ui_ic_play]
+ * @param playVideoIconBackgroundColor Applies a background colour to the View hosting the play video icon.
+ * Default value is [R.color.stream_ui_literal_white]
+ * @param playVideoIconElevation Determines the elevation of the play video button.
+ * @param playVideoIconPaddingTop Determines the padding set between the top of the play video icon and its
+ * parent.
+ * @param playVideoIconPaddingBottom Determines the padding set between the bottom of the play video icon and its
+ * parent.
+ * @param playVideoIconPaddingStart Determines the padding set between the start of the play video icon and its
+ * parent.
+ * @param playVideoIconPaddingEnd Determines the padding set between the end of the play video icon and its
+ * parent.
+ * @param playVideoIconCornerRadius Determines the corner radius of the play video icon.
  */
 public data class MediaAttachmentViewStyle(
     public val progressIcon: Drawable,
     public val placeholderIcon: Drawable,
+    @ColorInt public val placeholderIconTint: Int,
     @ColorInt val imageBackgroundColor: Int,
+    // TODO - Might be difficult to implement due to the way we apply border radius
+    // TODO - Check and decide
+    @ColorInt val videoBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
+    public val playVideoIcon: Drawable?,
+    @ColorInt public val playVideoIconBackgroundColor: Int,
+    public val playVideoIconElevation: Float,
+    public val playVideoIconPaddingTop: Int,
+    public val playVideoIconPaddingBottom: Int,
+    public val playVideoIconPaddingStart: Int,
+    public val playVideoIconPaddingEnd: Int,
+    public val playVideoIconCornerRadius: Float
 ) {
     internal companion object {
         /**
@@ -54,52 +86,99 @@ public data class MediaAttachmentViewStyle(
         operator fun invoke(context: Context, attrs: AttributeSet?): MediaAttachmentViewStyle {
             context.obtainStyledAttributes(
                 attrs,
-                R.styleable.ImageAttachmentView,
+                R.styleable.MediaAttachmentView,
                 R.attr.streamUiMessageListImageAttachmentStyle,
-                R.style.StreamUi_MessageList_ImageAttachment
+                R.style.StreamUi_MessageList_MediaAttachment
             ).use { a ->
-                val progressIcon = a.getDrawable(R.styleable.ImageAttachmentView_streamUiImageAttachmentProgressIcon)
+                val progressIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentProgressIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
 
                 val imageBackgroundColor = a.getColor(
-                    R.styleable.ImageAttachmentView_streamUiImageAttachmentImageBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_grey)
+                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentImageBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_message_list_image_attachment_background)
+                )
+
+                val videoBackgroundColor = a.getColor(
+                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentVideoBackgroundColor,
+                    context.getColorCompat(R.color.stream_ui_message_list_video_attachment_background)
                 )
 
                 val moreCountOverlayColor = a.getColor(
-                    R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountOverlayColor,
+                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountOverlayColor,
                     context.getColorCompat(R.color.stream_ui_overlay)
                 )
 
                 val moreCountTextStyle = TextStyle.Builder(a)
                     .size(
-                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountTextSize,
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextSize,
                         context.getDimension(R.dimen.stream_ui_message_image_attachment_more_count_text_size)
                     )
                     .color(
-                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountTextColor,
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextColor,
                         context.getColorCompat(R.color.stream_ui_literal_white)
                     )
                     .font(
-                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountFontAssets,
-                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountTextFont
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountFontAssets,
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextFont
                     )
                     .style(
-                        R.styleable.ImageAttachmentView_streamUiImageAttachmentMoreCountTextStyle,
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextStyle,
                         Typeface.NORMAL
                     )
                     .build()
 
                 val placeholderIcon =
-                    a.getDrawable(R.styleable.ImageAttachmentView_streamUiImageAttachmentPlaceHolderIcon)
+                    a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
+
+                val placeholderIconColor = a.getColor(
+                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIconTint,
+                    context.getColorCompat(R.color.stream_ui_literal_transparent)
+                )
+
+                val playVideoIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_play)
+
+                val playVideoIconBackgroundColor =
+                    a.getColor(
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconBackgroundColor,
+                        context.getColorCompat(R.color.stream_ui_literal_white)
+                    )
+
+                val playVideoIconCornerRadius =
+                    a.getDimension(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconCornerRadius, 0f)
+
+                val playVideoIconElevation =
+                    a.getDimension(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconElevation, 0f)
+
+                val playVideoIconPaddingTop =
+                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingTop, 0)
+
+                val playVideoIconPaddingBottom =
+                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingBottom, 0)
+
+                val playVideoIconPaddingStart =
+                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingStart, 0)
+
+                val playVideoIconPaddingEnd =
+                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingEnd, 0)
 
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
                     imageBackgroundColor = imageBackgroundColor,
+                    videoBackgroundColor = videoBackgroundColor,
                     moreCountOverlayColor = moreCountOverlayColor,
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
+                    placeholderIconTint = placeholderIconColor,
+                    playVideoIcon = playVideoIcon,
+                    playVideoIconBackgroundColor = playVideoIconBackgroundColor,
+                    playVideoIconElevation = playVideoIconElevation,
+                    playVideoIconPaddingTop = playVideoIconPaddingTop,
+                    playVideoIconPaddingBottom = playVideoIconPaddingBottom,
+                    playVideoIconPaddingStart = playVideoIconPaddingStart,
+                    playVideoIconPaddingEnd = playVideoIconPaddingEnd,
+                    playVideoIconCornerRadius = playVideoIconCornerRadius
                 ).let(TransformStyle.imageAttachmentStyleTransformer::transform)
             }
         }
