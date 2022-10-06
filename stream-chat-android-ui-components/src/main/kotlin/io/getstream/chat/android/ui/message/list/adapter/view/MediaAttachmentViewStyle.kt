@@ -77,12 +77,13 @@ public data class MediaAttachmentViewStyle(
     public val playVideoIconPaddingBottom: Int,
     public val playVideoIconPaddingStart: Int,
     public val playVideoIconPaddingEnd: Int,
-    public val playVideoIconCornerRadius: Float
+    public val playVideoIconCornerRadius: Float,
 ) {
     internal companion object {
         /**
          * Fetches styled attributes and returns them wrapped inside of [MediaAttachmentViewStyle].
          */
+        @Suppress("LongMethod")
         operator fun invoke(context: Context, attrs: AttributeSet?): MediaAttachmentViewStyle {
             context.obtainStyledAttributes(
                 attrs,
@@ -146,22 +147,40 @@ public data class MediaAttachmentViewStyle(
                     )
 
                 val playVideoIconCornerRadius =
-                    a.getDimension(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconCornerRadius, 0f)
+                    a.getDimension(
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconCornerRadius,
+                        0f
+                    )
 
                 val playVideoIconElevation =
-                    a.getDimension(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconElevation, 0f)
+                    a.getDimension(
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconElevation,
+                        0f
+                    )
 
                 val playVideoIconPaddingTop =
-                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingTop, 0)
+                    a.getDimensionPixelSize(
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingTop,
+                        0
+                    )
 
                 val playVideoIconPaddingBottom =
-                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingBottom, 0)
+                    a.getDimensionPixelSize(
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingBottom,
+                        0
+                    )
 
                 val playVideoIconPaddingStart =
-                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingStart, 0)
+                    a.getDimensionPixelSize(
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingStart,
+                        0
+                    )
 
                 val playVideoIconPaddingEnd =
-                    a.getDimensionPixelSize(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingEnd, 0)
+                    a.getDimensionPixelSize(
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingEnd,
+                        0
+                    )
 
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
