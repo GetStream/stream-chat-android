@@ -20,8 +20,18 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 
+/**
+ * Updates the state of the SDK accordingly with request to send attachments to backend.
+ */
 internal class SendAttachmentListenerState(private val logic: LogicRegistry) : SendAttachmentListener {
 
+    /**
+     * Update the state of the SDK before the attachments are sent to the backend.
+     *
+     * @param channelType String
+     * @param channelId String
+     * @param message [Message]
+     */
     override suspend fun onAttachmentSendRequest(channelType: String, channelId: String, message: Message) {
         val channel = logic.channel(channelType, channelId)
 

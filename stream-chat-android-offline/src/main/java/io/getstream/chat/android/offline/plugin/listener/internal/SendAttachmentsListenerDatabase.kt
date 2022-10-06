@@ -21,11 +21,21 @@ import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 
+/**
+ * Updates the database of the SDK accordingly with request to send attachments to backend.
+ */
 internal class SendAttachmentsListenerDatabase(
     private val messageRepository: MessageRepository,
     private val channelRepository: ChannelRepository,
 ) : SendAttachmentListener {
 
+    /**
+     * Update the database of the SDK before the attachments are sent to the backend.
+     *
+     * @param channelType String
+     * @param channelId String
+     * @param message [Message]
+     */
     override suspend fun onAttachmentSendRequest(channelType: String, channelId: String, message: Message) {
         // we insert early to ensure we don't lose messages
         messageRepository.insertMessage(message)

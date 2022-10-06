@@ -18,8 +18,18 @@ package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.models.Message
 
+/**
+ * Listener fo update the SDK accordingly with request to send attachments to backend.
+ */
 public interface SendAttachmentListener {
 
+    /**
+     * Updates the SDK before the attachments are sent to backend.
+     *
+     * @param channelType String
+     * @param channelId String
+     * @param message [Message]
+     */
     public suspend fun onAttachmentSendRequest(
         channelType: String,
         channelId: String,
