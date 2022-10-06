@@ -92,7 +92,11 @@ public class EditReactionsView : RecyclerView {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val canvasBounds = 0..(right - left)
+        val canvasWidth = width
+        val bubbleDrawOffset = 12.dpToPx()
+        val boundsEnd = canvasWidth - bubbleDrawOffset
+
+        val canvasBounds = bubbleDrawOffset..boundsEnd
 
         bubbleDrawer.drawReactionsBubble(
             context = context,
@@ -136,8 +140,8 @@ public class EditReactionsView : RecyclerView {
         }.also { reactionsAdapter = it }
     }
 
-    internal fun positionBubbleTail(translationX: Float) {
-        this.messageAnchorPosition = translationX
+    internal fun positionBubbleTail(messageAnchorPosition: Float) {
+        this.messageAnchorPosition = messageAnchorPosition
 
         requestLayout()
     }

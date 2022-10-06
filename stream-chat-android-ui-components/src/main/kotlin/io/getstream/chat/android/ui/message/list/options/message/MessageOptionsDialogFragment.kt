@@ -49,12 +49,6 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListIte
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDecoratorProvider
@@ -324,23 +318,17 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
      * Positions the reactions bubble near the message bubble according to the design.
      */
     private fun anchorReactionsViewToMessageView() {
-        val reactionsOffset = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_horizontal_offset)
+        val context = requireContext()
+        val reactionsOffset =
+            context.getDimension(R.dimen.stream_ui_edit_reactions_horizontal_offset)
 
-        when (val viewHolder = viewHolder) {
-            is MessagePlainTextViewHolder -> viewHolder.binding.messageContainer
-            is CustomAttachmentsViewHolder -> viewHolder.binding.messageContainer
-            is LinkAttachmentsViewHolder -> viewHolder.binding.messageContainer
-            is FileAttachmentsViewHolder -> viewHolder.binding.messageContainer
-            is GiphyAttachmentViewHolder -> viewHolder.binding.messageContainer
-            is ImageAttachmentViewHolder -> viewHolder.binding.messageContainer
-            else -> null
-        }?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
+        viewHolder.messageContainerView()?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {
                 editReactionsView.positionBubbleTail(
                     if (messageItem.isMine) {
-                        left - reactionsOffset - editReactionsView.left
+                        left + reactionsOffset - editReactionsView.left
                     } else {
-                        right + reactionsOffset
+                        right + reactionsOffset - editReactionsView.left
                     }.toFloat()
                 )
             }

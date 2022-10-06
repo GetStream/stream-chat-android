@@ -74,11 +74,23 @@ internal class EditReactionsBubbleDrawer(
 
         val bubblePaint = if (isMyMessage) bubblePaintMine else bubblePaintTheirs
         val isRtl = context.isRtlLayout
-        val finalBubblePosition = if (messageAnchorPosition.toInt() in canvasBounds) messageAnchorPosition else canvas.width / 2f
+
+        /**
+         * In order to pick a good anchor position, we have to see if the drawing area is within the standardized
+         * bounds of the canvas. If it is, we just pick that position. If it's not and it falls out of the bounds, we
+         * draw the tail at the nearest extreme of bounds.
+         */
+        val anchorPosition = if (messageAnchorPosition.toInt() in canvasBounds) {
+            messageAnchorPosition
+        } else if (messageAnchorPosition > canvasBounds.last) {
+            canvasBounds.last
+        } else {
+            canvasBounds.first
+        }.toFloat()
 
         drawBubbleRoundRect(canvas, bubblePaint)
-        drawLargeTailBubble(canvas, bubblePaint, isRtl, finalBubblePosition)
-        drawSmallTailBubble(canvas, bubblePaint, isRtl, finalBubblePosition)
+        drawLargeTailBubble(canvas, bubblePaint, isRtl, anchorPosition)
+        drawSmallTailBubble(canvas, bubblePaint, isRtl, anchorPosition)
     }
 
     /**

@@ -6,6 +6,7 @@
 
 ### 🐞 Fixed
 - Fixed displaying messages with failed image attachments. [#4234](https://github.com/GetStream/stream-chat-android/pull/4234)
+- Fixed anchoring of Reactions bubble and its tail for messages with margins and/or custom holders. [#4242](https://github.com/GetStream/stream-chat-android/pull/4242)
 
 ### ⚠️ Changed
 - Changed the way `MessageOptionsDialogFragment` margins are exposed for specific Views. Instead of just one vertical margin, we now expose all four directions for each major piece of the dialog. [#4240](https://github.com/GetStream/stream-chat-android/pull/4240)
