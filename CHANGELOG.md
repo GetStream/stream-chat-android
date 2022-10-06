@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Separated `state` and `offline` modules. (#4214)[https://github.com/GetStream/stream-chat-android/pull/4214]
 
 ### ❌ Removed
 
@@ -45,9 +46,11 @@
 
 ### ⚠️ Changed
 - Separated `QueryChannelListenerState` into state and databased focused classes. [#4188](https://github.com/GetStream/stream-chat-android/pull/4188)
+- Separated `ThreadQueryListener` into state and databased focused classes. [#4208](https://github.com/GetStream/stream-chat-android/pull/4208)
 - Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
 
 ### ❌ Removed
+- Removed `EventHandlerImpl` from the codebase. [#4207](https://github.com/GetStream/stream-chat-android/pull/4207)
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -66,6 +69,7 @@
 - Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
 
 ### ⬆️ Improved
+- Improved asking for `WRITE_EXTERNAL_STORAGE` permission. The permission won't be requested starting from Android Q unless legacy external storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
 
 ### ✅ Added
 - Added `UserAvatarView` and `ChannelAvatarView` to replace `AvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
@@ -84,6 +88,7 @@
 - Improved the way the [ChannelsScreen](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
 - Improved the way the [MessagesScreen](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
 - Improved automatic reloading of non-cached images when regaining network connection. The improvements are visible in the messages list and the new media gallery called `MediaGalleryPreviewActivity`. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Improved requesting `WRITE_EXTERNAL_STORAGE` permission when legacy storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
 
 ### ✅ Added
 - Added a new gallery called `MediaGalleryPreviewActivity`. This gallery is an upgrade over `ImagePreviewActivity` as it has the capability to reproduce videos as well as images, automatically reloads non-cached images upon regaining network connection and works in offline mode. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)

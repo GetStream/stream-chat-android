@@ -24,9 +24,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.utils.TestDataHelper
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
-import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
-import io.getstream.chat.android.offline.event.model.EventHandlerType
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,10 +34,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -82,13 +79,10 @@ internal class TotalUnreadCountTest {
         GlobalMutableState.instance = globalMutableState
     }
 
-    @ParameterizedTest
-    @EnumSource(EventHandlerType::class)
-    fun `When new message event is received for channel with read capability Should properly update total unread counts`(
-        eventHandlerType: EventHandlerType,
-    ) = runTest {
+    @Test
+    fun `When new message event is received for channel with read capability Should properly update total unread counts`() = runTest {
         val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-        val sut = Fixture(globalMutableState, clientMutableState, eventHandlerType, data.user1)
+        val sut = Fixture(globalMutableState, data.user1)
             .givenMockedRepositories()
             .givenChannel(channelWithReadCapability)
             .get()
@@ -105,13 +99,10 @@ internal class TotalUnreadCountTest {
         verify(globalMutableState).setChannelUnreadCount(2)
     }
 
-    @ParameterizedTest
-    @EnumSource(EventHandlerType::class)
-    fun `When mark read event is received for channel with read capability Should properly update total unread counts`(
-        eventHandlerType: EventHandlerType,
-    ) = runTest {
+    @Test
+    fun `When mark read event is received for channel with read capability Should properly update total unread counts`() = runTest {
         val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-        val sut = Fixture(globalMutableState, clientMutableState, eventHandlerType, data.user1)
+        val sut = Fixture(globalMutableState, data.user1)
             .givenMockedRepositories()
             .givenChannel(channelWithReadCapability)
             .get()
@@ -127,12 +118,9 @@ internal class TotalUnreadCountTest {
         verify(globalMutableState).setChannelUnreadCount(0)
     }
 
-    // @ParameterizedTest
-    // @EnumSource(EventHandlerType::class)
-    fun `when connected event is received, current user should be updated`(
-        eventHandlerType: EventHandlerType,
-    ) = runTest {
-        val sut = Fixture(globalMutableState, clientMutableState, eventHandlerType, data.user1)
+    // @Test
+    fun `when connected event is received, current user should be updated`() = runTest {
+        val sut = Fixture(globalMutableState, data.user1)
             .givenMockedRepositories()
             .get()
 
@@ -147,36 +135,22 @@ internal class TotalUnreadCountTest {
 
     private class Fixture(
         globalMutableState: GlobalMutableState,
-        clientMutableState: ClientState,
-        eventHandlerType: EventHandlerType,
         currentUser: User,
         sideEffect: suspend () -> Unit = {},
         syncedEvents: Flow<List<ChatEvent>> = MutableStateFlow(emptyList()),
     ) {
         private val repos: RepositoryFacade = mock()
-        private val eventHandler: EventHandler = when (eventHandlerType) {
-            EventHandlerType.SEQUENTIAL -> EventHandlerSequential(
-                currentUserId = currentUser.id,
-                scope = testCoroutines.scope,
-                subscribeForEvents = { mock() },
-                logicRegistry = mock(),
-                stateRegistry = mock(),
-                mutableGlobalState = globalMutableState,
-                repos = repos,
-                sideEffect = sideEffect,
-                syncedEvents = syncedEvents
-            )
-            EventHandlerType.DEFAULT -> EventHandlerImpl(
-                currentUserId = currentUser.id,
-                scope = testCoroutines.scope,
-                subscribeForEvents = { mock() },
-                logic = mock(),
-                state = mock(),
-                mutableGlobalState = globalMutableState,
-                repos = repos,
-                syncedEvents = syncedEvents
-            )
-        }
+        private val eventHandler: EventHandler = EventHandlerSequential(
+            currentUserId = currentUser.id,
+            scope = testCoroutines.scope,
+            subscribeForEvents = { mock() },
+            logicRegistry = mock(),
+            stateRegistry = mock(),
+            mutableGlobalState = globalMutableState,
+            repos = repos,
+            sideEffect = sideEffect,
+            syncedEvents = syncedEvents
+        )
 
         fun givenMockedRepositories(): Fixture {
             runTest {

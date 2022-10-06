@@ -18,11 +18,11 @@ package io.getstream.chat.android.offline.interceptor.internal
 
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry

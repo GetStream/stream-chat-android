@@ -22,10 +22,6 @@
 
     <application>
         <activity
-            android:name=".ui.attachments.preview.ImagePreviewActivity"
-            android:exported="false"
-            />
-        <activity
             android:name=".ui.attachments.preview.MediaPreviewActivity"
             android:exported="false"
             />

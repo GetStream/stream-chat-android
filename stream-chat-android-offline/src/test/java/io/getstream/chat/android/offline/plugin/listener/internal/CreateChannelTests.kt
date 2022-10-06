@@ -284,8 +284,8 @@ internal class CreateChannelTests {
             repositoryFacade = repos
         }
 
-        fun get(): CreateChannelListenerImpl {
-            return CreateChannelListenerImpl(
+        fun get(): CreateChannelListenerDatabase {
+            return CreateChannelListenerDatabase(
                 clientState,
                 repositoryFacade,
                 repositoryFacade

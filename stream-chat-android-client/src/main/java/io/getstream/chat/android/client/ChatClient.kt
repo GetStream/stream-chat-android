@@ -2821,13 +2821,13 @@ internal constructor(
         }
 
         /**
-         * Adds a plugin factory to be used by the client.
+         * Adds plugins factory to be used by the client.
          * @see [PluginFactory]
          *
-         * @param pluginFactory The factory to be added.
+         * @param pluginFactories The factories to be added.
          */
-        public fun withPlugin(pluginFactory: PluginFactory): Builder = apply {
-            pluginFactories.add(pluginFactory)
+        public fun withPlugins(vararg pluginFactories: PluginFactory): Builder = apply {
+            this.pluginFactories.addAll(pluginFactories)
         }
 
         /**

@@ -114,8 +114,6 @@ internal object Mother {
         return object : ClientState {
             override val user: StateFlow<User?> = MutableStateFlow(randomUser())
 
-            override val initialized: StateFlow<Boolean> = MutableStateFlow(true)
-
             override val initializationState: StateFlow<InitializationState> =
                 MutableStateFlow(InitializationState.COMPLETE)
 

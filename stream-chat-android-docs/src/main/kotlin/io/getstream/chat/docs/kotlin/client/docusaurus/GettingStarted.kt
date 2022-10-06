@@ -6,9 +6,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/basics/getting-started/#getting-started">Getting Started</a>
@@ -42,13 +44,22 @@ class GettingStarted {
                 persistenceEnabled = true,
                 // An enumeration of various network types used as a constraint inside upload attachments worker.
                 uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-                // Whether the SDK will use a new sequential event handling mechanism.
-                useSequentialEventHandler = false,
             ),
             appContext = context,
         )
 
-        ChatClient.Builder(apiKey, context).withPlugin(offlinePluginFactory).build()
+        val statePluginFactory = StreamStatePluginFactory(
+            config = StatePluginConfig(
+                backgroundSyncEnabled = true,
+                userPresence = true,
+                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+            ),
+            appContext = context
+        )
+
+        ChatClient.Builder(apiKey, context)
+            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .build()
     }
 
     fun connectingAUser() {
