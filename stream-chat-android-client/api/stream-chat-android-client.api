@@ -904,13 +904,6 @@ public final class io/getstream/chat/android/client/channel/ChannelClientExtensi
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/channel/ChannelClient;[Lkotlin/reflect/KClass;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 }
 
-public abstract interface class io/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic {
-	public abstract fun listenForChannelState ()Lio/getstream/chat/android/client/channel/state/ChannelState;
-	public abstract fun replyMessage (Lio/getstream/chat/android/client/models/Message;)V
-	public abstract fun upsertMessage (Lio/getstream/chat/android/client/models/Message;)V
-	public abstract fun upsertMessages (Ljava/util/List;Z)V
-}
-
 public final class io/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic$DefaultImpls {
 	public static synthetic fun upsertMessages$default (Lio/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic;Ljava/util/List;ZILjava/lang/Object;)V
 }
