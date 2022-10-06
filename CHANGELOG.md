@@ -2,7 +2,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed displaying messages with failed image attachments. [#4234](https://github.com/GetStream/stream-chat-android/pull/4234)
-- Fixes problem when alligning reactions ballon for custom ViewHolders in message options dialog. [#4246](https://github.com/GetStream/stream-chat-android/pull/4246)
+- Fixes problem when alligning reactions ballon for custom ViewHolders in message options dialog. [#4248](https://github.com/GetStream/stream-chat-android/pull/4248)
 
 ### ⬆️ Improved
 - Improved asking for `WRITE_EXTERNAL_STORAGE` permission. The permission won't be requested starting from Android Q unless legacy external storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
