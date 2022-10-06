@@ -32,6 +32,14 @@ import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+/**
+ * Class responsible for logic related to send attachments to backend.
+ *
+ * @param context Context.
+ * @param networkType [UploadAttachmentsNetworkType]
+ * @param clientState [ClientState]
+ * @param scope [CoroutineScope]
+ */
 internal class AttachmentsSender(
     private val context: Context,
     private val networkType: UploadAttachmentsNetworkType,
