@@ -92,10 +92,10 @@ internal class MessageListViewModelTest {
                 items = listOf(
                     MessageListItem.DateSeparatorItem(messageStartDate),
                 ) + messageItems,
-                hasNewMessages = false,
+                hasNewMessages = true,
                 isTyping = false,
                 isThread = false,
-                areNewestMessagesLoaded = true
+                areNewestMessagesLoaded = true,
             )
         )
 

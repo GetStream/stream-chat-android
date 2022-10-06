@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -311,7 +312,12 @@ public class MessageListController(
     /**
      * Represents the message we wish to scroll to.
      */
-    private var scrollToMessage: Message? = null
+    private var focusedMessage: MutableStateFlow<Message?> = MutableStateFlow(null)
+
+    /**
+     * Holds the information of which needs to be removed from focus.
+     */
+    private var removeFocusedMessageJob: Pair<String, Job>? = null
 
     /**
      * Whether the user is inside search or not.
@@ -356,7 +362,8 @@ public class MessageListController(
                 _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
-                typingUsers
+                typingUsers,
+                focusedMessage
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -366,6 +373,7 @@ public class MessageListController(
                 val messageFooterVisibility = data[5] as MessageFooterVisibility
                 val messagePositionHandler = data[6] as MessagePositionHandler
                 val typingUsers = data[7] as List<User>
+                val focusedMessage = data[8] as Message?
 
                 when (state) {
                     is MessagesState.Loading,
@@ -386,7 +394,8 @@ public class MessageListController(
                             deletedMessageVisibility = deletedMessageVisibility,
                             messageFooterVisibility = messageFooterVisibility,
                             messagePositionHandler = messagePositionHandler,
-                            typingUsers = typingUsers
+                            typingUsers = typingUsers,
+                            focusedMessage = focusedMessage
                         ),
                     )
                 }
@@ -398,14 +407,11 @@ public class MessageListController(
             val newLastMessage =
                 (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
 
+            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
             _messageListState.value = newState.copy(
-                newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+                newMessageState = newMessageState
             )
-            lastLoadedMessage = newLastMessage
-
-            _messageListState.value.messages.firstOrNull {
-                it is MessageItem && it.message.id == scrollToMessage?.id
-            }?.let { focusMessage((it as MessageItem).message.id) }
+            if (newMessageState != null) lastLoadedMessage = newLastMessage
         }.launchIn(scope)
 
         channelState.filterNotNull().flatMapLatest { it.endOfOlderMessages }.onEach {
@@ -460,7 +466,8 @@ public class MessageListController(
                 _deletedMessageVisibilityState,
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
-                typingUsers
+                typingUsers,
+                focusedMessage
             ) { data ->
                 val messages = data[0] as List<Message>
                 val reads = data[1] as List<ChannelUserRead>
@@ -485,18 +492,19 @@ public class MessageListController(
                         deletedMessageVisibility = deletedMessageVisibility,
                         messageFooterVisibility = messageFooterVisibility,
                         messagePositionHandler = messagePositionHandler,
-                        typingUsers = typingUsers
+                        typingUsers = typingUsers,
+                        focusedMessage = null
                     ),
                     parentMessageId = threadId,
                     endOfNewMessagesReached = true
                 )
             }.collect { newState ->
-                val newLastMessage =
-                    (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
+                val newLastMessage = (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
+                val newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
                 _threadListState.value = newState.copy(
-                    newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
+                    newMessageState = newMessageState
                 )
-                lastLoadedThreadMessage = newLastMessage
+                if (newMessageState != null) lastLoadedThreadMessage = newLastMessage
             }
 
             user.onEach {
@@ -528,6 +536,7 @@ public class MessageListController(
      * @param messageFooterVisibility Determines when the message footer should be visible.
      * @param messagePositionHandler Determines the message position inside a group of messages.
      * @param typingUsers The list of the users currently typing.
+     * @param focusedMessage The message we wish to scroll/focus in center of the screen.
      *
      * @return A list of [MessageListItem]s, each containing a position.
      */
@@ -540,6 +549,7 @@ public class MessageListController(
         messageFooterVisibility: MessageFooterVisibility,
         messagePositionHandler: MessagePositionHandler,
         typingUsers: List<User>,
+        focusedMessage: Message?,
     ): List<MessageListItem> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
@@ -591,6 +601,9 @@ public class MessageListController(
                     sortedReads.filter { it.lastRead?.after(messageCreatedAt) ?: false }
                 } ?: emptyList()
 
+                val isMessageFocused = message.id == focusedMessage?.id
+                if (isMessageFocused) removeMessageFocus(message.id)
+
                 groupedMessages.add(
                     MessageItem(
                         message = message,
@@ -602,7 +615,8 @@ public class MessageListController(
                         isMessageRead = isMessageRead,
                         deletedMessageVisibility = deletedMessageVisibility,
                         showMessageFooter = shouldShowFooter,
-                        messageReadBy = messageReadBy
+                        messageReadBy = messageReadBy,
+                        focusState = if (isMessageFocused) MessageFocused else null
                     )
                 )
             }
@@ -660,21 +674,30 @@ public class MessageListController(
      * allow us to show the user a floating button giving them the option to scroll to the bottom
      * when needed.
      *
-     * @param lastMessage Last message in the list, used for comparison.
+     * @param lastMessage The new last message in the list, used for comparison.
      * @param lastLoadedMessage The last currently loaded message, used for comparison.
      */
     private fun getNewMessageState(lastMessage: Message?, lastLoadedMessage: Message?): NewMessageState? {
-        val currentUser = user.value
 
-        return if (lastMessage != null && lastLoadedMessage != null && lastMessage.id != lastLoadedMessage.id) {
-            if (lastMessage.user.id == currentUser?.id) {
-                MyOwn
-            } else {
-                Other
-            }
-        } else {
-            null
+        val lastLoadedMessageDate = lastLoadedMessage?.createdAt ?: lastLoadedMessage?.createdLocallyAt
+
+        return when {
+            lastMessage == null -> null
+            lastLoadedMessage == null -> getNewMessageStateForMessage(lastMessage)
+            lastMessage.wasCreatedAfter(lastLoadedMessageDate) && lastLoadedMessage.id != lastMessage.id ->
+                getNewMessageStateForMessage(lastMessage)
+            else -> null
         }
+    }
+
+    /**
+     * @param message The message for which we want to determine the state for.
+     *
+     * @return Returns the [NewMessageState] depending whether the current user sent the message or not.
+     */
+    private fun getNewMessageStateForMessage(message: Message): NewMessageState {
+        val currentUser = user.value
+        return if (message.user.id == currentUser?.id) MyOwn else Other
     }
 
     /**
@@ -802,17 +825,7 @@ public class MessageListController(
      */
     public fun scrollToMessage(messageId: String) {
         if (isInThread) return
-        val message = getMessageWithId(messageId)
-
-        if (message != null) {
-            scrollToMessage = message
-            focusMessage(messageId)
-        } else {
-            loadMessageById(messageId) {
-                scrollToMessage = it.data()
-                focusMessage(messageId)
-            }
-        }
+        focusMessage(messageId)
     }
 
     /**
@@ -822,18 +835,14 @@ public class MessageListController(
      * @param messageId The ID of the message.
      */
     public fun focusMessage(messageId: String) {
-        val messages = messagesState.messages.map {
-            if (it is MessageItem && it.message.id == messageId) {
-                it.copy(focusState = MessageFocused)
-            } else {
-                it
-            }
-        }
+        val message = getMessageWithId(messageId)
 
-        scope.launch {
-            updateMessages(messages)
-            delay(REMOVE_MESSAGE_FOCUS_DELAY)
-            removeMessageFocus(messageId)
+        if (message != null) {
+            focusedMessage.value = message
+        } else {
+            loadMessageById(messageId) {
+                focusedMessage.value = it.data()
+            }
         }
     }
 
@@ -843,31 +852,24 @@ public class MessageListController(
      * @param messageId The ID of the message.
      */
     private fun removeMessageFocus(messageId: String) {
-        val messages = messagesState.messages.map {
-            if (it is MessageItem && it.message.id == messageId) {
-                it.copy(focusState = MessageFocusRemoved)
-            } else {
-                it
+        if (removeFocusedMessageJob?.first != messageId) {
+            removeFocusedMessageJob = messageId to scope.launch {
+                delay(REMOVE_MESSAGE_FOCUS_DELAY)
+
+                val messages = messagesState.messages.map {
+                    if (it is MessageItem && it.message.id == messageId) {
+                        it.copy(focusState = MessageFocusRemoved)
+                    } else {
+                        it
+                    }
+                }
+                _messageListState.value = _messageListState.value.copy(messages = messages)
+
+                if (focusedMessage.value?.id == messageId) {
+                    focusedMessage.value = null
+                    removeFocusedMessageJob = null
+                }
             }
-        }
-
-        if (scrollToMessage?.id == messageId) {
-            scrollToMessage = null
-        }
-
-        updateMessages(messages)
-    }
-
-    /**
-     * Updates the current message state with new messages.
-     *
-     * @param messages The list of new message items.
-     * */
-    private fun updateMessages(messages: List<MessageListItem>) {
-        if (isInThread) {
-            this._threadListState.value = _threadListState.value.copy(messages = messages)
-        } else {
-            this._messageListState.value = _messageListState.value.copy(messages = messages)
         }
     }
 

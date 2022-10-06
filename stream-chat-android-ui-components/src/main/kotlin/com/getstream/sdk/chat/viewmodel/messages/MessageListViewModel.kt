@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onSubscription
@@ -137,7 +138,7 @@ public class MessageListViewModel(
     public val targetMessage: LiveData<Message> = messageListController.messageListState.map {
         (it.messages.firstOrNull { it is MessageItem && it.focusState == MessageFocused } as? MessageItem)?.message
             ?: Message()
-    }.asLiveData()
+    }.distinctUntilChanged { old, new -> old.id == new.id }.asLiveData()
 
     /**
      * Emits error events.
