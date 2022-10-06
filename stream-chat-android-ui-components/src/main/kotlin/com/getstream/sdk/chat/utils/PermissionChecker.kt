@@ -20,6 +20,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Environment
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
@@ -146,20 +147,36 @@ public class PermissionChecker {
         )
     }
 
+    /**
+     * Checks is [Manifest.permission.WRITE_EXTERNAL_STORAGE] is needed an requests if necessary.
+     * Permission will be requested on versions below [Build.VERSION_CODES.Q]
+     * or if legacy external storage is enabled.
+     * Simply runs [onPermissionGranted] if the permission is not needed.
+     *
+     * The method is being used to get access to external download folder used by download attachment process.
+     *
+     * @param view The view used to obtain context and show the snackbar.
+     * @param onPermissionDenied Lambda to be run when permission is denied.
+     * @param onPermissionGranted Lambda to be run when permission is granted.
+     */
     public fun checkWriteStoragePermissions(
         view: View,
         onPermissionDenied: () -> Unit = { },
         onPermissionGranted: () -> Unit,
     ) {
-        checkPermissions(
-            view,
-            view.context.getString(R.string.stream_ui_message_input_permission_storage_title),
-            view.context.getString(R.string.stream_ui_message_input_permission_storage_message),
-            view.context.getString(R.string.stream_ui_message_input_permission_setting_message),
-            listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-            onPermissionDenied,
-            onPermissionGranted
-        )
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || Environment.isExternalStorageLegacy()) {
+            checkPermissions(
+                view,
+                view.context.getString(R.string.stream_ui_message_input_permission_storage_title),
+                view.context.getString(R.string.stream_ui_message_input_permission_storage_message),
+                view.context.getString(R.string.stream_ui_message_input_permission_setting_message),
+                listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                onPermissionDenied,
+                onPermissionGranted
+            )
+        } else {
+            onPermissionGranted()
+        }
     }
 
     public fun checkCameraPermissions(

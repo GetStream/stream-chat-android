@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 
@@ -51,7 +51,7 @@ class DokkaRoot {
         )
 
         val client = ChatClient.Builder(apiKey, applicationContext)
-            .withPlugin(offlinePluginFactory)
+            .withPlugins(offlinePluginFactory)
             .build()
     }
 
