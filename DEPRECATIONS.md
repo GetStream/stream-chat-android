@@ -6,7 +6,6 @@ This document lists deprecated constructs in the SDK, with their expected time â
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` | 2022.09.28<br/>5.10.1 | 2022.10.12<br/>5.10.1 | 2022.10.26<br/>5.10.1 | The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been deprecated in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. |
 | `ImageAttachmentQuotedContent` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.11.??<br/>6.0.0 | Deprecated in favor of `MediaAttachmentQuotedContent`. The new function has the ability to preview videos as well as images. |
 | `StreamDimens` constructor containing parameter `attachmentsContentImageGridSpacing`  | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.11.??<br/>6.0.0 | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageGridSpacing`. |
 | `ImageAttachmentContent` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2022.11.??<br/>6.0.0 | `ImageAttachmentContent` has been deprecated in favor of `MediattachmentContent`. The new function is able to preview videos as well as images and has access to a new and improved media gallery. |
