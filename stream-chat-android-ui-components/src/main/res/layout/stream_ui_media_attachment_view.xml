@@ -42,7 +42,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        <!--TODO add content description-->
         <ImageView
             android:id="@+id/playIconImageView"
             android:layout_width="wrap_content"
