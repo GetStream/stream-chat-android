@@ -35,7 +35,6 @@ import com.google.android.material.shape.CornerSize
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
@@ -113,14 +112,12 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
             // Used to set a dimension ratio before we load the media
             // so that message positions don't jump after we load it.
-            when {
-                mediaWidth != null && mediaHeight != null -> {
-                    val ratio = (mediaWidth / mediaHeight).toString()
-                    this.setDimensionRatio(mediaAttachmentView.id, ratio)
-                }
-                first.type == ModelType.attach_video && !ChatUI.videoThumbnailsEnabled ->
-                    this.setDimensionRatio(mediaAttachmentView.id, "1")
-                else -> constrainHeight(mediaAttachmentView.id, LayoutParams.WRAP_CONTENT)
+
+            if (mediaWidth != null && mediaHeight != null) {
+                val ratio = (mediaWidth / mediaHeight).toString()
+                this.setDimensionRatio(mediaAttachmentView.id, ratio)
+            } else {
+                this.setDimensionRatio(mediaAttachmentView.id, "1")
             }
 
             applyTo(this@MediaAttachmentsGroupView)
