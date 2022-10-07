@@ -41,12 +41,14 @@ class Offline {
                 backgroundSyncEnabled = true,
                 userPresence = true,
                 persistenceEnabled = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = context,
         )
 
-        ChatClient.Builder(apiKey, context).withPlugins(offlinePluginFactory).build()
+        ChatClient.Builder(apiKey, context)
+            .withPlugins(offlinePluginFactory)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
+            .build()
     }
 
     /**

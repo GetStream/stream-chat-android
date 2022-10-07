@@ -40,11 +40,11 @@ public class AndroidIntroduction {
         String apiKey = "{{ api_key }}";
         String token = "{{ chat_user_token }}";
         // Step 1 - Set up the OfflinePlugin for offline storage
-        Config config = new Config(true, true, true, UploadAttachmentsNetworkType.NOT_ROAMING);
+        Config config = new Config(true, true, true);
         StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(config, applicationContext);
 
         StreamStatePluginFactory streamStatePluginFactory = new StreamStatePluginFactory(
-                new StatePluginConfig(true, true, UploadAttachmentsNetworkType.NOT_ROAMING),
+                new StatePluginConfig(true, true),
                 applicationContext
         );
 
@@ -53,6 +53,7 @@ public class AndroidIntroduction {
                 // Change log level
                 .logLevel(ChatLogLevel.ALL)
                 .withPlugins(offlinePluginFactory, streamStatePluginFactory)
+                .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
                 .build();
 
         // Step 3 - Authenticate and connect the user

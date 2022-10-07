@@ -2686,6 +2686,7 @@ internal constructor(
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
+        private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING
 
         /**
          * Sets the log level to be used by the client.
@@ -2859,6 +2860,10 @@ internal constructor(
             this.distinctApiCalls = false
         }
 
+        public fun uploadAttachmentsNetworkType(type: UploadAttachmentsNetworkType): Builder = apply {
+            this.uploadAttachmentsNetworkType = type
+        }
+
         public override fun build(): ChatClient {
             return super.build()
         }
@@ -2946,7 +2951,7 @@ internal constructor(
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     appContext,
-                    UploadAttachmentsNetworkType.NOT_ROAMING,
+                    uploadAttachmentsNetworkType,
                     clientState,
                     clientScope
                 )
