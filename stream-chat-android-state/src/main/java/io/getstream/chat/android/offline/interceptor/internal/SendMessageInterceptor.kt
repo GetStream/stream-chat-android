@@ -20,7 +20,7 @@ import android.content.Context
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.extensions.internal.populateMentions
-import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
+import io.getstream.chat.android.client.interceptor.MessageInterceptor
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -40,11 +40,11 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 /**
- * Implementation of [SendMessageInterceptor] that upload attachments, update original message
+ * Implementation of [MessageInterceptor] that upload attachments, update original message
  * with new attachments and return updated message.
  */
 @Suppress("LongParameterList")
-internal class SendMessageInterceptorImpl(
+internal class SendMessageInterceptor(
     private val context: Context,
     private val logic: LogicRegistry,
     private val clientState: ClientState,
@@ -55,7 +55,7 @@ internal class SendMessageInterceptorImpl(
     private val networkType: UploadAttachmentsNetworkType,
     private val prepareMessageLogic: PrepareMessageLogic,
     private val user: User
-) : SendMessageInterceptor {
+) : MessageInterceptor {
 
     private var jobsMap: Map<String, Job> = emptyMap()
     private val uploadIds = mutableMapOf<String, UUID>()

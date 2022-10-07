@@ -216,6 +216,7 @@ internal class LogicRegistry internal constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
+        globalState.clearState()
     }
 
     internal companion object {

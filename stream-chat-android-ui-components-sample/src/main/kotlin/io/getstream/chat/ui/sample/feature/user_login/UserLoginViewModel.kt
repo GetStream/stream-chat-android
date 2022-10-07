@@ -75,8 +75,11 @@ class UserLoginViewModel : ViewModel() {
                 switchUser(chatUser, user.token) {
                     _events.postValue(Event(UiEvent.RedirectToChannels))
                 }.enqueue(::handleUserConnection)
-            } else if (getCurrentUser() == null) {
-                connectUser(chatUser, user.token).enqueue(::handleUserConnection)
+            } else {
+                if (getCurrentUser() == null) {
+                    connectUser(chatUser, user.token).enqueue(::handleUserConnection)
+                }
+
                 _events.postValue(Event(UiEvent.RedirectToChannels))
             }
         }
