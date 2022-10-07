@@ -23,11 +23,10 @@
         <attr name="streamUiMediaAttachmentPlaceHolderIcon" format="reference" />
         <!-- Image attachment placeholder icon tint. -->
         <attr name="streamUiMediaAttachmentPlaceHolderIconTint" format="color|reference" />
-        <!-- Image attachment background color. -->
-        <attr name="streamUiMediaAttachmentImageBackgroundColor" format="color|reference" />
-        <!-- Video attachment background color. -->
-        <attr name="streamUiMediaAttachmentVideoBackgroundColor" format="color|reference" />
-        <!-- Image attachment "more" count overlay color. -->
+        <!-- Image and video attachment background color. -->
+        <attr name="streamUiMediaAttachmentMediaPreviewBackgroundColor" format="color|reference" />
+        <!-- The color of the overlay displaying the number of media attachments in the message
+         that do not fit inside the preview group. -->
         <attr name="streamUiMediaAttachmentMoreCountOverlayColor" format="color|reference" />
 
         <!-- Text size of the image attachment "more" count text. -->

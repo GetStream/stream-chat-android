@@ -112,7 +112,6 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
             // Used to set a dimension ratio before we load the media
             // so that message positions don't jump after we load it.
-
             if (mediaWidth != null && mediaHeight != null) {
                 val ratio = (mediaWidth / mediaHeight).toString()
                 this.setDimensionRatio(mediaAttachmentView.id, ratio)

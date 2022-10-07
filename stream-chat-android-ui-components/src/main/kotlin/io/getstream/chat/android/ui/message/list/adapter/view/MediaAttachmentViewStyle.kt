@@ -40,9 +40,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param placeholderIconTint The tint applied to the placeholder icon displayed before a media
  * attachment preview was loaded or after loading had failed.
  * Default value is [R.drawable.stream_ui_picture_placeholder].
- * @param imageBackgroundColor Controls the background color of image attachment previews.
- * Default value is [R.color.stream_ui_grey].
- * @param videoBackgroundColor Controls the background color of video attachment previews.
+ * @param mediaPreviewBackgroundColor Controls the background color of image and video attachment previews.
  * Default value is [R.color.stream_ui_grey].
  * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
  * @param moreCountTextStyle Appearance for "more count" text.
@@ -65,8 +63,7 @@ public data class MediaAttachmentViewStyle(
     public val progressIcon: Drawable,
     public val placeholderIcon: Drawable,
     @ColorInt public val placeholderIconTint: Int?,
-    @ColorInt val imageBackgroundColor: Int,
-    @ColorInt val videoBackgroundColor: Int,
+    @ColorInt val mediaPreviewBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
     public val playVideoIcon: Drawable?,
@@ -93,14 +90,9 @@ public data class MediaAttachmentViewStyle(
                 val progressIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentProgressIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
 
-                val imageBackgroundColor = a.getColor(
-                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentImageBackgroundColor,
+                val mediaPreviewBackgroundColor = a.getColor(
+                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentMediaPreviewBackgroundColor,
                     context.getColorCompat(R.color.stream_ui_message_list_image_attachment_background)
-                )
-
-                val videoBackgroundColor = a.getColor(
-                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentVideoBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_message_list_video_attachment_background)
                 )
 
                 val moreCountOverlayColor = a.getColor(
@@ -182,8 +174,7 @@ public data class MediaAttachmentViewStyle(
 
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
-                    imageBackgroundColor = imageBackgroundColor,
-                    videoBackgroundColor = videoBackgroundColor,
+                    mediaPreviewBackgroundColor = mediaPreviewBackgroundColor,
                     moreCountOverlayColor = moreCountOverlayColor,
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
