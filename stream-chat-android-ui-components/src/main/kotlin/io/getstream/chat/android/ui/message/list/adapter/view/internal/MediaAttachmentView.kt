@@ -171,7 +171,11 @@ internal class MediaAttachmentView : ConstraintLayout {
     ) {
         val placeholder = if (showImagePlaceholder) {
             style.placeholderIcon.mutate().apply {
-                this.setTint(style.placeholderIconTint)
+                val tint = style.placeholderIconTint
+
+                if (tint != null) {
+                    this.setTint(tint)
+                }
             }
         } else {
             null
@@ -222,8 +226,6 @@ internal class MediaAttachmentView : ConstraintLayout {
      * how many more media attachments there are in a message.
      */
     private fun setMediaPreviewShape(shapeAppearanceModel: ShapeAppearanceModel) {
-        // TODO - add as a customizable point to the relevant style
-        binding.imageView.setContentPadding(1, 1, 1, 1)
         binding.imageView.shapeAppearanceModel = shapeAppearanceModel
         binding.imageView.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(style.imageBackgroundColor)

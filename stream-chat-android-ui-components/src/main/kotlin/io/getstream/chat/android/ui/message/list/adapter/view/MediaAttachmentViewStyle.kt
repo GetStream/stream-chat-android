@@ -24,6 +24,7 @@ import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -63,10 +64,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 public data class MediaAttachmentViewStyle(
     public val progressIcon: Drawable,
     public val placeholderIcon: Drawable,
-    @ColorInt public val placeholderIconTint: Int,
+    @ColorInt public val placeholderIconTint: Int?,
     @ColorInt val imageBackgroundColor: Int,
-    // TODO - Might be difficult to implement due to the way we apply border radius
-    // TODO - Check and decide
     @ColorInt val videoBackgroundColor: Int,
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
@@ -132,9 +131,8 @@ public data class MediaAttachmentViewStyle(
                     a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIcon)
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
-                val placeholderIconColor = a.getColor(
-                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIconTint,
-                    context.getColorCompat(R.color.stream_ui_literal_transparent)
+                val placeholderIconTint = a.getColorOrNull(
+                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIconTint
                 )
 
                 val playVideoIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIcon)
@@ -189,7 +187,7 @@ public data class MediaAttachmentViewStyle(
                     moreCountOverlayColor = moreCountOverlayColor,
                     moreCountTextStyle = moreCountTextStyle,
                     placeholderIcon = placeholderIcon,
-                    placeholderIconTint = placeholderIconColor,
+                    placeholderIconTint = placeholderIconTint,
                     playVideoIcon = playVideoIcon,
                     playVideoIconBackgroundColor = playVideoIconBackgroundColor,
                     playVideoIconElevation = playVideoIconElevation,
