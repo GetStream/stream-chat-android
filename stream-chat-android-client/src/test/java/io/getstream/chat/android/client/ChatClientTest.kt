@@ -139,10 +139,10 @@ internal class ChatClientTest {
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
-            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = pluginFactories,
+            clientState = Mother.mockedClientState(),
+            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = Mother.mockedClientState()
         ).apply {
             connectUser(user, token).enqueue()
         }
