@@ -46,6 +46,8 @@
 
         <!-- The icon overlaid on top of video attachment previews. -->
         <attr name="streamUiMediaAttachmentPlayVideoIcon" format="reference"/>
+        <!-- Tints the icon overlaid on top of video attachment previews. -->
+        <attr name="streamUiMediaAttachmentPlayVideoIconTint" format="reference|color"/>
         <!-- The background color of the View containing the play button. -->
         <attr name="streamUiMediaAttachmentPlayVideoIconBackgroundColor" format="color|reference"/>
         <!-- The corner radius of the play button. -->

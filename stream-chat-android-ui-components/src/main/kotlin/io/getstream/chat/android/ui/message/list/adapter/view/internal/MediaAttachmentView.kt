@@ -106,7 +106,15 @@ internal class MediaAttachmentView : ConstraintLayout {
         }
 
         with(binding.playIconImageView) {
-            setImageDrawable(style.playVideoIcon)
+            val playVideoDrawable = style.playVideoIcon?.mutate()?.apply {
+                val tintColor = style.playVideoIconTint
+
+                if (tintColor != null) {
+                    this.setTint(tintColor)
+                }
+            }
+
+            setImageDrawable(playVideoDrawable)
             setPaddingRelative(
                 style.playVideoIconPaddingStart,
                 style.playVideoIconPaddingTop,

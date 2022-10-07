@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param moreCountOverlayColor More count semi-transparent overlay color. Default value is [R.color.stream_ui_overlay].
  * @param moreCountTextStyle Appearance for "more count" text.
  * @param playVideoIcon The icon overlaid above previews of video attachments.
+ * @param playVideoIconTint The tint of the play video icon.
  * Default value is [R.drawable.stream_ui_ic_play]
  * @param playVideoIconBackgroundColor Applies a background colour to the View hosting the play video icon.
  * Default value is [R.color.stream_ui_literal_white]
@@ -67,6 +68,7 @@ public data class MediaAttachmentViewStyle(
     @ColorInt val moreCountOverlayColor: Int,
     public val moreCountTextStyle: TextStyle,
     public val playVideoIcon: Drawable?,
+    @ColorInt val playVideoIconTint: Int?,
     @ColorInt public val playVideoIconBackgroundColor: Int,
     public val playVideoIconElevation: Float,
     public val playVideoIconPaddingTop: Int,
@@ -130,6 +132,10 @@ public data class MediaAttachmentViewStyle(
                 val playVideoIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_play)
 
+                val playVideoIconTint = a.getColorOrNull(
+                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconTint
+                )
+
                 val playVideoIconBackgroundColor =
                     a.getColor(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconBackgroundColor,
@@ -180,6 +186,7 @@ public data class MediaAttachmentViewStyle(
                     placeholderIcon = placeholderIcon,
                     placeholderIconTint = placeholderIconTint,
                     playVideoIcon = playVideoIcon,
+                    playVideoIconTint = playVideoIconTint,
                     playVideoIconBackgroundColor = playVideoIconBackgroundColor,
                     playVideoIconElevation = playVideoIconElevation,
                     playVideoIconPaddingTop = playVideoIconPaddingTop,
