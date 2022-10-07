@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -65,6 +66,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -358,14 +360,17 @@ public class MessageListViewModel(
             }
         }
         messageId.takeUnless { it.isNullOrBlank() }?.let { targetMessageId ->
-            stateMerger.observeForever(object : Observer<State> {
-                override fun onChanged(state: State?) {
-                    if (state is State.Result) {
-                        onEvent(Event.ShowMessage(targetMessageId))
-                        stateMerger.removeObserver(this)
+            viewModelScope.launch {
+                clientState.initializationState.filterNotNull().first { it == InitializationState.COMPLETE }
+                stateMerger.observeForever(object : Observer<State> {
+                    override fun onChanged(state: State?) {
+                        if (state is State.Result) {
+                            onEvent(Event.LoadMessage(targetMessageId))
+                            stateMerger.removeObserver(this)
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     }
 
@@ -565,8 +570,8 @@ public class MessageListViewModel(
                     timeout = event.timeout,
                 ).enqueue(
                     onError = { chatError ->
-                        val errorMessage = chatError.message ?: chatError.cause?.message
-                            ?: "Unable to shadow ban the user"
+                        val errorMessage =
+                            chatError.message ?: chatError.cause?.message ?: "Unable to shadow ban the user"
                         logger.e { errorMessage }
 
                         _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
@@ -628,6 +633,19 @@ public class MessageListViewModel(
                             val error = result.error()
                             logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
                         }
+                    }
+                }
+            }
+            is Event.LoadMessage -> {
+                chatClient.loadMessageById(
+                    cid,
+                    event.messageId
+                ).enqueue { result ->
+                    if (result.isSuccess) {
+                        _targetMessage.value = result.data()
+                    } else {
+                        val error = result.error()
+                        logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
                     }
                 }
             }
@@ -1169,12 +1187,19 @@ public class MessageListViewModel(
 
         /**
          * When we need to display a particular message to the user.
-         * Usually triggered by clicking on pinned messages or navigation
-         * to the message list via push notifications.
+         * Usually triggered by clicking on pinned messages and replied messages.
          *
          * @param messageId The id of the message we need to navigate to.
          */
         public data class ShowMessage(val messageId: String) : Event()
+
+        /**
+         * When we need to display a particular message to the user.
+         * Usually triggered when coming from search and clicking on a push notification.
+         *
+         * @param messageId The id of the message we need to navigate to.
+         */
+        public data class LoadMessage(val messageId: String) : Event()
 
         /**
          * When the user removes an attachment from a message that was previously sent.

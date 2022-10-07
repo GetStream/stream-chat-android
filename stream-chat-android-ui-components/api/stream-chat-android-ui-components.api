@@ -414,6 +414,17 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$LastMessageRead;
 }
 
+public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$LoadMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$LoadMessage;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$LoadMessage;Ljava/lang/String;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$LoadMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessageId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$MessageReaction : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;Z)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
