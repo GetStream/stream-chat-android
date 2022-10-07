@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
@@ -31,7 +32,6 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsAndroidWorker
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

@@ -96,14 +96,14 @@ internal class ImageAttachmentView : ConstraintLayout {
      * images the message contains in case they don't all fit in the preview.
      */
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
-        val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: return
+        val url = attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: attachment.upload ?: return
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
                 showMoreCount(andMoreCount)
             }
         }
 
-        showImageByUrl(url) {
+        showImage(url) {
             showMore()
         }
 
@@ -124,7 +124,7 @@ internal class ImageAttachmentView : ConstraintLayout {
     /**
      * Loads the images.
      */
-    private fun showImageByUrl(imageUrl: String, onCompleteCallback: () -> Unit) {
+    private fun showImage(imageUrl: Any, onCompleteCallback: () -> Unit) {
         binding.imageView.load(
             data = imageUrl,
             placeholderDrawable = style.placeholderIcon,

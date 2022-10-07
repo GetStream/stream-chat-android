@@ -95,7 +95,7 @@ public fun MediaAttachmentContent(
         }
     },
 ) {
-    val (message, onLongItemClick, _, onMediaGalleryPreviewResult) = attachmentState
+    val (message, onLongItemClick, onMediaGalleryPreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentMediaGridSpacing
 
     Row(

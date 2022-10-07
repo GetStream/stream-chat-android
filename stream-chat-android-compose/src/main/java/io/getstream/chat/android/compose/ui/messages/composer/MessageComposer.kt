@@ -151,7 +151,6 @@ public fun MessageComposer(
     },
     label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(it.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
-        @Suppress("DEPRECATION_ERROR")
         DefaultComposerInputContent(
             messageComposerState = it,
             onValueChange = onValueChange,
@@ -273,7 +272,6 @@ public fun MessageComposer(
     },
     label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(messageComposerState.ownCapabilities) },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
-        @Suppress("DEPRECATION_ERROR")
         DefaultComposerInputContent(
             messageComposerState = messageComposerState,
             onValueChange = onValueChange,
@@ -555,26 +553,8 @@ internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  */
-@Deprecated(
-    message = "To be marked as an internal component. Use MessageInput directly.",
-    replaceWith = ReplaceWith(
-        expression = "MessageInput(" +
-            "    messageComposerState: MessageComposerState," +
-            "    onValueChange: (String) -> Unit," +
-            "    onAttachmentRemoved: (Attachment) -> Unit," +
-            "    modifier: Modifier = Modifier," +
-            "    maxLines: Int = DefaultMessageInputMaxLines," +
-            "    keyboardCapitalization: KeyboardCapitalization," +
-            "    label: @Composable (MessageComposerState) -> Unit," +
-            "    innerLeadingContent: @Composable RowScope.() -> Unit," +
-            "    innerTrailingContent: @Composable RowScope.() -> Unit" +
-            ")",
-        imports = arrayOf("io.getstream.chat.android.compose.ui.components.composer.MessageInput")
-    ),
-    level = DeprecationLevel.ERROR,
-)
 @Composable
-public fun RowScope.DefaultComposerInputContent(
+private fun RowScope.DefaultComposerInputContent(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,

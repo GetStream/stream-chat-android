@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.StateFlow
 internal class ClientStateImpl(private val networkStateProvider: NetworkStateProvider) : ClientMutableState {
 
     private val _initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
-    private val _initialized = MutableStateFlow(false)
     private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
     private val _user = MutableStateFlow<User?>(null)
 
@@ -45,12 +44,6 @@ internal class ClientStateImpl(private val networkStateProvider: NetworkStatePro
 
     override val isInitialized: Boolean
         get() = _initializationState.value == InitializationState.COMPLETE
-
-    @Deprecated(
-        "Use initializationState instead",
-        ReplaceWith("initializationState")
-    )
-    override val initialized: StateFlow<Boolean> = _initialized
 
     override val initializationState: StateFlow<InitializationState>
         get() = _initializationState
@@ -76,7 +69,6 @@ internal class ClientStateImpl(private val networkStateProvider: NetworkStatePro
 
     override fun setInitializionState(state: InitializationState) {
         _initializationState.value = state
-        _initialized.value = state == InitializationState.COMPLETE
     }
 }
 

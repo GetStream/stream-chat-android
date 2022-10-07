@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.getstream.sdk.chat.utils.extensions.isMine
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.attachments.content.QuotedMessageAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -39,7 +40,7 @@ public fun QuotedMessageContent(
     attachmentContent: @Composable (Message) -> Unit = { DefaultQuotedMessageAttachmentContent(it) },
     textContent: @Composable (Message) -> Unit = { DefaultQuotedMessageTextContent(it) },
 ) {
-    val isMyMessage = message.isMine()
+    val isMyMessage = message.isMine(ChatClient.instance())
 
     val messageBubbleShape = if (isMyMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
 

@@ -63,8 +63,6 @@ viewModel.bindView(messageListView, lifecycleOwner)
 * Editing the message (if you are an owner)
 * Deleting the message (if you are an owner)
 * Flagging the message (if it doesn't belong to you)
-* Muting the user who sent the message (if it doesn't belong to you)
-* Blocking the user who sent the message (if it doesn't belong to you)
 
 | Light Mode | Dark Mode |
 | --- | --- |
@@ -231,8 +229,6 @@ Some xml attributes let you to enable/disable features in `MessageListView`.
 - `streamUiEditMessageEnabled` - whether users can edit their messages
 - `streamUiFlagMessageEnabled` - whether users can flag messages
 - `streamUiFlagMessageConfirmationEnabled` - whether users will see the confirmation dialog when flag messages
-- `streamUiMuteUserEnabled` - whether users can mute others
-- `streamUiBlockUserEnabled` - whether users can block members of chat
 - `streamUiDeleteMessageEnabled` - whether users can delete their messages
 - `streamUiDeleteConfirmationEnabled` - whether users will see the confirmation dialog when deleting messages
 - `streamUiThreadsEnabled` - whether users can create thread replies

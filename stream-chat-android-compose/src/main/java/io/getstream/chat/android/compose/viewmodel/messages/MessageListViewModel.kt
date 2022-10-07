@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.compose.runtime.getValue
@@ -42,7 +40,6 @@ import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.MuteUser
 import io.getstream.chat.android.common.state.Pin
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
@@ -75,7 +72,6 @@ import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadNewestMessages
@@ -714,7 +710,6 @@ public class MessageListViewModel(
                 messageActions = messageActions + messageAction
             }
             is Copy -> copyMessage(messageAction.message)
-            is MuteUser -> updateUserMute(messageAction.message.user)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)
             else -> {
@@ -943,21 +938,6 @@ public class MessageListViewModel(
      */
     private fun copyMessage(message: Message) {
         clipboardHandler.copyMessage(message)
-    }
-
-    /**
-     * Mutes or unmutes the user that sent a particular message.
-     *
-     * @param user The user to mute or unmute.
-     */
-    private fun updateUserMute(user: User) {
-        val isUserMuted = chatClient.globalState.muted.value.any { it.target.id == user.id }
-
-        if (isUserMuted) {
-            unmuteUser(user.id)
-        } else {
-            muteUser(user.id)
-        }
     }
 
     /**
