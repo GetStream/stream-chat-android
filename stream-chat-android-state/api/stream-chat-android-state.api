@@ -314,16 +314,13 @@ public final class io/getstream/chat/android/state/plugin/configuration/StatePlu
 	public fun <init> ()V
 	public fun <init> (Z)V
 	public fun <init> (ZZ)V
-	public fun <init> (ZZLio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;)V
-	public synthetic fun <init> (ZZLio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
-	public final fun component3 ()Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
-	public final fun copy (ZZLio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/state/plugin/configuration/StatePluginConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/configuration/StatePluginConfig;ZZLio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;ILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/configuration/StatePluginConfig;
+	public final fun copy (ZZ)Lio/getstream/chat/android/state/plugin/configuration/StatePluginConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/configuration/StatePluginConfig;ZZILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/configuration/StatePluginConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundSyncEnabled ()Z
-	public final fun getUploadAttachmentsNetworkType ()Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
 	public final fun getUserPresence ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
