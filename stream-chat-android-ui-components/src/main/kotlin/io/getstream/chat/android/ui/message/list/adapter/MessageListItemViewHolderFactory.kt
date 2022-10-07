@@ -47,7 +47,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Err
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
@@ -205,33 +204,6 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             markdown = textTransformer
-        )
-    }
-
-    /**
-     * Creates a ViewHolder for messages containing image attachments and no other type
-     * of attachments.
-     *
-     * @param parentView The parent container.
-     * @return The [BaseMessageItemViewHolder] that displays messages with image attachments.
-     */
-    @Deprecated(
-        message = "This function has been deprecated in favor of the function 'createMediaAttachmentsViewHolder'." +
-            "The new functions returns a 'ViewHolder' which is capable of previewing both image" +
-            "and video attachments.",
-        replaceWith = ReplaceWith(
-            "createMediaAttachmentsViewHolder(parentView = parentView)",
-            "this::createMediaAttachmentsViewHolder"
-        )
-    )
-    protected fun createImageAttachmentsViewHolder(
-        parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<out MessageListItem> {
-        return ImageAttachmentViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listenerContainer,
-            textTransformer,
         )
     }
 

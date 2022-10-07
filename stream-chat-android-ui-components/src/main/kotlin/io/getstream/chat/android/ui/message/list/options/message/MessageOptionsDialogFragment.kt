@@ -52,8 +52,8 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
@@ -317,7 +317,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             is LinkAttachmentsViewHolder -> viewHolder.binding.messageContainer
             is FileAttachmentsViewHolder -> viewHolder.binding.messageContainer
             is GiphyAttachmentViewHolder -> viewHolder.binding.messageContainer
-            is ImageAttachmentViewHolder -> viewHolder.binding.messageContainer
+            is MediaAttachmentsViewHolder -> viewHolder.binding.messageContainer
             else -> null
         }?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {

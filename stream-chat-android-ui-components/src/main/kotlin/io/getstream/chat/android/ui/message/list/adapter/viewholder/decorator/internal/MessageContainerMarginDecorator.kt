@@ -25,7 +25,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Cus
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
@@ -69,19 +68,6 @@ internal class MessageContainerMarginDecorator(
      */
     override fun decorateFileAttachmentsMessage(
         viewHolder: FileAttachmentsViewHolder,
-        data: MessageListItem.MessageItem,
-    ) {
-        viewHolder.binding.run { configMargins(messageContainer, footnote, style) }
-    }
-
-    /**
-     * Decorates the message container of the image attachments message.
-     *
-     * @param viewHolder The holder to decorate.
-     * @param data The item that holds all the information.
-     */
-    override fun decorateImageAttachmentsMessage(
-        viewHolder: ImageAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         viewHolder.binding.run { configMargins(messageContainer, footnote, style) }
