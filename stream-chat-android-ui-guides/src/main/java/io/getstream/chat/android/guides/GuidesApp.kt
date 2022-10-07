@@ -39,13 +39,13 @@ class GuidesApp : Application() {
             config = StatePluginConfig(
                 backgroundSyncEnabled = true,
                 userPresence = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = this
         )
 
         ChatClient.Builder("qx5us2v6xvmh", this)
             .withPlugins(offlinePluginFactory, statePluginFactory)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .logLevel(ChatLogLevel.NOTHING)
             .build()
     }

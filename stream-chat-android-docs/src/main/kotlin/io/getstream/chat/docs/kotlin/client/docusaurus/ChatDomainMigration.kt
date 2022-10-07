@@ -35,7 +35,6 @@ class ChatDomainMigration {
                 backgroundSyncEnabled = true,
                 userPresence = true,
                 persistenceEnabled = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = context,
         )
@@ -44,13 +43,13 @@ class ChatDomainMigration {
             config = StatePluginConfig(
                 backgroundSyncEnabled = true,
                 userPresence = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = context
         )
 
         ChatClient.Builder(apiKey, context)
             .withPlugins(offlinePluginFactory, statePluginFactory)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
     }
 
