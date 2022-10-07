@@ -655,8 +655,7 @@ public class MessageListViewModel(
 
         /**
          * When we need to display a particular message to the user.
-         * Usually triggered by clicking on pinned messages or navigation
-         * to the message list via push notifications.
+         * Usually triggered by clicking on pinned messages and replied messages.
          *
          * @param messageId The id of the message we need to navigate to.
          */

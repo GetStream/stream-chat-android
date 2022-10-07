@@ -20,18 +20,15 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.InitializationCoordinator
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
-import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerState
@@ -46,7 +43,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListe
 import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerFull
+import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -187,7 +184,6 @@ public class StreamStatePluginFactory(
 
         val eventHandler: EventHandler = createEventHandler(
             user = user,
-            useSequentialEventHandler = config.useSequentialEventHandler,
             scope = scope,
             client = chatClient,
             logicRegistry = logic,
@@ -220,15 +216,11 @@ public class StreamStatePluginFactory(
             }
         }
 
-        val getMessageFun: suspend (String) -> Result<Message> = { messageId: String ->
-            chatClient.getMessage(messageId).await()
-        }
-
         return StatePlugin(
             activeUser = user,
             queryChannelListener = QueryChannelListenerState(logic),
             queryChannelsListener = QueryChannelsListenerState(logic),
-            threadQueryListener = ThreadQueryListenerFull(logic, repositoryFacade, repositoryFacade, getMessageFun),
+            threadQueryListener = ThreadQueryListenerState(logic, repositoryFacade),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
             editMessageListener = EditMessageListenerState(logic, clientState),
             hideChannelListener = HideChannelListenerState(logic),
@@ -260,7 +252,6 @@ public class StreamStatePluginFactory(
     @Suppress("LongMethod", "LongParameterList")
     private fun createEventHandler(
         user: User,
-        useSequentialEventHandler: Boolean,
         scope: CoroutineScope,
         client: ChatClient,
         logicRegistry: LogicRegistry,
@@ -270,29 +261,17 @@ public class StreamStatePluginFactory(
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
     ): EventHandler {
-        return when (useSequentialEventHandler) {
-            true -> EventHandlerSequential(
-                scope = scope,
-                currentUserId = user.id,
-                subscribeForEvents = { listener -> client.subscribe(listener) },
-                logicRegistry = logicRegistry,
-                stateRegistry = stateRegistry,
-                mutableGlobalState = mutableGlobalState,
-                repos = repos,
-                syncedEvents = syncedEvents,
-                sideEffect = sideEffect,
-            )
-            else -> EventHandlerImpl(
-                scope = scope,
-                currentUserId = user.id,
-                subscribeForEvents = { listener -> client.subscribe(listener) },
-                logic = logicRegistry,
-                state = stateRegistry,
-                mutableGlobalState = mutableGlobalState,
-                repos = repos,
-                syncedEvents = syncedEvents
-            )
-        }
+        return EventHandlerSequential(
+            scope = scope,
+            currentUserId = user.id,
+            subscribeForEvents = { listener -> client.subscribe(listener) },
+            logicRegistry = logicRegistry,
+            stateRegistry = stateRegistry,
+            mutableGlobalState = mutableGlobalState,
+            repos = repos,
+            syncedEvents = syncedEvents,
+            sideEffect = sideEffect,
+        )
     }
 
     private fun clearCachedInstance() {

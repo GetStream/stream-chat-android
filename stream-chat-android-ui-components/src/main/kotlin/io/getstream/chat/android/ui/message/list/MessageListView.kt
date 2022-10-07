@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.ui.message.list
 
 import android.animation.LayoutTransition
@@ -127,9 +125,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView.ReplyMessageCli
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.message.list.MessageListView.ThreadStartHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserClickListener
-import io.getstream.chat.android.ui.message.list.MessageListView.UserMuteHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.UserReactionClickListener
-import io.getstream.chat.android.ui.message.list.MessageListView.UserUnmuteHandler
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListItemAdapter
@@ -230,12 +226,6 @@ public class MessageListView : ConstraintLayout {
     }
     private var messageReactionHandler = MessageReactionHandler { _, _ ->
         throw IllegalStateException("onMessageReactionHandler must be set.")
-    }
-    private var userMuteHandler = UserMuteHandler {
-        throw IllegalStateException("onMuteUserHandler must be set.")
-    }
-    private var userUnmuteHandler = UserUnmuteHandler {
-        throw IllegalStateException("onUnmuteUserHandler must be set.")
     }
     private var customActionHandler = CustomActionHandler { _, _ ->
         throw IllegalStateException("onCustomActionHandler must be set.")
@@ -966,34 +956,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Enables or disables the user blocking feature.
-     *
-     * @param enabled True if user blocking is enabled, false otherwise.
-     */
-    @Deprecated(
-        "The option to block the user inside `MessageListView`" +
-            " has been deprecated and will be removed.",
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setBlockUserEnabled(enabled: Boolean) {
-        messageListViewStyle = requireStyle().copy(blockEnabled = enabled)
-    }
-
-    /**
-     * Enables or disables the user muting feature.
-     *
-     * @param enabled True if user muting is enabled, false otherwise.
-     */
-    @Deprecated(
-        "The option to mute the user inside `MessageListView`" +
-            " has been deprecated and will be removed.",
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setMuteUserEnabled(enabled: Boolean) {
-        messageListViewStyle = requireStyle().copy(muteEnabled = enabled)
-    }
-
-    /**
      * Enables or disables the message flagging feature.
      *
      * @param enabled True if user muting is enabled, false otherwise.
@@ -1484,36 +1446,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Sets the handler used when the user is going to be muted.
-     *
-     * @param userMuteHandler The handler to use.
-     */
-    @Deprecated(
-        "The option to mute the user inside `MessageListView`" +
-            " has been deprecated and will be removed. `MessageListView.setUserMuteHandler` " +
-            "will be removed with it too.",
-        level = DeprecationLevel.ERROR,
-    )
-    public fun setUserMuteHandler(userMuteHandler: UserMuteHandler) {
-        this.userMuteHandler = userMuteHandler
-    }
-
-    /**
-     * Sets the handler used when the user is going to be unmuted.
-     *
-     * @param userUnmuteHandler The handler to use.
-     */
-    @Deprecated(
-        "The option to unmute the user inside `MessageListView`" +
-            " has been deprecated and will be removed. `MessageListView.setUserUnmuteHandler` " +
-            "will be removed with it too.",
-        level = DeprecationLevel.ERROR
-    )
-    public fun setUserUnmuteHandler(userUnmuteHandler: UserUnmuteHandler) {
-        this.userUnmuteHandler = userUnmuteHandler
-    }
-
-    /**
      * Set the handler used when the custom action is going to be executed.
      *
      * @param customActionHandler The handler to use.
@@ -1824,36 +1756,6 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface GiphySendHandler {
         public fun onSendGiphy(message: Message, action: GiphyAction)
-    }
-
-    @Deprecated(
-        "The option to mute the user inside `MessageListView`" +
-            " has been deprecated and will be removed. `UserMuteHandler` will be removed " +
-            "with it too.",
-        level = DeprecationLevel.ERROR,
-    )
-    public fun interface UserMuteHandler {
-        public fun onUserMute(user: User)
-    }
-
-    @Deprecated(
-        "The option to unmute the user inside `MessageListView`" +
-            " has been deprecated and will be removed. `UserUnmuteHandler` will be removed " +
-            "with it too.",
-        level = DeprecationLevel.ERROR,
-    )
-    public fun interface UserUnmuteHandler {
-        public fun onUserUnmute(user: User)
-    }
-
-    @Deprecated(
-        message = "The option to block the user inside `MessageListView`" +
-            " has been deprecated and will be removed. `UserBlockHandler` will be removed " +
-            "with it too.",
-        level = DeprecationLevel.ERROR,
-    )
-    public fun interface UserBlockHandler {
-        public fun onUserBlock(user: User, cid: String)
     }
 
     public fun interface CustomActionHandler {

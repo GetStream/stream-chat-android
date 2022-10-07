@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR")
-
 package io.getstream.chat.android.ui.message.list.options.message
 
 import android.content.Context
@@ -107,7 +105,6 @@ public open class DefaultMessageOptionItemsFactory(
         val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
         val hasLinks = selectedMessage.attachments.any { it.hasLink() && it.type != ModelType.attach_giphy }
         val isOwnMessage = selectedMessageUserId == currentUser?.id
-        // val isUserMuted = currentUser?.mutes?.any { it.target.id == selectedMessageUserId } ?: false
         val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
         val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
 
@@ -185,7 +182,7 @@ public open class DefaultMessageOptionItemsFactory(
                     messageAction = Delete(selectedMessage),
                     isWarningItem = true,
                 )
-            } else null
+            } else null,
         )
     }
 }

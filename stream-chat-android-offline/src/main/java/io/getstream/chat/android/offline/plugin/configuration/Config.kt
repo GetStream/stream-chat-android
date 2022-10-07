@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.configuration
 
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 
 /**
  * Provides a configuration for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
@@ -25,12 +25,10 @@ import io.getstream.chat.android.offline.model.message.attachments.UploadAttachm
  * @param userPresence Whether the SDK should receive user presence changes.
  * @param persistenceEnabled Whether the data should be stored in the DB.
  * @param uploadAttachmentsNetworkType An enumeration of various network types used as a constraint inside upload attachments worker.
- * @param useSequentialEventHandler Whether the SDK will use a new sequential event handling mechanism.
  */
 public data class Config @JvmOverloads constructor(
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
     public val persistenceEnabled: Boolean = true,
     public val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-    public val useSequentialEventHandler: Boolean = true,
 )

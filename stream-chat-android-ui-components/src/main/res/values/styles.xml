@@ -432,11 +432,6 @@
         <item name="streamUiPinOptionIcon">@drawable/stream_ui_ic_pin</item>
         <item name="streamUiUnpinOptionIcon">@drawable/stream_ui_ic_unpin</item>
         <item name="streamUiPinMessageEnabled">false</item>
-        <item name="streamUiMuteOptionIcon">@drawable/stream_ui_ic_mute</item>
-        <item name="streamUiUnmuteOptionIcon">@drawable/stream_ui_ic_umnute</item>
-        <item name="streamUiMuteUserEnabled">true</item>
-        <item name="streamUiBlockOptionIcon">@drawable/stream_ui_ic_user_block</item>
-        <item name="streamUiBlockUserEnabled">true</item>
         <item name="streamUiDeleteOptionIcon">@drawable/stream_ui_ic_delete</item>
         <item name="streamUiDeleteConfirmationEnabled">true</item>
         <item name="streamUiDeleteMessageEnabled">true</item>

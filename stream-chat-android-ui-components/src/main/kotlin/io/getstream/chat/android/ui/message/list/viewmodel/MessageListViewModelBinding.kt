@@ -15,7 +15,6 @@
  */
 
 @file:JvmName("MessageListViewModelBinding")
-@file:Suppress("DEPRECATION_ERROR")
 
 package io.getstream.chat.android.ui.message.list.viewmodel
 
@@ -30,7 +29,6 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Flag
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.GiphyActionSelected
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MessageReaction
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MuteUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
@@ -78,8 +76,6 @@ public fun MessageListViewModel.bindView(
     view.setMessageReactionHandler { message, reactionType ->
         onEvent(MessageReaction(message, reactionType, enforceUnique = enforceUniqueReactions))
     }
-    view.setUserMuteHandler { onEvent(MuteUser(it)) }
-    view.setUserUnmuteHandler { onEvent(MessageListViewModel.Event.UnmuteUser(it)) }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
     view.setAttachmentDownloadHandler { downloadAttachmentCall ->
         PermissionChecker().checkWriteStoragePermissions(view) {

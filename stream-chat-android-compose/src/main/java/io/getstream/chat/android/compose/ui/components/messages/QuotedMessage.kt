@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.extensions.isMine
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
@@ -85,7 +86,7 @@ public fun QuotedMessage(
  */
 @Composable
 internal fun DefaultQuotedMessageLeadingContent(message: Message) {
-    if (!message.isMine()) {
+    if (!message.isMine(ChatClient.instance())) {
         Avatar(
             modifier = Modifier
                 .padding(start = 2.dp)
@@ -108,7 +109,7 @@ internal fun DefaultQuotedMessageLeadingContent(message: Message) {
  */
 @Composable
 internal fun DefaultQuotedMessageTrailingContent(message: Message) {
-    if (message.isMine()) {
+    if (message.isMine(ChatClient.instance())) {
         Spacer(modifier = Modifier.size(8.dp))
 
         Avatar(
