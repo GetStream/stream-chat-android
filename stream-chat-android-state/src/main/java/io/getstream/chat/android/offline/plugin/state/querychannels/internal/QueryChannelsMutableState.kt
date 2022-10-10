@@ -122,13 +122,18 @@ internal class QueryChannelsMutableState(
             currentRequest?.copy(offset = currentOffset)
         }.stateIn(scope, SharingStarted.Eagerly, null)
 
-    fun setLoading(isLoading: Boolean) {
-        if (!isLoading) {
-            _loading.value = false
-            _loadingMore.value = false
-        } else {
-            currentLoading.value = true
-        }
+    /**
+     * Set loading more. Notifies if the SDK is loading more channels.
+     */
+    fun setLoadingMore(isLoading: Boolean) {
+        _loadingMore.value = isLoading
+    }
+
+    /**
+     * Set loading more. Notifies if the SDK is loading the first page.
+     */
+    fun setLoadingFirstPage(isLoading: Boolean) {
+        _loading.value = isLoading
     }
 
     /**

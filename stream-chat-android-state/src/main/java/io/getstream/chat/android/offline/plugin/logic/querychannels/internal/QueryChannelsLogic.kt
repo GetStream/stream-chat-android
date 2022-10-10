@@ -57,16 +57,26 @@ internal class QueryChannelsLogic(
             return
         }
 
-        queryChannelsStateLogic.setLoading(true)
+        val hasOffset = pagination.channelOffset > 0
+        loadingPerPage(true, hasOffset)
 
         queryChannelsDatabaseLogic.let { dbLogic ->
             fetchChannelsFromCache(pagination, dbLogic)
                 .also { channels ->
                     if (channels.isNotEmpty()) {
                         addChannels(channels)
-                        queryChannelsStateLogic.setLoading(false)
+
+                        loadingPerPage(false, hasOffset)
                     }
                 }
+        }
+    }
+
+    private fun loadingPerPage(isLoading: Boolean, hasOffset: Boolean) {
+        if (hasOffset) {
+            queryChannelsStateLogic.setLoadingMore(isLoading)
+        } else {
+            queryChannelsStateLogic.setLoadingFirstPage(isLoading)
         }
     }
 
@@ -130,7 +140,8 @@ internal class QueryChannelsLogic(
             logger.d { "Number of returned channels: ${result.data().size}" }
             updateOnlineChannels(request, result.data())
         }
-        queryChannelsStateLogic.setLoading(false)
+
+        loadingPerPage(false, request.offset > 0)
     }
 
     /**
