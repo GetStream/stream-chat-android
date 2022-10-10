@@ -228,8 +228,8 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
             val params = (layoutParams as ViewGroup.MarginLayoutParams)
             params.updateMarginsRelative(
-                bottom = style.optionsOverlayEditReactionsMarginBottom,
                 top = style.optionsOverlayEditReactionsMarginTop,
+                bottom = style.optionsOverlayEditReactionsMarginBottom,
                 start = style.optionsOverlayEditReactionsMarginStart,
                 end = style.optionsOverlayEditReactionsMarginEnd
             )
