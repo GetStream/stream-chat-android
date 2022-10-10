@@ -35,6 +35,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Stop showing a blink of empty state screen when loading channel without loading from database first. [#4261](https://github.com/GetStream/stream-chat-android/pull/4261)
 
 ### ⬆️ Improved
 
