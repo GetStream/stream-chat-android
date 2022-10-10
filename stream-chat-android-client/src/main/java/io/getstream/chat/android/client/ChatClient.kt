@@ -269,7 +269,7 @@ internal constructor(
      * @see [Plugin]
      */
     @PublishedApi
-    internal lateinit var plugins: List<Plugin>
+    internal var plugins: List<Plugin> = emptyList()
 
     /**
      * Resolves dependency [T] within the provided plugin [P].
