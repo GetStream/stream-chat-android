@@ -153,8 +153,8 @@ public data class MessageListViewStyle(
         private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN = 2.dpToPx()
         private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION = DEFAULT_SCROLL_BUTTON_ELEVATION
 
-        private val DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM = 0.dpToPx()
         private val DEFAULT_EDIT_REACTIONS_MARGIN_TOP = 0.dpToPx()
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM = 0.dpToPx()
         private val DEFAULT_EDIT_REACTIONS_MARGIN_START = 50.dpToPx()
         private val DEFAULT_EDIT_REACTIONS_MARGIN_END = 8.dpToPx()
 
