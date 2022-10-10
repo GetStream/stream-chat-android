@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
@@ -73,8 +72,6 @@ internal open class BaseChatClientTest {
 
     protected val clientState = mock<ClientState>()
 
-    protected val initializationCoordinator = InitializationCoordinator.create()
-
     protected lateinit var chatClient: ChatClient
     internal val tokenUtils: TokenUtils = mock()
     internal val pluginFactories: MutableList<PluginFactory> = mutableListOf()
@@ -102,7 +99,6 @@ internal open class BaseChatClientTest {
             clientScope = clientScope,
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
-            initializationCoordinator = initializationCoordinator,
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),

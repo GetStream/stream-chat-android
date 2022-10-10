@@ -42,7 +42,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class SendMessageInterceptorImplTest {
+internal class SendMessageInterceptorTest {
     private val clientState: ClientState = mock {
         on(it.user) doReturn MutableStateFlow(randomUser())
     }
@@ -64,7 +64,7 @@ internal class SendMessageInterceptorImplTest {
         }
     }
 
-    private val sendMessageInterceptorImpl = SendMessageInterceptorImpl(
+    private val sendMessageInterceptorImpl = SendMessageInterceptor(
         context = mock(),
         logic = logic,
         clientState = clientState,
