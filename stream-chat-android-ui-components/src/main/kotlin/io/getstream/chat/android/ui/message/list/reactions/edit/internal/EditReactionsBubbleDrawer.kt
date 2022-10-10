@@ -56,6 +56,9 @@ internal class EditReactionsBubbleDrawer(
      * @param bubbleHeight The height of the bubble. This should be at least bigger than all the lines of reactions.
      * @param isMyMessage Whether this is the message of the current user or not.
      * @param isSingleReaction Whether there's only a single reaction of there are multiple reactions.
+     * @param messageAnchorPosition The best position to anchor the bubble to (on the message) as determined by the UI.
+     * We use this value unless it's completely out of the bounds of the canvas.
+     * @param canvasBounds The standardized bounds of the canvas that have a bit of an offset on the start and end sides.
      */
     fun drawReactionsBubble(
         context: Context,
@@ -117,6 +120,7 @@ internal class EditReactionsBubbleDrawer(
      * @param canvas [Canvas].
      * @param paint [Paint].
      * @param isRtl If the bubble should be drawn with inverted direction.
+     * @param bubbleTailPosition The position of the bubble tail, to use for the drawing.
      */
     private fun drawLargeTailBubble(canvas: Canvas, paint: Paint, isRtl: Boolean, bubbleTailPosition: Float) {
         val offset = editReactionsViewStyle.largeTailBubbleOffset.toFloat().let { bubbleOffset ->
@@ -158,6 +162,7 @@ internal class EditReactionsBubbleDrawer(
      * @param canvas [Canvas].
      * @param paint [Paint].
      * @param isRtl If the bubble should be drawn with inverted direction.
+     * @param bubbleTailPosition The position of the bubble tail, to use for the drawing.
      */
     private fun drawSmallTailBubble(canvas: Canvas, paint: Paint, isRtl: Boolean, bubbleTailPosition: Float) {
         val offset = editReactionsViewStyle.smallTailBubbleOffset.toFloat().let { bubbleOffset ->
