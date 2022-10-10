@@ -35,7 +35,7 @@ import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.StateFlow
 
-private const val MESSAGE_LIMIT = 30
+private const val MESSAGE_LIMIT = 1
 private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
@@ -62,8 +62,10 @@ internal class QueryChannelsLogic(
         queryChannelsDatabaseLogic.let { dbLogic ->
             fetchChannelsFromCache(pagination, dbLogic)
                 .also { channels ->
-                    queryChannelsStateLogic.setLoading(channels.isEmpty())
-                    addChannels(channels)
+                    if (channels.isNotEmpty()) {
+                        addChannels(channels)
+                        queryChannelsStateLogic.setLoading(false)
+                    }
                 }
         }
     }
@@ -124,11 +126,11 @@ internal class QueryChannelsLogic(
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
         onOnlineQueryResult(result, request)
 
-        queryChannelsStateLogic.setLoading(false)
-
         if (result.isSuccess) {
+            logger.d { "Number of returned channels: ${result.data().size}" }
             updateOnlineChannels(request, result.data())
         }
+        queryChannelsStateLogic.setLoading(false)
     }
 
     /**

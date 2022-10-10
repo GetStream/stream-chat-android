@@ -123,7 +123,12 @@ internal class QueryChannelsMutableState(
         }.stateIn(scope, SharingStarted.Eagerly, null)
 
     fun setLoading(isLoading: Boolean) {
-        currentLoading.value = isLoading
+        if (!isLoading) {
+            _loading.value = false
+            _loadingMore.value = false
+        } else {
+            currentLoading.value = true
+        }
     }
 
     /**
