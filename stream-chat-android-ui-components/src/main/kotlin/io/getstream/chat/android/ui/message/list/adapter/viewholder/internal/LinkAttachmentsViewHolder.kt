@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
@@ -62,6 +63,8 @@ internal class LinkAttachmentsViewHolder(
         initializeListeners()
         setLinkMovementMethod()
     }
+
+    override fun messageContainerView(): View = binding.messageContainer
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)
