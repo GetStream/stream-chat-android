@@ -39,6 +39,13 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     private var highlightAnimation: ValueAnimator? = null
 
     /**
+     * Returns the Message container that we can use to anchor UI based on its size and position.
+     */
+    public open fun messageContainerView(): View? {
+        return null
+    }
+
+    /**
      * Workaround to allow a downcast of the MessageListItem to T.
      */
     @Suppress("UNCHECKED_CAST")
