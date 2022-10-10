@@ -58,7 +58,8 @@ internal class EditReactionsBubbleDrawer(
      * @param isSingleReaction Whether there's only a single reaction of there are multiple reactions.
      * @param messageAnchorPosition The best position to anchor the bubble to (on the message) as determined by the UI.
      * We use this value unless it's completely out of the bounds of the canvas.
-     * @param canvasBounds The standardized bounds of the canvas that have a bit of an offset on the start and end sides.
+     * @param canvasBounds The standardized bounds of the canvas that have a bit of an offset
+     * on the start and end sides.
      */
     fun drawReactionsBubble(
         context: Context,
