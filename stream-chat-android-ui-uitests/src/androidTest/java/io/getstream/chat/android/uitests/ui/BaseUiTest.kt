@@ -21,8 +21,9 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.offline.plugin.configuration.Config
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.uitests.app.login.LoginActivity
 import io.getstream.chat.android.uitests.ui.util.CoroutineTaskExecutorRule
 import io.getstream.chat.android.uitests.util.readFileContents
@@ -65,18 +66,18 @@ internal abstract class BaseUiTest {
     }
 
     private fun setupStreamSdk() {
-        val offlinePluginFactory = StreamOfflinePluginFactory(
-            config = Config(
+        val statePluginFactory = StreamStatePluginFactory(
+            config = StatePluginConfig(
                 backgroundSyncEnabled = false,
                 userPresence = false,
-                persistenceEnabled = false,
+                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = context
         )
 
         ChatClient.Builder("hrwwzsgrzapv", context)
             .baseUrl(mockWebServer.url("/").toString())
-            .withPlugin(offlinePluginFactory)
+            .withPlugins(statePluginFactory)
             .logLevel(ChatLogLevel.ALL)
             .build()
     }
