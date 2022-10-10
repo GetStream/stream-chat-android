@@ -269,7 +269,7 @@ internal constructor(
      * @see [Plugin]
      */
     @PublishedApi
-    internal var plugins: List<Plugin> = emptyList()
+    internal lateinit var plugins: List<Plugin>
 
     /**
      * Resolves dependency [T] within the provided plugin [P].
@@ -383,7 +383,6 @@ internal constructor(
         val isAnonymous = user == anonUser
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
-        plugins.forEach { it.onUserSet(user) }
 
         return when {
             tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
@@ -461,6 +460,7 @@ internal constructor(
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
         _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
+        plugins.forEach { it.onUserSet(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
