@@ -52,6 +52,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDecoratorProvider
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 /**
  * An overlay with available message options to the selected message. Also, allows leaving a reaction.
@@ -323,11 +324,16 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
         viewHolder.messageContainerView()?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {
+                val rightAlignment = right + reactionsOffset - editReactionsView.left
+                val leftAlignment = left + reactionsOffset - editReactionsView.left
+                val isRtl = context.isRtlLayout
+
                 editReactionsView.positionBubbleTail(
-                    if (messageItem.isMine) {
-                        left + reactionsOffset - editReactionsView.left
-                    } else {
-                        right + reactionsOffset - editReactionsView.left
+                    when {
+                        messageItem.isMine && !isRtl -> leftAlignment
+                        messageItem.isMine && isRtl -> rightAlignment
+                        !messageItem.isMine && !isRtl -> rightAlignment
+                        else -> leftAlignment
                     }.toFloat()
                 )
             }
