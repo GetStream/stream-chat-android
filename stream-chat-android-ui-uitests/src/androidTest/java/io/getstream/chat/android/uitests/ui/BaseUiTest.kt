@@ -68,8 +68,8 @@ internal abstract class BaseUiTest {
     private fun setupStreamSdk() {
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
-                backgroundSyncEnabled = true,
-                userPresence = true,
+                backgroundSyncEnabled = false,
+                userPresence = false,
                 uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = context
