@@ -79,8 +79,8 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
  * @property scrollButtonEndMargin Defines the end margin of the scroll button.
  * @property disableScrollWhenShowingDialog Enables/disables scroll while a dialog is shown over the message list.
- * @property optionsOverlayEditReactionsMarginBottom Defines the margin between the selected message and the edit reactions bubble on the options overlay.
  * @property optionsOverlayEditReactionsMarginTop Defines the top margin between the edit reactions bubble on the options overlay and the parent.
+ * @property optionsOverlayEditReactionsMarginBottom Defines the margin between the selected message and the edit reactions bubble on the options overlay.
  * @property optionsOverlayEditReactionsMarginStart Defines the start margin between the edit reactions bubble on the options overlay and the parent.
  * @property optionsOverlayEditReactionsMarginEnd Defines the end margin between the edit reactions bubble on the options overlay and the parent.
  * @property optionsOverlayUserReactionsMarginTop Defines the margin between the selected message and the user reaction list on the options overlay.
