@@ -182,6 +182,7 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/c
 	public abstract fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getHidden ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInsideSearch ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getLastSentMessageDate ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingNewerMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
