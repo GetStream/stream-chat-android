@@ -129,7 +129,7 @@
             />
 
         <TextView
-            android:id="@+id/imageCountTextView"
+            android:id="@+id/mediaCountTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="?attr/streamUiAttachmentGalleryBottomBarImageCountStyle"
@@ -141,7 +141,7 @@
             />
 
         <ImageView
-            android:id="@+id/shareImageButton"
+            android:id="@+id/shareMediaButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="?attr/streamUiAttachmentGalleryBottomBarLeftIconStyle"

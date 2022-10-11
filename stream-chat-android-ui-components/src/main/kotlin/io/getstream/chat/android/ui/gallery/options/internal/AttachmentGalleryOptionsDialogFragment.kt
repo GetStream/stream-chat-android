@@ -92,7 +92,7 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
             showInChatOptionHandler?.onAttachmentOptionClick()
             dismiss()
         }
-        binding.attachmentOptionsMenu.setSaveImageClickListener {
+        binding.attachmentOptionsMenu.setSaveMediaClickListener {
             saveImageOptionHandler?.onAttachmentOptionClick()
             dismiss()
         }
@@ -170,21 +170,21 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
          * @param showInChatOptionHandler A callback for the "show in chat" option.
          * @param replyOptionHandler A callback for the "reply" option.
          * @param deleteOptionHandler A callback for the "delete" option.
-         * @param saveImageOptionHandler A callback for the "save image" option.
+         * @param saveMediaOptionHandler A callback for the "save image" option.
          * @param isMessageMine If the message belongs to the current user.
          */
         fun newInstance(
             showInChatOptionHandler: AttachmentOptionHandler,
             replyOptionHandler: AttachmentOptionHandler,
             deleteOptionHandler: AttachmentOptionHandler,
-            saveImageOptionHandler: AttachmentOptionHandler,
+            saveMediaOptionHandler: AttachmentOptionHandler,
             isMessageMine: Boolean,
         ): AttachmentGalleryOptionsDialogFragment {
             return AttachmentGalleryOptionsDialogFragment().apply {
                 setShowInChatOptionHandler(showInChatOptionHandler)
                 setReplyOptionHandler(replyOptionHandler)
                 setDeleteOptionHandler(deleteOptionHandler)
-                setSaveImageOptionHandler(saveImageOptionHandler)
+                setSaveImageOptionHandler(saveMediaOptionHandler)
                 setIsMessageMine(isMessageMine)
             }
         }

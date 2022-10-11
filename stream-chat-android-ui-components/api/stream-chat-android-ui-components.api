@@ -1668,8 +1668,8 @@ public final class io/getstream/chat/android/ui/gallery/options/AttachmentGaller
 	public final fun getOptionTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getReplyOptionDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getReplyOptionEnabled ()Z
-	public final fun getSaveImageOptionDrawable ()Landroid/graphics/drawable/Drawable;
-	public final fun getSaveImageOptionEnabled ()Z
+	public final fun getSaveMediaOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getSaveMediaOptionEnabled ()Z
 	public final fun getShowInChatOptionDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getShowInChatOptionEnabled ()Z
 	public fun hashCode ()I

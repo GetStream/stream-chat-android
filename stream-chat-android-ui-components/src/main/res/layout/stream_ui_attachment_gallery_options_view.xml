@@ -49,7 +49,7 @@
             />
 
         <TextView
-            android:id="@+id/saveImage"
+            android:id="@+id/saveMedia"
             style="@style/StreamUiMessageOptionItem"
             android:text="@string/stream_ui_attachment_gallery_save_image"
             android:textDirection="locale"

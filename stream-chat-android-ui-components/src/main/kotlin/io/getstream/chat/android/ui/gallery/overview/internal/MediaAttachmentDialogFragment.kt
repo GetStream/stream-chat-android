@@ -31,6 +31,8 @@ internal class MediaAttachmentDialogFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: AttachmentGalleryViewModel by viewModels()
+    // TODO - rename to media when the bottom sheet refactor
+    // TODO - comes into play
     private var imageClickListener: (Int) -> Unit = {}
 
     override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
@@ -59,7 +61,7 @@ internal class MediaAttachmentDialogFragment : BottomSheetDialogFragment() {
         super.onDestroyView()
     }
 
-    fun setImageClickListener(listener: (Int) -> Unit) {
+    fun setMediaClickListener(listener: (Int) -> Unit) {
         imageClickListener = listener
     }
 

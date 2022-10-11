@@ -22,18 +22,21 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.format.DateUtils
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -48,9 +51,9 @@ import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsView
 import io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOptionsDialogFragment
 import io.getstream.chat.android.ui.gallery.overview.internal.MediaAttachmentDialogFragment
 import io.getstream.logging.StreamLog
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 
@@ -71,14 +74,22 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private var showInChatOptionEnabled: Boolean = true
 
     /**
-     * If the "save image" option is present in the list
+     * If the "save media" option is present in the list
      */
-    private var saveImageOptionEnabled: Boolean = true
+    private var saveMediaOptionEnabled: Boolean = true
 
     /**
      * If the "delete" option is present in the list.
      */
     private var deleteOptionEnabled: Boolean = true
+
+    /**
+     * Represents the job used to share an attachment.
+     *
+     * If the attachment is larger, this could end up being a longer run job
+     * so cancel it accordingly.
+     */
+    private var shareMediaJob: Job? = null
 
     private val initialIndex: Int by lazy { intent.getIntExtra(EXTRA_KEY_INITIAL_INDEX, 0) }
     private val viewModel: AttachmentGalleryViewModel by viewModels()
@@ -98,21 +109,6 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         }
     private var isFullScreen = false
 
-    private var onSharePictureListener: (pictureUri: Uri) -> Unit = { pictureUri ->
-        ContextCompat.startActivity(
-            this,
-            Intent.createChooser(
-                Intent(Intent.ACTION_SEND).apply {
-                    type = "image/*"
-                    putExtra(Intent.EXTRA_STREAM, pictureUri)
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                },
-                getString(R.string.stream_ui_attachment_gallery_share),
-            ),
-            null
-        )
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -129,7 +125,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         } else {
             this.attachmentGalleryItems = attachmentGalleryItems
             setupGalleryAdapter()
-            setupShareImageButton()
+            setupShareMediaButton()
             setupAttachmentActionsButton()
             obtainOptionsViewStyle()
             observePageChanges()
@@ -139,8 +135,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun setupGalleryAdapter() {
         adapter = AttachmentGalleryPagerAdapter(
             fragmentActivity = this,
-            imageList = attachmentGalleryItems.map { it.attachment.imagePreviewUrl!! },
-            imageClickListener = {
+            mediaList = attachmentGalleryItems.map { it.attachment },
+            mediaClickListener = {
                 isFullScreen = !isFullScreen
                 if (isFullScreen) enterFullScreenMode() else exitFullScreenMode()
             }
@@ -149,30 +145,119 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         binding.galleryViewPager.setCurrentItem(initialIndex, false)
     }
 
-    private fun setupShareImageButton() {
-        binding.shareImageButton.setOnClickListener {
-            it.isEnabled = false
-            GlobalScope.launch(DispatcherProvider.Main) {
-                StreamImageLoader.instance().loadAsBitmap(
-                    context = applicationContext,
-                    url = adapter.getItem(binding.galleryViewPager.currentItem)
-                )?.let { bitmap ->
-                    StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
-                }?.let(onSharePictureListener)
+    /**
+     * Sets an on click listener with media sharing capability
+     * on the share button.
+     */
+    private fun setupShareMediaButton() {
+        binding.shareMediaButton.setOnClickListener {
+            val attachment = adapter.getItem(binding.galleryViewPager.currentItem)
 
-                delay(500)
-                it.isEnabled = true
+            when (attachment.type) {
+                ModelType.attach_image -> shareImage(attachment = attachment)
+                ModelType.attach_video -> shareVideo(attachment = attachment)
+                else -> toastFailedShare()
             }
         }
+    }
+
+    /**
+     * Prepares an image attachment for sharing.
+     *
+     * @param attachment The attachment to share.
+     **/
+    private fun shareImage(attachment: Attachment) {
+        val imageUrl = attachment.imageUrl
+
+        if (imageUrl != null) {
+            shareMediaJob?.cancel()
+
+            shareMediaJob = lifecycleScope.launch(DispatcherProvider.Main) {
+                StreamImageLoader.instance().loadAsBitmap(
+                    context = applicationContext,
+                    url = imageUrl
+                )?.let { bitmap ->
+                    StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
+                }?.let {
+                    launchShareActivity(mediaUri = it, attachmentType = attachment.type)
+                }
+            }
+        } else {
+            toastFailedShare()
+        }
+    }
+
+    /**
+     * Prepares a video attachment for sharing.
+     *
+     * @param attachment The attachment to share.
+     */
+    private fun shareVideo(attachment: Attachment) {
+        shareMediaJob?.cancel()
+
+        shareMediaJob = lifecycleScope.launch(DispatcherProvider.IO) {
+            val result = withContext(DispatcherProvider.IO) {
+                StreamFileUtil.writeFileToShareableFile(
+                    context = applicationContext,
+                    attachment = attachment
+                )
+            }
+
+            if (result.isSuccess) {
+                launchShareActivity(mediaUri = result.data(), attachmentType = attachment.type)
+            } else {
+                toastFailedShare()
+            }
+        }
+    }
+
+    private fun launchShareActivity(
+        mediaUri: Uri,
+        attachmentType: String?,
+    ) {
+        val type = when (attachmentType) {
+            ModelType.attach_image -> "image/*"
+            ModelType.attach_video -> "video/*"
+            else -> {
+                toastFailedShare()
+                return
+            }
+        }
+
+        ContextCompat.startActivity(
+            this,
+            Intent.createChooser(
+                Intent(Intent.ACTION_SEND).apply {
+                    this.type = type
+                    putExtra(Intent.EXTRA_STREAM, mediaUri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                },
+                getString(R.string.stream_ui_attachment_gallery_share),
+            ),
+            null
+        )
+    }
+
+    /**
+     * Displays a toast saying that sharing the attachment has failed.
+     */
+    private fun toastFailedShare() {
+        Toast.makeText(
+            applicationContext,
+            applicationContext.getString(R.string.stream_ui_attachment_gallery_share_error),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun setupAttachmentActionsButton() {
         binding.attachmentActionsButton.setOnClickListener {
             AttachmentGalleryOptionsDialogFragment.newInstance(
-                showInChatOptionHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) },
+                showInChatOptionHandler = {
+                    setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem))
+                },
                 deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
                 replyOptionHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
-                saveImageOptionHandler = handleSaveImage,
+                saveMediaOptionHandler = handleSaveMedia,
                 isMessageMine = attachmentGalleryItems[binding.galleryViewPager.currentItem].isMine,
             ).show(supportFragmentManager, AttachmentGalleryOptionsDialogFragment.TAG)
         }
@@ -189,7 +274,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         onGalleryPageSelected(initialIndex)
     }
 
-    private val handleSaveImage = AttachmentGalleryOptionsDialogFragment.AttachmentOptionHandler {
+    private val handleSaveMedia = AttachmentGalleryOptionsDialogFragment.AttachmentOptionHandler {
         permissionChecker.checkWriteStoragePermissions(
             binding.root,
             onPermissionGranted = {
@@ -207,7 +292,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     }
 
     private fun onGalleryPageSelected(position: Int) {
-        binding.imageCountTextView.text = getString(
+        binding.mediaCountTextView.text = getString(
             R.string.stream_ui_attachment_gallery_count,
             position + 1,
             attachmentGalleryItems.size
@@ -241,7 +326,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         binding.galleryOverviewButton.setOnClickListener {
             MediaAttachmentDialogFragment.newInstance()
                 .apply {
-                    setImageClickListener {
+                    setMediaClickListener {
                         binding.galleryViewPager.setCurrentItem(it, true)
                         dismiss()
                     }
@@ -292,7 +377,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 val style = AttachmentGalleryOptionsViewStyle(this, it)
                 replyOptionEnabled = style.replyOptionEnabled
                 showInChatOptionEnabled = style.showInChatOptionEnabled
-                saveImageOptionEnabled = style.saveImageOptionEnabled
+                saveMediaOptionEnabled = style.saveMediaOptionEnabled
                 deleteOptionEnabled = style.deleteOptionEnabled
             }
         } catch (e: Exception) {
@@ -309,7 +394,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun shouldShowOptionsButton(isMine: Boolean): Boolean {
         return replyOptionEnabled ||
             showInChatOptionEnabled ||
-            saveImageOptionEnabled ||
+            saveMediaOptionEnabled ||
             (deleteOptionEnabled && isMine)
     }
 
