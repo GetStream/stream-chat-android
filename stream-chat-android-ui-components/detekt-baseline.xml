@@ -49,7 +49,6 @@
     <ID>LongMethod:SwipeViewHolder.kt$SwipeViewHolder$@SuppressLint("ClickableViewAccessibility") public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?)</ID>
     <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, )</ID>
     <ID>LongParameterList:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle$( public val progressIcon: Drawable, public val giphyIcon: Drawable, public val placeholderIcon: Drawable, @ColorInt public val imageBackgroundColor: Int, public val giphyType: GiphyInfoType, public val scaleType: ImageView.ScaleType, public val sizingMode: GiphySizingMode, public val width: Int, public val height: Int, public val dimensionRatio: Float, )</ID>
-    <ID>MagicNumber:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$500</ID>
     <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$0.5f</ID>
     <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$3</ID>
     <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$4</ID>
@@ -57,7 +56,6 @@
     <ID>MagicNumber:ChannelViewHolder.kt$ChannelViewHolder$99</ID>
     <ID>MagicNumber:EditReactionsView.kt$EditReactionsView$5</ID>
     <ID>MagicNumber:EditReactionsViewStyle.kt$EditReactionsViewStyle.Builder$5</ID>
-    <ID>MagicNumber:ImageAttachmentsGroupView.kt$ImageAttachmentsGroupView$3</ID>
     <ID>MagicNumber:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$4</ID>
     <ID>MagicNumber:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$7</ID>
     <ID>MagicNumber:MessageInputView.kt$MessageInputView$1000</ID>
@@ -75,7 +73,6 @@
     <ID>MagicNumber:UserAvatarView.kt$UserAvatarView$8f</ID>
     <ID>MaxLineLength:AttachmentActivity.kt$AttachmentActivity$Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()</ID>
     <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) }</ID>
-    <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$showInChatOptionHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) }</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToCameraIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!</ID>
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle$*</ID>
@@ -104,8 +101,6 @@
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentPlaceHolderIcon)</ID>
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentProgressIcon)</ID>
     <ID>MaxLineLength:GiphyViewHolderStyle.kt$GiphyViewHolderStyle$*</ID>
-    <ID>MaxLineLength:ImageAttachmentViewHolder.kt$ImageAttachmentViewHolder$data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }</ID>
-    <ID>MaxLineLength:ImageAttachmentViewStyle.kt$ImageAttachmentViewStyle$*</ID>
     <ID>MaxLineLength:MediaAttachmentDialogFragment.kt$MediaAttachmentDialogFragment$viewModel.attachmentGalleryItemsLiveData.observe(viewLifecycleOwner, mediaAttachmentGridView::setAttachments)</ID>
     <ID>MaxLineLength:MessageBackgroundFactoryImpl.kt$MessageBackgroundFactoryImpl$// however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.</ID>
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
@@ -178,6 +173,7 @@
     <ID>TooGenericExceptionCaught:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ChatFontsImpl.kt$ChatFontsImpl$t: Throwable</ID>
     <ID>TooGenericExceptionCaught:MessageInputView.kt$MessageInputView$e: Exception</ID>
+    <ID>TooGenericExceptionThrown:AttachmentGalleryPagerAdapter.kt$AttachmentGalleryPagerAdapter$throw Throwable("Unsupported attachment type")</ID>
     <ID>TooManyFunctions:ChannelListView.kt$ChannelListView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageInputFieldView.kt$MessageInputFieldView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageInputView.kt$MessageInputView : ConstraintLayout</ID>
