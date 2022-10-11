@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
@@ -49,7 +48,6 @@ import kotlinx.coroutines.job
  * @param config [StatePluginConfig] Configuration of persistence of the SDK.
  * @param appContext [Context]
  */
-@InternalStreamChatApi
 public class StreamStatePluginFactory(
     private val config: StatePluginConfig,
     private val appContext: Context,
@@ -79,7 +77,6 @@ public class StreamStatePluginFactory(
         return createStatePlugin(user, scope)
     }
 
-    @InternalStreamChatApi
     @SuppressWarnings("LongMethod")
     public fun createStatePlugin(
         user: User,
