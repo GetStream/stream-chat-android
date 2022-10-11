@@ -393,7 +393,7 @@ internal class ChannelStateLogic(
     /**
      * @param isNotificationUpdate Whether the data is updating due to a new notification.
      * @param isInsideSearch Whether we are inside search or not.
-     * @param isScrollUpdate Whether the update is dut to a scroll update, meaning pagination.
+     * @param isScrollUpdate Whether the update is due to a scroll update, meaning pagination.
      * @param shouldRefreshMessages Whether the message list should get refreshed.
      *
      * @return Whether we need to upsert the messages or not.
