@@ -23,7 +23,6 @@
 
 ### ❌ Removed
 
-
 ## stream-chat-android-offline
 ### 🐞 Fixed
 

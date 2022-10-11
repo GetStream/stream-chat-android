@@ -1517,7 +1517,7 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessagesLa
 	public final fun copy (Landroidx/compose/foundation/lazy/LazyListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState$MessageOffsetHandler;)Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Landroidx/compose/foundation/lazy/LazyListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState$MessageOffsetHandler;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFocusedMessageOffset ()Lkotlinx/coroutines/flow/Flow;
+	public final fun getFocusedMessageOffset ()I
 	public final fun getLazyListState ()Landroidx/compose/foundation/lazy/LazyListState;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

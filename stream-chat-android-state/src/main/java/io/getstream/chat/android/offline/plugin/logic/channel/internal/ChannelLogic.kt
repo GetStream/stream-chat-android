@@ -188,7 +188,7 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
-        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
+        /* It is not possible to guarantee that the next page of newer messages is the same as the one on backend,
          * so we force the backend usage */
         if (request.isFilteringNewerMessages()) return null
 

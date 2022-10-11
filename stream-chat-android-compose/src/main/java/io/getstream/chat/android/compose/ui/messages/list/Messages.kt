@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -234,7 +233,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
-    val offset by messagesLazyListState.focusedMessageOffset.collectAsState(0)
+    val offset = messagesLazyListState.focusedMessageOffset
 
     LaunchedEffect(newMessageState, focusedItemIndex, offset) {
 
