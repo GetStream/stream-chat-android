@@ -30,7 +30,13 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 
 /**
+ * Style for unsupported attachments.
  *
+ * @param backgroundColor Unsupported attachment background color.
+ * @param strokeColor Unsupported attachment stroke color.
+ * @param strokeWidth Unsupported attachment stroke width.
+ * @param cornerRadius Unsupported attachment corner radius.
+ * @param titleTextStyle Text appearance for unsupported attachment title.
  */
 public data class UnsupportedAttachmentViewStyle(
     @ColorInt val backgroundColor: Int,

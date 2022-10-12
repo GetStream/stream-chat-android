@@ -3399,6 +3399,12 @@ public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/
 	public final fun createAndAddQuotedView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)V
 }
 
+public final class io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/UnsupportedAttachmentFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
+	public fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+}
+
 public abstract interface class io/getstream/chat/android/ui/message/list/background/MessageBackgroundFactory {
 	public abstract fun deletedMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun fileAttachmentsMessageBackground (Landroid/content/Context;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;

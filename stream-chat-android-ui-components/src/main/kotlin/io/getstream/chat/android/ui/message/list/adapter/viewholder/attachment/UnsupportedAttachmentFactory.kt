@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiUnsupportedAttachmentViewBinding
 import io.getstream.chat.android.ui.message.list.UnsupportedAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
@@ -36,7 +37,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
 /**
  * Fallback factory for unsupported attachment types.
  */
-internal class UnsupportedAttachmentFactory : AttachmentFactory {
+public class UnsupportedAttachmentFactory : AttachmentFactory {
 
     /**
      * Checks if the message contains unsupported attachments.
@@ -96,6 +97,7 @@ internal class UnsupportedAttachmentFactory : AttachmentFactory {
                 strokeColor = ColorStateList.valueOf(style.strokeColor)
                 strokeWidth = style.strokeWidth.toFloat()
             }
+            binding.titleImageView.setTextStyle(style.titleTextStyle)
         }
     }
 
@@ -108,7 +110,7 @@ internal class UnsupportedAttachmentFactory : AttachmentFactory {
         return SUPPORTED_ATTACHMENT_TYPES.contains(type)
     }
 
-    companion object {
+    private companion object {
         /**
          * The list of supported attachment types.
          */
