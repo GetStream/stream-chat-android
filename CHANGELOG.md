@@ -85,6 +85,7 @@
 - Improved automatic reloading of non-cached images when regaining network connection. The improvements are visible in the messages list and the new media gallery called `MediaGalleryPreviewActivity`. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Improved requesting `WRITE_EXTERNAL_STORAGE` permission when legacy storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
 - Improved the stability of cooldown timer in slow mode. [#4251](https://github.com/GetStream/stream-chat-android/pull/4251)
+- Improved how system bar colors are handled on the gallery screen. [#4267](https://github.com/GetStream/stream-chat-android/pull/4267)
 
 ### ✅ Added
 - Added a new gallery called `MediaGalleryPreviewActivity`. This gallery is an upgrade over `ImagePreviewActivity` as it has the capability to reproduce videos as well as images, automatically reloads non-cached images upon regaining network connection and works in offline mode. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
