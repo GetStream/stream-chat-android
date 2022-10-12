@@ -730,6 +730,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getSingleReactionViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getSuggestionListStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getTypingIndicatorViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getUnsupportedAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun setAttachmentGalleryOptionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setAttachmentsPickerStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -755,6 +756,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setSingleReactionViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setSuggestionListStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setTypingIndicatorViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setUnsupportedAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setViewReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 }
 
@@ -3189,6 +3191,25 @@ public final class io/getstream/chat/android/ui/message/list/ScrollButtonViewSty
 	public final fun getScrollButtonInternalMargin ()I
 	public final fun getScrollButtonRippleColor ()I
 	public final fun getScrollButtonUnreadEnabled ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/message/list/UnsupportedAttachmentViewStyle {
+	public fun <init> (IIIILio/getstream/chat/android/ui/common/style/TextStyle;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun copy (IIIILio/getstream/chat/android/ui/common/style/TextStyle;)Lio/getstream/chat/android/ui/message/list/UnsupportedAttachmentViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/list/UnsupportedAttachmentViewStyle;IIIILio/getstream/chat/android/ui/common/style/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/list/UnsupportedAttachmentViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundColor ()I
+	public final fun getCornerRadius ()I
+	public final fun getStrokeColor ()I
+	public final fun getStrokeWidth ()I
+	public final fun getTitleTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

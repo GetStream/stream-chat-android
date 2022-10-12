@@ -24,7 +24,9 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerCont
  * A manager for registered custom attachment factories.
  */
 public class AttachmentFactoryManager(
-    private val attachmentFactories: List<AttachmentFactory> = listOf(),
+    private val attachmentFactories: List<AttachmentFactory> = listOf(
+        UnsupportedAttachmentFactory()
+    ),
 ) {
     /**
      * Checks if any [AttachmentFactory] can consume attachments from the given message.
