@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.widget.MediaController
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
@@ -50,6 +51,58 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         ).let {
             AttachmentGalleryOptionsViewStyle(requireContext(), it)
         }
+    }
+
+    /**
+     * If the video has been prepared and the video player
+     * is ready for playback.
+     *
+     * VideoView does not expose state so we use these to track
+     * state externally.
+     */
+    private var playbackPrepared = false
+        set(value) {
+            field = value
+            if (playbackPrepared && playbackStartRequested) {
+                binding.thumbnailImageView.visibility = View.GONE
+                binding.playButtonCardView.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
+            } else {
+                binding.thumbnailImageView.visibility = View.VISIBLE
+                binding.playButtonCardView.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.VISIBLE
+            }
+        }
+
+    /**
+     * If the user has pressed play.
+     *
+     * VideoView does not expose state so we use these to track
+     * state externally.
+     */
+    private var playbackStartRequested = false
+        set(value) {
+            field = value
+            if (!playbackPrepared && playbackStartRequested) {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.playButtonCardView.visibility = View.GONE
+            } else {
+                binding.playButtonCardView.visibility = View.GONE
+                binding.thumbnailImageView.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
+            }
+        }
+
+    /**
+     * Resets the state and hides the controller.
+     *
+     * Important for resetting state when paging through
+     * fragments in a pager.
+     */
+    override fun onPause() {
+        super.onPause()
+        resetState()
+        mediaController.hide()
     }
 
     /**
@@ -80,8 +133,26 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupVideoThumbnail()
         setupPlayButton()
         loadVideo()
+    }
+
+    private fun setupVideoThumbnail() {
+        binding.thumbnailImageView.load(data = thumbUrl)
+    }
+
+    /**
+     * Resets this video page's state.
+     */
+    private fun resetState() {
+        playbackPrepared = false
+        playbackStartRequested = false
+        with(binding) {
+            playButtonCardView.visibility = View.VISIBLE
+            progressBar.visibility = View.VISIBLE
+            thumbnailImageView.visibility = View.VISIBLE
+        }
     }
 
     /**
@@ -89,12 +160,12 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
      * by pulling relevant values from [AttachmentGalleryOptionsViewStyle].
      **/
     private fun setupPlayButton() {
-        with(binding.playButtonCardView) {
-            elevation = style.viewMediaPlayVideoIconElevation
-            setCardBackgroundColor(style.viewMediaPlayVideoIconBackgroundColor)
-            radius = style.viewMediaPlayVideoIconCornerRadius
-        }
+        setupPlayButtonIcon()
+        setupPlayButtonCard()
+        setupOnPlayButtonClickedListener()
+    }
 
+    private fun setupPlayButtonIcon() {
         with(binding.playButtonImageView) {
             updateLayoutParams {
                 width = style.viewMediaPlayVideoIconWidth
@@ -119,6 +190,21 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         }
     }
 
+    private fun setupPlayButtonCard() {
+        with(binding.playButtonCardView) {
+            elevation = style.viewMediaPlayVideoIconElevation
+            setCardBackgroundColor(style.viewMediaPlayVideoIconBackgroundColor)
+            radius = style.viewMediaPlayVideoIconCornerRadius
+        }
+    }
+
+    private fun setupOnPlayButtonClickedListener() {
+        binding.playButtonCardView.setOnClickListener {
+            binding.videoView.start()
+            playbackStartRequested = true
+        }
+    }
+
     private fun loadVideo() {
         binding.videoView.apply {
             setVideoURI(Uri.parse(assetUrl))
@@ -128,7 +214,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
                 true
             }
             setOnPreparedListener {
-                // TODO fill in when there's a thumbnail preview
+                playbackPrepared = true
             }
 
             mediaController.setAnchorView(binding.root)
