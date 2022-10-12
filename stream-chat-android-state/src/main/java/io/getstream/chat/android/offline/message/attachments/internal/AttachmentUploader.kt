@@ -243,15 +243,22 @@ internal class AttachmentUploader(
             if (type == null) {
                 type = attachmentType.toString()
             }
-            if (attachmentType == AttachmentType.IMAGE) {
-                imageUrl = url
-            } else {
-                assetUrl = url
+            when (attachmentType) {
+                AttachmentType.IMAGE -> {
+                    imageUrl = url
+                }
+                AttachmentType.VIDEO -> {
+                    imageUrl = thumbUrl
+                    this.thumbUrl = thumbUrl
+                    assetUrl = url
+                }
+                else -> {
+                    assetUrl = url
+                }
             }
             if (title.isNullOrBlank()) {
                 title = file.name
             }
-            this.thumbUrl = thumbUrl
         }
     }
 
