@@ -109,6 +109,34 @@ internal class AttachmentUploaderTests {
     }
 
     @Test
+    fun `Should return attachment with proper data including thumb and image url when successfully sent video file`() =
+        runTest {
+            val attachment = randomAttachments(size = 1)
+                .first()
+                .apply { mimeType = "video/mp4" }
+
+            val url = "url"
+            val thumbUrl = "thumbUrl"
+
+            val sut = Fixture()
+                .givenMockedFileUploads(channelType, channelId, Result(UploadedFile(file = url, thumbUrl = thumbUrl)))
+                .get()
+
+            val result = sut.uploadAttachment(channelType, channelId, attachment)
+
+            with(result.data()) {
+                name shouldBeEqualTo attachment.upload!!.name
+                url shouldBeEqualTo url
+                thumbUrl shouldBeEqualTo thumbUrl
+                imageUrl shouldBeEqualTo thumbUrl
+                fileSize.shouldNotBeNull()
+                type.shouldNotBeNull()
+                mimeType.shouldNotBeNull()
+                uploadState shouldBeEqualTo Attachment.UploadState.Success
+            }
+        }
+
+    @Test
     fun `Upload attachment should have the right format`() = runTest {
         val attachments = randomAttachments()
         val files: List<File> = attachments.map { it.upload!! }

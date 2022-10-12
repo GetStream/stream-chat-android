@@ -62,6 +62,7 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -90,6 +91,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -126,6 +128,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ConnectionState
@@ -223,6 +226,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
         setContent {
             ChatTheme(videoThumbnailsEnabled = videoThumbnailsEnabled) {
+                SetupSystemUI()
+
                 val message = mediaGalleryPreviewViewModel.message
 
                 if (message.deletedAt != null) {
@@ -232,6 +237,24 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                 MediaGalleryPreviewContentWrapper(message, attachmentPosition)
             }
+        }
+    }
+
+    /**
+     * Responsible for updating the system UI.
+     */
+    @Composable
+    private fun SetupSystemUI() {
+        val systemUiController = rememberSystemUiController()
+        val useDarkIcons = !isSystemInDarkTheme()
+
+        val systemBarsColor = ChatTheme.colors.barsBackground
+
+        SideEffect {
+            systemUiController.setSystemBarsColor(
+                color = systemBarsColor,
+                darkIcons = useDarkIcons
+            )
         }
     }
 

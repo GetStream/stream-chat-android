@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
@@ -337,7 +338,10 @@ internal fun MediaAttachmentContentItem(
 
     val data =
         if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
-            attachment.imagePreviewUrl
+            when (message.syncStatus) {
+                SyncStatus.COMPLETED -> attachment.imagePreviewUrl
+                else -> attachment.upload
+            }
         } else {
             null
         }
@@ -372,13 +376,17 @@ internal fun MediaAttachmentContentItem(
                 interactionSource = MutableInteractionSource(),
                 indication = rememberRipple(),
                 onClick = {
-                    mixedMediaPreviewLauncher.launch(
-                        MediaGalleryPreviewContract.Input(
-                            message = message,
-                            initialPosition = attachmentPosition,
-                            videoThumbnailsEnabled = areVideosEnabled
+                    if (message.syncStatus == SyncStatus.COMPLETED) {
+                        mixedMediaPreviewLauncher.launch(
+                            MediaGalleryPreviewContract.Input(
+                                message = message,
+                                initialPosition = attachmentPosition,
+                                videoThumbnailsEnabled = areVideosEnabled
+                            )
                         )
-                    )
+                    } else {
+                        onLongItemClick(message)
+                    }
                 },
                 onLongClick = { onLongItemClick(message) }
             ),
