@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentF
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.ui.utils.GiphyInfoType
@@ -71,6 +72,7 @@ public object StreamAttachmentFactories {
         ),
         MediaAttachmentFactory(),
         FileAttachmentFactory(),
+        UnsupportedAttachmentFactory(),
     )
 
     /**

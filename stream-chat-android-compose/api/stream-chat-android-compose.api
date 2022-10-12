@@ -573,6 +573,13 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Comp
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
+public final class io/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$UnsupportedAttachmentContentKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$UnsupportedAttachmentContentKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/attachments/content/FileAttachmentContentKt {
 	public static final fun FileAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun FileAttachmentImage (Lio/getstream/chat/android/client/models/Attachment;Landroidx/compose/runtime/Composer;I)V
@@ -624,6 +631,10 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Quot
 	public static final fun QuotedMessageAttachmentContent (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/attachments/content/UnsupportedAttachmentContentKt {
+	public static final fun UnsupportedAttachmentContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$FileAttachmentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$FileAttachmentFactoryKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function5;
@@ -644,6 +655,13 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$QuotedAttachmentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$QuotedAttachmentFactoryKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function4;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$UnsupportedAttachmentFactoryKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$UnsupportedAttachmentFactoryKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function4;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
@@ -676,6 +694,10 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Medi
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/QuotedAttachmentFactoryKt {
 	public static final fun QuotedAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/factory/UnsupportedAttachmentFactoryKt {
+	public static final fun UnsupportedAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/UploadAttachmentFactoryKt {
@@ -1599,8 +1621,8 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors$Compa
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDimens$Companion;
-	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
 	public final fun component10-D9Ej5fM ()F
 	public final fun component11-D9Ej5fM ()F
@@ -1646,12 +1668,13 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun component48-D9Ej5fM ()F
 	public final fun component49-D9Ej5fM ()F
 	public final fun component5-D9Ej5fM ()F
+	public final fun component50-D9Ej5fM ()F
 	public final fun component6-D9Ej5fM ()F
 	public final fun component7-D9Ej5fM ()F
 	public final fun component8-D9Ej5fM ()F
 	public final fun component9-D9Ej5fM ()F
-	public final fun copy-IGK3VHk (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
-	public static synthetic fun copy-IGK3VHk$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public final fun copy-1ChE538 (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public static synthetic fun copy-1ChE538$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachmentsContentFileUploadWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentFileWidth-D9Ej5fM ()F
@@ -1665,6 +1688,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun getAttachmentsContentImageWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentLinkWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentMediaGridSpacing-D9Ej5fM ()F
+	public final fun getAttachmentsContentUnsupportedWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentVideoMaxHeight-D9Ej5fM ()F
 	public final fun getAttachmentsContentVideoWidth-D9Ej5fM ()F
 	public final fun getChannelAvatarSize-D9Ej5fM ()F
