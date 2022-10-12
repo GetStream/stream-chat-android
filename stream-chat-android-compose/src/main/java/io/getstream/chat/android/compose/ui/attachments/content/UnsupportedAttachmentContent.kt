@@ -67,7 +67,7 @@ public fun UnsupportedAttachmentContent(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 8.dp),
-                text = stringResource(id = R.string.stream_cmopose_message_list_unsupported_attachment),
+                text = stringResource(id = R.string.stream_compose_message_list_unsupported_attachment),
                 style = ChatTheme.typography.bodyBold,
                 overflow = TextOverflow.Ellipsis,
                 color = ChatTheme.colors.textHighEmphasis
