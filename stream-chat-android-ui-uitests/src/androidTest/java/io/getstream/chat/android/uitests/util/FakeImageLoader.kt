@@ -17,6 +17,7 @@
 package io.getstream.chat.android.uitests.util
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import coil.ComponentRegistry
@@ -99,7 +100,10 @@ class FakeImageLoader(
         return ContextCompat.getDrawable(
             context,
             userAvatars[avatarUrl] ?: return null
-        )!!
+        )!!.apply {
+            // Workaround for an issue with black background behind clipped images
+            (this as BitmapDrawable).bitmap.setHasAlpha(true)
+        }
     }
 
     companion object {

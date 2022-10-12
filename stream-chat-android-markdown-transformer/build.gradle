@@ -26,7 +26,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
                 '-Xexplicit-api=strict',
-                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+                '-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
         ]
     }
 }
