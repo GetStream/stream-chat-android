@@ -807,10 +807,6 @@
         <item name="streamUiSearchResultListMessageTimeTextStyle">normal</item>
     </style>
 
-    <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="streamUiTheme">@style/StreamUiTheme</item>
-    </style>
-
     <style name="StreamUi.AttachmentGallery.Options">
         <item name="streamUiAttachmentOptionTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiAttachmentOptionTextColor">@color/stream_ui_text_color_primary</item>
