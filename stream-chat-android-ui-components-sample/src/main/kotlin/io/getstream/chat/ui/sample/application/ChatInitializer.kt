@@ -24,8 +24,6 @@ import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
-import io.getstream.chat.android.offline.plugin.configuration.Config
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import io.getstream.chat.android.pushprovider.xiaomi.XiaomiPushDeviceGenerator
@@ -34,12 +32,17 @@ import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
+import io.getstream.chat.ui.sample.realme.model.MessageRealmEntity
+import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
 
 class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
         FirebaseApp.initializeApp(context)
+        configureRealm()
+
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
             newMessageIntent = {
@@ -65,13 +68,15 @@ class ChatInitializer(private val context: Context) {
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val offlinePlugin = StreamOfflinePluginFactory(
-            Config(
-                userPresence = true,
-                persistenceEnabled = true,
-            ),
-            context
-        )
+        // val offlinePlugin = StreamOfflinePluginFactory(
+        //     Config(
+        //         userPresence = true,
+        //         persistenceEnabled = true,
+        //     ),
+        //     context
+        // ).apply {
+        //     setCustomRepositoryFactory(RealmRepositoryFactory())
+        // }
 
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
@@ -86,11 +91,17 @@ class ChatInitializer(private val context: Context) {
             .loggerHandler(FirebaseLogger)
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
-            .withPlugins(offlinePlugin, statePluginFactory)
+            .withPlugins(statePluginFactory)
             .debugRequests(true)
             .build()
 
         // Using markdown as text transformer
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
+    }
+
+    private fun configureRealm() {
+        val config = RealmConfiguration.Builder(schema = setOf(MessageRealmEntity::class))
+            .build()
+        val realm: Realm = Realm.open(config)
     }
 }

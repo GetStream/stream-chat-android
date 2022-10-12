@@ -20,7 +20,6 @@ apply plugin: MinorBumpPlugin
 apply plugin: VersionPrintPlugin
 apply plugin: ChangelogAddModelSectionPlugin
 
-
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
@@ -32,6 +31,7 @@ buildscript {
                 includeGroup("com.huawei.agconnect")
             }
         }
+        mavenLocal()
     }
 
     dependencies {
@@ -75,6 +75,7 @@ allprojects {
                 includeModule("com.github.stfalcon-studio", "StfalconImageViewer")
             }
         }
+        mavenLocal()
     }
 }
 

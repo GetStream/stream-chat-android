@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepo
 /**
  * No-Op ChannelConfigRepository.
  */
-internal object NoOpChannelConfigRepository : ChannelConfigRepository {
+public object NoOpChannelConfigRepository : ChannelConfigRepository {
     override suspend fun cacheChannelConfigs() { /* No-Op */ }
     override fun selectChannelConfig(channelType: String): ChannelConfig? = null
     override suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) { /* No-Op */ }

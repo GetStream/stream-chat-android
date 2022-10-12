@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.emptyFlow
 /**
  * No-Op AttachmentRepository.
  */
-internal object NoOpAttachmentRepository : AttachmentRepository {
+public object NoOpAttachmentRepository : AttachmentRepository {
     override fun observeAttachmentsForMessage(messageId: String): Flow<List<Attachment>> = emptyFlow()
     override suspend fun clear() { /* No-Op */ }
 }

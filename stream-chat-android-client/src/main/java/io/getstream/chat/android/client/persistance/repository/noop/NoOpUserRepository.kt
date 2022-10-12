@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * No-Op UserRepository.
  */
-internal object NoOpUserRepository : UserRepository {
+public object NoOpUserRepository : UserRepository {
     override suspend fun insertUsers(users: Collection<User>) { /* No-Op */ }
     override suspend fun insertUser(user: User) { /* No-Op */ }
     override suspend fun insertCurrentUser(user: User) { /* No-Op */ }

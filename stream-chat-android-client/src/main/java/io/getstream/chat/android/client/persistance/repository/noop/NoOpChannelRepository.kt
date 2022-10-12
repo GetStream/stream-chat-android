@@ -26,7 +26,7 @@ import java.util.Date
  * Repository to read and write [Channel] data.
  */
 @Suppress("TooManyFunctions")
-internal object NoOpChannelRepository : ChannelRepository {
+public object NoOpChannelRepository : ChannelRepository {
     override suspend fun insertChannel(channel: Channel) { /* No-Op */ }
     override suspend fun insertChannels(channels: Collection<Channel>) { /* No-Op */ }
     override suspend fun deleteChannel(cid: String) { /* No-Op */ }

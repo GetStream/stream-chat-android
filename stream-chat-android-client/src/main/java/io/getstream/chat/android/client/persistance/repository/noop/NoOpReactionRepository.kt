@@ -24,7 +24,7 @@ import java.util.Date
 /**
  * No-Op ReactionRepository.
  */
-internal object NoOpReactionRepository : ReactionRepository {
+public object NoOpReactionRepository : ReactionRepository {
     override suspend fun insertReaction(reaction: Reaction) { /* No-Op */ }
     override suspend fun selectReactionById(id: Int): Reaction? = null
     override suspend fun selectReactionsByIds(ids: List<Int>): List<Reaction> = emptyList()

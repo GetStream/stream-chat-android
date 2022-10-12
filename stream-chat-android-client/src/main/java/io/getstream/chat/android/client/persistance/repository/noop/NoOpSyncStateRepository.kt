@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.sync.SyncState
 /**
  * No-Op SyncStateRepository.
  */
-internal object NoOpSyncStateRepository : SyncStateRepository {
+public object NoOpSyncStateRepository : SyncStateRepository {
     override suspend fun insertSyncState(syncState: SyncState) { /* No-Op */ }
     override suspend fun selectSyncState(userId: String): SyncState? = null
     override suspend fun clear() { /* No-Op */ }

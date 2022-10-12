@@ -27,7 +27,7 @@ import java.util.Date
  */
 
 @Suppress("TooManyFunctions")
-internal object NoOpMessageRepository : MessageRepository {
+public object NoOpMessageRepository : MessageRepository {
     override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> = emptyList()
     override suspend fun selectMessage(messageId: String): Message? = null
     override suspend fun insertMessages(messages: List<Message>, cache: Boolean) { /* No-Op */ }
