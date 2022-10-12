@@ -44,9 +44,6 @@ import java.util.Date
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided
  * in the events.
  * @param membership Represents relationship of the current user to the channel.
- * @param cachedLatestMessages The list of cached messages if the regular list does not contain the newest messages.
- * @param insideSearch When the channel is inside search, eg. searching from the channel list for a message or when
- * hopping to a quoted message a number pages away without retaining the newest messages in the list.
  */
 public data class ChannelData(
     var channelId: String,
@@ -65,8 +62,6 @@ public data class ChannelData(
     var extraData: MutableMap<String, Any> = mutableMapOf(),
     var ownCapabilities: Set<String> = setOf(),
     var membership: Member? = null,
-    var cachedLatestMessages: List<Message> = emptyList(),
-    var insideSearch: Boolean = false
 ) {
 
     /**
@@ -93,8 +88,6 @@ public data class ChannelData(
         ownCapabilities = channel.ownCapabilities.takeIf { ownCapabilities -> ownCapabilities.isNotEmpty() }
             ?: currentOwnCapabilities,
         membership = channel.membership,
-        cachedLatestMessages = channel.cachedLatestMessages,
-        insideSearch = channel.isInsideSearch
     )
 
     /**
@@ -110,11 +103,14 @@ public data class ChannelData(
      */
     internal fun toChannel(
         messages: List<Message>,
+        cachedLatestMessages: List<Message>,
         members: List<Member>,
         reads: List<ChannelUserRead>,
         watchers: List<User>,
         watcherCount: Int,
+        insideSearch: Boolean
     ): Channel {
+        val messagesList = if (insideSearch) cachedLatestMessages else messages
         return Channel(
             type = type,
             id = channelId,
@@ -127,7 +123,7 @@ public data class ChannelData(
             deletedAt = deletedAt,
             extraData = extraData,
             cooldown = cooldown,
-            lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt },
+            lastMessageAt = messagesList.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt },
             createdBy = createdBy,
             messages = messages,
             members = members,

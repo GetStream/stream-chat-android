@@ -139,7 +139,8 @@ internal class QueryChannelsStateLogic(
         channels.forEach { channel ->
             logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
                 channel = channel,
-                messageLimit = channel.messages.size
+                messageLimit = channel.messages.size,
+                isChannelsStateUpdate = true
             )
         }
     }

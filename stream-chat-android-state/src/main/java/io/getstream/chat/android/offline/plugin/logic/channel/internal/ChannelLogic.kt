@@ -188,9 +188,9 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
-        /* It is not possible to guarantee that the next page of newer messages is the same as the one on backend,
-         * so we force the backend usage */
-        if (request.isFilteringNewerMessages()) return null
+        /* It is not possible to guarantee that the next page of newer messages or the page surrounding a certain
+         * message is the same as the one on backend, so we force the backend usage */
+        if (request.isFilteringNewerMessages() || request.isFilteringAroundIdMessages()) return null
 
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
             logger.i { "Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages" }

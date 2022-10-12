@@ -171,7 +171,7 @@ internal class ChannelMutableState(
     override val membersCount: StateFlow<Int> = _membersCount
 
     override val channelData: StateFlow<ChannelData> =
-        _channelData.filterNotNull().combine(latestUsers) { channelData, users ->
+        combine(_channelData.filterNotNull(), latestUsers) { channelData, users ->
             if (users.containsKey(channelData.createdBy.id)) {
                 channelData.copy(createdBy = users[channelData.createdBy.id] ?: channelData.createdBy)
             } else {
@@ -183,8 +183,6 @@ internal class ChannelMutableState(
             ChannelData(
                 type = channelType,
                 channelId = channelId,
-                insideSearch = _insideSearch.value,
-                cachedLatestMessages = cachedLatestMessages.value.values.toList()
             )
         )
 
@@ -205,17 +203,21 @@ internal class ChannelMutableState(
         // recreate a channel object from the various observables.
         val channelData = channelData.value
 
-        val messages = if (_insideSearch.value) cachedLatestMessages.value.values.toList() else sortedMessages.value
+        val messages = sortedMessages.value
+        val cachedMessages = cachedLatestMessages.value.values.toList()
         val members = members.value
         val watchers = watchers.value
         val reads = _rawReads.value.values.toList()
         val watcherCount = _watcherCount.value
+        val insideSearch = _insideSearch.value
 
-        val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
+        val channel = channelData
+            .toChannel(messages, cachedMessages, members, reads, watchers, watcherCount, insideSearch)
         channel.config = _channelConfig.value
         channel.unreadCount = unreadCount.value
-        channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
+        channel.isInsideSearch = _insideSearch.value
+        channel.cachedLatestMessages = cachedLatestMessages.value.values.toList()
 
         return channel
     }
@@ -470,7 +472,7 @@ internal class ChannelMutableState(
     }
 
     private fun cacheLatestMessages() {
-        cachedLatestMessages.value = sortedVisibleMessages.value.associateBy(Message::id)
+        cachedLatestMessages.value = sortedMessages.value.associateBy(Message::id)
     }
 
     /**
