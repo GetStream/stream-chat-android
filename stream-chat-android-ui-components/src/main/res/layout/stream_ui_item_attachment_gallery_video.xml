@@ -20,17 +20,34 @@
     android:layout_height="match_parent"
     >
 
-    <ImageView
-        android:id="@+id/thumbnailImageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:src="@drawable/stream_ui_ic_attach"
-        />
-
     <VideoView
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         />
+
+    <ImageView
+        android:id="@+id/thumbnailImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/playButtonCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        >
+
+        <ImageView
+            android:id="@+id/playButtonImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/stream_ui_ic_play"
+            />
+    </androidx.cardview.widget.CardView>
 
 </FrameLayout>

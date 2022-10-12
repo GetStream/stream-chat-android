@@ -364,7 +364,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     }
 
     /**
-     * Obtains style attributes for the options list.
+     * Obtains style attributes for the gallery and its children.
      */
     private fun obtainOptionsViewStyle() {
         try {
@@ -381,7 +381,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 deleteOptionEnabled = style.deleteOptionEnabled
             }
         } catch (e: Exception) {
-            logger.e(e) { "Failed to obtain style attribute for the options menu" }
+            logger.e(e) { "Failed to obtain styles" }
         }
     }
 

@@ -19,24 +19,49 @@ package io.getstream.chat.android.ui.gallery.internal
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.MediaController
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
+import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 
 internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
     private var _binding: StreamUiItemAttachmentGalleryVideoBinding? = null
     private val binding get() = _binding!!
 
+    /**
+     * Holds the style necessary to stylize the play button.
+     *
+     * Fetching the style depends on [Context] so use this property
+     * only after it has been obtained during or after [onAttach].
+     */
+    private val style by lazy {
+        requireContext().obtainStyledAttributes(
+            null,
+            R.styleable.AttachmentOptionsView,
+            R.attr.streamUiAttachmentGalleryOptionsStyle,
+            R.style.StreamUi_AttachmentGallery_Options
+        ).let {
+            AttachmentGalleryOptionsViewStyle(requireContext(), it)
+        }
+    }
+
+    /**
+     * Contains the URL to the thumbnail of the video.
+     */
     private val thumbUrl: String? by lazy {
         requireArguments().getString(ARG_THUMB_URL)
     }
+
+    /**
+     * Contains the URL necessary to reproduce the video.
+     */
     private val assetUrl: String? by lazy {
         requireArguments().getString(ARG_ASSET_URL)
     }
@@ -55,7 +80,43 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupPlayButton()
         loadVideo()
+    }
+
+    /**
+     * Sets up the play icon overlaid above video attachment previews
+     * by pulling relevant values from [AttachmentGalleryOptionsViewStyle].
+     **/
+    private fun setupPlayButton() {
+        with(binding.playButtonCardView) {
+            elevation = style.viewMediaPlayVideoIconElevation
+            setCardBackgroundColor(style.viewMediaPlayVideoIconBackgroundColor)
+            radius = style.viewMediaPlayVideoIconCornerRadius
+        }
+
+        with(binding.playButtonImageView) {
+            updateLayoutParams {
+                width = style.viewMediaPlayVideoIconWidth
+                height = style.viewMediaPlayVideoIconHeight
+            }
+
+            val playVideoDrawable = style.viewMediaPlayVideoButtonIcon?.mutate()?.apply {
+                val tintColor = style.viewMediaPlayVideoIconTint
+
+                if (tintColor != null) {
+                    this.setTint(tintColor)
+                }
+            }
+
+            setImageDrawable(playVideoDrawable)
+            setPaddingRelative(
+                style.viewMediaPlayVideoIconPaddingStart,
+                style.viewMediaPlayVideoIconPaddingTop,
+                style.viewMediaPlayVideoIconPaddingEnd,
+                style.viewMediaPlayVideoIconPaddingBottom
+            )
+        }
     }
 
     private fun loadVideo() {
@@ -70,14 +131,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
                 // TODO fill in when there's a thumbnail preview
             }
 
-            mediaController.setAnchorView(binding.videoView)
-
-            layoutParams = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            ).apply {
-                gravity = Gravity.CENTER
-            }
+            mediaController.setAnchorView(binding.root)
         }
     }
 

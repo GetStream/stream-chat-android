@@ -834,6 +834,19 @@
         <item name="streamUiDeleteEnabled">true</item>
         <item name="streamUiDeleteIcon">@drawable/stream_ui_ic_delete</item>
         <item name="streamUiDeleteTextTint">@color/stream_ui_accent_red</item>
+
+        <!-- Play button style for the main media viewing section. -->
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon">@drawable/stream_ui_ic_play</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconElevation">3dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop">2dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom">2dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart">3dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd">2dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius">24dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayIconWidth">45dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayIconHeight">45dp</item>
+
     </style>
 
     <style name="StreamUi.AttachmentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
