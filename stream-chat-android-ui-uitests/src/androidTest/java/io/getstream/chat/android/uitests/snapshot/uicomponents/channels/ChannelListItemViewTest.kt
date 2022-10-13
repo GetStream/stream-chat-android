@@ -75,6 +75,7 @@ class ChannelListItemViewTest : ScreenshotTest {
                     TestData.message2()
                 )
                 lastMessageAt = TestData.date2()
+                extraData["mutedChannel"] = true
             }
         )
     }

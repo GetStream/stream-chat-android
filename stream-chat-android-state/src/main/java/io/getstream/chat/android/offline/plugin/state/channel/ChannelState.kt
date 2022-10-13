@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import kotlinx.coroutines.flow.StateFlow
+import java.util.Date
 
 /** State container with reactive data of a channel.*/
 public interface ChannelState {
@@ -104,6 +105,9 @@ public interface ChannelState {
     public val channelConfig: StateFlow<Config>
 
     public val insideSearch: StateFlow<Boolean>
+
+    /** The date of the last message sent by the current user. */
+    public val lastSentMessageDate: StateFlow<Date?>
 
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel

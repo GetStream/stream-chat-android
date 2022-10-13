@@ -217,6 +217,15 @@ internal class ChannelStateLogic(
         }
 
     /**
+     * Sets the date of the last message sent by the current user.
+     *
+     * @param lastSentMessageDate The date of the last message.
+     */
+    fun setLastSentMessageDate(lastSentMessageDate: Date?) {
+        mutableState.setLastSentMessageDate(lastSentMessageDate)
+    }
+
+    /**
      * Deletes a message for the channel
      *
      * @param message [Message]

@@ -79,13 +79,15 @@ android {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
-                '-Xopt-in=kotlin.RequiresOptIn',
+                '-opt-in=kotlin.RequiresOptIn',
         ]
     }
 }
 
 dependencies {
     implementation project(':stream-chat-android-compose')
+    implementation project(":stream-chat-android-offline")
+
     implementation project(":stream-chat-android-pushprovider-firebase")
 
     implementation Dependencies.androidxCoreKtx

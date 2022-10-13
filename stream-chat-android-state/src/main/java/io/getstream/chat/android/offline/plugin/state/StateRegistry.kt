@@ -95,6 +95,9 @@ public class StateRegistry private constructor(
         }
     }
 
+    internal fun markChannelAsRead(channelType: String, channelId: String): Boolean =
+        mutableChannel(channelType = channelType, channelId = channelId).markChannelAsRead()
+
     /**
      * Checks if the channel is already present in the state.
      * Should be used to prevent creating [ChannelState] objects without populated data.

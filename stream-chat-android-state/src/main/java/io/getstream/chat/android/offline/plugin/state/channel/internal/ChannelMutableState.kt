@@ -76,6 +76,7 @@ internal class ChannelMutableState(
     private val _insideSearch = MutableStateFlow(false)
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _loadingNewerMessages = MutableStateFlow(false)
+    private val _lastSentMessageDate = MutableStateFlow<Date?>(null)
 
     /** Channel config data. */
     private val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
@@ -199,6 +200,8 @@ internal class ChannelMutableState(
 
     override val insideSearch: StateFlow<Boolean> = _insideSearch
 
+    override val lastSentMessageDate: StateFlow<Date?> = _lastSentMessageDate
+
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
         val channelData = channelData.value
@@ -321,6 +324,15 @@ internal class ChannelMutableState(
         }
 
         _insideSearch.value = isInsideSearch
+    }
+
+    /**
+     * Sets the date of the last message sent by the current user.
+     *
+     * @param lastSentMessageDate The date of the last message.
+     */
+    fun setLastSentMessageDate(lastSentMessageDate: Date?) {
+        _lastSentMessageDate.value = lastSentMessageDate
     }
 
     /**

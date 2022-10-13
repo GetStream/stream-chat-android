@@ -49,6 +49,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -56,6 +58,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 /**
@@ -238,13 +242,6 @@ public class MessageComposerController(
     private var cooldownTimerJob: Job? = null
 
     /**
-     * Represents the cooldown interval in seconds.
-     *
-     * When slow mode is enabled, users can only send messages every [cooldownInterval] time interval.
-     */
-    private var cooldownInterval: Int = 0
-
-    /**
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're
      * sending a thread reply or a regular message.
      */
@@ -313,9 +310,11 @@ public class MessageComposerController(
             users = members.map { it.user }
         }.launchIn(scope)
 
-        channelState.flatMapLatest { it.channelData }.onEach {
-            cooldownInterval = it.cooldown
-        }.launchIn(scope)
+        channelState.flatMapLatest { combine(it.channelData, it.lastSentMessageDate, ::Pair) }
+            .distinctUntilChangedBy { (_, lastSentMessageDate) -> lastSentMessageDate }
+            .onEach { (channelData, lastSentMessageDate) ->
+                handleLastSentMessageDate(channelData.cooldown, lastSentMessageDate)
+            }.launchIn(scope)
 
         setupComposerState()
     }
@@ -513,7 +512,7 @@ public class MessageComposerController(
         dismissMessageActions()
         clearData()
 
-        sendMessageCall.enqueueAndHandleSlowMode()
+        sendMessageCall.enqueue()
     }
 
     /**
@@ -707,28 +706,37 @@ public class MessageComposerController(
     }
 
     /**
-     * Executes the message Call and shows cooldown countdown timer instead of send button
-     * when slow mode is enabled.
+     * Shows the amount of time left until the user is allowed to send the next message.
+     *
+     * @param cooldownInterval The cooldown interval in seconds.
+     * @param lastSentMessageDate The date of the last message.
      */
-    private fun Call<Message>.enqueueAndHandleSlowMode() {
-        if (cooldownInterval > 0 && isSlowModeActive.value && !isInEditMode) {
-            cooldownTimerJob?.cancel()
+    private fun handleLastSentMessageDate(cooldownInterval: Int, lastSentMessageDate: Date?) {
+        val isSlowModeActive = cooldownInterval > 0 && isSlowModeActive.value
 
-            cooldownTimer.value = cooldownInterval
-            enqueue {
-                if (it.isSuccess || !chatClient.clientState.isNetworkAvailable) {
-                    cooldownTimerJob = scope.launch {
-                        for (timeRemaining in cooldownInterval downTo 0) {
-                            cooldownTimer.value = timeRemaining
-                            delay(OneSecond)
-                        }
-                    }
-                } else {
-                    cooldownTimer.value = 0
-                }
+        if (isSlowModeActive && lastSentMessageDate != null && !isInEditMode) {
+            // Time passed since the last message was successfully sent to the server
+            val elapsedTime: Long = TimeUnit.MILLISECONDS
+                .toSeconds(System.currentTimeMillis() - lastSentMessageDate.time)
+                .coerceAtLeast(0)
+
+            fun updateCooldownTime(timeRemaining: Int) {
+                cooldownTimer.value = timeRemaining
+                state.value = state.value.copy(coolDownTime = timeRemaining)
             }
-        } else {
-            enqueue()
+
+            // If the user is still unable to send messages show the timer
+            if (elapsedTime < cooldownInterval) {
+                cooldownTimerJob?.cancel()
+                cooldownTimerJob = scope.launch {
+                    for (timeRemaining in cooldownInterval - elapsedTime downTo 0) {
+                        updateCooldownTime(timeRemaining.toInt())
+                        delay(OneSecond)
+                    }
+                }
+            } else {
+                updateCooldownTime(0)
+            }
         }
     }
 
