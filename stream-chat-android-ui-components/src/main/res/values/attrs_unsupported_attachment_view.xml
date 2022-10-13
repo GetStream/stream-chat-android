@@ -30,7 +30,7 @@
         <attr name="streamUiUnsupportedAttachmentTitleTextSize" format="dimension|reference" />
         <!-- A color of the unsupported attachment title -->
         <attr name="streamUiUnsupportedAttachmentTitleTextColor" format="color|reference" />
-        <!-- Font name of the unsupported attachment title -->
+        <!-- The font of the unsupported attachment title -->
         <attr name="streamUiUnsupportedAttachmentTitleTextFont" format="reference" />
         <!-- Font assets reference for the unsupported attachment title -->
         <attr name="streamUiUnsupportedAttachmentTitleFontAssets" format="string" />
