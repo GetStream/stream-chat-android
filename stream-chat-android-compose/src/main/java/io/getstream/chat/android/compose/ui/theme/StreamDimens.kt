@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
  * @param attachmentsContentLinkWidth The with of link attachments in the message list.
  * @param attachmentsContentFileWidth The width of file attachments in the message list.
  * @param attachmentsContentFileUploadWidth The width of uploading file attachments in the message list.
+ * @param attachmentsContentUnsupportedWidth The width of unsupported attachments in the message list.
  * @param threadSeparatorVerticalPadding The vertical content padding inside thread separator item.
  * @param threadSeparatorTextVerticalPadding The vertical padding inside thread separator text.
  * @param messageOptionsItemHeight The height of a message option item.
@@ -99,6 +100,7 @@ public data class StreamDimens(
     public val attachmentsContentLinkWidth: Dp,
     public val attachmentsContentFileWidth: Dp,
     public val attachmentsContentFileUploadWidth: Dp,
+    public val attachmentsContentUnsupportedWidth: Dp,
     public val threadSeparatorVerticalPadding: Dp,
     public val threadSeparatorTextVerticalPadding: Dp,
     public val messageOptionsItemHeight: Dp,
@@ -157,6 +159,7 @@ public data class StreamDimens(
             attachmentsContentLinkWidth = 250.dp,
             attachmentsContentFileWidth = 250.dp,
             attachmentsContentFileUploadWidth = 250.dp,
+            attachmentsContentUnsupportedWidth = 250.dp,
             threadSeparatorVerticalPadding = 8.dp,
             threadSeparatorTextVerticalPadding = 2.dp,
             messageOptionsItemHeight = 40.dp,

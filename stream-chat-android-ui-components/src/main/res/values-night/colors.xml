@@ -40,4 +40,7 @@
 
     <!-- Message replies -->
     <color name="stream_ui_bars_background">#121416</color>
+
+    <!-- Make status bar icons light -->
+    <bool name="stream_ui_light_status_bar">false</bool>
 </resources>

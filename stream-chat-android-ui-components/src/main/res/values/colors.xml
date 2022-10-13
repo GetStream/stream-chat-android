@@ -74,4 +74,7 @@
 
     <!-- Message replies -->
     <color name="stream_ui_bars_background">#FFFFFF</color>
+
+    <!-- Make status bar icons dark -->
+    <bool name="stream_ui_light_status_bar">true</bool>
 </resources>
