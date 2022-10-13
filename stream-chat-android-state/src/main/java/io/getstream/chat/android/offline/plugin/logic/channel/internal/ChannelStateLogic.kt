@@ -217,6 +217,15 @@ internal class ChannelStateLogic(
         }
 
     /**
+     * Sets the date of the last message sent by the current user.
+     *
+     * @param lastSentMessageDate The date of the last message.
+     */
+    fun setLastSentMessageDate(lastSentMessageDate: Date?) {
+        mutableState.setLastSentMessageDate(lastSentMessageDate)
+    }
+
+    /**
      * Deletes a message for the channel
      *
      * @param message [Message]
@@ -334,11 +343,12 @@ internal class ChannelStateLogic(
      * Updates data from channel.
      *
      * @param channel [Channel]
+     * @param messageLimit The request message limit. If limit is 0 will skip upserting messages.
      * @param shouldRefreshMessages If true, removed the current messages and only new messages are kept.
      * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
      * when the user is searching in the channel.
      * @param isNotificationUpdate Whether the message list update is due to a new notification.
-     * @param messageLimit The request message limit. If limit is 0 will skip upserting messages.
+     * @param isChannelsStateUpdate Whether the state update comes from querying the channels list.
      */
     fun updateDataFromChannel(
         channel: Channel,
@@ -346,6 +356,7 @@ internal class ChannelStateLogic(
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
+        isChannelsStateUpdate: Boolean = false,
     ) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
@@ -364,7 +375,8 @@ internal class ChannelStateLogic(
                     isNotificationUpdate = isNotificationUpdate,
                     isInsideSearch = mutableState.insideSearch.value,
                     isScrollUpdate = scrollUpdate,
-                    shouldRefreshMessages = shouldRefreshMessages
+                    shouldRefreshMessages = shouldRefreshMessages,
+                    isChannelsStateUpdate = isChannelsStateUpdate
                 )
             ) {
                 upsertMessages(channel.messages, shouldRefreshMessages)
@@ -393,7 +405,7 @@ internal class ChannelStateLogic(
     /**
      * @param isNotificationUpdate Whether the data is updating due to a new notification.
      * @param isInsideSearch Whether we are inside search or not.
-     * @param isScrollUpdate Whether the update is dut to a scroll update, meaning pagination.
+     * @param isScrollUpdate Whether the update is due to a scroll update, meaning pagination.
      * @param shouldRefreshMessages Whether the message list should get refreshed.
      *
      * @return Whether we need to upsert the messages or not.
@@ -402,11 +414,14 @@ internal class ChannelStateLogic(
         isNotificationUpdate: Boolean,
         isInsideSearch: Boolean,
         isScrollUpdate: Boolean,
-        shouldRefreshMessages: Boolean
+        shouldRefreshMessages: Boolean,
+        isChannelsStateUpdate: Boolean,
     ): Boolean {
         // upsert message if refresh is requested, on scroll updates and on notification updates when outside search
         // not to create gaps in message history
-        return shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch)
+        return shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch) ||
+            // upsert the messages that come from the QueryChannelsStateLogic only if there are no messages in the list
+            (isChannelsStateUpdate && (mutableState.messages.value.isEmpty() || !isInsideSearch))
     }
 
     /**

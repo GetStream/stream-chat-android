@@ -342,7 +342,11 @@ private suspend fun ChatClient.loadMessageByIdInternal(
  * @return Executable async [Call] responsible for loading the newest messages.
  */
 @CheckResult
-public fun ChatClient.loadNewestMessages(cid: String, messageLimit: Int, userPresence: Boolean = true): Call<Channel> {
+public fun ChatClient.loadNewestMessages(
+    cid: String,
+    messageLimit: Int,
+    userPresence: Boolean = true,
+): Call<Channel> {
     return CoroutineCall(state.scope) {
         val cidValidationResult = validateCidWithResult(cid)
         if (!cidValidationResult.isSuccess) {

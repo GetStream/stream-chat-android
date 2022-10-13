@@ -121,7 +121,7 @@ public fun MessageList(
         contentPadding = contentPadding,
         currentState = viewModel.currentMessagesState,
         messagesLazyListState = messagesLazyListState,
-        onMessagesStartReached = onMessagesPageStartReached,
+        onMessagesPageStartReached = onMessagesPageStartReached,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
@@ -133,7 +133,7 @@ public fun MessageList(
         loadingContent = loadingContent,
         emptyContent = emptyContent,
         onQuotedMessageClick = onQuotedMessageClick,
-        onMessagesEndReached = onMessagesPageEndReached,
+        onMessagesPageEndReached = onMessagesPageEndReached,
         onScrollToBottom = onScrollToBottomClicked,
     )
 }
@@ -209,7 +209,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
- * @param onMessagesStartReached Handler for pagination.
+ * @param onMessagesPageStartReached Handler for pagination.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
  * @param onScrolledToBottom Handler when the user scrolls to the bottom.
@@ -219,7 +219,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onMessagesEndReached Handler for pagination when the end of newest messages have been reached.
+ * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
@@ -236,7 +236,7 @@ public fun MessageList(
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = currentState.parentMessageId),
-    onMessagesStartReached: () -> Unit = {},
+    onMessagesPageStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -245,7 +245,7 @@ public fun MessageList(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onMessagesEndReached: (String) -> Unit = {},
+    onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
@@ -278,13 +278,13 @@ public fun MessageList(
             contentPadding = contentPadding,
             messagesState = currentState,
             messagesLazyListState = messagesLazyListState,
-            onMessagesStartReached = onMessagesStartReached,
+            onMessagesStartReached = onMessagesPageStartReached,
             onLastVisibleMessageChanged = onLastVisibleMessageChanged,
             onScrolledToBottom = onScrolledToBottom,
             helperContent = helperContent,
             loadingMoreContent = loadingMoreContent,
             itemContent = itemContent,
-            onMessagesEndReached = onMessagesEndReached,
+            onMessagesEndReached = onMessagesPageEndReached,
             onScrollToBottom = onScrollToBottom,
         )
         else -> emptyContent()

@@ -91,8 +91,6 @@ import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
-import io.getstream.chat.android.client.interceptor.Interceptor
-import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -137,7 +135,6 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
-import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.setup.state.internal.toMutableState
@@ -210,7 +207,6 @@ internal constructor(
     private val clientScope: ClientScope,
     private val userScope: UserScope,
     internal val retryPolicy: RetryPolicy,
-    private val initializationCoordinator: InitializationCoordinator = InitializationCoordinator.getOrCreate(),
     private val appSettingsManager: AppSettingManager,
     private val chatSocketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
@@ -275,8 +271,6 @@ internal constructor(
     @PublishedApi
     internal var plugins: List<Plugin> = emptyList()
 
-    private var interceptors: MutableList<Interceptor> = mutableListOf()
-
     /**
      * Resolves dependency [T] within the provided plugin [P].
      *
@@ -293,7 +287,8 @@ internal constructor(
     /**
      * Error handlers for API calls.
      */
-    private var errorHandlers: List<ErrorHandler> = emptyList()
+    private val errorHandlers: List<ErrorHandler>
+        get() = plugins.flatMap { it.errorHandlers }.sorted()
 
     init {
         eventsObservable.subscribeSuspend { event ->
@@ -364,27 +359,6 @@ internal constructor(
                 ?.mergePartially(user)
             else -> null
         }
-    }
-
-    @InternalStreamChatApi
-    public fun addInterceptor(interceptor: Interceptor) {
-        this.interceptors.add(interceptor)
-    }
-
-    @InternalStreamChatApi
-    public fun removeAllInterceptors() {
-        this.interceptors.clear()
-    }
-
-    /**
-     * Adds a list of error handlers.
-     * @see [ErrorHandler]
-     *
-     * @param errorHandlers A list of handlers to add.
-     */
-    @InternalStreamChatApi
-    public fun addErrorHandlers(errorHandlers: List<ErrorHandler>) {
-        this.errorHandlers = errorHandlers.sorted()
     }
 
     //region Set user
@@ -486,6 +460,7 @@ internal constructor(
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
         _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
         plugins = pluginFactories.map { it.get(user) }
+        plugins.forEach { it.onUserSet(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
@@ -1171,7 +1146,7 @@ internal constructor(
         userScope.coroutineContext.cancelChildren()
 
         notifications.onLogout()
-        getCurrentUser().let(initializationCoordinator::userDisconnected)
+        plugins.forEach { it.onUserDisconnected() }
         if (ToggleService.isSocketExperimental().not()) {
             socketStateService.onDisconnectRequested()
             userStateService.onLogout()
@@ -1497,31 +1472,32 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
 
         return CoroutineCall(userScope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
-            sendMessageInterceptors.fold(Result.success(message)) { message, interceptor ->
-                if (message.isSuccess) {
-                    interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
-                } else message
-            }.flatMapSuspend { newMessage ->
-                api.sendMessage(channelType, channelId, newMessage)
-                    .retry(userScope, retryPolicy)
-                    .doOnResult(userScope) { result ->
-                        logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
-                        plugins.forEach { listener ->
-                            logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                            listener.onMessageSendResult(
-                                result,
-                                channelType,
-                                channelId,
-                                newMessage
-                            )
-                        }
-                    }.await()
-            }
+            plugins
+                .flatMap { it.interceptors }
+                .fold(Result.success(message)) { message, interceptor ->
+                    if (message.isSuccess) {
+                        interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
+                    } else message
+                }.flatMapSuspend { newMessage ->
+                    api.sendMessage(channelType, channelId, newMessage)
+                        .retry(userScope, retryPolicy)
+                        .doOnResult(userScope) { result ->
+                            logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
+                            plugins.forEach { listener ->
+                                logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                                listener.onMessageSendResult(
+                                    result,
+                                    channelType,
+                                    channelId,
+                                    newMessage
+                                )
+                            }
+                        }.await()
+                }
         }
     }
 

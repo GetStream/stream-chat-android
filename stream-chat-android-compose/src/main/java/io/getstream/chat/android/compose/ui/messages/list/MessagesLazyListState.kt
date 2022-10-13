@@ -17,14 +17,13 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.ui.unit.IntSize
 import io.getstream.chat.android.client.models.Message
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import java.io.Serializable
 
 /**
@@ -43,33 +42,49 @@ public data class MessagesLazyListState(
     /**
      * By default tracks the size of [Messages] composable. Used to calculate [focusedMessageOffset].
      */
-    private val _parentSize: MutableStateFlow<IntSize> = MutableStateFlow(IntSize.Zero)
+    private val _parentSize: MutableState<IntSize> = mutableStateOf(IntSize.Zero)
 
     /**
      * Tracks the state of the focused [Message]. Used to calculate [focusedMessageOffset].
      */
-    private val _focusedMessageSize: MutableStateFlow<IntSize> = MutableStateFlow(IntSize.Zero)
+    private val _focusedMessageSize: MutableState<IntSize> = mutableStateOf(IntSize.Zero)
 
     /**
      * The offset to be applied to a message after it has been marked for focus.
      */
-    public val focusedMessageOffset: Flow<Int> =
-        combine(_parentSize, _focusedMessageSize) { parentSize, focusedMessageSize ->
-            messageOffsetHandler.calculateOffset(parentSize, focusedMessageSize)
-        }.distinctUntilChanged()
+    private val _focusedMessageOffset: MutableState<Int> = mutableStateOf(0)
+    public val focusedMessageOffset: Int by _focusedMessageOffset
 
     /**
      * Updates the list parent holder. By default will update the size of [Messages] composable.
+     *
+     * @param parentSize The size of the parent view.
      */
     public fun updateParentSize(parentSize: IntSize) {
+        if (parentSize == _parentSize.value) return
         _parentSize.value = parentSize
+        calculateMessageOffset(parentSize, _focusedMessageSize.value)
     }
 
     /**
      * Updates the size of the focused message.
+     *
+     * @param focusedMessageSize The size of the message view we wish to focus to on the screen.
      */
     public fun updateFocusedMessageSize(focusedMessageSize: IntSize) {
+        if (focusedMessageSize == _focusedMessageSize.value) return
         _focusedMessageSize.value = focusedMessageSize
+        calculateMessageOffset(_parentSize.value, focusedMessageSize)
+    }
+
+    /**
+     * Calculates the offset of the focused message on the screen.
+     *
+     * @param parentSize The size of the parent view.
+     * @param focusedMessageSize The size of the message view we wish to focus to on the screen.
+     */
+    private fun calculateMessageOffset(parentSize: IntSize, focusedMessageSize: IntSize) {
+        _focusedMessageOffset.value = messageOffsetHandler.calculateOffset(parentSize, focusedMessageSize)
     }
 
     /**
@@ -82,6 +97,8 @@ public data class MessagesLazyListState(
          *
          * @param parentSize The size of the parent containing the [Message] we wish to focus.
          * @param focusedMessageSize The size of the message we wish to focus.
+         *
+         * @return The offset that the focused message will have.
          */
         public fun calculateOffset(parentSize: IntSize, focusedMessageSize: IntSize): Int
     }

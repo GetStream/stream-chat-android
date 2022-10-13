@@ -79,9 +79,18 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property scrollButtonBottomMargin Defines the bottom margin of the scroll button.
  * @property scrollButtonEndMargin Defines the end margin of the scroll button.
  * @property disableScrollWhenShowingDialog Enables/disables scroll while a dialog is shown over the message list.
- * @property optionsOverlayEditReactionsMargin Defines the margin between the selected message and the edit reactions bubble on the options overlay.
- * @property optionsOverlayUserReactionsMargin Defines the margin between the selected message and the user reaction list on the options overlay.
- * @property optionsOverlayMessageOptionsMargin Defines the margin between the selected message and the message option list on the options overlay.
+ * @property optionsOverlayEditReactionsMarginTop Defines the top margin between the edit reactions bubble on the options overlay and the parent.
+ * @property optionsOverlayEditReactionsMarginBottom Defines the margin between the selected message and the edit reactions bubble on the options overlay.
+ * @property optionsOverlayEditReactionsMarginStart Defines the start margin between the edit reactions bubble on the options overlay and the parent.
+ * @property optionsOverlayEditReactionsMarginEnd Defines the end margin between the edit reactions bubble on the options overlay and the parent.
+ * @property optionsOverlayUserReactionsMarginTop Defines the margin between the selected message and the user reaction list on the options overlay.
+ * @property optionsOverlayUserReactionsMarginBottom Defines the bottom margin between the user reaction list on the options overlay and the parent.
+ * @property optionsOverlayUserReactionsMarginStart Defines the start margin between the user reaction list on the options overlay and the parent.
+ * @property optionsOverlayUserReactionsMarginEnd Defines the end margin between the user reaction list on the options overlay and the parent.
+ * @property optionsOverlayMessageOptionsMarginTop Defines the margin between the selected message and the message option list on the options overlay.
+ * @property optionsOverlayMessageOptionsMarginBottom Defines the bottom margin between the message option list on the options overlay and the user reactions view.
+ * @property optionsOverlayMessageOptionsMarginStart Defines the start margin between the message option list on the options overlay and the parent.
+ * @property optionsOverlayMessageOptionsMarginEnd Defines the end margin between the message option list on the options overlay and the parent.
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -124,20 +133,40 @@ public data class MessageListViewStyle(
     public val scrollButtonBottomMargin: Int,
     public val scrollButtonEndMargin: Int,
     public val disableScrollWhenShowingDialog: Boolean,
-    public val optionsOverlayEditReactionsMargin: Int,
-    public val optionsOverlayUserReactionsMargin: Int,
-    public val optionsOverlayMessageOptionsMargin: Int,
+    public val optionsOverlayEditReactionsMarginTop: Int,
+    public val optionsOverlayEditReactionsMarginBottom: Int,
+    public val optionsOverlayEditReactionsMarginStart: Int,
+    public val optionsOverlayEditReactionsMarginEnd: Int,
+    public val optionsOverlayUserReactionsMarginTop: Int,
+    public val optionsOverlayUserReactionsMarginBottom: Int,
+    public val optionsOverlayUserReactionsMarginStart: Int,
+    public val optionsOverlayUserReactionsMarginEnd: Int,
+    public val optionsOverlayMessageOptionsMarginTop: Int,
+    public val optionsOverlayMessageOptionsMarginBottom: Int,
+    public val optionsOverlayMessageOptionsMarginStart: Int,
+    public val optionsOverlayMessageOptionsMarginEnd: Int,
 ) {
-
     public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
         private val DEFAULT_SCROLL_BUTTON_ELEVATION = 3.dpToPx().toFloat()
         private val DEFAULT_SCROLL_BUTTON_MARGIN = 6.dpToPx()
         private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN = 2.dpToPx()
         private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION = DEFAULT_SCROLL_BUTTON_ELEVATION
-        private val DEFAULT_EDIT_REACTIONS_MARGIN = 0.dpToPx()
-        private val DEFAULT_USER_REACTIONS_MARGIN = 8.dpToPx()
-        private val DEFAULT_MESSAGE_OPTIONS_MARGIN = 24.dpToPx()
+
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_TOP = 0.dpToPx()
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM = 0.dpToPx()
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_START = 50.dpToPx()
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_END = 8.dpToPx()
+
+        private val DEFAULT_USER_REACTIONS_MARGIN_TOP = 8.dpToPx()
+        private val DEFAULT_USER_REACTIONS_MARGIN_BOTTOM = 0.dpToPx()
+        private val DEFAULT_USER_REACTIONS_MARGIN_START = 8.dpToPx()
+        private val DEFAULT_USER_REACTIONS_MARGIN_END = 8.dpToPx()
+
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_TOP = 24.dpToPx()
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_BOTTOM = 0.dpToPx()
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_START = 50.dpToPx()
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_END = 8.dpToPx()
 
         /**
          * Creates an [MessageListViewStyle] instance with the default values.
@@ -408,22 +437,76 @@ public data class MessageListViewStyle(
                     true
                 )
 
-                val optionsOverlayEditReactionsMargin =
+                val optionsOverlayEditReactionsMarginBottom =
                     attributes.getDimensionPixelSize(
-                        R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMargin,
-                        DEFAULT_EDIT_REACTIONS_MARGIN
+                        R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMarginBottom,
+                        DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM
                     )
 
-                val optionsOverlayUserReactionsMargin =
+                val optionsOverlayEditReactionsMarginTop =
                     attributes.getDimensionPixelSize(
-                        R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMargin,
-                        DEFAULT_USER_REACTIONS_MARGIN
+                        R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMarginTop,
+                        DEFAULT_EDIT_REACTIONS_MARGIN_TOP
                     )
 
-                val optionsOverlayMessageOptionsMargin =
+                val optionsOverlayEditReactionsMarginStart =
                     attributes.getDimensionPixelSize(
-                        R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMargin,
-                        DEFAULT_MESSAGE_OPTIONS_MARGIN
+                        R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMarginStart,
+                        DEFAULT_EDIT_REACTIONS_MARGIN_START
+                    )
+
+                val optionsOverlayEditReactionsMarginEnd =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMarginEnd,
+                        DEFAULT_EDIT_REACTIONS_MARGIN_END
+                    )
+
+                val optionsOverlayUserReactionsMarginTop =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMarginTop,
+                        DEFAULT_USER_REACTIONS_MARGIN_TOP
+                    )
+
+                val optionsOverlayUserReactionsMarginBottom =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMarginBottom,
+                        DEFAULT_USER_REACTIONS_MARGIN_BOTTOM
+                    )
+
+                val optionsOverlayUserReactionsMarginStart =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMarginStart,
+                        DEFAULT_USER_REACTIONS_MARGIN_START
+                    )
+
+                val optionsOverlayUserReactionsMarginEnd =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMarginEnd,
+                        DEFAULT_USER_REACTIONS_MARGIN_END
+                    )
+
+                val optionsOverlayMessageOptionsMarginTop =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMarginTop,
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN_TOP
+                    )
+
+                val optionsOverlayMessageOptionsMarginBottom =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMarginBottom,
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN_BOTTOM
+                    )
+
+                val optionsOverlayMessageOptionsMarginStart =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMarginStart,
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN_START
+                    )
+
+                val optionsOverlayMessageOptionsMarginEnd =
+                    attributes.getDimensionPixelSize(
+                        R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMarginEnd,
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN_END
                     )
 
                 return MessageListViewStyle(
@@ -467,9 +550,18 @@ public data class MessageListViewStyle(
                     threadMessagesStart = threadMessagesStart,
                     messageOptionsUserReactionAlignment = messageOptionsUserReactionAlignment,
                     disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
-                    optionsOverlayEditReactionsMargin = optionsOverlayEditReactionsMargin,
-                    optionsOverlayUserReactionsMargin = optionsOverlayUserReactionsMargin,
-                    optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin,
+                    optionsOverlayEditReactionsMarginBottom = optionsOverlayEditReactionsMarginBottom,
+                    optionsOverlayEditReactionsMarginTop = optionsOverlayEditReactionsMarginTop,
+                    optionsOverlayEditReactionsMarginStart = optionsOverlayEditReactionsMarginStart,
+                    optionsOverlayEditReactionsMarginEnd = optionsOverlayEditReactionsMarginEnd,
+                    optionsOverlayUserReactionsMarginTop = optionsOverlayUserReactionsMarginTop,
+                    optionsOverlayUserReactionsMarginBottom = optionsOverlayUserReactionsMarginBottom,
+                    optionsOverlayUserReactionsMarginStart = optionsOverlayUserReactionsMarginStart,
+                    optionsOverlayUserReactionsMarginEnd = optionsOverlayUserReactionsMarginEnd,
+                    optionsOverlayMessageOptionsMarginTop = optionsOverlayMessageOptionsMarginTop,
+                    optionsOverlayMessageOptionsMarginBottom = optionsOverlayMessageOptionsMarginBottom,
+                    optionsOverlayMessageOptionsMarginStart = optionsOverlayMessageOptionsMarginStart,
+                    optionsOverlayMessageOptionsMarginEnd = optionsOverlayMessageOptionsMarginEnd,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

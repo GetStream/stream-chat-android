@@ -70,12 +70,17 @@ internal class QueryChannelsStateLogic(
     internal fun getState(): QueryChannelsState = mutableState
 
     /**
-     * Set the loading state.
-     *
-     * @param isLoading Boolean
+     * Set loading more. Notifies if the SDK is loading more channels.
      */
-    internal fun setLoading(isLoading: Boolean) {
-        mutableState.setLoading(isLoading)
+    internal fun setLoadingMore(isLoading: Boolean) {
+        mutableState.setLoadingMore(isLoading)
+    }
+
+    /**
+     * Set loading more. Notifies if the SDK is loading the first page.
+     */
+    internal fun setLoadingFirstPage(isLoading: Boolean) {
+        mutableState.setLoadingFirstPage(isLoading)
     }
 
     /**
@@ -139,7 +144,8 @@ internal class QueryChannelsStateLogic(
         channels.forEach { channel ->
             logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
                 channel = channel,
-                messageLimit = channel.messages.size
+                messageLimit = channel.messages.size,
+                isChannelsStateUpdate = true
             )
         }
     }

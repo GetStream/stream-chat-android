@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -59,6 +60,8 @@ internal class GiphyAttachmentViewHolder(
     init {
         initializeListeners()
     }
+
+    override fun messageContainerView(): View = binding.messageContainer
 
     /**
      * Initializes listeners that enable handling clicks on various
