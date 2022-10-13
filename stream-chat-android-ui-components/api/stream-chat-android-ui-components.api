@@ -2694,6 +2694,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun setCustomLinearLayoutManager (Landroidx/recyclerview/widget/LinearLayoutManager;)V
 	public final fun setDeleteMessageConfirmationEnabled (Z)V
 	public final fun setDeleteMessageEnabled (Z)V
+	public final fun setDeletedMessageVisibility (Lio/getstream/chat/android/common/state/DeletedMessageVisibility;)V
 	public final fun setDownloadOptionHandler (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryActivity$AttachmentDownloadOptionHandler;)V
 	public final fun setEditMessageEnabled (Z)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
