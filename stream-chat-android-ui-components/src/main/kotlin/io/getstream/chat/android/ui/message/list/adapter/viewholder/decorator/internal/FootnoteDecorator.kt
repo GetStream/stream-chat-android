@@ -52,7 +52,7 @@ internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
     private val isDirectMessage: () -> Boolean,
     private val listViewStyle: MessageListViewStyle,
-    private val deletedMessageVisibility: DeletedMessageVisibility,
+    private val deletedMessageVisibilityHandler: () -> DeletedMessageVisibility,
 ) : BaseDecorator() {
 
     /**
@@ -263,6 +263,8 @@ internal class FootnoteDecorator(
         data: MessageListItem.MessageItem,
         style: MessageListItemStyle,
     ) {
+        println(deletedMessageVisibilityHandler())
+
         when {
             data.isBottomPosition() && !isDirectMessage() && data.isTheirs -> {
                 textView.text = data.message.user.name
@@ -272,7 +274,7 @@ internal class FootnoteDecorator(
 
             data.isBottomPosition() &&
                 data.message.isDeleted() &&
-                deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
+                deletedMessageVisibilityHandler() == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
                 showOnlyVisibleToYou(textView, style)
             }
 

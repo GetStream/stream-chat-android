@@ -67,7 +67,6 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
@@ -795,7 +794,7 @@ public class MessageListView : ConstraintLayout {
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
             messageBackgroundFactory = messageBackgroundFactory,
-            deletedMessageVisibility = deletedMessageVisibility,
+            deletedMessageVisibility = { deletedMessageVisibility },
             isCurrentUserBanned = { channel.isCurrentUserBanned() },
         )
 
@@ -1539,23 +1538,14 @@ public class MessageListView : ConstraintLayout {
 
     /**
      * Sets the value used to filter deleted messages.
-     *
-     * Use this only if you are using your own ViewModel, if you are using our [MessageListViewModel]
-     * setting this is a part of the binding process and re-setting it manually will introduce
-     * bugs.
      * @see DeletedMessageVisibility
      *
      * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
-    @InternalStreamChatApi
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        if (this.deletedMessageVisibility != deletedMessageVisibility) {
-            check(!isAdapterInitialized()) {
-                "Adapter was already initialized, please set DeletedMessageVisibility first. " +
-                    "If you are using MessageListViewModel, please set the visibility before binding " +
-                    "it to MessageListView."
-            }
-            this.deletedMessageVisibility = deletedMessageVisibility
+        this.deletedMessageVisibility = deletedMessageVisibility
+        if (isAdapterInitialized()) {
+            adapter.notifyItemRangeChanged(0, adapter.itemCount)
         }
     }
 
