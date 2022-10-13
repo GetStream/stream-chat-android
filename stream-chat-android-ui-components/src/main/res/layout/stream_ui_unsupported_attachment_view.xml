@@ -14,49 +14,42 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/attachmentContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp"
+    android:layout_margin="4dp"
+    android:padding="6dp"
     >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/attachmentContainer"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/iconImageView"
+        android:layout_width="@dimen/stream_ui_attachment_dialog_file_type_width"
+        android:layout_height="@dimen/stream_ui_attachment_dialog_file_type_height"
+        android:layout_marginStart="6dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/stream_ui_ic_file"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        />
+
+    <TextView
+        android:id="@+id/titleImageView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="6dp"
-        >
+        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:text="Unsupported attachment"
+        android:textAppearance="@style/StreamUiTextAppearance.Body"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iconImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
-        <ImageView
-            android:id="@+id/iconImageView"
-            android:layout_width="@dimen/stream_ui_attachment_dialog_file_type_width"
-            android:layout_height="@dimen/stream_ui_attachment_dialog_file_type_height"
-            android:layout_marginStart="6dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/stream_ui_ic_file"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription"
-            />
-
-        <TextView
-            android:id="@+id/titleImageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/stream_ui_spacing_medium"
-            android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
-            android:text="Unsupported attachment"
-            android:textAppearance="@style/StreamUiTextAppearance.Body"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/iconImageView"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
