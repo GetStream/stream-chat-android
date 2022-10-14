@@ -15,7 +15,7 @@ concurrency:
 jobs:
   lint:
     name: ktlint
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -35,7 +35,7 @@ jobs:
 
   api_check:
     name: API check
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -52,7 +52,7 @@ jobs:
 
   debug_build:
     name: Debug build
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -69,7 +69,7 @@ jobs:
 
   test:
     name: Unit tests
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
