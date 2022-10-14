@@ -1147,6 +1147,7 @@ internal constructor(
 
         notifications.onLogout()
         plugins.forEach { it.onUserDisconnected() }
+        plugins = emptyList()
         if (ToggleService.isSocketExperimental().not()) {
             socketStateService.onDisconnectRequested()
             userStateService.onLogout()

@@ -65,7 +65,6 @@ public class StreamOfflinePluginFactory(
 ) : PluginFactory, RepositoryFactory.Provider {
 
     private val logger = StreamLog.getLogger("Chat:OfflinePluginFactory")
-    private var cachedOfflinePluginInstances: MutableMap<String, OfflinePlugin> = mutableMapOf()
     private val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
         StreamLog.e("StreamOfflinePlugin", throwable) {
             "[uncaughtCoroutineException] throwable: $throwable, context: $context"
@@ -89,8 +88,7 @@ public class StreamOfflinePluginFactory(
      *
      * @return The [Plugin] instance.
      */
-    override fun get(user: User): Plugin =
-        cachedOfflinePluginInstances.getOrPut(user.id) { createOfflinePlugin(user) }
+    override fun get(user: User): Plugin = createOfflinePlugin(user)
 
     /**
      * Tries to get cached [OfflinePlugin] instance for the user if it exists or
