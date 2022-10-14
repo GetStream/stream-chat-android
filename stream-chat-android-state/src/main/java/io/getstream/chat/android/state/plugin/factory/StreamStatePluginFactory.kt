@@ -52,9 +52,6 @@ public class StreamStatePluginFactory(
     private val config: StatePluginConfig,
     private val appContext: Context,
 ) : PluginFactory {
-
-    private var cachedStatePluginInstances: MutableMap<String, StatePlugin> = mutableMapOf()
-
     private val logger = StreamLog.getLogger("Chat:StatePluginFactory")
 
     /**
@@ -62,8 +59,7 @@ public class StreamStatePluginFactory(
      *
      * @return The [Plugin] instance.
      */
-    override fun get(user: User): Plugin =
-        cachedStatePluginInstances.getOrPut(user.id) { createStatePlugin(user) }
+    override fun get(user: User): Plugin = createStatePlugin(user)
 
     private fun createStatePlugin(user: User): StatePlugin {
         val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
