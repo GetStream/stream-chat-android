@@ -34,7 +34,7 @@ jobs:
           script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter
       - name: Upload screnshot results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: screenshots_reports
           path: ${{ github.workspace }}/stream-chat-android-ui-uitests/build/reports/*
