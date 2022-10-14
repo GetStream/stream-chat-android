@@ -223,7 +223,9 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             if (result.isSuccess) {
                 launchShareActivity(mediaUri = result.data(), attachmentType = attachment.type)
             } else {
-                toastFailedShare()
+                withContext(DispatcherProvider.Main) {
+                    toastFailedShare()
+                }
             }
             withContext(DispatcherProvider.Main) {
                 setNoSharingInProgressUi()
