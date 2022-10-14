@@ -14,7 +14,7 @@ concurrency:
 jobs:
   debug_build:
     name: Debug build
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
 
   release_build:
     name: Release build
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
 
   tests:
     name: Tests
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -62,7 +62,7 @@ jobs:
 
   size_check_xml:
     name: Size Check XML
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -82,7 +82,7 @@ jobs:
           
   size_check_compose:
     name: Size Check Compose
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
