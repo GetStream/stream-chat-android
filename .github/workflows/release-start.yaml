@@ -15,7 +15,7 @@ on:
 jobs:
   start_release:
     name: Start Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     environment: 'publish'
     steps:
       - name: Check out code

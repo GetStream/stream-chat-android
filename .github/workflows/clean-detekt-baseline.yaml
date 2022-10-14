@@ -8,7 +8,7 @@ on:
 jobs:
   clean_detekt_baseline_files:
     name: Clean Detekt Baseline Files
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
         uses: actions/checkout@v3
