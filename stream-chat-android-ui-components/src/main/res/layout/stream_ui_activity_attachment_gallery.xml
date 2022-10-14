@@ -197,6 +197,7 @@
             app:layout_constraintStart_toEndOf="@id/centerContent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription"
+            android:padding="6dp"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
