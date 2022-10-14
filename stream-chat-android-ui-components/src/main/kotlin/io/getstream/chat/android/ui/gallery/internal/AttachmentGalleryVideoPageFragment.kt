@@ -70,7 +70,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
             } else {
                 binding.thumbnailImageView.visibility = View.VISIBLE
                 binding.playButtonCardView.visibility = View.VISIBLE
-                binding.progressBar.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.INVISIBLE
             }
         }
 

@@ -152,7 +152,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
      */
     private fun setupShareMediaButton() {
         binding.shareMediaButton.setOnClickListener {
-            if (shareMediaJob == null) {
+            if (shareMediaJob == null || shareMediaJob?.isCompleted == true) {
                 setSharingInProgressUi()
                 shareMedia()
             } else {
