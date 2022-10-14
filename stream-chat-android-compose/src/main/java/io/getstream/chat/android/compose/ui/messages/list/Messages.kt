@@ -29,6 +29,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -232,6 +234,10 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val offset = messagesLazyListState.focusedMessageOffset
 
+    val hasLoadedThread by derivedStateOf {
+        messagesState.messageItems.size > 1 && messagesState.parentMessageId != null
+    }
+
     LaunchedEffect(newMessageState, focusedItemIndex, offset) {
 
         if (focusedItemIndex != -1 &&
@@ -242,15 +248,15 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             }
         }
 
-        val shouldScrollToBottomOnNewMessage = shouldScrollToBottomOnNewMessage(
+        val shouldScrollToBottom = shouldScrollToBottomOnNewMessage(
             focusedItemIndex,
             firstVisibleItemIndex,
             newMessageState,
             areNewestMessagesLoaded,
             lazyListState.isScrollInProgress
-        )
+        ) || hasLoadedThread
 
-        if (shouldScrollToBottomOnNewMessage) {
+        if (shouldScrollToBottom) {
             coroutineScope.launch {
                 if (newMessageState == MyOwn && firstVisibleItemIndex > 5) {
                     lazyListState.scrollToItem(5)

@@ -76,6 +76,7 @@
 ### 🐞 Fixed
 - Fixed scroll to bottom. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 - Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
+- Fixed thread list initials scroll state. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ### ⬆️ Improved
 - Improved asking for `WRITE_EXTERNAL_STORAGE` permission. The permission won't be requested starting from Android Q unless legacy external storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
@@ -95,6 +96,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed pagination when the newest messages arent loaded with newer messages pagination. Fixed scroll to bottom if the newest messages aren't loaded. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Fixed thread list initials scroll state. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ### ⬆️ Improved
 - Improved the way the [ChannelsScreen](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)

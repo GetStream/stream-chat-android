@@ -1131,7 +1131,8 @@ public class MessageListView : ConstraintLayout {
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
 
-                val isThreadStart = !adapter.isThread && listItem.isThread
+                val isThreadStart = !adapter.isThread && listItem.isThread ||
+                    (listItem.isThread && listItem.items.size > 1 && adapter.itemCount <= 1)
                 val isNormalModeStart = adapter.isThread && !listItem.isThread
                 val isOldListEmpty = adapter.currentList.isEmpty()
                 if (isThreadStart) {
