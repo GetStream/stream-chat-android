@@ -54,7 +54,7 @@ jobs:
       - name: Unit tests
         run: ./scripts/ci-unit-tests.sh
       - name: Upload testDebugUnitTest results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3.1.0
         if: failure()
         with:
           name: testDebugUnitTest
