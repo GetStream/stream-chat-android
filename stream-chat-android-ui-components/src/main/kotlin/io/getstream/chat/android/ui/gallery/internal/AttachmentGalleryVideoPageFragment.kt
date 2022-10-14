@@ -23,6 +23,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.MediaController
+import android.widget.Toast
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.images.load
@@ -205,7 +206,11 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
             setVideoURI(Uri.parse(assetUrl))
             this.setMediaController(mediaController)
             setOnErrorListener { _, _, _ ->
-                // TODO
+                Toast.makeText(
+                    requireContext(),
+                    requireContext().getString(R.string.stream_ui_attachment_gallery_video_display_error),
+                    Toast.LENGTH_SHORT
+                ).show()
                 true
             }
             setOnPreparedListener {

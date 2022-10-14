@@ -25,6 +25,7 @@
     <string name="stream_ui_attachment_gallery_share_error">Could not share attachment</string>
     <string name="stream_ui_attachment_unsupported_attachment">Unsupported attachment</string>
     <string name="stream_ui_attachment_gallery_preview_preparing">Preparing…</string>
+    <string name="stream_ui_attachment_gallery_video_display_error">Error. Video can\'t be displayed</string>
 
     <!-- Gallery Overview Dialog -->
     <string name="stream_ui_attachment_gallery_overview_title">Photos</string>
