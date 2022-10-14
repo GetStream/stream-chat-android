@@ -22,6 +22,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.format.DateUtils
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -151,13 +152,27 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
      */
     private fun setupShareMediaButton() {
         binding.shareMediaButton.setOnClickListener {
-            val attachment = adapter.getItem(binding.galleryViewPager.currentItem)
-
-            when (attachment.type) {
-                ModelType.attach_image -> shareImage(attachment = attachment)
-                ModelType.attach_video -> shareVideo(attachment = attachment)
-                else -> toastFailedShare()
+            if (shareMediaJob == null) {
+                setSharingInProgressUi()
+                shareMedia()
+            } else {
+                shareMediaJob?.cancel()
+                setNoSharingInProgressUi()
             }
+        }
+    }
+
+    /**
+     * Begins the process of sharing media depending on
+     * the attachment type.
+     */
+    private fun shareMedia() {
+        val attachment = adapter.getItem(binding.galleryViewPager.currentItem)
+
+        when (attachment.type) {
+            ModelType.attach_image -> shareImage(attachment = attachment)
+            ModelType.attach_video -> shareVideo(attachment = attachment)
+            else -> toastFailedShare()
         }
     }
 
@@ -181,9 +196,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 }?.let {
                     launchShareActivity(mediaUri = it, attachmentType = attachment.type)
                 }
+                setNoSharingInProgressUi()
             }
         } else {
             toastFailedShare()
+            setNoSharingInProgressUi()
         }
     }
 
@@ -207,6 +224,9 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 launchShareActivity(mediaUri = result.data(), attachmentType = attachment.type)
             } else {
                 toastFailedShare()
+            }
+            withContext(DispatcherProvider.Main) {
+                setNoSharingInProgressUi()
             }
         }
     }
@@ -292,7 +312,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     }
 
     private fun onGalleryPageSelected(position: Int) {
-        binding.mediaCountTextView.text = getString(
+        binding.mediaInformationTextView.text = getString(
             R.string.stream_ui_attachment_gallery_count,
             position + 1,
             attachmentGalleryItems.size
@@ -364,6 +384,46 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     }
 
     /**
+     * Sets up the UI in a way that signals to the user
+     * that sharing is in progress.
+     */
+    private fun setSharingInProgressUi() {
+        with(binding) {
+            mediaInformationTextView.text =
+                applicationContext.getString(R.string.stream_ui_attachment_gallery_preview_preparing)
+            progressBar.visibility = View.VISIBLE
+
+            val drawable =
+                ContextCompat.getDrawable(applicationContext, R.drawable.stream_ui_ic_clear)?.mutate()
+                    ?.apply { setTint(ContextCompat.getColor(applicationContext, R.color.stream_ui_black)) }
+
+            binding.shareMediaButton.setImageDrawable(drawable)
+        }
+    }
+
+    /**
+     * Sets up the UI in a way that signals to the user
+     * that no attachment is being shared currently.
+     */
+    private fun setNoSharingInProgressUi() {
+        with(binding) {
+            progressBar.visibility = View.GONE
+            shareMediaButton.setImageDrawable(
+                ContextCompat.getDrawable(
+                    applicationContext,
+                    R.drawable.stream_ui_ic_share
+                )
+            )
+
+            mediaInformationTextView.text = getString(
+                R.string.stream_ui_attachment_gallery_count,
+                galleryViewPager.currentItem + 1,
+                attachmentGalleryItems.size
+            )
+        }
+    }
+
+    /**
      * Obtains style attributes for the gallery and its children.
      */
     private fun obtainOptionsViewStyle() {
@@ -396,6 +456,15 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             showInChatOptionEnabled ||
             saveMediaOptionEnabled ||
             (deleteOptionEnabled && isMine)
+    }
+
+    /**
+     * Clear the cache when the activity is
+     * destroyed.
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+        StreamFileUtil.clearStreamCache(context = applicationContext)
     }
 
     public fun interface AttachmentShowInChatOptionHandler {
