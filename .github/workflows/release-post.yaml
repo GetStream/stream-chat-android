@@ -13,7 +13,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps: 
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.1.0
         with:
           ref: main
       - name: Sync main
@@ -31,7 +31,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.1.0
         with:
           ref: release
       - name: Update changelog
