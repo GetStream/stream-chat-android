@@ -70,7 +70,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
             } else {
                 binding.thumbnailImageView.visibility = View.VISIBLE
                 binding.playButtonCardView.visibility = View.VISIBLE
-                binding.progressBar.visibility = View.INVISIBLE
+                binding.progressBar.visibility = View.GONE
             }
         }
 
@@ -148,11 +148,6 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     private fun resetState() {
         playbackPrepared = false
         playbackStartRequested = false
-        with(binding) {
-            playButtonCardView.visibility = View.VISIBLE
-            progressBar.visibility = View.VISIBLE
-            thumbnailImageView.visibility = View.VISIBLE
-        }
     }
 
     /**
