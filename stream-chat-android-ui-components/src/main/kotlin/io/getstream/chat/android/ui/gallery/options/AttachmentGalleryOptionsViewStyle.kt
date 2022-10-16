@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.gallery.options
 
-import android.app.ActionBar.LayoutParams
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
@@ -27,15 +26,14 @@ import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
-import io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOptionsView
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 
 /**
- * Style for [AttachmentGalleryOptionsView].
+ * Controls how video attachments are displayed inside of the [AttachmentGalleryActivity].
  *
  * @param optionTextStyle The text style of each option.
  * @param backgroundColor The background color of the options dialog.
@@ -48,24 +46,6 @@ import io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOp
  * @param deleteOptionEnabled If the "delete" option is present in the list.
  * @param deleteOptionDrawable The icon for the "delete" option.
  * @param deleteOptionTextColor The text color of the "delete" option.
- * @param viewMediaPlayVideoButtonIcon The drawable for the play button icon displayed above videos in the main viewing
- * area of the gallery.
- * @param viewMediaPlayVideoIconTint Tints the icon overlaid above videos in the main viewing area of the gallery.
- * @param viewMediaPlayVideoIconBackgroundColor The background color of the View containing the play button overlaid
- * above the main viewing area of the gallery.
- * @param viewMediaPlayVideoIconCornerRadius The corner radius of the play button in the main viewing area of the
- * gallery.
- * @param viewMediaPlayVideoIconElevation The elevation of the play button in the main viewing area of the gallery.
- * @param viewMediaPlayVideoIconPaddingTop Sets the top padding of the play video icon displayed above the main viewing
- * area of the gallery.
- * @param viewMediaPlayVideoIconPaddingBottom Sets the bottom padding of the play video icon in the main viewing
- * area of the gallery.
- * @param viewMediaPlayVideoIconPaddingStart Sets the start padding of the play video icon in the main viewing
- * area of the gallery.
- * @param viewMediaPlayVideoIconPaddingEnd  Sets the end padding of the play video icon in the main viewing
- * area of the gallery.
- * @param viewMediaPlayVideoIconWidth Sets the width of the play video button in the main viewing area of the gallery.
- * @param viewMediaPlayVideoIconHeight Sets the width of the play video button in the main viewing area of the gallery.
  */
 public data class AttachmentGalleryOptionsViewStyle(
     val optionTextStyle: TextStyle,
@@ -81,17 +61,6 @@ public data class AttachmentGalleryOptionsViewStyle(
     val deleteOptionEnabled: Boolean,
     val deleteOptionDrawable: Drawable,
     @ColorInt val deleteOptionTextColor: Int,
-    val viewMediaPlayVideoButtonIcon: Drawable?,
-    @ColorInt val viewMediaPlayVideoIconTint: Int?,
-    @ColorInt val viewMediaPlayVideoIconBackgroundColor: Int,
-    val viewMediaPlayVideoIconCornerRadius: Float,
-    val viewMediaPlayVideoIconElevation: Float,
-    val viewMediaPlayVideoIconPaddingTop: Int,
-    val viewMediaPlayVideoIconPaddingBottom: Int,
-    val viewMediaPlayVideoIconPaddingStart: Int,
-    val viewMediaPlayVideoIconPaddingEnd: Int,
-    val viewMediaPlayVideoIconWidth: Int,
-    val viewMediaPlayVideoIconHeight: Int,
 ) {
 
     internal companion object {
@@ -173,68 +142,6 @@ public data class AttachmentGalleryOptionsViewStyle(
                 context.getColorCompat(R.color.stream_ui_accent_red)
             )
 
-            val viewMediaPlayVideoButtonIcon = it.getDrawable(
-                R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon
-            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_play)
-
-            val viewMediaPlayVideoIconTint = it.getColorOrNull(
-                R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayVideoIconTint
-            )
-
-            val viewMediaPlayVideoIconBackgroundColor =
-                it.getColor(
-                    R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_literal_white)
-                )
-
-            val viewMediaPlayVideoIconCornerRadius =
-                it.getDimension(
-                    R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius,
-                    0f
-                )
-
-            val viewMediaPlayVideoIconElevation =
-                it.getDimension(
-                    R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayVideoIconElevation,
-                    0f
-                )
-
-            val viewMediaPlayVideoIconPaddingTop =
-                it.getDimensionPixelSize(
-                    R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop,
-                    0
-                )
-
-            val viewMediaPlayVideoIconPaddingBottom =
-                it.getDimensionPixelSize(
-                    R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom,
-                    0
-                )
-
-            val viewMediaPlayVideoIconPaddingStart =
-                it.getDimensionPixelSize(
-                    R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart,
-                    0
-                )
-
-            val viewMediaPlayVideoIconPaddingEnd =
-                it.getDimensionPixelSize(
-                    R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd,
-                    0
-                )
-
-            val viewMediaPlayVideoIconWidth =
-                it.getLayoutDimension(
-                    R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayIconWidth,
-                    LayoutParams.WRAP_CONTENT
-                )
-
-            val viewMediaPlayVideoIconHeight =
-                it.getLayoutDimension(
-                    R.styleable.AttachmentOptionsView_streamUiAttachmentGalleryViewMediaPlayIconHeight,
-                    LayoutParams.WRAP_CONTENT
-                )
-
             return AttachmentGalleryOptionsViewStyle(
                 optionTextStyle = optionTextStyle,
                 backgroundColor = backgroundColor,
@@ -247,17 +154,6 @@ public data class AttachmentGalleryOptionsViewStyle(
                 deleteOptionEnabled = deleteOptionEnabled,
                 deleteOptionDrawable = deleteOptionDrawable,
                 deleteOptionTextColor = deleteOptionTextColor,
-                viewMediaPlayVideoButtonIcon = viewMediaPlayVideoButtonIcon,
-                viewMediaPlayVideoIconTint = viewMediaPlayVideoIconTint,
-                viewMediaPlayVideoIconBackgroundColor = viewMediaPlayVideoIconBackgroundColor,
-                viewMediaPlayVideoIconCornerRadius = viewMediaPlayVideoIconCornerRadius,
-                viewMediaPlayVideoIconElevation = viewMediaPlayVideoIconElevation,
-                viewMediaPlayVideoIconPaddingTop = viewMediaPlayVideoIconPaddingTop,
-                viewMediaPlayVideoIconPaddingBottom = viewMediaPlayVideoIconPaddingBottom,
-                viewMediaPlayVideoIconPaddingStart = viewMediaPlayVideoIconPaddingStart,
-                viewMediaPlayVideoIconPaddingEnd = viewMediaPlayVideoIconPaddingEnd,
-                viewMediaPlayVideoIconWidth = viewMediaPlayVideoIconWidth,
-                viewMediaPlayVideoIconHeight = viewMediaPlayVideoIconHeight
             ).let(TransformStyle.attachmentGalleryOptionsStyleTransformer::transform)
         }
     }

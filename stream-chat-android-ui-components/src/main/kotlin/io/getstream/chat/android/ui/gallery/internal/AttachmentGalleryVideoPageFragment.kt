@@ -30,6 +30,7 @@ import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryVideoAttachmentsStyle
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 
 internal class AttachmentGalleryVideoPageFragment : Fragment() {
@@ -46,11 +47,11 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     private val style by lazy {
         requireContext().obtainStyledAttributes(
             null,
-            R.styleable.AttachmentOptionsView,
-            R.attr.streamUiAttachmentGalleryOptionsStyle,
-            R.style.StreamUi_AttachmentGallery_Options
+            R.styleable.AttachmentGalleryVideoAttachments,
+            R.attr.streamUiAttachmentGalleryVideoAttachmentsStyle,
+            R.style.StreamUi_AttachmentGallery_VideoAttachments
         ).let {
-            AttachmentGalleryOptionsViewStyle(requireContext(), it)
+            AttachmentGalleryVideoAttachmentsStyle(requireContext(), it)
         }
     }
 
