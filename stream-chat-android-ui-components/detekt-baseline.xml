@@ -26,6 +26,7 @@
     <ID>LargeClass:MessageInputView.kt$MessageInputView : ConstraintLayout</ID>
     <ID>LargeClass:MessageListView.kt$MessageListView : ConstraintLayout</ID>
     <ID>LongMethod:AttachmentGalleryOptionsViewStyle.kt$AttachmentGalleryOptionsViewStyle.Companion$operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryOptionsViewStyle</ID>
+    <ID>LongMethod:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryVideoAttachmentsStyle</ID>
     <ID>LongMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
     <ID>LongMethod:AvatarStyle.kt$AvatarStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle</ID>
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
@@ -73,6 +74,13 @@
     <ID>MagicNumber:UserAvatarView.kt$UserAvatarView$8f</ID>
     <ID>MaxLineLength:AttachmentActivity.kt$AttachmentActivity$Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()</ID>
     <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) }</ID>
+    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor</ID>
+    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius</ID>
+    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconElevation</ID>
+    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom</ID>
+    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd</ID>
+    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart</ID>
+    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToCameraIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!</ID>
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle$*</ID>
@@ -158,6 +166,7 @@
     <ID>MaxLineLength:SuggestionListController.kt$SuggestionListController$suggestionListControllerListener?.onSuggestionListUiVisibilityChanged(suggestionListUi.isSuggestionListVisible())</ID>
     <ID>MaxLineLength:SuggestionListViewStyle.kt$SuggestionListViewStyle$*</ID>
     <ID>MaxLineLength:SwipeViewHolder.kt$SwipeViewHolder$* If the swipe view is swiped of not. When true, swipe view is completely swiped, when false it is in the default state</ID>
+    <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public</ID>
     <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public var attachmentGalleryOptionsStyleTransformer: StyleTransformer&lt;AttachmentGalleryOptionsViewStyle> = noopTransformer()</ID>
     <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public var defaultQuotedAttachmentViewStyleTransformer: StyleTransformer&lt;DefaultQuotedAttachmentViewStyle> = noopTransformer()</ID>
     <ID>MaxLineLength:TypingIndicatorViewStyle.kt$TypingIndicatorViewStyle$*</ID>
