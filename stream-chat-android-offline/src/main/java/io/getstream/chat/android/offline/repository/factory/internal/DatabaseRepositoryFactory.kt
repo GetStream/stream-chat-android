@@ -32,6 +32,7 @@ import io.getstream.chat.android.offline.repository.domain.channel.internal.Data
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.DatabaseAttachmentRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
+import io.getstream.chat.android.offline.repository.domain.message.internal.RealmChannelRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.RealmMessageRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
@@ -73,6 +74,13 @@ internal class DatabaseRepositoryFactory(
     override fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
+    ): ChannelRepository = realmChannelRepository()
+
+    private fun realmChannelRepository(): ChannelRepository = RealmChannelRepository(realm)
+
+    private fun roomChannelRepository(
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
     ): ChannelRepository {
         val databaseChannelRepository = repositoriesCache[ChannelRepository::class.java] as? DatabaseChannelRepository?
 
@@ -97,7 +105,7 @@ internal class DatabaseRepositoryFactory(
 
     override fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository = realmDatabaseMessageRepository(getUser)
+    ): MessageRepository = roomDatabaseMessageRepository(getUser)
 
     private fun realmDatabaseMessageRepository(
         getUser: suspend (userId: String) -> User

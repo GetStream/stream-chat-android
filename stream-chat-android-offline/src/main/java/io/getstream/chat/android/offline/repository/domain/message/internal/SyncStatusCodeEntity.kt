@@ -2,7 +2,7 @@ package io.getstream.chat.ui.sample.realm.entity
 
 import io.getstream.chat.android.client.utils.SyncStatus
 
-internal fun Int.toDomain(): SyncStatus =
+public fun Int.toDomain(): SyncStatus =
   when (this) {
     SyncStatus.SYNC_NEEDED.status -> SyncStatus.SYNC_NEEDED
     SyncStatus.COMPLETED.status -> SyncStatus.COMPLETED
@@ -12,4 +12,4 @@ internal fun Int.toDomain(): SyncStatus =
     else -> throw IllegalStateException("The status code: $this is not supported")
   }
 
-internal fun SyncStatus.toRealm(): Int = status
+public fun SyncStatus.toRealm(): Int = status

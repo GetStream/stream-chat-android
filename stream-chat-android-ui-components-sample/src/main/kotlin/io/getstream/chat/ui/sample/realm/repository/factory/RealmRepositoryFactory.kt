@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.persistance.repository.noop.NoOpAttachme
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpReactionRepository
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpSyncStateRepository
-import io.getstream.chat.ui.sample.realm.repository.RealmChannelRepository
+import io.getstream.chat.android.offline.repository.domain.message.internal.RealmChannelRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.RealmMessageRepository
 import io.getstream.chat.ui.sample.realm.repository.RealmQueryChannelsRepository
 import io.getstream.chat.ui.sample.realm.repository.RealmUserRepository

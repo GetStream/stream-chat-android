@@ -45,13 +45,19 @@ import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionLi
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
+import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelEntityRealm
+import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntityRealm
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.logging.StreamLog
+import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
+import io.realm.kotlin.types.RealmObject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
 
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
@@ -84,9 +90,23 @@ public class StreamOfflinePluginFactory(
         val scope = ensureScope(user)
         return customRepositoryFactory ?: DatabaseRepositoryFactory(
             database = createDatabase(scope, appContext, user, config.persistenceEnabled),
-            currentUser = user
+            currentUser = user,
+            realm = configureRealm()
         )
     }
+
+    private fun configureRealm(): Realm =
+        RealmConfiguration.Builder(schema = realmSchema())
+            .schemaVersion(18)
+            .deleteRealmIfMigrationNeeded()
+            .build()
+            .let(Realm::open)
+
+    private fun realmSchema(): Set<KClass<out RealmObject>> =
+        setOf(
+            MessageEntityRealm::class,
+            ChannelEntityRealm::class
+        )
 
     /**
      * Creates a [Plugin]

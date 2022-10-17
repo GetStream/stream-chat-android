@@ -34,22 +34,12 @@ import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
-import io.getstream.chat.ui.sample.realm.entity.MessageEntityRealm
-import io.getstream.chat.ui.sample.realm.entity.ChannelEntityRealm
-import io.getstream.chat.ui.sample.realm.entity.QueryChannelsEntityRealm
-import io.getstream.chat.ui.sample.realm.entity.UserEntityRealm
-import io.getstream.chat.ui.sample.realm.repository.factory.RealmRepositoryFactory
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
-import io.realm.kotlin.types.RealmObject
-import kotlin.reflect.KClass
 
 class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
         FirebaseApp.initializeApp(context)
-        configureRealm()
 
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
@@ -79,11 +69,7 @@ class ChatInitializer(private val context: Context) {
         val offlinePluginFactory = StreamOfflinePluginFactory(
             Config(userPresence = true, persistenceEnabled = true),
             context
-        ).apply {
-            configureRealm()
-                .let(::RealmRepositoryFactory)
-                .let(::setCustomRepositoryFactory)
-        }
+        )
 
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
@@ -105,20 +91,4 @@ class ChatInitializer(private val context: Context) {
         // Using markdown as text transformer
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
     }
-
-    private fun configureRealm(): Realm =
-        RealmConfiguration.Builder(schema = realmSchema())
-            .schemaVersion(18)
-            .deleteRealmIfMigrationNeeded()
-            .build()
-            .let(Realm::open)
-
-    private fun realmSchema(): Set<KClass<out RealmObject>> =
-        setOf(
-            MessageEntityRealm::class,
-            ChannelEntityRealm::class,
-            UserEntityRealm::class,
-            QueryChannelsEntityRealm::class,
-            QueryChannelsEntityRealm::class,
-        )
 }

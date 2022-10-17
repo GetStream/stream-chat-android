@@ -1,8 +1,10 @@
-package io.getstream.chat.ui.sample.realm.entity
+package io.getstream.chat.android.offline.repository.domain.channel.internal
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.ui.sample.realm.entity.toDomain
+import io.getstream.chat.ui.sample.realm.entity.toRealm
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import java.util.*
