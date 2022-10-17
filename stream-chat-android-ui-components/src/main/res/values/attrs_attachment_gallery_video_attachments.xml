@@ -66,32 +66,5 @@
             <enum name="wrap_content" value="-2" />
         </attr>
 
-        <!-- The drawable for the play button icon overlaid above video attachments in the media
-        overview segment of the gallery. -->
-        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoButtonIcon" format="reference" />
-        <!-- Tints the icon overlaid on top of video attachment previews in the media
-        overview segment of the gallery. -->
-        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconTint" format="reference|color" />
-        <!-- The background color of the View containing the play button in the media
-        overview segment of the gallery. -->
-        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconBackgroundColor" format="color|reference" />
-        <!-- The corner radius of the play button in the media
-        overview segment of the gallery. -->
-        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconCornerRadius" format="dimension" />
-        <!-- The elevation of the play button in the media
-        overview segment of the gallery. -->
-        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconElevation" format="dimension" />
-        <!-- Sets the top padding of the play video icon in the media
-        overview segment of the gallery. -->
-        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingTop" format="dimension" />
-        <!-- Sets the bottom padding of the play video icon in the media
-        overview segment of the gallery. -->
-        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingBottom" format="dimension" />
-        <!-- Sets the start padding of the play video icon in the media
-        overview segment of the gallery. -->
-        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingStart" format="dimension" />
-        <!-- Sets the end padding of the play video icon in the media
-        overview segment of the gallery. -->
-        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingEnd" format="dimension" />
     </declare-styleable>
 </resources>

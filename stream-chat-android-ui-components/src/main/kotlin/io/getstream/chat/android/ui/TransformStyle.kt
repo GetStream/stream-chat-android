@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui
 import io.getstream.chat.android.ui.avatar.AvatarStyle
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryVideoAttachmentsStyle
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryViewMediaStyle
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 import io.getstream.chat.android.ui.mention.list.MentionListViewStyle
 import io.getstream.chat.android.ui.message.composer.AttachmentsPickerDialogStyle
@@ -70,7 +70,8 @@ public object TransformStyle {
     public var messageComposerStyleTransformer: StyleTransformer<MessageComposerViewStyle> = noopTransformer()
     public var attachmentsPickerStyleTransformer: StyleTransformer<AttachmentsPickerDialogStyle> = noopTransformer()
     /* TODO test the transformation */
-    public var attachmentGalleryVideoAttachmentsStyleTransformer: StyleTransformer<AttachmentGalleryVideoAttachmentsStyle> = noopTransformer()
+    public var attachmentGalleryVideoAttachmentsStyleTransformer: StyleTransformer<AttachmentGalleryViewMediaStyle> = noopTransformer()
+    public var mediaAttachmentViewStyle: StyleTransformer<MediaAttachmentViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }

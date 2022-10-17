@@ -26,12 +26,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.EndlessScrollListener
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentGridViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.gallery.overview.internal.MediaAttachmentAdapter
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -42,8 +41,14 @@ public class MediaAttachmentGridView : FrameLayout {
     private val binding = StreamUiMediaAttachmentGridViewBinding.inflate(streamThemeInflater, this, true)
     private val dateFormat: DateFormat = SimpleDateFormat("MMM yyyy", Locale.US)
     private var showUserAvatars: Boolean = false
+
+    /**
+     * Style used to change the appearance of the view
+     */
+    private lateinit var style: MediaAttachmentGridViewStyle
+
     private val adapter: MediaAttachmentAdapter by lazy {
-        MediaAttachmentAdapter(showUserAvatars = showUserAvatars) {
+        MediaAttachmentAdapter(style = style) {
             mediaClickListener?.onClick(it)
         }
     }
@@ -80,9 +85,12 @@ public class MediaAttachmentGridView : FrameLayout {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.MediaAttachmentGridView).use {
-            showUserAvatars = it.getBoolean(R.styleable.MediaAttachmentGridView_streamUiShowUserAvatars, false)
-        }
+        style = MediaAttachmentGridViewStyle(
+            context = context,
+            attrs = attrs
+        )
+
+        showUserAvatars = style.showUserAvatars
 
         binding.mediaRecyclerView.apply {
             adapter = this@MediaAttachmentGridView.adapter

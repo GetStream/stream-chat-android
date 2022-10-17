@@ -833,7 +833,6 @@
     </style>
 
     <style name="StreamUi.AttachmentGallery.VideoAttachments">
-        <!-- Attributes for the play main media viewing section play button. -->
         <item name="streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon">@drawable/stream_ui_ic_play</item>
         <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconElevation">3dp</item>
         <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop">2dp</item>
@@ -844,16 +843,17 @@
         <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor">@color/stream_ui_literal_white</item>
         <item name="streamUiAttachmentGalleryViewMediaPlayIconWidth">45dp</item>
         <item name="streamUiAttachmentGalleryViewMediaPlayIconHeight">45dp</item>
+    </style>
 
-        <!-- Attributes for the play media overview section play button. -->
-        <item name="streamUiAttachmentGalleryMediaOverviewPlayVideoButtonIcon">@drawable/stream_ui_ic_play</item>
-        <item name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconElevation">3dp</item>
-        <item name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingTop">2dp</item>
-        <item name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingBottom">2dp</item>
-        <item name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingStart">3dp</item>
-        <item name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingEnd">2dp</item>
-        <item name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconCornerRadius">24dp</item>
-        <item name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconBackgroundColor">@color/stream_ui_literal_white</item>
+    <style name="StreamUi.MediaAttachmentGridView">
+        <item name="streamUiMediaAttachmentGridViewPlayVideoButtonIcon">@drawable/stream_ui_ic_play</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconElevation">3dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingTop">2dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingBottom">2dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingStart">3dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingEnd">2dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconCornerRadius">24dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconBackgroundColor">@color/stream_ui_literal_white</item>
     </style>
 
     <style name="StreamUi.AttachmentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">

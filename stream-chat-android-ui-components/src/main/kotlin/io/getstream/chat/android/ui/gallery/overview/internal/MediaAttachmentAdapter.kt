@@ -28,28 +28,23 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryVideoAttachmentsStyle
+import io.getstream.chat.android.ui.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 
 internal class MediaAttachmentAdapter(
-    private val showUserAvatars: Boolean,
+    private val style: MediaAttachmentGridViewStyle,
     private val mediaAttachmentClickListener: MediaAttachmentClickListener,
 ) : ListAdapter<AttachmentGalleryItem, MediaAttachmentAdapter.MediaAttachmentViewHolder>(
     AttachmentGalleryItemDiffCallback
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
-        val style = AttachmentGalleryVideoAttachmentsStyle(
-            context = parent.context,
-            attrs = null
-        )
 
         return StreamUiItemMediaAttachmentBinding
             .inflate(parent.streamThemeInflater, parent, false)
             .let {
                 MediaAttachmentViewHolder(
                     binding = it,
-                    showUserAvatars = showUserAvatars,
                     mediaAttachmentClickListener = mediaAttachmentClickListener,
                     style = style
                 )
@@ -60,11 +55,18 @@ internal class MediaAttachmentAdapter(
         holder.bind(getItem(position))
     }
 
+    /**
+     * The ViewHolder used for displaying media previews.
+     *
+     * @param binding The binding used to build a UI.
+     * @param mediaAttachmentClickListener Click listener used to detect
+     * clicks on media attachment previews.
+     * @param style Used to change the appearance of the UI.
+     */
     class MediaAttachmentViewHolder(
         private val binding: StreamUiItemMediaAttachmentBinding,
-        private val showUserAvatars: Boolean,
         private val mediaAttachmentClickListener: MediaAttachmentClickListener,
-        private val style: AttachmentGalleryVideoAttachmentsStyle,
+        private val style: MediaAttachmentGridViewStyle,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
@@ -74,17 +76,24 @@ internal class MediaAttachmentAdapter(
         }
 
         fun bind(attachmentGalleryItem: AttachmentGalleryItem) {
+            val isVideoAttachment = attachmentGalleryItem.attachment.type == ModelType.attach_video
+
             binding.mediaImageView.load(
                 data = attachmentGalleryItem.attachment.imagePreviewUrl,
-                placeholderResId = R.drawable.stream_ui_placeholder,
+                placeholderResId = if (!isVideoAttachment) {
+                    R.drawable.stream_ui_picture_placeholder
+                } else {
+                    null
+                },
             )
 
             val user = attachmentGalleryItem.user
-            if (showUserAvatars) {
-                binding.userAvatarView.isVisible = true
+
+            if (style.showUserAvatars) {
+                binding.userAvatarCardView.isVisible = true
                 binding.userAvatarView.setUser(user)
             } else {
-                binding.userAvatarView.isVisible = false
+                binding.userAvatarCardView.isVisible = false
             }
 
             setupPlayButton(attachmentGalleryItem.attachment.type)

@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryVideoAttachmentsStyle
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryViewMediaStyle
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 
 internal class AttachmentGalleryVideoPageFragment : Fragment() {
@@ -46,7 +46,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
      * only after it has been obtained during or after [onAttach].
      */
     private val style by lazy {
-        AttachmentGalleryVideoAttachmentsStyle(
+        AttachmentGalleryViewMediaStyle(
             context = requireContext(),
             attrs = null
         )
