@@ -36,7 +36,7 @@ public class RealmChannelRepository(
 
     override suspend fun deleteChannel(cid: String) {
         realm.writeBlocking {
-            realm.query<ChannelEntityRealm>("cid == \'$cid\'")
+            realm.query<ChannelEntityRealm>("cid == '$cid'")
                 .first()
                 .find()
                 ?.let(this::delete)
@@ -135,7 +135,7 @@ public class RealmChannelRepository(
     }
 
     private fun selectChannelByCidRealm(cid: String): ChannelEntityRealm? =
-        realm.query<ChannelEntityRealm>("cid == \"$cid\"")
+        realm.query<ChannelEntityRealm>("cid == '$cid'")
             .first()
             .find()
 }
