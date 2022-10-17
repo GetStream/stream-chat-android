@@ -1,6 +1,10 @@
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.Configuration
 
+plugins {
+    id 'io.realm.kotlin'
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.devtools.ksp'
@@ -76,6 +80,10 @@ dependencies {
     implementation Dependencies.moshiKotlin
     implementation Dependencies.moshiAdapters
     ksp Dependencies.moshiCodegen
+
+    // Realm
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt'
+    implementation 'io.realm.kotlin:library-base:1.2.0'
 
     // Tests
     testImplementation project(":stream-chat-android-test")

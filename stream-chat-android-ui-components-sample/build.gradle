@@ -1,6 +1,10 @@
 import io.getstream.chat.android.Configuration
 import io.getstream.chat.android.Dependencies
 
+plugins {
+    id 'io.realm.kotlin'
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'androidx.navigation.safeargs.kotlin'

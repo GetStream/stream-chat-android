@@ -52,7 +52,6 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
     private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
         Comparator { o1, o2 ->
             val fieldName = this.snakeToLowerCamelCase()
-            logger.v { "[compare] fieldName: $fieldName" }
             val fieldOne = o1.getComparableField(fieldName) as? Comparable<Any>
             val fieldTwo = o2.getComparableField(fieldName) as? Comparable<Any>
 
