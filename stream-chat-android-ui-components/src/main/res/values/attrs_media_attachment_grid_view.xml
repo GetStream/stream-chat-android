@@ -45,5 +45,9 @@
         <!-- Sets the end padding of the play video icon in the media
         overview segment of the gallery. -->
         <attr name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingEnd" format="dimension" />
+        <!-- A placeholder drawable used before the image is loaded. -->
+        <attr name="streamUiMediaAttachmentGridViewImagePlaceholder" format="reference"/>
+        <!-- Changes the background color for media attachment previews. -->
+        <attr name="streamUiMediaAttachmentGridViewMediaBackgroundColor" format="reference|color"/>
     </declare-styleable>
 </resources>

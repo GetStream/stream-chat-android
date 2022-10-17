@@ -854,6 +854,8 @@
         <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingEnd">2dp</item>
         <item name="streamUiMediaAttachmentGridViewPlayVideoIconCornerRadius">24dp</item>
         <item name="streamUiMediaAttachmentGridViewPlayVideoIconBackgroundColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiMediaAttachmentGridViewImagePlaceholder">@drawable/stream_ui_picture_placeholder</item>
+        <item name="streamUiMediaAttachmentGridViewMediaBackgroundColor">@color/stream_ui_grey_whisper</item>
     </style>
 
     <style name="StreamUi.AttachmentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">

@@ -21,6 +21,7 @@ import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
@@ -32,36 +33,40 @@ import io.getstream.chat.android.ui.gallery.overview.MediaAttachmentGridView
  *
  * @param showUserAvatars Controls whether the avatar of the user who had sent the attachment is displayed
  * over the attachment preview or not.
- * @param mediaOverviewPlayVideoButtonIcon The drawable for the play button icon overlaid above video attachments in
+ * @param playVideoButtonIcon The drawable for the play button icon overlaid above video attachments in
  * the media overview segment of the gallery.
- * @param mediaOverviewPlayVideoIconTint Tints the icon overlaid on top of video attachment previews in the media
+ * @param playVideoIconTint Tints the icon overlaid on top of video attachment previews in the media
  * overview segment of the gallery.
- * @param mediaOverviewPlayVideoIconBackgroundColor The background color of the View containing the play button in
+ * @param playVideoIconBackgroundColor The background color of the View containing the play button in
  * the media overview segment of the gallery.
- * @param mediaOverviewPlayVideoIconCornerRadius The corner radius of the play button in the media
+ * @param playVideoIconCornerRadius The corner radius of the play button in the media
  * overview segment of the gallery..
- * @param mediaOverviewPlayVideoIconElevation The elevation of the play button in the media
+ * @param playVideoIconElevation The elevation of the play button in the media
  * overview segment of the gallery
- * @param mediaOverviewPlayVideoIconPaddingTop Sets the top padding of the play video icon in the media
+ * @param playVideoIconPaddingTop Sets the top padding of the play video icon in the media
  * overview segment of the gallery.
- * @param mediaOverviewPlayVideoIconPaddingBottom Sets the bottom padding of the play video icon in the media
+ * @param playVideoIconPaddingBottom Sets the bottom padding of the play video icon in the media
  * overview segment of the gallery.
- * @param mediaOverviewPlayVideoIconPaddingStart Sets the start padding of the play video icon in the media
+ * @param playVideoIconPaddingStart Sets the start padding of the play video icon in the media
  * overview segment of the gallery.
- * @param mediaOverviewPlayVideoIconPaddingEnd  Sets the end padding of the play video icon in the media
+ * @param playVideoIconPaddingEnd  Sets the end padding of the play video icon in the media
  * overview segment of the gallery.
+ * @param imagePlaceholder A placeholder drawable used before the image is loaded.
+ * @param mediaBackgroundColor Changes the background color of media attachment previews.
  **/
 public data class MediaAttachmentGridViewStyle(
     val showUserAvatars: Boolean,
-    val mediaOverviewPlayVideoButtonIcon: Drawable?,
-    @ColorInt val mediaOverviewPlayVideoIconTint: Int?,
-    @ColorInt val mediaOverviewPlayVideoIconBackgroundColor: Int,
-    val mediaOverviewPlayVideoIconCornerRadius: Float,
-    val mediaOverviewPlayVideoIconElevation: Float,
-    val mediaOverviewPlayVideoIconPaddingTop: Int,
-    val mediaOverviewPlayVideoIconPaddingBottom: Int,
-    val mediaOverviewPlayVideoIconPaddingStart: Int,
-    val mediaOverviewPlayVideoIconPaddingEnd: Int,
+    val playVideoButtonIcon: Drawable?,
+    @ColorInt val playVideoIconTint: Int?,
+    @ColorInt val playVideoIconBackgroundColor: Int,
+    val playVideoIconCornerRadius: Float,
+    val playVideoIconElevation: Float,
+    val playVideoIconPaddingTop: Int,
+    val playVideoIconPaddingBottom: Int,
+    val playVideoIconPaddingStart: Int,
+    val playVideoIconPaddingEnd: Int,
+    val imagePlaceholder: Drawable?,
+    @ColorInt val mediaBackgroundColor: Int?,
 ) {
     internal companion object {
 
@@ -86,67 +91,79 @@ public data class MediaAttachmentGridViewStyle(
                     true
                 )
 
-            val mediaOverviewPlayVideoButtonIcon = it.getDrawable(
+            val playVideoButtonIcon = it.getDrawable(
                 R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoButtonIcon
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_play)
 
-            val mediaOverviewPlayVideoIconTint = it.getColorOrNull(
+            val playVideoIconTint = it.getColorOrNull(
                 R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconTint
             )
 
-            val mediaOverviewPlayVideoIconBackgroundColor =
+            val playVideoIconBackgroundColor =
                 it.getColor(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconBackgroundColor,
                     context.getColorCompat(R.color.stream_ui_literal_white)
                 )
 
-            val mediaOverviewPlayVideoIconCornerRadius =
+            val playVideoIconCornerRadius =
                 it.getDimension(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconCornerRadius,
                     0f
                 )
 
-            val mediaOverviewPlayVideoIconElevation =
+            val playVideoIconElevation =
                 it.getDimension(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconElevation,
                     0f
                 )
 
-            val mediaOverviewPlayVideoIconPaddingTop =
+            val playVideoIconPaddingTop =
                 it.getDimensionPixelSize(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconPaddingTop,
                     0
                 )
 
-            val mediaOverviewPlayVideoIconPaddingBottom =
+            val playVideoIconPaddingBottom =
                 it.getDimensionPixelSize(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconPaddingBottom,
                     0
                 )
 
-            val mediaOverviewPlayVideoIconPaddingStart =
+            val playVideoIconPaddingStart =
                 it.getDimensionPixelSize(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconPaddingStart,
                     0
                 )
 
-            val mediaOverviewPlayVideoIconPaddingEnd =
+            val playVideoIconPaddingEnd =
                 it.getDimensionPixelSize(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconPaddingEnd,
                     0
                 )
 
+            val imagePlaceholder = it.getDrawable(
+                R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewImagePlaceholder
+            ) ?: ContextCompat.getDrawable(
+                context,
+                R.drawable.stream_ui_picture_placeholder
+            )
+
+            val mediaBackgroundColor =
+                it.getColorOrNull(R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewMediaBackgroundColor)
+
             return MediaAttachmentGridViewStyle(
                 showUserAvatars = showUserAvatars,
-                mediaOverviewPlayVideoButtonIcon = mediaOverviewPlayVideoButtonIcon,
-                mediaOverviewPlayVideoIconTint = mediaOverviewPlayVideoIconTint,
-                mediaOverviewPlayVideoIconBackgroundColor = mediaOverviewPlayVideoIconBackgroundColor,
-                mediaOverviewPlayVideoIconCornerRadius = mediaOverviewPlayVideoIconCornerRadius,
-                mediaOverviewPlayVideoIconElevation = mediaOverviewPlayVideoIconElevation,
-                mediaOverviewPlayVideoIconPaddingTop = mediaOverviewPlayVideoIconPaddingTop,
-                mediaOverviewPlayVideoIconPaddingBottom = mediaOverviewPlayVideoIconPaddingBottom,
-                mediaOverviewPlayVideoIconPaddingStart = mediaOverviewPlayVideoIconPaddingStart,
-                mediaOverviewPlayVideoIconPaddingEnd = mediaOverviewPlayVideoIconPaddingEnd,
+                playVideoButtonIcon = playVideoButtonIcon,
+                playVideoIconTint = playVideoIconTint,
+                playVideoIconBackgroundColor = playVideoIconBackgroundColor,
+                playVideoIconCornerRadius = playVideoIconCornerRadius,
+                playVideoIconElevation = playVideoIconElevation,
+                playVideoIconPaddingTop = playVideoIconPaddingTop,
+                playVideoIconPaddingBottom = playVideoIconPaddingBottom,
+                playVideoIconPaddingStart = playVideoIconPaddingStart,
+                playVideoIconPaddingEnd = playVideoIconPaddingEnd,
+                imagePlaceholder = imagePlaceholder,
+                mediaBackgroundColor = mediaBackgroundColor,
             )
         }
     }

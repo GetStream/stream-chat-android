@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
@@ -76,17 +76,54 @@ internal class MediaAttachmentAdapter(
         }
 
         fun bind(attachmentGalleryItem: AttachmentGalleryItem) {
+            setupUserAvatar(attachmentGalleryItem)
+            setupPlayButton(attachmentGalleryItem.attachment.type)
+            setupImageView()
+            loadImage(attachmentGalleryItem)
+        }
+
+        /**
+         * Loads the given image.
+         *
+         * @param attachmentGalleryItem The attachment to be displayed.
+         */
+        private fun loadImage(attachmentGalleryItem: AttachmentGalleryItem) {
             val isVideoAttachment = attachmentGalleryItem.attachment.type == ModelType.attach_video
+            val shouldLoadImage = attachmentGalleryItem.attachment.type == ModelType.attach_image ||
+                (attachmentGalleryItem.attachment.type == ModelType.attach_video && ChatUI.videoThumbnailsEnabled)
 
             binding.mediaImageView.load(
-                data = attachmentGalleryItem.attachment.imagePreviewUrl,
-                placeholderResId = if (!isVideoAttachment) {
-                    R.drawable.stream_ui_picture_placeholder
+                data = if (shouldLoadImage) {
+                    attachmentGalleryItem.attachment.imagePreviewUrl
+                } else {
+                    null
+                },
+                placeholderDrawable = if (!isVideoAttachment) {
+                    style.imagePlaceholder
                 } else {
                     null
                 },
             )
+        }
 
+        /**
+         * Sets up the image view.
+         * */
+        private fun setupImageView() {
+            val backgroundColor = style.mediaBackgroundColor
+
+            if (backgroundColor != null) {
+                binding.mediaImageView.setBackgroundColor(backgroundColor)
+            }
+        }
+
+        /**
+         * Toggles the visibility of user avatars and load the
+         * given image.
+         *
+         * @param attachmentGalleryItem The attachment to be displayed.
+         */
+        private fun setupUserAvatar(attachmentGalleryItem: AttachmentGalleryItem) {
             val user = attachmentGalleryItem.user
 
             if (style.showUserAvatars) {
@@ -95,8 +132,6 @@ internal class MediaAttachmentAdapter(
             } else {
                 binding.userAvatarCardView.isVisible = false
             }
-
-            setupPlayButton(attachmentGalleryItem.attachment.type)
         }
 
         /**
@@ -117,8 +152,8 @@ internal class MediaAttachmentAdapter(
          */
         private fun setupPlayButtonIcon() {
             with(binding.playButtonImageView) {
-                val playVideoDrawable = style.mediaOverviewPlayVideoButtonIcon?.mutate()?.apply {
-                    val tintColor = style.mediaOverviewPlayVideoIconTint
+                val playVideoDrawable = style.playVideoButtonIcon?.mutate()?.apply {
+                    val tintColor = style.playVideoIconTint
 
                     if (tintColor != null) {
                         this.setTint(tintColor)
@@ -127,10 +162,10 @@ internal class MediaAttachmentAdapter(
 
                 setImageDrawable(playVideoDrawable)
                 setPaddingRelative(
-                    style.mediaOverviewPlayVideoIconPaddingStart,
-                    style.mediaOverviewPlayVideoIconPaddingTop,
-                    style.mediaOverviewPlayVideoIconPaddingEnd,
-                    style.mediaOverviewPlayVideoIconPaddingBottom
+                    style.playVideoIconPaddingStart,
+                    style.playVideoIconPaddingTop,
+                    style.playVideoIconPaddingEnd,
+                    style.playVideoIconPaddingBottom
                 )
             }
         }
@@ -141,9 +176,9 @@ internal class MediaAttachmentAdapter(
          */
         private fun setupPlayButtonCard() {
             with(binding.playButtonCardView) {
-                elevation = style.mediaOverviewPlayVideoIconElevation
-                setCardBackgroundColor(style.mediaOverviewPlayVideoIconBackgroundColor)
-                radius = style.mediaOverviewPlayVideoIconCornerRadius
+                elevation = style.playVideoIconElevation
+                setCardBackgroundColor(style.playVideoIconBackgroundColor)
+                radius = style.playVideoIconCornerRadius
             }
         }
     }

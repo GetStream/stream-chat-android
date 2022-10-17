@@ -1680,9 +1680,11 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity$
 }
 
 public final class io/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle {
-	public fun <init> (ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIII)V
+	public fun <init> (ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIILandroid/graphics/drawable/Drawable;Ljava/lang/Integer;)V
 	public final fun component1 ()Z
 	public final fun component10 ()I
+	public final fun component11 ()Landroid/graphics/drawable/Drawable;
+	public final fun component12 ()Ljava/lang/Integer;
 	public final fun component2 ()Landroid/graphics/drawable/Drawable;
 	public final fun component3 ()Ljava/lang/Integer;
 	public final fun component4 ()I
@@ -1691,18 +1693,20 @@ public final class io/getstream/chat/android/ui/gallery/MediaAttachmentGridViewS
 	public final fun component7 ()I
 	public final fun component8 ()I
 	public final fun component9 ()I
-	public final fun copy (ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIII)Lio/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIIILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle;
+	public final fun copy (ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIILandroid/graphics/drawable/Drawable;Ljava/lang/Integer;)Lio/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIILandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMediaOverviewPlayVideoButtonIcon ()Landroid/graphics/drawable/Drawable;
-	public final fun getMediaOverviewPlayVideoIconBackgroundColor ()I
-	public final fun getMediaOverviewPlayVideoIconCornerRadius ()F
-	public final fun getMediaOverviewPlayVideoIconElevation ()F
-	public final fun getMediaOverviewPlayVideoIconPaddingBottom ()I
-	public final fun getMediaOverviewPlayVideoIconPaddingEnd ()I
-	public final fun getMediaOverviewPlayVideoIconPaddingStart ()I
-	public final fun getMediaOverviewPlayVideoIconPaddingTop ()I
-	public final fun getMediaOverviewPlayVideoIconTint ()Ljava/lang/Integer;
+	public final fun getImagePlaceholder ()Landroid/graphics/drawable/Drawable;
+	public final fun getMediaBackgroundColor ()Ljava/lang/Integer;
+	public final fun getPlayVideoButtonIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getPlayVideoIconBackgroundColor ()I
+	public final fun getPlayVideoIconCornerRadius ()F
+	public final fun getPlayVideoIconElevation ()F
+	public final fun getPlayVideoIconPaddingBottom ()I
+	public final fun getPlayVideoIconPaddingEnd ()I
+	public final fun getPlayVideoIconPaddingStart ()I
+	public final fun getPlayVideoIconPaddingTop ()I
+	public final fun getPlayVideoIconTint ()Ljava/lang/Integer;
 	public final fun getShowUserAvatars ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
