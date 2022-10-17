@@ -11,6 +11,7 @@ import java.util.*
 
 internal class ChannelEntityRealm : RealmObject {
   @PrimaryKey
+  var cid: String = ""
   var channel_id: String = ""
   var type: String = ""
   var name: String = ""
@@ -32,11 +33,13 @@ internal class ChannelEntityRealm : RealmObject {
   var sync_status: Int = SyncStatus.COMPLETED.status
   var team: String = ""
   var own_capabilities: Set<String> = emptySet()
+
 }
 
 internal fun Channel.toRealm(): ChannelEntityRealm {
   val thisChannel = this
   return ChannelEntityRealm().apply {
+    cid = thisChannel.cid
     type = thisChannel.type
     channel_id = thisChannel.id
     name = thisChannel.name
