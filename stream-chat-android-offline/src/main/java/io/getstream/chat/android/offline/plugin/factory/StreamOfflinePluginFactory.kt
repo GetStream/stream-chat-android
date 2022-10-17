@@ -47,6 +47,8 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryLis
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.offline.repository.realm.entity.ChannelEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.ChannelUserReadEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.MemberEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.MessageEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.QueryChannelsEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.UserEntityRealm
@@ -110,6 +112,8 @@ public class StreamOfflinePluginFactory(
             ChannelEntityRealm::class,
             UserEntityRealm::class,
             QueryChannelsEntityRealm::class,
+            MemberEntityRealm::class,
+            ChannelUserReadEntityRealm::class,
         )
 
     /**

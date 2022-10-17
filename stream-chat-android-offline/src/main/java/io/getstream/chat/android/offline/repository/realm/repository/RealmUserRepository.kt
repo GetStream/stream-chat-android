@@ -3,7 +3,7 @@ package io.getstream.chat.android.offline.repository.realm.repository
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.offline.repository.realm.entity.UserEntityRealm
-import io.getstream.chat.android.offline.repository.realm.entity.toModel
+import io.getstream.chat.android.offline.repository.realm.entity.toDomain
 import io.getstream.chat.android.offline.repository.realm.entity.toRealm
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
@@ -41,18 +41,18 @@ public class RealmUserRepository(private val realm: Realm) : UserRepository {
   override fun observeLatestUsers(): StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
 
   override suspend fun selectAllUsers(limit: Int, offset: Int): List<User> =
-    realm.query<UserEntityRealm>().find().map { entity -> entity.toModel() }
+    realm.query<UserEntityRealm>().find().map { entity -> entity.toDomain() }
 
   override suspend fun selectUser(userId: String): User? {
     val id = userId.takeIf { it.isNotEmpty() } ?: "null"
 
-    return realm.query<UserEntityRealm>("id = '$id'").first().find()?.toModel()
+    return realm.query<UserEntityRealm>("id = '$id'").first().find()?.toDomain()
   }
 
 
   override suspend fun selectUsers(ids: List<String>): List<User> =
     realm.query<UserEntityRealm>().find().map { userEntity ->
-      userEntity.toModel()
+      userEntity.toDomain()
     }
 
   override suspend fun selectUsersLikeName(

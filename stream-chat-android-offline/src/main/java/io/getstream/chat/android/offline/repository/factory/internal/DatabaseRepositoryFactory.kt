@@ -77,7 +77,10 @@ internal class DatabaseRepositoryFactory(
         }
     }
 
-    private fun realmChannelRepository(): ChannelRepository = RealmChannelRepository(realm)
+    private fun realmChannelRepository(
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+    ): ChannelRepository = RealmChannelRepository(realm, getUser, getMessage)
 
     private fun roomChannelRepository(
         getUser: suspend (userId: String) -> User,
@@ -96,7 +99,7 @@ internal class DatabaseRepositoryFactory(
     override fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository = realmChannelRepository()
+    ): ChannelRepository = realmChannelRepository(getUser, getMessage)
 
     private fun roomQueryChannelsRepository(): DatabaseQueryChannelsRepository {
         val databaseQueryChannelsRepository =
