@@ -149,7 +149,9 @@ public data class MediaAttachmentGridViewStyle(
             )
 
             val mediaBackgroundColor =
-                it.getColorOrNull(R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewMediaBackgroundColor)
+                it.getColorOrNull(
+                    R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewMediaBackgroundColor
+                )
 
             return MediaAttachmentGridViewStyle(
                 showUserAvatars = showUserAvatars,
