@@ -48,12 +48,12 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
  * area of the gallery.
  * @param viewMediaPlayVideoIconWidth Sets the width of the play video button in the main viewing area of the gallery.
  * @param viewMediaPlayVideoIconHeight Sets the width of the play video button in the main viewing area of the gallery.
- * @param mediaOverviewPlayVideoButtonIcon The drawable for the play button icon overlaid above video attachments in the media
- * overview segment of the gallery.
+ * @param mediaOverviewPlayVideoButtonIcon The drawable for the play button icon overlaid above video attachments in
+ * the media overview segment of the gallery.
  * @param mediaOverviewPlayVideoIconTint Tints the icon overlaid on top of video attachment previews in the media
  * overview segment of the gallery.
- * @param mediaOverviewPlayVideoIconBackgroundColor The background color of the View containing the play button in the media
- * overview segment of the gallery.
+ * @param mediaOverviewPlayVideoIconBackgroundColor The background color of the View containing the play button in
+ * the media overview segment of the gallery.
  * @param mediaOverviewPlayVideoIconCornerRadius The corner radius of the play button in the media
  * overview segment of the gallery..
  * @param mediaOverviewPlayVideoIconElevation The elevation of the play button in the media
