@@ -1,4 +1,4 @@
-package io.getstream.chat.ui.sample.realm.entity
+package io.getstream.chat.android.offline.repository.realm.entity
 
 import io.getstream.chat.android.client.models.User
 import io.realm.kotlin.types.RealmObject

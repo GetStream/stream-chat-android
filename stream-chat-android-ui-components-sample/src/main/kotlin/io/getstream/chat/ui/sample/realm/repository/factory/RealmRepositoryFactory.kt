@@ -17,8 +17,8 @@ import io.getstream.chat.android.client.persistance.repository.noop.NoOpReaction
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpSyncStateRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmChannelRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmMessageRepository
-import io.getstream.chat.ui.sample.realm.repository.RealmQueryChannelsRepository
-import io.getstream.chat.ui.sample.realm.repository.RealmUserRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmQueryChannelsRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmUserRepository
 import io.realm.kotlin.Realm
 
 class RealmRepositoryFactory(private val realm: Realm): RepositoryFactory {

@@ -1,4 +1,4 @@
-package io.getstream.chat.ui.sample.realm.entity
+package io.getstream.chat.android.offline.repository.realm.entity
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter

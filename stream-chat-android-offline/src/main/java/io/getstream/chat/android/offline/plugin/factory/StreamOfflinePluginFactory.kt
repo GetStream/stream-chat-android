@@ -48,6 +48,8 @@ import io.getstream.chat.android.offline.repository.database.internal.ChatDataba
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.offline.repository.realm.entity.ChannelEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.MessageEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.QueryChannelsEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.UserEntityRealm
 import io.getstream.logging.StreamLog
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -105,7 +107,9 @@ public class StreamOfflinePluginFactory(
     private fun realmSchema(): Set<KClass<out RealmObject>> =
         setOf(
             MessageEntityRealm::class,
-            ChannelEntityRealm::class
+            ChannelEntityRealm::class,
+            UserEntityRealm::class,
+            QueryChannelsEntityRealm::class,
         )
 
     /**

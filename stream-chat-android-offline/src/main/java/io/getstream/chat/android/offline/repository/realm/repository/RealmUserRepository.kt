@@ -1,17 +1,17 @@
-package io.getstream.chat.ui.sample.realm.repository
+package io.getstream.chat.android.offline.repository.realm.repository
 
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.UserRepository
-import io.getstream.chat.ui.sample.realm.entity.UserEntityRealm
-import io.getstream.chat.ui.sample.realm.entity.toModel
-import io.getstream.chat.ui.sample.realm.entity.toRealm
+import io.getstream.chat.android.offline.repository.realm.entity.UserEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.toModel
+import io.getstream.chat.android.offline.repository.realm.entity.toRealm
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class RealmUserRepository(private val realm: Realm) : UserRepository {
+public class RealmUserRepository(private val realm: Realm) : UserRepository {
 
   override suspend fun clear() {
 //    realm.writeBlocking {

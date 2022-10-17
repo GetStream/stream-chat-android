@@ -38,6 +38,8 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Dat
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmChannelRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmQueryChannelsRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmUserRepository
 import io.realm.kotlin.Realm
 
 private const val DEFAULT_CACHE_SIZE = 100
@@ -50,7 +52,7 @@ internal class DatabaseRepositoryFactory(
 
     private var repositoriesCache: MutableMap<Class<out Any>, Any> = mutableMapOf()
 
-    override fun createUserRepository(): UserRepository {
+    private fun roomUserRepository(): DatabaseUserRepository {
         val databaseUserRepository = repositoriesCache[UserRepository::class.java] as? DatabaseUserRepository?
 
         return databaseUserRepository ?: run {
@@ -59,6 +61,10 @@ internal class DatabaseRepositoryFactory(
             }
         }
     }
+
+    private fun realmUserRepository(): RealmUserRepository = RealmUserRepository(realm)
+
+    override fun createUserRepository(): UserRepository = realmUserRepository()
 
     override fun createChannelConfigRepository(): ChannelConfigRepository {
         val databaseChannelConfigRepository =
@@ -70,11 +76,6 @@ internal class DatabaseRepositoryFactory(
             }
         }
     }
-
-    override fun createChannelRepository(
-        getUser: suspend (userId: String) -> User,
-        getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository = realmChannelRepository()
 
     private fun realmChannelRepository(): ChannelRepository = RealmChannelRepository(realm)
 
@@ -92,9 +93,14 @@ internal class DatabaseRepositoryFactory(
         }
     }
 
-    override fun createQueryChannelsRepository(): QueryChannelsRepository {
+    override fun createChannelRepository(
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+    ): ChannelRepository = realmChannelRepository()
+
+    private fun roomQueryChannelsRepository(): DatabaseQueryChannelsRepository {
         val databaseQueryChannelsRepository =
-            repositoriesCache[QueryChannelsRepository::class.java] as? QueryChannelsRepository?
+            repositoriesCache[QueryChannelsRepository::class.java] as? DatabaseQueryChannelsRepository?
 
         return databaseQueryChannelsRepository ?: run {
             DatabaseQueryChannelsRepository(database.queryChannelsDao()).also { repository ->
@@ -103,9 +109,9 @@ internal class DatabaseRepositoryFactory(
         }
     }
 
-    override fun createMessageRepository(
-        getUser: suspend (userId: String) -> User,
-    ): MessageRepository = realmDatabaseMessageRepository(getUser)
+    private fun realmQueryChannelsRepository(): RealmQueryChannelsRepository = RealmQueryChannelsRepository(realm)
+
+    override fun createQueryChannelsRepository(): QueryChannelsRepository = roomQueryChannelsRepository()
 
     private fun realmDatabaseMessageRepository(
         getUser: suspend (userId: String) -> User
@@ -127,6 +133,10 @@ internal class DatabaseRepositoryFactory(
             }
         }
     }
+
+    override fun createMessageRepository(
+        getUser: suspend (userId: String) -> User,
+    ): MessageRepository = realmDatabaseMessageRepository(getUser)
 
     override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
         val databaseReactionRepository =

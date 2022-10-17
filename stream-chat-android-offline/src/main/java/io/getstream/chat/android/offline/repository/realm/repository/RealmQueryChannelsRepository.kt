@@ -1,4 +1,4 @@
-package io.getstream.chat.ui.sample.realm.repository
+package io.getstream.chat.android.offline.repository.realm.repository
 
 import android.util.Log
 import io.getstream.chat.android.client.api.models.FilterObject
@@ -6,17 +6,17 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
-import io.getstream.chat.ui.sample.realm.entity.QueryChannelsEntityRealm
-import io.getstream.chat.ui.sample.realm.entity.generateQuerySpecId
-import io.getstream.chat.ui.sample.realm.entity.toDomain
-import io.getstream.chat.ui.sample.realm.entity.toRealm
+import io.getstream.chat.android.offline.repository.realm.entity.QueryChannelsEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.generateQuerySpecId
+import io.getstream.chat.android.offline.repository.realm.entity.toDomain
+import io.getstream.chat.android.offline.repository.realm.entity.toRealm
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 
 private const val TAG = "ChannelsRepository"
 
-internal class RealmQueryChannelsRepository(private val realm: Realm) : QueryChannelsRepository {
+public class RealmQueryChannelsRepository(private val realm: Realm) : QueryChannelsRepository {
 
   override suspend fun clear() {
     val queries = realm.query<QueryChannelsEntityRealm>().find()
