@@ -22,11 +22,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.images.load
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryVideoAttachmentsStyle
+import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 
 internal class MediaAttachmentAdapter(
     private val showUserAvatars: Boolean,
@@ -36,9 +39,21 @@ internal class MediaAttachmentAdapter(
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
+        val style = AttachmentGalleryVideoAttachmentsStyle(
+            context = parent.context,
+            attrs = null
+        )
+
         return StreamUiItemMediaAttachmentBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let { MediaAttachmentViewHolder(it, showUserAvatars, mediaAttachmentClickListener) }
+            .let {
+                MediaAttachmentViewHolder(
+                    binding = it,
+                    showUserAvatars = showUserAvatars,
+                    mediaAttachmentClickListener = mediaAttachmentClickListener,
+                    style = style
+                )
+            }
     }
 
     override fun onBindViewHolder(holder: MediaAttachmentViewHolder, position: Int) {
@@ -49,6 +64,7 @@ internal class MediaAttachmentAdapter(
         private val binding: StreamUiItemMediaAttachmentBinding,
         private val showUserAvatars: Boolean,
         private val mediaAttachmentClickListener: MediaAttachmentClickListener,
+        private val style: AttachmentGalleryVideoAttachmentsStyle,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
@@ -69,6 +85,56 @@ internal class MediaAttachmentAdapter(
                 binding.userAvatarView.setUser(user)
             } else {
                 binding.userAvatarView.isVisible = false
+            }
+
+            setupPlayButton(attachmentGalleryItem.attachment.type)
+        }
+
+        /**
+         * Sets up the play icon overlaid above video attachment previews
+         * by pulling relevant values from [AttachmentGalleryOptionsViewStyle].
+         **/
+        private fun setupPlayButton(attachmentType: String?) {
+            binding.playButtonCardView.isVisible = attachmentType == ModelType.attach_video
+
+            if (attachmentType == ModelType.attach_video) {
+                setupPlayButtonIcon()
+                setupPlayButtonCard()
+            }
+        }
+
+        /**
+         * Sets up the play button icon hosted in an image view.
+         */
+        private fun setupPlayButtonIcon() {
+            with(binding.playButtonImageView) {
+                val playVideoDrawable = style.mediaOverviewPlayVideoButtonIcon?.mutate()?.apply {
+                    val tintColor = style.mediaOverviewPlayVideoIconTint
+
+                    if (tintColor != null) {
+                        this.setTint(tintColor)
+                    }
+                }
+
+                setImageDrawable(playVideoDrawable)
+                setPaddingRelative(
+                    style.mediaOverviewPlayVideoIconPaddingStart,
+                    style.mediaOverviewPlayVideoIconPaddingTop,
+                    style.mediaOverviewPlayVideoIconPaddingEnd,
+                    style.mediaOverviewPlayVideoIconPaddingBottom
+                )
+            }
+        }
+
+        /**
+         * Sets up the card wrapping the image view that contains the
+         * play button icon.
+         */
+        private fun setupPlayButtonCard() {
+            with(binding.playButtonCardView) {
+                elevation = style.mediaOverviewPlayVideoIconElevation
+                setCardBackgroundColor(style.mediaOverviewPlayVideoIconBackgroundColor)
+                radius = style.mediaOverviewPlayVideoIconCornerRadius
             }
         }
     }

@@ -15,75 +15,83 @@
     limitations under the License.
 -->
 <resources>
-<declare-styleable name="AttachmentGalleryVideoAttachments">
+    <declare-styleable name="AttachmentGalleryVideoAttachments">
 
-    <!-- The drawable for the play button icon displayed above videos in the main viewing
-     area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon" format="reference" />
-    <!-- Tints the icon overlaid above videos in the main viewing area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconTint"
-        format="reference|color" />
-    <!-- The background color of the View containing the play button overlaid above
-     the main viewing area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor"
-        format="color|reference" />
-    <!-- The corner radius of the play button in the main viewing area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius"
-        format="dimension" />
-    <!-- The elevation of the play button in the main viewing area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconElevation"
-        format="dimension" />
-    <!-- Sets the top padding of the play video icon displayed above the main viewing
-     area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop"
-        format="dimension" />
-    <!-- Sets the bottom padding of the play video icon in the main viewing
-    area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom"
-        format="dimension" />
-    <!-- Sets the start padding of the play video icon in the main viewing
-    area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart"
-        format="dimension" />
-    <!-- Sets the end padding of the play video icon in the main viewing
-    area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd"
-        format="dimension" />
-    <!-- Sets the width of the play video button in the main viewing area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayIconWidth" format="dimension">
-        <!-- The view should be as big as its parent (minus padding).
-             Introduced in API Level 8. -->
-        <enum name="match_parent" value="-1" />
-        <!-- The view should be only big enough to enclose its content (plus padding). -->
-        <enum name="wrap_content" value="-2" />
-    </attr>
-    <!-- Sets the width of the play video button in the main viewing area of the gallery. -->
-    <attr name="streamUiAttachmentGalleryViewMediaPlayIconHeight" format="dimension">
-        <!-- The view should be as big as its parent (minus padding).
-             Introduced in API Level 8. -->
-        <enum name="match_parent" value="-1" />
-        <!-- The view should be only big enough to enclose its content (plus padding). -->
-        <enum name="wrap_content" value="-2" />
-    </attr>
+        <!-- The drawable for the play button icon displayed above videos in the main viewing
+         area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon" format="reference" />
+        <!-- Tints the icon overlaid above videos in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconTint"
+            format="reference|color" />
+        <!-- The background color of the View containing the play button overlaid above
+         the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor"
+            format="color|reference" />
+        <!-- The corner radius of the play button in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius"
+            format="dimension" />
+        <!-- The elevation of the play button in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconElevation"
+            format="dimension" />
+        <!-- Sets the top padding of the play video icon displayed above the main viewing
+         area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop"
+            format="dimension" />
+        <!-- Sets the bottom padding of the play video icon in the main viewing
+        area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom"
+            format="dimension" />
+        <!-- Sets the start padding of the play video icon in the main viewing
+        area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart"
+            format="dimension" />
+        <!-- Sets the end padding of the play video icon in the main viewing
+        area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd"
+            format="dimension" />
+        <!-- Sets the width of the play video button in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayIconWidth" format="dimension">
+            <!-- The view should be as big as its parent (minus padding).
+                 Introduced in API Level 8. -->
+            <enum name="match_parent" value="-1" />
+            <!-- The view should be only big enough to enclose its content (plus padding). -->
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <!-- Sets the width of the play video button in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayIconHeight" format="dimension">
+            <!-- The view should be as big as its parent (minus padding).
+                 Introduced in API Level 8. -->
+            <enum name="match_parent" value="-1" />
+            <!-- The view should be only big enough to enclose its content (plus padding). -->
+            <enum name="wrap_content" value="-2" />
+        </attr>
 
-    <!-- TODO update kdocs -->
-    <!-- The drawable for the play button icon overlaid above video attachments. -->
-    <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoButtonIcon" format="reference" />
-    <!-- Tints the icon overlaid on top of video attachment previews. -->
-    <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconTint" format="reference|color" />
-    <!-- The background color of the View containing the play button. -->
-    <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconBackgroundColor" format="color|reference" />
-    <!-- The corner radius of the play button. -->
-    <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconCornerRadius" format="dimension" />
-    <!-- The elevation of the play button. -->
-    <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconElevation" format="dimension" />
-    <!-- Sets the top padding of the play video icon. -->
-    <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingTop" format="dimension" />
-    <!-- Sets the bottom padding of the play video icon. -->
-    <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingBottom" format="dimension" />
-    <!-- Sets the start padding of the play video icon. -->
-    <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingStart" format="dimension" />
-    <!-- Sets the end padding of the play video icon. -->
-    <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingEnd" format="dimension" />
-</declare-styleable>
+        <!-- The drawable for the play button icon overlaid above video attachments in the media
+        overview segment of the gallery. -->
+        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoButtonIcon" format="reference" />
+        <!-- Tints the icon overlaid on top of video attachment previews in the media
+        overview segment of the gallery. -->
+        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconTint" format="reference|color" />
+        <!-- The background color of the View containing the play button in the media
+        overview segment of the gallery. -->
+        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconBackgroundColor" format="color|reference" />
+        <!-- The corner radius of the play button in the media
+        overview segment of the gallery. -->
+        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconCornerRadius" format="dimension" />
+        <!-- The elevation of the play button in the media
+        overview segment of the gallery. -->
+        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconElevation" format="dimension" />
+        <!-- Sets the top padding of the play video icon in the media
+        overview segment of the gallery. -->
+        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingTop" format="dimension" />
+        <!-- Sets the bottom padding of the play video icon in the media
+        overview segment of the gallery. -->
+        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingBottom" format="dimension" />
+        <!-- Sets the start padding of the play video icon in the media
+        overview segment of the gallery. -->
+        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingStart" format="dimension" />
+        <!-- Sets the end padding of the play video icon in the media
+        overview segment of the gallery. -->
+        <attr name="streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingEnd" format="dimension" />
+    </declare-styleable>
 </resources>

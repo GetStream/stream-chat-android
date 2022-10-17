@@ -28,6 +28,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryVideoAttachmentsStyle
@@ -45,14 +46,10 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
      * only after it has been obtained during or after [onAttach].
      */
     private val style by lazy {
-        requireContext().obtainStyledAttributes(
-            null,
-            R.styleable.AttachmentGalleryVideoAttachments,
-            R.attr.streamUiAttachmentGalleryVideoAttachmentsStyle,
-            R.style.StreamUi_AttachmentGallery_VideoAttachments
-        ).let {
-            AttachmentGalleryVideoAttachmentsStyle(requireContext(), it)
-        }
+        AttachmentGalleryVideoAttachmentsStyle(
+            context = requireContext(),
+            attrs = null
+        )
     }
 
     /**
@@ -141,7 +138,9 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     }
 
     private fun setupVideoThumbnail() {
-        binding.thumbnailImageView.load(data = thumbUrl)
+        if (ChatUI.videoThumbnailsEnabled) {
+            binding.thumbnailImageView.load(data = thumbUrl)
+        }
     }
 
     /**
@@ -162,6 +161,9 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         setupOnPlayButtonClickedListener()
     }
 
+    /**
+     * Sets up the play button icon hosted in an image view.
+     */
     private fun setupPlayButtonIcon() {
         with(binding.playButtonImageView) {
             updateLayoutParams {
@@ -187,6 +189,10 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         }
     }
 
+    /**
+     * Sets up the card wrapping the image view that contains the
+     * play button icon.
+     */
     private fun setupPlayButtonCard() {
         with(binding.playButtonCardView) {
             elevation = style.viewMediaPlayVideoIconElevation
