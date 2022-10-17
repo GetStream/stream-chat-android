@@ -111,7 +111,7 @@ internal class FootnoteDecorator(
     }
 
     /**
-     * Decorates the footnotes of messages containing image and/ or video attachments.
+     * Decorates the footnote of messages containing image and/or video attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

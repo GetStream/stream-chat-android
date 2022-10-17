@@ -74,7 +74,7 @@ internal class MessageContainerMarginDecorator(
     }
 
     /**
-     * Decorates the message containers of messages containing image and/ or video attachments.
+     * Decorates the message container of messages containing image and/or video attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

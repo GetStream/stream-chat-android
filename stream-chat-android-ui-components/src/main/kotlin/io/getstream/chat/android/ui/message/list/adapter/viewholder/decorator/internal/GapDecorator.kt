@@ -63,7 +63,7 @@ internal class GapDecorator : BaseDecorator() {
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     /**
-     * Decorates the gap sections of messages containing image and/ or video attachments.
+     * Decorates the gap section of messages containing image and/or video attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

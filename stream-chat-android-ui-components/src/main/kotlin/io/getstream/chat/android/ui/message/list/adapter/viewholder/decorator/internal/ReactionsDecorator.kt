@@ -81,7 +81,7 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
     }
 
     /**
-     * Decorates the reactions sections of messages containing image and/ or video attachments.
+     * Decorates the reactions section of messages containing image and/or video attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

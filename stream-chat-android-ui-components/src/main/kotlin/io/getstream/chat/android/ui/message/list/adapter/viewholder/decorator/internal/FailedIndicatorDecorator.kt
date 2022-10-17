@@ -77,8 +77,8 @@ internal class FailedIndicatorDecorator(
     }
 
     /**
-     * Decorates the visibility of the "failed" sections of messages containing
-     * image and/ or video attachments.
+     * Decorates the visibility of the "failed" section of messages containing
+     * image and/or video attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

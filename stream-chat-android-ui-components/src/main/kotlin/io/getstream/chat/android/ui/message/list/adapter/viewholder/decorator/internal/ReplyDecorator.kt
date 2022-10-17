@@ -66,7 +66,7 @@ internal class ReplyDecorator(
     ) = setupReplyView(viewHolder.binding.replyView, data)
 
     /**
-     * Decorates the reply sections of messages containing image and/ or video attachments.
+     * Decorates the reply section of messages containing image and/or video attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.
