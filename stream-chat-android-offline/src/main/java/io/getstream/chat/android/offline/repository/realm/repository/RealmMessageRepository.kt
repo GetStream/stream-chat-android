@@ -52,7 +52,7 @@ public class RealmMessageRepository(
   }
 
   override suspend fun selectMessage(messageId: String): Message? {
-    return realm.query<MessageEntityRealm>("id == $messageId")
+    return realm.query<MessageEntityRealm>("id == '$messageId'")
       .first()
       .find()
       ?.toDomain(user)
@@ -95,7 +95,7 @@ public class RealmMessageRepository(
   }
 
   override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> {
-    return realm.query<MessageEntityRealm>("parent_id == $messageId")
+    return realm.query<MessageEntityRealm>("parent_id == '$messageId'")
       .find()
       .map { entity ->
         entity.toDomain(user)
