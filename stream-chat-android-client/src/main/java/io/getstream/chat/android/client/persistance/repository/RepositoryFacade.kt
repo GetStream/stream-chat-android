@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.persistance.repository.factory.Repositor
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -65,9 +66,13 @@ public class RepositoryFacade private constructor(
         forceCache: Boolean = false,
     ): List<Channel> {
         // fetch the channel entities from room
+        StreamLog.d("RepositoryFacade") { "selecting channels" }
         val channels = channelsRepository.selectChannels(channelIds, forceCache)
         // TODO why it is not compared this way?
         //  pagination?.isRequestingMoreThanLastMessage() == true
+
+        StreamLog.d("RepositoryFacade") { "channels found count: ${channels.size}" }
+
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -79,8 +84,12 @@ public class RepositoryFacade private constructor(
             emptyMap()
         }
 
+        StreamLog.d("RepositoryFacade") { "Enriching channels..." }
+
         return channels.onEach { channel ->
             channel.enrichChannel(messagesMap, defaultConfig)
+        }.also {
+            StreamLog.d("RepositoryFacade") { "Channels enriched" }
         }
     }
 

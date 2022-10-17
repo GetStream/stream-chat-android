@@ -65,7 +65,9 @@ internal class QueryChannelsLogic(
         queryChannelsDatabaseLogic.let { dbLogic ->
             fetchChannelsFromCache(pagination, dbLogic)
                 .also { channels ->
+                    logger.d { "Adding channels is not empty" }
                     if (channels.isNotEmpty()) {
+                        logger.d { "Adding channels..." }
                         addChannels(channels)
 
                         loadingPerPage(false, hasOffset)
@@ -100,7 +102,7 @@ internal class QueryChannelsLogic(
         val queryChannelsSpec = queryChannelsStateLogic.getQuerySpecs()
 
         return queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, queryChannelsSpec)
-            .also { logger.i { "[fetchChannelsFromCache] found ${it.size} channels in offline storage" } }
+            .also { logger.d { "[fetchChannelsFromCache] found ${it.size} channels in offline storage" } }
     }
 
     /**

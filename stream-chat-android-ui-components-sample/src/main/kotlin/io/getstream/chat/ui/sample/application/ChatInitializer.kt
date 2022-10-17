@@ -32,9 +32,6 @@ import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
-import io.getstream.chat.ui.sample.realme.model.MessageRealmEntity
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
 
 class ChatInitializer(private val context: Context) {
 
@@ -100,8 +97,8 @@ class ChatInitializer(private val context: Context) {
     }
 
     private fun configureRealm() {
-        val config = RealmConfiguration.Builder(schema = setOf(MessageRealmEntity::class))
-            .build()
-        val realm: Realm = Realm.open(config)
+        // val config = RealmConfiguration.Builder(schema = setOf(MessageRealmEntity::class))
+        //     .build()
+        // val realm: Realm = Realm.open(config)
     }
 }

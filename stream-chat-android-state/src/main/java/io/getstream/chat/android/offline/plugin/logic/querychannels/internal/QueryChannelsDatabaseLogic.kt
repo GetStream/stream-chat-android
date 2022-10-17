@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.logging.StreamLog
 
 @Suppress("LongParameterList")
 internal class QueryChannelsDatabaseLogic(
@@ -65,7 +66,11 @@ internal class QueryChannelsDatabaseLogic(
     ): List<Channel> {
         val query = queryChannelsSpec?.run {
             queryChannelsRepository.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort)
-        } ?: return emptyList()
+        } ?: return emptyList<Channel>().also {
+            StreamLog.d("QueryChannelsDBLogic") {
+                "Running without because queryChannelsRepository.selectBy returned null"
+            }
+        }
 
         return repositoryFacade.selectChannels(query.cids.toList(), pagination).applyPagination(pagination)
     }
