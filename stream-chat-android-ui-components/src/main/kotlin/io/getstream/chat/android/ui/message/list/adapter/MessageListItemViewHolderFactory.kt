@@ -208,7 +208,7 @@ public open class MessageListItemViewHolderFactory {
     }
 
     /**
-     * Creates a ViewHolder for messages containing image and/ or video attachments and no other type
+     * Creates a ViewHolder for messages containing image and/or video attachments and no other type
      * of attachments.
      *
      * @param parentView The parent container.

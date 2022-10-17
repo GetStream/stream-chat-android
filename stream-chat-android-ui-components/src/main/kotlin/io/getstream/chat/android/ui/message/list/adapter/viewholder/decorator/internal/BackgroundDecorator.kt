@@ -84,7 +84,7 @@ internal class BackgroundDecorator(
     }
 
     /**
-     * Decorates the backgrounds of messages containing image and/ or video attachments.
+     * Decorates the backgrounds of messages containing image and/or video attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

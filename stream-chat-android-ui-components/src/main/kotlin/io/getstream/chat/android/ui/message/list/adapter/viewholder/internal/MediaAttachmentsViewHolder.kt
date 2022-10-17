@@ -38,7 +38,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 /**
- * ViewHolder used for displaying messages that contain image and/ or video attachments.
+ * ViewHolder used for displaying messages that contain image and/or video attachments.
  *
  * @param parent The parent container.
  * @param decorators List of decorators applied to the ViewHolder.
