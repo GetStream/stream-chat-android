@@ -64,7 +64,7 @@ internal class TextDecorator(private val style: MessageListItemStyle) : BaseDeco
     ) = setupTextView(viewHolder.binding.messageText, data)
 
     /**
-     * Decorates the texts of messages containing image and/ or video attachments.
+     * Decorates the text of messages containing image and/or video attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

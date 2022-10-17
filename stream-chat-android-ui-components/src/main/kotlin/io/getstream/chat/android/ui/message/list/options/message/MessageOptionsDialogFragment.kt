@@ -27,7 +27,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.core.view.updateMargins
+import androidx.core.view.updateMarginsRelative
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
@@ -49,15 +49,10 @@ import io.getstream.chat.android.ui.message.list.adapter.internal.MessageListIte
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.DecoratorProvider
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDecoratorProvider
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 /**
  * An overlay with available message options to the selected message. Also, allows leaving a reaction.
@@ -233,7 +228,13 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             }
 
             val params = (layoutParams as ViewGroup.MarginLayoutParams)
-            params.updateMargins(bottom = style.optionsOverlayEditReactionsMargin)
+            params.updateMarginsRelative(
+                top = style.optionsOverlayEditReactionsMarginTop,
+                bottom = style.optionsOverlayEditReactionsMarginBottom,
+                start = style.optionsOverlayEditReactionsMarginStart,
+                end = style.optionsOverlayEditReactionsMarginEnd
+            )
+            (params as? LinearLayout.LayoutParams)?.gravity = if (messageItem.isMine) Gravity.END else Gravity.START
         }
     }
 
@@ -272,7 +273,12 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             }
 
             val params = (layoutParams as ViewGroup.MarginLayoutParams)
-            params.updateMargins(top = style.optionsOverlayUserReactionsMargin)
+            params.updateMarginsRelative(
+                top = style.optionsOverlayUserReactionsMarginTop,
+                bottom = style.optionsOverlayUserReactionsMarginBottom,
+                start = style.optionsOverlayUserReactionsMarginStart,
+                end = style.optionsOverlayUserReactionsMarginEnd
+            )
         }
     }
 
@@ -300,7 +306,12 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             }
 
             val params = (layoutParams as ViewGroup.MarginLayoutParams)
-            params.updateMargins(top = style.optionsOverlayMessageOptionsMargin)
+            params.updateMarginsRelative(
+                top = style.optionsOverlayMessageOptionsMarginTop,
+                bottom = style.optionsOverlayMessageOptionsMarginBottom,
+                start = style.optionsOverlayMessageOptionsMarginStart,
+                end = style.optionsOverlayMessageOptionsMarginEnd
+            )
         }
     }
 
@@ -308,25 +319,23 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
      * Positions the reactions bubble near the message bubble according to the design.
      */
     private fun anchorReactionsViewToMessageView() {
-        val reactionsWidth = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_total_width)
-        val reactionsOffset = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_horizontal_offset)
+        val context = requireContext()
+        val reactionsOffset = context.getDimension(R.dimen.stream_ui_edit_reactions_horizontal_offset)
 
-        when (val viewHolder = viewHolder) {
-            is MessagePlainTextViewHolder -> viewHolder.binding.messageContainer
-            is CustomAttachmentsViewHolder -> viewHolder.binding.messageContainer
-            is LinkAttachmentsViewHolder -> viewHolder.binding.messageContainer
-            is FileAttachmentsViewHolder -> viewHolder.binding.messageContainer
-            is GiphyAttachmentViewHolder -> viewHolder.binding.messageContainer
-            is MediaAttachmentsViewHolder -> viewHolder.binding.messageContainer
-            else -> null
-        }?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
+        viewHolder.messageContainerView()?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             with(binding) {
-                val maxTranslation = messageContainer.width / 2 - reactionsWidth / 2
-                editReactionsView.translationX = if (messageItem.isMine) {
-                    left - messageContainer.width / 2 - reactionsOffset
-                } else {
-                    right - messageContainer.width / 2 + reactionsOffset
-                }.coerceIn(-maxTranslation, maxTranslation).toFloat()
+                val rightAlignment = right + reactionsOffset - editReactionsView.left
+                val leftAlignment = left + reactionsOffset - editReactionsView.left
+                val isRtl = context.isRtlLayout
+
+                editReactionsView.positionBubbleTail(
+                    when {
+                        messageItem.isMine && !isRtl -> leftAlignment
+                        messageItem.isMine && isRtl -> rightAlignment
+                        !messageItem.isMine && !isRtl -> rightAlignment
+                        else -> leftAlignment
+                    }.toFloat()
+                )
             }
         }
     }

@@ -148,11 +148,7 @@ internal class MediaAttachmentView : ConstraintLayout {
             showImagePlaceholder = attachment.type == ModelType.attach_image
         ) {
             showMore()
-            if (attachment.type == ModelType.attach_video) {
-                binding.playIconImageView.visibility = VISIBLE
-            } else {
-                binding.playIconImageView.visibility = GONE
-            }
+            binding.playIconImageView.isVisible = attachment.type == ModelType.attach_video
         }
 
         setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }

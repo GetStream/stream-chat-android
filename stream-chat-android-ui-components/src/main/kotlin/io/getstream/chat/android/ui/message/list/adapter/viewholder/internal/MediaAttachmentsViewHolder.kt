@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -37,7 +38,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 /**
- * ViewHolder used for displaying messages that contain image and/ or video attachments.
+ * ViewHolder used for displaying messages that contain image and/or video attachments.
  *
  * @param parent The parent container.
  * @param decorators List of decorators applied to the ViewHolder.
@@ -64,6 +65,8 @@ internal class MediaAttachmentsViewHolder(
         initializeListeners()
         setLinkMovementMethod()
     }
+
+    override fun messageContainerView(): View = binding.messageContainer
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         super.bindData(data, diff)

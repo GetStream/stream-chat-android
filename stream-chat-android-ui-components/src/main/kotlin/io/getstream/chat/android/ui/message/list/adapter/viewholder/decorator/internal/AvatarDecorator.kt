@@ -76,7 +76,7 @@ internal class AvatarDecorator(
     }
 
     /**
-     * Decorates the avatars of messages containing image and/ or video attachments, based on the message owner.
+     * Decorates the avatars of messages containing image and/or video attachments, based on the message owner.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.

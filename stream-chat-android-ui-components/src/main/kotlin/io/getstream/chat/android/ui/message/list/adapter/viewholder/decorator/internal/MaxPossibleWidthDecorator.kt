@@ -67,7 +67,7 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
     ) = applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
 
     /**
-     * Decorates the maximum width of messages containing image and/ or video attachments, by changing
+     * Decorates the maximum width of messages containing image and/or video attachments, by changing
      * the start and end margins of the container.
      *
      * @param viewHolder The holder to decorate.
