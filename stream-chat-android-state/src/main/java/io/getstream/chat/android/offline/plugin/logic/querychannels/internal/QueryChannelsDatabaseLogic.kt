@@ -31,6 +31,8 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.logging.StreamLog
 
+private const val TAG = "QueryChannelsDBLogic"
+
 @Suppress("LongParameterList")
 internal class QueryChannelsDatabaseLogic(
     private val queryChannelsRepository: QueryChannelsRepository,
@@ -67,12 +69,17 @@ internal class QueryChannelsDatabaseLogic(
         val query = queryChannelsSpec?.run {
             queryChannelsRepository.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort)
         } ?: return emptyList<Channel>().also {
-            StreamLog.d("QueryChannelsDBLogic") {
+            StreamLog.d(TAG) {
                 "Running without because queryChannelsRepository.selectBy returned null"
             }
         }
 
-        return repositoryFacade.selectChannels(query.cids.toList(), pagination).applyPagination(pagination)
+        return repositoryFacade
+            .selectChannels(query.cids.toList(), pagination)
+            .also {
+                StreamLog.d(TAG){ "Channels selected" }
+            }
+            .applyPagination(pagination)
     }
 
     /**

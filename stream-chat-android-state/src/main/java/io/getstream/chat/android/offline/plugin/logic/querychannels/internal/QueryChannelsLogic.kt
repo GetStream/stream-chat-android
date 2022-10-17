@@ -65,7 +65,7 @@ internal class QueryChannelsLogic(
         queryChannelsDatabaseLogic.let { dbLogic ->
             fetchChannelsFromCache(pagination, dbLogic)
                 .also { channels ->
-                    logger.d { "Adding channels is not empty" }
+                    logger.d { "Adding channels if not empty" }
                     if (channels.isNotEmpty()) {
                         logger.d { "Adding channels..." }
                         addChannels(channels)
