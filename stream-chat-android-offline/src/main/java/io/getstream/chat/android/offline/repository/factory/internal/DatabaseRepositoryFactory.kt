@@ -32,12 +32,12 @@ import io.getstream.chat.android.offline.repository.domain.channel.internal.Data
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.DatabaseAttachmentRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
-import io.getstream.chat.android.offline.repository.domain.message.internal.RealmChannelRepository
-import io.getstream.chat.android.offline.repository.domain.message.internal.RealmMessageRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmMessageRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmChannelRepository
 import io.realm.kotlin.Realm
 
 private const val DEFAULT_CACHE_SIZE = 100
@@ -105,7 +105,7 @@ internal class DatabaseRepositoryFactory(
 
     override fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository = roomDatabaseMessageRepository(getUser)
+    ): MessageRepository = realmDatabaseMessageRepository(getUser)
 
     private fun realmDatabaseMessageRepository(
         getUser: suspend (userId: String) -> User

@@ -45,9 +45,9 @@ import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionLi
 import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelEntityRealm
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntityRealm
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
+import io.getstream.chat.android.offline.repository.realm.entity.ChannelEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.MessageEntityRealm
 import io.getstream.logging.StreamLog
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.repository.domain.channel.internal
+package io.getstream.chat.android.offline.repository.realm.entity
 
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message

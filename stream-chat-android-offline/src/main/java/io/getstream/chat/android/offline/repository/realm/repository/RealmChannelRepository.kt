@@ -1,4 +1,4 @@
-package io.getstream.chat.android.offline.repository.domain.message.internal
+package io.getstream.chat.android.offline.repository.realm.repository
 
 import android.util.Log
 import io.getstream.chat.android.client.models.Channel
@@ -6,9 +6,9 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelEntityRealm
-import io.getstream.chat.android.offline.repository.domain.channel.internal.toDomain
-import io.getstream.chat.android.offline.repository.domain.channel.internal.toRealm
+import io.getstream.chat.android.offline.repository.realm.entity.ChannelEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.toDomain
+import io.getstream.chat.android.offline.repository.realm.entity.toRealm
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
