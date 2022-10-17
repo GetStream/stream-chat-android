@@ -6,6 +6,7 @@
 
 ### ⬆️ Improved
 - Improved asking for `WRITE_EXTERNAL_STORAGE` permission. The permission won't be requested starting from Android Q unless legacy external storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
+- When `ChatClient.disconnect` is called, only remove the device on backend side if `flushPersistence` is `true` [#4280](https://github.com/GetStream/stream-chat-android/pull/4280)
 
 ## stream-chat-android-compose
 ### ⬆️ Improved

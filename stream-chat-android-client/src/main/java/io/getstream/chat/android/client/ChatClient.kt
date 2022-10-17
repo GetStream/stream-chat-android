@@ -1201,7 +1201,7 @@ internal constructor(
         logger.d { "[disconnectSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
         userScope.coroutineContext.cancelChildren()
 
-        notifications.onLogout()
+        notifications.onLogout(flushPersistence)
         getCurrentUser().let(initializationCoordinator::userDisconnected)
         if (ToggleService.isSocketExperimental().not()) {
             socketStateService.onDisconnectRequested()
