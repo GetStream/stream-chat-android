@@ -26,7 +26,7 @@
     <ID>LargeClass:MessageInputView.kt$MessageInputView : ConstraintLayout</ID>
     <ID>LargeClass:MessageListView.kt$MessageListView : ConstraintLayout</ID>
     <ID>LongMethod:AttachmentGalleryOptionsViewStyle.kt$AttachmentGalleryOptionsViewStyle.Companion$operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryOptionsViewStyle</ID>
-    <ID>LongMethod:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryVideoAttachmentsStyle</ID>
+    <ID>LongMethod:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryViewMediaStyle</ID>
     <ID>LongMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
     <ID>LongMethod:AvatarStyle.kt$AvatarStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle</ID>
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
@@ -35,6 +35,7 @@
     <ID>LongMethod:FileAttachmentViewStyle.kt$FileAttachmentViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): GiphyMediaAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyViewHolderStyle.kt$GiphyViewHolderStyle.Companion$operator fun invoke(context: Context, attributes: TypedArray): GiphyViewHolderStyle</ID>
+    <ID>LongMethod:MediaAttachmentGridViewStyle.kt$MediaAttachmentGridViewStyle.Companion$operator fun invoke(context: Context, it: TypedArray): MediaAttachmentGridViewStyle</ID>
     <ID>LongMethod:MentionListViewStyle.kt$MentionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MentionListViewStyle</ID>
     <ID>LongMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
     <ID>LongMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
@@ -74,20 +75,13 @@
     <ID>MagicNumber:UserAvatarView.kt$UserAvatarView$8f</ID>
     <ID>MaxLineLength:AttachmentActivity.kt$AttachmentActivity$Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()</ID>
     <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) }</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryMediaOverviewPlayVideoIconBackgroundColor</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryMediaOverviewPlayVideoIconCornerRadius</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryMediaOverviewPlayVideoIconElevation</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingBottom</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingEnd</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingStart</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryMediaOverviewPlayVideoIconPaddingTop</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconElevation</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart</ID>
-    <ID>MaxLineLength:AttachmentGalleryVideoAttachmentsStyle.kt$AttachmentGalleryVideoAttachmentsStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop</ID>
+    <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor</ID>
+    <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius</ID>
+    <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconElevation</ID>
+    <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom</ID>
+    <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd</ID>
+    <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart</ID>
+    <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToCameraIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!</ID>
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle$*</ID>

@@ -82,8 +82,6 @@ public data class AttachmentGalleryViewMediaStyle(
 
         operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryViewMediaStyle {
 
-            // Parse attributes for the play button inside the main viewing area in the gallery
-
             val viewMediaPlayVideoButtonIcon = it.getDrawable(
                 R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_play)
