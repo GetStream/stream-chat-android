@@ -71,13 +71,10 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
 
     @Suppress("MagicNumber")
     fun showAttachments(attachments: List<Attachment>) {
-        val media =
-            attachments.filter { attachment ->
-                !attachment.hasLink() && (
-                    attachment.type == ModelType.attach_image ||
-                        attachment.type == ModelType.attach_video
-                    )
-            }
+        val media = attachments.filter { attachment ->
+            !attachment.hasLink() &&
+                (attachment.type == ModelType.attach_image || attachment.type == ModelType.attach_video)
+        }
         when (media.size) {
             0 -> Unit
             1 -> showOne(media.first())
