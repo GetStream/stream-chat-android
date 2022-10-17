@@ -36,6 +36,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Stop showing a blink of empty state screen when loading channel without loading from database first. [#4261](https://github.com/GetStream/stream-chat-android/pull/4261)
 
 ### ⬆️ Improved
 
@@ -71,6 +72,17 @@
 
 ### ✅ Added
 - Added `UserAvatarView` and `ChannelAvatarView` to replace `AvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
+- Added `UnsupportedAttachmentFactory` for unsupported attachments. [#4271](https://github.com/GetStream/stream-chat-android/pull/4271)
+- Added attrs to `UnsupportedAttachmentsView` that allow to customize the UI of unsupported attachments in [#4271](https://github.com/GetStream/stream-chat-android/pull/4271):
+ * `streamUiUnsupportedAttachmentBackgroundColor`
+ * `streamUiUnsupportedAttachmentStrokeColor`
+ * `streamUiUnsupportedAttachmentStrokeWidth`
+ * `streamUiUnsupportedAttachmentCornerRadius`
+ * `streamUiUnsupportedAttachmentTitleTextSize`
+ * `streamUiUnsupportedAttachmentTitleTextColor`
+ * `streamUiUnsupportedAttachmentTitleTextFont`
+ * `streamUiUnsupportedAttachmentTitleFontAssets`
+ * `streamUiUnsupportedAttachmentTitleTextStyle`
 - Added the ability to turn off video previews (thumbnails) via `ChatUI.videoThumbnailsEnabled`. Video previews are a paid feature and as such you can turn them off. They are on by default and the pricing can be found [here](https://getstream.io/chat/pricing/). [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - Added a new function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - Added a style class called `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
