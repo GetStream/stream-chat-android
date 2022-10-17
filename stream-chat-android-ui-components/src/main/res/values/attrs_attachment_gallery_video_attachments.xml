@@ -65,6 +65,10 @@
             <!-- The view should be only big enough to enclose its content (plus padding). -->
             <enum name="wrap_content" value="-2" />
         </attr>
+        <!-- A placeholder drawable used before the image is loaded. -->
+        <attr name="streamUiAttachmentGalleryViewMediaImagePlaceholder" format="reference" />
+        <!-- Changes the background color for media attachment previews. -->
+        <attr name="streamUiAttachmentGalleryViewMediaMediaBackgroundColor" format="reference|color" />
 
     </declare-styleable>
 </resources>

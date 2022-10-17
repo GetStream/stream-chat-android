@@ -138,6 +138,12 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     }
 
     private fun setupVideoThumbnail() {
+        val backgroundColor = style.mediaBackgroundColor
+
+        if (backgroundColor != null) {
+            binding.thumbnailImageView.setBackgroundColor(backgroundColor)
+        }
+
         if (ChatUI.videoThumbnailsEnabled) {
             binding.thumbnailImageView.load(data = thumbUrl)
         }

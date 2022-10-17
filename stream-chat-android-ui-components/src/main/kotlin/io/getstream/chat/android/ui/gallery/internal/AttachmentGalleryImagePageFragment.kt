@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.gallery.internal
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,11 +25,25 @@ import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryImageBinding
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryViewMediaStyle
 
 internal class AttachmentGalleryImagePageFragment : Fragment() {
 
     private var _binding: StreamUiItemAttachmentGalleryImageBinding? = null
     private val binding get() = _binding!!
+
+    /**
+     * Holds the style necessary to stylize the play button.
+     *
+     * Fetching the style depends on [Context] so use this property
+     * only after it has been obtained during or after [onAttach].
+     */
+    private val style by lazy {
+        AttachmentGalleryViewMediaStyle(
+            context = requireContext(),
+            attrs = null
+        )
+    }
 
     private val imageUrl: String? by lazy {
         requireArguments().getString(ARG_IMAGE_URL)
@@ -44,8 +59,18 @@ internal class AttachmentGalleryImagePageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val backgroundColor = style.mediaBackgroundColor
+
+        if (backgroundColor != null) {
+            binding.photoView.setBackgroundColor(backgroundColor)
+        }
+
         with(binding.photoView) {
-            load(data = imageUrl)
+            load(
+                data = imageUrl,
+                placeholderDrawable = style.imagePlaceholder
+            )
+
             setOnClickListener {
                 imageClickListener()
             }

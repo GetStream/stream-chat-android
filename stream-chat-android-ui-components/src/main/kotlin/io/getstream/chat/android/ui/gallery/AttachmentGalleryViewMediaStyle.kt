@@ -22,6 +22,7 @@ import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
@@ -50,6 +51,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
  * area of the gallery.
  * @param viewMediaPlayVideoIconWidth Sets the width of the play video button in the main viewing area of the gallery.
  * @param viewMediaPlayVideoIconHeight Sets the width of the play video button in the main viewing area of the gallery.
+ * @param imagePlaceholder A placeholder drawable used before the image is loaded.
+ * @param mediaBackgroundColor Changes the background color of media attachment previews.
  */
 public data class AttachmentGalleryViewMediaStyle(
     val viewMediaPlayVideoButtonIcon: Drawable?,
@@ -63,6 +66,8 @@ public data class AttachmentGalleryViewMediaStyle(
     val viewMediaPlayVideoIconPaddingEnd: Int,
     val viewMediaPlayVideoIconWidth: Int,
     val viewMediaPlayVideoIconHeight: Int,
+    val imagePlaceholder: Drawable?,
+    @ColorInt val mediaBackgroundColor: Int?,
 ) {
 
     internal companion object {
@@ -144,6 +149,18 @@ public data class AttachmentGalleryViewMediaStyle(
                     ActionBar.LayoutParams.WRAP_CONTENT
                 )
 
+            val imagePlaceholder = it.getDrawable(
+                R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaImagePlaceholder
+            ) ?: ContextCompat.getDrawable(
+                context,
+                R.drawable.stream_ui_picture_placeholder
+            )
+
+            val mediaBackgroundColor =
+                it.getColorOrNull(
+                    R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaMediaBackgroundColor
+                )
+
             return AttachmentGalleryViewMediaStyle(
                 viewMediaPlayVideoButtonIcon = viewMediaPlayVideoButtonIcon,
                 viewMediaPlayVideoIconTint = viewMediaPlayVideoIconTint,
@@ -156,6 +173,8 @@ public data class AttachmentGalleryViewMediaStyle(
                 viewMediaPlayVideoIconPaddingEnd = viewMediaPlayVideoIconPaddingEnd,
                 viewMediaPlayVideoIconWidth = viewMediaPlayVideoIconWidth,
                 viewMediaPlayVideoIconHeight = viewMediaPlayVideoIconHeight,
+                imagePlaceholder = imagePlaceholder,
+                mediaBackgroundColor = mediaBackgroundColor,
             )
         }
     }

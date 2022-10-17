@@ -843,6 +843,8 @@
         <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor">@color/stream_ui_literal_white</item>
         <item name="streamUiAttachmentGalleryViewMediaPlayIconWidth">45dp</item>
         <item name="streamUiAttachmentGalleryViewMediaPlayIconHeight">45dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaImagePlaceholder">@drawable/stream_ui_picture_placeholder</item>
+        <item name="streamUiAttachmentGalleryViewMediaMediaBackgroundColor">@color/stream_ui_grey_whisper</item>
     </style>
 
     <style name="StreamUi.MediaAttachmentGridView">
