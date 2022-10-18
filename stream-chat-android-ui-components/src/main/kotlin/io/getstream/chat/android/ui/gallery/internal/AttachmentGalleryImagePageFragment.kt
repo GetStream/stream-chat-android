@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.gallery.internal
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +24,6 @@ import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryImageBinding
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryViewMediaStyle
 
 internal class AttachmentGalleryImagePageFragment : Fragment() {
 
