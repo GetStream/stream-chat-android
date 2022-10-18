@@ -32,12 +32,12 @@ import io.getstream.chat.android.offline.repository.domain.channel.internal.Data
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.DatabaseAttachmentRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
-import io.getstream.chat.android.offline.repository.realm.repository.RealmMessageRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmChannelRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmMessageRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmUserRepository
 import io.realm.kotlin.Realm
