@@ -139,7 +139,7 @@ internal class DatabaseRepositoryFactory(
 
     override fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository = roomMessageRepository(getUser)
+    ): MessageRepository = realmMessageRepository(getUser)
 
     override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
         val databaseReactionRepository =

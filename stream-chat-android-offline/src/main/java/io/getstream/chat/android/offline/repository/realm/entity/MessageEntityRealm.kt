@@ -16,7 +16,7 @@ internal class MessageEntityRealm : RealmObject {
   @PrimaryKey
   var id: String = ""
   var cid: String = ""
-  var user_id: String = ""
+  var user: UserEntityRealm? = null
 
   /** the message text */
   var text: String = ""
@@ -99,10 +99,11 @@ internal class MessageEntityRealm : RealmObject {
   var thread_participants_ids: RealmList<String> = realmListOf()
 }
 
-internal suspend fun MessageEntityRealm.toDomain(userFn: suspend (String) -> User): Message {
+internal suspend fun MessageEntityRealm.toDomain(): Message {
   return Message(
     id = this.id,
     cid = this.cid,
+    user = this.user?.toDomain() ?: User(),
     text = this.text,
     html = this.html,
     command = this.command,
@@ -117,7 +118,6 @@ internal suspend fun MessageEntityRealm.toDomain(userFn: suspend (String) -> Use
     deletedAt = this.deleted_at,
     updatedLocallyAt = this.updated_locally_at,
     createdLocallyAt = this.created_locally_at,
-    user = userFn(user_id),
     silent = this.silent,
     shadowed = this.shadowed,
     showInChannel = this.show_in_channel,
@@ -133,13 +133,11 @@ internal fun Message.toRealm(): MessageEntityRealm {
   return MessageEntityRealm().apply {
     this.id = thisMessage.id
     this.cid = thisMessage.cid
-    this.user_id = thisMessage.user.id
-
+    this.user = thisMessage.user.toRealm()
     this.text = thisMessage.text
     this.html = thisMessage.html
     this.type = thisMessage.type
     this.sync_status = thisMessage.syncStatus.toRealm()
-
     this.created_at = thisMessage.createdAt
     this.created_locally_at = thisMessage.createdLocallyAt
     this.updated_at = thisMessage.updatedAt

@@ -55,14 +55,14 @@ public class RealmMessageRepository(
     return realm.query<MessageEntityRealm>("id == '$messageId'")
       .first()
       .find()
-      ?.toDomain(user)
+      ?.toDomain()
   }
 
   override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
     return realm.query<MessageEntityRealm>("sync_status == $0", syncStatus.status)
       .find()
       .map { entity ->
-        entity.toDomain(user)
+        entity.toDomain()
       }
   }
 
@@ -74,12 +74,12 @@ public class RealmMessageRepository(
     messageIds: List<String>,
     forceCache: Boolean
   ): List<Message> {
-    val idsString = messageIds.joinToString(separator = ", ", prefix = "{", postfix = "}")
+    val idsString = messageIds.joinToString(separator = ", ", prefix = "{", postfix = "}") { id -> "'$id'" }
 
     return realm.query<MessageEntityRealm>("id IN $idsString")
       .find()
       .map { entity ->
-        entity.toDomain(user)
+        entity.toDomain()
       }
   }
 
@@ -87,10 +87,10 @@ public class RealmMessageRepository(
     cid: String,
     pagination: AnyChannelPaginationRequest?
   ): List<Message> {
-    return realm.query<MessageEntityRealm>("cid == \"$cid\"")
+    return realm.query<MessageEntityRealm>("cid == '$cid'")
       .find()
       .map { entity ->
-        entity.toDomain(user)
+        entity.toDomain()
       }
   }
 
@@ -98,7 +98,7 @@ public class RealmMessageRepository(
     return realm.query<MessageEntityRealm>("parent_id == '$messageId'")
       .find()
       .map { entity ->
-        entity.toDomain(user)
+        entity.toDomain()
       }
   }
 }

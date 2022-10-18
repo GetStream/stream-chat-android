@@ -21,13 +21,14 @@ internal class ChannelEntityRealm : RealmObject {
     var name: String = ""
     var image: String = ""
     var cooldown: Int = 0
-    var created_by_user_id: String = ""
+    var created_by: UserEntityRealm? = null
     var frozen: Boolean = false
     var hidden: Boolean? = null
     var hide_messages_before: Date? = null
-    var member_Count: Int = 0
+    var member_count: Int = 0
+    var messages: RealmList<MessageEntityRealm> = realmListOf()
     var members: RealmList<MemberEntityRealm> = realmListOf()
-    var watcher_ids: MutableList<String> = mutableListOf()
+    var watchers: RealmList<UserEntityRealm> = realmListOf()
     var watcher_count: Int = 0
     var last_message_at: Date? = null
     var last_message_id: String = ""
@@ -51,13 +52,14 @@ internal fun Channel.toRealm(): ChannelEntityRealm {
         name = thisChannel.name
         image = thisChannel.image
         cooldown = thisChannel.cooldown
-        created_by_user_id = thisChannel.createdBy.id
+        created_by = thisChannel.createdBy.toRealm()
         frozen = thisChannel.frozen
         hidden = thisChannel.hidden
         hide_messages_before = thisChannel.hiddenMessagesBefore
-        member_Count = thisChannel.memberCount
+        messages = thisChannel.messages.map { message -> message.toRealm() }.toRealmList()
+        member_count = thisChannel.memberCount
         members = thisChannel.members.map { member -> member.toRealm() }.toRealmList()
-        watcher_ids = thisChannel.watchers.map { it.id }.toMutableList()
+        watchers = thisChannel.watchers.map { it.toRealm() }.toRealmList()
         watcher_count = thisChannel.watcherCount
         last_message_at = thisChannel.lastMessageAt
         last_message_id = thisChannel.lastMessage()?.id ?: ""
@@ -73,7 +75,6 @@ internal fun Channel.toRealm(): ChannelEntityRealm {
 
 internal suspend fun ChannelEntityRealm.toDomain(
     getUser: suspend (userId: String) -> User,
-    getMessage: suspend (messageId: String) -> Message?,
 ): Channel =
     Channel(
         cid = this.cid,
@@ -89,10 +90,10 @@ internal suspend fun ChannelEntityRealm.toDomain(
         updatedAt = this.updated_at,
         syncStatus = this.sync_status.toDomain(),
         members = members.map { it.toDomain() },
-        memberCount = this.member_Count,
-        messages = listOfNotNull(getMessage(last_message_id)),
-        createdBy = getUser(created_by_user_id),
-        watchers = watcher_ids.map { getUser(it) },
+        memberCount = this.member_count,
+        messages = messages.map { messageEntityRealm -> messageEntityRealm.toDomain() },
+        createdBy = this.created_by?.toDomain() ?: User(),
+        watchers = watchers.map { watcher -> watcher.toDomain() },
         team = this.team,
         read = reads.map { readEntity -> readEntity.toDomain(getUser) },
         hidden = this.hidden,
