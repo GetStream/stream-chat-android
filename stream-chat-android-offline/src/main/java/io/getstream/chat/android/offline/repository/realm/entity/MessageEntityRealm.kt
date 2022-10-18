@@ -6,6 +6,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.ui.sample.realm.entity.toDomain
 import io.getstream.chat.ui.sample.realm.entity.toRealm
+import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import java.util.*
@@ -49,16 +51,16 @@ internal class MessageEntityRealm : RealmObject {
   var deleted_at: Date? = null
 
   /** the users mentioned in this message */
-  var remote_mentioned_user_ids: MutableList<String> = mutableListOf()
+  var remote_mentioned_user_ids: RealmList<String> = realmListOf()
 
   /** the users to be mentioned in this message */
-  var mentioned_users_id: MutableList<String> = mutableListOf()
+  var mentioned_users_id: RealmList<String> = realmListOf()
 
   /** a mapping between reaction type and the count ie like:10 heart:4 */
-  var reaction_counts: MutableMap<String, Int> = mutableMapOf()
+  var reaction_counts: RealmList<ReactionCountEntityRealm> = realmListOf()
 
   /** a mapping between reaction type and the reaction score ie like:10 heart:4 */
-  var reaction_scores: MutableMap<String, Int> = mutableMapOf()
+  var reaction_scores: RealmList<ReactionScoreEntityRealm> = realmListOf()
 
   /** parent id used for threads */
   var parent_id: String? = null
@@ -94,7 +96,7 @@ internal class MessageEntityRealm : RealmObject {
   var pinned_by_user_id: String = ""
 
   /** participants of thread replies */
-  var thread_participants_ids: MutableList<String> = mutableListOf()
+  var thread_participants_ids: RealmList<String> = realmListOf()
 }
 
 internal suspend fun MessageEntityRealm.toDomain(userFn: suspend (String) -> User): Message {
@@ -106,8 +108,8 @@ internal suspend fun MessageEntityRealm.toDomain(userFn: suspend (String) -> Use
     command = this.command,
     mentionedUsersIds = this.mentioned_users_id,
     replyCount = this.reply_count,
-    reactionCounts = this.reaction_counts,
-    reactionScores = this.reaction_scores,
+    reactionCounts = this.reaction_counts.toDomain(),
+    reactionScores = this.reaction_scores.toDomain(),
     syncStatus = this.sync_status.toDomain(),
     type = this.type,
     createdAt = this.created_at,
@@ -143,8 +145,8 @@ internal fun Message.toRealm(): MessageEntityRealm {
     this.updated_at = thisMessage.updatedAt
     this.updated_locally_at = thisMessage.updatedLocallyAt
     this.deleted_at = thisMessage.deletedAt
-    this.reaction_counts = thisMessage.reactionCounts
-    this.reaction_scores = thisMessage.reactionScores
+    this.reaction_counts = thisMessage.reactionCounts.toReactionCountRealm()
+    this.reaction_scores = thisMessage.reactionScores.toReactionScoreRealm()
     this.parent_id = thisMessage.parentId
     this.command = thisMessage.command
     this.shadowed = thisMessage.shadowed

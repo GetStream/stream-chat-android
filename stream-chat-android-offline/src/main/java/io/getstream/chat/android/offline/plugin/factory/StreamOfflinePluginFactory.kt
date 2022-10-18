@@ -51,6 +51,8 @@ import io.getstream.chat.android.offline.repository.realm.entity.ChannelUserRead
 import io.getstream.chat.android.offline.repository.realm.entity.MemberEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.MessageEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.QueryChannelsEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.ReactionCountEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.ReactionScoreEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.UserEntityRealm
 import io.getstream.logging.StreamLog
 import io.realm.kotlin.Realm
@@ -114,6 +116,8 @@ public class StreamOfflinePluginFactory(
             QueryChannelsEntityRealm::class,
             MemberEntityRealm::class,
             ChannelUserReadEntityRealm::class,
+            ReactionCountEntityRealm::class,
+            ReactionScoreEntityRealm::class,
         )
 
     /**
