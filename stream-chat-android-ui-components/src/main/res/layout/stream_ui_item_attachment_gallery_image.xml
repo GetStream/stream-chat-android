@@ -22,6 +22,7 @@
     >
 
     <ImageView
+        android:id="@+id/placeHolderImageView"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:src="@drawable/stream_ui_attachment_permission_media"
