@@ -15,8 +15,6 @@
     limitations under the License.
 -->
 <resources>
-    <!--TODO rename this and its members to AttachmentGallery... to better
-    TODO reflect its capabilities -->
     <declare-styleable name="AttachmentOptionsView">
         <!-- Text size of the option text -->
         <attr name="streamUiAttachmentOptionTextSize" format="dimension|reference" />

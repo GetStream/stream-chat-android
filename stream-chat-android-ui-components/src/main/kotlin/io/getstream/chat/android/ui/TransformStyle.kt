@@ -20,6 +20,7 @@ import io.getstream.chat.android.ui.avatar.AvatarStyle
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryViewMediaStyle
+import io.getstream.chat.android.ui.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 import io.getstream.chat.android.ui.mention.list.MentionListViewStyle
 import io.getstream.chat.android.ui.message.composer.AttachmentsPickerDialogStyle
@@ -56,7 +57,7 @@ public object TransformStyle {
     public var singleReactionViewStyleTransformer: StyleTransformer<SingleReactionViewStyle> = noopTransformer()
     public var channelActionsDialogStyleTransformer: StyleTransformer<ChannelActionsDialogViewStyle> = noopTransformer()
     public var giphyViewHolderStyleTransformer: StyleTransformer<GiphyViewHolderStyle> = noopTransformer()
-    public var imageAttachmentStyleTransformer: StyleTransformer<MediaAttachmentViewStyle> = noopTransformer()
+    public var mediaAttachmentStyleTransformer: StyleTransformer<MediaAttachmentViewStyle> = noopTransformer()
     public var messageReplyStyleTransformer: StyleTransformer<MessageReplyStyle> = noopTransformer()
     public var fileAttachmentStyleTransformer: StyleTransformer<FileAttachmentViewStyle> = noopTransformer()
     public var unsupportedAttachmentStyleTransformer: StyleTransformer<UnsupportedAttachmentViewStyle> = noopTransformer()
@@ -71,9 +72,8 @@ public object TransformStyle {
     public var attachmentGalleryOptionsStyleTransformer: StyleTransformer<AttachmentGalleryOptionsViewStyle> = noopTransformer()
     public var messageComposerStyleTransformer: StyleTransformer<MessageComposerViewStyle> = noopTransformer()
     public var attachmentsPickerStyleTransformer: StyleTransformer<AttachmentsPickerDialogStyle> = noopTransformer()
-    /* TODO test the transformation */
-    public var attachmentGalleryVideoAttachmentsStyleTransformer: StyleTransformer<AttachmentGalleryViewMediaStyle> = noopTransformer()
-    public var mediaAttachmentViewStyle: StyleTransformer<MediaAttachmentViewStyle> = noopTransformer()
+    public var attachmentGalleryViewMediaStyle: StyleTransformer<AttachmentGalleryViewMediaStyle> = noopTransformer()
+    public var mediaAttachmentGridViewStyle: StyleTransformer<MediaAttachmentGridViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }

@@ -709,7 +709,7 @@ public final class io/getstream/chat/android/ui/SupportedReactions$ReactionDrawa
 public final class io/getstream/chat/android/ui/TransformStyle {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/TransformStyle;
 	public final fun getAttachmentGalleryOptionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
-	public final fun getAttachmentGalleryVideoAttachmentsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getAttachmentGalleryViewMediaStyle ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getAttachmentsPickerStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getAvatarStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelActionsDialogStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -718,8 +718,8 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getEditReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getFileAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getGiphyViewHolderStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
-	public final fun getImageAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
-	public final fun getMediaAttachmentViewStyle ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getMediaAttachmentGridViewStyle ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getMediaAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMentionListViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageComposerStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageInputStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -737,7 +737,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getUnsupportedAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun setAttachmentGalleryOptionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
-	public final fun setAttachmentGalleryVideoAttachmentsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setAttachmentGalleryViewMediaStyle (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setAttachmentsPickerStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelActionsDialogStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -746,8 +746,8 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setEditReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setFileAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setGiphyViewHolderStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
-	public final fun setImageAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
-	public final fun setMediaAttachmentViewStyle (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setMediaAttachmentGridViewStyle (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setMediaAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMentionListViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageComposerStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageInputStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V

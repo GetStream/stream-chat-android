@@ -23,6 +23,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -158,7 +159,7 @@ public data class MediaAttachmentGridViewStyle(
                 playVideoIconPaddingStart = playVideoIconPaddingStart,
                 playVideoIconPaddingEnd = playVideoIconPaddingEnd,
                 imagePlaceholder = imagePlaceholder,
-            )
+            ).let(TransformStyle.mediaAttachmentGridViewStyle::transform)
         }
     }
 }
