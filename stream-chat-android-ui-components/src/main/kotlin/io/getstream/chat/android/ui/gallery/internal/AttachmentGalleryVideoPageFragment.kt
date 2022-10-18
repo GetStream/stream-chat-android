@@ -85,6 +85,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
             if (!playbackPrepared && playbackStartRequested) {
                 binding.progressBar.visibility = View.VISIBLE
                 binding.playButtonCardView.visibility = View.GONE
+                binding.thumbnailImageView.visibility = View.GONE
             } else {
                 binding.playButtonCardView.visibility = View.GONE
                 binding.thumbnailImageView.visibility = View.GONE
@@ -153,8 +154,9 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
      * Resets this video page's state.
      */
     private fun resetState() {
-        playbackPrepared = false
         playbackStartRequested = false
+        binding.thumbnailImageView.visibility = View.VISIBLE
+        binding.playButtonCardView.visibility = View.VISIBLE
     }
 
     /**
