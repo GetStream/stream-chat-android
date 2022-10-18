@@ -17,7 +17,6 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -144,37 +143,37 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
 
         val attachmentPdf = Attachment(
             type = "file",
-            mimeType = ModelType.attach_mime_pdf,
+            mimeType = "application/pdf",
             fileSize = 120.kiloBytes(),
             title = "Sample pdf file"
         )
         val attachmentPpt = Attachment(
             type = "file",
-            mimeType = ModelType.attach_mime_ppt,
+            mimeType = "application/vnd.ms-powerpoint",
             fileSize = 567.kiloBytes(),
             title = "Sample ppt file"
         )
         val attachment7z = Attachment(
             type = "file",
-            mimeType = ModelType.attach_mime_7z,
+            mimeType = "application/x-7z-compressed",
             fileSize = 1920.kiloBytes(),
             title = "Sample archive file"
         )
         val attachmentTxt = Attachment(
             type = "file",
-            mimeType = ModelType.attach_mime_txt,
+            mimeType = "text/plain",
             fileSize = 18.kiloBytes(),
             title = "Sample text file"
         )
         val attachmentDoc = Attachment(
             type = "file",
-            mimeType = ModelType.attach_mime_doc,
+            mimeType = "application/msword",
             fileSize = 89.kiloBytes(),
             title = "Sample doc file"
         )
         val attachmentXls = Attachment(
             type = "file",
-            mimeType = ModelType.attach_mime_xls,
+            mimeType = "application/vnd.ms-excel",
             fileSize = 5234.kiloBytes(),
             title = "Sample xls file"
         )

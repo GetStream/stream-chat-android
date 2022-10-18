@@ -21,7 +21,6 @@ import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
 import com.stfalcon.imageviewer.StfalconImageViewer
@@ -35,6 +34,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.gallery.AttachmentMediaActivity
+import io.getstream.chat.android.uiutils.model.MimeType
 import io.getstream.logging.StreamLog
 
 public open class AttachmentDestination(
@@ -157,10 +157,10 @@ public open class AttachmentDestination(
     }
 
     private fun docMimeType(mimeType: String?): Boolean {
-        return mimeType == ModelType.attach_mime_doc ||
-            mimeType == ModelType.attach_mime_txt ||
-            mimeType == ModelType.attach_mime_pdf ||
-            mimeType == ModelType.attach_mime_html ||
+        return mimeType == MimeType.MIME_TYPE_DOC ||
+            mimeType == MimeType.MIME_TYPE_TXT ||
+            mimeType == MimeType.MIME_TYPE_PDF ||
+            mimeType == MimeType.MIME_TYPE_HTML ||
             mimeType?.contains("application/vnd") == true
     }
 
