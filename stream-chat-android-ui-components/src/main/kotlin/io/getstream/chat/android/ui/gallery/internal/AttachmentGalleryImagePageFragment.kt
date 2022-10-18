@@ -32,19 +32,6 @@ internal class AttachmentGalleryImagePageFragment : Fragment() {
     private var _binding: StreamUiItemAttachmentGalleryImageBinding? = null
     private val binding get() = _binding!!
 
-    /**
-     * Holds the style necessary to stylize the play button.
-     *
-     * Fetching the style depends on [Context] so use this property
-     * only after it has been obtained during or after [onAttach].
-     */
-    private val style by lazy {
-        AttachmentGalleryViewMediaStyle(
-            context = requireContext(),
-            attrs = null
-        )
-    }
-
     private val imageUrl: String? by lazy {
         requireArguments().getString(ARG_IMAGE_URL)
     }
