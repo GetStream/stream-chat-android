@@ -21,10 +21,19 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 
+/**
+ * A client aware implementation of [CoroutineScope].
+ */
 internal interface ClientScope : CoroutineScope
 
+/**
+ * Creates a client aware [CoroutineScope].
+ */
 internal fun ClientScope(): ClientScope = ClientScopeImpl()
 
+/**
+ * Represents SDK root [CoroutineScope].
+ */
 private class ClientScopeImpl :
     ClientScope,
     CoroutineScope by CoroutineScope(

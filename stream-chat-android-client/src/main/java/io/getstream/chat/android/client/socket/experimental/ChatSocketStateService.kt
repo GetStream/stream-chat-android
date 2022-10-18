@@ -25,7 +25,7 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.StateFlow
 
 internal class ChatSocketStateService(initialState: State = State.Disconnected.Stopped) {
-    private val logger = StreamLog.getLogger("Chat:ChatSocketStateService")
+    private val logger = StreamLog.getLogger("Chat:SocketState-Exp")
 
     suspend fun observer(onNewState: (State) -> Unit) {
         stateMachine.stateFlow.collect(onNewState)
@@ -37,6 +37,9 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * @param connectionConf The [SocketFactory.ConnectionConf] to be used to reconnect.
      */
     fun onReconnect(connectionConf: SocketFactory.ConnectionConf) {
+        logger.v {
+            "[onReconnect] user.id: '${connectionConf.user.id}', isReconnection: ${connectionConf.isReconnection}"
+        }
         stateMachine.sendEvent(Event.Connect(connectionConf, true))
     }
 
@@ -46,6 +49,9 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * @param connectionConf The [SocketFactory.ConnectionConf] to be used on the new connection.
      */
     fun onConnect(connectionConf: SocketFactory.ConnectionConf) {
+        logger.v {
+            "[onConnect] user.id: '${connectionConf.user.id}', isReconnection: ${connectionConf.isReconnection}"
+        }
         stateMachine.sendEvent(Event.Connect(connectionConf, false))
     }
 
@@ -53,6 +59,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * Notify that the network is not available at the moment.
      */
     fun onNetworkNotAvailable() {
+        logger.w { "[onNetworkNotAvailable] no args" }
         stateMachine.sendEvent(Event.NetworkNotAvailable)
     }
 
@@ -62,6 +69,9 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * @param connectedEvent The [ConnectedEvent] received within the WebSocket connection.
      */
     fun onConnectionEstablished(connectedEvent: ConnectedEvent) {
+        logger.i {
+            "[onConnected] user.id: '${connectedEvent.me.id}', connectionId: ${connectedEvent.connectionId}"
+        }
         stateMachine.sendEvent(Event.ConnectionEstablished(connectedEvent))
     }
 
@@ -71,6 +81,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * @param error The [ChatNetworkError]
      */
     fun onUnrecoverableError(error: ChatNetworkError) {
+        logger.e { "[onUnrecoverableError] error: $error" }
         stateMachine.sendEvent(Event.UnrecoverableError(error))
     }
 
@@ -80,6 +91,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * @param error The [ChatNetworkError]
      */
     fun onNetworkError(error: ChatNetworkError) {
+        logger.e { "[onNetworkError] error: $error" }
         stateMachine.sendEvent(Event.NetworkError(error))
     }
 
@@ -87,6 +99,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * Notify that the user want to disconnect the WebSocket connection.
      */
     fun onRequiredDisconnect() {
+        logger.i { "[onRequiredDisconnect] no args" }
         stateMachine.sendEvent(Event.RequiredDisconnection)
     }
 
@@ -94,6 +107,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * Notify that the connection should be stopped.
      */
     fun onStop() {
+        logger.i { "[onStop] no args" }
         stateMachine.sendEvent(Event.Stop)
     }
 
@@ -101,6 +115,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * Notify that some WebSocket Event has been lost.
      */
     fun onWebSocketEventLost() {
+        logger.w { "[onWebSocketEventLost] no args" }
         stateMachine.sendEvent(Event.WebSocketEventLost)
     }
 
@@ -108,6 +123,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * Notify that the network is available at the moment.
      */
     fun onNetworkAvailable() {
+        logger.i { "[onNetworkAvailable] no args" }
         stateMachine.sendEvent(Event.NetworkAvailable)
     }
 
@@ -115,6 +131,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * Notify that the connection should be resumed.
      */
     fun onResume() {
+        logger.v { "[onResume] no args" }
         stateMachine.sendEvent(Event.Resume)
     }
 

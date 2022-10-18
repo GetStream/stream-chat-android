@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
@@ -74,7 +73,6 @@ public class StreamStatePluginFactory(
         return createStatePlugin(user, scope)
     }
 
-    @InternalStreamChatApi
     @SuppressWarnings("LongMethod")
     public fun createStatePlugin(
         user: User,
@@ -83,9 +81,7 @@ public class StreamStatePluginFactory(
         logger.i { "[createStatePlugin] no args" }
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
-        val clientState = chatClient.clientState.also { clientState ->
-            clientState.clearState()
-        }
+        val clientState = chatClient.clientState
         val globalState = GlobalMutableState.get(chatClient.clientState).apply {
             clearState()
         }

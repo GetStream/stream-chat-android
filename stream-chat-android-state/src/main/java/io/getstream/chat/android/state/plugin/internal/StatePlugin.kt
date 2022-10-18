@@ -115,7 +115,6 @@ public class StatePlugin internal constructor(
         sendMessageInterceptor.cancelJobs()
         stateRegistry.clear()
         logic.clear()
-        clientState.clearState()
         syncManager.stop()
         eventHandler.stopListening()
     }
