@@ -21,7 +21,7 @@ import io.getstream.chat.android.offline.repository.realm.repository.RealmQueryC
 import io.getstream.chat.android.offline.repository.realm.repository.RealmUserRepository
 import io.realm.kotlin.Realm
 
-public class RealmRepositoryFactory(private val realm: Realm): RepositoryFactory {
+public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactory {
     override fun createUserRepository(): UserRepository = RealmUserRepository(realm)
 
     override fun createChannelConfigRepository(): ChannelConfigRepository = NoOpChannelConfigRepository
@@ -34,7 +34,7 @@ public class RealmRepositoryFactory(private val realm: Realm): RepositoryFactory
     override fun createAttachmentRepository(): AttachmentRepository = NoOpAttachmentRepository
 
     override fun createReactionRepository(
-        getUser: suspend (userId: String) -> User
+        getUser: suspend (userId: String) -> User,
     ): ReactionRepository = NoOpReactionRepository
 
     override fun createMessageRepository(
@@ -45,5 +45,4 @@ public class RealmRepositoryFactory(private val realm: Realm): RepositoryFactory
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
     ): ChannelRepository = RealmChannelRepository(realm, getUser, getMessage)
-
 }

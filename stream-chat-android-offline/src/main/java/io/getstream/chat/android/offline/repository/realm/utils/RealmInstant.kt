@@ -3,6 +3,8 @@ package io.getstream.chat.android.offline.repository.realm.utils
 import io.realm.kotlin.types.RealmInstant
 import java.util.Date
 
-internal fun RealmInstant.toDate() = Date(this.epochSeconds * 1000)
+private const val ONE_K: Int = 1000
 
-internal fun Date.toRealmInstant() = RealmInstant.from(time/1000, 0)
+internal fun RealmInstant.toDate() = Date(this.epochSeconds * ONE_K)
+
+internal fun Date.toRealmInstant() = RealmInstant.from(time / ONE_K, 0)

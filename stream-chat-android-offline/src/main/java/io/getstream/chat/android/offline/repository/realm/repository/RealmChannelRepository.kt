@@ -4,7 +4,6 @@ import android.util.Log
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.repository.realm.entity.ChannelEntityRealm
@@ -19,11 +18,8 @@ import java.util.*
 private const val LOG_TAG: String = "RealmChannelRepository"
 private const val NO_LIMIT: Int = -1
 
-public class RealmChannelRepository(
-    private val realm: Realm,
-    private val getUser: suspend (userId: String) -> User,
-    private val getMessage: suspend (messageId: String) -> Message?,
-) : ChannelRepository {
+@Suppress("TooManyFunctions")
+public class RealmChannelRepository(private val realm: Realm) : ChannelRepository {
 
     override suspend fun clear() {
         realm.writeBlocking {
@@ -45,6 +41,7 @@ public class RealmChannelRepository(
     }
 
     override suspend fun evictChannel(cid: String) {
+        // Nothing to do
     }
 
     override suspend fun insertChannel(channel: Channel) {
@@ -62,7 +59,7 @@ public class RealmChannelRepository(
         realm.query<ChannelEntityRealm>().find().map { entity -> entity.cid }
 
     override suspend fun selectChannelByCid(cid: String): Channel? =
-        selectChannelByCidRealm(cid)?.toDomain(getUser)
+        selectChannelByCidRealm(cid)?.toDomain()
 
     override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> =
         realm.query<ChannelEntityRealm>("sync_status == $0", SyncStatus.SYNC_NEEDED.status)
@@ -73,7 +70,7 @@ public class RealmChannelRepository(
             .map { entity -> entity.cid }
 
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? =
-        selectChannelByCidRealm(cid)?.toDomain(getUser)
+        selectChannelByCidRealm(cid)?.toDomain()
 
     override suspend fun selectChannels(
         channelCIDs: List<String>,
@@ -91,7 +88,7 @@ public class RealmChannelRepository(
 
         return realm.query<ChannelEntityRealm>(query)
             .find()
-            .map { entity -> entity.toDomain(getUser) }
+            .map { entity -> entity.toDomain() }
     }
 
     override suspend fun selectChannelsByCids(cids: List<String>): List<Channel> =
@@ -103,7 +100,7 @@ public class RealmChannelRepository(
                 if (limit != NO_LIMIT) limit(limit)
             }
             .find()
-            .map { entity -> entity.toDomain(getUser) }
+            .map { entity -> entity.toDomain() }
     }
 
     override suspend fun selectMembersForChannel(cid: String): List<Member> = emptyList()
@@ -124,15 +121,15 @@ public class RealmChannelRepository(
     }
 
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
-        //Nothing to do here
+        // Nothing to do here
     }
 
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
-        //Nothing to do here
+        // Nothing to do here
     }
 
     override suspend fun updateMembersForChannel(cid: String, members: List<Member>) {
-        //Nothing to do here
+        // Nothing to do here
     }
 
     private fun selectChannelByCidRealm(cid: String): ChannelEntityRealm? =

@@ -13,54 +13,50 @@ import kotlinx.coroutines.flow.StateFlow
 
 public class RealmUserRepository(private val realm: Realm) : UserRepository {
 
-  override suspend fun clear() {
+    override suspend fun clear() {
 //    realm.writeBlocking {
 //      val allUsers = realm.query<UserEntityRealm>().find()
 //      delete(allUsers)
 //    }
-  }
-
-  override suspend fun insertCurrentUser(user: User) {
-    realm.writeBlocking { copyToRealm(user.toRealm(), updatePolicy = UpdatePolicy.ALL) }
-  }
-
-  override suspend fun insertUser(user: User) {
-    realm.writeBlocking { copyToRealm(user.toRealm(), updatePolicy = UpdatePolicy.ALL) }
-  }
-
-  override suspend fun insertUsers(users: Collection<User>) {
-    val usersRealm = users.map { user -> user.toRealm() }
-
-    realm.writeBlocking {
-      usersRealm.forEach { entity ->
-        copyToRealm(entity, updatePolicy = UpdatePolicy.ALL)
-      }
-    }
-  }
-
-  override fun observeLatestUsers(): StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
-
-  override suspend fun selectAllUsers(limit: Int, offset: Int): List<User> =
-    realm.query<UserEntityRealm>().find().map { entity -> entity.toDomain() }
-
-  override suspend fun selectUser(userId: String): User? {
-    val id = userId.takeIf { it.isNotEmpty() } ?: "null"
-
-    return realm.query<UserEntityRealm>("id = '$id'").first().find()?.toDomain()
-  }
-
-
-  override suspend fun selectUsers(ids: List<String>): List<User> =
-    realm.query<UserEntityRealm>().find().map { userEntity ->
-      userEntity.toDomain()
     }
 
-  override suspend fun selectUsersLikeName(
-    searchString: String,
-    limit: Int,
-    offset: Int
-  ): List<User> = emptyList()
+    override suspend fun insertCurrentUser(user: User) {
+        realm.writeBlocking { copyToRealm(user.toRealm(), updatePolicy = UpdatePolicy.ALL) }
+    }
+
+    override suspend fun insertUser(user: User) {
+        realm.writeBlocking { copyToRealm(user.toRealm(), updatePolicy = UpdatePolicy.ALL) }
+    }
+
+    override suspend fun insertUsers(users: Collection<User>) {
+        val usersRealm = users.map { user -> user.toRealm() }
+
+        realm.writeBlocking {
+            usersRealm.forEach { entity ->
+                copyToRealm(entity, updatePolicy = UpdatePolicy.ALL)
+            }
+        }
+    }
+
+    override fun observeLatestUsers(): StateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+
+    override suspend fun selectAllUsers(limit: Int, offset: Int): List<User> =
+        realm.query<UserEntityRealm>().find().map { entity -> entity.toDomain() }
+
+    override suspend fun selectUser(userId: String): User? {
+        val id = userId.takeIf { it.isNotEmpty() } ?: "null"
+
+        return realm.query<UserEntityRealm>("id = '$id'").first().find()?.toDomain()
+    }
+
+    override suspend fun selectUsers(ids: List<String>): List<User> =
+        realm.query<UserEntityRealm>().find().map { userEntity ->
+            userEntity.toDomain()
+        }
+
+    override suspend fun selectUsersLikeName(
+        searchString: String,
+        limit: Int,
+        offset: Int,
+    ): List<User> = emptyList()
 }
-
-
-

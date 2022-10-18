@@ -44,6 +44,7 @@ import io.realm.kotlin.Realm
 
 private const val DEFAULT_CACHE_SIZE = 100
 
+@Suppress("UnusedPrivateMember")
 internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User,
@@ -77,10 +78,7 @@ internal class DatabaseRepositoryFactory(
         }
     }
 
-    private fun realmChannelRepository(
-        getUser: suspend (userId: String) -> User,
-        getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository = RealmChannelRepository(realm, getUser, getMessage)
+    private fun realmChannelRepository(): ChannelRepository = RealmChannelRepository(realm)
 
     private fun roomChannelRepository(
         getUser: suspend (userId: String) -> User,
@@ -99,7 +97,7 @@ internal class DatabaseRepositoryFactory(
     override fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository = realmChannelRepository(getUser, getMessage)
+    ): ChannelRepository = realmChannelRepository()
 
     private fun roomQueryChannelsRepository(): DatabaseQueryChannelsRepository {
         val databaseQueryChannelsRepository =
@@ -116,9 +114,7 @@ internal class DatabaseRepositoryFactory(
 
     override fun createQueryChannelsRepository(): QueryChannelsRepository = roomQueryChannelsRepository()
 
-    private fun realmMessageRepository(
-        getUser: suspend (userId: String) -> User
-    ): MessageRepository = RealmMessageRepository(realm, getUser)
+    private fun realmMessageRepository(): MessageRepository = RealmMessageRepository(realm)
 
     private fun roomMessageRepository(
         getUser: suspend (userId: String) -> User,
@@ -138,8 +134,8 @@ internal class DatabaseRepositoryFactory(
     }
 
     override fun createMessageRepository(
-        getUser: suspend (userId: String) -> User,
-    ): MessageRepository = realmMessageRepository(getUser)
+        getUser: suspend (userId: String) -> User
+    ): MessageRepository = realmMessageRepository()
 
     override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
         val databaseReactionRepository =

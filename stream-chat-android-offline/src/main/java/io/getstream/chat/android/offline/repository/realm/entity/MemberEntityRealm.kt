@@ -8,6 +8,7 @@ import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
+@Suppress("VariableNaming")
 internal class MemberEntityRealm : RealmObject {
     @PrimaryKey
     var user_id: String = ""

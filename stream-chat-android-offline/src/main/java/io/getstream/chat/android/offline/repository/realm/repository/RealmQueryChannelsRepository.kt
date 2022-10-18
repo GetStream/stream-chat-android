@@ -18,44 +18,44 @@ private const val TAG = "ChannelsRepository"
 
 public class RealmQueryChannelsRepository(private val realm: Realm) : QueryChannelsRepository {
 
-  override suspend fun clear() {
-    val queries = realm.query<QueryChannelsEntityRealm>().find()
+    override suspend fun clear() {
+        val queries = realm.query<QueryChannelsEntityRealm>().find()
 
-    realm.writeBlocking {
-//      delete(queries)
-    }
-  }
-
-  override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
-    val realmSpec = queryChannelsSpec.toRealm()
-    realm.writeBlocking {
-      copyToRealm(realmSpec, updatePolicy = UpdatePolicy.ALL)
+        realm.writeBlocking {
+            delete(queries)
+        }
     }
 
-    realm.query<QueryChannelsEntityRealm>("id == '${realmSpec.id}'")
-      .find()
-      .onEach { querySpec ->
-        Log.d(TAG, "inserted spec with id: ${querySpec.id}")
-        Log.d(TAG, "inserted spec with cids: ${querySpec.cids.joinToString()}")
-      }
-  }
+    override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
+        val realmSpec = queryChannelsSpec.toRealm()
+        realm.writeBlocking {
+            copyToRealm(realmSpec, updatePolicy = UpdatePolicy.ALL)
+        }
 
-  override suspend fun selectBy(
-    filter: FilterObject,
-    querySort: QuerySorter<Channel>
-  ): QueryChannelsSpec? {
-    val id = generateQuerySpecId(filter, querySort)
+        realm.query<QueryChannelsEntityRealm>("id == '${realmSpec.id}'")
+            .find()
+            .onEach { querySpec ->
+                Log.d(TAG, "inserted spec with id: ${querySpec.id}")
+                Log.d(TAG, "inserted spec with cids: ${querySpec.cids.joinToString()}")
+            }
+    }
 
-    val query = "id == '$id'"
+    override suspend fun selectBy(
+        filter: FilterObject,
+        querySort: QuerySorter<Channel>,
+    ): QueryChannelsSpec? {
+        val id = generateQuerySpecId(filter, querySort)
 
-    return realm.query<QueryChannelsEntityRealm>(query)
-      .first()
-      .find()
-      .also { querySpec ->
-        Log.d(TAG, "Query: $query")
-        Log.d(TAG, "Found spec with id: ${querySpec?.id}")
-        Log.d(TAG, "Found spec with cids: ${querySpec?.cids?.joinToString()}")
-      }
-      ?.toDomain()
-  }
+        val query = "id == '$id'"
+
+        return realm.query<QueryChannelsEntityRealm>(query)
+            .first()
+            .find()
+            .also { querySpec ->
+                Log.d(TAG, "Query: $query")
+                Log.d(TAG, "Found spec with id: ${querySpec?.id}")
+                Log.d(TAG, "Found spec with cids: ${querySpec?.cids?.joinToString()}")
+            }
+            ?.toDomain()
+    }
 }

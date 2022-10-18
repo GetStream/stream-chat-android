@@ -12,35 +12,35 @@ import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
 internal class QueryChannelsEntityRealm : RealmObject {
-  @PrimaryKey
-  var id: String = ""
-  var filter: FilterObject = Filters.neutral()
-  var querySort: QuerySorter<Channel>? = null
-  var cids: RealmList<String> = realmListOf()
+    @PrimaryKey
+    var id: String = ""
+    var filter: FilterObject = Filters.neutral()
+    var querySort: QuerySorter<Channel>? = null
+    var cids: RealmList<String> = realmListOf()
 }
 
 internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
-  val thisQuery = this
+    val thisQuery = this
 
-  return QueryChannelsEntityRealm().apply {
-    id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
-    filter = thisQuery.filter
-    querySort = thisQuery.querySort
-    cids = thisQuery.cids.toRealmList()
-  }
+    return QueryChannelsEntityRealm().apply {
+        id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
+        filter = thisQuery.filter
+        querySort = thisQuery.querySort
+        cids = thisQuery.cids.toRealmList()
+    }
 }
 
 internal fun QueryChannelsEntityRealm.toDomain(): QueryChannelsSpec {
-  val entity = this
+    val entity = this
 
-  return QueryChannelsSpec(
-    filter = filter,
-    querySort = querySort!!,
-  ).apply {
-    cids = entity.cids.toSet()
-  }
+    return QueryChannelsSpec(
+        filter = filter,
+        querySort = querySort!!,
+    ).apply {
+        cids = entity.cids.toSet()
+    }
 }
 
 internal fun generateQuerySpecId(filter: FilterObject, querySort: QuerySorter<Channel>): String {
-  return "${filter.hashCode()}-${querySort.toDto().hashCode()}"
+    return "${filter.hashCode()}-${querySort.toDto().hashCode()}"
 }

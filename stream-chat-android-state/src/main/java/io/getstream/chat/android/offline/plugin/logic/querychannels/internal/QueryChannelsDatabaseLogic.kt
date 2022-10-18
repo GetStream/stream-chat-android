@@ -77,7 +77,7 @@ internal class QueryChannelsDatabaseLogic(
         return repositoryFacade
             .selectChannels(query.cids.toList(), pagination)
             .also {
-                StreamLog.d(TAG){ "Channels selected" }
+                StreamLog.d(TAG) { "Channels selected" }
             }
             .applyPagination(pagination)
     }

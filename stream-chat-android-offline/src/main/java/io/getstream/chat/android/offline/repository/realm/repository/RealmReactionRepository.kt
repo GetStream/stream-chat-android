@@ -11,7 +11,7 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import java.util.Date
 
-internal class RealmReactionRepository(private val realm: Realm): ReactionRepository {
+internal class RealmReactionRepository(private val realm: Realm) : ReactionRepository {
 
     override suspend fun insertReaction(reaction: Reaction) {
         realm.writeBlocking {
@@ -76,6 +76,6 @@ internal class RealmReactionRepository(private val realm: Realm): ReactionReposi
     }
 
     override suspend fun clear() {
-
+        // Implement
     }
 }

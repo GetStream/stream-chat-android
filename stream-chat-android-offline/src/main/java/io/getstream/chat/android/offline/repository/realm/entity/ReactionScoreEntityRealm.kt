@@ -4,6 +4,7 @@ import io.realm.kotlin.ext.toRealmList
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 
+@Suppress("VariableNaming")
 internal class ReactionScoreEntityRealm : RealmObject {
     var reaction_id: String = ""
     var score: Int = 0

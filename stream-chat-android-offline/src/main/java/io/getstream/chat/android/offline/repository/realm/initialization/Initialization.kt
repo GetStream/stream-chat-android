@@ -14,9 +14,11 @@ import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.types.RealmObject
 import kotlin.reflect.KClass
 
+private const val SCHEMA_VERSION = 18L
+
 public fun configureRealm(): Realm =
     RealmConfiguration.Builder(schema = realmSchema())
-        .schemaVersion(18)
+        .schemaVersion(SCHEMA_VERSION)
         .deleteRealmIfMigrationNeeded()
         .build()
         .let(Realm::open)

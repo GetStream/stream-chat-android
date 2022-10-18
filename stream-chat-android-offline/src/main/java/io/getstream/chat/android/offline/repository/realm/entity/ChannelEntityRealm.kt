@@ -15,6 +15,7 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
+@Suppress("VariableNaming")
 internal class ChannelEntityRealm : RealmObject {
     @PrimaryKey
     var cid: String = ""
@@ -75,9 +76,7 @@ internal fun Channel.toRealm(): ChannelEntityRealm {
     }
 }
 
-internal suspend fun ChannelEntityRealm.toDomain(
-    getUser: suspend (userId: String) -> User,
-): Channel =
+internal fun ChannelEntityRealm.toDomain(): Channel =
     Channel(
         cid = this.cid,
         id = this.channel_id,
@@ -97,7 +96,7 @@ internal suspend fun ChannelEntityRealm.toDomain(
         createdBy = this.created_by?.toDomain() ?: User(),
         watchers = watchers.map { watcher -> watcher.toDomain() },
         team = this.team,
-        read = reads.map { readEntity -> readEntity.toDomain(getUser) },
+        read = reads.map { readEntity -> readEntity.toDomain() },
         hidden = this.hidden,
         hiddenMessagesBefore = this.hide_messages_before?.toDate(),
         cooldown = this.cooldown,
