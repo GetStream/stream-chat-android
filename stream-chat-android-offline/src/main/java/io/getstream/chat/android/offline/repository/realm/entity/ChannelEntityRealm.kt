@@ -4,10 +4,13 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.offline.repository.realm.utils.toDate
+import io.getstream.chat.android.offline.repository.realm.utils.toRealmInstant
 import io.getstream.chat.ui.sample.realm.entity.toDomain
 import io.getstream.chat.ui.sample.realm.entity.toRealm
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
+import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
@@ -33,9 +36,9 @@ internal class ChannelEntityRealm : RealmObject {
     var last_message_at: Date? = null
     var last_message_id: String = ""
     var reads: RealmList<ChannelUserReadEntityRealm> = realmListOf()
-    var created_at: Date? = null
-    var updated_at: Date? = null
-    var deleted_at: Date? = null
+    var created_at: RealmInstant? = null
+    var updated_at: RealmInstant? = null
+    var deleted_at: RealmInstant? = null
     var extra_data: MutableMap<String, Any> = mutableMapOf()
     var sync_status: Int = SyncStatus.COMPLETED.status
     var team: String = ""
@@ -63,9 +66,9 @@ internal fun Channel.toRealm(): ChannelEntityRealm {
         watcher_count = thisChannel.watcherCount
         last_message_at = thisChannel.lastMessageAt
         last_message_id = thisChannel.lastMessage()?.id ?: ""
-        created_at = thisChannel.createdAt
-        updated_at = thisChannel.updatedAt
-        deleted_at = thisChannel.deletedAt
+        created_at = thisChannel.createdAt?.toRealmInstant()
+        updated_at = thisChannel.updatedAt?.toRealmInstant()
+        deleted_at = thisChannel.deletedAt?.toRealmInstant()
         extra_data = thisChannel.extraData
         sync_status = thisChannel.syncStatus.toRealm()
         team = thisChannel.team
@@ -85,9 +88,9 @@ internal suspend fun ChannelEntityRealm.toDomain(
         watcherCount = this.watcher_count,
         frozen = this.frozen,
         lastMessageAt = this.last_message_at,
-        createdAt = this.created_at,
-        deletedAt = this.deleted_at,
-        updatedAt = this.updated_at,
+        createdAt = this.created_at?.toDate(),
+        deletedAt = this.deleted_at?.toDate(),
+        updatedAt = this.updated_at?.toDate(),
         syncStatus = this.sync_status.toDomain(),
         members = members.map { it.toDomain() },
         memberCount = this.member_count,
