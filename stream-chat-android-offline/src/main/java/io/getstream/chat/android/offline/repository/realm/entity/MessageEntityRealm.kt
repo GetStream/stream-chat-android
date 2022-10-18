@@ -25,6 +25,7 @@ import io.getstream.chat.android.offline.repository.realm.utils.toRealmInstant
 import io.getstream.chat.ui.sample.realm.entity.toDomain
 import io.getstream.chat.ui.sample.realm.entity.toRealm
 import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.ext.toRealmList
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
@@ -53,6 +54,10 @@ internal class MessageEntityRealm : RealmObject {
 
     /** the number of replies */
     var reply_count: Int = 0
+
+    var latest_reactions: RealmList<ReactionEntityRealm> = realmListOf()
+
+    var own_reactions: RealmList<ReactionEntityRealm> = realmListOf()
 
     /** when the message was created */
     var created_at: RealmInstant? = null
@@ -132,6 +137,8 @@ internal fun MessageEntityRealm.toDomain(): Message {
         reactionScores = this.reaction_scores.toDomain(),
         syncStatus = this.sync_status.toDomain(),
         type = this.type,
+        latestReactions = latest_reactions.map { reactionEntity -> reactionEntity.toDomain() }.toMutableList(),
+        ownReactions = own_reactions.map { reactionEntity -> reactionEntity.toDomain() }.toMutableList(),
         createdAt = this.created_at?.toDate(),
         updatedAt = this.updated_at?.toDate(),
         deletedAt = this.deleted_at?.toDate(),
@@ -157,6 +164,8 @@ internal fun Message.toRealm(): MessageEntityRealm {
         this.html = thisMessage.html
         this.type = thisMessage.type
         this.sync_status = thisMessage.syncStatus.toRealm()
+        this.latest_reactions = thisMessage.latestReactions.map { reaction -> reaction.toRealm() }.toRealmList()
+        this.own_reactions = thisMessage.ownReactions.map { reaction -> reaction.toRealm() }.toRealmList()
         this.created_at = thisMessage.createdAt?.toRealmInstant()
         this.created_locally_at = thisMessage.createdLocallyAt?.toRealmInstant()
         this.updated_at = thisMessage.updatedAt?.toRealmInstant()
