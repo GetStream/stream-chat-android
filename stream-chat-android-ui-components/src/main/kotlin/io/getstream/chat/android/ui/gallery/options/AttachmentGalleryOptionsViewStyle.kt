@@ -55,8 +55,6 @@ public data class AttachmentGalleryOptionsViewStyle(
     val showInChatOptionEnabled: Boolean,
     val showInChatOptionDrawable: Drawable,
     val saveMediaOptionEnabled: Boolean,
-    // TODO - see with the team if we want to keep using
-    // TODO - the terminology icon or drawable for this.
     val saveMediaOptionDrawable: Drawable,
     val deleteOptionEnabled: Boolean,
     val deleteOptionDrawable: Drawable,
