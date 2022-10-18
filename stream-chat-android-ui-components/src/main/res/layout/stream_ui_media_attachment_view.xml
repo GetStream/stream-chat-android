@@ -34,6 +34,28 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/playIconCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/playIconImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/stream_ui_ic_play"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </androidx.cardview.widget.CardView>
+
     <FrameLayout
         android:id="@+id/loadImage"
         android:layout_width="0dp"
@@ -75,8 +97,8 @@
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textColor="@color/stream_ui_literal_white"
-            android:textSize="@dimen/stream_ui_message_image_attachment_more_count_text_size"
             android:textDirection="locale"
+            android:textSize="@dimen/stream_ui_message_image_attachment_more_count_text_size"
             tools:text="+9"
             />
 

@@ -29,9 +29,9 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.FILE_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.GIPHY_ATTACHMENT
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.IMAGE_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LINK_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.LOADING_INDICATOR
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MEDIA_ATTACHMENT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.PLAIN_TEXT
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.uiutils.constant.AttachmentType
 import io.getstream.chat.android.uiutils.extension.hasLink
 import io.getstream.chat.android.uiutils.extension.isUploading
 
@@ -82,19 +83,19 @@ internal object MessageListItemViewTypeMapper {
             message.isGiphyEphemeral() -> GIPHY
             containsGiphy -> GIPHY_ATTACHMENT
             containsOnlyLinks -> LINK_ATTACHMENTS
-            message.isImageAttachment() -> IMAGE_ATTACHMENT
+            message.isMediaAttachment() -> MEDIA_ATTACHMENT
             hasAttachments -> FILE_ATTACHMENTS
             else -> PLAIN_TEXT
         }
     }
 
     /**
-     * Checks if the message contains only image attachments (Can also optionally contain links).
+     * Checks if the message contains only image or video attachments (Can also optionally contain links).
      */
-    private fun Message.isImageAttachment(): Boolean {
+    private fun Message.isMediaAttachment(): Boolean {
         return attachments.isNotEmpty() &&
-            attachments.any { it.isImage() } &&
-            attachments.all { it.isImage() || it.hasLink() } &&
+            attachments.any { it.isImage() || it.type == AttachmentType.VIDEO } &&
+            attachments.all { it.isImage() || it.type == AttachmentType.VIDEO || it.hasLink() } &&
             attachments.none { it.isUploading() }
     }
 

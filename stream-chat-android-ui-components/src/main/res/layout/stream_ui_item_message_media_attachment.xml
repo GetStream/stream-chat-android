@@ -81,8 +81,8 @@
             android:visibility="gone"
             />
 
-        <io.getstream.chat.android.ui.message.list.adapter.view.internal.ImageAttachmentsGroupView
-            android:id="@+id/imageAttachmentView"
+        <io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentsGroupView
+            android:id="@+id/mediaAttachmentView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />

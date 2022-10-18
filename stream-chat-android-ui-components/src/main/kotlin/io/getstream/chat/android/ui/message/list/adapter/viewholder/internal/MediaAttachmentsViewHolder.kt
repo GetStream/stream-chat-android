@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
-import io.getstream.chat.android.ui.databinding.StreamUiItemImageAttachmentBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentBinding
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
@@ -38,7 +38,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 
 /**
- * ViewHolder used for displaying messages that contain image attachments.
+ * ViewHolder used for displaying messages that contain image and/or video attachments.
  *
  * @param parent The parent container.
  * @param decorators List of decorators applied to the ViewHolder.
@@ -46,12 +46,12 @@ import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
  * @param messageTextTransformer Formats strings and sets them on the respective TextView.
  * @param binding Binding generated for the layout.
  */
-internal class ImageAttachmentViewHolder(
+internal class MediaAttachmentsViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer?,
     private val messageTextTransformer: ChatMessageTextTransformer,
-    internal val binding: StreamUiItemImageAttachmentBinding = StreamUiItemImageAttachmentBinding.inflate(
+    internal val binding: StreamUiItemMessageMediaAttachmentBinding = StreamUiItemMessageMediaAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
         false
@@ -73,7 +73,7 @@ internal class ImageAttachmentViewHolder(
 
         bindMessageText()
         bindHorizontalBias()
-        bindImageAttachments(diff)
+        bindMediaAttachments(diff)
         bindUploadingIndicator()
     }
 
@@ -96,13 +96,13 @@ internal class ImageAttachmentViewHolder(
     }
 
     /**
-     * Updates the image attachments section of the message.
+     * Updates the media attachments section of the message.
      */
-    private fun bindImageAttachments(diff: MessageListItemPayloadDiff?) {
+    private fun bindMediaAttachments(diff: MessageListItemPayloadDiff?) {
         if (diff?.attachments != false) {
-            binding.imageAttachmentView.setPadding(1.dpToPx())
-            binding.imageAttachmentView.setupBackground(data)
-            binding.imageAttachmentView.showAttachments(data.message.attachments)
+            binding.mediaAttachmentView.setPadding(1.dpToPx())
+            binding.mediaAttachmentView.setupBackground(data)
+            binding.mediaAttachmentView.showAttachments(data.message.attachments)
         }
     }
 
@@ -112,7 +112,9 @@ internal class ImageAttachmentViewHolder(
     private fun bindUploadingIndicator() {
         val totalAttachmentsCount = data.message.attachments.size
         val completedAttachmentsCount =
-            data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }
+            data.message.attachments.count {
+                it.uploadState == null || it.uploadState == Attachment.UploadState.Success
+            }
         if (completedAttachmentsCount == totalAttachmentsCount) {
             binding.sentFiles.isVisible = false
         } else {
@@ -148,10 +150,10 @@ internal class ImageAttachmentViewHolder(
                 userAvatarView.setOnClickListener {
                     container.userClickListener.onUserClick(data.message.user)
                 }
-                imageAttachmentView.attachmentClickListener = AttachmentClickListener { attachment ->
+                mediaAttachmentView.attachmentClickListener = AttachmentClickListener { attachment ->
                     container.attachmentClickListener.onAttachmentClick(data.message, attachment)
                 }
-                imageAttachmentView.attachmentLongClickListener = AttachmentLongClickListener {
+                mediaAttachmentView.attachmentLongClickListener = AttachmentLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                 }
             }
