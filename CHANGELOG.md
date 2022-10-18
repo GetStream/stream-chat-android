@@ -18,6 +18,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Exposed `MessageType`, `AttachmentType` and `ChannelType` classes containing useful constants. [#4285](https://github.com/GetStream/stream-chat-android/pull/4285)
 
 ### ⚠️ Changed
 
