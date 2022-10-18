@@ -79,7 +79,6 @@ internal class MediaAttachmentAdapter(
         fun bind(attachmentGalleryItem: AttachmentGalleryItem) {
             setupUserAvatar(attachmentGalleryItem)
             setupPlayButton(attachmentGalleryItem.attachment.type)
-            setupImageView()
             loadImage(attachmentGalleryItem)
         }
 
@@ -111,17 +110,6 @@ internal class MediaAttachmentAdapter(
                     binding.progressBar.visibility = View.GONE
                 }
             )
-        }
-
-        /**
-         * Sets up the image view.
-         * */
-        private fun setupImageView() {
-            val backgroundColor = style.mediaBackgroundColor
-
-            if (backgroundColor != null) {
-                binding.mediaImageView.setBackgroundColor(backgroundColor)
-            }
         }
 
         /**

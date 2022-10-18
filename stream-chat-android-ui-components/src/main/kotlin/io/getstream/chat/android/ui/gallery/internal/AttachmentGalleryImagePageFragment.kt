@@ -59,16 +59,9 @@ internal class AttachmentGalleryImagePageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val backgroundColor = style.mediaBackgroundColor
-
-        if (backgroundColor != null) {
-            binding.photoView.setBackgroundColor(backgroundColor)
-        }
-
         with(binding.photoView) {
             load(
                 data = imageUrl,
-                placeholderDrawable = style.imagePlaceholder,
                 onStart = { binding.progressBar.visibility = View.VISIBLE },
                 onComplete = { binding.progressBar.visibility = View.GONE }
             )

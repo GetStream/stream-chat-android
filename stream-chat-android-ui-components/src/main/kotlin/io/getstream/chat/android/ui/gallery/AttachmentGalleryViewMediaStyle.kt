@@ -52,7 +52,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
  * @param viewMediaPlayVideoIconWidth Sets the width of the play video button in the main viewing area of the gallery.
  * @param viewMediaPlayVideoIconHeight Sets the width of the play video button in the main viewing area of the gallery.
  * @param imagePlaceholder A placeholder drawable used before the image is loaded.
- * @param mediaBackgroundColor Changes the background color of media attachment previews.
  */
 public data class AttachmentGalleryViewMediaStyle(
     val viewMediaPlayVideoButtonIcon: Drawable?,
@@ -67,7 +66,6 @@ public data class AttachmentGalleryViewMediaStyle(
     val viewMediaPlayVideoIconWidth: Int,
     val viewMediaPlayVideoIconHeight: Int,
     val imagePlaceholder: Drawable?,
-    @ColorInt val mediaBackgroundColor: Int?,
 ) {
 
     internal companion object {
@@ -156,11 +154,6 @@ public data class AttachmentGalleryViewMediaStyle(
                 R.drawable.stream_ui_picture_placeholder
             )
 
-            val mediaBackgroundColor =
-                it.getColorOrNull(
-                    R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaMediaBackgroundColor
-                )
-
             return AttachmentGalleryViewMediaStyle(
                 viewMediaPlayVideoButtonIcon = viewMediaPlayVideoButtonIcon,
                 viewMediaPlayVideoIconTint = viewMediaPlayVideoIconTint,
@@ -174,7 +167,6 @@ public data class AttachmentGalleryViewMediaStyle(
                 viewMediaPlayVideoIconWidth = viewMediaPlayVideoIconWidth,
                 viewMediaPlayVideoIconHeight = viewMediaPlayVideoIconHeight,
                 imagePlaceholder = imagePlaceholder,
-                mediaBackgroundColor = mediaBackgroundColor,
             )
         }
     }

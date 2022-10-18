@@ -52,8 +52,7 @@ import io.getstream.chat.android.ui.gallery.overview.MediaAttachmentGridView
  * @param playVideoIconPaddingEnd  Sets the end padding of the play video icon in the media
  * overview segment of the gallery.
  * @param imagePlaceholder A placeholder drawable used before the image is loaded.
- * @param mediaBackgroundColor Changes the background color of media attachment previews.
- **/
+ */
 public data class MediaAttachmentGridViewStyle(
     val showUserAvatars: Boolean,
     val playVideoButtonIcon: Drawable?,
@@ -66,7 +65,6 @@ public data class MediaAttachmentGridViewStyle(
     val playVideoIconPaddingStart: Int,
     val playVideoIconPaddingEnd: Int,
     val imagePlaceholder: Drawable?,
-    @ColorInt val mediaBackgroundColor: Int?,
 ) {
     internal companion object {
 
@@ -148,11 +146,6 @@ public data class MediaAttachmentGridViewStyle(
                 R.drawable.stream_ui_picture_placeholder
             )
 
-            val mediaBackgroundColor =
-                it.getColorOrNull(
-                    R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewMediaBackgroundColor
-                )
-
             return MediaAttachmentGridViewStyle(
                 showUserAvatars = showUserAvatars,
                 playVideoButtonIcon = playVideoButtonIcon,
@@ -165,7 +158,6 @@ public data class MediaAttachmentGridViewStyle(
                 playVideoIconPaddingStart = playVideoIconPaddingStart,
                 playVideoIconPaddingEnd = playVideoIconPaddingEnd,
                 imagePlaceholder = imagePlaceholder,
-                mediaBackgroundColor = mediaBackgroundColor,
             )
         }
     }
