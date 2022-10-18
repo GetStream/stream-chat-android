@@ -4,13 +4,15 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.offline.repository.realm.utils.toDate
+import io.getstream.chat.android.offline.repository.realm.utils.toRealmInstant
 import io.getstream.chat.ui.sample.realm.entity.toDomain
 import io.getstream.chat.ui.sample.realm.entity.toRealm
 import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import java.util.*
 
 internal class MessageEntityRealm : RealmObject {
   @PrimaryKey
@@ -36,19 +38,19 @@ internal class MessageEntityRealm : RealmObject {
   var reply_count: Int = 0
 
   /** when the message was created */
-  var created_at: Date? = null
+  var created_at: RealmInstant? = null
 
   /** when the message was created locally */
-  var created_locally_at: Date? = null
+  var created_locally_at: RealmInstant? = null
 
   /** when the message was updated */
-  var updated_at: Date? = null
+  var updated_at: RealmInstant? = null
 
   /** when the message was updated locally */
-  var updated_locally_at: Date? = null
+  var updated_locally_at: RealmInstant? = null
 
   /** when the message was deleted */
-  var deleted_at: Date? = null
+  var deleted_at: RealmInstant? = null
 
   /** the users mentioned in this message */
   var remote_mentioned_user_ids: RealmList<String> = realmListOf()
@@ -87,10 +89,10 @@ internal class MessageEntityRealm : RealmObject {
   var pinned: Boolean = false
 
   /** date when the message got pinned **/
-  var pinned_at: Date? = null
+  var pinned_at: RealmInstant? = null
 
   /** date when pinned message expires **/
-  var pin_expires: Date? = null
+  var pin_expires: RealmInstant? = null
 
   /** the ID of the user who pinned the message **/
   var pinned_by_user_id: String = ""
@@ -113,18 +115,18 @@ internal suspend fun MessageEntityRealm.toDomain(): Message {
     reactionScores = this.reaction_scores.toDomain(),
     syncStatus = this.sync_status.toDomain(),
     type = this.type,
-    createdAt = this.created_at,
-    updatedAt = this.updated_at,
-    deletedAt = this.deleted_at,
-    updatedLocallyAt = this.updated_locally_at,
-    createdLocallyAt = this.created_locally_at,
+    createdAt = this.created_at?.toDate(),
+    updatedAt = this.updated_at?.toDate(),
+    deletedAt = this.deleted_at?.toDate(),
+    updatedLocallyAt = this.updated_locally_at?.toDate(),
+    createdLocallyAt = this.created_locally_at?.toDate(),
     silent = this.silent,
     shadowed = this.shadowed,
     showInChannel = this.show_in_channel,
     replyMessageId = this.reply_to_id,
     pinned = this.pinned,
-    pinnedAt = this.pinned_at,
-    pinExpires = this.pin_expires,
+    pinnedAt = this.pinned_at?.toDate(),
+    pinExpires = this.pin_expires?.toDate(),
   )
 }
 
@@ -138,11 +140,11 @@ internal fun Message.toRealm(): MessageEntityRealm {
     this.html = thisMessage.html
     this.type = thisMessage.type
     this.sync_status = thisMessage.syncStatus.toRealm()
-    this.created_at = thisMessage.createdAt
-    this.created_locally_at = thisMessage.createdLocallyAt
-    this.updated_at = thisMessage.updatedAt
-    this.updated_locally_at = thisMessage.updatedLocallyAt
-    this.deleted_at = thisMessage.deletedAt
+    this.created_at = thisMessage.createdAt?.toRealmInstant()
+    this.created_locally_at = thisMessage.createdLocallyAt?.toRealmInstant()
+    this.updated_at = thisMessage.updatedAt?.toRealmInstant()
+    this.updated_locally_at = thisMessage.updatedLocallyAt?.toRealmInstant()
+    this.deleted_at = thisMessage.deletedAt?.toRealmInstant()
     this.reaction_counts = thisMessage.reactionCounts.toReactionCountRealm()
     this.reaction_scores = thisMessage.reactionScores.toReactionScoreRealm()
     this.parent_id = thisMessage.parentId
@@ -152,7 +154,7 @@ internal fun Message.toRealm(): MessageEntityRealm {
     this.silent = thisMessage.silent
     this.extra_data = thisMessage.extraData
     this.pinned = thisMessage.pinned
-    this.pinned_at = thisMessage.pinnedAt
-    this.pin_expires = thisMessage.pinExpires
+    this.pinned_at = thisMessage.pinnedAt?.toRealmInstant()
+    this.pin_expires = thisMessage.pinExpires?.toRealmInstant()
   }
 }
