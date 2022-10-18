@@ -40,7 +40,7 @@ internal class MemberEntityRealm : RealmObject {
     var channel_role: String? = null
 }
 
-internal fun Member.toRealm(): MemberEntityRealm {  
+internal fun Member.toRealm(): MemberEntityRealm {
     val thisMember = this
 
     return MemberEntityRealm().apply {
