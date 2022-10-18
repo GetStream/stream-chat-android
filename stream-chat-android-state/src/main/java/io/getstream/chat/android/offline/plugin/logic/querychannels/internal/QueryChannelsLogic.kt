@@ -52,8 +52,6 @@ internal class QueryChannelsLogic(
     private val logger = StreamLog.getLogger("QueryChannelsLogic")
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {
-        logger.d { "queryOffline ----- " }
-
         if (queryChannelsStateLogic.isLoading()) {
             logger.i { "[queryOffline] another query channels request is in progress. Ignoring this request." }
             return
@@ -65,9 +63,7 @@ internal class QueryChannelsLogic(
         queryChannelsDatabaseLogic.let { dbLogic ->
             fetchChannelsFromCache(pagination, dbLogic)
                 .also { channels ->
-                    logger.d { "Adding channels if not empty" }
                     if (channels.isNotEmpty()) {
-                        logger.d { "Adding channels..." }
                         addChannels(channels)
 
                         loadingPerPage(false, hasOffset)
@@ -98,7 +94,6 @@ internal class QueryChannelsLogic(
         pagination: AnyChannelPaginationRequest,
         queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
     ): List<Channel> {
-        logger.d { "Fetching channels from cache" }
         val queryChannelsSpec = queryChannelsStateLogic.getQuerySpecs()
 
         return queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, queryChannelsSpec)

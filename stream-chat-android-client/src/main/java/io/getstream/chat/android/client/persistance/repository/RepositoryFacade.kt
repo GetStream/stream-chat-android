@@ -70,9 +70,7 @@ public class RepositoryFacade private constructor(
         val channels = channelsRepository.selectChannels(channelIds, forceCache)
         // TODO why it is not compared this way?
         //  pagination?.isRequestingMoreThanLastMessage() == true
-
-        StreamLog.d("RepositoryFacade") { "channels found count: ${channels.size}" }
-
+        
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html

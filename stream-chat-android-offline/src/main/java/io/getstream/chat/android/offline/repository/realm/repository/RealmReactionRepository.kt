@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.repository.realm.entity.ReactionEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.toDomain
 import io.getstream.chat.android.offline.repository.realm.entity.toRealm
-import io.getstream.chat.android.offline.repository.realm.utils.toRealmInstant
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import java.util.Date
@@ -36,8 +35,8 @@ internal class RealmReactionRepository(private val realm: Realm) : ReactionRepos
     }
 
     override suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) {
-        val query = "message_id == $messageId AND user_id == $userId AND deleted_at == ${deletedAt.toRealmInstant()}"
-        val entities = realm.query<ReactionEntityRealm>(query).find()
+        val query = "message_id == '$messageId' AND user_id == '$userId' AND deleted_at == $0}"
+        val entities = realm.query<ReactionEntityRealm>(query, deletedAt).find()
 
         realm.writeBlocking { delete(entities) }
     }
@@ -71,7 +70,7 @@ internal class RealmReactionRepository(private val realm: Realm) : ReactionRepos
         messageId: String,
         userId: String,
     ): Reaction? {
-        val query = "type == $reactionType AND message_id == $messageId AND user_id == $userId"
+        val query = "type == '$reactionType' AND message_id == '$messageId' AND user_id == '$userId'"
 
         return realm.query<ReactionEntityRealm>(query)
             .first()
@@ -80,7 +79,7 @@ internal class RealmReactionRepository(private val realm: Realm) : ReactionRepos
     }
 
     override suspend fun selectUserReactionsToMessage(messageId: String, userId: String): List<Reaction> {
-        val query = "message_id == $messageId AND user_id == $userId"
+        val query = "message_id == '$messageId' AND user_id == '$userId'"
 
         return realm.query<ReactionEntityRealm>(query)
             .find()
