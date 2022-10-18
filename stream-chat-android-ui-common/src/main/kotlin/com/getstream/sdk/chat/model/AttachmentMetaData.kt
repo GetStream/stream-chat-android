@@ -21,6 +21,7 @@ import android.net.Uri
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import java.io.File
 
@@ -59,14 +60,14 @@ public data class AttachmentMetaData(
     private fun getTypeFromMimeType(mimeType: String?): String = mimeType?.let { type ->
         when {
             type.contains("image") -> {
-                ModelType.attach_image
+                AttachmentType.IMAGE
             }
             type.contains("video") -> {
-                ModelType.attach_video
+                AttachmentType.VIDEO
             }
             else -> {
-                ModelType.attach_file
+                AttachmentType.FILE
             }
         }
-    } ?: ModelType.attach_file
+    } ?: AttachmentType.FILE
 }

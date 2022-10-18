@@ -26,7 +26,12 @@ import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.attachment.isAudio
+import io.getstream.chat.android.client.utils.attachment.isFile
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.gallery.AttachmentMediaActivity
@@ -45,9 +50,9 @@ public open class AttachmentDestination(
     }
 
     public fun showAttachment(message: Message, attachment: Attachment) {
-        if (attachment.type == ModelType.attach_file ||
-            attachment.type == ModelType.attach_video ||
-            attachment.type == ModelType.attach_audio ||
+        if (attachment.isFile() ||
+            attachment.isVideo() ||
+            attachment.isAudio() ||
             attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true
         ) {
             loadFile(attachment)
@@ -58,15 +63,15 @@ public open class AttachmentDestination(
         var type: String? = attachment.type
 
         when (attachment.type) {
-            ModelType.attach_image -> {
+            AttachmentType.IMAGE -> {
                 when {
                     attachment.titleLink != null || attachment.ogUrl != null || attachment.assetUrl != null -> {
                         url = attachment.titleLink ?: attachment.ogUrl ?: attachment.assetUrl
-                        type = ModelType.attach_link
+                        type = AttachmentType.LINK
                     }
                     attachment.isGif() -> {
                         url = attachment.imageUrl
-                        type = ModelType.attach_giphy
+                        type = AttachmentType.GIPHY
                     }
                     else -> {
                         showImageViewer(message, attachment)
@@ -74,8 +79,8 @@ public open class AttachmentDestination(
                     }
                 }
             }
-            ModelType.attach_giphy -> url = attachment.thumbUrl
-            ModelType.attach_product -> url = attachment.url
+            AttachmentType.GIPHY -> url = attachment.thumbUrl
+            AttachmentType.PRODUCT -> url = attachment.url
         }
 
         if (url.isNullOrEmpty()) {
@@ -164,7 +169,7 @@ public open class AttachmentDestination(
         attachment: Attachment,
     ) {
         val imageUrls: List<String> = message.attachments
-            .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
+            .filter { it.isImage() && !it.imageUrl.isNullOrEmpty() }
             .mapNotNull(Attachment::imageUrl)
 
         if (imageUrls.isEmpty()) {

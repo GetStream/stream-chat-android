@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.uitests.util
 
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessageType
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -93,7 +93,7 @@ object TestData {
         id = "message1"
         text = "Ladies and gentlemen, we have liftoff"
         createdAt = date1()
-        type = ModelType.message_regular
+        type = MessageType.REGULAR
         user = user1()
     }
 
@@ -101,7 +101,7 @@ object TestData {
         id = "message2"
         text = "Space!"
         createdAt = date2()
-        type = ModelType.message_regular
+        type = MessageType.REGULAR
         user = user2()
     }
 
@@ -109,7 +109,7 @@ object TestData {
         id = "message3"
         text = "They ain't in space yet"
         createdAt = date3()
-        type = ModelType.message_regular
+        type = MessageType.REGULAR
         user = user3()
     }
 
@@ -117,7 +117,7 @@ object TestData {
         id = "message4"
         text = "OK, not to be that guy, but by my calculations, they’re technically in space now"
         createdAt = date4()
-        type = ModelType.message_regular
+        type = MessageType.REGULAR
         user = user4()
     }
 

@@ -42,7 +42,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -82,7 +83,7 @@ public fun GiphyAttachmentContent(
 ) {
     val context = LocalContext.current
     val (message, onLongItemClick) = attachmentState
-    val attachment = message.attachments.firstOrNull { it.type == ModelType.attach_giphy }
+    val attachment = message.attachments.firstOrNull(Attachment::isGiphy)
 
     checkNotNull(attachment) {
         "Missing Giphy attachment."

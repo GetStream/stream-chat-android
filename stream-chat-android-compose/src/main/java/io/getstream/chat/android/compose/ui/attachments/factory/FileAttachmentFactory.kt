@@ -23,7 +23,7 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.uiutils.extension.isFile
+import io.getstream.chat.android.uiutils.extension.isAnyFileType
 
 /**
  * An [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
@@ -32,7 +32,7 @@ import io.getstream.chat.android.uiutils.extension.isFile
 @Suppress("FunctionName")
 public fun FileAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments ->
-        attachments.any { it.isFile() }
+        attachments.any { it.isAnyFileType() }
     },
     previewContent = @Composable { modifier, attachments, onAttachmentRemoved ->
         FileAttachmentPreviewContent(

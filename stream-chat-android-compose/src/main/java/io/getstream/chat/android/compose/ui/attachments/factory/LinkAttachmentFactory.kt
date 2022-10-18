@@ -19,7 +19,7 @@ package io.getstream.chat.android.compose.ui.attachments.factory
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
-import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -37,7 +37,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
 public fun LinkAttachmentFactory(
     linkDescriptionMaxLines: Int,
 ): AttachmentFactory = AttachmentFactory(
-    canHandle = { links -> links.any { it.hasLink() && it.type != ModelType.attach_giphy } },
+    canHandle = { links -> links.any { it.hasLink() && !it.isGiphy() } },
     content = @Composable { modifier, state ->
         LinkAttachmentContent(
             modifier = modifier

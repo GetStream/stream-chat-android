@@ -20,8 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -43,7 +43,7 @@ public fun MessageAttachmentsContent(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     if (message.attachments.isNotEmpty()) {
-        val (links, attachments) = message.attachments.partition { it.hasLink() && it.type != ModelType.attach_giphy }
+        val (links, attachments) = message.attachments.partition { it.hasLink() && !it.isGiphy() }
 
         val linkFactory = if (links.isNotEmpty()) {
             ChatTheme.attachmentFactories.firstOrNull { it.canHandle(links) }

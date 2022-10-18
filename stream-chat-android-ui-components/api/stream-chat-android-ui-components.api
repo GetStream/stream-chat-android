@@ -1375,16 +1375,8 @@ public final class io/getstream/chat/android/ui/common/extensions/MessageKt {
 	public static final fun hasReactions (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun hasSingleReaction (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun hasText (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isDeleted (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isEphemeral (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isError (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun isFailed (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isGiphyEphemeral (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun isGiphyNotEphemeral (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isInThread (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isRegular (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isReply (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isSystem (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public final class io/getstream/chat/android/ui/common/extensions/UserKt {

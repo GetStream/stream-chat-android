@@ -21,13 +21,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListItemLiveData
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessageType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
@@ -264,12 +264,12 @@ internal class MessageListItemLiveDataTest {
         val messages = listOf(
             createMessage(
                 user = user,
-                type = ModelType.message_regular,
+                type = MessageType.REGULAR,
                 createdAt = createDate(year = 2020, month = 11, date = 1, seconds = 1)
             ),
             createMessage(
                 user = user,
-                type = ModelType.message_system,
+                type = MessageType.SYSTEM,
                 createdAt = createDate(year = 2020, month = 11, date = 1, seconds = 2)
             )
         )

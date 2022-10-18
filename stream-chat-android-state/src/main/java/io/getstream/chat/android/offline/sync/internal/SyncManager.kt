@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
@@ -456,7 +457,7 @@ internal class SyncManager(
             val message = repos.selectMessage(id) ?: return@forEach
             val channelClient = chatClient.channel(message.cid)
             val result = when {
-                message.deletedAt != null -> {
+                message.isDeleted() -> {
                     logger.v { "[retryMgsWithSyncedAttachments] deleting message($id)" }
                     channelClient.deleteMessage(message.id).await()
                 }

@@ -24,7 +24,8 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.uiutils.constant.MessageType
+import io.getstream.chat.android.client.utils.message.isRegular
+import io.getstream.chat.android.client.utils.message.isSystem
 
 /**
  * Returns channel's last regular or system message if exists.
@@ -38,7 +39,7 @@ public fun Channel.getPreviewMessage(currentUser: User?): Message? =
         .filter { it.deletedAt == null }
         .filter { !it.silent }
         .filter { it.user.id == currentUser?.id || !it.shadowed }
-        .filter { it.type == MessageType.REGULAR || it.type == MessageType.SYSTEM }
+        .filter { it.isRegular() || it.isSystem() }
         .maxByOrNull { requireNotNull(it.createdAt ?: it.createdLocallyAt) }
 
 /**

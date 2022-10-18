@@ -2406,6 +2406,19 @@ public final class io/getstream/chat/android/client/models/Attachment$UploadStat
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/Attachment$UploadState$Success;
 }
 
+public final class io/getstream/chat/android/client/models/AttachmentType {
+	public static final field AUDIO Ljava/lang/String;
+	public static final field FILE Ljava/lang/String;
+	public static final field GIPHY Ljava/lang/String;
+	public static final field IMAGE Ljava/lang/String;
+	public static final field IMGUR Ljava/lang/String;
+	public static final field INSTANCE Lio/getstream/chat/android/client/models/AttachmentType;
+	public static final field LINK Ljava/lang/String;
+	public static final field PRODUCT Ljava/lang/String;
+	public static final field UNKNOWN Ljava/lang/String;
+	public static final field VIDEO Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/client/models/BannedUser {
 	public fun <init> (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Channel;Ljava/util/Date;Ljava/util/Date;ZLjava/lang/String;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
@@ -2604,6 +2617,16 @@ public final class io/getstream/chat/android/client/models/ChannelMute {
 	public fun hashCode ()I
 	public final fun setUpdatedAt (Ljava/util/Date;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/models/ChannelType {
+	public static final field COMMERCE Ljava/lang/String;
+	public static final field GAMING Ljava/lang/String;
+	public static final field INSTANCE Lio/getstream/chat/android/client/models/ChannelType;
+	public static final field LIVESTREAM Ljava/lang/String;
+	public static final field MESSAGING Ljava/lang/String;
+	public static final field TEAM Ljava/lang/String;
+	public static final field UNKNOWN Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/ChannelUserRead : io/getstream/chat/android/client/models/UserEntity {
@@ -3122,6 +3145,16 @@ public final class io/getstream/chat/android/client/models/MessageSyncType : jav
 
 public final class io/getstream/chat/android/client/models/MessageSyncType$Companion {
 	public final fun fromInt (I)Lio/getstream/chat/android/client/models/MessageSyncType;
+}
+
+public final class io/getstream/chat/android/client/models/MessageType {
+	public static final field EPHEMERAL Ljava/lang/String;
+	public static final field ERROR Ljava/lang/String;
+	public static final field FAILED Ljava/lang/String;
+	public static final field INSTANCE Lio/getstream/chat/android/client/models/MessageType;
+	public static final field REGULAR Ljava/lang/String;
+	public static final field REPLY Ljava/lang/String;
+	public static final field SYSTEM Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/ModerationViolation {
@@ -3980,6 +4013,16 @@ public final class io/getstream/chat/android/client/utils/TimeProvider {
 public final class io/getstream/chat/android/client/utils/UserUtilsKt {
 }
 
+public final class io/getstream/chat/android/client/utils/attachment/AttachmentUtilsKt {
+	public static final fun isAudio (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public static final fun isFile (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public static final fun isGiphy (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public static final fun isImage (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public static final fun isImgur (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public static final fun isLink (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public static final fun isVideo (Lio/getstream/chat/android/client/models/Attachment;)Z
+}
+
 public final class io/getstream/chat/android/client/utils/channel/ChannelUtilsKt {
 }
 
@@ -3996,6 +4039,16 @@ public final class io/getstream/chat/android/client/utils/internal/toggle/Toggle
 }
 
 public final class io/getstream/chat/android/client/utils/message/MessageUtils {
+	public static final fun isDeleted (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isEphemeral (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isError (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isGiphy (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isGiphyEphemeral (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isRegular (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isReply (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isSystem (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isThreadReply (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isThreadStart (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public abstract interface class io/getstream/chat/android/client/utils/observable/Disposable {

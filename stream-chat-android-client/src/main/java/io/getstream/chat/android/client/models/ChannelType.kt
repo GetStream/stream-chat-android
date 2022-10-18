@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.constant
+package io.getstream.chat.android.client.models
 
-/**
- * Represents types of attachments.
- */
-public object AttachmentType {
-    public const val IMAGE: String = "image"
-    public const val IMGUR: String = "imgur"
-    public const val GIPHY: String = "giphy"
-    public const val VIDEO: String = "video"
-    public const val AUDIO: String = "audio"
-    public const val PRODUCT: String = "product"
-    public const val FILE: String = "file"
-    public const val LINK: String = "link"
+public object ChannelType {
     public const val UNKNOWN: String = "unknown"
+    public const val LIVESTREAM: String = "livestream"
+    public const val MESSAGING: String = "messaging"
+    public const val TEAM: String = "team"
+    public const val GAMING: String = "gaming"
+    public const val COMMERCE: String = "commerce"
 }

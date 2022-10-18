@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.util
 
 import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.compose.R
 
 /**
@@ -63,8 +64,8 @@ internal object MimeTypeIconProvider {
             return R.drawable.stream_compose_ic_file_generic
         }
         return mimeTypesToIconResMap[mimeType] ?: when {
-            mimeType.contains(ModelType.attach_audio) -> R.drawable.stream_compose_ic_file_audio_generic
-            mimeType.contains(ModelType.attach_video) -> R.drawable.stream_compose_ic_file_video_generic
+            mimeType.contains(AttachmentType.AUDIO) -> R.drawable.stream_compose_ic_file_audio_generic
+            mimeType.contains(AttachmentType.VIDEO) -> R.drawable.stream_compose_ic_file_video_generic
             else -> R.drawable.stream_compose_ic_file_generic
         }
     }

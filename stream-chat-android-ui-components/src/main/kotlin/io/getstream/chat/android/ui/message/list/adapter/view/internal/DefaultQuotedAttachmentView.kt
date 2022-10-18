@@ -21,9 +21,9 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.message.list.DefaultQuotedAttachmentViewStyle
@@ -57,7 +57,7 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
 
         layoutParams = layoutParams.apply {
             when (attachment.type) {
-                ModelType.attach_file, ModelType.attach_video -> {
+                AttachmentType.FILE, AttachmentType.VIDEO -> {
                     width = style.fileAttachmentWidth
                     height = style.fileAttachmentHeight
                 }
@@ -78,9 +78,9 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
     fun showAttachment(attachment: Attachment) {
         this.attachment = attachment
         when (attachment.type) {
-            ModelType.attach_file, ModelType.attach_video -> loadAttachmentThumb(attachment)
-            ModelType.attach_image -> showAttachmentThumb(attachment.imagePreviewUrl)
-            ModelType.attach_giphy -> showAttachmentThumb(attachment.thumbUrl)
+            AttachmentType.FILE, AttachmentType.VIDEO -> loadAttachmentThumb(attachment)
+            AttachmentType.IMAGE -> showAttachmentThumb(attachment.imagePreviewUrl)
+            AttachmentType.GIPHY -> showAttachmentThumb(attachment.thumbUrl)
             else -> showAttachmentThumb(attachment.image)
         }
     }

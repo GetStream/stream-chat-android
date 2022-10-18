@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui
 
 import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.ui.message.input.attachment.factory.file.internal.FileAttachmentAdapter
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedFileAttachmentAdapter
 
@@ -80,8 +81,8 @@ public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
             return R.drawable.stream_ui_ic_file
         }
         return mimeTypesToIconResMap[mimeType] ?: when {
-            mimeType.contains(ModelType.attach_audio) -> R.drawable.stream_ui_ic_file_audio_generic
-            mimeType.contains(ModelType.attach_video) -> R.drawable.stream_ui_ic_file_video_generic
+            mimeType.contains(AttachmentType.AUDIO) -> R.drawable.stream_ui_ic_file_audio_generic
+            mimeType.contains(AttachmentType.VIDEO) -> R.drawable.stream_ui_ic_file_video_generic
             else -> R.drawable.stream_ui_ic_file
         }
     }

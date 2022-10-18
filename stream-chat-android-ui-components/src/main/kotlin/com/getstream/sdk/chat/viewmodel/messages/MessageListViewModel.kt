@@ -25,7 +25,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
@@ -44,6 +43,8 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.message.isError
+import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
@@ -1240,7 +1241,7 @@ public class MessageListViewModel(
                     val nextUser = nextMessage?.user
 
                     fun Message.isServerMessage(): Boolean {
-                        return type == ModelType.message_system || type == ModelType.message_error
+                        return isSystem() || isError()
                     }
 
                     mutableListOf<MessageListItem.Position>().apply {

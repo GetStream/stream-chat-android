@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
 import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewViewHolder
-import io.getstream.chat.android.uiutils.extension.isFile
+import io.getstream.chat.android.uiutils.extension.isAnyFileType
 
 /**
  * The default [AttachmentPreviewFactory] for file attachments.
@@ -38,7 +38,7 @@ public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
     public override fun canHandle(attachment: Attachment): Boolean {
-        return attachment.isFile()
+        return attachment.isAnyFileType()
     }
 
     /**

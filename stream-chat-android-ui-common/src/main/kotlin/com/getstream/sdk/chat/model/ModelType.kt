@@ -20,34 +20,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public object ModelType {
-    // Channel Type
-    public const val channel_unknown: String = "unknown"
-    public const val channel_livestream: String = "livestream"
-    public const val channel_messaging: String = "messaging"
-    public const val channel_team: String = "team"
-    public const val channel_gaming: String = "gaming"
-    public const val channel_commerce: String = "commerce"
-
-    // Message Type
-    public const val message_regular: String = "regular"
-    public const val message_ephemeral: String = "ephemeral"
-    public const val message_error: String = "error"
-    public const val message_failed: String = "failed"
-    public const val message_reply: String = "reply"
-    public const val message_system: String = "system"
-
-    // Attachment Type
-    public const val attach_image: String = "image"
-    public const val attach_imgur: String = "imgur"
-    public const val attach_giphy: String = "giphy"
-    public const val attach_video: String = "video"
-    public const val attach_audio: String = "audio"
-    public const val attach_product: String = "product"
-    public const val attach_file: String = "file"
-    public const val attach_link: String = "link"
-    public const val attach_unknown: String = "unknown"
-
-    // File Mime Type
     public const val attach_mime_vnd: String = "application/vnd"
     public const val attach_mime_7z: String = "application/x-7z-compressed"
     public const val attach_mime_csv: String = "text/comma-separated-values"
