@@ -69,6 +69,7 @@
 - Improved asking for `WRITE_EXTERNAL_STORAGE` permission. The permission won't be requested starting from Android Q unless legacy external storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
 - Improved the stability of cooldown timer in slow mode. [#4251](https://github.com/GetStream/stream-chat-android/pull/4251)
 - Improved how system bar colors are handled on the attachment gallery screen. [#4269](https://github.com/GetStream/stream-chat-android/pull/4269)
+- The default attachment gallery is now able to handle videos as well as images. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 
 ### ✅ Added
 - Added `UserAvatarView` and `ChannelAvatarView` to replace `AvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
@@ -90,10 +91,14 @@
 - Added the ability to turn off video previews (thumbnails) via `ChatUI.videoThumbnailsEnabled`. Video previews are a paid feature and as such you can turn them off. They are on by default and the pricing can be found [here](https://getstream.io/chat/pricing/). [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - Added a new function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - Added a style class called `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
+- Added the ability to style the play button inside the attachment gallery. The necessary attributes along with their description can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_attachment_gallery_activity.xml). These attributes can be parsed using the newly created `AttachmentGalleryViewMediaStyle` class. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
+- Added new styled attributes for `MediaAttachmentGridView`. The new attributes along with their description can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/src/main/res/values/attrs_media_attachment_grid_view.xml). These attributes can be parsed using the newly created `MediaAttachmentGridViewStyle` class. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - 🚨 Breaking change: `ImageAttachmentViewStyle` has been removed and replaced by `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
+- 🚨 Breaking change: Attribute `streamUiSaveImageEnabled` has been renamed to `streamUiSaveMediaEnabled`. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
+- 🚨 Breaking change: Attribute `streamUiSaveImageIcon` has been renamed to `streamUiSaveMediaIcon`. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 
 ### ❌ Removed
 - Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
