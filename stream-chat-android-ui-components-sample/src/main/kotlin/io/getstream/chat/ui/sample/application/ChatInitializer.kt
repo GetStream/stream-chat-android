@@ -72,7 +72,7 @@ class ChatInitializer(private val context: Context) {
             Config(userPresence = true, persistenceEnabled = true),
             context
         ).apply {
-            setCustomRepositoryFactory(RealmRepositoryFactory(configureRealm()))
+            // setCustomRepositoryFactory(RealmRepositoryFactory(configureRealm()))
         }
 
         val statePluginFactory = StreamStatePluginFactory(

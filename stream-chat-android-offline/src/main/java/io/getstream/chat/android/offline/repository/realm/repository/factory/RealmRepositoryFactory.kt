@@ -21,7 +21,7 @@ import io.getstream.chat.android.offline.repository.realm.repository.RealmQueryC
 import io.getstream.chat.android.offline.repository.realm.repository.RealmUserRepository
 import io.realm.kotlin.Realm
 
-class RealmRepositoryFactory(private val realm: Realm): RepositoryFactory {
+public class RealmRepositoryFactory(private val realm: Realm): RepositoryFactory {
     override fun createUserRepository(): UserRepository = RealmUserRepository(realm)
 
     override fun createChannelConfigRepository(): ChannelConfigRepository = NoOpChannelConfigRepository
