@@ -68,7 +68,9 @@ internal class AttachmentGalleryImagePageFragment : Fragment() {
         with(binding.photoView) {
             load(
                 data = imageUrl,
-                placeholderDrawable = style.imagePlaceholder
+                placeholderDrawable = style.imagePlaceholder,
+                onStart = { binding.progressBar.visibility = View.VISIBLE },
+                onComplete = { binding.progressBar.visibility = View.GONE }
             )
 
             setOnClickListener {

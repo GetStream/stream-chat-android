@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.gallery.overview.internal
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -103,6 +104,12 @@ internal class MediaAttachmentAdapter(
                 } else {
                     null
                 },
+                onStart = { binding.progressBar.visibility = View.VISIBLE },
+                onComplete = {
+                    binding.playButtonCardView.isVisible =
+                        attachmentGalleryItem.attachment.type == ModelType.attach_video
+                    binding.progressBar.visibility = View.GONE
+                }
             )
         }
 
@@ -139,8 +146,6 @@ internal class MediaAttachmentAdapter(
          * by pulling relevant values from [AttachmentGalleryOptionsViewStyle].
          **/
         private fun setupPlayButton(attachmentType: String?) {
-            binding.playButtonCardView.isVisible = attachmentType == ModelType.attach_video
-
             if (attachmentType == ModelType.attach_video) {
                 setupPlayButtonIcon()
                 setupPlayButtonCard()

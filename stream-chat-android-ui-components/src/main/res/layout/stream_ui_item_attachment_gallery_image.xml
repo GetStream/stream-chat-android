@@ -24,18 +24,31 @@
     <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
+        android:src="@drawable/stream_ui_attachment_permission_media"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/stream_ui_attachment_permission_media"
         />
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminateDrawable="@drawable/stream_ui_rotating_indeterminate_progress_gradient"
+        android:indeterminateDuration="1000"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
