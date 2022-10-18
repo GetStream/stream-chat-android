@@ -117,10 +117,10 @@ internal class MessageEntityRealm : RealmObject {
     var pin_expires: RealmInstant? = null
 
     /** the ID of the user who pinned the message **/
-    var pinned_by_user_id: String = ""
+    var pinned_by_user: UserEntityRealm? = null
 
     /** participants of thread replies */
-    var thread_participants_ids: RealmList<String> = realmListOf()
+    var thread_participants_ids: RealmList<UserEntityRealm> = realmListOf()
 }
 
 internal fun MessageEntityRealm.toDomain(): Message {
@@ -151,6 +151,8 @@ internal fun MessageEntityRealm.toDomain(): Message {
         pinned = this.pinned,
         pinnedAt = this.pinned_at?.toDate(),
         pinExpires = this.pin_expires?.toDate(),
+        pinnedBy = pinned_by_user?.toDomain() ?: User(),
+        threadParticipants = thread_participants_ids.map { entity -> entity.toDomain() }
     )
 }
 
@@ -182,5 +184,8 @@ internal fun Message.toRealm(): MessageEntityRealm {
         this.pinned = thisMessage.pinned
         this.pinned_at = thisMessage.pinnedAt?.toRealmInstant()
         this.pin_expires = thisMessage.pinExpires?.toRealmInstant()
+        this.pinned_by_user = thisMessage.pinnedBy?.toRealm()
+        this.thread_participants_ids =
+            thisMessage.threadParticipants.map { participant -> participant.toRealm() }.toRealmList()
     }
 }

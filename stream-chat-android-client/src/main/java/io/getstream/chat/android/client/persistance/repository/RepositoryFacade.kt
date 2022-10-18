@@ -84,12 +84,8 @@ public class RepositoryFacade private constructor(
             emptyMap()
         }
 
-        StreamLog.d("RepositoryFacade") { "Enriching channels..." }
-
         return channels.onEach { channel ->
             channel.enrichChannel(messagesMap, defaultConfig)
-        }.also {
-            StreamLog.d("RepositoryFacade") { "Channels enriched" }
         }
     }
 

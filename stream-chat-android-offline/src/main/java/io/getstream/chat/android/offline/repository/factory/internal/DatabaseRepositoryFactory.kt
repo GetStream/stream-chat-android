@@ -152,7 +152,7 @@ internal class DatabaseRepositoryFactory(
     private fun realmReactionRepository(): RealmReactionRepository = RealmReactionRepository(realm)
 
     override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
-        roomReactionRepository(getUser)
+        realmReactionRepository()
 
     override fun createSyncStateRepository(): SyncStateRepository {
         val databaseSyncStateRepository =

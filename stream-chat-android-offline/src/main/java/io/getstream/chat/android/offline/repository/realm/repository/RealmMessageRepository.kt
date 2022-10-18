@@ -73,9 +73,7 @@ public class RealmMessageRepository(private val realm: Realm) : MessageRepositor
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
         return realm.query<MessageEntityRealm>("sync_status == $0", syncStatus.status)
             .find()
-            .map { entity ->
-                entity.toDomain()
-            }
+            .map { entity -> entity.toDomain() }
     }
 
     override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> {
@@ -90,9 +88,7 @@ public class RealmMessageRepository(private val realm: Realm) : MessageRepositor
 
         return realm.query<MessageEntityRealm>("id IN $idsString")
             .find()
-            .map { entity ->
-                entity.toDomain()
-            }
+            .map { entity -> entity.toDomain() }
     }
 
     override suspend fun selectMessagesForChannel(
@@ -101,16 +97,12 @@ public class RealmMessageRepository(private val realm: Realm) : MessageRepositor
     ): List<Message> {
         return realm.query<MessageEntityRealm>("cid == '$cid'")
             .find()
-            .map { entity ->
-                entity.toDomain()
-            }
+            .map { entity -> entity.toDomain() }
     }
 
     override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> {
         return realm.query<MessageEntityRealm>("parent_id == '$messageId'")
             .find()
-            .map { entity ->
-                entity.toDomain()
-            }
+            .map { entity -> entity.toDomain() }
     }
 }
