@@ -10,7 +10,7 @@ internal class MemberEntityRealm : RealmObject {
     @PrimaryKey
     var user_id: String = ""
 
-    var user: User? = null
+    var user: UserEntityRealm? = null
 
     /** the user's role, user, moderator or admin */
     var role: String = ""
@@ -40,12 +40,12 @@ internal class MemberEntityRealm : RealmObject {
     var channel_role: String? = null
 }
 
-internal fun Member.toRealm(): MemberEntityRealm {
+internal fun Member.toRealm(): MemberEntityRealm {  
     val thisMember = this
 
     return MemberEntityRealm().apply {
         user_id = thisMember.user.id
-        user = thisMember.user
+        user = thisMember.user.toRealm()
         created_at = thisMember.createdAt
         updated_at = thisMember.updatedAt
         is_invited = thisMember.isInvited ?: false
@@ -59,7 +59,7 @@ internal fun Member.toRealm(): MemberEntityRealm {
 
 internal fun MemberEntityRealm.toDomain(): Member =
     Member(
-        user = user ?: User(),
+        user = user?.toDomain() ?: User(),
         createdAt = created_at,
         updatedAt = updated_at,
         isInvited = is_invited,

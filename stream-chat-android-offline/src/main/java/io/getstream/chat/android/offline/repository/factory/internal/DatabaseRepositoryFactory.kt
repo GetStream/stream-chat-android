@@ -64,7 +64,7 @@ internal class DatabaseRepositoryFactory(
 
     private fun realmUserRepository(): RealmUserRepository = RealmUserRepository(realm)
 
-    override fun createUserRepository(): UserRepository = realmUserRepository()
+    override fun createUserRepository(): UserRepository = roomUserRepository()
 
     override fun createChannelConfigRepository(): ChannelConfigRepository {
         val databaseChannelConfigRepository =
@@ -139,7 +139,7 @@ internal class DatabaseRepositoryFactory(
 
     override fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository = realmDatabaseMessageRepository(getUser)
+    ): MessageRepository = roomDatabaseMessageRepository(getUser)
 
     override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
         val databaseReactionRepository =

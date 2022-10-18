@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.ui.sample.realm.entity.toDomain
 import io.getstream.chat.ui.sample.realm.entity.toRealm
 import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.ext.toRealmList
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
@@ -55,6 +56,7 @@ internal fun Channel.toRealm(): ChannelEntityRealm {
         hidden = thisChannel.hidden
         hide_messages_before = thisChannel.hiddenMessagesBefore
         member_Count = thisChannel.memberCount
+        members = thisChannel.members.map { member -> member.toRealm() }.toRealmList()
         watcher_ids = thisChannel.watchers.map { it.id }.toMutableList()
         watcher_count = thisChannel.watcherCount
         last_message_at = thisChannel.lastMessageAt
