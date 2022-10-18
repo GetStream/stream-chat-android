@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.offline.repository.realm.initialization.configureRealm
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import io.getstream.chat.android.pushprovider.xiaomi.XiaomiPushDeviceGenerator
@@ -35,7 +34,6 @@ import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
-import io.getstream.chat.android.offline.repository.realm.repository.factory.RealmRepositoryFactory
 
 class ChatInitializer(private val context: Context) {
 

@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.repository.realm.entity.ChannelEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.toDomain
 import io.getstream.chat.android.offline.repository.realm.entity.toRealm
+import io.getstream.chat.android.offline.repository.realm.utils.toRealmInstant
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
@@ -110,7 +111,7 @@ public class RealmChannelRepository(
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) {
         val channel = selectChannelByCidRealm(cid)
         realm.writeBlocking {
-            channel.apply { this?.deleted_at = deletedAt }?.let(this::copyToRealm)
+            channel.apply { this?.deleted_at = deletedAt.toRealmInstant() }?.let(this::copyToRealm)
         }
     }
 

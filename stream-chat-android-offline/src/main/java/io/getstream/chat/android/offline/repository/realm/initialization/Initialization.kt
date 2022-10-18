@@ -6,6 +6,7 @@ import io.getstream.chat.android.offline.repository.realm.entity.MemberEntityRea
 import io.getstream.chat.android.offline.repository.realm.entity.MessageEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.QueryChannelsEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.ReactionCountEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.ReactionEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.ReactionScoreEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.UserEntityRealm
 import io.realm.kotlin.Realm
@@ -28,6 +29,7 @@ private fun realmSchema(): Set<KClass<out RealmObject>> =
         QueryChannelsEntityRealm::class,
         MemberEntityRealm::class,
         ChannelUserReadEntityRealm::class,
+        ReactionEntityRealm::class,
         ReactionCountEntityRealm::class,
         ReactionScoreEntityRealm::class,
     )
