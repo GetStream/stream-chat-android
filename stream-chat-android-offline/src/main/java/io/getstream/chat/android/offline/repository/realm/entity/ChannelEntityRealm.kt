@@ -14,7 +14,6 @@ import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import java.util.Date
 
 internal class ChannelEntityRealm : RealmObject {
     @PrimaryKey
@@ -27,13 +26,13 @@ internal class ChannelEntityRealm : RealmObject {
     var created_by: UserEntityRealm? = null
     var frozen: Boolean = false
     var hidden: Boolean? = null
-    var hide_messages_before: Date? = null
+    var hide_messages_before: RealmInstant? = null
     var member_count: Int = 0
     var messages: RealmList<MessageEntityRealm> = realmListOf()
     var members: RealmList<MemberEntityRealm> = realmListOf()
     var watchers: RealmList<UserEntityRealm> = realmListOf()
     var watcher_count: Int = 0
-    var last_message_at: Date? = null
+    var last_message_at: RealmInstant? = null
     var last_message_id: String = ""
     var reads: RealmList<ChannelUserReadEntityRealm> = realmListOf()
     var created_at: RealmInstant? = null
@@ -58,13 +57,13 @@ internal fun Channel.toRealm(): ChannelEntityRealm {
         created_by = thisChannel.createdBy.toRealm()
         frozen = thisChannel.frozen
         hidden = thisChannel.hidden
-        hide_messages_before = thisChannel.hiddenMessagesBefore
+        hide_messages_before = thisChannel.hiddenMessagesBefore?.toRealmInstant()
         messages = thisChannel.messages.map { message -> message.toRealm() }.toRealmList()
         member_count = thisChannel.memberCount
         members = thisChannel.members.map { member -> member.toRealm() }.toRealmList()
         watchers = thisChannel.watchers.map { it.toRealm() }.toRealmList()
         watcher_count = thisChannel.watcherCount
-        last_message_at = thisChannel.lastMessageAt
+        last_message_at = thisChannel.lastMessageAt?.toRealmInstant()
         last_message_id = thisChannel.lastMessage()?.id ?: ""
         created_at = thisChannel.createdAt?.toRealmInstant()
         updated_at = thisChannel.updatedAt?.toRealmInstant()
@@ -87,7 +86,7 @@ internal suspend fun ChannelEntityRealm.toDomain(
         image = this.image,
         watcherCount = this.watcher_count,
         frozen = this.frozen,
-        lastMessageAt = this.last_message_at,
+        lastMessageAt = this.last_message_at?.toDate(),
         createdAt = this.created_at?.toDate(),
         deletedAt = this.deleted_at?.toDate(),
         updatedAt = this.updated_at?.toDate(),
@@ -100,7 +99,7 @@ internal suspend fun ChannelEntityRealm.toDomain(
         team = this.team,
         read = reads.map { readEntity -> readEntity.toDomain(getUser) },
         hidden = this.hidden,
-        hiddenMessagesBefore = this.hide_messages_before,
+        hiddenMessagesBefore = this.hide_messages_before?.toDate(),
         cooldown = this.cooldown,
         ownCapabilities = this.own_capabilities,
         membership = this.membership?.toDomain(),

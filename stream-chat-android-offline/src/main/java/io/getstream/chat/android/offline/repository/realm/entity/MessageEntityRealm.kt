@@ -101,7 +101,7 @@ internal class MessageEntityRealm : RealmObject {
   var thread_participants_ids: RealmList<String> = realmListOf()
 }
 
-internal suspend fun MessageEntityRealm.toDomain(): Message {
+internal fun MessageEntityRealm.toDomain(): Message {
   return Message(
     id = this.id,
     cid = this.cid,

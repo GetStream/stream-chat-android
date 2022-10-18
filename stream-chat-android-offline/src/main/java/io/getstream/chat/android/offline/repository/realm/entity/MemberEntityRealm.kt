@@ -7,7 +7,6 @@ import io.getstream.chat.android.offline.repository.realm.utils.toRealmInstant
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import java.util.Date
 
 internal class MemberEntityRealm : RealmObject {
     @PrimaryKey

@@ -46,24 +46,13 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyLi
 import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
-import io.getstream.chat.android.offline.repository.realm.entity.ChannelEntityRealm
-import io.getstream.chat.android.offline.repository.realm.entity.ChannelUserReadEntityRealm
-import io.getstream.chat.android.offline.repository.realm.entity.MemberEntityRealm
-import io.getstream.chat.android.offline.repository.realm.entity.MessageEntityRealm
-import io.getstream.chat.android.offline.repository.realm.entity.QueryChannelsEntityRealm
-import io.getstream.chat.android.offline.repository.realm.entity.ReactionCountEntityRealm
-import io.getstream.chat.android.offline.repository.realm.entity.ReactionScoreEntityRealm
-import io.getstream.chat.android.offline.repository.realm.entity.UserEntityRealm
+import io.getstream.chat.android.offline.repository.realm.initialization.configureRealm
 import io.getstream.logging.StreamLog
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
-import io.realm.kotlin.types.RealmObject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.reflect.KClass
 
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
@@ -100,25 +89,6 @@ public class StreamOfflinePluginFactory(
             realm = configureRealm()
         )
     }
-
-    private fun configureRealm(): Realm =
-        RealmConfiguration.Builder(schema = realmSchema())
-            .schemaVersion(18)
-            .deleteRealmIfMigrationNeeded()
-            .build()
-            .let(Realm::open)
-
-    private fun realmSchema(): Set<KClass<out RealmObject>> =
-        setOf(
-            MessageEntityRealm::class,
-            ChannelEntityRealm::class,
-            UserEntityRealm::class,
-            QueryChannelsEntityRealm::class,
-            MemberEntityRealm::class,
-            ChannelUserReadEntityRealm::class,
-            ReactionCountEntityRealm::class,
-            ReactionScoreEntityRealm::class,
-        )
 
     /**
      * Creates a [Plugin]

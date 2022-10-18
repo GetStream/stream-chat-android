@@ -1,4 +1,4 @@
-package io.getstream.chat.ui.sample.realm.repository.factory
+package io.getstream.chat.android.offline.repository.realm.repository.factory
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
