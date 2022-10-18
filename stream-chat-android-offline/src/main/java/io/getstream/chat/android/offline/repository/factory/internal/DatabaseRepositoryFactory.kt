@@ -39,6 +39,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.Databas
 import io.getstream.chat.android.offline.repository.realm.repository.RealmChannelRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmMessageRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmQueryChannelsRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmReactionRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmUserRepository
 import io.realm.kotlin.Realm
 
@@ -137,7 +138,7 @@ internal class DatabaseRepositoryFactory(
         getUser: suspend (userId: String) -> User
     ): MessageRepository = realmMessageRepository()
 
-    override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
+    private fun roomReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
         val databaseReactionRepository =
             repositoriesCache[ReactionRepository::class.java] as? DatabaseReactionRepository?
 
@@ -147,6 +148,11 @@ internal class DatabaseRepositoryFactory(
             }
         }
     }
+
+    private fun realmReactionRepository(): RealmReactionRepository = RealmReactionRepository(realm)
+
+    override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
+        realmReactionRepository()
 
     override fun createSyncStateRepository(): SyncStateRepository {
         val databaseSyncStateRepository =

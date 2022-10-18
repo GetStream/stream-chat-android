@@ -39,9 +39,7 @@ internal class RealmReactionRepository(private val realm: Realm) : ReactionRepos
         val query = "message_id == $messageId AND user_id == $userId AND deleted_at == ${deletedAt.toRealmInstant()}"
         val entities = realm.query<ReactionEntityRealm>(query).find()
 
-        realm.writeBlocking {
-            delete(entities)
-        }
+        realm.writeBlocking { delete(entities) }
     }
 
     override suspend fun selectReactionById(id: Int): Reaction? =
@@ -86,9 +84,7 @@ internal class RealmReactionRepository(private val realm: Realm) : ReactionRepos
 
         return realm.query<ReactionEntityRealm>(query)
             .find()
-            .map { reactionEntity ->
-                reactionEntity.toDomain()
-            }
+            .map { reactionEntity -> reactionEntity.toDomain() }
     }
 
     override suspend fun clear() {

@@ -55,10 +55,10 @@ public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactor
 
     override fun createMessageRepository(
         getUser: suspend (userId: String) -> User,
-    ): MessageRepository = RealmMessageRepository(realm, getUser)
+    ): MessageRepository = RealmMessageRepository(realm)
 
     override fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository = RealmChannelRepository(realm, getUser, getMessage)
+    ): ChannelRepository = RealmChannelRepository(realm)
 }
