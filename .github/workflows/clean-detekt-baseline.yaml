@@ -8,10 +8,10 @@ on:
 jobs:
   clean_detekt_baseline_files:
     name: Clean Detekt Baseline Files
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.1.0
         with:
           ref: develop
           token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}

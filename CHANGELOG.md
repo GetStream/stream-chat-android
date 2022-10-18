@@ -36,6 +36,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Stop showing a blink of empty state screen when loading channel without loading from database first. [#4261](https://github.com/GetStream/stream-chat-android/pull/4261)
 
 ### ⬆️ Improved
 
@@ -74,6 +75,21 @@
 - Added the ability to turn off video previews (thumbnails) via `ChatUI.videoThumbnailsEnabled`. Video previews are a paid feature and as such you can turn them off. They are on by default and the pricing can be found [here](https://getstream.io/chat/pricing/). [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - Added a new function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - Added a style class called `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
+- Added `UnsupportedAttachmentFactory` for unsupported attachments. [#4271](https://github.com/GetStream/stream-chat-android/pull/4271)
+- Added attrs to `UnsupportedAttachmentsView` that allow to customize the UI of unsupported attachments in [#4271](https://github.com/GetStream/stream-chat-android/pull/4271):
+ * `streamUiUnsupportedAttachmentBackgroundColor`
+ * `streamUiUnsupportedAttachmentStrokeColor`
+ * `streamUiUnsupportedAttachmentStrokeWidth`
+ * `streamUiUnsupportedAttachmentCornerRadius`
+ * `streamUiUnsupportedAttachmentTitleTextSize`
+ * `streamUiUnsupportedAttachmentTitleTextColor`
+ * `streamUiUnsupportedAttachmentTitleTextFont`
+ * `streamUiUnsupportedAttachmentTitleFontAssets`
+ * `streamUiUnsupportedAttachmentTitleTextStyle`
+- Added a page about [Sample Apps](https://getstream.io/chat/docs/sdk/android/resources/sample-apps/) to the docs. [#4282](https://github.com/GetStream/stream-chat-android/pull/4282)
+- Added the ability to turn off video previews (thumbnails) via `ChatUI.videoThumbnailsEnabled`. Video previews are a paid feature and as such you can turn them off. They are on by default and the pricing can be found [here](https://getstream.io/chat/pricing/). [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
+- Added a new function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
+- Added a style class called `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
@@ -102,6 +118,7 @@
 - Added parameters `attachmentsContentVideoMaxHeight`, `attachmentsContentMediaGridSpacing`, `attachmentsContentVideoWidth`, `attachmentsContentGroupPreviewWidth` and `attachmentsContentGroupPreviewHeight` to `StreamDimens`. These parameters are meant for more finer grained control over how media previews are displayed in the message list. For the best aesthetic outcome, the width of these should be equal to the value in `StreamDimens.messageItemMaxWidth`. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Added the ability to turn off video previews (thumbnails) via `ChatTheme.videoThumbnailsEnabled`. Video previews are a paid feature and as such you can turn them off. They are on by default and the pricing can be found [here](https://getstream.io/chat/pricing/). [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Added fallback factory for unsupported attachments. [#4270](https://github.com/GetStream/stream-chat-android/pull/4270)
+- Added a page about [Sample Apps](https://getstream.io/chat/docs/sdk/android/resources/sample-apps/) to the docs. [#4282](https://github.com/GetStream/stream-chat-android/pull/4282)
 
 ### ⚠️ Changed
 - Changed the way ChannelsScreen and MessagesScreen components are built. Instead of exposing a ton of parameters for customization, we now expose a ViewModelFactory that accepts them. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)

@@ -235,7 +235,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel() {
         channelNameLabel.text = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
-            currentUser = ChatClient.instance().getCurrentUser()
+            currentUser = ChatUI.currentUserProvider.getCurrentUser()
         )
     }
 

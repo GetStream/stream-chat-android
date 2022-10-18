@@ -8,9 +8,9 @@ on:
 jobs:
   localazy-download:
     name: Download strings from Localazy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
         with:
           ref: develop
       - uses: localazy/download@v1

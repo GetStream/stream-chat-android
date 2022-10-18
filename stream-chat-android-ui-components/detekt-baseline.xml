@@ -170,6 +170,7 @@
     <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public</ID>
     <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public var attachmentGalleryOptionsStyleTransformer: StyleTransformer&lt;AttachmentGalleryOptionsViewStyle> = noopTransformer()</ID>
     <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public var defaultQuotedAttachmentViewStyleTransformer: StyleTransformer&lt;DefaultQuotedAttachmentViewStyle> = noopTransformer()</ID>
+    <ID>MaxLineLength:TransformStyle.kt$TransformStyle$public var unsupportedAttachmentStyleTransformer: StyleTransformer&lt;UnsupportedAttachmentViewStyle> = noopTransformer()</ID>
     <ID>MaxLineLength:TypingIndicatorViewStyle.kt$TypingIndicatorViewStyle$*</ID>
     <ID>MaxLineLength:ViewReactionsBubbleDrawer.kt$ViewReactionsBubbleDrawer$"You need to specify either bubbleBorderColorTheirs and bubbleBorderWidthTheirs to draw a border for another user reaction bubble"</ID>
     <ID>NestedBlockDepth:MessageListHeaderView.kt$MessageListHeaderView$private fun renderSubtitleState()</ID>
