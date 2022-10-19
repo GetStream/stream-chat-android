@@ -254,6 +254,8 @@
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
+        <item name="streamUiMediaAttachmentGridViewStyle">@style/StreamUi.MediaAttachmentGridView</item>
+        <item name="streamUiAttachmentGalleryVideoAttachmentsStyle">@style/StreamUi.AttachmentGallery.VideoAttachments</item>
     </style>
 
     <style name="StreamUi">

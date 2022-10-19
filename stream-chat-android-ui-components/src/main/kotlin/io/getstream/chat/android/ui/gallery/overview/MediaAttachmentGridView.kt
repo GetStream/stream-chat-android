@@ -68,23 +68,19 @@ public class MediaAttachmentGridView : FrameLayout {
     private var mediaClickListener: MediaClickListener? = null
     private var loadMoreListener: OnLoadMoreListener? = null
 
-    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
-        init(context, null)
-    }
+    public constructor(context: Context) : this(context, null)
 
-    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        init(context, attrs)
-    }
+    public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr
     ) {
-        init(context, attrs)
+        init(attrs)
     }
 
-    private fun init(context: Context, attrs: AttributeSet?) {
+    private fun init(attrs: AttributeSet?) {
         style = MediaAttachmentGridViewStyle(
             context = context,
             attrs = attrs
