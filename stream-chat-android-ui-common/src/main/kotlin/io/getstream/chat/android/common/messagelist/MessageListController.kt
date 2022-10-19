@@ -363,7 +363,8 @@ public class MessageListController(
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
                 typingUsers,
-                focusedMessage
+                focusedMessage,
+                channelState.endOfNewerMessages
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -374,6 +375,7 @@ public class MessageListController(
                 val messagePositionHandler = data[6] as MessagePositionHandler
                 val typingUsers = data[7] as List<User>
                 val focusedMessage = data[8] as Message?
+                val endOfNewerMessages = data[9] as Boolean
 
                 when (state) {
                     is MessagesState.Loading,
@@ -395,8 +397,9 @@ public class MessageListController(
                             messageFooterVisibility = messageFooterVisibility,
                             messagePositionHandler = messagePositionHandler,
                             typingUsers = typingUsers,
-                            focusedMessage = focusedMessage
+                            focusedMessage = focusedMessage,
                         ),
+                        endOfNewMessagesReached = endOfNewerMessages
                     )
                 }
             }
@@ -404,22 +407,20 @@ public class MessageListController(
             it.cause?.printStackTrace()
             showEmptyState()
         }.onEach { newState ->
-            val newLastMessage =
-                (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
+            if (_messageListState.value.messages.isEmpty() &&
+                !newState.endOfNewMessagesReached &&
+                messageId == null
+            ) return@onEach
+
+            val newLastMessage = (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
 
             val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
-            _messageListState.value = newState.copy(
-                newMessageState = newMessageState
-            )
+            _messageListState.value = newState.copy(newMessageState = newMessageState)
             if (newMessageState != null) lastLoadedMessage = newLastMessage
         }.launchIn(scope)
 
         channelState.filterNotNull().flatMapLatest { it.endOfOlderMessages }.onEach {
             _messageListState.value = _messageListState.value.copy(endOfOldMessagesReached = it)
-        }.launchIn(scope)
-
-        channelState.filterNotNull().flatMapLatest { it.endOfNewerMessages }.onEach {
-            _messageListState.value = _messageListState.value.copy(endOfNewMessagesReached = it)
         }.launchIn(scope)
 
         user.onEach {
