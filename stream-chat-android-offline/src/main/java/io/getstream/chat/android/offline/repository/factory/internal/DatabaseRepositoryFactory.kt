@@ -36,6 +36,7 @@ import io.getstream.chat.android.offline.repository.domain.queryChannels.interna
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmChannelConfigRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmChannelRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmMessageRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmQueryChannelsRepository
@@ -67,9 +68,7 @@ internal class DatabaseRepositoryFactory(
 
     private fun realmUserRepository(): RealmUserRepository = RealmUserRepository(realm)
 
-    override fun createUserRepository(): UserRepository = realmUserRepository()
-
-    override fun createChannelConfigRepository(): ChannelConfigRepository {
+    private fun roomChannelConfigRepository(): DatabaseChannelConfigRepository {
         val databaseChannelConfigRepository =
             repositoriesCache[ChannelConfigRepository::class.java] as? DatabaseChannelConfigRepository?
 
@@ -79,6 +78,8 @@ internal class DatabaseRepositoryFactory(
             }
         }
     }
+
+    private fun realmChannelConfigRepository(): RealmChannelConfigRepository = RealmChannelConfigRepository(realm)
 
     private fun realmChannelRepository(): ChannelRepository = RealmChannelRepository(realm)
 
@@ -96,11 +97,6 @@ internal class DatabaseRepositoryFactory(
         }
     }
 
-    override fun createChannelRepository(
-        getUser: suspend (userId: String) -> User,
-        getMessage: suspend (messageId: String) -> Message?,
-    ): ChannelRepository = realmChannelRepository()
-
     private fun roomQueryChannelsRepository(): DatabaseQueryChannelsRepository {
         val databaseQueryChannelsRepository =
             repositoriesCache[QueryChannelsRepository::class.java] as? DatabaseQueryChannelsRepository?
@@ -113,8 +109,6 @@ internal class DatabaseRepositoryFactory(
     }
 
     private fun realmQueryChannelsRepository(): RealmQueryChannelsRepository = RealmQueryChannelsRepository(realm)
-
-    override fun createQueryChannelsRepository(): QueryChannelsRepository = roomQueryChannelsRepository()
 
     private fun realmMessageRepository(): MessageRepository = RealmMessageRepository(realm)
 
@@ -135,10 +129,6 @@ internal class DatabaseRepositoryFactory(
         }
     }
 
-    override fun createMessageRepository(
-        getUser: suspend (userId: String) -> User,
-    ): MessageRepository = realmMessageRepository()
-
     private fun roomReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
         val databaseReactionRepository =
             repositoriesCache[ReactionRepository::class.java] as? DatabaseReactionRepository?
@@ -152,10 +142,6 @@ internal class DatabaseRepositoryFactory(
 
     private fun realmReactionRepository(): RealmReactionRepository = RealmReactionRepository(realm)
 
-    override fun createReactionRepository(
-        getUser: suspend (userId: String) -> User
-    ): ReactionRepository = realmReactionRepository()
-
     private fun roomSyncStateRepository(): DatabaseSyncStateRepository {
         val databaseSyncStateRepository =
             repositoriesCache[SyncStateRepository::class.java] as? DatabaseSyncStateRepository?
@@ -168,6 +154,25 @@ internal class DatabaseRepositoryFactory(
     }
 
     private fun realmSyncStateRepository(): RealmSyncStateRepository = RealmSyncStateRepository(realm)
+
+    override fun createUserRepository(): UserRepository = realmUserRepository()
+
+    override fun createChannelConfigRepository(): ChannelConfigRepository = realmChannelConfigRepository()
+
+    override fun createChannelRepository(
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+    ): ChannelRepository = realmChannelRepository()
+
+    override fun createQueryChannelsRepository(): QueryChannelsRepository = roomQueryChannelsRepository()
+
+    override fun createMessageRepository(
+        getUser: suspend (userId: String) -> User,
+    ): MessageRepository = realmMessageRepository()
+
+    override fun createReactionRepository(
+        getUser: suspend (userId: String) -> User
+    ): ReactionRepository = realmReactionRepository()
 
     override fun createSyncStateRepository(): SyncStateRepository = realmSyncStateRepository()
 
