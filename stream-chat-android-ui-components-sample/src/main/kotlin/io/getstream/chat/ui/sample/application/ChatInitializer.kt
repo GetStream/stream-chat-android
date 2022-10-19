@@ -34,6 +34,8 @@ import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
+import io.getstream.realm.initialization.configureRealm
+import io.getstream.realm.repository.factory.RealmRepositoryFactory
 
 class ChatInitializer(private val context: Context) {
 
@@ -70,7 +72,7 @@ class ChatInitializer(private val context: Context) {
             Config(userPresence = true, persistenceEnabled = true),
             context
         ).apply {
-            // setCustomRepositoryFactory(RealmRepositoryFactory(configureRealm()))
+            setCustomRepositoryFactory(RealmRepositoryFactory(configureRealm()))
         }
 
         val statePluginFactory = StreamStatePluginFactory(

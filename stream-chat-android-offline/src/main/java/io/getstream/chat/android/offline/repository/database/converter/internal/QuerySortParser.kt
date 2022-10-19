@@ -6,9 +6,9 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api.models.querysort.SortDirection
 import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 
-internal class QuerySortParser<T : ComparableFieldProvider> {
+public class QuerySortParser<T : ComparableFieldProvider> {
 
-    internal fun fromRawInfo(
+    public fun fromRawInfo(
         specs: List<Map<String, Any>>,
     ): QuerySorter<T> {
         return specs.fold(QuerySortByField()) { sort, sortSpecMap ->

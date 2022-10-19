@@ -46,7 +46,6 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyLi
 import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
-import io.getstream.chat.android.offline.repository.realm.initialization.configureRealm
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -86,7 +85,6 @@ public class StreamOfflinePluginFactory(
         return customRepositoryFactory ?: DatabaseRepositoryFactory(
             database = createDatabase(scope, appContext, user, config.persistenceEnabled),
             currentUser = user,
-            realm = configureRealm()
         )
     }
 

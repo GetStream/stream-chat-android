@@ -1,0 +1,80 @@
+import io.getstream.chat.android.Dependencies
+
+plugins {
+    id 'com.android.library'
+    id 'io.realm.kotlin'
+    id 'kotlin-android'
+    id 'com.google.devtools.ksp'
+}
+
+ext {
+    PUBLISH_GROUP_ID = io.getstream.chat.android.Configuration.artifactGroup
+    PUBLISH_ARTIFACT_ID = 'stream-chat-android-offline'
+    PUBLISH_VERSION = rootVersionName
+}
+
+apply from: "${rootDir}/scripts/publish-module.gradle"
+apply from: "${rootDir}/scripts/android.gradle"
+
+android {
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    testOptions.unitTests {
+        includeAndroidResources = true
+        returnDefaultValues = true
+        all {
+            testLogging {
+                events 'failed', 'standardOut', 'standardError'
+                showExceptions true
+                showCauses true
+                showStackTraces true
+                exceptionFormat 'full'
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled false
+        }
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+                '-opt-in=kotlin.RequiresOptIn',
+                '-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+        ]
+    }
+}
+
+dependencies {
+    api project(":stream-chat-android-client")
+    implementation project(":stream-chat-android-offline")
+
+    implementation Dependencies.androidxAppCompat
+    implementation Dependencies.androidxCoreKtx
+
+    // Moshi
+    implementation Dependencies.moshi
+    implementation Dependencies.moshiKotlin
+    implementation Dependencies.moshiAdapters
+    ksp Dependencies.moshiCodegen
+
+    // Realm
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt'
+    implementation 'io.realm.kotlin:library-base:1.2.0'
+
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+}

@@ -10,6 +10,7 @@ include (
 		':stream-chat-android-ui-guides',
 		':stream-chat-android-state',
 		':stream-chat-android-offline',
+		':stream-chat-android-offline-realm',
 		':stream-chat-android-client',
 		':stream-chat-android-client-test',
 		':stream-chat-android-core',
