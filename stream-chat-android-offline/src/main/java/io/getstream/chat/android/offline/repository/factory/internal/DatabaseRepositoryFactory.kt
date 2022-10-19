@@ -40,6 +40,7 @@ import io.getstream.chat.android.offline.repository.realm.repository.RealmChanne
 import io.getstream.chat.android.offline.repository.realm.repository.RealmMessageRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmReactionRepository
+import io.getstream.chat.android.offline.repository.realm.repository.RealmSyncStateRepository
 import io.getstream.chat.android.offline.repository.realm.repository.RealmUserRepository
 import io.realm.kotlin.Realm
 
@@ -135,7 +136,7 @@ internal class DatabaseRepositoryFactory(
     }
 
     override fun createMessageRepository(
-        getUser: suspend (userId: String) -> User
+        getUser: suspend (userId: String) -> User,
     ): MessageRepository = realmMessageRepository()
 
     private fun roomReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository {
@@ -151,10 +152,11 @@ internal class DatabaseRepositoryFactory(
 
     private fun realmReactionRepository(): RealmReactionRepository = RealmReactionRepository(realm)
 
-    override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
-        realmReactionRepository()
+    override fun createReactionRepository(
+        getUser: suspend (userId: String) -> User
+    ): ReactionRepository = realmReactionRepository()
 
-    override fun createSyncStateRepository(): SyncStateRepository {
+    private fun roomSyncStateRepository(): DatabaseSyncStateRepository {
         val databaseSyncStateRepository =
             repositoriesCache[SyncStateRepository::class.java] as? DatabaseSyncStateRepository?
 
@@ -164,6 +166,10 @@ internal class DatabaseRepositoryFactory(
             }
         }
     }
+
+    private fun realmSyncStateRepository(): RealmSyncStateRepository = RealmSyncStateRepository(realm)
+
+    override fun createSyncStateRepository(): SyncStateRepository = realmSyncStateRepository()
 
     override fun createAttachmentRepository(): AttachmentRepository {
         val databaseAttachmentRepository =
