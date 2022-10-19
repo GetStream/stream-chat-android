@@ -36,7 +36,8 @@ public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = {
         if (it.isEmpty()) return@AttachmentFactory false
         val attachment = it.first()
-        attachment.isFile() || attachment.isImage() || attachment.isVideo() || attachment.isGiphy() || attachment.hasLink()
+        attachment.isFile() || attachment.isImage() || attachment.isVideo() || attachment.isGiphy() ||
+            attachment.hasLink()
     },
     content = @Composable { modifier, attachmentState ->
         val attachment = attachmentState.message.attachments.first()
