@@ -18,7 +18,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `isFilteringMessages` check on request. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Added `isFilteringMessages` check on `QueryChannelRequest` request. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ⚠️ Changed
 
@@ -85,6 +85,17 @@
 
 ### ✅ Added
 - Added `UserAvatarView` and `ChannelAvatarView` to replace `AvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
+- Added `UnsupportedAttachmentFactory` for unsupported attachments. [#4271](https://github.com/GetStream/stream-chat-android/pull/4271)
+- Added attrs to `UnsupportedAttachmentsView` that allow to customize the UI of unsupported attachments in [#4271](https://github.com/GetStream/stream-chat-android/pull/4271):
+ * `streamUiUnsupportedAttachmentBackgroundColor`
+ * `streamUiUnsupportedAttachmentStrokeColor`
+ * `streamUiUnsupportedAttachmentStrokeWidth`
+ * `streamUiUnsupportedAttachmentCornerRadius`
+ * `streamUiUnsupportedAttachmentTitleTextSize`
+ * `streamUiUnsupportedAttachmentTitleTextColor`
+ * `streamUiUnsupportedAttachmentTitleTextFont`
+ * `streamUiUnsupportedAttachmentTitleFontAssets`
+ * `streamUiUnsupportedAttachmentTitleTextStyle`
 - Added `OnScrollToBottomHandler` to `MessageListView`. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 
 ### ⚠️ Changed
@@ -95,7 +106,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed pagination when the newest messages arent loaded with newer messages pagination. Fixed scroll to bottom if the newest messages aren't loaded. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Fixed pagination when the newest messages aren't loaded and we are paginating newer messages pagination. Fixed scroll to bottom if the newest messages aren't loaded. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 - Fixed thread list initials scroll state. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ### ⬆️ Improved

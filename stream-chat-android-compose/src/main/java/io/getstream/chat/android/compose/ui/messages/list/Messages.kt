@@ -228,7 +228,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val firstVisibleItemIndex = lazyListState.firstVisibleItemIndex
+    val firstVisibleItemIndex = derivedStateOf { lazyListState.firstVisibleItemIndex }
 
     val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
@@ -248,9 +248,9 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             }
         }
 
-        val shouldScrollToBottom = shouldScrollToBottomOnNewMessage(
+        val shouldScrollToBottom = shouldScrollToBottom(
             focusedItemIndex,
-            firstVisibleItemIndex,
+            firstVisibleItemIndex.value,
             newMessageState,
             areNewestMessagesLoaded,
             lazyListState.isScrollInProgress
@@ -258,7 +258,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
         if (shouldScrollToBottom) {
             coroutineScope.launch {
-                if (newMessageState == MyOwn && firstVisibleItemIndex > 5) {
+                if (newMessageState == MyOwn && firstVisibleItemIndex.value > 5) {
                     lazyListState.scrollToItem(5)
                 }
                 lazyListState.animateScrollToItem(0)
@@ -266,14 +266,14 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         }
     }
 
-    if (isScrollToBottomButtonVisible(isMessageInThread, firstVisibleItemIndex, areNewestMessagesLoaded)) {
+    if (isScrollToBottomButtonVisible(isMessageInThread, firstVisibleItemIndex.value, areNewestMessagesLoaded)) {
         MessagesScrollingOption(
             unreadCount = messagesState.unreadCount,
             modifier = Modifier.align(Alignment.BottomEnd),
             onClick = {
                 scrollToBottom {
                     coroutineScope.launch {
-                        if (firstVisibleItemIndex > 5) {
+                        if (firstVisibleItemIndex.value > 5) {
                             lazyListState.scrollToItem(5)
                         }
                         lazyListState.animateScrollToItem(0)
@@ -298,12 +298,12 @@ internal fun BoxScope.DefaultMessagesHelperContent(
  *
  * @return Whether the list should scroll to the bottom when a new message arrives or not.
  */
-private fun shouldScrollToBottomOnNewMessage(
+private fun shouldScrollToBottom(
     focusedItemIndex: Int,
     firstVisibleItemIndex: Int,
     newMessageState: NewMessageState?,
     areNewestMessagesLoaded: Boolean,
-    isScrollInProgress: Boolean,
+    isScrollInProgress: Boolean
 ): Boolean {
     newMessageState ?: return false
 

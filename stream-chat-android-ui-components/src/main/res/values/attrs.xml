@@ -28,6 +28,7 @@
         <attr name="streamUiMessageListGiphyAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListImageAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListFileAttachmentStyle" format="reference" />
+        <attr name="streamUiMessageListUnsupportedAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListItemAvatarStyle" format="reference" />
         <attr name="streamUiMessageListHeaderAvatarStyle" format="reference" />
         <attr name="streamUiChannelListItemAvatarStyle" format="reference" />
