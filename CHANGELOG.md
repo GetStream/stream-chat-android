@@ -179,6 +179,25 @@
 
 ### ❌ Removed
 
+# October 17th, 2022 - 5.11.2
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed displaying messages with failed image attachments. [#4234](https://github.com/GetStream/stream-chat-android/pull/4234)
+- Fixes problem when alligning reactions ballon for custom ViewHolders in message options dialog. [#4248](https://github.com/GetStream/stream-chat-android/pull/4248)
+
+### ⬆️ Improved
+- Improved asking for `WRITE_EXTERNAL_STORAGE` permission. The permission won't be requested starting from Android Q unless legacy external storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
+- When `ChatClient.disconnect` is called, only remove the device on backend side if `flushPersistence` is `true` [#4280](https://github.com/GetStream/stream-chat-android/pull/4280)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Improved requesting `WRITE_EXTERNAL_STORAGE` permission when legacy storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
+
+# September 30th, 2022 - 5.11.1
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fixed giphy size parsing. [#4222](https://github.com/GetStream/stream-chat-android/pull/4222)
+
 # September 21th, 2022 - 5.11.0
 ## stream-chat-android-client
 ### ⬆️ Improved

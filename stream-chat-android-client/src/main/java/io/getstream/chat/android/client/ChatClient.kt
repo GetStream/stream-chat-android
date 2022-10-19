@@ -1163,7 +1163,7 @@ internal constructor(
         val userId = clientState.user.value?.id
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
-        notifications.onLogout()
+        notifications.onLogout(flushPersistence)
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
         if (ToggleService.isSocketExperimental().not()) {
