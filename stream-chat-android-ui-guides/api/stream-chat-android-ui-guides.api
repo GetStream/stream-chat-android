@@ -84,126 +84,61 @@ public final class io/getstream/chat/android/guides/catalog/compose/customattach
 	public static final fun getQuotedDateAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/ChannelsActivity : io/getstream/chat/android/ui/channel/ChannelListActivity, io/getstream/chat/android/ui/channel/ChannelListFragment$ChannelListItemClickListener {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/ChannelsActivity : io/getstream/chat/android/ui/channel/ChannelListActivity, io/getstream/chat/android/ui/channel/ChannelListFragment$ChannelListItemClickListener {
 	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/ChannelsActivity$Companion;
+	public static final field Companion Lio/getstream/chat/android/guides/catalog/uicomponents/customattachments/ChannelsActivity$Companion;
 	public fun <init> ()V
 	public fun onChannelClick (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/ChannelsActivity$Companion {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/ChannelsActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;)Landroid/content/Intent;
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/MessagesActivity : androidx/appcompat/app/AppCompatActivity {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/MessagesActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/MessagesActivity$Companion;
+	public static final field Companion Lio/getstream/chat/android/guides/catalog/uicomponents/customattachments/MessagesActivity$Companion;
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/MessagesActivity$Companion {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/MessagesActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/factory/DateAttachmentFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactory {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/DateAttachmentFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactory {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
 	public fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/factory/DateAttachmentFactory$DateAttachmentViewHolder : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/DateAttachmentFactory$DateAttachmentViewHolder : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/guides/databinding/ItemDateAttachmentBinding;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;)V
 	public fun onBindViewHolder (Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/factory/DateAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/attachment/factory/AttachmentPreviewFactory {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/DateAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/attachment/factory/AttachmentPreviewFactory {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
 	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder;
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/factory/DateAttachmentPreviewFactory$DateAttachmentPreviewViewHolder : io/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/DateAttachmentPreviewFactory$DateAttachmentPreviewViewHolder : io/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/guides/databinding/ItemDateAttachmentPreviewBinding;Lkotlin/jvm/functions/Function1;)V
 	public fun bind (Lio/getstream/chat/android/client/models/Attachment;)V
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/factory/QuotedDateAttachmentFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/QuotedDateAttachmentFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
 	public fun generateQuotedAttachmentView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/composer/factory/QuotedDateAttachmentFactory$QuotedDateAttachmentView : android/widget/FrameLayout {
-	public static final field $stable I
-	public fun <init> (Landroid/content/Context;)V
-	public final fun showDate (Lio/getstream/chat/android/client/models/Attachment;)V
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/ChannelsActivity : io/getstream/chat/android/ui/channel/ChannelListActivity, io/getstream/chat/android/ui/channel/ChannelListFragment$ChannelListItemClickListener {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/ChannelsActivity$Companion;
-	public fun <init> ()V
-	public fun onChannelClick (Lio/getstream/chat/android/client/models/Channel;)V
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/ChannelsActivity$Companion {
-	public final fun createIntent (Landroid/content/Context;)Landroid/content/Intent;
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/MessagesActivity : io/getstream/chat/android/ui/message/MessageListActivity {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/MessagesActivity$Companion;
-	public fun <init> ()V
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/MessagesActivity$Companion {
-	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
-	public static synthetic fun createIntent$default (Lio/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/MessagesActivity$Companion;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Landroid/content/Intent;
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/MessagesActivity$CustomMessageListFragment : io/getstream/chat/android/ui/message/MessageListFragment {
-	public static final field $stable I
-	public fun <init> ()V
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/factory/DateAttachmentFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactory {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
-	public fun createViewHolder (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/factory/DateAttachmentFactory$DateAttachmentViewHolder : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/InnerAttachmentViewHolder {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/guides/databinding/ItemDateAttachmentBinding;Lio/getstream/chat/android/ui/message/list/adapter/MessageListListenerContainer;)V
-	public fun onBindViewHolder (Lio/getstream/chat/android/client/models/Message;)V
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/factory/DateAttachmentPreviewFactory : io/getstream/chat/android/ui/message/input/attachment/selected/internal/SelectedCustomAttachmentViewHolderFactory {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun createAttachmentViewHolder (Ljava/util/List;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/message/input/attachment/selected/internal/BaseSelectedCustomAttachmentViewHolder;
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/factory/DateAttachmentPreviewFactory$DateAttachmentPreviewViewHolder : io/getstream/chat/android/ui/message/input/attachment/selected/internal/BaseSelectedCustomAttachmentViewHolder {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/guides/databinding/ItemDateAttachmentPreviewBinding;)V
-	public fun bind (Lio/getstream/chat/android/client/models/Attachment;Lkotlin/jvm/functions/Function1;)V
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/factory/QuotedDateAttachmentFactory : io/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun canHandle (Lio/getstream/chat/android/client/models/Message;)Z
-	public fun generateQuotedAttachmentView (Lio/getstream/chat/android/client/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
-}
-
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/input/factory/QuotedDateAttachmentFactory$QuotedDateAttachmentView : android/widget/FrameLayout {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/QuotedDateAttachmentFactory$QuotedDateAttachmentView : android/widget/FrameLayout {
 	public static final field $stable I
 	public fun <init> (Landroid/content/Context;)V
 	public final fun showDate (Lio/getstream/chat/android/client/models/Attachment;)V

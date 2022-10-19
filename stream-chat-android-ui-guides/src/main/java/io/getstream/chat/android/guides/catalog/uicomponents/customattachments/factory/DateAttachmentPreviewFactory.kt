@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.factory
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

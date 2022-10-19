@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.factory
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory
 
 import android.content.Context
 import android.view.LayoutInflater

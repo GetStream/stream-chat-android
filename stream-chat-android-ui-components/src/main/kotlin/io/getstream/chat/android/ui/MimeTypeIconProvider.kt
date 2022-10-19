@@ -18,13 +18,11 @@ package io.getstream.chat.android.ui
 
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.ui.message.input.attachment.factory.file.internal.FileAttachmentAdapter
-import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedFileAttachmentAdapter
 
 /**
  * Provides icons for file attachments.
  *
  * @see [FileAttachmentAdapter.FileAttachmentViewHolder]
- * @see [SelectedFileAttachmentAdapter.SelectedFileAttachmentViewHolder]
  */
 public fun interface MimeTypeIconProvider {
 

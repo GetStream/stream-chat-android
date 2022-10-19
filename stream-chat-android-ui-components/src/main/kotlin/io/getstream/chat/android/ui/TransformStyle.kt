@@ -40,7 +40,6 @@ import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsVie
 import io.getstream.chat.android.ui.pinned.list.PinnedMessageListViewStyle
 import io.getstream.chat.android.ui.search.SearchInputViewStyle
 import io.getstream.chat.android.ui.search.list.SearchResultListViewStyle
-import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.typing.TypingIndicatorViewStyle
 
 public object TransformStyle {
@@ -59,7 +58,6 @@ public object TransformStyle {
     public var messageReplyStyleTransformer: StyleTransformer<MessageReplyStyle> = noopTransformer()
     public var fileAttachmentStyleTransformer: StyleTransformer<FileAttachmentViewStyle> = noopTransformer()
     public var unsupportedAttachmentStyleTransformer: StyleTransformer<UnsupportedAttachmentViewStyle> = noopTransformer()
-    public var suggestionListStyleTransformer: StyleTransformer<SuggestionListViewStyle> = noopTransformer()
     public var messageListHeaderStyleTransformer: StyleTransformer<MessageListHeaderViewStyle> = noopTransformer()
     public var mentionListViewStyleTransformer: StyleTransformer<MentionListViewStyle> = noopTransformer()
     public var searchInputViewStyleTransformer: StyleTransformer<SearchInputViewStyle> = noopTransformer()

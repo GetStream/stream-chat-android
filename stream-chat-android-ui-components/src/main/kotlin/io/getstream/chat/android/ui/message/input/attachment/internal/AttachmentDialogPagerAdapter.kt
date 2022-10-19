@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.message.input.attachment.internal
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabListener
@@ -26,7 +26,7 @@ import io.getstream.chat.android.ui.message.input.attachment.factory.Attachments
 /**
  * An adapter that handles the creation of tabs for the attachment picker.
  *
- * @param style Style for [MessageInputView].
+ * @param style Style for [MessageComposerView].
  * @param attachmentsPickerTabFactories The list of factories for the tabs in the attachment picker.
  * @param attachmentsPickerTabListener The listener invoked when attachments are selected in the tab.
  */

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments
 
 import android.content.Context
 import android.content.Intent

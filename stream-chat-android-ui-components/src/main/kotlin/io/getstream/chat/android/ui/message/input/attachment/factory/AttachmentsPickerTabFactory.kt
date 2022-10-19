@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.message.input.attachment.factory
 
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 
 /**
@@ -29,7 +29,7 @@ public interface AttachmentsPickerTabFactory {
     /**
      * Creates an icon for the tab.
      *
-     * @param style Style for [MessageInputView].
+     * @param style Style for [MessageComposerView].
      * @return The Drawable used as the teb icon.
      */
     public fun createTabIcon(style: MessageInputViewStyle): Drawable

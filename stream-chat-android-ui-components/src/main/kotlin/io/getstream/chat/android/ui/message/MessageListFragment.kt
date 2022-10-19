@@ -27,15 +27,18 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.common.model.DeleteMessage
 import io.getstream.chat.android.common.model.EditMessage
 import io.getstream.chat.android.common.model.SendAnyway
+import io.getstream.chat.android.common.state.Edit
+import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBinding
-import io.getstream.chat.android.ui.message.input.MessageInputView
-import io.getstream.chat.android.ui.message.input.viewmodel.bindView
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
+import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
@@ -50,7 +53,7 @@ import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListVi
  *   and the channel image
  * - [MessageListView] - shows a list of paginated messages, with threads, replies,
  *   quotes, reactions and deleted messages
- * - [MessageInputView] - allows the user to send new messages as well as pick and
+ * - [MessageComposerView] - allows the user to send new messages as well as pick and
  *   choose attachments to send
  *
  * **Note**: Fragments representing self-contained screens are easy to use. They allow you
@@ -86,8 +89,8 @@ public open class MessageListFragment : Fragment() {
     /** A message list ViewModel for binding [MessageListView]. */
     protected val messageListViewModel: MessageListViewModel by viewModels { factory }
 
-    /** A message input ViewModel for binding [MessageInputView]. */
-    protected val messageInputViewModel: MessageInputViewModel by viewModels { factory }
+    /** A message composer ViewModel for binding [MessageComposerView]. */
+    protected val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
     /** A click listener for the navigation button in the header. */
     protected var backPressListener: BackPressListener? = null
@@ -119,7 +122,7 @@ public open class MessageListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupMessageListHeader(binding.messageListHeaderView)
         setupMessageList(binding.messageListView)
-        setupMessageInput(binding.messageInputView)
+        setupMessageComposer(binding.messageComposerView)
     }
 
     /**
@@ -174,36 +177,53 @@ public open class MessageListFragment : Fragment() {
         binding.messageListView.setModeratedMessageHandler { message, action ->
             when (action) {
                 DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
-                EditMessage -> messageInputViewModel.postMessageToEdit(message)
+                EditMessage -> messageComposerViewModel.performMessageAction(Edit(message))
                 SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
-                else -> {
-                    // custom actions
-                }
+                else -> Unit
             }
         }
     }
 
     /**
-     * Configures [MessageInputView]. Override the method for a custom setup.
+     * Configures [MessageComposerView]. Override the method for a custom setup.
      *
-     * @param messageInputView The message inout that is being configured.
+     * @param messageComposerView The message composer that is being configured.
      */
-    protected open fun setupMessageInput(messageInputView: MessageInputView) {
-        messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
-
-        messageListViewModel.mode.observe(viewLifecycleOwner) {
-            when (it) {
-                is MessageListViewModel.Mode.Thread -> {
-                    messageListHeaderViewModel.setActiveThread(it.parentMessage)
-                    messageInputViewModel.setActiveThread(it.parentMessage)
+    protected open fun setupMessageComposer(messageComposerView: MessageComposerView) {
+        messageComposerViewModel.apply {
+            bindView(binding.messageComposerView, viewLifecycleOwner)
+            messageListViewModel.mode.observe(viewLifecycleOwner) {
+                when (it) {
+                    is MessageListViewModel.Mode.Thread -> {
+                        messageListHeaderViewModel.setActiveThread(it.parentMessage)
+                        messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
+                    }
+                    is MessageListViewModel.Mode.Normal -> {
+                        messageListHeaderViewModel.resetThread()
+                        messageComposerViewModel.leaveThread()
+                    }
                 }
-                is MessageListViewModel.Mode.Normal -> {
-                    messageListHeaderViewModel.resetThread()
-                    messageInputViewModel.resetThread()
+            }
+            binding.messageListView.setMessageReplyHandler { _, message ->
+                messageComposerViewModel.performMessageAction(Reply(message))
+            }
+            binding.messageListView.setMessageEditHandler { message ->
+                messageComposerViewModel.performMessageAction(Edit(message))
+            }
+            binding.messageListView.setModeratedMessageHandler { message, action ->
+                when (action) {
+                    DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
+                    EditMessage -> messageComposerViewModel.performMessageAction(Edit(message))
+                    SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
+                    else -> Unit
+                }
+            }
+            binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
+                messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
+                    messageComposerViewModel.performMessageAction(Reply(message))
                 }
             }
         }
-        binding.messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit)
     }
 
     override fun onDestroyView() {

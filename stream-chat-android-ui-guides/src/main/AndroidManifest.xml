@@ -69,12 +69,12 @@
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.ChannelsActivity"
+            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.ChannelsActivity"
             android:exported="false"
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.MessagesActivity"
+            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.MessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />

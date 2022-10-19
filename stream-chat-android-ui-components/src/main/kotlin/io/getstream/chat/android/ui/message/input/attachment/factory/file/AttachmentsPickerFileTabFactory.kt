@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.message.input.attachment.factory.file
 
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabListener
@@ -32,7 +32,7 @@ public class AttachmentsPickerFileTabFactory : AttachmentsPickerTabFactory {
     /**
      * Creates an icon for file attachments tab.
      *
-     * @param style Style for [MessageInputView].
+     * @param style Style for [MessageComposerView].
      * @return The Drawable used as the teb icon.
      */
     override fun createTabIcon(style: MessageInputViewStyle): Drawable {
@@ -42,7 +42,7 @@ public class AttachmentsPickerFileTabFactory : AttachmentsPickerTabFactory {
     /**
      * Provides a new Fragment associated with this file attachments tab.
      *
-     * @param style Style for [MessageInputView].
+     * @param style Style for [MessageComposerView].
      * @param attachmentsPickerTabListener The listener invoked when attachments are selected in the tab.
      * @return A new content Fragment for the tab.
      */

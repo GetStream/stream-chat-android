@@ -28,9 +28,6 @@
     <string name="custom_attachments_guide_compose_title">Custom attachments</string>
     <string name="custom_attachments_guide_compose_description">A guide that demonstrates how to build a date sharing feature using the Compose SDK.</string>
 
-    <string name="custom_attachments_guide_message_input_title">Custom attachments (MessageInputView)</string>
-    <string name="custom_attachments_guide_message_input_description">A guide that demonstrates how to build a date sharing feature using the UI Components SDK and MessageInputView.</string>
-
-    <string name="custom_attachments_guide_message_composer_title">Custom attachments (MessageComposerView)</string>
-    <string name="custom_attachments_guide_message_composer_description">A guide that demonstrates how to build a date sharing feature using the UI Components SDK and MessageComposerView.</string>
+    <string name="custom_attachments_guide_uicomponents_title">Custom attachments</string>
+    <string name="custom_attachments_guide_uicomponents_description">A guide that demonstrates how to build a date sharing feature using the UI Components SDK.</string>
 </resources>

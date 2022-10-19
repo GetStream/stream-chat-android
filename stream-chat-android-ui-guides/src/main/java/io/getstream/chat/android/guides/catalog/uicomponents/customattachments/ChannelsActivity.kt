@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer
+package io.getstream.chat.android.guides.catalog.uicomponents.customattachments
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.factory.DateAttachmentFactory
-import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.factory.DateAttachmentPreviewFactory
-import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.factory.QuotedDateAttachmentFactory
+import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.DateAttachmentFactory
+import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.DateAttachmentPreviewFactory
+import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.QuotedDateAttachmentFactory
 import io.getstream.chat.android.guides.cleanup
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.channel.ChannelListActivity

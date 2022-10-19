@@ -21,19 +21,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.common.model.DeleteMessage
 import io.getstream.chat.android.common.model.EditMessage
 import io.getstream.chat.android.common.model.SendAnyway
@@ -42,11 +39,9 @@ import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
-import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
@@ -66,7 +61,6 @@ class ChatFragment : Fragment() {
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
     private val headerViewModel: MessageListHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
-    private val messageInputViewModel: MessageInputViewModel by viewModels { factory }
     private val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
     private val chatViewModel: ChatViewModel by viewModels { chatViewModelFactory }
 
@@ -87,18 +81,12 @@ class ChatFragment : Fragment() {
         _binding = null
     }
 
-    @OptIn(InternalStreamChatApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         headerViewModel.bindView(binding.messagesHeaderView, viewLifecycleOwner)
         initChatViewModel()
-        initMessagesViewModel()
+        initMessageListViewModel()
+        initMessageComposerViewModel()
         configureBackButtonHandling()
-
-        if (ToggleService.isEnabled(ToggleService.TOGGLE_KEY_MESSAGE_COMPOSER)) {
-            initMessageComposerViewModel()
-        } else {
-            initMessageInputViewModel()
-        }
     }
 
     override fun onResume() {
@@ -151,28 +139,7 @@ class ChatFragment : Fragment() {
         )
     }
 
-    private fun initMessageInputViewModel() {
-        binding.messageInputView.isVisible = true
-        messageInputViewModel.apply {
-            bindView(binding.messageInputView, viewLifecycleOwner)
-            messageListViewModel.mode.observe(viewLifecycleOwner) {
-                when (it) {
-                    is MessageListViewModel.Mode.Thread -> {
-                        headerViewModel.setActiveThread(it.parentMessage)
-                        messageInputViewModel.setActiveThread(it.parentMessage)
-                    }
-                    is MessageListViewModel.Mode.Normal -> {
-                        headerViewModel.resetThread()
-                        messageInputViewModel.resetThread()
-                    }
-                }
-            }
-            binding.messageListView.setMessageEditHandler(::postMessageToEdit)
-        }
-    }
-
     private fun initMessageComposerViewModel() {
-        binding.messageComposerView.isVisible = true
         messageComposerViewModel.apply {
             bindView(binding.messageComposerView, viewLifecycleOwner)
             messageListViewModel.mode.observe(viewLifecycleOwner) {
@@ -193,14 +160,6 @@ class ChatFragment : Fragment() {
             binding.messageListView.setMessageEditHandler { message ->
                 messageComposerViewModel.performMessageAction(Edit(message))
             }
-            binding.messageListView.setModeratedMessageHandler { message, action ->
-                when (action) {
-                    DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
-                    EditMessage -> messageComposerViewModel.performMessageAction(Edit(message))
-                    SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
-                    else -> Unit
-                }
-            }
             binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
                 messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
                     messageComposerViewModel.performMessageAction(Reply(message))
@@ -209,7 +168,7 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun initMessagesViewModel() {
+    private fun initMessageListViewModel() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
             messageListViewModel.setDeletedMessageVisibility(
@@ -270,7 +229,7 @@ class ChatFragment : Fragment() {
             setModeratedMessageHandler { message, action ->
                 when (action) {
                     DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
-                    EditMessage -> messageInputViewModel.postMessageToEdit(message)
+                    EditMessage -> messageComposerViewModel.performMessageAction(Edit(message))
                     SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
                     else -> Unit
                 }
