@@ -164,7 +164,7 @@ internal class DatabaseRepositoryFactory(
         getMessage: suspend (messageId: String) -> Message?,
     ): ChannelRepository = realmChannelRepository()
 
-    override fun createQueryChannelsRepository(): QueryChannelsRepository = roomQueryChannelsRepository()
+    override fun createQueryChannelsRepository(): QueryChannelsRepository = realmQueryChannelsRepository()
 
     override fun createMessageRepository(
         getUser: suspend (userId: String) -> User,

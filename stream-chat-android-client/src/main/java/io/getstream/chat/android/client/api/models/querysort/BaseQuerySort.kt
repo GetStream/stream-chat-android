@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecif
  */
 public abstract class BaseQuerySort<T : Any> : QuerySorter<T> {
 
-    internal var sortSpecifications: List<SortSpecification<T>> = emptyList()
+    override var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
     /**
      * Comparator class that will be generator by the sort specifications.

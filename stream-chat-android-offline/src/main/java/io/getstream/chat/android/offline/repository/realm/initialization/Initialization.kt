@@ -23,9 +23,12 @@ import io.getstream.chat.android.offline.repository.realm.entity.ConfigEntityRea
 import io.getstream.chat.android.offline.repository.realm.entity.MemberEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.MessageEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.QueryChannelsEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.QuerySorterInfoEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.ReactionCountEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.ReactionEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.ReactionScoreEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.SortSpecificationEntityRealm
+import io.getstream.chat.android.offline.repository.realm.entity.SyncStateEntityRealm
 import io.getstream.chat.android.offline.repository.realm.entity.UserEntityRealm
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -54,4 +57,7 @@ private fun realmSchema(): Set<KClass<out RealmObject>> =
         ReactionScoreEntityRealm::class,
         ConfigEntityRealm::class,
         CommandEntityRealm::class,
+        QuerySorterInfoEntityRealm::class,
+        SortSpecificationEntityRealm::class,
+        SyncStateEntityRealm::class,
     )

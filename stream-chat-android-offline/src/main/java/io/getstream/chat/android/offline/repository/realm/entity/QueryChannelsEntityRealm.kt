@@ -16,10 +16,13 @@
 
 package io.getstream.chat.android.offline.repository.realm.entity
 
+import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
@@ -30,28 +33,30 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 internal class QueryChannelsEntityRealm : RealmObject {
     @PrimaryKey
     var id: String = ""
-    var filter: FilterObject = Filters.neutral()
-    var querySort: QuerySorter<Channel>? = null
+    var filterAsString: String = ""
+    var querySort: QuerySorterInfoEntityRealm? = null
     var cids: RealmList<String> = realmListOf()
 }
 
 internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
     val thisQuery = this
+    val moshi = Moshi.Builder().build()
 
     return QueryChannelsEntityRealm().apply {
         id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
-        filter = thisQuery.filter
-        querySort = thisQuery.querySort
+        filterAsString = moshi.adapter(Map::class.java).toJson(thisQuery.filter.toMap())
+        querySort = thisQuery.querySort.toRealm()
         cids = thisQuery.cids.toRealmList()
     }
 }
 
 internal fun QueryChannelsEntityRealm.toDomain(): QueryChannelsSpec {
     val entity = this
+    val moshi = Moshi.Builder().build()
 
     return QueryChannelsSpec(
-        filter = filter,
-        querySort = querySort!!,
+        filter = Filters.neutral(), //Todo: Fix this!!
+        querySort = querySort?.toDomain() ?: QuerySortByField.ascByName("name"),
     ).apply {
         cids = entity.cids.toSet()
     }

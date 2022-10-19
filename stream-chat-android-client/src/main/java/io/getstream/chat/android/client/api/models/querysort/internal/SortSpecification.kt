@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api.models.querysort.internal
 
 import io.getstream.chat.android.client.api.models.querysort.SortDirection
 
-internal data class SortSpecification<T>(
+public data class SortSpecification<T>(
     val sortAttribute: SortAttribute<T>,
     val sortDirection: SortDirection,
 )
