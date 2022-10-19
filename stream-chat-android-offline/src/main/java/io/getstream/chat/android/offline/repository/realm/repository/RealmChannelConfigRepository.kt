@@ -6,6 +6,7 @@ import io.getstream.chat.android.offline.repository.realm.entity.ConfigEntityRea
 import io.getstream.chat.android.offline.repository.realm.entity.toDomain
 import io.getstream.chat.android.offline.repository.realm.entity.toRealm
 import io.realm.kotlin.Realm
+import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 
 internal class RealmChannelConfigRepository(private val realm: Realm): ChannelConfigRepository {
@@ -22,11 +23,15 @@ internal class RealmChannelConfigRepository(private val realm: Realm): ChannelCo
 
     override suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
         val configsRealm = configs.map { config -> config.toRealm() }
-        realm.writeBlocking { configsRealm.forEach(::copyToRealm) }
+        realm.writeBlocking {
+            configsRealm.forEach { configRealm ->
+                copyToRealm(configRealm, UpdatePolicy.ALL)
+            }
+        }
     }
 
     override suspend fun insertChannelConfig(config: ChannelConfig) {
-        realm.writeBlocking { copyToRealm(config.toRealm()) }
+        realm.writeBlocking { copyToRealm(config.toRealm(), UpdatePolicy.ALL) }
     }
 
     override suspend fun clear() {
