@@ -276,7 +276,7 @@ public class MessageListController(
      * [MessagePositionHandler] that determines the message position inside the group.
      */
     private var _messagePositionHandler: MutableStateFlow<MessagePositionHandler> =
-        MutableStateFlow(MessagePositionHandler.defaultHandler())
+        MutableStateFlow(messagePositionHandler)
 
     /**
      * Evaluates whether and when date separators should be added to the message list.
