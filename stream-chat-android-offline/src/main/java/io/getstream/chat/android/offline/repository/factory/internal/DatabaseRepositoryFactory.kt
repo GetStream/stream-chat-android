@@ -132,7 +132,6 @@ internal class DatabaseRepositoryFactory(
         }
     }
 
-
     override fun createUserRepository(): UserRepository = roomUserRepository()
 
     override fun createChannelConfigRepository(): ChannelConfigRepository = roomChannelConfigRepository()

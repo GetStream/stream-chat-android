@@ -77,4 +77,6 @@ dependencies {
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
     testRuntimeOnly Dependencies.junitVintageEngine
+
+    detektPlugins(Dependencies.detektFormatting)
 }

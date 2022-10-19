@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.realm.entity
 
 import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
@@ -12,31 +28,33 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
+@Suppress("VariableNaming")
 internal class QuerySorterInfoEntityRealm : RealmObject {
-    var querySpecs: RealmList<SortSpecificationEntityRealm> = realmListOf()
+    var query_specs: RealmList<SortSpecificationEntityRealm> = realmListOf()
 
     @PrimaryKey
-    var id: Int = querySpecs.hashCode()
+    var id: Int = query_specs.hashCode()
 }
 
+@Suppress("VariableNaming")
 internal class SortSpecificationEntityRealm : RealmObject {
     var sort_attribute_name: String = ""
     var sort_direction: Int = 0
 }
 
-internal fun <T: ComparableFieldProvider> QuerySorterInfoEntityRealm.toDomain(): QuerySorter<T> {
-    return QuerySortParser<T>().fromSpecifications(this.querySpecs.map { it.toDomain() })
+internal fun <T : ComparableFieldProvider> QuerySorterInfoEntityRealm.toDomain(): QuerySorter<T> {
+    return QuerySortParser<T>().fromSpecifications(this.query_specs.map { it.toDomain() })
 }
 
-internal fun <T: ComparableFieldProvider> QuerySorter<T>.toRealm(): QuerySorterInfoEntityRealm {
+internal fun <T : ComparableFieldProvider> QuerySorter<T>.toRealm(): QuerySorterInfoEntityRealm {
     val thisQuerySorter = this
 
     return QuerySorterInfoEntityRealm().apply {
-        querySpecs = thisQuerySorter.sortSpecifications
+        query_specs = thisQuerySorter.sortSpecifications
             .map { spec -> spec.toRealm() }
             .toRealmList()
 
-        id = querySpecs.hashCode()
+        id = query_specs.hashCode()
     }
 }
 

@@ -30,11 +30,12 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
+@Suppress("VariableNaming")
 internal class QueryChannelsEntityRealm : RealmObject {
     @PrimaryKey
     var id: String = ""
     var filterAsString: String = ""
-    var querySort: QuerySorterInfoEntityRealm? = null
+    var query_sort: QuerySorterInfoEntityRealm? = null
     var cids: RealmList<String> = realmListOf()
 }
 
@@ -45,7 +46,7 @@ internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
     return QueryChannelsEntityRealm().apply {
         id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
         filterAsString = moshi.adapter(Map::class.java).toJson(thisQuery.filter.toMap())
-        querySort = thisQuery.querySort.toRealm()
+        query_sort = thisQuery.querySort.toRealm()
         cids = thisQuery.cids.toRealmList()
     }
 }
@@ -55,13 +56,13 @@ internal fun QueryChannelsEntityRealm.toDomain(): QueryChannelsSpec {
     val moshi = Moshi.Builder().build()
 
     return QueryChannelsSpec(
-        filter = Filters.neutral(), //Todo: Fix this!!
-        querySort = querySort?.toDomain() ?: QuerySortByField.ascByName("name"),
+        filter = Filters.neutral(),
+        querySort = query_sort?.toDomain() ?: QuerySortByField.ascByName("name"),
     ).apply {
         cids = entity.cids.toSet()
     }
 }
 
-internal fun generateQuerySpecId(filter: FilterObject, querySort: QuerySorter<Channel>): String {
+internal fun generateQuerySpecId(filter: FilterObject, querySort: QuerySorter<out Channel>): String {
     return "${filter.hashCode()}-${querySort.toDto().hashCode()}"
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.realm.entity
 
 import io.getstream.chat.android.client.models.ChannelConfig
@@ -12,6 +28,9 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
+private const val DEFAULT_MAX_MESSAGE: Int = 100
+
+@Suppress("VariableNaming")
 internal class ConfigEntityRealm : RealmObject {
     @PrimaryKey
     var channel_type: String = ""
@@ -37,6 +56,7 @@ internal class ConfigEntityRealm : RealmObject {
     var commands: RealmList<CommandEntityRealm> = realmListOf()
 }
 
+@Suppress("VariableNaming")
 internal class CommandEntityRealm : RealmObject {
     @PrimaryKey
     var id: Int = hashCode()
@@ -66,7 +86,7 @@ internal fun ConfigEntityRealm.toDomain(): ChannelConfig =
             customEventsEnabled = custom_events_enabled ?: false,
             pushNotificationsEnabled = push_notifications_enabled ?: false,
             messageRetention = message_retention,
-            maxMessageLength = max_message_length ?: 100,
+            maxMessageLength = max_message_length ?: DEFAULT_MAX_MESSAGE,
             automod = automod,
             automodBehavior = automod_behavior,
             blocklistBehavior = blocklist_behavior,
@@ -123,4 +143,3 @@ internal fun Command.toRealm(channelType: String): CommandEntityRealm {
         id = hashCode()
     }
 }
-
