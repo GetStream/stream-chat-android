@@ -243,15 +243,15 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             }
         }
 
-        val shouldScrollToBottomOnNewMessage = shouldScrollToBottomOnNewMessage(
-            focusedItemIndex,
-            firstVisibleItemIndex.value,
-            newMessageState,
-            areNewestMessagesLoaded,
-            lazyListState.isScrollInProgress
+        val shouldScrollToBottom = shouldScrollToBottom(
+            focusedItemIndex = focusedItemIndex,
+            firstVisibleItemIndex = firstVisibleItemIndex.value,
+            newMessageState = newMessageState,
+            areNewestMessagesLoaded = areNewestMessagesLoaded,
+            isScrollInProgress = lazyListState.isScrollInProgress
         )
 
-        if (shouldScrollToBottomOnNewMessage) {
+        if (shouldScrollToBottom) {
             coroutineScope.launch {
                 if (newMessageState == MyOwn && firstVisibleItemIndex.value > 5) {
                     lazyListState.scrollToItem(5)
@@ -293,12 +293,12 @@ internal fun BoxScope.DefaultMessagesHelperContent(
  *
  * @return Whether the list should scroll to the bottom when a new message arrives or not.
  */
-private fun shouldScrollToBottomOnNewMessage(
+private fun shouldScrollToBottom(
     focusedItemIndex: Int,
     firstVisibleItemIndex: Int,
     newMessageState: NewMessageState?,
     areNewestMessagesLoaded: Boolean,
-    isScrollInProgress: Boolean,
+    isScrollInProgress: Boolean
 ): Boolean {
     newMessageState ?: return false
 

@@ -317,6 +317,8 @@ public class MessageListViewModel(
                         showEmptyState()
                     }
                     .collect { newState ->
+                        if (messagesState.messageItems.isEmpty() && !newState.newestMessageLoaded) return@collect
+
                         val newLastMessage =
                             (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
 
@@ -326,10 +328,7 @@ public class MessageListViewModel(
 
                         messagesState = if (hasNewMessage) {
                             val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
-
-                            newState.copy(
-                                newMessageState = newMessageState,
-                            )
+                            newState.copy(newMessageState = newMessageState,)
                         } else {
                             newState
                         }

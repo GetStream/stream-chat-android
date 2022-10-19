@@ -247,6 +247,12 @@ public class MessageListViewModel(
     private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
 
     /**
+     * Tracks if the initial load of the list has finished or not. Helps with initial scroll state.
+     * Will be removed in the next pr for MessageListController.
+     */
+    private var initialLoadFinished: Boolean = false
+
+    /**
      * Evaluates whether date separators should be added to the message list.
      */
     private var dateSeparatorHandler: DateSeparatorHandler? =
@@ -409,6 +415,8 @@ public class MessageListViewModel(
         }
         messageListData?.let {
             stateMerger.addSource(it) { messageListItemWrapper ->
+                if (!messageListItemWrapper.areNewestMessagesLoaded && !initialLoadFinished) return@addSource
+                initialLoadFinished = true
                 stateMerger.value = State.Result(messageListItemWrapper)
             }
         }
