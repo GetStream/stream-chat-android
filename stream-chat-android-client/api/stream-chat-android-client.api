@@ -2619,16 +2619,6 @@ public final class io/getstream/chat/android/client/models/ChannelMute {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/models/ChannelType {
-	public static final field COMMERCE Ljava/lang/String;
-	public static final field GAMING Ljava/lang/String;
-	public static final field INSTANCE Lio/getstream/chat/android/client/models/ChannelType;
-	public static final field LIVESTREAM Ljava/lang/String;
-	public static final field MESSAGING Ljava/lang/String;
-	public static final field TEAM Ljava/lang/String;
-	public static final field UNKNOWN Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/client/models/ChannelUserRead : io/getstream/chat/android/client/models/UserEntity {
 	public fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ILjava/util/Date;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ILjava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
