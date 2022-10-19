@@ -46,16 +46,16 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * [Adding Custom Attachments (MessageComposerView)](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-composer/)
+ * [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/)
  */
 @OptIn(ExperimentalStreamChatApi::class)
-class AddingCustomAttachmentsSnippet2 : Fragment() {
+class AddingCustomAttachmentsSnippet : Fragment() {
 
     private lateinit var messageComposerView: MessageComposerView
     private lateinit var messageComposerViewModel: MessageComposerViewModel
 
     /**
-     * [Sending Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-composer/#sending-date-attachments)
+     * [Sending Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/#sending-date-attachments)
      */
     fun sendingDateAttachments(context: Context) {
         // Set custom leading content view
@@ -187,7 +187,7 @@ class AddingCustomAttachmentsSnippet2 : Fragment() {
     }
 
     /**
-     * [Rendering Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-composer/#rendering-date-attachments)
+     * [Rendering Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/#rendering-date-attachments)
      */
     fun renderingDateAttachments() {
         ChatUI.attachmentFactoryManager = AttachmentFactoryManager(listOf(DateAttachmentFactory()))
@@ -241,7 +241,7 @@ class AddingCustomAttachmentsSnippet2 : Fragment() {
     }
 
     /**
-     * [Rendering Quoted Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments-message-composer/#rendering-quoted-date-attachments)
+     * [Rendering Quoted Date Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/#rendering-quoted-date-attachments)
      */
     fun renderingQuotedDateAttachments() {
         ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(listOf(
