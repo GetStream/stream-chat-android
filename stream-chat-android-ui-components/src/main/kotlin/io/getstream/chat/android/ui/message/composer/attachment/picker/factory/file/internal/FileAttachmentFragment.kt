@@ -34,7 +34,6 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
-import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentSource
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.AttachmentsPickerTabListener
 import kotlinx.coroutines.launch
@@ -119,7 +118,7 @@ internal class FileAttachmentFragment : Fragment() {
             selectedAttachments = selectedAttachments + attachmentMetaData
             fileAttachmentsAdapter.selectAttachment(attachmentMetaData)
         }
-        attachmentsPickerTabListener?.onSelectedAttachmentsChanged(selectedAttachments.toList(), AttachmentSource.FILE)
+        attachmentsPickerTabListener?.onSelectedAttachmentsChanged(selectedAttachments.toList())
     }
 
     private fun setupViews() {
@@ -169,10 +168,7 @@ internal class FileAttachmentFragment : Fragment() {
                         ).show()
                     }
 
-                    attachmentsPickerTabListener?.onSelectedAttachmentsChanged(
-                        filteredAttachments,
-                        AttachmentSource.FILE
-                    )
+                    attachmentsPickerTabListener?.onSelectedAttachmentsChanged(filteredAttachments)
                     attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
                 }
             }

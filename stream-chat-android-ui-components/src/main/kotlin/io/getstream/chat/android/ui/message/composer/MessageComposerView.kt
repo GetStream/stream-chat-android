@@ -37,7 +37,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentSelectionListener
-import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentSource
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogFragment
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCenterContent
@@ -136,7 +135,7 @@ public class MessageComposerView : ConstraintLayout {
             AttachmentsPickerDialogFragment.newInstance(attachmentsPickerDialogStyle)
                 .apply {
                     val listener =
-                        AttachmentSelectionListener { attachments: Set<AttachmentMetaData>, _: AttachmentSource ->
+                        AttachmentSelectionListener { attachments: Set<AttachmentMetaData> ->
                             attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
                         }
                     setAttachmentSelectionListener(listener)

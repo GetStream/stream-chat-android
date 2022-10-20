@@ -33,7 +33,6 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
-import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentSource
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.AttachmentsPickerTabListener
 import kotlinx.coroutines.launch
@@ -161,7 +160,7 @@ internal class MediaAttachmentFragment : Fragment() {
             selectedAttachments = selectedAttachments + attachmentMetaData
             mediaAttachmentsAdapter.selectAttachment(attachmentMetaData)
         }
-        attachmentsPickerTabListener?.onSelectedAttachmentsChanged(selectedAttachments.toList(), AttachmentSource.MEDIA)
+        attachmentsPickerTabListener?.onSelectedAttachmentsChanged(selectedAttachments.toList())
     }
 
     private fun populateAttachments() {

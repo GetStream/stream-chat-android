@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.message.composer.attachment.picker.factory
 
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentSource
 
 /**
  * Listener invoked when attachments are selected in the attachment tab.
@@ -28,9 +27,8 @@ public interface AttachmentsPickerTabListener {
      * Called when the list of currently selected attachments changes.
      *
      * @param attachments The list of currently selected attachments.
-     * @param attachmentSource The source that the attachments were obtained from, see [AttachmentSource].
      */
-    public fun onSelectedAttachmentsChanged(attachments: List<AttachmentMetaData>, attachmentSource: AttachmentSource)
+    public fun onSelectedAttachmentsChanged(attachments: List<AttachmentMetaData>)
 
     /**
      * Called when selected attachments need to be submitted to the message input.

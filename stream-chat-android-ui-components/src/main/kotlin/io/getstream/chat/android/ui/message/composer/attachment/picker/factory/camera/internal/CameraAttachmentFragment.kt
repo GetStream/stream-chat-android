@@ -29,7 +29,6 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentCameraBinding
-import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentSource
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.AttachmentsPickerTabListener
 import java.io.File
@@ -110,7 +109,7 @@ internal class CameraAttachmentFragment : Fragment() {
                     listOf(AttachmentMetaData(requireContext(), file))
                 }
 
-                attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result, AttachmentSource.CAMERA)
+                attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
                 attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
             }
     }

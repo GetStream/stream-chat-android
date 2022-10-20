@@ -61,11 +61,6 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment(), Atta
      */
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
 
-    /**
-     * The source of the selected attachments.
-     */
-    private var attachmentSource: AttachmentSource = AttachmentSource.MEDIA
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -102,7 +97,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment(), Atta
         binding.attachButton.setImageDrawable(style.submitAttachmentsButtonIconDrawable)
         binding.attachButton.isEnabled = false
         binding.attachButton.setOnClickListener {
-            attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, attachmentSource)
+            attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
             dismiss()
         }
     }
@@ -138,13 +133,12 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment(), Atta
         val attachmentsPickerTabListener: AttachmentsPickerTabListener = object : AttachmentsPickerTabListener {
             override fun onSelectedAttachmentsChanged(
                 attachments: List<AttachmentMetaData>,
-                attachmentSource: AttachmentSource,
             ) {
-                onAttachmentsSelected(attachments.toSet(), attachmentSource)
+                onAttachmentsSelected(attachments.toSet())
             }
 
             override fun onSelectedAttachmentsSubmitted() {
-                attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments, attachmentSource)
+                attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
                 dismiss()
             }
         }
@@ -193,9 +187,8 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment(), Atta
         this.attachmentSelectionListener = attachmentSelectionListener
     }
 
-    override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>, attachmentSource: AttachmentSource) {
+    override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>) {
         this.selectedAttachments = attachments
-        this.attachmentSource = attachmentSource
         selectedAttachments.isNotEmpty().let {
             setAttachButtonEnabled(it)
             setUnselectedButtonsEnabled(!it)
