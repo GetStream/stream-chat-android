@@ -2846,6 +2846,7 @@ public final class io/getstream/chat/android/client/models/FileUploadConfig {
 
 public final class io/getstream/chat/android/client/models/Filters {
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/Filters;
+	public static final fun and (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun and ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun autocomplete (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun contains (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
@@ -2864,8 +2865,10 @@ public final class io/getstream/chat/android/client/models/Filters {
 	public static final fun nin (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nin (Ljava/lang/String;[Ljava/lang/Number;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nin (Ljava/lang/String;[Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
+	public static final fun nor (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nor ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun notExists (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
+	public static final fun or (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun or ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
 }
 
@@ -3533,10 +3536,6 @@ public final class io/getstream/chat/android/client/notifications/permissions/No
 	public static final field REQUESTED Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
 	public static fun values ()[Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-}
-
-public final class io/getstream/chat/android/client/parser/FilterObjectToMapKt {
-	public static final fun toMap (Lio/getstream/chat/android/client/api/models/FilterObject;)Ljava/util/Map;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/AttachmentRepository {
