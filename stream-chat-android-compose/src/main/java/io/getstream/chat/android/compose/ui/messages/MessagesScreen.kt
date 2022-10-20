@@ -25,7 +25,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -365,7 +364,7 @@ private fun BoxScope.MessagesScreenMenus(
  * @param selectedMessageState The state of the currently selected message.
  * @param selectedMessage The currently selected message.
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.MessagesScreenReactionsPicker(
     listViewModel: MessageListViewModel,
