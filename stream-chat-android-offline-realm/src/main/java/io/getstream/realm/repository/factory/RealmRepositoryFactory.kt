@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.persistance.repository.ReactionRepositor
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
-import io.getstream.chat.android.client.persistance.repository.noop.NoOpAttachmentRepository
+import io.getstream.realm.repository.RealmAttachmentRepository
 import io.getstream.realm.repository.RealmChannelConfigRepository
 import io.getstream.realm.repository.RealmChannelRepository
 import io.getstream.realm.repository.RealmMessageRepository
@@ -47,7 +47,7 @@ public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactor
 
     override fun createSyncStateRepository(): SyncStateRepository = RealmSyncStateRepository(realm)
 
-    override fun createAttachmentRepository(): AttachmentRepository = NoOpAttachmentRepository
+    override fun createAttachmentRepository(): AttachmentRepository = RealmAttachmentRepository(realm)
 
     override fun createReactionRepository(
         getUser: suspend (userId: String) -> User,
