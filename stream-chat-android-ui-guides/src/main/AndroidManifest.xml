@@ -47,34 +47,23 @@
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.compose.customattachments.ChannelsActivity"
+            android:name=".catalog.compose.customattachments.ChannelsActivity"
             android:exported="false"
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.compose.customattachments.MessagesActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            />
-
-        <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.ChannelsActivity"
-            android:exported="false"
-            />
-
-        <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.MessagesActivity"
+            android:name=".catalog.compose.customattachments.MessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.ChannelsActivity"
+            android:name=".catalog.uicomponents.customattachments.ChannelsActivity"
             android:exported="false"
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.MessagesActivity"
+            android:name=".catalog.uicomponents.customattachments.MessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />

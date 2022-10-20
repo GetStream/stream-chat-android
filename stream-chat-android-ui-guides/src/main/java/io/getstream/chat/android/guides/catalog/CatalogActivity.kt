@@ -88,8 +88,8 @@ class CatalogActivity : AppCompatActivity() {
             GuideSection(stringResource(R.string.catalog_section_compose))
 
             GuideItem(
-                titleText = stringResource(R.string.custom_attachments_guide_compose_title),
-                descriptionText = stringResource(R.string.custom_attachments_guide_compose_description)
+                titleText = stringResource(R.string.compose_custom_attachments_guide_title),
+                descriptionText = stringResource(R.string.compose_custom_attachments_guide_description)
             ) {
                 startActivity(ComposeCustomAttachmentsActivity.createIntent(this@CatalogActivity))
             }
@@ -97,8 +97,8 @@ class CatalogActivity : AppCompatActivity() {
             GuideSection(stringResource(R.string.catalog_section_uicomponents))
 
             GuideItem(
-                titleText = stringResource(R.string.custom_attachments_guide_uicomponents_title),
-                descriptionText = stringResource(R.string.custom_attachments_guide_uicomponents_description)
+                titleText = stringResource(R.string.uicomponents_custom_attachments_guide_title),
+                descriptionText = stringResource(R.string.uicomponents_custom_attachments_guide_description)
             ) {
                 startActivity(UiComponentsCustomAttachmentsActivity.createIntent(this@CatalogActivity))
             }
