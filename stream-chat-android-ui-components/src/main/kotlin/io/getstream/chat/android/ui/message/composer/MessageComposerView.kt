@@ -36,7 +36,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
-import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentSelectionListener
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogFragment
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCenterContent
@@ -132,15 +131,11 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var attachmentsButtonClickListener: () -> Unit = {
         context.getFragmentManager()?.let {
-            AttachmentsPickerDialogFragment.newInstance(attachmentsPickerDialogStyle)
-                .apply {
-                    val listener =
-                        AttachmentSelectionListener { attachments: Set<AttachmentMetaData> ->
-                            attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
-                        }
-                    setAttachmentSelectionListener(listener)
-                    show(it, AttachmentsPickerDialogFragment.TAG)
+            AttachmentsPickerDialogFragment.newInstance(attachmentsPickerDialogStyle).apply {
+                setAttachmentSelectionListener { attachments: Set<AttachmentMetaData> ->
+                    attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
                 }
+            }.show(it, AttachmentsPickerDialogFragment.TAG)
         }
     }
 
@@ -220,7 +215,7 @@ public class MessageComposerView : ConstraintLayout {
 
         validationErrorRenderer = ValidationErrorRenderer(context, this)
         messageComposerContext = MessageComposerContext(MessageComposerViewStyle(context, attrs))
-        attachmentsPickerDialogStyle = AttachmentsPickerDialogStyle(context.createStreamThemeWrapper(), attrs)
+        attachmentsPickerDialogStyle = AttachmentsPickerDialogStyle(context, attrs)
 
         setBackgroundColor(messageComposerContext.style.backgroundColor)
         binding.separator.background = messageComposerContext.style.dividerBackgroundDrawable

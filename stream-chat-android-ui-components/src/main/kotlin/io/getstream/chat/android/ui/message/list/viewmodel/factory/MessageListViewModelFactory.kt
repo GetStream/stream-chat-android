@@ -30,8 +30,8 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
  * queries executed on screen initialization.
  *
- * @see MessageListViewModel
  * @see MessageListHeaderViewModel
+ * @see MessageListViewModel
  * @see MessageComposerViewModel
  */
 public class MessageListViewModelFactory @JvmOverloads constructor(
