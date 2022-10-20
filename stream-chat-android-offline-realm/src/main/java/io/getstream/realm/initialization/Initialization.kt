@@ -16,6 +16,7 @@
 
 package io.getstream.realm.initialization
 
+import io.getstream.realm.entity.AttachmentEntityRealm
 import io.getstream.realm.entity.ChannelEntityRealm
 import io.getstream.realm.entity.ChannelUserReadEntityRealm
 import io.getstream.realm.entity.CommandEntityRealm
@@ -29,6 +30,7 @@ import io.getstream.realm.entity.ReactionEntityRealm
 import io.getstream.realm.entity.ReactionScoreEntityRealm
 import io.getstream.realm.entity.SortSpecificationEntityRealm
 import io.getstream.realm.entity.SyncStateEntityRealm
+import io.getstream.realm.entity.UploadStateEntityRealm
 import io.getstream.realm.entity.UserEntityRealm
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -60,4 +62,6 @@ private fun realmSchema(): Set<KClass<out RealmObject>> =
         QuerySorterInfoEntityRealm::class,
         SortSpecificationEntityRealm::class,
         SyncStateEntityRealm::class,
+        AttachmentEntityRealm::class,
+        UploadStateEntityRealm::class,
     )

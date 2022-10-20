@@ -16,6 +16,7 @@
 
 package io.getstream.realm.entity
 
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.models.User
@@ -121,6 +122,8 @@ internal class MessageEntityRealm : RealmObject {
 
     /** participants of thread replies */
     var thread_participants_ids: RealmList<UserEntityRealm> = realmListOf()
+
+    var attachments: RealmList<AttachmentEntityRealm> = realmListOf()
 }
 
 internal fun MessageEntityRealm.toDomain(): Message {
