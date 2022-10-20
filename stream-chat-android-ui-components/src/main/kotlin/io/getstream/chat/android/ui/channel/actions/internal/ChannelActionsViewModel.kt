@@ -58,7 +58,7 @@ internal class ChannelActionsViewModel(
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGE_LIMIT,
-            coroutineScope = viewModelScope
+            coroutineScope = viewModelScope,
         ).filterNotNull()
 
     /**

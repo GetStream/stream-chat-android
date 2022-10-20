@@ -40,7 +40,7 @@ class ChatViewModel(
      * Holds information about the current channel and is actively updated.
      */
     private val channelState: StateFlow<ChannelState?> =
-        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
+        chatClient.watchChannelAsState(cid, 0, viewModelScope)
 
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent
@@ -71,13 +71,5 @@ class ChatViewModel(
 
         data class NavigateToChatInfo(override val cid: String) : NavigationEvent()
         data class NavigateToGroupChatInfo(override val cid: String) : NavigationEvent()
-    }
-
-    private companion object {
-
-        /**
-         * The default limit for messages count in requests.
-         */
-        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }

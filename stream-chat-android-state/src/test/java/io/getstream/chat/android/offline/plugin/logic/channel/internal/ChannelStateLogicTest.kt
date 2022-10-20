@@ -16,6 +16,10 @@
 
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
+import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
@@ -27,6 +31,7 @@ import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -36,6 +41,7 @@ import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomDateAfter
 import io.getstream.chat.android.test.randomDateBefore
 import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
@@ -67,7 +73,7 @@ internal class ChannelStateLogicTest {
             mutableState,
             globalMutableState = globalMutableState,
             clientState = clientState,
-            searchLogic = mock(),
+            searchLogic = SearchLogic(mutableState),
             attachmentUrlValidator = attachmentUrlValidator,
             coroutineScope = testCoroutines.scope
         )
@@ -88,6 +94,8 @@ internal class ChannelStateLogicTest {
     private val _membersCount = MutableStateFlow(0)
     private val _channelConfig = MutableStateFlow(Config())
     private val channelId = "channelId"
+    private val _endOfNewerMessages = MutableStateFlow(true)
+    private val _cachedMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
 
     @Suppress("UNCHECKED_CAST")
     private val mutableState: ChannelMutableState = mock { mock ->
@@ -101,6 +109,8 @@ internal class ChannelStateLogicTest {
         on(mock.membersCount) doReturn _membersCount
         on(mock.channelConfig) doReturn _channelConfig
         on(mock.messageList) doReturn MutableStateFlow(emptyList())
+        on(mock.endOfNewerMessages) doReturn _endOfNewerMessages
+        on(mock.cachedLatestMessages) doReturn _cachedMessages
     }
     private val globalMutableState: GlobalMutableState = mock {
         on(it.channelMutes) doReturn MutableStateFlow(emptyList())
@@ -136,6 +146,7 @@ internal class ChannelStateLogicTest {
         val createdLocallyAt = randomDateBefore(createdAt.time)
         val updatedAt = randomDateAfter(createdAt.time)
         val oldUpdatedAt = randomDateBefore(updatedAt.time)
+        whenever(mutableState.visibleMessages) doReturn MutableStateFlow(_messages)
 
         val recentMessage = randomMessage(
             user = User(id = "otherUserId"),
@@ -210,6 +221,51 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `Given TypingStartEvent contains the currently logged in userId Should not update typing events`() {
+        val typingStartEvent = randomTypingStartEvent(user = user)
+
+        channelStateLogic.setTyping(typingStartEvent.user.id, typingStartEvent)
+
+        verify(mutableState, times(0)).updateTypingEvents(any(), any())
+        verify(globalMutableState, times(0)).tryEmitTypingEvent(any(), any())
+    }
+
+    @Test
+    fun `given loading message by id, message list should enter search state`() {
+        val message = randomMessage()
+        val channel = randomChannel(messages = listOf(message))
+        val request = QueryChannelRequest().withMessages(direction = Pagination.AROUND_ID, messageId = message.id, 30)
+
+        channelStateLogic.propagateChannelQuery(channel, request)
+
+        verify(mutableState).setInsideSearch(true)
+    }
+
+    @Test
+    fun `given message list refreshed, message list should exit search state`() {
+        val message = randomMessage()
+        val channel = randomChannel(messages = listOf(message))
+        val request = QueryChannelRequest().apply {
+            shouldRefresh = true
+        }.withMessages(30)
+
+        channelStateLogic.propagateChannelQuery(channel, request)
+
+        verify(mutableState).setInsideSearch(false)
+    }
+
+    @Test
+    fun `given messageLimit is 0, messages should not be upserted`() {
+        val randomMessage = randomMessage()
+        val channel: Channel = randomChannel(messages = listOf(randomMessage))
+        val request = QueryChannelRequest().withMessages(0)
+        channelStateLogic.propagateChannelQuery(channel, request)
+
+        verify(mutableState, times(0)).updateCachedLatestMessages(any())
+        verify(mutableState, times(0)).upsertMessages(any())
+    }
+
+    @Test
     fun `given inside search should not upsert messages when messages are not coming from scroll update`() {
         _insideSearch.value = true
 
@@ -218,19 +274,74 @@ internal class ChannelStateLogicTest {
         channelStateLogic.updateDataFromChannel(
             randomChannel(messages = listOf(message)),
             shouldRefreshMessages = false,
-            scrollUpdate = false
+            scrollUpdate = false,
+            isNotificationUpdate = false,
+            messageLimit = 30
         )
 
-        _messages `should be equal to` emptyMap()
+        verify(mutableState, times(0)).upsertMessages(any())
     }
 
     @Test
-    fun `Given TypingStartEvent contains the currently logged in userId Should not update typing events`() {
-        val typingStartEvent = randomTypingStartEvent(user = user)
+    fun `given inside search, when new page arrives, should be upserted`() {
+        _insideSearch.value = true
 
-        channelStateLogic.setTyping(typingStartEvent.user.id, typingStartEvent)
+        val randomMessage = randomMessage()
+        val channel: Channel = randomChannel(messages = listOf(randomMessage))
+        val filteringRequest = QueryChannelPaginationRequest(1)
+            .withMessages(Pagination.GREATER_THAN, randomString(), 1)
 
-        verify(mutableState, times(0)).updateTypingEvents(any(), any())
-        verify(globalMutableState, times(0)).tryEmitTypingEvent(any(), any())
+        channelStateLogic.propagateChannelQuery(channel, filteringRequest)
+        verify(mutableState).upsertMessages(any())
+    }
+
+    @Test
+    fun `given inside search, when notification message arrives, should not be upserted`() {
+        _insideSearch.value = true
+
+        val randomMessage = randomMessage()
+        val channel: Channel = randomChannel(messages = listOf(randomMessage))
+        val request = QueryChannelRequest().apply { isNotificationUpdate = true }.withMessages(1)
+        channelStateLogic.propagateChannelQuery(channel, request)
+
+        verify(mutableState, times(0)).upsertMessages(any())
+    }
+
+    @Test
+    fun `given inside search, new message should be added to cached messages`() {
+        _insideSearch.value = true
+
+        val randomMessage = randomMessage()
+        val channel: Channel = randomChannel(messages = listOf(randomMessage))
+        val request = QueryChannelRequest().withMessages(1)
+        channelStateLogic.propagateChannelQuery(channel, request)
+
+        verify(mutableState).updateCachedLatestMessages(any())
+    }
+
+    @Test
+    fun `given refresh messages is true, new messages should replace the old ones`() {
+        val messages = listOf(randomMessage(), randomMessage())
+        val channel: Channel = randomChannel(messages = messages)
+        val request = QueryChannelRequest().apply { shouldRefresh = true }.withMessages(1)
+        channelStateLogic.propagateChannelQuery(channel, request)
+
+        verify(mutableState).setMessages(any())
+    }
+
+    @Test
+    fun `given inside search, if message update comes, should update the message`() {
+        _insideSearch.value = true
+        val message = randomMessage()
+        whenever(mutableState.visibleMessages) doReturn MutableStateFlow(mapOf(message.id to message))
+        val updatedMessage = message.copy(
+            text = "new text",
+            updatedAt = randomDateAfter((message.updatedAt ?: message.updatedLocallyAt ?: NEVER).time),
+            updatedLocallyAt = randomDateAfter((message.updatedLocallyAt ?: message.updatedAt ?: NEVER).time)
+        )
+
+        channelStateLogic.upsertMessage(updatedMessage)
+
+        verify(mutableState).upsertMessages(listOf(updatedMessage))
     }
 }

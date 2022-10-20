@@ -191,7 +191,11 @@ internal class ChannelStateLogic(
      * @param message The message to be added or updated.
      */
     fun upsertMessage(message: Message) {
-        upsertMessages(listOf(message), false)
+        if (mutableState.visibleMessages.value.containsKey(message.id) || !mutableState.insideSearch.value) {
+            upsertMessages(listOf(message))
+        } else {
+            mutableState.updateCachedLatestMessages(parseCachedMessages(listOf(message)))
+        }
     }
 
     /**
@@ -339,11 +343,21 @@ internal class ChannelStateLogic(
      * Updates data from channel.
      *
      * @param channel [Channel]
+     * @param messageLimit The request message limit. If limit is 0 will skip upserting messages.
      * @param shouldRefreshMessages If true, removed the current messages and only new messages are kept.
      * @param scrollUpdate Notifies that this is a scroll update. Only scroll updates will be accepted
      * when the user is searching in the channel.
+     * @param isNotificationUpdate Whether the message list update is due to a new notification.
+     * @param isChannelsStateUpdate Whether the state update comes from querying the channels list.
      */
-    fun updateDataFromChannel(channel: Channel, shouldRefreshMessages: Boolean, scrollUpdate: Boolean) {
+    fun updateDataFromChannel(
+        channel: Channel,
+        messageLimit: Int,
+        shouldRefreshMessages: Boolean = false,
+        scrollUpdate: Boolean = false,
+        isNotificationUpdate: Boolean = false,
+        isChannelsStateUpdate: Boolean = false,
+    ) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
 
@@ -356,11 +370,58 @@ internal class ChannelStateLogic(
         upsertMembers(channel.members)
         upsertWatchers(channel.watchers, channel.watcherCount)
 
-        if (!mutableState.insideSearch.value || scrollUpdate) {
-            upsertMessages(channel.messages, shouldRefreshMessages)
+        if (messageLimit != 0) {
+            if (shouldUpsertMessages(
+                    isNotificationUpdate = isNotificationUpdate,
+                    isInsideSearch = mutableState.insideSearch.value,
+                    isScrollUpdate = scrollUpdate,
+                    shouldRefreshMessages = shouldRefreshMessages,
+                    isChannelsStateUpdate = isChannelsStateUpdate
+                )
+            ) {
+                upsertMessages(channel.messages, shouldRefreshMessages)
+            } else {
+                upsertCachedMessages(channel.messages)
+            }
         }
 
         mutableState.setChannelConfig(channel.config)
+
+        mutableState.setLoadingOlderMessages(false)
+        mutableState.setLoadingNewerMessages(false)
+    }
+
+    private fun upsertCachedMessages(messages: List<Message>) {
+        mutableState.updateCachedLatestMessages(parseCachedMessages(messages))
+    }
+
+    private fun parseCachedMessages(messages: List<Message>): Map<String, Message> {
+        val currentMessages = mutableState.cachedLatestMessages.value
+        return currentMessages + attachmentUrlValidator.updateValidAttachmentsUrl(messages, currentMessages)
+            .filter { newMessage -> isMessageNewerThanCurrent(currentMessages[newMessage.id], newMessage) }
+            .associateBy(Message::id)
+    }
+
+    /**
+     * @param isNotificationUpdate Whether the data is updating due to a new notification.
+     * @param isInsideSearch Whether we are inside search or not.
+     * @param isScrollUpdate Whether the update is due to a scroll update, meaning pagination.
+     * @param shouldRefreshMessages Whether the message list should get refreshed.
+     *
+     * @return Whether we need to upsert the messages or not.
+     */
+    private fun shouldUpsertMessages(
+        isNotificationUpdate: Boolean,
+        isInsideSearch: Boolean,
+        isScrollUpdate: Boolean,
+        shouldRefreshMessages: Boolean,
+        isChannelsStateUpdate: Boolean,
+    ): Boolean {
+        // upsert message if refresh is requested, on scroll updates and on notification updates when outside search
+        // not to create gaps in message history
+        return shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch) ||
+            // upsert the messages that come from the QueryChannelsStateLogic only if there are no messages in the list
+            (isChannelsStateUpdate && (mutableState.messages.value.isEmpty() || !isInsideSearch))
     }
 
     /**
@@ -390,23 +451,45 @@ internal class ChannelStateLogic(
      */
     fun propagateChannelQuery(channel: Channel, request: QueryChannelRequest) {
         val noMoreMessages = request.messagesLimit() > channel.messages.size
+        val isNotificationUpdate = request.isNotificationUpdate
 
-        searchLogic.handleMessageBounds(request, noMoreMessages)
-        mutableState.recoveryNeeded = false
+        if (!isNotificationUpdate && request.messagesLimit() != 0) {
+            searchLogic.handleMessageBounds(request, noMoreMessages)
+            mutableState.recoveryNeeded = false
 
-        if (noMoreMessages) {
-            if (request.isFilteringNewerMessages()) {
+            determinePaginationEnd(request, noMoreMessages)
+        }
+
+        updateDataFromChannel(
+            channel = channel,
+            shouldRefreshMessages = request.shouldRefresh,
+            scrollUpdate = request.isFilteringMessages(),
+            isNotificationUpdate = request.isNotificationUpdate,
+            messageLimit = request.messagesLimit()
+        )
+    }
+
+    private fun determinePaginationEnd(request: QueryChannelRequest, noMoreMessages: Boolean) {
+        when {
+            /* If we are not filtering the messages in any direction and not providing any message id then
+            * we are requesting the newest messages, only if not inside search so we don't override the
+            * search results */
+            !request.isFilteringMessages() -> {
+                mutableState.setEndOfOlderMessages(false)
+                mutableState.setEndOfNewerMessages(true)
+            }
+            /* If we are filtering around a specific message we are loading both newer and older messages
+            * and can't be sure if there are no older or newer messages left */
+            request.isFilteringAroundIdMessages() -> {
+                mutableState.setEndOfOlderMessages(false)
+                mutableState.setEndOfNewerMessages(false)
+            }
+            noMoreMessages -> if (request.isFilteringNewerMessages()) {
                 mutableState.setEndOfNewerMessages(true)
             } else {
                 mutableState.setEndOfOlderMessages(true)
             }
         }
-
-        updateDataFromChannel(
-            channel,
-            shouldRefreshMessages = request.isFilteringAroundIdMessages(),
-            scrollUpdate = true
-        )
     }
 
     /**

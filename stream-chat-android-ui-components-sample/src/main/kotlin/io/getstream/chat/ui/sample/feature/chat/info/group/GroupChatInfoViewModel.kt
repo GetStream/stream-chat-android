@@ -47,7 +47,7 @@ class GroupChatInfoViewModel(
      * Holds information about the current channel and is actively updated.
      */
     private val channelState: Flow<ChannelState> =
-        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope).filterNotNull()
+        chatClient.watchChannelAsState(cid, 0, viewModelScope).filterNotNull()
 
     private val channelClient: ChannelClient = chatClient.channel(cid)
     private val _state = MediatorLiveData<State>()
@@ -187,10 +187,5 @@ class GroupChatInfoViewModel(
             membersToShowCount = 0,
             emptySet(),
         )
-
-        /**
-         * The default limit for messages count in requests.
-         */
-        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }

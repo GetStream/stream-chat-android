@@ -18,6 +18,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `isFilteringMessages` check on `QueryChannelRequest` request. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ⚠️ Changed
 
@@ -29,8 +30,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `loadNewestMessages` method to `ChatClient` that loads newest messages in the channel and clears the rest. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ⚠️ Changed
+- Changed the logic how the end of pages is determined inside `ChannelLogic.onQueryChannelResult`. Added loadNewestMessages in `ChannelLogic`. Added check to prevent upserting new messages if newest page isn't loaded to avoid breaking pagination. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ❌ Removed
 
@@ -64,6 +67,8 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed scroll to bottom. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
+- Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
 
 ### ⬆️ Improved
 - Improved asking for `WRITE_EXTERNAL_STORAGE` permission. The permission won't be requested starting from Android Q unless legacy external storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
@@ -87,6 +92,7 @@
 - Added the ability to turn off video previews (thumbnails) via `ChatUI.videoThumbnailsEnabled`. Video previews are a paid feature and as such you can turn them off. They are on by default and the pricing can be found [here](https://getstream.io/chat/pricing/). [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - Added a new function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - Added a style class called `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
+- Added `OnScrollToBottomHandler` to `MessageListView`. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
@@ -99,6 +105,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed pagination when the newest messages aren't loaded and we are paginating newer messages pagination. Fixed scroll to bottom if the newest messages aren't loaded. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ⬆️ Improved
 - Improved the way the [ChannelsScreen](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
@@ -116,6 +123,8 @@
 - Added the ability to turn off video previews (thumbnails) via `ChatTheme.videoThumbnailsEnabled`. Video previews are a paid feature and as such you can turn them off. They are on by default and the pricing can be found [here](https://getstream.io/chat/pricing/). [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Added fallback factory for unsupported attachments. [#4270](https://github.com/GetStream/stream-chat-android/pull/4270)
 - Added a page about [Sample Apps](https://getstream.io/chat/docs/sdk/android/resources/sample-apps/) to the docs. [#4282](https://github.com/GetStream/stream-chat-android/pull/4282)
+- Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Added `MessageLazyListState` to replace the default `LazyListState`. `MessageLazyListState` is used to track the scroll position of the message list as well as the focused message offset. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ⚠️ Changed
 - Changed the way ChannelsScreen and MessagesScreen components are built. Instead of exposing a ton of parameters for customization, we now expose a ViewModelFactory that accepts them. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)

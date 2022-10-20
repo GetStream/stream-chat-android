@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -103,13 +104,10 @@ internal class ChannelLogic(
         get() = mutableState.cid
 
     suspend fun updateStateFromDatabase(request: QueryChannelRequest) {
+        if (request.isNotificationUpdate) return
         channelStateLogic.refreshMuteState()
 
-        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
-         * so we force the backend usage */
-        if (!request.isFilteringNewerMessages()) {
-            runChannelQueryOffline(request)
-        }
+        runChannelQueryOffline(request)
     }
 
     /**
@@ -129,13 +127,19 @@ internal class ChannelLogic(
      * @param messagesLimit The limit of messages inside the channel that should be requested.
      * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events. Used by the SDK to indicate if the user is online or not.
      */
-    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean) {
+    internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean): Result<Channel> {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (mutableState.loading.value) {
             logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
-            return
+            return Result.error(
+                ChatError("Another request to watch this channel is in progress. Ignoring this request.")
+            )
         }
-        runChannelQuery(QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence))
+        return runChannelQuery(
+            QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence).apply {
+                shouldRefresh = true
+            }
+        )
     }
 
     /**
@@ -147,6 +151,7 @@ internal class ChannelLogic(
      * @return [Result] of [Channel] with fetched messages.
      */
     internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+        mutableState.setLoadingNewerMessages(true)
         return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
@@ -159,6 +164,7 @@ internal class ChannelLogic(
      * @return [Result] of [Channel] with fetched messages.
      */
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
+        mutableState.setLoadingOlderMessages(true)
         return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
     }
 
@@ -169,9 +175,10 @@ internal class ChannelLogic(
     private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
         val offlineChannel = runChannelQueryOffline(request)
 
-        val onlineResult = ChatClient.instance()
-            .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
-            .await()
+        val onlineResult =
+            ChatClient.instance()
+                .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
+                .await()
 
         return when {
             onlineResult.isSuccess -> onlineResult
@@ -181,20 +188,42 @@ internal class ChannelLogic(
     }
 
     private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
+        /* It is not possible to guarantee that the next page of newer messages or the page surrounding a certain
+         * message is the same as the one on backend, so we force the backend usage */
+        if (request.isFilteringNewerMessages() || request.isFilteringAroundIdMessages()) return null
+
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
             logger.i { "Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages" }
             if (request.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
-                updateDataFromLocalChannel(channel)
+                updateDataFromLocalChannel(
+                    localChannel = channel,
+                    isNotificationUpdate = request.isNotificationUpdate,
+                    messageLimit = request.messagesLimit(),
+                    scrollUpdate = request.isFilteringMessages() && !request.isFilteringAroundIdMessages(),
+                    shouldRefreshMessages = request.shouldRefresh
+                )
             }
         }
     }
 
-    private fun updateDataFromLocalChannel(localChannel: Channel) {
+    private fun updateDataFromLocalChannel(
+        localChannel: Channel,
+        isNotificationUpdate: Boolean,
+        messageLimit: Int,
+        scrollUpdate: Boolean,
+        shouldRefreshMessages: Boolean,
+    ) {
         localChannel.hidden?.let(channelStateLogic::toggleHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateDataFromChannel(localChannel, scrollUpdate = true)
+        updateDataFromChannel(
+            localChannel,
+            scrollUpdate = scrollUpdate,
+            isNotificationUpdate = isNotificationUpdate,
+            messageLimit = messageLimit,
+            shouldRefreshMessages = shouldRefreshMessages
+        )
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
@@ -214,17 +243,25 @@ internal class ChannelLogic(
 
     internal fun updateDataFromChannel(
         channel: Channel,
+        messageLimit: Int,
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
+        isNotificationUpdate: Boolean = false,
     ) {
-        channelStateLogic.updateDataFromChannel(channel, shouldRefreshMessages, scrollUpdate)
+        channelStateLogic.updateDataFromChannel(
+            channel,
+            messageLimit,
+            shouldRefreshMessages,
+            scrollUpdate,
+            isNotificationUpdate,
+        )
     }
 
     internal fun deleteMessage(message: Message) {
         channelStateLogic.deleteMessage(message)
     }
 
-    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessages(listOf(message))
+    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessage(message)
 
     internal fun upsertMessages(messages: List<Message>) {
         channelStateLogic.upsertMessages(messages)
@@ -327,7 +364,7 @@ internal class ChannelLogic(
             message.ownReactions = it.ownReactions
         }
 
-        channelStateLogic.upsertMessages(listOf(message))
+        channelStateLogic.upsertMessage(message)
     }
 
     /**
@@ -402,9 +439,7 @@ internal class ChannelLogic(
         StreamLog.d("Channel-Logic") { "[handleEvent] cid: $cid, event: $event" }
         when (event) {
             is NewMessageEvent -> {
-                if (!mutableState.insideSearch.value) {
-                    upsertEventMessage(event.message)
-                }
+                upsertEventMessage(event.message)
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 channelStateLogic.toggleHidden(false)
             }
