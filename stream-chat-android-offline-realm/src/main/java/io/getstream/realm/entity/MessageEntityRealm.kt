@@ -16,7 +16,6 @@
 
 package io.getstream.realm.entity
 
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.models.User

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.realm.entity
 
 import io.getstream.chat.android.client.models.Attachment
@@ -8,6 +24,7 @@ import java.io.File
 private const val DEFAULT_ORIGINAL_HEIGHT = 200
 private const val DEFAULT_ORIGINAL_WIDTH = 200
 
+@Suppress("VariableNaming")
 internal class AttachmentEntityRealm : RealmObject {
     @PrimaryKey
     var id: String = ""
@@ -52,8 +69,8 @@ internal fun AttachmentEntityRealm.toDomain(): Attachment =
         url = url,
         name = name,
         fallback = fallback,
-        originalHeight =original_height,
-        originalWidth =original_width,
+        originalHeight = original_height,
+        originalWidth = original_width,
         upload = upload_file_path?.let(::File),
         uploadState = upload_state?.toDomain(upload_file_path?.let(::File)),
     )
@@ -62,6 +79,7 @@ internal fun Attachment.toRealm(messageId: String, index: Int): AttachmentEntity
     val thisAttachment = this
 
     return AttachmentEntityRealm().apply {
+        id = generateId(messageId, index)
         message_id = messageId
         author_name = thisAttachment.authorName
         title_link = thisAttachment.titleLink
@@ -84,4 +102,8 @@ internal fun Attachment.toRealm(messageId: String, index: Int): AttachmentEntity
         original_width = thisAttachment.originalWidth ?: DEFAULT_ORIGINAL_WIDTH
         upload_state = thisAttachment.uploadState?.toRealm()
     }
+}
+
+private fun generateId(messageId: String, index: Int): String {
+    return messageId + "_$index"
 }
