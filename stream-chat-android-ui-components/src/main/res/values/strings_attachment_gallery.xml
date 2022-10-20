@@ -20,8 +20,12 @@
     <string name="stream_ui_attachment_gallery_reply">Reply</string>
     <string name="stream_ui_attachment_gallery_delete">Delete</string>
     <string name="stream_ui_attachment_gallery_show_in_chat">Show in chat</string>
-    <string name="stream_ui_attachment_gallery_save_image">Save Image</string>
-    <string name="stream_ui_attachment_gallery_share">Share Image</string>
+    <string name="stream_ui_attachment_gallery_save_media">Save Media</string>
+    <string name="stream_ui_attachment_gallery_share">Share Media</string>
+    <string name="stream_ui_attachment_gallery_share_error">Could not share attachment</string>
+    <string name="stream_ui_attachment_unsupported_attachment">Unsupported attachment</string>
+    <string name="stream_ui_attachment_gallery_preview_preparing">Preparing…</string>
+    <string name="stream_ui_attachment_gallery_video_display_error">Error. Video can\'t be displayed</string>
 
     <!-- Gallery Overview Dialog -->
     <string name="stream_ui_attachment_gallery_overview_title">Photos</string>

@@ -25,5 +25,7 @@
         <attr name="streamUiAttachmentGalleryBottomBarLeftIconStyle" format="reference" />
         <attr name="streamUiAttachmentGalleryBottomBarRightIconStyle" format="reference" />
         <attr name="streamUiAttachmentGalleryOptionsStyle" format="reference"/>
+        <attr name="streamUiAttachmentGalleryVideoAttachmentsStyle" format="reference"/>
+        <attr name="streamUiMediaAttachmentGridViewStyle" format="reference"/>
     </declare-styleable>
 </resources>
