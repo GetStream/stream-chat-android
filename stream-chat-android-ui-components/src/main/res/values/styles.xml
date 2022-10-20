@@ -254,6 +254,8 @@
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
+        <item name="streamUiMediaAttachmentGridViewStyle">@style/StreamUi.MediaAttachmentGridView</item>
+        <item name="streamUiAttachmentGalleryVideoAttachmentsStyle">@style/StreamUi.AttachmentGallery.VideoAttachments</item>
     </style>
 
     <style name="StreamUi">
@@ -837,11 +839,37 @@
         <item name="streamUiReplyIcon">@drawable/stream_ui_ic_arrow_curve_left_grey</item>
         <item name="streamUiShowInChatEnabled">true</item>
         <item name="streamUiShowInChatIcon">@drawable/stream_ui_ic_show_in_chat</item>
-        <item name="streamUiSaveImageEnabled">true</item>
-        <item name="streamUiSaveImageIcon">@drawable/stream_ui_ic_download</item>
+        <item name="streamUiSaveMediaEnabled">true</item>
+        <item name="streamUiSaveMediaIcon">@drawable/stream_ui_ic_download</item>
         <item name="streamUiDeleteEnabled">true</item>
         <item name="streamUiDeleteIcon">@drawable/stream_ui_ic_delete</item>
         <item name="streamUiDeleteTextTint">@color/stream_ui_accent_red</item>
+    </style>
+
+    <style name="StreamUi.AttachmentGallery.VideoAttachments">
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon">@drawable/stream_ui_ic_play</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconElevation">3dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop">2dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom">2dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart">3dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd">2dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius">24dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayIconWidth">45dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaPlayIconHeight">45dp</item>
+        <item name="streamUiAttachmentGalleryViewMediaImagePlaceholder">@drawable/stream_ui_picture_placeholder</item>
+    </style>
+
+    <style name="StreamUi.MediaAttachmentGridView">
+        <item name="streamUiMediaAttachmentGridViewPlayVideoButtonIcon">@drawable/stream_ui_ic_play</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconElevation">3dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingTop">2dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingBottom">2dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingStart">3dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingEnd">2dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconCornerRadius">24dp</item>
+        <item name="streamUiMediaAttachmentGridViewPlayVideoIconBackgroundColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiMediaAttachmentGridViewImagePlaceholder">@drawable/stream_ui_picture_placeholder</item>
     </style>
 
     <style name="StreamUi.AttachmentActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
