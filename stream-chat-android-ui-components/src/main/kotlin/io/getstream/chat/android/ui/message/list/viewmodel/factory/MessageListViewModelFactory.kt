@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.message.list.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
@@ -32,7 +31,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  *
  * @see MessageListViewModel
  * @see MessageListHeaderViewModel
- * @see MessageInputViewModel
+ * @see MessageComposerViewModel
  */
 public class MessageListViewModelFactory @JvmOverloads constructor(
     private val cid: String,
@@ -41,7 +40,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid) },
-        MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
         MessageListViewModel::class.java to { MessageListViewModel(cid, messageId) },
         MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid)) },
     )

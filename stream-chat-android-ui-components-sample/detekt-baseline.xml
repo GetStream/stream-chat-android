@@ -13,7 +13,7 @@
     <ID>LongMethod:PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithFileAttachmentsMessagesComponentBrowserFragment$@OptIn(InternalStreamChatApi::class) override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
     <ID>LongMethod:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
     <ID>LongMethod:RepliedMessagesComponentBrowserFragment.kt$RepliedMessagesComponentBrowserFragment$@OptIn(InternalStreamChatApi::class) override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
-    <ID>LongParameterList:AddChannelViewController.kt$AddChannelViewController$( private val headerView: AddChannelHeader, private val usersTitle: TextView, private val usersRecyclerView: RecyclerView, private val createGroupContainer: ViewGroup, private val messageListView: MessageListView, private val messageInputView: MessageInputView, private val emptyStateView: View, private val loadingView: View, private val isAddGroupChannel: Boolean, )</ID>
+    <ID>LongParameterList:AddChannelViewController.kt$AddChannelViewController$( private val headerView: AddChannelHeader, private val usersTitle: TextView, private val usersRecyclerView: RecyclerView, private val createGroupContainer: ViewGroup, private val messageListView: MessageListView, private val messageComposerView: MessageComposerView, private val emptyStateView: View, private val loadingView: View, private val isAddGroupChannel: Boolean, )</ID>
     <ID>LongParameterList:ConfirmationDialogFragment.kt$ConfirmationDialogFragment.Companion$( @DrawableRes iconResId: Int, @ColorRes iconTintResId: Int, title: String, description: String, confirmText: String, cancelText: String, hasConfirmButton: Boolean = true, )</ID>
     <ID>MagicNumber:ChatFragment.kt$ChatFragment$4</ID>
     <ID>MagicNumber:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$10</ID>
@@ -94,6 +94,7 @@
     <ID>PackageNaming:UserLoginFragment.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
     <ID>PackageNaming:UserLoginViewModel.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
     <ID>SerialVersionUIDInSerializableClass:UserData.kt$UserData : Serializable</ID>
+    <ID>UnusedPrivateMember:AddChannelViewController.kt$AddChannelViewController$private val messageComposerView: MessageComposerView</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
   </CurrentIssues>
 </SmellBaseline>
