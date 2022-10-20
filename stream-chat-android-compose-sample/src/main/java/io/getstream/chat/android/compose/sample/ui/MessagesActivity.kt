@@ -36,7 +36,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -68,6 +67,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPick
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -112,7 +112,7 @@ class MessagesActivity : BaseConnectedActivity() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
         val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
         val user by listViewModel.user.collectAsState()
-        val lazyListState = rememberLazyListState()
+        val lazyListState = rememberMessageListState()
 
         Box(modifier = Modifier.fillMaxSize()) {
             Scaffold(
@@ -127,7 +127,7 @@ class MessagesActivity : BaseConnectedActivity() {
                         .background(ChatTheme.colors.appBackground)
                         .fillMaxSize(),
                     viewModel = listViewModel,
-                    lazyListState = if (listViewModel.currentMessagesState.parentMessageId != null) rememberLazyListState() else lazyListState,
+                    messagesLazyListState = if (listViewModel.isInThread) rememberMessageListState() else lazyListState,
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)

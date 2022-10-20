@@ -93,7 +93,7 @@ private object MessageListHandlingActionsSnippet {
                         onThreadClick = { message -> },
                         onLongItemClick = { message -> },
                         onReactionsClick = { message -> },
-                        onMessagesStartReached = { },
+                        onMessagesPageStartReached = { },
                         onLastVisibleMessageChanged = { message -> },
                         onScrollToBottom = { },
                         onGiphyActionClick = { giphyAction -> },
@@ -130,7 +130,7 @@ private object MessageListControllingScrollStateSnippet {
 
                     MessageList(
                         viewModel = listViewModel,
-                        lazyListState = myListState,
+                        messagesLazyListState = myListState,
                     )
                 }
             }

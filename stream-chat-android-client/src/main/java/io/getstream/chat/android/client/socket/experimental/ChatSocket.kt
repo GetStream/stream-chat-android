@@ -51,7 +51,7 @@ internal class ChatSocket private constructor(
     private val wssUrl: String,
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory,
-    private val coroutineScope: UserScope,
+    private val userScope: UserScope,
     private val lifecycleObserver: StreamLifecycleObserver,
     private val networkStateProvider: NetworkStateProvider,
 ) {
@@ -62,7 +62,7 @@ internal class ChatSocket private constructor(
     private val chatSocketStateService = ChatSocketStateService()
     private var socketStateObserverJob: Job? = null
     private val healthMonitor = HealthMonitor(
-        userScope = coroutineScope,
+        userScope = userScope,
         checkCallback = { (chatSocketStateService.currentState as? State.Connected)?.event?.let(::sendEvent) },
         reconnectCallback = { chatSocketStateService.onWebSocketEventLost() }
     )
@@ -80,7 +80,7 @@ internal class ChatSocket private constructor(
         var socketListenerJob: Job? = null
 
         fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
-            coroutineScope.launch { startObservers() }
+            userScope.launch { startObservers() }
             this.connectionConf = connectionConf
             socketListenerJob?.cancel()
             when (networkStateProvider.isConnected()) {
@@ -91,7 +91,7 @@ internal class ChatSocket private constructor(
                                 is StreamWebSocketEvent.Error -> handleError(it.chatError)
                                 is StreamWebSocketEvent.Message -> handleEvent(it.chatEvent)
                             }
-                        }.launchIn(coroutineScope)
+                        }.launchIn(userScope)
                     }
                 }
                 false -> chatSocketStateService.onNetworkNotAvailable()
@@ -102,8 +102,9 @@ internal class ChatSocket private constructor(
             connectUser(connectionConf.asReconnectionConf())
         }
 
-        return coroutineScope.launch {
+        return userScope.launch {
             chatSocketStateService.observer { state ->
+                logger.i { "[onSocketStateChanged] state: $state" }
                 when (state) {
                     is State.RestartConnection -> {
                         connectionConf?.let { chatSocketStateService.onReconnect(it) }
@@ -124,7 +125,7 @@ internal class ChatSocket private constructor(
                             is State.Disconnected.DisconnectedByRequest -> {
                                 streamWebSocket?.close()
                                 healthMonitor.stop()
-                                coroutineScope.launch { disposeObservers() }
+                                userScope.launch { disposeObservers() }
                             }
                             is State.Disconnected.NetworkDisconnected -> {
                                 streamWebSocket?.close()
@@ -138,7 +139,7 @@ internal class ChatSocket private constructor(
                             is State.Disconnected.DisconnectedPermanently -> {
                                 streamWebSocket?.close()
                                 healthMonitor.stop()
-                                coroutineScope.launch { disposeObservers() }
+                                userScope.launch { disposeObservers() }
                             }
                             is State.Disconnected.DisconnectedTemporarily -> {
                                 healthMonitor.onDisconnected()
@@ -156,6 +157,7 @@ internal class ChatSocket private constructor(
     }
 
     fun connectUser(user: User, isAnonymous: Boolean) {
+        logger.d { "[connectUser] user.id: ${user.id}, isAnonymous: $isAnonymous" }
         socketStateObserverJob?.cancel()
         socketStateObserverJob = observeSocketStateService()
         chatSocketStateService.onConnect(
@@ -167,6 +169,7 @@ internal class ChatSocket private constructor(
     }
 
     fun disconnect() {
+        logger.d { "[disconnect] no args" }
         connectionConf = null
         chatSocketStateService.onRequiredDisconnect()
     }
@@ -194,7 +197,7 @@ internal class ChatSocket private constructor(
     }
 
     private fun handleError(error: ChatError) {
-        logger.e { error.stringify() }
+        logger.e { "[handleError] error: ${error.stringify()}" }
         when (error) {
             is ChatNetworkError -> onChatNetworkError(error)
             else -> callListeners { it.onError(error) }
@@ -272,6 +275,7 @@ internal class ChatSocket private constructor(
     }
 
     fun reconnectUser(user: User, isAnonymous: Boolean) {
+        logger.d { "[reconnectUser] user.id: ${user.id}, isAnonymous: $isAnonymous" }
         chatSocketStateService.onReconnect(
             when (isAnonymous) {
                 true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
@@ -283,7 +287,7 @@ internal class ChatSocket private constructor(
     private fun callListeners(call: (SocketListener) -> Unit) {
         synchronized(listeners) {
             listeners.forEach { listener ->
-                coroutineScope.launch(DispatcherProvider.Main) { call(listener) }
+                userScope.launch(DispatcherProvider.Main) { call(listener) }
             }
         }
     }

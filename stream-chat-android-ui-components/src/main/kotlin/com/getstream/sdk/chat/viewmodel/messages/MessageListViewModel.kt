@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
+import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -50,6 +51,7 @@ import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadNewerMessages
+import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.setMessageForReply
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
@@ -62,6 +64,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -75,6 +78,8 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * Can be bound to the view using [MessageListViewModel.bindView] function.
  *
  * @param cid The full channel id, i.e. "messaging:123"
+ * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
+ * queries executed on screen initialization.
  * @param chatClient Entry point for all low-level operations.
  * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.
@@ -93,8 +98,8 @@ public class MessageListViewModel(
     public val channelState: StateFlow<ChannelState?> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = viewModelScope
+            messageLimit = if (messageId == null) DEFAULT_MESSAGES_LIMIT else 0,
+            coroutineScope = viewModelScope,
         )
 
     /**
@@ -242,6 +247,12 @@ public class MessageListViewModel(
     private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
 
     /**
+     * Tracks if the initial load of the list has finished or not. Helps with initial scroll state.
+     * Will be removed in the next pr for MessageListController.
+     */
+    private var initialLoadFinished: Boolean = false
+
+    /**
      * Evaluates whether date separators should be added to the message list.
      */
     private var dateSeparatorHandler: DateSeparatorHandler? =
@@ -290,11 +301,7 @@ public class MessageListViewModel(
         stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
 
         initialJob = viewModelScope.launch {
-            chatClient.watchChannelAsState(
-                cid = cid,
-                messageLimit = DEFAULT_MESSAGES_LIMIT,
-                coroutineScope = viewModelScope
-            ).collect { channelState ->
+            channelState.collect { channelState ->
                 if (channelState != null) {
                     initWithOfflinePlugin(channelState)
                     initialJob?.cancel()
@@ -335,6 +342,7 @@ public class MessageListViewModel(
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
             messagePositionHandlerProvider = ::messagePositionHandler,
+            endOfNewMessages = channelState.endOfNewerMessages.asLiveData(),
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
@@ -356,14 +364,17 @@ public class MessageListViewModel(
             }
         }
         messageId.takeUnless { it.isNullOrBlank() }?.let { targetMessageId ->
-            stateMerger.observeForever(object : Observer<State> {
-                override fun onChanged(state: State?) {
-                    if (state is State.Result) {
-                        onEvent(Event.ShowMessage(targetMessageId))
-                        stateMerger.removeObserver(this)
+            viewModelScope.launch {
+                clientState.initializationState.filterNotNull().first { it == InitializationState.COMPLETE }
+                stateMerger.observeForever(object : Observer<State> {
+                    override fun onChanged(state: State?) {
+                        if (state is State.Result) {
+                            onEvent(Event.LoadMessage(targetMessageId))
+                            stateMerger.removeObserver(this)
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     }
 
@@ -383,6 +394,7 @@ public class MessageListViewModel(
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
             messagePositionHandlerProvider = ::messagePositionHandler,
+            endOfNewMessages = MutableLiveData(true)
         )
         threadListData?.let { tld ->
             messageListData?.let { mld ->
@@ -403,6 +415,8 @@ public class MessageListViewModel(
         }
         messageListData?.let {
             stateMerger.addSource(it) { messageListItemWrapper ->
+                if (!messageListItemWrapper.areNewestMessagesLoaded && !initialLoadFinished) return@addSource
+                initialLoadFinished = true
                 stateMerger.value = State.Result(messageListItemWrapper)
             }
         }
@@ -549,8 +563,8 @@ public class MessageListViewModel(
                     timeout = event.timeout,
                 ).enqueue(
                     onError = { chatError ->
-                        val errorMessage = chatError.message ?: chatError.cause?.message
-                            ?: "Unable to shadow ban the user"
+                        val errorMessage =
+                            chatError.message ?: chatError.cause?.message ?: "Unable to shadow ban the user"
                         logger.e { errorMessage }
 
                         _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
@@ -615,6 +629,19 @@ public class MessageListViewModel(
                     }
                 }
             }
+            is Event.LoadMessage -> {
+                chatClient.loadMessageById(
+                    cid,
+                    event.messageId
+                ).enqueue { result ->
+                    if (result.isSuccess) {
+                        _targetMessage.value = result.data()
+                    } else {
+                        val error = result.error()
+                        logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
+                    }
+                }
+            }
             is Event.RemoveAttachment -> {
                 val attachmentToBeDeleted = event.attachment
                 chatClient.loadMessageById(
@@ -675,6 +702,29 @@ public class MessageListViewModel(
         }
 
         return (messageItem as? MessageListItem.MessageItem)?.message
+    }
+
+    /**
+     * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest
+     * messages. If the messages are not loaded we need to load them first and then scroll to the bottom of the
+     * list.
+     */
+    public fun scrollToBottom(scrollToBottom: () -> Unit) {
+        if (_mode.value is Mode.Thread || messageListData?.value?.areNewestMessagesLoaded == true) {
+            scrollToBottom()
+        } else {
+            chatClient.loadNewestMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue { result ->
+                if (result.isSuccess) {
+                    scrollToBottom()
+                } else {
+                    val error = result.error()
+                    logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
+                }
+            }
+            if (chatClient.clientState.isOffline) {
+                scrollToBottom()
+            }
+        }
     }
 
     /**
@@ -754,9 +804,9 @@ public class MessageListViewModel(
         currentMode.run {
             when (this) {
                 is Mode.Normal -> {
-                    messageListData?.loadingMoreChanged(true)
+                    messageListData?.loadingMoreOldMessagesChanged(true)
                     chatClient.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue {
-                        messageListData?.loadingMoreChanged(false)
+                        messageListData?.loadingMoreOldMessagesChanged(false)
                     }
                 }
                 is Mode.Thread -> threadLoadMore(this)
@@ -769,10 +819,10 @@ public class MessageListViewModel(
      */
     private fun onBottomEndRegionReached(baseMessageId: String?) {
         if (baseMessageId != null) {
-            messageListData?.loadingMoreChanged(true)
+            messageListData?.loadingMoreNewMessagesChanged(true)
             chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
                 .enqueue { result ->
-                    messageListData?.loadingMoreChanged(false)
+                    messageListData?.loadingMoreNewMessagesChanged(false)
                 }
         } else {
             logger.e { "There's no base message to request more message at bottom of limit" }
@@ -785,17 +835,17 @@ public class MessageListViewModel(
      * @param threadMode Current thread mode.
      */
     private fun threadLoadMore(threadMode: Mode.Thread) {
-        threadListData?.loadingMoreChanged(true)
+        threadListData?.loadingMoreOldMessagesChanged(true)
         if (threadMode.threadState != null) {
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
                 limit = DEFAULT_MESSAGES_LIMIT,
             ).enqueue {
-                threadListData?.loadingMoreChanged(false)
+                threadListData?.loadingMoreOldMessagesChanged(false)
             }
         } else {
-            threadListData?.loadingMoreChanged(false)
+            threadListData?.loadingMoreOldMessagesChanged(false)
             logger.w { "Thread state must be not null for offline plugin thread load more!" }
         }
     }
@@ -1112,12 +1162,19 @@ public class MessageListViewModel(
 
         /**
          * When we need to display a particular message to the user.
-         * Usually triggered by clicking on pinned messages or navigation
-         * to the message list via push notifications.
+         * Usually triggered by clicking on pinned messages and replied messages.
          *
          * @param messageId The id of the message we need to navigate to.
          */
         public data class ShowMessage(val messageId: String) : Event()
+
+        /**
+         * When we need to display a particular message to the user.
+         * Usually triggered when coming from search and clicking on a push notification.
+         *
+         * @param messageId The id of the message we need to navigate to.
+         */
+        public data class LoadMessage(val messageId: String) : Event()
 
         /**
          * When the user removes an attachment from a message that was previously sent.

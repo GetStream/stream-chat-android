@@ -39,7 +39,7 @@ public interface ChatNotifications {
     public fun setDevice(device: Device)
     public fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
     public fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
-    public suspend fun onLogout()
+    public suspend fun onLogout(flushPersistence: Boolean)
     public fun displayNotification(channel: Channel, message: Message)
     public fun dismissChannelNotifications(channelType: String, channelId: String)
 }
@@ -109,12 +109,12 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    override suspend fun onLogout() {
+    override suspend fun onLogout(flushPersistence: Boolean) {
         logger.i { "[onLogout] no args" }
         permissionManager.stop()
         handler.dismissAllNotifications()
-        removeStoredDevice()
         cancelLoadDataWork()
+        if (flushPersistence) { removeStoredDevice() }
     }
 
     private fun cancelLoadDataWork() {
@@ -174,7 +174,7 @@ internal object NoOpChatNotifications : ChatNotifications {
     ) = Unit
 
     override fun onNewMessageEvent(newMessageEvent: NewMessageEvent) = Unit
-    override suspend fun onLogout() = Unit
+    override suspend fun onLogout(flushPersistence: Boolean) = Unit
     override fun displayNotification(channel: Channel, message: Message) = Unit
     override fun dismissChannelNotifications(channelType: String, channelId: String) = Unit
 }

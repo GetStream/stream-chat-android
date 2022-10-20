@@ -65,7 +65,7 @@ internal class ChannelMutableState(
     private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val _watchers = MutableStateFlow<Map<String, User>>(emptyMap())
     private val _watcherCount = MutableStateFlow(0)
-    private val _endOfNewerMessages = MutableStateFlow(false)
+    private val _endOfNewerMessages = MutableStateFlow(true)
     private val _endOfOlderMessages = MutableStateFlow(false)
     private val _loading = MutableStateFlow(false)
     private val _hidden = MutableStateFlow(false)
@@ -83,6 +83,11 @@ internal class ChannelMutableState(
 
     /** the data to hide messages before */
     var hideMessagesBefore: Date? = null
+
+    /**
+     * Messages to show on the channels list when the state is inside search to show the latest message in the preview.
+     */
+    internal val cachedLatestMessages: MutableStateFlow<Map<String, Message>> = MutableStateFlow(emptyMap())
 
     /** The raw message list updated by recent users value. */
     val messageList: StateFlow<List<Message>> =
@@ -167,14 +172,20 @@ internal class ChannelMutableState(
     override val membersCount: StateFlow<Int> = _membersCount
 
     override val channelData: StateFlow<ChannelData> =
-        _channelData.filterNotNull().combine(latestUsers) { channelData, users ->
+        combine(_channelData.filterNotNull(), latestUsers) { channelData, users ->
             if (users.containsKey(channelData.createdBy.id)) {
                 channelData.copy(createdBy = users[channelData.createdBy.id] ?: channelData.createdBy)
             } else {
                 channelData
             }
-        }
-            .stateIn(scope, SharingStarted.Eagerly, ChannelData(type = channelType, channelId = channelId))
+        }.stateIn(
+            scope,
+            SharingStarted.Eagerly,
+            ChannelData(
+                type = channelType,
+                channelId = channelId,
+            )
+        )
 
     override val hidden: StateFlow<Boolean> = _hidden
     override val muted: StateFlow<Boolean> = _muted
@@ -196,16 +207,20 @@ internal class ChannelMutableState(
         val channelData = channelData.value
 
         val messages = sortedMessages.value
+        val cachedMessages = cachedLatestMessages.value.values.toList()
         val members = members.value
         val watchers = watchers.value
         val reads = _rawReads.value.values.toList()
         val watcherCount = _watcherCount.value
+        val insideSearch = _insideSearch.value
 
-        val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
+        val channel = channelData
+            .toChannel(messages, cachedMessages, members, reads, watchers, watcherCount, insideSearch)
         channel.config = _channelConfig.value
         channel.unreadCount = unreadCount.value
-        channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         channel.hidden = _hidden.value
+        channel.isInsideSearch = _insideSearch.value
+        channel.cachedLatestMessages = cachedLatestMessages.value.values.toList()
 
         return channel
     }
@@ -298,6 +313,16 @@ internal class ChannelMutableState(
      * @param isInsideSearch Boolean.
      * */
     fun setInsideSearch(isInsideSearch: Boolean) {
+        when {
+            isInsideSearch && !_insideSearch.value -> {
+                cacheLatestMessages()
+            }
+
+            !isInsideSearch && _insideSearch.value -> {
+                cachedLatestMessages.value = emptyMap()
+            }
+        }
+
         _insideSearch.value = isInsideSearch
     }
 
@@ -456,6 +481,17 @@ internal class ChannelMutableState(
 
     fun setMessages(messages: List<Message>) {
         _messages.value = messages.associateBy(Message::id)
+    }
+
+    private fun cacheLatestMessages() {
+        cachedLatestMessages.value = sortedMessages.value.associateBy(Message::id)
+    }
+
+    /**
+     * Updates the cached messages with new messages.
+     */
+    fun updateCachedLatestMessages(messages: Map<String, Message>) {
+        cachedLatestMessages.value = messages
     }
 
     private companion object {

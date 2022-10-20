@@ -51,7 +51,7 @@ class ChatInfoViewModel(
      * Holds information about the current channel and is actively updated.
      */
     private val channelState: Flow<ChannelState> =
-        chatClient.watchChannelAsState(cid ?: "", DEFAULT_MESSAGE_LIMIT, viewModelScope).filterNotNull()
+        chatClient.watchChannelAsState(cid ?: "", 0, viewModelScope).filterNotNull()
 
     private lateinit var channelClient: ChannelClient
     private val _state = MediatorLiveData<State>()
@@ -198,14 +198,6 @@ class ChatInfoViewModel(
         object MuteChannelError : ErrorEvent()
         object BlockUserError : ErrorEvent()
         object DeleteChannelError : ErrorEvent()
-    }
-
-    private companion object {
-
-        /**
-         * The default limit for messages count in requests.
-         */
-        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }
 

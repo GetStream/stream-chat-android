@@ -22,10 +22,13 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 internal class ClientStateImpl(private val networkStateProvider: NetworkStateProvider) : ClientMutableState {
+
+    private val logger = StreamLog.getLogger("Chat:ClientState")
 
     private val _initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
     private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
@@ -54,6 +57,7 @@ internal class ClientStateImpl(private val networkStateProvider: NetworkStatePro
         get() = networkStateProvider.isConnected()
 
     override fun clearState() {
+        logger.d { "[clearState] no args" }
         _initializationState.value = InitializationState.NOT_INITIALIZED
         _connectionState.value = ConnectionState.OFFLINE
         _user.value = null
@@ -64,10 +68,11 @@ internal class ClientStateImpl(private val networkStateProvider: NetworkStatePro
     }
 
     override fun setConnectionState(connectionState: ConnectionState) {
+        logger.d { "[setConnectionState] state: $connectionState" }
         _connectionState.value = connectionState
     }
 
-    override fun setInitializionState(state: InitializationState) {
+    override fun setInitializationState(state: InitializationState) {
         _initializationState.value = state
     }
 }

@@ -17,9 +17,13 @@
 package io.getstream.chat.android.client.scope
 
 import io.getstream.chat.android.client.call.SharedCalls
+import io.getstream.chat.android.client.models.UserId
+import io.getstream.chat.android.client.scope.user.UserIdentifier
+import io.getstream.chat.android.client.scope.user.UserJob
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.job
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
@@ -30,7 +34,20 @@ internal class ClientTestScope(
 
 internal class UserTestScope(
     clientScope: ClientTestScope,
-) : UserScope, CoroutineScope by (clientScope + SupervisorJob(clientScope.coroutineContext.job)) {
+    userIdentifier: UserIdentifier = UserIdentifier(),
+) : UserScope,
+    CoroutineScope by (
+        clientScope + userIdentifier + UserJob(clientScope.coroutineContext.job) {
+            userIdentifier.value
+        }
+        ) {
 
     internal constructor(testScope: TestScope) : this(ClientTestScope(testScope))
+
+    override val userId: UserIdentifier
+        get() = coroutineContext[UserIdentifier] ?: error("no UserIdentifier found")
+
+    override fun cancelChildren(userId: UserId?) {
+        (coroutineContext[Job] as UserJob).cancelChildren(userId)
+    }
 }

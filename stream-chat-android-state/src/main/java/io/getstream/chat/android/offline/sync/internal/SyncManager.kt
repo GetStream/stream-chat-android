@@ -390,7 +390,7 @@ internal class SyncManager(
 
                 foundChannels.forEach { channel ->
                     val channelLogic = logicRegistry.channel(channel.type, channel.id)
-                    channelLogic.updateDataFromChannel(channel)
+                    channelLogic.updateDataFromChannel(channel, channel.messages.size)
                 }
                 storeStateForChannels(foundChannels)
                 val foundCids = foundChannels.map { it.cid }

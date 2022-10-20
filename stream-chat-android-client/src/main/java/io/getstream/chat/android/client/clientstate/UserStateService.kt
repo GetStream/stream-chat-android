@@ -19,17 +19,18 @@ package io.getstream.chat.android.client.clientstate
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.flow.StateFlow
 
 internal class UserStateService {
     private val logger = StreamLog.getLogger("Chat:UserStateService")
 
     fun onUserUpdated(user: User) {
-        logger.d { "[onUserUpdated] user id: ${user.id}" }
+        logger.d { "[onUserUpdated] user.id: '${user.id}'" }
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
     }
 
     fun onSetUser(user: User, isAnonymous: Boolean) {
-        logger.d { "[onSetUser] user id: ${user.id}" }
+        logger.i { "[onSetUser] user.id: '${user.id}', isAnonymous: $isAnonymous" }
         if (isAnonymous) {
             fsm.sendEvent(UserStateEvent.ConnectAnonymous(user))
         } else {
@@ -38,17 +39,20 @@ internal class UserStateService {
     }
 
     fun onLogout() {
-        logger.d { "[onLogout]" }
+        logger.i { "[onLogout] no args" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
     fun onSocketUnrecoverableError() {
-        logger.d { "[onSocketUnrecoverableError]" }
+        logger.e { "[onSocketUnrecoverableError] no args" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
     internal val state: UserState
         get() = fsm.state
+
+    internal val stateFlow: StateFlow<UserState>
+        get() = fsm.stateFlow
 
     private val fsm = FiniteStateMachine<UserState, UserStateEvent> {
         defaultHandler { state, event ->
