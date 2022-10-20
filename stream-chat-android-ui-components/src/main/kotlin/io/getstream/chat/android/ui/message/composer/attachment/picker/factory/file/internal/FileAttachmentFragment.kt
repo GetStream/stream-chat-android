@@ -164,7 +164,7 @@ internal class FileAttachmentFragment : Fragment() {
                     if (filteredAttachments.size < attachments.size) {
                         Toast.makeText(
                             context,
-                            getString(R.string.stream_ui_message_input_file_not_supported),
+                            getString(R.string.stream_ui_message_composer_file_not_supported),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
