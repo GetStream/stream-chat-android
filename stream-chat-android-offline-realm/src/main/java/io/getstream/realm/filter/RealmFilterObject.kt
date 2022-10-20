@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.realm.filter
 
 import io.getstream.chat.android.client.api.models.AndFilterObject
@@ -23,12 +39,17 @@ import io.getstream.realm.entity.FilterNodeEntity
 import io.realm.kotlin.ext.toRealmSet
 import io.realm.kotlin.types.RealmSet
 
+@Suppress("ComplexMethod")
 internal fun FilterObject.toFilterNodeEntity(): FilterNodeEntity = when (this) {
-    is AndFilterObject -> createBooleanLogicFilterNode(KEY_AND,
-        this.filterObjects.map(FilterObject::toFilterNodeEntity))
+    is AndFilterObject -> createBooleanLogicFilterNode(
+        KEY_AND,
+        this.filterObjects.map(FilterObject::toFilterNodeEntity)
+    )
     is OrFilterObject -> createBooleanLogicFilterNode(KEY_OR, this.filterObjects.map(FilterObject::toFilterNodeEntity))
-    is NorFilterObject -> createBooleanLogicFilterNode(KEY_NOR,
-        this.filterObjects.map(FilterObject::toFilterNodeEntity))
+    is NorFilterObject -> createBooleanLogicFilterNode(
+        KEY_NOR,
+        this.filterObjects.map(FilterObject::toFilterNodeEntity)
+    )
     is ExistsFilterObject -> createFilterNodeEntity(KEY_EXIST, this.fieldName, null)
     is NotExistsFilterObject -> createFilterNodeEntity(KEY_NOT_EXIST, this.fieldName, null)
     is EqualsFilterObject -> createFilterNodeEntity(KEY_EQUALS, this.fieldName, this.value)
@@ -46,6 +67,7 @@ internal fun FilterObject.toFilterNodeEntity(): FilterNodeEntity = when (this) {
     is NeutralFilterObject -> createFilterNodeEntity(KEY_NEUTRAL, null, null)
 }
 
+@Suppress("ComplexMethod")
 internal fun FilterNodeEntity.toFilterObject(): FilterObject = when (this.filter_type) {
     KEY_AND -> Filters.and((this.value as List<FilterNodeEntity>).map(FilterNodeEntity::toFilterObject))
     KEY_OR -> Filters.or((this.value as List<FilterNodeEntity>).map(FilterNodeEntity::toFilterObject))
