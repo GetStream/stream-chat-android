@@ -15,7 +15,7 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="stream_ui_message_input_capture_media">"Capture d\'image ou vidéo"</string>
+  <string name="stream_ui_message_composer_capture_media">"Capture d\'image ou vidéo"</string>
   <string name="stream_ui_message_composer_permission_camera_message">"Des autorisations d\'accès à l\'appareil photo et au stockage sont nécessaires pour pouvoir prendre des photos et des vidéos"</string>
   <string name="stream_ui_message_composer_permission_camera_title">"Caméra et stockage Autorisation d\'accès"</string>
   <string name="stream_ui_message_composer_permission_setting_message">"Activez les autorisations dans les Paramètres de l\'application"</string>

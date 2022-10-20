@@ -15,7 +15,7 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="stream_ui_message_input_capture_media">"Ambil Gambar atau Video"</string>
+  <string name="stream_ui_message_composer_capture_media">"Ambil Gambar atau Video"</string>
   <string name="stream_ui_message_composer_permission_camera_message">"Izin akses kamera dan penyimpanan diperlukan agar dapat mengambil foto dan video"</string>
   <string name="stream_ui_message_composer_permission_camera_title">"Izin Akses Kamera dan Penyimpanan"</string>
   <string name="stream_ui_message_composer_permission_setting_message">"Aktifkan izin di Pengaturan Aplikasi"</string>

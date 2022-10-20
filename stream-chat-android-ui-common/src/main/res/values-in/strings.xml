@@ -19,7 +19,7 @@
     <string name="stream_ui_yesterday">Kemarin</string>
 
     <!-- Media capture -->
-    <string name="stream_ui_message_input_capture_media">Ambil Gambar atau Video</string>
+    <string name="stream_ui_message_composer_capture_media">Ambil Gambar atau Video</string>
 
     <!-- Permissions -->
     <string name="stream_ui_message_composer_permission_camera_title">Izin Akses Kamera dan Penyimpanan</string>
