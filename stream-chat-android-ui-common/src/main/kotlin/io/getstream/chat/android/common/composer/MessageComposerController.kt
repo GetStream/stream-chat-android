@@ -74,6 +74,8 @@ import java.util.regex.Pattern
  * @param chatClient The client used to communicate to the API.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
+ * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
+ * queries executed on screen initialization.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
@@ -83,6 +85,7 @@ public class MessageComposerController(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
+    messageId: String? = null
 ) {
 
     /**
@@ -111,8 +114,8 @@ public class MessageComposerController(
      */
     public val channelState: Flow<ChannelState> = chatClient.watchChannelAsState(
         cid = channelId,
-        messageLimit = DefaultMessageLimit,
-        coroutineScope = scope
+        messageLimit = if (messageId != null) 0 else DefaultMessageLimit,
+        coroutineScope = scope,
     ).filterNotNull()
 
     /**

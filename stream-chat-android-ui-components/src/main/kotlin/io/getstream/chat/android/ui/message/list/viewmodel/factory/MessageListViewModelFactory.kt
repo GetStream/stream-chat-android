@@ -27,7 +27,8 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageComposerViewModel.
  *
  * @param cid The channel id in the format messaging:123.
- * @param messageId The id of the target message to displayed.
+ * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
+ * queries executed on screen initialization.
  *
  * @see MessageListViewModel
  * @see MessageListHeaderViewModel
@@ -39,9 +40,9 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
-        MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid) },
-        MessageListViewModel::class.java to { MessageListViewModel(cid, messageId) },
-        MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid)) },
+        MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid, messageId = messageId) },
+        MessageListViewModel::class.java to { MessageListViewModel(cid, messageId = messageId) },
+        MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid, messageId = messageId)) },
     )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

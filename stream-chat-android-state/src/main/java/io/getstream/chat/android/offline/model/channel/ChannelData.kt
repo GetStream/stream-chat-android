@@ -103,11 +103,14 @@ public data class ChannelData(
      */
     internal fun toChannel(
         messages: List<Message>,
+        cachedLatestMessages: List<Message>,
         members: List<Member>,
         reads: List<ChannelUserRead>,
         watchers: List<User>,
         watcherCount: Int,
+        insideSearch: Boolean
     ): Channel {
+        val messagesList = if (insideSearch) cachedLatestMessages else messages
         return Channel(
             type = type,
             id = channelId,
@@ -120,7 +123,7 @@ public data class ChannelData(
             deletedAt = deletedAt,
             extraData = extraData,
             cooldown = cooldown,
-            lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt },
+            lastMessageAt = messagesList.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt },
             createdBy = createdBy,
             messages = messages,
             members = members,
@@ -130,7 +133,9 @@ public data class ChannelData(
             team = team,
             memberCount = memberCount,
             ownCapabilities = ownCapabilities,
-            membership = membership
+            membership = membership,
+            cachedLatestMessages = cachedLatestMessages,
+            isInsideSearch = insideSearch
         )
     }
 

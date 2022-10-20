@@ -33,7 +33,11 @@ import io.getstream.chat.android.uiutils.constant.MessageType
  * @return Last message from the channel or null if it doesn't exist.
  */
 public fun Channel.getPreviewMessage(currentUser: User?): Message? =
-    messages.asSequence()
+    if (isInsideSearch) {
+        cachedLatestMessages
+    } else {
+        messages
+    }.asSequence()
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filter { it.deletedAt == null }
         .filter { !it.silent }
