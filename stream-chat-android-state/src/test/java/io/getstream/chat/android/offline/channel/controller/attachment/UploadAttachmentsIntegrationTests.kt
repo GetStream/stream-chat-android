@@ -70,7 +70,6 @@ internal class UploadAttachmentsIntegrationTests {
     @get:Rule
     val testCoroutines = TestCoroutineRule()
 
-    private val currentUser = randomUser()
     private val messageRepository = MockMessageRepository()
 
     private val chatClient: ChatClient = mock {
@@ -98,6 +97,7 @@ internal class UploadAttachmentsIntegrationTests {
         }
         val channelLogic: ChannelStateLogic = mock {
             on(it.writeChannelState()) doReturn channelState
+            on(it.listenForChannelState()) doReturn channelState
         }
 
         uploader = mock()
