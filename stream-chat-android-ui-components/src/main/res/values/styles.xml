@@ -254,6 +254,8 @@
         <item name="streamUiThreadAvatarStyle">@style/StreamUi.Thread.Avatar</item>
         <item name="streamUiReplyAvatarStyle">@style/StreamUi.Reply.Avatar</item>
         <item name="streamUiMessageOptionsAvatarStyle">@style/StreamUi.MessageOptions.Avatar</item>
+        <item name="streamUiMessageComposerViewStyle">@style/StreamUi.MessageComposerView</item>
+        <item name="streamUiAttachmentsPickerDialogStyle">@style/StreamUi.AttachmentsPickerDialog</item>
     </style>
 
     <style name="StreamUi">
