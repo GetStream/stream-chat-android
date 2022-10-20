@@ -111,4 +111,6 @@ public interface ChannelState {
 
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel
+
+    public fun getMessageById(id: String): Message?
 }

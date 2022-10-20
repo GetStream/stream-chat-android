@@ -494,6 +494,8 @@ internal class ChannelMutableState(
         cachedLatestMessages.value = messages
     }
 
+    override fun getMessageById(id: String): Message? = _messages.value[id]
+
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
     }
