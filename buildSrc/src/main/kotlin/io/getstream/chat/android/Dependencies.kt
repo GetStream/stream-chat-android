@@ -24,7 +24,7 @@ object Versions {
     internal const val COMPOSE_ACTIVITY = "1.5.1"
     internal const val COMPOSE_VIEW_MODEL = "2.5.1"
     internal const val COMPOSE = "1.2.1"
-    public const val COMPOSE_COMPILER = "1.3.2"
+    public const val COMPOSE_COMPILER = "1.3.1"
     internal const val CONSTRAINT_LAYOUT = "2.1.4"
     internal const val COROUTINES = "1.6.4"
     internal const val DETEKT_PLUGIN = "1.21.0"
