@@ -36,7 +36,7 @@ import io.getstream.chat.android.ui.message.composer.attachment.picker.internal.
 /**
  * Represent the bottom sheet dialog that allows users to pick attachments.
  */
-public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment(), AttachmentSelectionListener {
+public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: StreamUiDialogAttachmentBinding? = null
     private val binding get() = _binding!!
@@ -59,7 +59,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment(), Atta
     /**
      * The list of currently selected attachments.
      */
-    private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
+    private var selectedAttachments: List<AttachmentMetaData> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -131,10 +131,12 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment(), Atta
      */
     private fun setupPages() {
         val attachmentsPickerTabListener: AttachmentsPickerTabListener = object : AttachmentsPickerTabListener {
-            override fun onSelectedAttachmentsChanged(
-                attachments: List<AttachmentMetaData>,
-            ) {
-                onAttachmentsSelected(attachments.toSet())
+            override fun onSelectedAttachmentsChanged(attachments: List<AttachmentMetaData>) {
+                selectedAttachments = attachments
+
+                val hasSelectedAttachments = selectedAttachments.isNotEmpty()
+                setAttachButtonEnabled(hasSelectedAttachments)
+                setUnselectedButtonsEnabled(!hasSelectedAttachments)
             }
 
             override fun onSelectedAttachmentsSubmitted() {
@@ -185,14 +187,6 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment(), Atta
      */
     public fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
         this.attachmentSelectionListener = attachmentSelectionListener
-    }
-
-    override fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>) {
-        this.selectedAttachments = attachments
-        selectedAttachments.isNotEmpty().let {
-            setAttachButtonEnabled(it)
-            setUnselectedButtonsEnabled(!it)
-        }
     }
 
     private fun setSelectedTab(checkedTextView: CheckedTextView, pagePosition: Int) {

@@ -22,7 +22,7 @@ public fun interface AttachmentSelectionListener {
     /**
      * Called when attachment picking has been completed.
      *
-     * @param attachments The set of selected attachments.
+     * @param attachments The list of selected attachments.
      */
-    public fun onAttachmentsSelected(attachments: Set<AttachmentMetaData>)
+    public fun onAttachmentsSelected(attachments: List<AttachmentMetaData>)
 }

@@ -132,7 +132,7 @@ public class MessageComposerView : ConstraintLayout {
     public var attachmentsButtonClickListener: () -> Unit = {
         context.getFragmentManager()?.let {
             AttachmentsPickerDialogFragment.newInstance(attachmentsPickerDialogStyle).apply {
-                setAttachmentSelectionListener { attachments: Set<AttachmentMetaData> ->
+                setAttachmentSelectionListener { attachments: List<AttachmentMetaData> ->
                     attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
                 }
             }.show(it, AttachmentsPickerDialogFragment.TAG)

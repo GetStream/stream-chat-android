@@ -1953,15 +1953,14 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/composer/attachment/picker/AttachmentSelectionListener {
-	public abstract fun onAttachmentsSelected (Ljava/util/Set;)V
+	public abstract fun onAttachmentsSelected (Ljava/util/List;)V
 }
 
-public final class io/getstream/chat/android/ui/message/composer/attachment/picker/AttachmentsPickerDialogFragment : com/google/android/material/bottomsheet/BottomSheetDialogFragment, io/getstream/chat/android/ui/message/composer/attachment/picker/AttachmentSelectionListener {
+public final class io/getstream/chat/android/ui/message/composer/attachment/picker/AttachmentsPickerDialogFragment : com/google/android/material/bottomsheet/BottomSheetDialogFragment {
 	public static final field Companion Lio/getstream/chat/android/ui/message/composer/attachment/picker/AttachmentsPickerDialogFragment$Companion;
 	public static final field TAG Ljava/lang/String;
 	public fun <init> ()V
 	public fun getTheme ()I
-	public fun onAttachmentsSelected (Ljava/util/Set;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroy ()V
 	public fun onDestroyView ()V
