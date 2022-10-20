@@ -100,7 +100,7 @@ internal open class BaseChatClientTest {
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            chatSocketExperimental = mock(),
+            socketExperimental = mock(),
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,

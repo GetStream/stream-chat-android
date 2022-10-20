@@ -56,7 +56,6 @@
     <ID>MagicNumber:ChannelViewHolder.kt$ChannelViewHolder$99</ID>
     <ID>MagicNumber:EditReactionsView.kt$EditReactionsView$5</ID>
     <ID>MagicNumber:EditReactionsViewStyle.kt$EditReactionsViewStyle.Builder$5</ID>
-    <ID>MagicNumber:ImageAttachmentsGroupView.kt$ImageAttachmentsGroupView$3</ID>
     <ID>MagicNumber:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$4</ID>
     <ID>MagicNumber:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$7</ID>
     <ID>MagicNumber:MessageInputView.kt$MessageInputView$1000</ID>
@@ -103,8 +102,6 @@
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentPlaceHolderIcon)</ID>
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentProgressIcon)</ID>
     <ID>MaxLineLength:GiphyViewHolderStyle.kt$GiphyViewHolderStyle$*</ID>
-    <ID>MaxLineLength:ImageAttachmentViewHolder.kt$ImageAttachmentViewHolder$data.message.attachments.count { it.uploadState == null || it.uploadState == Attachment.UploadState.Success }</ID>
-    <ID>MaxLineLength:ImageAttachmentViewStyle.kt$ImageAttachmentViewStyle$*</ID>
     <ID>MaxLineLength:MediaAttachmentDialogFragment.kt$MediaAttachmentDialogFragment$viewModel.attachmentGalleryItemsLiveData.observe(viewLifecycleOwner, mediaAttachmentGridView::setAttachments)</ID>
     <ID>MaxLineLength:MessageBackgroundFactoryImpl.kt$MessageBackgroundFactoryImpl$// however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.</ID>
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>

@@ -45,7 +45,7 @@ public fun ImageView.load(
 @InternalStreamChatApi
 public fun ImageView.load(
     data: Any?,
-    placeholderDrawable: Drawable,
+    placeholderDrawable: Drawable?,
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},

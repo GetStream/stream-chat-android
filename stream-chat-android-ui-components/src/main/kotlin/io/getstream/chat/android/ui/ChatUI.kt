@@ -127,4 +127,9 @@ public object ChatUI {
      * Provides the currently logged in user.
      */
     public var currentUserProvider: CurrentUserProvider = CurrentUserProvider.defaultCurrentUserProvider()
+
+    /**
+     * Whether thumbnails for video attachments will be displayed in previews.
+     */
+    public var videoThumbnailsEnabled: Boolean = true
 }

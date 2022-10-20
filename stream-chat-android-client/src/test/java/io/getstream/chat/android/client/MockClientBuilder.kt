@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -37,6 +38,7 @@ import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.mockito.Mockito
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -61,6 +63,7 @@ internal class MockClientBuilder(
     val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
     val serverErrorCode = 500
     val user = User().apply { id = userId }
+    val userStateFlow = MutableStateFlow(user)
     val createdAt = Date()
     val rawCreatedAt = streamDateFormatter.format(createdAt)
     val connectedEvent = ConnectedEvent(
@@ -93,7 +96,9 @@ internal class MockClientBuilder(
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutineExtension.dispatcher)
 
         val tokenUtil: TokenUtils = mock()
+        val clientState: ClientState = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
+        Mockito.`when`(clientState.user) doReturn userStateFlow
         socket = FakeSocket()
         fileUploader = mock()
         notificationsManager = mock()
@@ -122,11 +127,11 @@ internal class MockClientBuilder(
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            chatSocketExperimental = mock(),
+            socketExperimental = mock(),
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = mock()
+            clientState = clientState
         )
 
         client.connectUser(user, token).enqueue()

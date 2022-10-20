@@ -79,5 +79,6 @@ public interface ClientState {
     /**
      * Clears the state of [ClientState].
      */
+    @Deprecated("This function will be moved into the ClientMutableState.")
     public fun clearState()
 }
