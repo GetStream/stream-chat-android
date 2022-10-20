@@ -42,8 +42,7 @@ public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactor
 
     override fun createChannelConfigRepository(): ChannelConfigRepository = RealmChannelConfigRepository(realm)
 
-    override fun createQueryChannelsRepository(): QueryChannelsRepository =
-        RealmQueryChannelsRepository(realm)
+    override fun createQueryChannelsRepository(): QueryChannelsRepository = RealmQueryChannelsRepository(realm)
 
     override fun createSyncStateRepository(): SyncStateRepository = RealmSyncStateRepository(realm)
 

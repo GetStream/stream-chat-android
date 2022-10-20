@@ -5,6 +5,7 @@ plugins {
     id 'io.realm.kotlin'
     id 'kotlin-android'
     id 'com.google.devtools.ksp'
+    id 'de.mannodermaus.android-junit5'
 }
 
 ext {
@@ -77,6 +78,12 @@ dependencies {
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
     testRuntimeOnly Dependencies.junitVintageEngine
+
+    testImplementation Dependencies.kfixture
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.turbine
 
     detektPlugins(Dependencies.detektFormatting)
 }

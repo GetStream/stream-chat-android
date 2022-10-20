@@ -16,14 +16,15 @@
 
 package io.getstream.realm.entity
 
-import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.realm.filter.FilterNode
+import io.getstream.realm.filter.toFilterNode
+import io.getstream.realm.filter.toFilterObject
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
 import io.realm.kotlin.types.RealmList
@@ -34,32 +35,30 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 internal class QueryChannelsEntityRealm : RealmObject {
     @PrimaryKey
     var id: String = ""
-    var filterAsString: String = ""
+    var filter: FilterNode? = null
     var query_sort: QuerySorterInfoEntityRealm? = null
     var cids: RealmList<String> = realmListOf()
 }
 
 internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
     val thisQuery = this
-    val moshi = Moshi.Builder().build()
 
     return QueryChannelsEntityRealm().apply {
         id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
-        filterAsString = moshi.adapter(Map::class.java).toJson(thisQuery.filter.toMap())
+        filter = thisQuery.filter.toFilterNode()
         query_sort = thisQuery.querySort.toRealm()
         cids = thisQuery.cids.toRealmList()
     }
 }
 
 internal fun QueryChannelsEntityRealm.toDomain(): QueryChannelsSpec {
-    val entity = this
-    val moshi = Moshi.Builder().build()
+    val thisEntity = this
 
     return QueryChannelsSpec(
-        filter = Filters.neutral(),
+        filter = this.filter?.toFilterObject() ?: Filters.neutral(),
         querySort = query_sort?.toDomain() ?: QuerySortByField.ascByName("name"),
     ).apply {
-        cids = entity.cids.toSet()
+        cids = thisEntity.cids.toSet()
     }
 }
 
