@@ -31,6 +31,8 @@
     <color name="stream_ui_overlay_dark">#99FFFFFF</color>
     <color name="stream_ui_background_gradient_start">#101214</color>
     <color name="stream_ui_background_gradient_end">#070A0D</color>
+    <color name="stream_ui_message_list_image_attachment_background">#1C1E22</color>
+    <color name="stream_ui_message_list_video_attachment_background">#1C1E22</color>
 
     <!-- Other -->
     <color name="stream_ui_button_background_color">#FFFFFF</color>

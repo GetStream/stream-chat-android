@@ -147,7 +147,7 @@ internal class ClientConnectionTests {
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            chatSocketExperimental = mock(),
+            socketExperimental = mock(),
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,

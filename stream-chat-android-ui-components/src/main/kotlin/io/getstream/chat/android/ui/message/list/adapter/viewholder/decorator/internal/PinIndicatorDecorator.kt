@@ -31,8 +31,8 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Cus
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 
@@ -82,13 +82,13 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
     }
 
     /**
-     * Decorates the pin indicator of the message containing image attachments.
+     * Decorates the pin indicator of messages containing image and/or video attachments.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.
      */
-    override fun decorateImageAttachmentsMessage(
-        viewHolder: ImageAttachmentViewHolder,
+    override fun decorateMediaAttachmentsMessage(
+        viewHolder: MediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = with(viewHolder.binding) {
         setupPinIndicator(root, pinIndicatorTextView, data)

@@ -47,5 +47,10 @@ public interface ClientMutableState : ClientState {
      *
      * @param state [InitializationState]
      */
-    public fun setInitializionState(state: InitializationState)
+    public fun setInitializationState(state: InitializationState)
+
+    /**
+     * Clears the state of [ClientMutableState].
+     */
+    public override fun clearState()
 }

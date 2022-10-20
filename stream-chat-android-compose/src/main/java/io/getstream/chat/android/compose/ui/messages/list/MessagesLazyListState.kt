@@ -104,8 +104,8 @@ public data class MessagesLazyListState(
     }
 
     public companion object {
-        private const val KeyFirstVisibleItem: String = "firstVisibleItem"
-        private const val KeyFirstVisibleItemOffset: String = "firstVisibleItemOffset"
+        private const val KeyFirstVisibleItemIndex: String = "firstVisibleItemIndex"
+        private const val KeyFirstVisibleItemScrollOffset: String = "firstVisibleItemScrollOffset"
         private const val KeyMessageOffsetHandler: String = "messageOffsetHandler"
 
         /**
@@ -117,16 +117,16 @@ public data class MessagesLazyListState(
         public val Saver: Saver<MessagesLazyListState, *> = mapSaver(
             save = {
                 mapOf(
-                    KeyFirstVisibleItem to it.lazyListState.firstVisibleItemIndex,
-                    KeyFirstVisibleItemOffset to it.lazyListState.firstVisibleItemScrollOffset,
+                    KeyFirstVisibleItemIndex to it.lazyListState.firstVisibleItemIndex,
+                    KeyFirstVisibleItemScrollOffset to it.lazyListState.firstVisibleItemScrollOffset,
                     KeyMessageOffsetHandler to it.messageOffsetHandler
                 )
             },
             restore = {
                 MessagesLazyListState(
                     LazyListState(
-                        firstVisibleItemIndex = (it[KeyFirstVisibleItem] as? Int) ?: 0,
-                        firstVisibleItemScrollOffset = (it[KeyFirstVisibleItemOffset] as? Int) ?: 0
+                        firstVisibleItemIndex = (it[KeyFirstVisibleItemIndex] as? Int) ?: 0,
+                        firstVisibleItemScrollOffset = (it[KeyFirstVisibleItemScrollOffset] as? Int) ?: 0
                     ),
                     messageOffsetHandler = (it[KeyMessageOffsetHandler] as? MessageOffsetHandler)
                         ?: defaultOffsetHandler

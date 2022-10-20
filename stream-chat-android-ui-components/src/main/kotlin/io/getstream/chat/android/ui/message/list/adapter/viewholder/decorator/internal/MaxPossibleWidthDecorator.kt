@@ -23,8 +23,8 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Cus
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.ImageAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 
@@ -67,14 +67,14 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
     ) = applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
 
     /**
-     * Decorates the maximum width of the image attachments message, by changing
+     * Decorates the maximum width of messages containing image and/or video attachments, by changing
      * the start and end margins of the container.
      *
      * @param viewHolder The holder to decorate.
      * @param data The item that holds all the information.
      */
-    override fun decorateImageAttachmentsMessage(
-        viewHolder: ImageAttachmentViewHolder,
+    override fun decorateMediaAttachmentsMessage(
+        viewHolder: MediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) = applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
 

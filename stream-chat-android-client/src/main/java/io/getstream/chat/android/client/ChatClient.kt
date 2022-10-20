@@ -171,12 +171,14 @@ import io.getstream.logging.StreamLog
 import io.getstream.logging.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -208,7 +210,7 @@ internal constructor(
     private val userScope: UserScope,
     internal val retryPolicy: RetryPolicy,
     private val appSettingsManager: AppSettingManager,
-    private val chatSocketExperimental: ChatSocketExperimental,
+    private val socketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
     private val lifecycleObserver: StreamLifecycleObserver,
@@ -219,7 +221,8 @@ internal constructor(
 
     @InternalStreamChatApi
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
-    private val eventsObservable = ChatEventsObservable(socket, waitConnection, userScope, chatSocketExperimental)
+    private val eventsObservable = ChatEventsObservable(socket, waitConnection, userScope, socketExperimental)
+    private val eventMutex = Mutex()
 
     @Deprecated(
         message = "This LifecycleHandler won't be needed anymore after we remove old socket implementation." +
@@ -292,59 +295,66 @@ internal constructor(
 
     init {
         eventsObservable.subscribeSuspend { event ->
-            when (event) {
-                is ConnectedEvent -> {
-                    val user = event.me
-                    val connectionId = event.connectionId
-                    api.setConnection(user.id, connectionId)
-                    if (ToggleService.isSocketExperimental().not()) {
-                        socketStateService.onConnected(connectionId)
-                        lifecycleObserver.observe(lifecycleHandler)
-                    }
-                    notifications.onSetUser()
-
-                    clientState.toMutableState()?.run {
-                        setConnectionState(ConnectionState.CONNECTED)
-                        setUser(user)
-                    }
-                }
-                is NewMessageEvent -> {
-                    notifications.onNewMessageEvent(event)
-                }
-                is ConnectingEvent -> {
-                    clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
-                }
-
-                is DisconnectedEvent -> {
-                    when (event.disconnectCause) {
-                        DisconnectCause.ConnectionReleased,
-                        DisconnectCause.NetworkNotAvailable,
-                        DisconnectCause.WebSocketNotAvailable,
-                        is DisconnectCause.Error,
-                        -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
-                        is DisconnectCause.UnrecoverableError -> {
-                            userStateService.onSocketUnrecoverableError()
-                            if (ToggleService.isSocketExperimental().not()) {
-                                socketStateService.onSocketUnrecoverableError()
-                            }
-                        }
-                    }
-                    clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
-                }
-
-                else -> Unit // Ignore other events
-            }
-
-            event.extractCurrentUser()?.let { currentUser ->
-                userStateService.onUserUpdated(currentUser)
-                storePushNotificationsConfig(
-                    currentUser.id,
-                    currentUser.name,
-                    userStateService.state !is UserState.UserSet,
-                )
+            eventMutex.withLock {
+                handleEvent(event)
             }
         }
         logger.i { "Initialised: ${buildSdkTrackingHeaders()}" }
+    }
+
+    private suspend fun handleEvent(event: ChatEvent) {
+        when (event) {
+            is ConnectedEvent -> {
+                logger.i { "[handleEvent] event: ConnectedEvent(userId='${event.me.id}')" }
+                val user = event.me
+                val connectionId = event.connectionId
+                api.setConnection(user.id, connectionId)
+                if (ToggleService.isSocketExperimental().not()) {
+                    socketStateService.onConnected(connectionId)
+                    lifecycleObserver.observe(lifecycleHandler)
+                }
+                notifications.onSetUser()
+
+                clientState.toMutableState()?.run {
+                    setConnectionState(ConnectionState.CONNECTED)
+                    setUser(user)
+                }
+            }
+            is NewMessageEvent -> {
+                notifications.onNewMessageEvent(event)
+            }
+            is ConnectingEvent -> {
+                logger.i { "[handleEvent] event: ConnectingEvent" }
+                clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
+            }
+            is DisconnectedEvent -> {
+                logger.i { "[handleEvent] event: DisconnectedEvent(disconnectCause=${event.disconnectCause})" }
+                when (event.disconnectCause) {
+                    is DisconnectCause.ConnectionReleased,
+                    is DisconnectCause.NetworkNotAvailable,
+                    is DisconnectCause.WebSocketNotAvailable,
+                    is DisconnectCause.Error,
+                    -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
+                    is DisconnectCause.UnrecoverableError -> {
+                        userStateService.onSocketUnrecoverableError()
+                        if (ToggleService.isSocketExperimental().not()) {
+                            socketStateService.onSocketUnrecoverableError()
+                        }
+                    }
+                }
+                clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
+            }
+            else -> Unit // Ignore other events
+        }
+
+        event.extractCurrentUser()?.let { currentUser ->
+            userStateService.onUserUpdated(currentUser)
+            storePushNotificationsConfig(
+                currentUser.id,
+                currentUser.name,
+                userStateService.state !is UserState.UserSet,
+            )
+        }
     }
 
     /**
@@ -401,7 +411,7 @@ internal constructor(
                 clientState.toMutableState()?.setUser(user)
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {
-                    chatSocketExperimental.connectUser(user, isAnonymous)
+                    socketExperimental.connectUser(user, isAnonymous)
                 } else {
                     socketStateService.onConnectionRequested()
                     socket.connectUser(user, isAnonymous)
@@ -445,7 +455,7 @@ internal constructor(
         }.onErrorSuspend {
             disconnectSuspend(flushPersistence = true)
         }.onSuccess {
-            clientState.toMutableState()?.setInitializionState(InitializationState.COMPLETE)
+            clientState.toMutableState()?.setInitializationState(InitializationState.COMPLETE)
         }
     }
 
@@ -513,6 +523,7 @@ internal constructor(
         timeoutMilliseconds: Long? = null,
     ): Call<ConnectionData> {
         return CoroutineCall(clientScope) {
+            userScope.userId.value = user.id
             connectUserSuspend(user, tokenProvider, timeoutMilliseconds)
         }
     }
@@ -522,7 +533,7 @@ internal constructor(
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long?,
     ): Result<ConnectionData> {
-        clientState.toMutableState()?.setInitializionState(InitializationState.RUNNING)
+        clientState.toMutableState()?.setInitializationState(InitializationState.RUNNING)
         logger.d { "[connectUserSuspend] userId: '${user.id}', username: '${user.name}'" }
         return setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
             logger.v {
@@ -556,7 +567,8 @@ internal constructor(
     ): Call<ConnectionData> {
         return CoroutineCall(clientScope) {
             logger.d { "[switchUser] user.id: '${user.id}'" }
-            disconnectSuspend(flushPersistence = true)
+            userScope.userId.value = user.id
+            disconnectUserSuspend(flushPersistence = true)
             onDisconnectionComplete()
             connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
                 logger.v { "[switchUser] completed('${user.id}')" }
@@ -650,6 +662,7 @@ internal constructor(
     public fun connectAnonymousUser(timeoutMilliseconds: Long? = null): Call<ConnectionData> {
         return CoroutineCall(clientScope) {
             logger.d { "[connectAnonymousUser] no args" }
+            userScope.userId.value = ANONYMOUS_USER_ID
             setUser(
                 anonUser,
                 ConstantTokenProvider(devToken(ANONYMOUS_USER_ID)),
@@ -679,6 +692,7 @@ internal constructor(
     ): Call<ConnectionData> {
         return CoroutineCall(clientScope) {
             logger.d { "[connectGuestUser] userId: '$userId', username: '$username'" }
+            userScope.userId.value = userId
             getGuestToken(userId, username).await()
                 .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
                 .data()
@@ -957,7 +971,7 @@ internal constructor(
 
     public fun disconnectSocket() {
         if (ToggleService.isSocketExperimental()) {
-            chatSocketExperimental.disconnect()
+            socketExperimental.disconnect()
         } else {
             socket.disconnect()
         }
@@ -977,7 +991,7 @@ internal constructor(
             }
         } else {
             when (val userState = userStateService.state) {
-                is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
+                is UserState.UserSet, is UserState.AnonymousUserSet -> socketExperimental.reconnectUser(
                     userState.userOrError(),
                     userState is UserState.AnonymousUserSet
                 )
@@ -990,7 +1004,7 @@ internal constructor(
         if (ToggleService.isSocketExperimental().not()) {
             socket.addListener(listener)
         } else {
-            chatSocketExperimental.addListener(listener)
+            socketExperimental.addListener(listener)
         }
     }
 
@@ -998,7 +1012,7 @@ internal constructor(
         if (ToggleService.isSocketExperimental().not()) {
             socket.removeListener(listener)
         } else {
-            chatSocketExperimental.removeListener(listener)
+            socketExperimental.removeListener(listener)
         }
     }
 
@@ -1141,11 +1155,15 @@ internal constructor(
         }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
-        val userId = clientState.user.value?.id
-        logger.d { "[disconnectSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
-        userScope.coroutineContext.cancelChildren()
+        disconnectUserSuspend(flushPersistence)
+        userScope.userId.value = null
+    }
 
-        notifications.onLogout()
+    private suspend fun disconnectUserSuspend(flushPersistence: Boolean) {
+        val userId = clientState.user.value?.id
+        logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
+
+        notifications.onLogout(flushPersistence)
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
         if (ToggleService.isSocketExperimental().not()) {
@@ -1154,8 +1172,11 @@ internal constructor(
             socket.disconnect()
         } else {
             userStateService.onLogout()
-            chatSocketExperimental.disconnect()
+            socketExperimental.disconnect()
         }
+        clientState.awaitConnectionState(ConnectionState.OFFLINE)
+        userScope.cancelChildren(userId)
+
         if (flushPersistence) {
             repositoryFacade.clear()
             userCredentialStorage.clear()
@@ -1167,8 +1188,21 @@ internal constructor(
         appSettingsManager.clear()
 
         clientState.toMutableState()?.clearState()
+        logger.v { "[disconnectUserSuspend] completed('$userId')" }
+    }
 
-        logger.v { "[disconnectSuspend] completed('$userId')" }
+    @Suppress("TooGenericExceptionCaught")
+    private suspend fun ClientState.awaitConnectionState(
+        state: ConnectionState,
+        timeoutInMillis: Long = DEFAULT_CONNECTION_STATE_TIMEOUT
+    ) = try {
+        withTimeout(timeoutInMillis) {
+            connectionState.first {
+                it == state
+            }
+        }
+    } catch (e: Throwable) {
+        logger.e { "[awaitConnectionState] failed: $e" }
     }
 
     //region: api calls
@@ -1616,9 +1650,13 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
+        val userId = clientState.user.value?.id
+        val scopedUserId = userScope.userId.value
         val isConnectionRequired = request.watch || request.presence
-        logger.d { "[queryChannelsInternal] request: $request, isConnectionRequired: $isConnectionRequired" }
-
+        logger.d {
+            "[queryChannelsInternal] userId: $userId, scopedUserId: $scopedUserId, " +
+                "isConnectionRequired: $isConnectionRequired, request: $request"
+        }
         return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
             api.queryChannels(request)
         }
@@ -2279,7 +2317,7 @@ internal constructor(
             if (ToggleService.isSocketExperimental().not()) {
                 socketStateService.state.connectionIdOrError()
             } else {
-                chatSocketExperimental.connectionIdOrError()
+                socketExperimental.connectionIdOrError()
             }
         }.getOrNull()
     }
@@ -2308,7 +2346,7 @@ internal constructor(
 
     public fun isSocketConnected(): Boolean {
         return if (ToggleService.isSocketExperimental().not()) socketStateService.state is SocketState.Connected
-        else chatSocketExperimental.isConnected()
+        else socketExperimental.isConnected()
     }
 
     /**
@@ -2916,7 +2954,7 @@ internal constructor(
                 userScope = userScope,
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
-                chatSocketExperimental = module.experimentalSocket(),
+                socketExperimental = module.experimentalSocket(),
                 lifecycleObserver = module.lifecycleObserver,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
@@ -2980,6 +3018,7 @@ internal constructor(
         public var OFFLINE_SUPPORT_ENABLED: Boolean = false
 
         private const val MAX_COOLDOWN_TIME_SECONDS = 120
+        private const val DEFAULT_CONNECTION_STATE_TIMEOUT = 10_000L
         private const val KEY_MESSAGE_ACTION = "image_action"
         private const val MESSAGE_ACTION_SEND = "send"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
