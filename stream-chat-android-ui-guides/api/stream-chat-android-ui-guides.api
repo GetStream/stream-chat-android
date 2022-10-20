@@ -118,14 +118,14 @@ public final class io/getstream/chat/android/guides/catalog/uicomponents/customa
 	public fun onBindViewHolder (Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/DateAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/attachment/factory/AttachmentPreviewFactory {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/DateAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/attachment/preview/factory/AttachmentPreviewFactory {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
-	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder;
+	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/preview/AttachmentPreviewViewHolder;
 }
 
-public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/DateAttachmentPreviewFactory$DateAttachmentPreviewViewHolder : io/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder {
+public final class io/getstream/chat/android/guides/catalog/uicomponents/customattachments/factory/DateAttachmentPreviewFactory$DateAttachmentPreviewViewHolder : io/getstream/chat/android/ui/message/composer/attachment/preview/AttachmentPreviewViewHolder {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/guides/databinding/ItemDateAttachmentPreviewBinding;Lkotlin/jvm/functions/Function1;)V
 	public fun bind (Lio/getstream/chat/android/client/models/Attachment;)V

@@ -21,11 +21,11 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
-import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewFactoryManager
-import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewViewHolder
-import io.getstream.chat.android.ui.message.composer.attachment.factory.AttachmentPreviewFactory
-import io.getstream.chat.android.ui.message.composer.attachment.factory.FileAttachmentPreviewFactory
-import io.getstream.chat.android.ui.message.composer.attachment.factory.ImageAttachmentPreviewFactory
+import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
+import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.AttachmentPreviewFactory
+import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.FileAttachmentPreviewFactory
+import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
 import io.getstream.chat.android.ui.message.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer

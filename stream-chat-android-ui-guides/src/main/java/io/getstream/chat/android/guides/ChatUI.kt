@@ -17,7 +17,7 @@
 package io.getstream.chat.android.guides
 
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
 

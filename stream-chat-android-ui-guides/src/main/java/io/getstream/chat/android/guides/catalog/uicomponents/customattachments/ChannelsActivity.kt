@@ -28,9 +28,9 @@ import io.getstream.chat.android.guides.cleanup
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.channel.ChannelListActivity
 import io.getstream.chat.android.ui.channel.ChannelListFragment
-import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewFactoryManager
-import io.getstream.chat.android.ui.message.composer.attachment.factory.FileAttachmentPreviewFactory
-import io.getstream.chat.android.ui.message.composer.attachment.factory.ImageAttachmentPreviewFactory
+import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.FileAttachmentPreviewFactory
+import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager

@@ -39,8 +39,8 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCe
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
-import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewFactoryManager
-import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewViewHolder
+import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
 
 /**
  * Represents the default content shown at the center of [MessageComposerView].
