@@ -11,7 +11,7 @@ internal class RealmFilterObjectKtTest {
         val filterObject = Filters.and(
             Filters.eq("name", "leandro"),
             Filters.exists("age")
-        ).toFilterNode()
+        ).toFilterNodeEntity()
 
         filterObject.filter_type `should be equal to` KEY_AND
     }
@@ -23,7 +23,7 @@ internal class RealmFilterObjectKtTest {
             Filters.exists("age")
         )
 
-        val newFilter = filterObject.toFilterNode().toFilterObject()
+        val newFilter = filterObject.toFilterNodeEntity().toFilterObject()
 
         newFilter `should be equal to` filterObject
     }
@@ -39,7 +39,7 @@ internal class RealmFilterObjectKtTest {
             Filters.ne("something", "something")
         )
 
-        val newFilter = filterObject.toFilterNode().toFilterObject()
+        val newFilter = filterObject.toFilterNodeEntity().toFilterObject()
 
         newFilter `should be equal to` filterObject
     }

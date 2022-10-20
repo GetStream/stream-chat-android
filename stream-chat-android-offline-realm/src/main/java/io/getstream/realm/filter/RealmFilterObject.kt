@@ -19,41 +19,37 @@ import io.getstream.chat.android.client.api.models.NotExistsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.realm.entity.FilterNodeEntity
 import io.realm.kotlin.ext.toRealmSet
-import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.RealmSet
 
-internal class FilterNode : RealmObject {
-    var filter_type: String? = null
-    var field: String? = null
-    var value: Any? = null
-}
-
-internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
-    is AndFilterObject -> createBooleanLogicFilterNode(KEY_AND, this.filterObjects.map(FilterObject::toFilterNode))
-    is OrFilterObject -> createBooleanLogicFilterNode(KEY_OR, this.filterObjects.map(FilterObject::toFilterNode))
-    is NorFilterObject -> createBooleanLogicFilterNode(KEY_NOR, this.filterObjects.map(FilterObject::toFilterNode))
-    is ExistsFilterObject -> createFilterNode(KEY_EXIST, this.fieldName, null)
-    is NotExistsFilterObject -> createFilterNode(KEY_NOT_EXIST, this.fieldName, null)
-    is EqualsFilterObject -> createFilterNode(KEY_EQUALS, this.fieldName, this.value)
-    is NotEqualsFilterObject -> createFilterNode(KEY_NOT_EQUALS, this.fieldName, this.value)
-    is ContainsFilterObject -> createFilterNode(KEY_CONTAINS, this.fieldName, this.value)
-    is GreaterThanFilterObject -> createFilterNode(KEY_GREATER_THAN, this.fieldName, this.value)
+internal fun FilterObject.toFilterNodeEntity(): FilterNodeEntity = when (this) {
+    is AndFilterObject -> createBooleanLogicFilterNode(KEY_AND,
+        this.filterObjects.map(FilterObject::toFilterNodeEntity))
+    is OrFilterObject -> createBooleanLogicFilterNode(KEY_OR, this.filterObjects.map(FilterObject::toFilterNodeEntity))
+    is NorFilterObject -> createBooleanLogicFilterNode(KEY_NOR,
+        this.filterObjects.map(FilterObject::toFilterNodeEntity))
+    is ExistsFilterObject -> createFilterNodeEntity(KEY_EXIST, this.fieldName, null)
+    is NotExistsFilterObject -> createFilterNodeEntity(KEY_NOT_EXIST, this.fieldName, null)
+    is EqualsFilterObject -> createFilterNodeEntity(KEY_EQUALS, this.fieldName, this.value)
+    is NotEqualsFilterObject -> createFilterNodeEntity(KEY_NOT_EQUALS, this.fieldName, this.value)
+    is ContainsFilterObject -> createFilterNodeEntity(KEY_CONTAINS, this.fieldName, this.value)
+    is GreaterThanFilterObject -> createFilterNodeEntity(KEY_GREATER_THAN, this.fieldName, this.value)
     is GreaterThanOrEqualsFilterObject ->
-        createFilterNode(KEY_GREATER_THAN_OR_EQUALS, this.fieldName, this.value)
-    is LessThanFilterObject -> createFilterNode(KEY_LESS_THAN, this.fieldName, this.value)
-    is LessThanOrEqualsFilterObject -> createFilterNode(KEY_LESS_THAN_OR_EQUALS, this.fieldName, this.value)
-    is InFilterObject -> createFilterNode(KEY_IN, this.fieldName, this.values.toRealmSet())
-    is NotInFilterObject -> createFilterNode(KEY_NOT_IN, this.fieldName, this.values.toRealmSet())
-    is AutocompleteFilterObject -> createFilterNode(KEY_AUTOCOMPLETE, this.fieldName, this.value)
-    is DistinctFilterObject -> createFilterNode(null, null, null)
-    is NeutralFilterObject -> createFilterNode(null, null, null)
+        createFilterNodeEntity(KEY_GREATER_THAN_OR_EQUALS, this.fieldName, this.value)
+    is LessThanFilterObject -> createFilterNodeEntity(KEY_LESS_THAN, this.fieldName, this.value)
+    is LessThanOrEqualsFilterObject -> createFilterNodeEntity(KEY_LESS_THAN_OR_EQUALS, this.fieldName, this.value)
+    is InFilterObject -> createFilterNodeEntity(KEY_IN, this.fieldName, this.values.toRealmSet())
+    is NotInFilterObject -> createFilterNodeEntity(KEY_NOT_IN, this.fieldName, this.values.toRealmSet())
+    is AutocompleteFilterObject -> createFilterNodeEntity(KEY_AUTOCOMPLETE, this.fieldName, this.value)
+    is DistinctFilterObject -> createFilterNodeEntity(null, null, null)
+    is NeutralFilterObject -> createFilterNodeEntity(KEY_NEUTRAL, null, null)
 }
 
-internal fun FilterNode.toFilterObject(): FilterObject = when (this.filter_type) {
-    KEY_AND -> Filters.and((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
-    KEY_OR -> Filters.or((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
-    KEY_NOR -> Filters.nor((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
+internal fun FilterNodeEntity.toFilterObject(): FilterObject = when (this.filter_type) {
+    KEY_AND -> Filters.and((this.value as List<FilterNodeEntity>).map(FilterNodeEntity::toFilterObject))
+    KEY_OR -> Filters.or((this.value as List<FilterNodeEntity>).map(FilterNodeEntity::toFilterObject))
+    KEY_NOR -> Filters.nor((this.value as List<FilterNodeEntity>).map(FilterNodeEntity::toFilterObject))
     KEY_EXIST -> this.field?.let(Filters::exists) ?: Filters.neutral()
     KEY_NOT_EXIST -> this.field?.let(Filters::notExists) ?: Filters.neutral()
     KEY_EQUALS -> Filters.eq(this.field!!, this.value!!)
@@ -69,14 +65,14 @@ internal fun FilterNode.toFilterObject(): FilterObject = when (this.filter_type)
     else -> Filters.neutral()
 }
 
-private fun createBooleanLogicFilterNode(filterType: String?, value: Any): FilterNode =
-    FilterNode().apply {
+private fun createBooleanLogicFilterNode(filterType: String?, value: Any): FilterNodeEntity =
+    FilterNodeEntity().apply {
         this.filter_type = filterType
         this.value = value
     }
 
-private fun createFilterNode(filterType: String?, field: String?, value: Any?): FilterNode =
-    FilterNode().apply {
+private fun createFilterNodeEntity(filterType: String?, field: String?, value: Any?): FilterNodeEntity =
+    FilterNodeEntity().apply {
         this.filter_type = filterType
         this.field = field
         this.value = value
@@ -97,5 +93,6 @@ internal const val KEY_LESS_THAN_OR_EQUALS: String = "lte"
 internal const val KEY_IN: String = "in"
 internal const val KEY_NOT_IN: String = "nin"
 internal const val KEY_AUTOCOMPLETE: String = "autocomplete"
+internal const val KEY_NEUTRAL: String = "neutral"
 internal const val KEY_DISTINCT: String = "distinct"
 internal const val KEY_MEMBERS: String = "members"

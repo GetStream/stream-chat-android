@@ -22,8 +22,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.query.QueryChannelsSpec
-import io.getstream.realm.filter.FilterNode
-import io.getstream.realm.filter.toFilterNode
+import io.getstream.realm.filter.toFilterNodeEntity
 import io.getstream.realm.filter.toFilterObject
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
@@ -35,7 +34,7 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 internal class QueryChannelsEntityRealm : RealmObject {
     @PrimaryKey
     var id: String = ""
-    var filter: FilterNode? = null
+    var filter: FilterNodeEntity? = null
     var query_sort: QuerySorterInfoEntityRealm? = null
     var cids: RealmList<String> = realmListOf()
 }
@@ -45,7 +44,7 @@ internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
 
     return QueryChannelsEntityRealm().apply {
         id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
-        filter = thisQuery.filter.toFilterNode()
+        filter = Filters.neutral().toFilterNodeEntity()
         query_sort = thisQuery.querySort.toRealm()
         cids = thisQuery.cids.toRealmList()
     }

@@ -21,6 +21,7 @@ import io.getstream.realm.entity.ChannelEntityRealm
 import io.getstream.realm.entity.ChannelUserReadEntityRealm
 import io.getstream.realm.entity.CommandEntityRealm
 import io.getstream.realm.entity.ConfigEntityRealm
+import io.getstream.realm.entity.FilterNodeEntity
 import io.getstream.realm.entity.MemberEntityRealm
 import io.getstream.realm.entity.MessageEntityRealm
 import io.getstream.realm.entity.QueryChannelsEntityRealm
@@ -52,6 +53,7 @@ private fun realmSchema(): Set<KClass<out RealmObject>> =
         ChannelEntityRealm::class,
         UserEntityRealm::class,
         QueryChannelsEntityRealm::class,
+        FilterNodeEntity::class,
         MemberEntityRealm::class,
         ChannelUserReadEntityRealm::class,
         ReactionEntityRealm::class,
