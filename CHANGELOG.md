@@ -44,7 +44,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-
+- Adding ChannelState.getMessageById to fetch messages from the state of the SDK. [#4292](https://github.com/GetStream/stream-chat-android/pull/4292)
 ### ⚠️ Changed
 - Separated `QueryChannelListenerState` into state and databased focused classes. [#4188](https://github.com/GetStream/stream-chat-android/pull/4188)
 - Separated `ThreadQueryListener` into state and databased focused classes. [#4208](https://github.com/GetStream/stream-chat-android/pull/4208)
