@@ -44,6 +44,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.isMessageRead
 import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import io.getstream.chat.android.ui.common.extensions.internal.isNotNull
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemBackgroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
@@ -318,10 +319,10 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
     private fun StreamUiChannelListItemForegroundViewBinding.applyStyle(style: ChannelListViewStyle) {
         root.backgroundTintList = ColorStateList.valueOf(style.foregroundLayoutColor)
-        style.channelTitleText.apply(channelNameLabel)
-        style.lastMessageText.apply(lastMessageLabel)
-        style.lastMessageDateText.apply(lastMessageTimeLabel)
-        style.unreadMessageCounterText.apply(unreadCountBadge)
+        channelNameLabel.setTextStyle(style.channelTitleText)
+        lastMessageLabel.setTextStyle(style.lastMessageText)
+        lastMessageTimeLabel.setTextStyle(style.lastMessageDateText)
+        unreadCountBadge.setTextStyle(style.unreadMessageCounterText)
         unreadCountBadge.backgroundTintList = ColorStateList.valueOf(style.unreadMessageCounterBackgroundColor)
         muteIcon.setImageDrawable(style.mutedChannelIcon)
     }

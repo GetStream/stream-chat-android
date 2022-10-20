@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.AttachmentsPickerTabListener
@@ -120,9 +121,9 @@ internal class MediaAttachmentFragment : Fragment() {
             adapter = mediaAttachmentsAdapter
         }
         binding.grantPermissionsInclude.apply {
-            grantPermissionsImageView.setImageDrawable(style.mediaAttachmentsTabIconDrawable)
+            grantPermissionsImageView.setImageDrawable(style.allowAccessToMediaIconDrawable)
             grantPermissionsTextView.text = style.allowAccessToMediaButtonText
-            style.allowAccessButtonTextStyle.apply(grantPermissionsTextView)
+            grantPermissionsTextView.setTextStyle(style.allowAccessButtonTextStyle)
             grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }
@@ -173,8 +174,8 @@ internal class MediaAttachmentFragment : Fragment() {
             val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
             if (filteredAttachments.isEmpty()) {
-                style?.mediaAttachmentNoMediaTextStyle?.apply(binding.emptyPlaceholderTextView)
-                binding.emptyPlaceholderTextView.text = style?.mediaAttachmentNoMediaText
+                binding.emptyPlaceholderTextView.setTextStyle(style.mediaAttachmentNoMediaTextStyle)
+                binding.emptyPlaceholderTextView.text = style.mediaAttachmentNoMediaText
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
                 mediaAttachmentsAdapter.setAttachments(filteredAttachments)

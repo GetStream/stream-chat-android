@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.UserAvatarView
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
@@ -110,7 +111,7 @@ internal class FootnoteView : ConstraintLayout {
 
             threadRepliesButton.text =
                 resources.getQuantityString(R.plurals.stream_ui_message_list_thread_reply, replyCount, replyCount)
-            style.textStyleThreadCounter.apply(threadRepliesButton)
+            threadRepliesButton.setTextStyle(style.textStyleThreadCounter)
         }
         setupUserAvatars(isMine, threadParticipants)
     }
@@ -162,7 +163,7 @@ internal class FootnoteView : ConstraintLayout {
         footnote.timeView.apply {
             isVisible = true
             text = time
-            style.textStyleMessageDate.apply(this)
+            setTextStyle(style.textStyleMessageDate)
         }
     }
 

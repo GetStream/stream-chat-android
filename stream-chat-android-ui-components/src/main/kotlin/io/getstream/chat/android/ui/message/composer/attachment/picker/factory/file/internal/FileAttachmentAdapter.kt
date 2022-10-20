@@ -23,6 +23,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentFileBinding
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 
@@ -83,30 +84,25 @@ internal class FileAttachmentAdapter(
         lateinit var attachment: AttachmentMetaData
 
         init {
-            binding.run {
-                selectionIndicator.setTextColor(style.fileAttachmentItemCheckboxTextColor)
-
-                root.setOnClickListener {
-                    onAttachmentClick(attachment)
-                }
-
-                style.fileAttachmentItemNameTextStyle.apply(fileNameTextView)
-                style.fileAttachmentItemSizeTextStyle.apply(fileSizeTextView)
+            binding.root.setOnClickListener {
+                onAttachmentClick(attachment)
             }
+
+            binding.selectionIndicator.setTextColor(style.fileAttachmentItemCheckboxTextColor)
+            binding.fileNameTextView.setTextStyle(style.fileAttachmentItemNameTextStyle)
+            binding.fileSizeTextView.setTextStyle(style.fileAttachmentItemSizeTextStyle)
         }
 
         fun bind(attachment: AttachmentMetaData) {
             this.attachment = attachment
 
-            binding.apply {
-                fileTypeImageView.loadAttachmentThumb(attachment)
-                fileNameTextView.text = attachment.title
-                fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
+            binding.fileTypeImageView.loadAttachmentThumb(attachment)
+            binding.fileNameTextView.text = attachment.title
+            binding.fileSizeTextView.text = MediaStringUtil.convertFileSizeByteCount(attachment.size)
 
-                selectionIndicator.background = getSelectionIndicatorBackground(attachment.isSelected, style)
-                selectionIndicator.isChecked = attachment.isSelected
-                selectionIndicator.text = attachment.selectedPosition.takeIf { it > 0 }?.toString() ?: ""
-            }
+            binding.selectionIndicator.background = getSelectionIndicatorBackground(attachment.isSelected, style)
+            binding.selectionIndicator.isChecked = attachment.isSelected
+            binding.selectionIndicator.text = attachment.selectedPosition.takeIf { it > 0 }?.toString() ?: ""
         }
 
         private fun getSelectionIndicatorBackground(selected: Boolean, style: AttachmentsPickerDialogStyle): Drawable {

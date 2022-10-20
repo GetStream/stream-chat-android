@@ -250,7 +250,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
      * Updates the title with the member names.
      */
     private fun bindMemberNames(members: List<Member>) {
-        style.memberNamesTextStyle.apply(binding.channelMembersTextView)
+        binding.channelMembersTextView.setTextStyle(style.memberNamesTextStyle)
         binding.channelMembersTextView.text = if (isGroup) {
             members.joinToString { it.user.name }
         } else {
@@ -262,7 +262,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
      * Updates the subtitle with the status text.
      */
     private fun bindMembersInfo(members: List<Member>) {
-        style.memberInfoTextStyle.apply(binding.membersInfoTextView)
+        binding.membersInfoTextView.setTextStyle(style.memberInfoTextStyle)
         binding.membersInfoTextView.text = if (isGroup) {
             requireContext().resources.getQuantityString(
                 R.plurals.stream_ui_channel_list_member_info,

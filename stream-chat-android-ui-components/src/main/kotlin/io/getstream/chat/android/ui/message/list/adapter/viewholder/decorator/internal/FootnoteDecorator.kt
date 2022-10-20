@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.isDeleted
 import io.getstream.chat.android.ui.common.extensions.isEphemeral
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
@@ -267,7 +268,7 @@ internal class FootnoteDecorator(
             data.isBottomPosition() && !isDirectMessage() && data.isTheirs -> {
                 textView.text = data.message.user.name
                 textView.isVisible = true
-                style.textStyleUserName.apply(textView)
+                textView.setTextStyle(style.textStyleUserName)
             }
 
             data.isBottomPosition() &&

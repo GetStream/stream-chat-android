@@ -33,6 +33,7 @@ import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.AttachmentsPickerTabListener
@@ -125,14 +126,14 @@ internal class FileAttachmentFragment : Fragment() {
         binding.apply {
             grantPermissionsInclude.grantPermissionsImageView.setImageDrawable(style.allowAccessToFilesIconDrawable)
             grantPermissionsInclude.grantPermissionsTextView.text = style.allowAccessToFilesButtonText
-            style.allowAccessButtonTextStyle.apply(grantPermissionsInclude.grantPermissionsTextView)
+            grantPermissionsInclude.grantPermissionsTextView.setTextStyle(style.allowAccessButtonTextStyle)
             grantPermissionsInclude.grantPermissionsTextView.setOnClickListener {
                 checkPermissions()
             }
             recentFilesRecyclerView.adapter = fileAttachmentsAdapter
             fileManagerImageView.setImageDrawable(style.fileManagerIconDrawable)
             recentFilesTextView.text = style.recentFilesText
-            style.recentFilesTextStyle.apply(recentFilesTextView)
+            recentFilesTextView.setTextStyle(style.recentFilesTextStyle)
             fileManagerImageView.setOnClickListener {
                 activityResultLauncher?.launch(Unit)
             }
@@ -200,7 +201,7 @@ internal class FileAttachmentFragment : Fragment() {
             val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
             if (filteredAttachments.isEmpty()) {
-                style.fileAttachmentsNoFilesTextStyle.apply(binding.emptyPlaceholderTextView)
+                binding.emptyPlaceholderTextView.setTextStyle(style.fileAttachmentsNoFilesTextStyle)
                 binding.emptyPlaceholderTextView.text = style.fileAttachmentsNoFilesText
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {

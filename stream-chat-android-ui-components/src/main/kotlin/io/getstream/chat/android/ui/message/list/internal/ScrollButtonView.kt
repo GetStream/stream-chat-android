@@ -24,6 +24,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.setMargins
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiScrollButtonViewBinding
 import io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
 
@@ -81,7 +82,7 @@ internal class ScrollButtonView : FrameLayout {
             binding.unreadCountTextView.backgroundTintList =
                 ColorStateList.valueOf(color)
         }
-        scrollButtonViewStyle.scrollButtonBadgeTextStyle.apply(binding.unreadCountTextView)
+        binding.unreadCountTextView.setTextStyle(scrollButtonViewStyle.scrollButtonBadgeTextStyle)
     }
 
     override fun setOnClickListener(listener: OnClickListener?) {
