@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerVi
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 
 /**
- * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageInputViewModel.
+ * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageComposerViewModel.
  *
  * @param cid The channel id in the format messaging:123.
  * @param messageId The id of the target message to displayed.

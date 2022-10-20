@@ -94,7 +94,7 @@ class AddChannelViewController(
         showUsers(userInfoList.map { UserInfo(it.user, members.contains(it.user)) })
     }
 
-    fun messageInputViewClicked() {
+    fun messageComposerViewClicked() {
         if (members.isNotEmpty()) {
             showMessageListView()
         }

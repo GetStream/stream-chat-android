@@ -54,8 +54,6 @@ This document lists deprecated constructs in the SDK, with their expected time â
 | `MessageListView.setUserBlockHandler` | 2022.07.04 <br/>5.5.0 | 2022.07.19<br/>5.6.0 | 2022.08.02<br/>5.7.0 | The block action has been removed. Use `MessageOptionItemsFactory.setMessageOptionItemsFactory()` in conjunction with `MessageOptionItemsFactory.setCustomActionHandler()` to add support for custom block action. |
 | `QuerySort` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use QuerySortByReflection. |
 | `ChatClient.loadMessageById` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use the version without offsets, as it uses less requests to backend. |
-| `MessageInputView.setTypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use `MessageInputView.setTypingUpdatesBuffer` to set a typing buffer instead. |
-| `MessageInputView.TypingListener` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use your own implementation of `TypingUpdatesBuffer` or Stream's own `DefaultTypingUpdatesBuffer` instead. |
 | `InputField` | 2022.06.22 <br/>5.4.0 | 2022.07.19<br/>5.6.0 | 2022.08.16<br/>5.8.0 | Use the new implementation of `InputField`. |
 | `Member.isOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use Channel::ownCapabilities to determine user permissions. |
 | `List<Member?>.isCurrentUserOwnerOrAdmin` | 2022.05.24<br/>5.3.0 | 2022.06.22 <br/>5.4.0 | 2022.07.04 <br/>5.5.0 | Use Channel::ownCapabilities to determine user permissions. |
@@ -104,7 +102,6 @@ This document lists deprecated constructs in the SDK, with their expected time â
 | `ChatClient.Builder#logLevel(String)`<br/>*client* | 2021.07.01 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Use `ChatClient.Builder#logLevel(ChatLogLevel)` instead |
 | `ChatDomain#sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?,)` <br/>*offline* | 2021.06.14 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Use `ChatDomain#sendMessage(message: Message)` instead |
 | Multiple `MessageListView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Override drawables instead |
-| Multiple `MessageInputView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Override drawables instead |
 | `ChannelListHeaderView.streamUiActionButtonTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Override drawable instead |
 | `ChannelListView.streamUiMutedChannelIconTint` attribute<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Override drawable instead |
 | Multiple `AttachmentOptionsView` tint related attributes<br/>*ui-components* | 2021.06.10 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Override drawables instead |
@@ -126,11 +123,8 @@ This document lists deprecated constructs in the SDK, with their expected time â
 | Old serialization implementation<br/>*client* | 2021.05.10<br/>4.10.0 | 2021.06.30<br/>4.13.0 | 2021.09.15<br/>4.18.0 | See the [4.10.0 release notes](https://github.com/GetStream/stream-chat-android/releases/tag/4.10.0) for details |
 | `io.getstream.chat.android.livedata.ChannelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `io.getstream.chat.android.offline.channel.ChannelData` instead |
 | `ChannelController#channelData` <br/>*offline* | 2021.05.07 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `ChannelController::offlineChannelData` instead|
-| `MessageInputViewModel#editMessage` <br/>*ui-common* | 2021.05.05 | 2021.06.23<br/>4.12.1 | 2021.07.13<br/>4.14.0 | Use `MessageInputViewModel::messageToEdit` and `MessageInputViewModel::postMessageToEdit` |
 | `ChatDomain#currentUser` <br/>*offline* | 2021.04.30 | 2021.07.13<br/>4.14.0 | 2021.08.24<br/>4.17.0 | Subscribe to `ChatDomain::user` and handle nullable state |
-| `MessageInputView#setSuggestionListView` <br/>*ui-components* | 2021.04.13 | 2021.04.27<br/>4.10.0 | 2021.06.23<br/>4.12.1 | Setting external SuggestionListView is no longer necessary |
 | `ChatDomain.usecases` <br/>*offline* | 2021.04.06 | 2021.05.06<br/>4.10.0 | 2021.06.23<br/>4.12.1 | Replace this property call by obtaining a specific use case directly from ChatDomain |
-| `MessageInputView#setMembers` <br/>*ui-components* | 2021.04.07 | 2021.04.21<br/>4.9.0 | 2021.05.05<br>4.10.0 | Use MessageInputView::setUserLookupHandler instead of manually passing the list of users |
 | `ChannelListView's empty state methods` <br/>*ui-components* | 2021.04.05 | 2021.04.21<br/>4.9.0 | 2021.05.05<br/>4.10.0 | These methods no longer need to be called directly, `setChannel` handles empty state changes automatically |
 | `MessageListItemStyle#messageTextColorTheirs` <br/>*ui-components* | 2021.03.25 | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use MessageListItemStyle::textStyleTheirs::colorOrNull() instead |
 | `MessageListItemStyle#messageTextColorMine` <br/>*ui-components* | 2021.03.25 | 2021.04.21<br/>4.9.0 | 2021.06.23<br/>4.12.1 | Use MessageListItemStyle::textStyleMine::colorOrNull() instead |

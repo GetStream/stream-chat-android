@@ -70,11 +70,11 @@ class AddChannelView : FrameLayout {
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         if (binding.messageComposerView.isVisible && ev.action == MotionEvent.ACTION_DOWN) {
-            val messageInputViewRect = Rect().apply {
+            val messageComposerViewRect = Rect().apply {
                 binding.messageComposerView.getHitRect(this)
             }
-            if (messageInputViewRect.contains(ev.x.toInt(), ev.y.toInt())) {
-                controller.messageInputViewClicked()
+            if (messageComposerViewRect.contains(ev.x.toInt(), ev.y.toInt())) {
+                controller.messageComposerViewClicked()
             }
         }
         return super.onInterceptTouchEvent(ev)
