@@ -67,3 +67,4 @@ gradleEnterprise {
 		termsOfServiceAgree = "yes"
 	}
 }
+include ':stream-chat-android-offline-realm'
