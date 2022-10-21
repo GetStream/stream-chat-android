@@ -35,21 +35,20 @@ import io.getstream.chat.android.client.api.models.NotExistsFilterObject
 import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.realm.entity.FilterNodeEntity
+import io.getstream.realm.entity.FilterNode
 import io.realm.kotlin.ext.toRealmSet
-import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmSet
 
 @Suppress("ComplexMethod")
-internal fun FilterObject.toFilterNodeEntity(): FilterNodeEntity = when (this) {
+internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
     is AndFilterObject -> createBooleanLogicFilterNode(
         KEY_AND,
-        this.filterObjects.map(FilterObject::toFilterNodeEntity)
+        this.filterObjects.map(FilterObject::toFilterNode)
     )
-    is OrFilterObject -> createBooleanLogicFilterNode(KEY_OR, this.filterObjects.map(FilterObject::toFilterNodeEntity))
+    is OrFilterObject -> createBooleanLogicFilterNode(KEY_OR, this.filterObjects.map(FilterObject::toFilterNode))
     is NorFilterObject -> createBooleanLogicFilterNode(
         KEY_NOR,
-        this.filterObjects.map(FilterObject::toFilterNodeEntity)
+        this.filterObjects.map(FilterObject::toFilterNode)
     )
     is ExistsFilterObject -> createFilterNodeEntity(KEY_EXIST, this.fieldName, null)
     is NotExistsFilterObject -> createFilterNodeEntity(KEY_NOT_EXIST, this.fieldName, null)
@@ -69,10 +68,10 @@ internal fun FilterObject.toFilterNodeEntity(): FilterNodeEntity = when (this) {
 }
 
 @Suppress("ComplexMethod")
-internal fun FilterNodeEntity.toFilterObject(): FilterObject = when (this.filter_type) {
-    KEY_AND -> Filters.and((this.value as List<FilterNodeEntity>).map(FilterNodeEntity::toFilterObject))
-    KEY_OR -> Filters.or((this.value as List<FilterNodeEntity>).map(FilterNodeEntity::toFilterObject))
-    KEY_NOR -> Filters.nor((this.value as List<FilterNodeEntity>).map(FilterNodeEntity::toFilterObject))
+internal fun FilterNode.toFilterObject(): FilterObject = when (this.filter_type) {
+    KEY_AND -> Filters.and((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
+    KEY_OR -> Filters.or((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
+    KEY_NOR -> Filters.nor((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
     KEY_EXIST -> this.field?.let(Filters::exists) ?: Filters.neutral()
     KEY_NOT_EXIST -> this.field?.let(Filters::notExists) ?: Filters.neutral()
     KEY_EQUALS -> Filters.eq(this.field ?: "", this.value ?: "")
@@ -88,14 +87,14 @@ internal fun FilterNodeEntity.toFilterObject(): FilterObject = when (this.filter
     else -> Filters.neutral()
 }
 
-private fun createBooleanLogicFilterNode(filterType: String?, value: Any): FilterNodeEntity =
-    FilterNodeEntity().apply {
+private fun createBooleanLogicFilterNode(filterType: String?, value: Any): FilterNode =
+    FilterNode().apply {
         this.filter_type = filterType
         this.value = value
     }
 
-private fun createFilterNodeEntity(filterType: String?, field: String?, value: Any?): FilterNodeEntity =
-    FilterNodeEntity().apply {
+private fun createFilterNodeEntity(filterType: String?, field: String?, value: Any?): FilterNode =
+    FilterNode().apply {
         this.filter_type = filterType
         this.field = field
         this.value = value

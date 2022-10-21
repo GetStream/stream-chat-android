@@ -56,10 +56,7 @@ class ChannelListFragment : Fragment() {
         }
 
         ChannelListViewModelFactory(
-            filter = Filters.or(
-                Filters.eq("type", "messaging"),
-                Filters.eq("type", "something")
-            ),
+            Filters.eq("type", "messaging"),
             // Filters.and(
             //     Filters.eq("type", "messaging"),
                 // Filters.`in`("members", listOf(userId)),

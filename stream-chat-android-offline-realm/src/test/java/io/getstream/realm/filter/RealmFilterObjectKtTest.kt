@@ -18,17 +18,16 @@ package io.getstream.realm.filter
 
 import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.realm.entity.FilterNodeEntity
+import io.getstream.realm.entity.FilterNode
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
-import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.Test
 
 internal class RealmFilterObjectKtTest {
 
     @Test
     fun `it should be possible to convert a empty filter`() {
-        val emptyFilerEntity = FilterNodeEntity().apply {
+        val emptyFilerEntity = FilterNode().apply {
             filter_type = ""
             field = ""
             value = ""
@@ -42,7 +41,7 @@ internal class RealmFilterObjectKtTest {
         val filterObject = Filters.and(
             Filters.eq("name", "leandro"),
             Filters.exists("age")
-        ).toFilterNodeEntity()
+        ).toFilterNode()
 
         filterObject.filter_type `should be equal to` KEY_AND
     }
@@ -52,7 +51,7 @@ internal class RealmFilterObjectKtTest {
         val field = "field"
         val args = listOf("value1", "value2", "value3")
         val originalFilter = Filters.`in`(field, args)
-        val filterEntity = originalFilter.toFilterNodeEntity()
+        val filterEntity = originalFilter.toFilterNode()
 
         filterEntity.filter_type `should be equal to` KEY_IN
 
@@ -66,7 +65,7 @@ internal class RealmFilterObjectKtTest {
             Filters.exists("age")
         )
 
-        val newFilter = filterObject.toFilterNodeEntity().toFilterObject()
+        val newFilter = filterObject.toFilterNode().toFilterObject()
 
         newFilter `should be equal to` filterObject
     }
@@ -82,7 +81,7 @@ internal class RealmFilterObjectKtTest {
             Filters.ne("something", "something")
         )
 
-        val newFilter = filterObject.toFilterNodeEntity().toFilterObject()
+        val newFilter = filterObject.toFilterNode().toFilterObject()
 
         newFilter `should be equal to` filterObject
     }
@@ -95,7 +94,7 @@ internal class RealmFilterObjectKtTest {
             Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
         )
 
-        val newFilter = filterObject.toFilterNodeEntity().toFilterObject()
+        val newFilter = filterObject.toFilterNode().toFilterObject()
 
         newFilter `should be equal to` filterObject
     }

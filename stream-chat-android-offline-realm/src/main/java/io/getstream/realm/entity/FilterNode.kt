@@ -16,11 +16,12 @@
 
 package io.getstream.realm.entity
 
-import io.realm.kotlin.types.RealmObject
+import com.squareup.moshi.JsonClass
 
 @Suppress("VariableNaming")
-internal class FilterNodeEntity : RealmObject {
-    var filter_type: String? = null
-    var field: String? = null
-    var value: Any? = null
-}
+@JsonClass(generateAdapter = true)
+internal class FilterNode(
+    var filter_type: String? = null,
+    var field: String? = null,
+    var value: Any? = null,
+)

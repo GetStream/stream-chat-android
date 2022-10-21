@@ -16,13 +16,14 @@
 
 package io.getstream.realm.entity
 
+import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.query.QueryChannelsSpec
-import io.getstream.realm.filter.toFilterNodeEntity
+import io.getstream.realm.filter.toFilterNode
 import io.getstream.realm.filter.toFilterObject
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
@@ -34,27 +35,39 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 internal class QueryChannelsEntityRealm : RealmObject {
     @PrimaryKey
     var id: String = ""
-    var filter: FilterNodeEntity? = null
+    var filterAsString: String? = null
     var query_sort: QuerySorterInfoEntityRealm? = null
     var cids: RealmList<String> = realmListOf()
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
     val thisQuery = this
+    val moshi = Moshi.Builder()
+        // .addAdapter(FilterNodeAdapter())
+        .build()
 
     return QueryChannelsEntityRealm().apply {
         id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
-        filter = thisQuery.filter.toFilterNodeEntity()
+        filterAsString =
+            moshi.adapter(FilterNode::class.java).toJson(thisQuery.filter.toFilterNode())
         query_sort = thisQuery.querySort.toRealm()
         cids = thisQuery.cids.toRealmList()
     }
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 internal fun QueryChannelsEntityRealm.toDomain(): QueryChannelsSpec {
     val thisEntity = this
 
+    val moshi = Moshi.Builder()
+        // .addAdapter(FilterNodeAdapter())
+        .build()
+
     return QueryChannelsSpec(
-        filter = this.filter?.toFilterObject() ?: Filters.neutral(),
+        filter = filterAsString
+            ?.let(moshi.adapter(FilterNode::class.java)::fromJson)?.toFilterObject()
+            ?: Filters.neutral(),
         querySort = query_sort?.toDomain() ?: QuerySortByField.ascByName("name"),
     ).apply {
         cids = thisEntity.cids.toSet()
