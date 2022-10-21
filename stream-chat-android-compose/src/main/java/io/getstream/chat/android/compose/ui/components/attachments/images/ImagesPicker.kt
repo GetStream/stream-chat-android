@@ -192,16 +192,14 @@ private fun BoxScope.VideoThumbnailOverlay(
             tint = ChatTheme.colors.textHighEmphasis
         )
 
-        if (videoLength != 0L) {
-            Text(
-                modifier = Modifier
-                    .padding(start = 4.dp, end = 2.dp)
-                    .align(Alignment.CenterVertically),
-                text = MediaStringUtil.convertVideoLength(videoLength),
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textHighEmphasis
-            )
-        }
+        Text(
+            modifier = Modifier
+                .padding(start = 4.dp, end = 2.dp)
+                .align(Alignment.CenterVertically),
+            text = MediaStringUtil.convertVideoLength(videoLength),
+            style = ChatTheme.typography.footnote,
+            color = ChatTheme.colors.textHighEmphasis
+        )
     }
 }
 
