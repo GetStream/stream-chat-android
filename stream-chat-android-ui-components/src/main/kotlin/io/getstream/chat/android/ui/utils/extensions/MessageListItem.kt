@@ -33,7 +33,7 @@ import io.getstream.chat.android.common.model.messsagelist.MessageListItem as Me
 public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
     return when (this) {
         is DateSeparatorItem -> MessageListItem.DateSeparatorItem(date = date)
-        is SystemMessageItem -> MessageListItem.ThreadPlaceholderItem
+        is SystemMessageItem -> MessageListItem.MessageItem(message = message)
         is ThreadSeparatorItem -> MessageListItem.ThreadSeparatorItem(date = date, messageCount = messageCount)
         is TypingItem -> MessageListItem.TypingItem(users = typingUsers)
         is MessageItem -> MessageListItem.MessageItem(

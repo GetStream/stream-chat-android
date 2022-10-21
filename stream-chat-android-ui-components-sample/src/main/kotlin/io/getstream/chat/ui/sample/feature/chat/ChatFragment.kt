@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
-import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.model.DeleteMessage
 import io.getstream.chat.android.common.model.EditMessage
 import io.getstream.chat.android.common.model.SendAnyway
@@ -217,24 +216,20 @@ class ChatFragment : Fragment() {
                 deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
             )
             bindView(binding.messageListView, viewLifecycleOwner)
-            setDateSeparatorHandler(
-                DateSeparatorHandler { previousMessage, message ->
-                    if (previousMessage == null) {
-                        true
-                    } else {
-                        shouldShowDateSeparator(calendar, previousMessage, message)
-                    }
+            setDateSeparatorHandler { previousMessage, message ->
+                if (previousMessage == null) {
+                    true
+                } else {
+                    shouldShowDateSeparator(calendar, previousMessage, message)
                 }
-            )
-            setThreadDateSeparatorHandler(
-                DateSeparatorHandler { previousMessage, message ->
-                    if (previousMessage == null) {
-                        false
-                    } else {
-                        shouldShowDateSeparator(calendar, previousMessage, message)
-                    }
+            }
+            setThreadDateSeparatorHandler { previousMessage, message ->
+                if (previousMessage == null) {
+                    false
+                } else {
+                    shouldShowDateSeparator(calendar, previousMessage, message)
                 }
-            )
+            }
             state.observe(viewLifecycleOwner) {
                 when (it) {
                     is MessageListViewModel.State.Loading -> Unit

@@ -412,7 +412,13 @@ public class MessageListController(
                 messageId == null
             ) return@onEach
 
-            val newLastMessage = (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
+            val newLastMessage = newState.messages.lastOrNull { it is MessageItem || it is SystemMessageItem }?.let {
+                when (it) {
+                    is MessageItem -> it.message
+                    is SystemMessageItem -> it.message
+                    else -> null
+                }
+            }
 
             val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
             _messageListState.value = newState.copy(newMessageState = newMessageState)

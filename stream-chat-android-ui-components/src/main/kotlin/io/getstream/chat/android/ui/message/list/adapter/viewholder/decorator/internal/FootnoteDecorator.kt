@@ -263,8 +263,6 @@ internal class FootnoteDecorator(
         data: MessageListItem.MessageItem,
         style: MessageListItemStyle,
     ) {
-        println(deletedMessageVisibilityHandler())
-
         when {
             data.isBottomPosition() && !isDirectMessage() && data.isTheirs -> {
                 textView.text = data.message.user.name
