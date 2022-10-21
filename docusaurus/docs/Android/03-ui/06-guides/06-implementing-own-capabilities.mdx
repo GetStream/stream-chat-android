@@ -45,7 +45,7 @@ After setting own capabilities, the following capabilities will be regulated:
 *For this component, as well as all the other examples, the capabilities in bold are a part of the "default" behavior that is set up for most users in the dashboard.
 :::
 
-### MessageInputView
+### MessageComposerView
 
 Inside `MessageInputView` you will find the following function:
 
@@ -115,7 +115,7 @@ public object ChannelCapabilities {
 }
 ```
 The file containing `ChannelCapabilities` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/ChannelCapabilities.kt#L29).
+found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/ChannelCapabilities.kt).
 
 This object contains all relevant channel capabilities as type safe properties.
 You can use the properties to build a set containing only the capabilities you want enabled for the user.
