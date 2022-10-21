@@ -133,8 +133,7 @@ public object ChannelCapabilities {
     ... // Other capabilities
 }
 ```
-The file containing `ChannelCapabilities` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/ChannelCapabilities.kt).
+The file containing `ChannelCapabilities` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/ChannelCapabilities.kt).
 
 This object contains all relevant channel capabilities as type safe properties.
 You can use the properties to build a set containing only the capabilities you want enabled for the user.
@@ -158,7 +157,7 @@ val messageComposerState = MessageComposerState(
 )
 ```
 
-And finally call the `MessageComposerView::renderState` method with `messageComposerState` parameter::
+And finally call the `MessageComposerView::renderState` method with `messageComposerState` parameter:
 
 ```kotlin
 messageComposerView.renderState(messageComposerState)
