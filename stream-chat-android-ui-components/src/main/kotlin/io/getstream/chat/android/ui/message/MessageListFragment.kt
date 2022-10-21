@@ -190,38 +190,37 @@ public open class MessageListFragment : Fragment() {
      * @param messageComposerView The message composer that is being configured.
      */
     protected open fun setupMessageComposer(messageComposerView: MessageComposerView) {
-        messageComposerViewModel.apply {
-            bindView(binding.messageComposerView, viewLifecycleOwner)
-            messageListViewModel.mode.observe(viewLifecycleOwner) {
-                when (it) {
-                    is MessageListViewModel.Mode.Thread -> {
-                        messageListHeaderViewModel.setActiveThread(it.parentMessage)
-                        messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
-                    }
-                    is MessageListViewModel.Mode.Normal -> {
-                        messageListHeaderViewModel.resetThread()
-                        messageComposerViewModel.leaveThread()
-                    }
+        messageComposerViewModel.bindView(binding.messageComposerView, viewLifecycleOwner)
+
+        messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
+            when (mode) {
+                is MessageListViewModel.Mode.Thread -> {
+                    messageListHeaderViewModel.setActiveThread(mode.parentMessage)
+                    messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
+                }
+                is MessageListViewModel.Mode.Normal -> {
+                    messageListHeaderViewModel.resetThread()
+                    messageComposerViewModel.leaveThread()
                 }
             }
-            binding.messageListView.setMessageReplyHandler { _, message ->
+        }
+        binding.messageListView.setMessageReplyHandler { _, message ->
+            messageComposerViewModel.performMessageAction(Reply(message))
+        }
+        binding.messageListView.setMessageEditHandler { message ->
+            messageComposerViewModel.performMessageAction(Edit(message))
+        }
+        binding.messageListView.setModeratedMessageHandler { message, action ->
+            when (action) {
+                DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
+                EditMessage -> messageComposerViewModel.performMessageAction(Edit(message))
+                SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
+                else -> Unit
+            }
+        }
+        binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
+            messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
                 messageComposerViewModel.performMessageAction(Reply(message))
-            }
-            binding.messageListView.setMessageEditHandler { message ->
-                messageComposerViewModel.performMessageAction(Edit(message))
-            }
-            binding.messageListView.setModeratedMessageHandler { message, action ->
-                when (action) {
-                    DeleteMessage -> messageListViewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message))
-                    EditMessage -> messageComposerViewModel.performMessageAction(Edit(message))
-                    SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
-                    else -> Unit
-                }
-            }
-            binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
-                messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
-                    messageComposerViewModel.performMessageAction(Reply(message))
-                }
             }
         }
     }
