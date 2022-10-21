@@ -37,8 +37,7 @@ public fun MessageComposer(
     },
 )
 ```
-The file containing `MessageComposer` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/messages/composer/MessageComposer.kt).
+The file containing `MessageComposer` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/messages/composer/MessageComposer.kt).
 
 `MessageComposer` contains a parameter `messageComposerState: MessageComposerState`. This class holds all the necessary
 state to make `MessageComposer` work, including a set of own capabilities. These are used by the default components
@@ -52,14 +51,14 @@ public data class MessageComposerState(
     val ownCapabilities: Set<String> = setOf()
 )
 ```
-The file containing `MessageComposerState` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/common/composer/MessageComposerState.kt).
+The file containing `MessageComposerState` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/common/composer/MessageComposerState.kt).
 
 `MessageComposer` regulates the following capabilities:
 
 - **send-message * **
 - **send-links * **
 - **upload-file * **
+- **send-typing-events * **
 
 :::note
 Own capabilities are publicly exposed inside `MessageComposerController` and `MessageComposerViewModel` as `ownCapabilities: StateFlow<Set<String>>`.
@@ -211,13 +210,14 @@ found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-c
 This object contains all relevant channel capabilities as type safe properties.
 You can use the properties to build a set containing only the capabilities you want enabled for the user.
 
-If you were to enable the user to send messages, links and attachments, you would build a set as follows:
+If you were to enable the user to send messages, links and attachments and typing events, you would build a set as follows:
 
 ```kotlin
 val customOwnCapabilities = setOf(
     ChannelCapabilities.SEND_MESSAGE,
     ChannelCapabilities.SEND_LINKS,
-    ChannelCapabilities.UPLOAD_FILE
+    ChannelCapabilities.UPLOAD_FILE,
+    ChannelCapabilities.SEND_TYPING_EVENTS
 )
 ```
 
@@ -243,6 +243,7 @@ This enables the following capabilities:
 - **send-message * **
 - **send-links * **
 - **upload-file * **
+- **send-typing-events * **
 
 And results in `MessageComposer` having the following appearance:
 
