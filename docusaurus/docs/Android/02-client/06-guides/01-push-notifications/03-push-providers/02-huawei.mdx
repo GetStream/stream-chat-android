@@ -5,6 +5,7 @@ title: Huawei Push Kit
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import HuaweiContent from '../../../../../../shared/_dashboard-huawei-config.md'
+import PayloadContent from '../../../../../../shared/_push-notification-payload.md'
 
 
 <HuaweiContent/>
@@ -134,3 +135,7 @@ public final class CustomHuaweiMessagingService extends HmsMessageService {
 :::note
 Your custom service needs to have an [`<intent-filter>` priority](https://developer.android.com/guide/topics/manifest/intent-filter-element#priority) higher than `-1` to replace our default service. (This priority is `0` by default.)
 :::
+
+### Push Notification Payload
+
+<PayloadContent />

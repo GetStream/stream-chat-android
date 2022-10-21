@@ -5,6 +5,7 @@ title: Firebase Cloud Messaging
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import FirebaseContent from '../../../../../../shared/_dashboard-firebase-config.md'
+import PayloadContent from '../../../../../../shared/_push-notification-payload.md'
 
 <FirebaseContent/>
 
@@ -127,3 +128,7 @@ public final class CustomFirebaseMessagingService extends FirebaseMessagingServi
 :::note
 Make sure that your custom service has an [`<intent-filter>` priority](https://developer.android.com/guide/topics/manifest/intent-filter-element#priority) higher than `-1` to override our default service. (This priority is `0` by default.)
 :::
+
+### Push Notification Payload
+
+<PayloadContent />
