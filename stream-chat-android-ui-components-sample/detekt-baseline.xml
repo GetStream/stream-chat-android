@@ -94,7 +94,6 @@
     <ID>PackageNaming:UserLoginFragment.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
     <ID>PackageNaming:UserLoginViewModel.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
     <ID>SerialVersionUIDInSerializableClass:UserData.kt$UserData : Serializable</ID>
-    <ID>UnusedPrivateMember:AddChannelViewController.kt$AddChannelViewController$private val messageComposerView: MessageComposerView</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
   </CurrentIssues>
 </SmellBaseline>

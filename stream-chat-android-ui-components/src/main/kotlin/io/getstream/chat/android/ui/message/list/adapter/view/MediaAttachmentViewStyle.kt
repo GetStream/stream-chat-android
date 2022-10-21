@@ -32,7 +32,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 
 /**
  * Style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.MediaAttachmentView].
- * Use this class together with [TransformStyle.imageAttachmentStyleTransformer] to change styles programmatically.
+ * Use this class together with [TransformStyle.mediaAttachmentStyleTransformer] to change styles programmatically.
  *
  * @param progressIcon Animated progress drawable. Default value is
  * [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
@@ -194,7 +194,7 @@ public data class MediaAttachmentViewStyle(
                     playVideoIconPaddingStart = playVideoIconPaddingStart,
                     playVideoIconPaddingEnd = playVideoIconPaddingEnd,
                     playVideoIconCornerRadius = playVideoIconCornerRadius
-                ).let(TransformStyle.imageAttachmentStyleTransformer::transform)
+                ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }
         }
     }
