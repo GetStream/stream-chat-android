@@ -19,13 +19,11 @@ package io.getstream.chat.android.ui.message.composer.attachment.preview.factory
 import android.view.View
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
 
 /**
  * A fallback [AttachmentPreviewFactory] for attachments unhandled by other factories.
  */
-@ExperimentalStreamChatApi
 public class FallbackAttachmentPreviewFactory : AttachmentPreviewFactory {
     /**
      * Checks if the factory can create a preview ViewHolder for this attachment.

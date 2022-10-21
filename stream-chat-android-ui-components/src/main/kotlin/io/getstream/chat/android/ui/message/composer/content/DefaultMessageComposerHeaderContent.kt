@@ -23,7 +23,6 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultHeaderContentBinding
@@ -34,7 +33,6 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 /**
  * Represents the default content shown at the top of [MessageComposerView].
  */
-@ExperimentalStreamChatApi
 public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.

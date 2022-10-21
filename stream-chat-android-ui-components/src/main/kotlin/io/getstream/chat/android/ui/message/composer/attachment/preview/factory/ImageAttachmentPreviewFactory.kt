@@ -20,7 +20,6 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.model.ModelType
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -31,7 +30,6 @@ import io.getstream.chat.android.ui.message.composer.attachment.preview.Attachme
 /**
  * The default [AttachmentPreviewFactory] for image attachments.
  */
-@ExperimentalStreamChatApi
 public class ImageAttachmentPreviewFactory : AttachmentPreviewFactory {
     /**
      * Checks if the factory can create a preview ViewHolder for this attachment.

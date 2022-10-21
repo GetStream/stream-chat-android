@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.message.composer.attachment.preview.factory
 import android.view.ViewGroup
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
@@ -29,7 +28,6 @@ import io.getstream.chat.android.uiutils.extension.isFile
 /**
  * The default [AttachmentPreviewFactory] for file attachments.
  */
-@ExperimentalStreamChatApi
 public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
     /**
      * Checks if the factory can create a preview ViewHolder for this attachment.

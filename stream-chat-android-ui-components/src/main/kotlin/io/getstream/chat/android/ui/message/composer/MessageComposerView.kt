@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -54,7 +53,6 @@ import io.getstream.chat.android.ui.message.composer.internal.toAttachment
  * UI component designed for handling message text input, attachments, actions,
  * and sending the message.
  */
-@ExperimentalStreamChatApi
 public class MessageComposerView : ConstraintLayout {
     /**
      * Generated binding class for the XML layout.

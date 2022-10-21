@@ -22,7 +22,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -69,7 +68,6 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param allowAccessToCameraButtonText The text to request required permissions on the camera attachments tab.
  * @param allowAccessToCameraIconDrawable The icon above the permissions text on the camera attachments tab.
  */
-@ExperimentalStreamChatApi
 public data class AttachmentsPickerDialogStyle(
     @ColorInt val attachmentsPickerBackgroundColor: Int,
     val allowAccessButtonTextStyle: TextStyle,

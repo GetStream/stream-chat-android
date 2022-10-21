@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -45,7 +44,6 @@ import io.getstream.chat.android.ui.message.composer.attachment.preview.Attachme
 /**
  * Represents the default content shown at the center of [MessageComposerView].
  */
-@ExperimentalStreamChatApi
 public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.

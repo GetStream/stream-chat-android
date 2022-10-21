@@ -33,7 +33,7 @@ First, let's take a look into a high level overview of the differences between t
 |    Stateless Components*    | ⛔️ Main components support only ViewModel driven state.                                | ✅ Fully-independent variants that don't use ViewModels.                               |
 |  Extensive Layout Changes  | ⛔️No out-of-the-box support for replacing whole views.                                 | ✅ Using slot APIs*                                       |
 
-- **Main building blocks**: Large elements crucial to a chat experience such as lists, headers and the message input.
+- **Main building blocks**: Large elements crucial to a chat experience such as lists, headers and the message composer.
 - **Secondary building blocks**: Smaller elements such as avatars, typing indicators, timestamps etc. Building Composables is a lot
   easier than building Views and this enables us to deliver more reusable components.
 - **Stateless Components**: Components that don't rely on ViewModels and use only pure state, but offer the same behavior as our ViewModel-powered components. These give

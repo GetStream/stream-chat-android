@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.message.composer.attachment.preview
 import android.view.ViewGroup
 import androidx.collection.SparseArrayCompat
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.AttachmentPreviewFactory
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.FallbackAttachmentPreviewFactory
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.FileAttachmentPreviewFactory
@@ -32,7 +31,6 @@ import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.
  * @param fallbackAttachmentPreviewFactory The fallback factory that will be used in case there are
  * no other factories that can handle the attachment.
  */
-@ExperimentalStreamChatApi
 public class AttachmentPreviewFactoryManager(
     attachmentPreviewFactories: List<AttachmentPreviewFactory> = listOf(
         ImageAttachmentPreviewFactory(),

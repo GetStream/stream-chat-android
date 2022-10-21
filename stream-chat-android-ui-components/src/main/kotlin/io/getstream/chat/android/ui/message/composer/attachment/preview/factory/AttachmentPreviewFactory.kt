@@ -18,13 +18,11 @@ package io.getstream.chat.android.ui.message.composer.attachment.preview.factory
 
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
 
 /**
  * A factory responsible for creating attachment preview ViewHolders.
  */
-@ExperimentalStreamChatApi
 public interface AttachmentPreviewFactory {
     /**
      * Checks if the factory can create a preview ViewHolder for this attachment.

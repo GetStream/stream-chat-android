@@ -20,14 +20,12 @@ import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * A base [RecyclerView.ViewHolder] for attachment preview items in the message composer.
  *
  * @param itemView The view that this ViewHolder controls.
  */
-@ExperimentalStreamChatApi
 public abstract class AttachmentPreviewViewHolder(
     public val itemView: View,
 ) : RecyclerView.ViewHolder(itemView.rootView) {
