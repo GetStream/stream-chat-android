@@ -23,6 +23,6 @@
         android:color="@color/stream_ui_grey_gainsboro"
         />
     <solid
-        android:color="@color/stream_ui_grey_whisper"
+        android:color="@color/stream_ui_white"
         />
 </shape>

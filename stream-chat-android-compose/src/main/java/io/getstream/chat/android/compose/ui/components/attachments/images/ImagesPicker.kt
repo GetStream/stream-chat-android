@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.components.attachments.images
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -168,16 +169,23 @@ private fun BoxScope.VideoThumbnailOverlay(
     videoLength: Long,
     modifier: Modifier = Modifier,
 ) {
+    val overlayShape = RoundedCornerShape(12.dp)
+
     Row(
         modifier = modifier
             .wrapContentSize()
-            .padding(horizontal = 4.dp, vertical = 6.dp)
+            .padding(horizontal = 4.dp, vertical = 5.dp)
+            .border(
+                width = 1.dp,
+                color = ChatTheme.colors.borders,
+                shape = overlayShape
+            )
             .background(
-                shape = RoundedCornerShape(10.dp),
+                shape = overlayShape,
                 color = ChatTheme.colors.barsBackground
             )
             .align(Alignment.BottomCenter)
-            .padding(4.dp),
+            .padding(vertical = 2.dp, horizontal = 6.dp),
         horizontalArrangement = Arrangement.Center
     ) {
 
