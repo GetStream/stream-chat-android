@@ -349,6 +349,9 @@ public data class MessageInputViewStyle(
                 val videoIconDrawable = a.getDrawable(R.styleable.MessageInputView_streamUiAttachmentVideoLogoIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!
 
+                val videoIconDrawableTint =
+                    a.getColorOrNull(R.styleable.MessageInputView_streamUiAttachmentVideoLogoIconTint)
+
                 val videoLengthTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageInputView_streamUiAttachmentVideoLengthTextSize,
@@ -412,6 +415,7 @@ public data class MessageInputViewStyle(
                     recentFilesText = recentFilesText.toString(),
                     fileManagerIcon = fileManagerIcon,
                     videoIconDrawable = videoIconDrawable,
+                    videoIconDrawableTint = videoIconDrawableTint,
                     videoDurationTextStyle = videoLengthTextStyle,
                     videoLengthLabelVisible = videoLengthVisible,
                     videoIconVisible = videoIconVisible,

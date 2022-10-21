@@ -1039,6 +1039,7 @@
         <item name="streamUiAttachmentsRecentFilesText">@string/stream_ui_message_input_recent_files</item>
         <item name="streamUiAttachmentsFileManagerIcon">@drawable/stream_ui_ic_file_manager</item>
         <item name="streamUiAttachmentVideoLogoIcon">@drawable/stream_ui_ic_video</item>
+        <item name="streamUiAttachmentVideoLogoIconTint">@color/stream_ui_black</item>
         <item name="streamUiAttachmentVideoLengthVisible">true</item>
         <item name="streamUiAttachmentVideoIconVisible">true</item>
         <item name="streamUiCommandInputCancelIcon">@drawable/stream_ui_ic_clear</item>
@@ -1193,9 +1194,10 @@
         <item name="streamUiAttachmentsPickerAllowAccessToMediaIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
         <item name="streamUiAttachmentsPickerVideoLengthTextVisible">true</item>
         <item name="streamUiAttachmentsPickerVideoLengthTextSize">@dimen/stream_ui_text_small</item>
-        <item name="streamUiAttachmentsPickerVideoLengthTextColor">@color/stream_ui_white</item>
+        <item name="streamUiAttachmentsPickerVideoLengthTextColor">@color/stream_ui_black</item>
         <item name="streamUiAttachmentsPickerVideoIconVisible">true</item>
         <item name="streamUiAttachmentsPickerVideoIconDrawable">@drawable/stream_ui_ic_video</item>
+        <item name="streamUiAttachmentsPickerVideoIconDrawableTint">@color/stream_ui_black</item>
         <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaText">@string/stream_ui_message_composer_no_files</item>
         <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextColor">@color/stream_ui_text_color_primary</item>

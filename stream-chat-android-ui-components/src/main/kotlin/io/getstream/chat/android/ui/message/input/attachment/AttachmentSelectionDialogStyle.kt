@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param fileManagerIcon The icon for a button to pick files from file manager.
  * @param videoDurationTextStyle The text style used for video duration caption in each tile.
  * @param videoIconDrawable The icon used for video files.
+ * @param videoIconDrawableTint The tint of the icon used for video files.
  * @param videoIconVisible If the video icon is displayed.
  * @param videoLengthLabelVisible If the video duration caption is displayed.
  * @param backgroundColor The background color of the picker.
@@ -71,6 +72,7 @@ public data class AttachmentSelectionDialogStyle(
     val fileManagerIcon: Drawable,
     val videoDurationTextStyle: TextStyle,
     val videoIconDrawable: Drawable,
+    @ColorInt val videoIconDrawableTint: Int?,
     val videoIconVisible: Boolean,
     val videoLengthLabelVisible: Boolean,
     @ColorInt val backgroundColor: Int,
@@ -109,9 +111,10 @@ public data class AttachmentSelectionDialogStyle(
                 fileManagerIcon = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_file_manager)!!,
                 videoDurationTextStyle = TextStyle(
                     size = context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_small),
-                    color = context.getColorCompat(R.color.stream_ui_white),
+                    color = context.getColorCompat(R.color.stream_ui_black),
                 ),
                 videoIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!,
+                videoIconDrawableTint = context.getColorCompat(R.color.stream_ui_black),
                 videoIconVisible = true,
                 videoLengthLabelVisible = true,
                 backgroundColor = context.getColorCompat(R.color.stream_ui_white_smoke),

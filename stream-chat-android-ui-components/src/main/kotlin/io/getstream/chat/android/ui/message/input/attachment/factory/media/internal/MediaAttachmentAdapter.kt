@@ -119,15 +119,30 @@ internal class MediaAttachmentAdapter(
 
         private fun bindAttachmentType(attachment: AttachmentMetaData) {
             if (attachment.type == ModelType.attach_video) {
+                binding.videoInformationConstraintLayout.isVisible =
+                    style.videoLengthLabelVisible || style.videoIconVisible
                 binding.videoLengthTextView.isVisible = style.videoLengthLabelVisible
                 binding.videoLogoImageView.isVisible = style.videoIconVisible
-                binding.videoLogoImageView.setImageDrawable(style.videoIconDrawable)
+                binding.videoLogoImageView.setImageDrawable(getVideoIconDrawable())
                 binding.videoLengthTextView.setTextStyle(style.videoDurationTextStyle)
                 binding.videoLengthTextView.text = MediaStringUtil.convertVideoLength(attachment.videoLength)
             } else {
-                binding.videoLengthTextView.isVisible = false
-                binding.videoLogoImageView.isVisible = false
+                binding.videoInformationConstraintLayout.isVisible = false
                 binding.videoLengthTextView.text = ""
+            }
+        }
+
+        /**
+         * Processes the video icon drawable contained in the style and tints
+         * it if a non-null tint is provided in the style.
+         */
+        private fun getVideoIconDrawable() = style.videoIconDrawable.let { drawable ->
+            val tintColor = style.videoIconDrawableTint
+
+            if (tintColor != null) {
+                drawable.mutate().apply { setTint(tintColor) }
+            } else {
+                drawable
             }
         }
     }
