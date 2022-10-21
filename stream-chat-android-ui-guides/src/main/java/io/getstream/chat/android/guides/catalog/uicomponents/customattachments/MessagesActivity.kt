@@ -34,7 +34,6 @@ import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.guides.databinding.ActivityMessagesBinding
 import io.getstream.chat.android.guides.databinding.CustomMessageComposerLeadingContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
@@ -52,7 +51,6 @@ import java.util.Date
 /**
  * An Activity representing a self-contained chat screen with custom attachment factories.
  */
-@OptIn(ExperimentalStreamChatApi::class)
 class MessagesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMessagesBinding
 
@@ -136,7 +134,6 @@ class MessagesActivity : AppCompatActivity() {
         )
     }
 
-    @OptIn(ExperimentalStreamChatApi::class)
     private class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
 
         private lateinit var binding: CustomMessageComposerLeadingContentBinding

@@ -48,7 +48,6 @@ import java.util.Locale
 /**
  * [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/ui/guides/adding-custom-attachments/)
  */
-@OptIn(ExperimentalStreamChatApi::class)
 class AddingCustomAttachmentsSnippet : Fragment() {
 
     private lateinit var messageComposerView: MessageComposerView

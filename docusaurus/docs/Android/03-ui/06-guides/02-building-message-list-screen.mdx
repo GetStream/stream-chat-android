@@ -1,6 +1,6 @@
 # Building a Message List Screen
 
-The SDK provides multiple UI Components which can be used together to build a message list screen. This guide will show you how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageInputView`.
+The SDK provides multiple UI Components which can be used together to build a message list screen. This guide will show you how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageComposerView`.
 
 This is what a screen made with these three components looks like:
 
@@ -15,8 +15,7 @@ To add these Views to your app, first create them in an XML layout:
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
         android:id="@+id/messagesHeaderView"
@@ -24,8 +23,7 @@ To add these Views to your app, first create them in an XML layout:
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <io.getstream.chat.android.ui.message.list.MessageListView
         android:id="@+id/messageListView"
@@ -36,18 +34,16 @@ To add these Views to your app, first create them in an XML layout:
         app:layout_constraintBottom_toTopOf="@+id/messageComposerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView" />
 
-    <io.getstream.chat.android.ui.message.input.MessageInputView
-        android:id="@+id/messageInputView"
+    <io.getstream.chat.android.ui.message.composer.MessageComposerView
+        android:id="@+id/messageComposerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageListView"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/messageListView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
@@ -61,29 +57,36 @@ After setting up the ViewModels, this screen also requires some additional setup
 val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
 val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
 val messageListViewModel: MessageListViewModel by viewModels { factory }
-val messageInputViewModel: MessageInputViewModel by viewModels { factory }
+val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
 // Bind view models
 messageListHeaderViewModel.bindView(messageListHeaderView, viewLifecycleOwner)
 messageListViewModel.bindView(messageListView, viewLifecycleOwner)
-messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
+messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
 
 // Let both message list header and message input know when we open a thread
 messageListViewModel.mode.observe(this) { mode ->
     when (mode) {
         is MessageListViewModel.Mode.Thread -> {
             messageListHeaderViewModel.setActiveThread(mode.parentMessage)
-            messageInputViewModel.setActiveThread(mode.parentMessage)
+            messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
         }
         MessageListViewModel.Mode.Normal -> {
             messageListHeaderViewModel.resetThread()
-            messageInputViewModel.resetThread()
+            messageComposerViewModel.leaveThread()
         }
     }
 }
 
-// Let the message input know when we are editing a message
-messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit)
+// Let the message composer know when we are replying to a message
+messageListView.setMessageReplyHandler { _, message ->
+    messageComposerViewModel.performMessageAction(Reply(message))
+}
+
+// Let the message composer know when we are editing a message
+messageListView.setMessageEditHandler { message ->
+    messageComposerViewModel.performMessageAction(Edit(message))
+}
 
 // Handle navigate up state
 messageListViewModel.state.observe(this) { state ->

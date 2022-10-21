@@ -38,7 +38,6 @@ import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.Edit
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
@@ -52,7 +51,6 @@ import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 import java.util.Calendar
 
-@OptIn(ExperimentalStreamChatApi::class)
 class ChatFragment : Fragment() {
 
     private val args: ChatFragmentArgs by navArgs()

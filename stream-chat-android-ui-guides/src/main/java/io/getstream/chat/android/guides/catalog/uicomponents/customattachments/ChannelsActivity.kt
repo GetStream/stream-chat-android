@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.DateAttachmentFactory
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.DateAttachmentPreviewFactory
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.QuotedDateAttachmentFactory
@@ -40,7 +39,6 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.Q
  */
 class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListItemClickListener {
 
-    @OptIn(ExperimentalStreamChatApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ChatUI.attachmentFactoryManager = AttachmentFactoryManager(
