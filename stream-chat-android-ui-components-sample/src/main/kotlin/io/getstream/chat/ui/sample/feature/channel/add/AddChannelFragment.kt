@@ -74,6 +74,11 @@ class AddChannelFragment : Fragment() {
         binding.addChannelView.apply {
             messageListViewModel.bindView(messageListView, viewLifecycleOwner)
             messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
+
+            messageComposerView.sendMessageButtonClickListener = {
+                messageComposerViewModel.sendMessage(messageComposerViewModel.buildNewMessage())
+                addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
+            }
         }
     }
 
@@ -108,10 +113,6 @@ class AddChannelFragment : Fragment() {
             }
             setOnCreateGroupButtonListener {
                 findNavController().navigateSafely(R.id.action_addChannelFragment_to_addGroupChannelFragment)
-            }
-
-            messageComposerView.sendMessageButtonClickListener = {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
             }
         }
     }

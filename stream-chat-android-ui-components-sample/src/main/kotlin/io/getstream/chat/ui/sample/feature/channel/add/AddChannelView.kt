@@ -85,7 +85,6 @@ class AddChannelView : FrameLayout {
             val isAddGroupChannel = it.getBoolean(R.styleable.AddChannelView_isAddGroupChannel, false)
 
             binding.createGroupContainer.isVisible = !isAddGroupChannel
-            binding.messageComposerView.isVisible = !isAddGroupChannel
             binding.headerView.isVisible = !isAddGroupChannel
             binding.groupHeaderView.isVisible = isAddGroupChannel
 

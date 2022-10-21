@@ -154,14 +154,14 @@ class AddChannelViewController(
         }
         if (members.isEmpty()) {
             if (!isAddGroupChannel) {
-                // messageComposerView.disableSendButton()
+                messageComposerView.isVisible = false
                 createGroupContainer.isVisible = true
             }
             showUsersView()
             showInput()
         } else {
             if (!isAddGroupChannel) {
-                // messageComposerView.enableSendButton()
+                messageComposerView.isVisible = true
                 createGroupContainer.isVisible = false
             }
             hideInput()
