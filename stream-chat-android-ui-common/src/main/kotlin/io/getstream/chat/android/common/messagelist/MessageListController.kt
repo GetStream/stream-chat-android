@@ -1036,11 +1036,7 @@ public class MessageListController(
      * @param message The last seen [Message].
      */
     public fun updateLastSeenMessage(message: Message) {
-        val latestMessage: MessageItem? = listState.value.messages.lastOrNull { messageItem ->
-            messageItem is MessageItem
-        } as? MessageItem
-
-        if (message.id == latestMessage?.message?.id) {
+        if (message.id == lastLoadedMessage?.id) {
             markLastMessageRead()
         }
     }

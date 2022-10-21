@@ -105,15 +105,6 @@ public fun Messages(
 
     val density = LocalDensity.current
 
-    /** Marks the bottom most item as read every time it changes. **/
-    OnLastVisibleItemChanged(lazyListState) { messageIndex ->
-        val message = messagesState.messageItems.getOrNull(messageIndex)
-
-        if (message is MessageItemState) {
-            onLastVisibleMessageChanged(message.message)
-        }
-    }
-
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
@@ -194,6 +185,15 @@ public fun Messages(
         }
 
         helperContent()
+    }
+
+    /** Marks the bottom most item as read every time it changes. **/
+    OnLastVisibleItemChanged(lazyListState) { messageIndex ->
+        val message = messagesState.messageItems.getOrNull(messageIndex)
+
+        if (message is MessageItemState) {
+            onLastVisibleMessageChanged(message.message)
+        }
     }
 }
 

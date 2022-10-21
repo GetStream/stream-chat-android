@@ -104,7 +104,7 @@ internal class MessageListScrollHelper(
                     val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
                     val lastPotentiallyVisibleItemPosition = currentList.indexOfLast { it.isValid() }
                     bottomOffset = lastPotentiallyVisibleItemPosition - lastVisibleItemPosition
-                    isAtBottom = bottomOffset == 0
+                    isAtBottom = bottomOffset == 0 && areNewestMessagesLoaded
 
                     scrollButtonView.isVisible = shouldScrollToBottomBeVisible(bottomOffset)
                 }
