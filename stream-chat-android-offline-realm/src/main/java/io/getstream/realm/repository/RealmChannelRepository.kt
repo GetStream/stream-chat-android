@@ -124,7 +124,9 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) {
         val channel = selectChannelByCidRealm(cid)
         realm.writeBlocking {
-            channel.apply { this?.deleted_at = deletedAt.toRealmInstant() }?.let(this::copyToRealm)
+            channel.apply { this?.deleted_at = deletedAt.toRealmInstant() }?.let { entity ->
+                this.copyToRealm(entity, UpdatePolicy.ALL)
+            }
         }
     }
 

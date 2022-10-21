@@ -22,6 +22,7 @@ import io.getstream.realm.entity.SyncStateEntityRealm
 import io.getstream.realm.entity.toDomain
 import io.getstream.realm.entity.toRealm
 import io.realm.kotlin.Realm
+import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 
 internal class RealmSyncStateRepository(private val realm: Realm) : SyncStateRepository {
@@ -32,7 +33,7 @@ internal class RealmSyncStateRepository(private val realm: Realm) : SyncStateRep
 
     override suspend fun insertSyncState(syncState: SyncState) {
         realm.writeBlocking {
-            copyToRealm(syncState.toRealm())
+            copyToRealm(syncState.toRealm(), UpdatePolicy.ALL)
         }
     }
 

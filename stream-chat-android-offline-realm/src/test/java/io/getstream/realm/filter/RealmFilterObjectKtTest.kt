@@ -16,11 +16,26 @@
 
 package io.getstream.realm.filter
 
+import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.realm.entity.FilterNodeEntity
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be instance of`
+import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.Test
 
 internal class RealmFilterObjectKtTest {
+
+    @Test
+    fun `it should be possible to convert a empty filter`() {
+        val emptyFilerEntity = FilterNodeEntity().apply {
+            filter_type = ""
+            field = ""
+            value = ""
+        }
+
+        emptyFilerEntity.toFilterObject() `should be instance of` NeutralFilterObject::class
+    }
 
     @Test
     fun `it should be possible to convert a filter object to realm`() {
@@ -30,6 +45,18 @@ internal class RealmFilterObjectKtTest {
         ).toFilterNodeEntity()
 
         filterObject.filter_type `should be equal to` KEY_AND
+    }
+
+    @Test
+    fun `it should be possible to convert a filter IN object to realm`() {
+        val field = "field"
+        val args = listOf("value1", "value2", "value3")
+        val originalFilter = Filters.`in`(field, args)
+        val filterEntity = originalFilter.toFilterNodeEntity()
+
+        filterEntity.filter_type `should be equal to` KEY_IN
+
+        filterEntity.toFilterObject() `should be equal to` originalFilter
     }
 
     @Test
@@ -53,6 +80,19 @@ internal class RealmFilterObjectKtTest {
                 Filters.contains("profession", "programmer")
             ),
             Filters.ne("something", "something")
+        )
+
+        val newFilter = filterObject.toFilterNodeEntity().toFilterObject()
+
+        newFilter `should be equal to` filterObject
+    }
+
+    @Test
+    fun `it should be possible to convert and revert a filter object to realm - complex scenario2`() {
+        val filterObject = Filters.and(
+            Filters.eq("type", "messaging"),
+            Filters.`in`("members", listOf("user_id")),
+            Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
         )
 
         val newFilter = filterObject.toFilterNodeEntity().toFilterObject()

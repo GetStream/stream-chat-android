@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.realm.entity.FilterNodeEntity
 import io.realm.kotlin.ext.toRealmSet
+import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmSet
 
 @Suppress("ComplexMethod")
@@ -74,16 +75,16 @@ internal fun FilterNodeEntity.toFilterObject(): FilterObject = when (this.filter
     KEY_NOR -> Filters.nor((this.value as List<FilterNodeEntity>).map(FilterNodeEntity::toFilterObject))
     KEY_EXIST -> this.field?.let(Filters::exists) ?: Filters.neutral()
     KEY_NOT_EXIST -> this.field?.let(Filters::notExists) ?: Filters.neutral()
-    KEY_EQUALS -> Filters.eq(this.field!!, this.value!!)
-    KEY_NOT_EQUALS -> Filters.ne(this.field!!, this.value!!)
-    KEY_CONTAINS -> Filters.contains(this.field!!, this.value!!)
-    KEY_GREATER_THAN -> Filters.greaterThan(this.field!!, this.value!!)
-    KEY_GREATER_THAN_OR_EQUALS -> Filters.greaterThanEquals(this.field!!, this.value!!)
-    KEY_LESS_THAN -> Filters.lessThan(this.field!!, this.value!!)
-    KEY_LESS_THAN_OR_EQUALS -> Filters.lessThanEquals(this.field!!, this.value!!)
-    KEY_IN -> Filters.`in`(this.field!!, (this.value as RealmSet<Any>).toList())
-    KEY_NOT_IN -> Filters.nin(this.field!!, (this.value as RealmSet<Any>).toList())
-    KEY_AUTOCOMPLETE -> Filters.autocomplete(this.field!!, this.value as String)
+    KEY_EQUALS -> Filters.eq(this.field ?: "", this.value ?: "")
+    KEY_NOT_EQUALS -> Filters.ne(this.field ?: "", this.value ?: "")
+    KEY_CONTAINS -> Filters.contains(this.field ?: "", this.value ?: "")
+    KEY_GREATER_THAN -> Filters.greaterThan(this.field ?: "", this.value ?: "")
+    KEY_GREATER_THAN_OR_EQUALS -> Filters.greaterThanEquals(this.field ?: "", this.value ?: "")
+    KEY_LESS_THAN -> Filters.lessThan(this.field ?: "", this.value ?: "")
+    KEY_LESS_THAN_OR_EQUALS -> Filters.lessThanEquals(this.field ?: "", this.value ?: "")
+    KEY_IN -> Filters.`in`(this.field ?: "", (this.value as RealmSet<Any>).toList())
+    KEY_NOT_IN -> Filters.nin(this.field ?: "", (this.value as RealmSet<Any>).toList())
+    KEY_AUTOCOMPLETE -> Filters.autocomplete(this.field ?: "", this.value as String)
     else -> Filters.neutral()
 }
 

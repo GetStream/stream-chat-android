@@ -44,7 +44,7 @@ internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
 
     return QueryChannelsEntityRealm().apply {
         id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
-        filter = Filters.neutral().toFilterNodeEntity()
+        filter = thisQuery.filter.toFilterNodeEntity()
         query_sort = thisQuery.querySort.toRealm()
         cids = thisQuery.cids.toRealmList()
     }

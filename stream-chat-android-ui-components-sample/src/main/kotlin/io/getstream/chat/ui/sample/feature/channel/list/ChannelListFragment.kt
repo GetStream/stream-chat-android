@@ -56,11 +56,15 @@ class ChannelListFragment : Fragment() {
         }
 
         ChannelListViewModelFactory(
-            filter = Filters.and(
+            filter = Filters.or(
                 Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(userId)),
-                Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+                Filters.eq("type", "something")
             ),
+            // Filters.and(
+            //     Filters.eq("type", "messaging"),
+                // Filters.`in`("members", listOf(userId)),
+                // Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+            // ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
         )
     }
