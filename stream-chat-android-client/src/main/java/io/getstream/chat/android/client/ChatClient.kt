@@ -600,6 +600,8 @@ internal constructor(
      *
      * @return Executable [Call] responsible for connecting the user.
      */
+    @CheckResult
+    @JvmOverloads
     public fun switchUser(
         user: User,
         tokenProvider: TokenProvider,
@@ -631,6 +633,8 @@ internal constructor(
      *
      * @return Executable [Call] responsible for connecting the user.
      */
+    @CheckResult
+    @JvmOverloads
     public fun switchUser(
         user: User,
         token: String,
@@ -3117,6 +3121,7 @@ internal constructor(
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
+        @JvmStatic
         public fun dismissChannelNotifications(channelType: String, channelId: String) {
             ensureClientInitialized().notifications.dismissChannelNotifications(channelType, channelId)
         }

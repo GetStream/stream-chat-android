@@ -19,6 +19,7 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.MessagePreviewFormatter
 import io.getstream.chat.android.ui.MimeTypeIconProvider
 import io.getstream.chat.android.ui.SupportedReactions
 import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
@@ -70,6 +71,14 @@ private class ChatUiSnippets {
                 mimeType.contains("video") -> R.drawable.stream_ui_ic_file_mov
                 // Generic icon for other files
                 else -> R.drawable.stream_ui_ic_file
+            }
+        }
+    }
+
+    fun defaultAvatar() {
+        object : AvatarBitmapFactory(context) {
+            override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
+                return createDefaultUserBitmap(user, style, avatarSize)
             }
         }
     }
@@ -160,6 +169,12 @@ private class ChatUiSnippets {
     fun customizingChannelNameFormatter() {
         ChatUI.channelNameFormatter = ChannelNameFormatter { channel, currentUser ->
             channel.name
+        }
+    }
+
+    fun customizingMessagePreview() {
+        ChatUI.messagePreviewFormatter = MessagePreviewFormatter { channel, message, currentUser ->
+            message.text
         }
     }
 
