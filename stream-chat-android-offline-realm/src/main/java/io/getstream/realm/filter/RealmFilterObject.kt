@@ -36,8 +36,6 @@ import io.getstream.chat.android.client.api.models.NotInFilterObject
 import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.realm.entity.FilterNode
-import io.realm.kotlin.ext.toRealmSet
-import io.realm.kotlin.types.RealmSet
 
 @Suppress("ComplexMethod")
 internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
@@ -81,8 +79,8 @@ internal fun FilterNode.toFilterObject(): FilterObject = when (this.filter_type)
     KEY_GREATER_THAN_OR_EQUALS -> Filters.greaterThanEquals(this.field ?: "", this.value ?: "")
     KEY_LESS_THAN -> Filters.lessThan(this.field ?: "", this.value ?: "")
     KEY_LESS_THAN_OR_EQUALS -> Filters.lessThanEquals(this.field ?: "", this.value ?: "")
-    KEY_IN -> Filters.`in`(this.field ?: "", (this.value as RealmSet<Any>).toList())
-    KEY_NOT_IN -> Filters.nin(this.field ?: "", (this.value as RealmSet<Any>).toList())
+    KEY_IN -> Filters.`in`(this.field ?: "", (this.value as List<out Any>))
+    KEY_NOT_IN -> Filters.nin(this.field ?: "", (this.value as List<out Any>))
     KEY_AUTOCOMPLETE -> Filters.autocomplete(this.field ?: "", this.value as String)
     else -> Filters.neutral()
 }
