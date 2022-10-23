@@ -70,6 +70,11 @@ public class StreamOfflinePluginFactory(
             "[uncaughtCoroutineException] throwable: $throwable, context: $context"
         }
     }
+    private var customRepositoryFactory: RepositoryFactory? = null
+
+    public fun setCustomRepositoryFactory(repositoryFactory: RepositoryFactory) {
+        customRepositoryFactory = repositoryFactory
+    }
 
     @Volatile
     private var _scope: CoroutineScope? = null
@@ -77,9 +82,9 @@ public class StreamOfflinePluginFactory(
     override fun createRepositoryFactory(user: User): RepositoryFactory {
         logger.i { "[createRepositoryFactory] user.id: '${user.id}'" }
         val scope = ensureScope(user)
-        return DatabaseRepositoryFactory(
+        return customRepositoryFactory ?: DatabaseRepositoryFactory(
             database = createDatabase(scope, appContext, user, config.persistenceEnabled),
-            currentUser = user
+            currentUser = user,
         )
     }
 
