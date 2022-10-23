@@ -34,12 +34,15 @@ import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.feature.HostActivity
+import io.getstream.realm.initialization.configureRealm
+import io.getstream.realm.repository.factory.RealmRepositoryFactory
 
 class ChatInitializer(private val context: Context) {
 
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
         FirebaseApp.initializeApp(context)
+
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
             newMessageIntent = {
@@ -65,13 +68,12 @@ class ChatInitializer(private val context: Context) {
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val offlinePlugin = StreamOfflinePluginFactory(
-            Config(
-                userPresence = true,
-                persistenceEnabled = true,
-            ),
+        val offlinePluginFactory = StreamOfflinePluginFactory(
+            Config(userPresence = true, persistenceEnabled = true),
             context
-        )
+        ).apply {
+            setCustomRepositoryFactory(RealmRepositoryFactory(configureRealm()))
+        }
 
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
@@ -86,7 +88,7 @@ class ChatInitializer(private val context: Context) {
             .loggerHandler(FirebaseLogger)
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
-            .withPlugins(offlinePlugin, statePluginFactory)
+            .withPlugins(offlinePluginFactory, statePluginFactory)
             .debugRequests(true)
             .build()
 
