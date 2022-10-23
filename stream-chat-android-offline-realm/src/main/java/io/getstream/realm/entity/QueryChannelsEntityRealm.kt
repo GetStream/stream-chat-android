@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.logging.StreamLog
 import io.getstream.realm.filter.toFilterNode
 import io.getstream.realm.filter.toFilterObject
 import io.realm.kotlin.ext.realmListOf
@@ -43,14 +44,11 @@ internal class QueryChannelsEntityRealm : RealmObject {
 @OptIn(ExperimentalStdlibApi::class)
 internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
     val thisQuery = this
-    val moshi = Moshi.Builder()
-        // .addAdapter(FilterNodeAdapter())
-        .build()
+    val moshi = Moshi.Builder().build()
 
     return QueryChannelsEntityRealm().apply {
         id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
-        filterAsString =
-            moshi.adapter(FilterNode::class.java).toJson(thisQuery.filter.toFilterNode())
+        filterAsString = moshi.adapter(FilterNode::class.java).toJson(thisQuery.filter.toFilterNode())
         query_sort = thisQuery.querySort.toRealm()
         cids = thisQuery.cids.toRealmList()
     }
@@ -60,16 +58,23 @@ internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
 internal fun QueryChannelsEntityRealm.toDomain(): QueryChannelsSpec {
     val thisEntity = this
 
-    val moshi = Moshi.Builder()
-        // .addAdapter(FilterNodeAdapter())
-        .build()
+    val moshi = Moshi.Builder().build()
+
+    StreamLog.d("RealmQueryChannelsRepo") { "[toDomain] Starting to covert realm to domain" }
+
+    val querySort: QuerySorter<Channel> = query_sort?.toDomain() ?: QuerySortByField.ascByName("name")
+    StreamLog.d("RealmQueryChannelsRepo") { "query sort done!! ------" }
+
+    val filterAsString = filterAsString
+        ?.let(moshi.adapter(FilterNode::class.java)::fromJson)?.toFilterObject()
+        ?: Filters.neutral()
+    StreamLog.d("RealmQueryChannelsRepo") { "filter done!!! ------" }
 
     return QueryChannelsSpec(
-        filter = filterAsString
-            ?.let(moshi.adapter(FilterNode::class.java)::fromJson)?.toFilterObject()
-            ?: Filters.neutral(),
-        querySort = query_sort?.toDomain() ?: QuerySortByField.ascByName("name"),
+        querySort = querySort,
+        filter = filterAsString,
     ).apply {
+        StreamLog.d("RealmQueryChannelsRepo") { "[toDomain] End of covert realm to domain" }
         cids = thisEntity.cids.toSet()
     }
 }

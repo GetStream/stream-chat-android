@@ -34,6 +34,11 @@ internal class QuerySorterInfoEntityRealm : RealmObject {
 
     @PrimaryKey
     var id: Int = query_specs.hashCode()
+
+    override fun toString(): String {
+        return "[QuerySorterInfoEntityRealm] id: $id " +
+            "${query_specs.joinToString { "name: ${it.sort_attribute_name} direction: ${it.sort_direction}" }}}"
+    }
 }
 
 @Suppress("VariableNaming")
