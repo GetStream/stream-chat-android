@@ -54,6 +54,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.common.state.Copy
@@ -389,7 +390,7 @@ public class MessageListView : ConstraintLayout {
         },
         optionClickListener: (MessageAction) -> Unit = { messageAction: MessageAction ->
             handleMessageAction(messageAction)
-        }
+        },
     ) {
         MessageOptionsDialogFragment.newInstance(
             context = context,
@@ -471,9 +472,12 @@ public class MessageListView : ConstraintLayout {
                 }
             } else {
                 val destination = when {
-                    message.attachments.all(Attachment::isImage) -> {
+                    message.attachments.all { it.isImage() || it.isVideo() } -> {
                         val filteredAttachments = message.attachments
-                            .filter { it.isImage() && !it.imagePreviewUrl.isNullOrEmpty() }
+                            .filter {
+                                it.isImage() && !it.imagePreviewUrl.isNullOrEmpty() ||
+                                    it.isVideo() && !it.assetUrl.isNullOrEmpty()
+                            }
                         val attachmentGalleryItems = filteredAttachments.map {
                             AttachmentGalleryItem(
                                 attachment = it,
@@ -811,6 +815,13 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Scrolls the message list to the bottom.sl
+     */
+    public fun scrollToBottom() {
+        scrollHelper.scrollToBottom()
+    }
+
+    /**
      * Set a custom layout manager for MessageListView. This can be used to change orientation of messages.
      *
      * @param layoutManager
@@ -1138,7 +1149,8 @@ public class MessageListView : ConstraintLayout {
                     scrollHelper.onMessageListChanged(
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
-                        isInitialList = isOldListEmpty && filteredList.isNotEmpty()
+                        isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
+                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded
                     )
 
                     buffer.active()
@@ -1487,7 +1499,7 @@ public class MessageListView : ConstraintLayout {
      * @param handler The handler to use.
      */
     public fun setAttachmentShowInChatOptionClickHandler(
-        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler
+        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler,
     ) {
         this._attachmentShowInChatOptionClickHandler = handler
     }
@@ -1548,6 +1560,15 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setModeratedMessageHandler(handler: ModeratedMessageOptionHandler) {
         this.moderatedMessageOptionHandler = handler
+    }
+
+    /**
+     * Sets the handler used when the user interacts with [ScrollButtonView].
+     *
+     * @param handler The handler to use.
+     */
+    public fun setOnScrollToBottomHandler(handler: OnScrollToBottomHandler) {
+        this.scrollHelper.setScrollToBottomHandler(handler)
     }
 
     /**
@@ -1745,6 +1766,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ModeratedMessageOptionHandler {
         public fun onModeratedMessageOptionSelected(message: Message, moderatedMessageOption: ModeratedMessageOption)
+    }
+
+    public fun interface OnScrollToBottomHandler {
+        public fun onScrollToBottom()
     }
     //endregion
 

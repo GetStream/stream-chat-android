@@ -30,10 +30,10 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
-import io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOptionsView
+import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 
 /**
- * Style for [AttachmentGalleryOptionsView].
+ * Controls how video attachments are displayed inside of the [AttachmentGalleryActivity].
  *
  * @param optionTextStyle The text style of each option.
  * @param backgroundColor The background color of the options dialog.
@@ -41,8 +41,8 @@ import io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOp
  * @param replyOptionDrawable  The icon to the "reply" option.
  * @param showInChatOptionEnabled If the "show in chat" option present in the list.
  * @param showInChatOptionDrawable The icon for the "show in chat" option.
- * @param saveImageOptionEnabled If the "save image" option is present in the list.
- * @param saveImageOptionDrawable The icon for the "save image" option.
+ * @param saveMediaOptionEnabled If the "save media" option is present in the list.
+ * @param saveMediaOptionDrawable The icon for the "save media" option.
  * @param deleteOptionEnabled If the "delete" option is present in the list.
  * @param deleteOptionDrawable The icon for the "delete" option.
  * @param deleteOptionTextColor The text color of the "delete" option.
@@ -54,8 +54,8 @@ public data class AttachmentGalleryOptionsViewStyle(
     val replyOptionDrawable: Drawable,
     val showInChatOptionEnabled: Boolean,
     val showInChatOptionDrawable: Drawable,
-    val saveImageOptionEnabled: Boolean,
-    val saveImageOptionDrawable: Drawable,
+    val saveMediaOptionEnabled: Boolean,
+    val saveMediaOptionDrawable: Drawable,
     val deleteOptionEnabled: Boolean,
     val deleteOptionDrawable: Drawable,
     @ColorInt val deleteOptionTextColor: Int,
@@ -117,13 +117,13 @@ public data class AttachmentGalleryOptionsViewStyle(
                 R.styleable.AttachmentOptionsView_streamUiShowInChatIcon
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_show_in_chat)!!
 
-            val saveImageOptionEnabled = it.getBoolean(
-                R.styleable.AttachmentOptionsView_streamUiSaveImageEnabled,
+            val saveMediaOptionEnabled = it.getBoolean(
+                R.styleable.AttachmentOptionsView_streamUiSaveMediaEnabled,
                 true
             )
 
-            val saveImageOptionDrawable = it.getDrawable(
-                R.styleable.AttachmentOptionsView_streamUiSaveImageIcon,
+            val saveMediaOptionDrawable = it.getDrawable(
+                R.styleable.AttachmentOptionsView_streamUiSaveMediaIcon,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_download)!!
 
             val deleteOptionEnabled = it.getBoolean(
@@ -147,8 +147,8 @@ public data class AttachmentGalleryOptionsViewStyle(
                 replyOptionDrawable = replyOptionDrawable,
                 showInChatOptionEnabled = showInChatOptionEnabled,
                 showInChatOptionDrawable = showInChatOptionDrawable,
-                saveImageOptionEnabled = saveImageOptionEnabled,
-                saveImageOptionDrawable = saveImageOptionDrawable,
+                saveMediaOptionEnabled = saveMediaOptionEnabled,
+                saveMediaOptionDrawable = saveMediaOptionDrawable,
                 deleteOptionEnabled = deleteOptionEnabled,
                 deleteOptionDrawable = deleteOptionDrawable,
                 deleteOptionTextColor = deleteOptionTextColor,

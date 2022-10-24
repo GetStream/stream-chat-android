@@ -37,7 +37,7 @@ private val FILE_THUMB_TRANSFORMATION = RoundedCorners(3.dpToPxPrecise())
 internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
     return with(attachment) {
         when {
-            isVideo() && !thumbUrl.isNullOrBlank() ->
+            isVideo() && ChatUI.videoThumbnailsEnabled && !thumbUrl.isNullOrBlank() ->
                 load(data = thumbUrl, transformation = FILE_THUMB_TRANSFORMATION)
             isImage() && !imageUrl.isNullOrBlank() ->
                 load(data = imageUrl, transformation = FILE_THUMB_TRANSFORMATION)

@@ -69,9 +69,7 @@ internal class ChatClientStateCalls(
         val userPresence = true // todo: Fix this!!
         val request = QueryChannelPaginationRequest(messageLimit)
             .toWatchChannelRequest(userPresence)
-            .apply {
-                shouldRefresh = true
-            }
+            .apply { this.shouldRefresh = true }
         return queryChannel(channelType, channelId, request)
     }
 

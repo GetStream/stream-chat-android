@@ -19,17 +19,25 @@ package io.getstream.chat.android.ui.gallery.internal
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 
 internal class AttachmentGalleryPagerAdapter(
     fragmentActivity: FragmentActivity,
-    private val imageList: List<String>,
-    private val imageClickListener: () -> Unit,
+    private val mediaList: List<Attachment>,
+    private val mediaClickListener: () -> Unit,
 ) : FragmentStateAdapter(fragmentActivity) {
-    override fun getItemCount(): Int = imageList.size
+    override fun getItemCount(): Int = mediaList.size
 
     override fun createFragment(position: Int): Fragment {
-        return AttachmentGalleryPageFragment.create(getItem(position), imageClickListener)
+        val attachment = getItem(position)
+
+        return when (attachment.type) {
+            AttachmentType.IMAGE -> AttachmentGalleryImagePageFragment.create(attachment, mediaClickListener)
+            AttachmentType.VIDEO -> AttachmentGalleryVideoPageFragment.create(attachment, mediaClickListener)
+            else -> throw Throwable("Unsupported attachment type")
+        }
     }
 
-    fun getItem(position: Int): String = imageList[position]
+    fun getItem(position: Int): Attachment = mediaList[position]
 }

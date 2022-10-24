@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.gallery.overview.internal
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -23,32 +24,52 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.gallery.MediaAttachmentGridViewStyle
+import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 
 internal class MediaAttachmentAdapter(
-    private val showUserAvatars: Boolean,
+    private val style: MediaAttachmentGridViewStyle,
     private val mediaAttachmentClickListener: MediaAttachmentClickListener,
 ) : ListAdapter<AttachmentGalleryItem, MediaAttachmentAdapter.MediaAttachmentViewHolder>(
     AttachmentGalleryItemDiffCallback
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
+
         return StreamUiItemMediaAttachmentBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let { MediaAttachmentViewHolder(it, showUserAvatars, mediaAttachmentClickListener) }
+            .let {
+                MediaAttachmentViewHolder(
+                    binding = it,
+                    mediaAttachmentClickListener = mediaAttachmentClickListener,
+                    style = style
+                )
+            }
     }
 
     override fun onBindViewHolder(holder: MediaAttachmentViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
+    /**
+     * The ViewHolder used for displaying media previews.
+     *
+     * @param binding The binding used to build a UI.
+     * @param mediaAttachmentClickListener Click listener used to detect
+     * clicks on media attachment previews.
+     * @param style Used to change the appearance of the UI.
+     */
     class MediaAttachmentViewHolder(
         private val binding: StreamUiItemMediaAttachmentBinding,
-        private val showUserAvatars: Boolean,
         private val mediaAttachmentClickListener: MediaAttachmentClickListener,
+        private val style: MediaAttachmentGridViewStyle,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
@@ -58,17 +79,101 @@ internal class MediaAttachmentAdapter(
         }
 
         fun bind(attachmentGalleryItem: AttachmentGalleryItem) {
-            binding.mediaImageView.load(
-                data = attachmentGalleryItem.attachment.imagePreviewUrl,
-                placeholderResId = R.drawable.stream_ui_placeholder,
-            )
+            setupUserAvatar(attachmentGalleryItem)
+            setupPlayButton(attachmentGalleryItem.attachment.type)
+            loadImage(attachmentGalleryItem)
+        }
 
+        /**
+         * Loads the given image.
+         *
+         * @param attachmentGalleryItem The attachment to be displayed.
+         */
+        private fun loadImage(attachmentGalleryItem: AttachmentGalleryItem) {
+            val isVideoAttachment = attachmentGalleryItem.attachment.isVideo()
+            val shouldLoadImage = attachmentGalleryItem.attachment.isImage() ||
+                (attachmentGalleryItem.attachment.isVideo() && ChatUI.videoThumbnailsEnabled)
+
+            binding.mediaImageView.load(
+                data = if (shouldLoadImage) {
+                    attachmentGalleryItem.attachment.imagePreviewUrl
+                } else {
+                    null
+                },
+                placeholderDrawable = if (!isVideoAttachment) {
+                    style.imagePlaceholder
+                } else {
+                    null
+                },
+                onStart = { binding.progressBar.visibility = View.VISIBLE },
+                onComplete = {
+                    binding.playButtonCardView.isVisible =
+                        attachmentGalleryItem.attachment.isVideo()
+                    binding.progressBar.visibility = View.GONE
+                }
+            )
+        }
+
+        /**
+         * Toggles the visibility of user avatars and load the
+         * given image.
+         *
+         * @param attachmentGalleryItem The attachment to be displayed.
+         */
+        private fun setupUserAvatar(attachmentGalleryItem: AttachmentGalleryItem) {
             val user = attachmentGalleryItem.user
-            if (showUserAvatars) {
-                binding.userAvatarView.isVisible = true
+
+            if (style.showUserAvatars) {
+                binding.userAvatarCardView.isVisible = true
                 binding.userAvatarView.setUser(user)
             } else {
-                binding.userAvatarView.isVisible = false
+                binding.userAvatarCardView.isVisible = false
+            }
+        }
+
+        /**
+         * Sets up the play icon overlaid above video attachment previews
+         * by pulling relevant values from [AttachmentGalleryOptionsViewStyle].
+         **/
+        private fun setupPlayButton(attachmentType: String?) {
+            if (attachmentType == AttachmentType.VIDEO) {
+                setupPlayButtonIcon()
+                setupPlayButtonCard()
+            }
+        }
+
+        /**
+         * Sets up the play button icon hosted in an image view.
+         */
+        private fun setupPlayButtonIcon() {
+            with(binding.playButtonImageView) {
+                val playVideoDrawable = style.playVideoButtonIcon?.mutate()?.apply {
+                    val tintColor = style.playVideoIconTint
+
+                    if (tintColor != null) {
+                        this.setTint(tintColor)
+                    }
+                }
+
+                setImageDrawable(playVideoDrawable)
+                setPaddingRelative(
+                    style.playVideoIconPaddingStart,
+                    style.playVideoIconPaddingTop,
+                    style.playVideoIconPaddingEnd,
+                    style.playVideoIconPaddingBottom
+                )
+            }
+        }
+
+        /**
+         * Sets up the card wrapping the image view that contains the
+         * play button icon.
+         */
+        private fun setupPlayButtonCard() {
+            with(binding.playButtonCardView) {
+                elevation = style.playVideoIconElevation
+                setCardBackgroundColor(style.playVideoIconBackgroundColor)
+                radius = style.playVideoIconCornerRadius
             }
         }
     }

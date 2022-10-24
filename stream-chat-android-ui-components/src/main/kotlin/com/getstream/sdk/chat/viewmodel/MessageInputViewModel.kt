@@ -56,12 +56,15 @@ import java.io.File
  * @param cid The full channel id, i.e. "messaging:123".
  * @param chatClient Entry point for most of the chat SDK
  * such as the current user, connection state, unread counts etc.
+ * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
+ * queries executed on screen initialization.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
 public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
+    messageId: String? = null
 ) : ViewModel() {
 
     /**
@@ -70,8 +73,8 @@ public class MessageInputViewModel @JvmOverloads constructor(
     public val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = viewModelScope
+            messageLimit = if (messageId != null) 0 else DEFAULT_MESSAGES_LIMIT,
+            coroutineScope = viewModelScope,
         ).filterNotNull()
 
     /**

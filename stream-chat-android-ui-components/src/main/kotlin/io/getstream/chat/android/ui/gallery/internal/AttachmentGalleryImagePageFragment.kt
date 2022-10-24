@@ -22,21 +22,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.getstream.sdk.chat.images.load
-import io.getstream.chat.android.ui.databinding.StreamUiItemImageGalleryBinding
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryImageBinding
 
-internal class AttachmentGalleryPageFragment : Fragment() {
+internal class AttachmentGalleryImagePageFragment : Fragment() {
 
-    private var _binding: StreamUiItemImageGalleryBinding? = null
+    private var _binding: StreamUiItemAttachmentGalleryImageBinding? = null
     private val binding get() = _binding!!
 
-    private val imageUrl: String by lazy {
-        requireNotNull(requireArguments().getString(ARG_IMAGE_URL)) { "Image URL must not be null" }
+    private val imageUrl: String? by lazy {
+        requireArguments().getString(ARG_IMAGE_URL)
     }
 
     private var imageClickListener: () -> Unit = {}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return StreamUiItemImageGalleryBinding.inflate(inflater)
+        return StreamUiItemAttachmentGalleryImageBinding.inflate(inflater)
             .apply { _binding = this }
             .root
     }
@@ -44,7 +45,18 @@ internal class AttachmentGalleryPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding.photoView) {
-            load(data = imageUrl)
+            load(
+                data = imageUrl,
+                onStart = {
+                    binding.placeHolderImageView.visibility = View.GONE
+                    binding.progressBar.visibility = View.VISIBLE
+                },
+                onComplete = {
+                    binding.placeHolderImageView.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.GONE
+                }
+            )
+
             setOnClickListener {
                 imageClickListener()
             }
@@ -59,10 +71,10 @@ internal class AttachmentGalleryPageFragment : Fragment() {
     companion object {
         private const val ARG_IMAGE_URL = "image_url"
 
-        fun create(imageUrl: String, imageClickListener: () -> Unit = {}): Fragment {
-            return AttachmentGalleryPageFragment().apply {
+        fun create(attachment: Attachment, imageClickListener: () -> Unit = {}): Fragment {
+            return AttachmentGalleryImagePageFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_IMAGE_URL, imageUrl)
+                    putString(ARG_IMAGE_URL, attachment.imageUrl)
                 }
                 this.imageClickListener = imageClickListener
             }

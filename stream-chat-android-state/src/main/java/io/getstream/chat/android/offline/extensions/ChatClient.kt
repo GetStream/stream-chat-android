@@ -330,3 +330,31 @@ private suspend fun ChatClient.loadMessageByIdInternal(
         Result(ChatError("Error while fetching messages from backend. Messages around id: $messageId"))
     }
 }
+
+/**
+ * Loads the newest messages of a channel.
+ *
+ * @param cid The full channel id i. e. messaging:123.
+ * @param messageLimit The number of messages to be loaded.
+ * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events.
+ * Used by the SDK to indicate if the user is online or not.
+ *
+ * @return Executable async [Call] responsible for loading the newest messages.
+ */
+@CheckResult
+public fun ChatClient.loadNewestMessages(
+    cid: String,
+    messageLimit: Int,
+    userPresence: Boolean = true,
+): Call<Channel> {
+    return CoroutineCall(state.scope) {
+        val cidValidationResult = validateCidWithResult(cid)
+        if (!cidValidationResult.isSuccess) {
+            cidValidationResult.error().toResultError()
+        } else {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            logic.channel(channelType = channelType, channelId = channelId)
+                .watch(messageLimit, userPresence)
+        }
+    }
+}

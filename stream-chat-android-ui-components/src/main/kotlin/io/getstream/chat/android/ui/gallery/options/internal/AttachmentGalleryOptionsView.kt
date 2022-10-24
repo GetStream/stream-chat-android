@@ -28,8 +28,8 @@ import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryOptions
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 
 /**
- * Represents the image options menu, used to perform different actions for
- * the currently selected image.
+ * Represents the media options menu, used to perform different actions for
+ * the currently selected media.
  */
 internal class AttachmentGalleryOptionsView : FrameLayout {
 
@@ -81,12 +81,12 @@ internal class AttachmentGalleryOptionsView : FrameLayout {
     }
 
     /**
-     * Registers a callback to be invoked when the "save image" option is clicked.
+     * Registers a callback to be invoked when the "save media" option is clicked.
      *
      * @param listener The callback that will run.
      */
-    fun setSaveImageClickListener(listener: OnClickListener) {
-        binding.saveImage.setOnClickListener(listener)
+    fun setSaveMediaClickListener(listener: OnClickListener) {
+        binding.saveMedia.setOnClickListener(listener)
     }
 
     /**
@@ -120,11 +120,11 @@ internal class AttachmentGalleryOptionsView : FrameLayout {
             binding.showInChat.isVisible = false
         }
 
-        if (style.saveImageOptionEnabled) {
-            binding.saveImage.setStartDrawable(style.saveImageOptionDrawable)
-            binding.saveImage.setTextStyle(style.optionTextStyle)
+        if (style.saveMediaOptionEnabled) {
+            binding.saveMedia.setStartDrawable(style.saveMediaOptionDrawable)
+            binding.saveMedia.setTextStyle(style.optionTextStyle)
         } else {
-            binding.saveImage.isVisible = false
+            binding.saveMedia.isVisible = false
         }
 
         if (style.deleteOptionEnabled) {
