@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
-import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -62,7 +61,6 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.scope.UserScope
-import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
@@ -93,9 +91,6 @@ internal open class BaseChatModule(
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, notificationConfig) }
     private val defaultApi by lazy { buildApi(config) }
-    private val defaultSocket by lazy {
-        buildSocket(config, moshiParser)
-    }
     private val chatSocketExperimental: ChatSocketExperimental by lazy {
         buildExperimentalChatSocket(config, moshiParser)
     }
@@ -107,14 +102,13 @@ internal open class BaseChatModule(
     val networkStateProvider: NetworkStateProvider by lazy {
         NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
     }
-    val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
     val callPostponeHelper: CallPostponeHelper by lazy {
         CallPostponeHelper(
             awaitConnection = {
                 when (ToggleService.isSocketExperimental()) {
                     true -> chatSocketExperimental.awaitConnection()
-                    else -> socketStateService.awaitConnection()
+                    else -> { }
                 }
             },
             userScope = scope,
@@ -124,8 +118,6 @@ internal open class BaseChatModule(
     //region Modules
 
     fun api(): ChatApi = defaultApi
-
-    fun socket(): ChatSocket = defaultSocket
 
     fun experimentalSocket() = chatSocketExperimental
 
@@ -218,19 +210,6 @@ internal open class BaseChatModule(
     ): () -> Boolean {
         return { isAnonymousApi || config.isAnonymous }
     }
-
-    private fun buildSocket(
-        chatConfig: ChatClientConfig,
-        parser: ChatParser,
-    ) = ChatSocket(
-        chatConfig.apiKey,
-        chatConfig.wssUrl,
-        tokenManager,
-        SocketFactory(parser, tokenManager),
-        networkStateProvider,
-        parser,
-        scope,
-    )
 
     private fun buildExperimentalChatSocket(
         chatConfig: ChatClientConfig,

@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
@@ -38,7 +37,6 @@ import java.util.Date
 import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 internal class ChatEventsObservable(
-    private val socket: ChatSocket,
     private val waitConnection: FlowCollector<Result<ConnectionData>>,
     private val scope: CoroutineScope,
     private val chatSocketExperimental: ChatSocketExperimental,
@@ -78,8 +76,6 @@ internal class ChatEventsObservable(
         if (subscriptions.isEmpty()) {
             if (ToggleService.isSocketExperimental()) {
                 chatSocketExperimental.removeListener(eventsMapper)
-            } else {
-                socket.removeListener(eventsMapper)
             }
         }
     }
@@ -114,8 +110,6 @@ internal class ChatEventsObservable(
             // add listener to socket events only once
             if (ToggleService.isSocketExperimental()) {
                 chatSocketExperimental.addListener(eventsMapper)
-            } else {
-                socket.addListener(eventsMapper)
             }
         }
 

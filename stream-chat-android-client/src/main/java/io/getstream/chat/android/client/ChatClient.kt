@@ -61,8 +61,6 @@ import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
-import io.getstream.chat.android.client.clientstate.SocketState
-import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
@@ -142,7 +140,6 @@ import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.setup.state.internal.toMutableState
-import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.ConstantTokenProvider
@@ -201,10 +198,8 @@ public class ChatClient
 internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
-    private val socket: ChatSocket,
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val socketStateService: SocketStateService = SocketStateService(),
     private val callPostponeHelper: CallPostponeHelper,
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
@@ -224,7 +219,7 @@ internal constructor(
 
     @InternalStreamChatApi
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
-    private val eventsObservable = ChatEventsObservable(socket, waitConnection, userScope, socketExperimental)
+    private val eventsObservable = ChatEventsObservable(waitConnection, userScope, socketExperimental)
     private val eventMutex = Mutex()
 
     @Deprecated(
@@ -233,9 +228,7 @@ internal constructor(
     )
     private val lifecycleHandler = object : LifecycleHandler {
         override fun resume() = reconnectSocket()
-        override fun stopped() {
-            socket.releaseConnection()
-        }
+        override fun stopped() {}
     }
 
     /**
@@ -316,10 +309,6 @@ internal constructor(
                 val user = event.me
                 val connectionId = event.connectionId
                 api.setConnection(user.id, connectionId)
-                if (ToggleService.isSocketExperimental().not()) {
-                    socketStateService.onConnected(connectionId)
-                    lifecycleObserver.observe(lifecycleHandler)
-                }
                 notifications.onSetUser()
 
                 clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTED)
@@ -338,12 +327,9 @@ internal constructor(
                     is DisconnectCause.NetworkNotAvailable,
                     is DisconnectCause.WebSocketNotAvailable,
                     is DisconnectCause.Error,
-                    -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
+                    -> { }
                     is DisconnectCause.UnrecoverableError -> {
                         userStateService.onSocketUnrecoverableError()
-                        if (ToggleService.isSocketExperimental().not()) {
-                            socketStateService.onSocketUnrecoverableError()
-                        }
                     }
                 }
                 clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
@@ -416,9 +402,6 @@ internal constructor(
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {
                     socketExperimental.connectUser(user, isAnonymous)
-                } else {
-                    socketStateService.onConnectionRequested()
-                    socket.connectUser(user, isAnonymous)
                 }
                 waitFirstConnection(timeoutMilliseconds)
             }
@@ -978,23 +961,11 @@ internal constructor(
     public fun disconnectSocket() {
         if (ToggleService.isSocketExperimental()) {
             socketExperimental.disconnect()
-        } else {
-            socket.disconnect()
         }
     }
 
     public fun reconnectSocket() {
         if (ToggleService.isSocketExperimental().not()) {
-            when (socketStateService.state is SocketState.Disconnected) {
-                true -> when (val userState = userStateService.state) {
-                    is UserState.UserSet, is UserState.AnonymousUserSet -> socket.reconnectUser(
-                        userState.userOrError(),
-                        userState is UserState.AnonymousUserSet
-                    )
-                    else -> error("Invalid user state $userState without user being set!")
-                }
-                false -> Unit
-            }
         } else {
             when (val userState = userStateService.state) {
                 is UserState.UserSet, is UserState.AnonymousUserSet -> socketExperimental.reconnectUser(
@@ -1008,7 +979,6 @@ internal constructor(
 
     public fun addSocketListener(listener: SocketListener) {
         if (ToggleService.isSocketExperimental().not()) {
-            socket.addListener(listener)
         } else {
             socketExperimental.addListener(listener)
         }
@@ -1016,7 +986,6 @@ internal constructor(
 
     public fun removeSocketListener(listener: SocketListener) {
         if (ToggleService.isSocketExperimental().not()) {
-            socket.removeListener(listener)
         } else {
             socketExperimental.removeListener(listener)
         }
@@ -1173,9 +1142,7 @@ internal constructor(
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
         if (ToggleService.isSocketExperimental().not()) {
-            socketStateService.onDisconnectRequested()
             userStateService.onLogout()
-            socket.disconnect()
         } else {
             userStateService.onLogout()
             socketExperimental.disconnect()
@@ -2332,7 +2299,7 @@ internal constructor(
     public fun getConnectionId(): String? {
         return runCatching {
             if (ToggleService.isSocketExperimental().not()) {
-                socketStateService.state.connectionIdOrError()
+                null
             } else {
                 socketExperimental.connectionIdOrError()
             }
@@ -2362,7 +2329,7 @@ internal constructor(
     }
 
     public fun isSocketConnected(): Boolean {
-        return if (ToggleService.isSocketExperimental().not()) socketStateService.state is SocketState.Connected
+        return if (ToggleService.isSocketExperimental().not()) false
         else socketExperimental.isConnected()
     }
 
@@ -2964,10 +2931,8 @@ internal constructor(
             return ChatClient(
                 config,
                 module.api(),
-                module.socket(),
                 module.notifications(),
                 tokenManager,
-                module.socketStateService,
                 module.callPostponeHelper,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,

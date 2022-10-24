@@ -33,16 +33,7 @@ internal class SocketFactory(
     private val tokenManager: TokenManager,
     private val httpClient: OkHttpClient = OkHttpClient(),
 ) {
-
     private val logger = StreamLog.getLogger("Chat:SocketFactory")
-
-    @Throws(UnsupportedEncodingException::class)
-    fun createSocket(eventsParser: EventsParser, connectionConf: ConnectionConf): Socket {
-        val request = buildRequest(connectionConf)
-        val newWebSocket = httpClient.newWebSocket(request, eventsParser)
-        logger.i { "new web socket: ${request.url}" }
-        return Socket(newWebSocket, parser)
-    }
 
     @Throws(UnsupportedEncodingException::class)
     fun createSocket(connectionConf: ConnectionConf): StreamWebSocket {
