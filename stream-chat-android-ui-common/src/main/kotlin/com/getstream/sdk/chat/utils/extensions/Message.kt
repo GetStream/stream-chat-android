@@ -16,6 +16,7 @@
 
 package com.getstream.sdk.chat.utils.extensions
 
+import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
@@ -56,3 +57,8 @@ public fun Message.getCreatedAtOrNull(): Date? {
 public fun Message.isModerationFailed(chatClient: ChatClient): Boolean = isMine(chatClient) &&
     syncStatus == SyncStatus.FAILED_PERMANENTLY &&
     syncDescription?.type == MessageSyncType.FAILED_MODERATION
+
+/**
+ * @return if the message is a giphy or not.
+ */
+public fun Message.isGiphy(): Boolean = command == ModelType.attach_giphy

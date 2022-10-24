@@ -17,6 +17,7 @@
 package io.getstream.chat.android.common.messagelist
 
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import com.getstream.sdk.chat.utils.extensions.isGiphy
 import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
@@ -402,28 +403,31 @@ public class MessageListController(
                         endOfNewMessagesReached = endOfNewerMessages
                     )
                 }
-            }
+            }.distinctUntilChanged()
         }.catch {
             it.cause?.printStackTrace()
             showEmptyState()
-        }.onEach { newState ->
-            if (_messageListState.value.messages.isEmpty() &&
-                !newState.endOfNewMessagesReached &&
-                messageId == null
-            ) return@onEach
+        }
+            .distinctUntilChanged()
+            .onEach { newState ->
+                if (_messageListState.value.messages.isEmpty() &&
+                    !newState.endOfNewMessagesReached &&
+                    messageId == null
+                ) return@onEach
 
-            val newLastMessage = newState.messages.lastOrNull { it is MessageItem || it is SystemMessageItem }?.let {
-                when (it) {
-                    is MessageItem -> it.message
-                    is SystemMessageItem -> it.message
-                    else -> null
-                }
-            }
+                val newLastMessage =
+                    newState.messages.lastOrNull { it is MessageItem || it is SystemMessageItem }?.let {
+                        when (it) {
+                            is MessageItem -> it.message
+                            is SystemMessageItem -> it.message
+                            else -> null
+                        }
+                    }
 
-            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
-            _messageListState.value = newState.copy(newMessageState = newMessageState)
-            if (newMessageState != null) lastLoadedMessage = newLastMessage
-        }.launchIn(scope)
+                val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+                _messageListState.value = newState.copy(newMessageState = newMessageState)
+                if (newMessageState != null) lastLoadedMessage = newLastMessage
+            }.launchIn(scope)
 
         channelState.filterNotNull().flatMapLatest { it.endOfOlderMessages }.onEach {
             _messageListState.value = _messageListState.value.copy(endOfOldMessagesReached = it)
@@ -508,9 +512,7 @@ public class MessageListController(
             }.collect { newState ->
                 val newLastMessage = (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
                 val newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
-                _threadListState.value = newState.copy(
-                    newMessageState = newMessageState
-                )
+                _threadListState.value = newState.copy(newMessageState = newMessageState)
                 if (newMessageState != null) lastLoadedThreadMessage = newLastMessage
             }
 
@@ -685,14 +687,15 @@ public class MessageListController(
      * @param lastLoadedMessage The last currently loaded message, used for comparison.
      */
     private fun getNewMessageState(lastMessage: Message?, lastLoadedMessage: Message?): NewMessageState? {
-
         val lastLoadedMessageDate = lastLoadedMessage?.createdAt ?: lastLoadedMessage?.createdLocallyAt
 
         return when {
             lastMessage == null -> null
             lastLoadedMessage == null -> getNewMessageStateForMessage(lastMessage)
-            lastMessage.wasCreatedAfter(lastLoadedMessageDate) && lastLoadedMessage.id != lastMessage.id ->
+            lastMessage.wasCreatedAfter(lastLoadedMessageDate) &&
+                (lastMessage.isGiphy() || lastLoadedMessage.id != lastMessage.id) -> {
                 getNewMessageStateForMessage(lastMessage)
+            }
             else -> null
         }
     }
