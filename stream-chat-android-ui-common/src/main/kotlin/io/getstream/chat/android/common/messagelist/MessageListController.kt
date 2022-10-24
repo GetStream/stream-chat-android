@@ -772,12 +772,16 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     private fun threadLoadMore(threadMode: MessageMode.MessageThread, messageLimit: Int = this.messageLimit) {
+        if (_threadListState.value.endOfOldMessagesReached) return
+
         if (threadMode.threadState != null) {
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
                 limit = messageLimit,
-            ).enqueue()
+            ).enqueue {
+                _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = false)
+            }
             _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = true)
         } else {
             logger.w { "Thread state must be not null for offline plugin thread load more!" }
