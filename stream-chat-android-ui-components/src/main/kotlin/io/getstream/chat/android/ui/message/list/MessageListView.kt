@@ -76,7 +76,6 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.isGiphy
-import io.getstream.chat.android.ui.common.extensions.internal.isImage
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
@@ -388,7 +387,7 @@ public class MessageListView : ConstraintLayout {
         },
         optionClickListener: (MessageAction) -> Unit = { messageAction: MessageAction ->
             handleMessageAction(messageAction)
-        }
+        },
     ) {
         MessageOptionsDialogFragment.newInstance(
             context = context,
@@ -470,9 +469,15 @@ public class MessageListView : ConstraintLayout {
                 }
             } else {
                 val destination = when {
-                    message.attachments.all(Attachment::isImage) -> {
+                    message.attachments.all {
+                        attachment.type == ModelType.attach_image ||
+                            attachment.type == ModelType.attach_video
+                    } -> {
                         val filteredAttachments = message.attachments
-                            .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
+                            .filter {
+                                it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() ||
+                                    it.type == ModelType.attach_video && !it.assetUrl.isNullOrEmpty()
+                            }
                         val attachmentGalleryItems = filteredAttachments.map {
                             AttachmentGalleryItem(
                                 attachment = it,
@@ -1504,7 +1509,7 @@ public class MessageListView : ConstraintLayout {
      * @param handler The handler to use.
      */
     public fun setAttachmentShowInChatOptionClickHandler(
-        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler
+        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler,
     ) {
         this._attachmentShowInChatOptionClickHandler = handler
     }

@@ -612,6 +612,7 @@ public final class io/getstream/chat/android/ui/SupportedReactions$ReactionDrawa
 public final class io/getstream/chat/android/ui/TransformStyle {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/TransformStyle;
 	public final fun getAttachmentGalleryOptionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getAttachmentGalleryViewMediaStyle ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getAttachmentsPickerStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getAvatarStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getChannelActionsDialogStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -620,7 +621,8 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getEditReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getFileAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getGiphyViewHolderStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
-	public final fun getImageAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getMediaAttachmentGridViewStyle ()Lio/getstream/chat/android/ui/StyleTransformer;
+	public final fun getMediaAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMentionListViewStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageComposerStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getMessageInputStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
@@ -638,6 +640,7 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun getUnsupportedAttachmentStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun getViewReactionsStyleTransformer ()Lio/getstream/chat/android/ui/StyleTransformer;
 	public final fun setAttachmentGalleryOptionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setAttachmentGalleryViewMediaStyle (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setAttachmentsPickerStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setAvatarStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setChannelActionsDialogStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -646,7 +649,8 @@ public final class io/getstream/chat/android/ui/TransformStyle {
 	public final fun setEditReactionsStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setFileAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setGiphyViewHolderStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
-	public final fun setImageAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setMediaAttachmentGridViewStyle (Lio/getstream/chat/android/ui/StyleTransformer;)V
+	public final fun setMediaAttachmentStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMentionListViewStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageComposerStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
 	public final fun setMessageInputStyleTransformer (Lio/getstream/chat/android/ui/StyleTransformer;)V
@@ -1539,6 +1543,39 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 	public static final fun toAttachmentGalleryResultItem (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
 }
 
+public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryViewMediaStyle {
+	public fun <init> (Landroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIIIILandroid/graphics/drawable/Drawable;)V
+	public final fun component1 ()Landroid/graphics/drawable/Drawable;
+	public final fun component10 ()I
+	public final fun component11 ()I
+	public final fun component12 ()Landroid/graphics/drawable/Drawable;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()I
+	public final fun component4 ()F
+	public final fun component5 ()F
+	public final fun component6 ()I
+	public final fun component7 ()I
+	public final fun component8 ()I
+	public final fun component9 ()I
+	public final fun copy (Landroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIIIILandroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryViewMediaStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryViewMediaStyle;Landroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIIIILandroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryViewMediaStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImagePlaceholder ()Landroid/graphics/drawable/Drawable;
+	public final fun getViewMediaPlayVideoButtonIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getViewMediaPlayVideoIconBackgroundColor ()I
+	public final fun getViewMediaPlayVideoIconCornerRadius ()F
+	public final fun getViewMediaPlayVideoIconElevation ()F
+	public final fun getViewMediaPlayVideoIconHeight ()I
+	public final fun getViewMediaPlayVideoIconPaddingBottom ()I
+	public final fun getViewMediaPlayVideoIconPaddingEnd ()I
+	public final fun getViewMediaPlayVideoIconPaddingStart ()I
+	public final fun getViewMediaPlayVideoIconPaddingTop ()I
+	public final fun getViewMediaPlayVideoIconTint ()Ljava/lang/Integer;
+	public final fun getViewMediaPlayVideoIconWidth ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {
 	public static final field Companion Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;
 	public fun <init> ()V
@@ -1547,6 +1584,37 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity 
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 	public static synthetic fun createIntent$default (Lio/getstream/chat/android/ui/gallery/AttachmentMediaActivity$Companion;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Landroid/content/Intent;
+}
+
+public final class io/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle {
+	public fun <init> (ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIILandroid/graphics/drawable/Drawable;)V
+	public final fun component1 ()Z
+	public final fun component10 ()I
+	public final fun component11 ()Landroid/graphics/drawable/Drawable;
+	public final fun component2 ()Landroid/graphics/drawable/Drawable;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun component4 ()I
+	public final fun component5 ()F
+	public final fun component6 ()F
+	public final fun component7 ()I
+	public final fun component8 ()I
+	public final fun component9 ()I
+	public final fun copy (ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIILandroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;IFFIIIILandroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/MediaAttachmentGridViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImagePlaceholder ()Landroid/graphics/drawable/Drawable;
+	public final fun getPlayVideoButtonIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getPlayVideoIconBackgroundColor ()I
+	public final fun getPlayVideoIconCornerRadius ()F
+	public final fun getPlayVideoIconElevation ()F
+	public final fun getPlayVideoIconPaddingBottom ()I
+	public final fun getPlayVideoIconPaddingEnd ()I
+	public final fun getPlayVideoIconPaddingStart ()I
+	public final fun getPlayVideoIconPaddingTop ()I
+	public final fun getPlayVideoIconTint ()Ljava/lang/Integer;
+	public final fun getShowUserAvatars ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/gallery/options/AttachmentGalleryOptionsViewStyle {
@@ -1572,8 +1640,8 @@ public final class io/getstream/chat/android/ui/gallery/options/AttachmentGaller
 	public final fun getOptionTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getReplyOptionDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getReplyOptionEnabled ()Z
-	public final fun getSaveImageOptionDrawable ()Landroid/graphics/drawable/Drawable;
-	public final fun getSaveImageOptionEnabled ()Z
+	public final fun getSaveMediaOptionDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getSaveMediaOptionEnabled ()Z
 	public final fun getShowInChatOptionDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getShowInChatOptionEnabled ()Z
 	public fun hashCode ()I
