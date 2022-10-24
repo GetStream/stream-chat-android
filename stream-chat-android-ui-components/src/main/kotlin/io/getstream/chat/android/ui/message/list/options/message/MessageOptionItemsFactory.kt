@@ -17,11 +17,12 @@
 package io.getstream.chat.android.ui.message.list.options.message
 
 import android.content.Context
-import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.Edit
@@ -103,7 +104,7 @@ public open class DefaultMessageOptionItemsFactory(
         val selectedMessageUserId = selectedMessage.user.id
 
         val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
-        val hasLinks = selectedMessage.attachments.any { it.hasLink() && it.type != ModelType.attach_giphy }
+        val hasLinks = selectedMessage.attachments.any { it.hasLink() && !it.isGiphy() }
         val isOwnMessage = selectedMessageUserId == currentUser?.id
         val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
         val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
@@ -147,7 +148,7 @@ public open class DefaultMessageOptionItemsFactory(
                 )
             } else null,
             if (style.editMessageEnabled && ((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) &&
-                selectedMessage.command != ModelType.attach_giphy
+                selectedMessage.command != AttachmentType.GIPHY
             ) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_edit_message),

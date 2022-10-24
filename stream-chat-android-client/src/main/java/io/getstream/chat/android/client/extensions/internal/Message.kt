@@ -134,9 +134,6 @@ public fun Message.shouldIncrementUnreadCount(
 }
 
 @InternalStreamChatApi
-public fun Message.isEphemeral(): Boolean = type == Message.TYPE_EPHEMERAL
-
-@InternalStreamChatApi
 public fun Message.hasPendingAttachments(): Boolean =
     attachments.any {
         it.uploadState is Attachment.UploadState.InProgress ||

@@ -21,15 +21,20 @@ import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.attachment.isAudio
+import io.getstream.chat.android.client.utils.attachment.isFile
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.gallery.AttachmentMediaActivity
+import io.getstream.chat.android.uiutils.model.MimeType
 import io.getstream.logging.StreamLog
 
 public open class AttachmentDestination(
@@ -45,9 +50,9 @@ public open class AttachmentDestination(
     }
 
     public fun showAttachment(message: Message, attachment: Attachment) {
-        if (attachment.type == ModelType.attach_file ||
-            attachment.type == ModelType.attach_video ||
-            attachment.type == ModelType.attach_audio ||
+        if (attachment.isFile() ||
+            attachment.isVideo() ||
+            attachment.isAudio() ||
             attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true
         ) {
             loadFile(attachment)
@@ -58,15 +63,15 @@ public open class AttachmentDestination(
         var type: String? = attachment.type
 
         when (attachment.type) {
-            ModelType.attach_image -> {
+            AttachmentType.IMAGE -> {
                 when {
                     attachment.titleLink != null || attachment.ogUrl != null || attachment.assetUrl != null -> {
                         url = attachment.titleLink ?: attachment.ogUrl ?: attachment.assetUrl
-                        type = ModelType.attach_link
+                        type = AttachmentType.LINK
                     }
                     attachment.isGif() -> {
                         url = attachment.imageUrl
-                        type = ModelType.attach_giphy
+                        type = AttachmentType.GIPHY
                     }
                     else -> {
                         showImageViewer(message, attachment)
@@ -74,8 +79,8 @@ public open class AttachmentDestination(
                     }
                 }
             }
-            ModelType.attach_giphy -> url = attachment.thumbUrl
-            ModelType.attach_product -> url = attachment.url
+            AttachmentType.GIPHY -> url = attachment.thumbUrl
+            AttachmentType.PRODUCT -> url = attachment.url
         }
 
         if (url.isNullOrEmpty()) {
@@ -152,10 +157,10 @@ public open class AttachmentDestination(
     }
 
     private fun docMimeType(mimeType: String?): Boolean {
-        return mimeType == ModelType.attach_mime_doc ||
-            mimeType == ModelType.attach_mime_txt ||
-            mimeType == ModelType.attach_mime_pdf ||
-            mimeType == ModelType.attach_mime_html ||
+        return mimeType == MimeType.MIME_TYPE_DOC ||
+            mimeType == MimeType.MIME_TYPE_TXT ||
+            mimeType == MimeType.MIME_TYPE_PDF ||
+            mimeType == MimeType.MIME_TYPE_HTML ||
             mimeType?.contains("application/vnd") == true
     }
 
@@ -164,7 +169,7 @@ public open class AttachmentDestination(
         attachment: Attachment,
     ) {
         val imageUrls: List<String> = message.attachments
-            .filter { it.type == ModelType.attach_image && !it.imageUrl.isNullOrEmpty() }
+            .filter { it.isImage() && !it.imageUrl.isNullOrEmpty() }
             .mapNotNull(Attachment::imageUrl)
 
         if (imageUrls.isEmpty()) {
