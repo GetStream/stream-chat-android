@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaBinding
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
+import io.getstream.chat.android.ui.utils.extensions.applyTint
 
 internal class MediaAttachmentAdapter(
     private val style: AttachmentSelectionDialogStyle,
@@ -123,26 +124,14 @@ internal class MediaAttachmentAdapter(
                     style.videoLengthLabelVisible || style.videoIconVisible
                 binding.videoLengthTextView.isVisible = style.videoLengthLabelVisible
                 binding.videoLogoImageView.isVisible = style.videoIconVisible
-                binding.videoLogoImageView.setImageDrawable(getVideoIconDrawable())
+                binding.videoLogoImageView.setImageDrawable(
+                    style.videoIconDrawable.applyTint(style.videoIconDrawableTint)
+                )
                 binding.videoLengthTextView.setTextStyle(style.videoDurationTextStyle)
                 binding.videoLengthTextView.text = MediaStringUtil.convertVideoLength(attachment.videoLength)
             } else {
                 binding.videoInformationConstraintLayout.isVisible = false
                 binding.videoLengthTextView.text = ""
-            }
-        }
-
-        /**
-         * Processes the video icon drawable contained in the style and tints
-         * it if a non-null tint is provided in the style.
-         */
-        private fun getVideoIconDrawable() = style.videoIconDrawable.let { drawable ->
-            val tintColor = style.videoIconDrawableTint
-
-            if (tintColor != null) {
-                drawable.mutate().apply { setTint(tintColor) }
-            } else {
-                drawable
             }
         }
     }
