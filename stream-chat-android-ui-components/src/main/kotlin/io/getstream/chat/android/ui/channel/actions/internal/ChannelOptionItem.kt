@@ -16,23 +16,20 @@
 
 package io.getstream.chat.android.ui.channel.actions.internal
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import android.graphics.drawable.Drawable
+import io.getstream.chat.android.common.state.ChannelAction
 
 /**
- * Specialized factory class that produces [ChannelActionsViewModel].
+ * UI representation of a Channel option, when the user selects a channel in the list.
  *
- * @param cid The full channel id, i.e. "messaging:123".
+ * @param optionText The text of the option item.
+ * @param optionIcon The icon of the option item.
+ * @param channelAction The [ChannelAction] the option represents.
+ * @param isWarningItem If the option item is dangerous.
  */
-internal class ChannelActionsViewModelFactory(
-    private val cid: String,
-) : ViewModelProvider.Factory {
-
-    /**
-     * Creates an instance of [ChannelActionsViewModel].
-     */
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ChannelActionsViewModel(cid) as T
-    }
-}
+internal data class ChannelOptionItem(
+    val optionIcon: Drawable,
+    val optionText: String,
+    val channelAction: ChannelAction,
+    val isWarningItem: Boolean = false,
+)

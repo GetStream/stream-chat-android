@@ -53,11 +53,12 @@
         <item name="android:paddingStart">@dimen/stream_ui_spacing_medium</item>
         <item name="android:paddingEnd">@dimen/stream_ui_spacing_medium</item>
         <item name="android:drawablePadding">@dimen/stream_ui_spacing_medium</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/stream_ui_channel_actions_item_height</item>
         <item name="android:textSize">@dimen/stream_ui_text_medium</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:singleLine">true</item>
+        <item name="android:background">?selectableItemBackground</item>
     </style>
 
     <style name="StreamUiAttachmentBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
