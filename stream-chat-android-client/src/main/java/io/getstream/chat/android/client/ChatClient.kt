@@ -222,15 +222,6 @@ internal constructor(
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
 
-    @Deprecated(
-        message = "This LifecycleHandler won't be needed anymore after we remove old socket implementation." +
-            "The new Socket Implementation handle it internally"
-    )
-    private val lifecycleHandler = object : LifecycleHandler {
-        override fun resume() = reconnectSocket()
-        override fun stopped() {}
-    }
-
     /**
      * Launches a new coroutine in the [UserScope] without blocking the current thread
      * and returns a reference to the coroutine as a [Job].
@@ -1137,8 +1128,6 @@ internal constructor(
             repositoryFacade.clear()
             userCredentialStorage.clear()
         }
-
-        lifecycleObserver.dispose(lifecycleHandler)
 
         _repositoryFacade = null
         appSettingsManager.clear()
