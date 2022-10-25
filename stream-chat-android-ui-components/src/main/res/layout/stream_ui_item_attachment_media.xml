@@ -79,16 +79,15 @@
 
         <ImageView
             android:id="@+id/videoLogoImageView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:scaleType="centerInside"
             android:src="@drawable/stream_ui_ic_video"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/videoLengthTextView"
-            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/videoLengthTextView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/videoLengthTextView"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription"
             tools:visibility="visible"
             />
@@ -101,6 +100,7 @@
             android:textColor="@color/stream_ui_black"
             android:textDirection="locale"
             android:textSize="@dimen/stream_ui_text_small"
+            app:layout_goneMarginStart="0dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
