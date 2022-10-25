@@ -47,8 +47,8 @@ import coil.compose.AsyncImage
 import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
 import coil.request.videoFrameMillis
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -98,7 +98,7 @@ internal fun DefaultImagesPickerItem(
     onImageSelected: (AttachmentPickerItemState) -> Unit,
 ) {
     val attachmentMetaData = imageItem.attachmentMetaData
-    val isVideo = attachmentMetaData.type == ModelType.attach_video
+    val isVideo = attachmentMetaData.type == AttachmentType.VIDEO
 
     val imageRequest = ImageRequest.Builder(LocalContext.current)
         .data(attachmentMetaData.uri.toString())

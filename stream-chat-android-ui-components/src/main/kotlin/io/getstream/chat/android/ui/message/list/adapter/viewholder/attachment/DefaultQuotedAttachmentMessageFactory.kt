@@ -18,8 +18,11 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment
 
 import android.view.View
 import android.view.ViewGroup
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.attachment.isFile
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.DefaultQuotedAttachmentView
 
 /**
@@ -33,10 +36,10 @@ public class DefaultQuotedAttachmentMessageFactory : QuotedAttachmentFactory {
      * @return If the factory can handle the given quoted message attachment or not.
      */
     override fun canHandle(message: Message): Boolean {
-        val attachmentType = message.attachments.firstOrNull()?.type ?: return false
+        val attachment = message.attachments.firstOrNull() ?: return false
 
-        return attachmentType == ModelType.attach_file || attachmentType == ModelType.attach_image ||
-            attachmentType == ModelType.attach_giphy || attachmentType == ModelType.attach_video
+        return attachment.isFile() || attachment.isImage() ||
+            attachment.isGiphy() || attachment.isVideo()
     }
 
     /**

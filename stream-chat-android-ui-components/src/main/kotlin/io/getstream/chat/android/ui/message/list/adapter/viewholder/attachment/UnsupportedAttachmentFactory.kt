@@ -21,11 +21,11 @@ import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.getstream.sdk.chat.model.ModelType
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -115,12 +115,12 @@ public class UnsupportedAttachmentFactory : AttachmentFactory {
          * The list of supported attachment types.
          */
         private val SUPPORTED_ATTACHMENT_TYPES: Set<String> = setOf(
-            ModelType.attach_image,
-            ModelType.attach_giphy,
-            ModelType.attach_video,
-            ModelType.attach_audio,
-            ModelType.attach_file,
-            ModelType.attach_link,
+            AttachmentType.IMAGE,
+            AttachmentType.GIPHY,
+            AttachmentType.VIDEO,
+            AttachmentType.AUDIO,
+            AttachmentType.FILE,
+            AttachmentType.LINK,
         )
     }
 }

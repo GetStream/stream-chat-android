@@ -32,7 +32,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.ListenerDelegate
 import com.getstream.sdk.chat.utils.StartStopBuffer
@@ -53,6 +52,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.CustomAction
@@ -76,11 +79,9 @@ import io.getstream.chat.android.ui.common.extensions.internal.copyToClipboard
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
-import io.getstream.chat.android.ui.common.extensions.internal.isGiphy
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
-import io.getstream.chat.android.ui.common.extensions.isInThread
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
 import io.getstream.chat.android.ui.common.style.setTextStyle
@@ -360,7 +361,7 @@ public class MessageListView : ConstraintLayout {
                     val messageOptionItems = messageOptionItemsFactory.createMessageOptionItems(
                         selectedMessage = message,
                         currentUser = ChatUI.currentUserProvider.getCurrentUser(),
-                        isInThread = adapter.isThread || message.isInThread(),
+                        isInThread = adapter.isThread || message.isThreadReply(),
                         ownCapabilities = ownCapabilities,
                         style = viewStyle
                     )
@@ -471,14 +472,11 @@ public class MessageListView : ConstraintLayout {
                 }
             } else {
                 val destination = when {
-                    message.attachments.all {
-                        attachment.type == ModelType.attach_image ||
-                            attachment.type == ModelType.attach_video
-                    } -> {
+                    message.attachments.all { it.isImage() || it.isVideo() } -> {
                         val filteredAttachments = message.attachments
                             .filter {
-                                it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() ||
-                                    it.type == ModelType.attach_video && !it.assetUrl.isNullOrEmpty()
+                                it.isImage() && !it.imagePreviewUrl.isNullOrEmpty() ||
+                                    it.isVideo() && !it.assetUrl.isNullOrEmpty()
                             }
                         val attachmentGalleryItems = filteredAttachments.map {
                             AttachmentGalleryItem(

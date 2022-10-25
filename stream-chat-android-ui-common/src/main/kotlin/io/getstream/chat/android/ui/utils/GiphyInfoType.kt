@@ -17,9 +17,9 @@
 package io.getstream.chat.android.ui.utils
 
 import androidx.annotation.Px
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -66,7 +66,7 @@ public const val GIPHY_INFO_DEFAULT_HEIGHT_DP: Int = 200
  */
 public fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
     val giphyInfoMap =
-        (extraData[ModelType.attach_giphy] as? Map<String, Any>?)?.get(field.value) as? Map<String, String>?
+        (extraData[AttachmentType.GIPHY] as? Map<String, Any>?)?.get(field.value) as? Map<String, String>?
 
     return giphyInfoMap?.let { map ->
         GiphyInfo(

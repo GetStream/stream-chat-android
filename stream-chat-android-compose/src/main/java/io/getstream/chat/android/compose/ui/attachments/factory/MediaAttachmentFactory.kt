@@ -28,11 +28,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
-import io.getstream.chat.android.uiutils.constant.AttachmentType
 
 /**
  * An [AttachmentFactory] that is able to handle Image and Video attachments.
@@ -61,7 +63,7 @@ public fun MediaAttachmentFactory(
     AttachmentFactory(
         canHandle = {
             it.none { attachment ->
-                attachment.type != AttachmentType.IMAGE && attachment.type != AttachmentType.VIDEO
+                !attachment.isImage() && !attachment.isVideo()
             }
         },
         previewContent = { modifier, attachments, onAttachmentRemoved ->

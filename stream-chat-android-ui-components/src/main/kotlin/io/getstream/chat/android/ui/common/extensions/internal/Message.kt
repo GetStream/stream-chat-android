@@ -18,8 +18,8 @@ package io.getstream.chat.android.ui.common.extensions.internal
 
 import android.content.Context
 import android.text.SpannableString
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 
@@ -62,6 +62,6 @@ internal fun Message.getAttachmentsText(): SpannableString? {
 
 private fun getAttachmentPrefix(attachment: Attachment): String? =
     when (attachment.type) {
-        ModelType.attach_giphy -> "/giphy"
+        AttachmentType.GIPHY -> "/giphy"
         else -> null
     }
