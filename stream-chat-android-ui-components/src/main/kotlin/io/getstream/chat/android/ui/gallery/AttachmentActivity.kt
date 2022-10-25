@@ -26,7 +26,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentBinding
@@ -77,7 +77,7 @@ public class AttachmentActivity : AppCompatActivity() {
 
     private fun showAttachment(type: String, url: String) {
         when (type) {
-            ModelType.attach_giphy -> showGiphy(url)
+            AttachmentType.GIPHY -> showGiphy(url)
             else -> loadUrlToWeb(url)
         }
     }

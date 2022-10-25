@@ -53,6 +53,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
+import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -75,11 +78,8 @@ import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisi
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.hasThread
-import io.getstream.chat.android.compose.ui.util.isDeleted
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFailed
-import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
 import io.getstream.chat.android.compose.ui.util.isUploading
 
 /**
@@ -157,7 +157,7 @@ public fun MessageItem(
         Modifier.combinedClickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = { if (message.hasThread()) onThreadClick(message) },
+            onClick = { if (message.isThreadStart()) onThreadClick(message) },
             onLongClick = { if (!message.isUploading()) onLongItemClick(message) }
         )
     }

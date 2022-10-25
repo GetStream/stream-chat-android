@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.previewdata
 
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessageType
 import io.getstream.chat.android.client.models.Reaction
 import java.util.Date
 
@@ -30,21 +30,21 @@ internal object PreviewMessageData {
         id = "message-id-1"
         text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         createdAt = Date()
-        type = ModelType.message_regular
+        type = MessageType.REGULAR
     }
 
     val message2: Message = Message().apply {
         id = "message-id-2"
         text = "Aenean commodo ligula eget dolor."
         createdAt = Date()
-        type = ModelType.message_regular
+        type = MessageType.REGULAR
     }
 
     val messageWithOwnReaction: Message = Message().apply {
         id = "message-id-3"
         text = "Pellentesque leo dui, finibus et nibh et, congue aliquam lectus"
         createdAt = Date()
-        type = ModelType.message_regular
+        type = MessageType.REGULAR
         ownReactions = mutableListOf(Reaction(messageId = this.id, type = "haha"))
     }
 }

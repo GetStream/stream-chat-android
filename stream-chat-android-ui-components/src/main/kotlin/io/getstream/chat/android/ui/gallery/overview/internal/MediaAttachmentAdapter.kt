@@ -23,8 +23,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
@@ -88,9 +90,9 @@ internal class MediaAttachmentAdapter(
          * @param attachmentGalleryItem The attachment to be displayed.
          */
         private fun loadImage(attachmentGalleryItem: AttachmentGalleryItem) {
-            val isVideoAttachment = attachmentGalleryItem.attachment.type == ModelType.attach_video
-            val shouldLoadImage = attachmentGalleryItem.attachment.type == ModelType.attach_image ||
-                (attachmentGalleryItem.attachment.type == ModelType.attach_video && ChatUI.videoThumbnailsEnabled)
+            val isVideoAttachment = attachmentGalleryItem.attachment.isVideo()
+            val shouldLoadImage = attachmentGalleryItem.attachment.isImage() ||
+                (attachmentGalleryItem.attachment.isVideo() && ChatUI.videoThumbnailsEnabled)
 
             binding.mediaImageView.load(
                 data = if (shouldLoadImage) {
@@ -106,7 +108,7 @@ internal class MediaAttachmentAdapter(
                 onStart = { binding.progressBar.visibility = View.VISIBLE },
                 onComplete = {
                     binding.playButtonCardView.isVisible =
-                        attachmentGalleryItem.attachment.type == ModelType.attach_video
+                        attachmentGalleryItem.attachment.isVideo()
                     binding.progressBar.visibility = View.GONE
                 }
             )
@@ -134,7 +136,7 @@ internal class MediaAttachmentAdapter(
          * by pulling relevant values from [AttachmentGalleryOptionsViewStyle].
          **/
         private fun setupPlayButton(attachmentType: String?) {
-            if (attachmentType == ModelType.attach_video) {
+            if (attachmentType == AttachmentType.VIDEO) {
                 setupPlayButtonIcon()
                 setupPlayButtonCard()
             }

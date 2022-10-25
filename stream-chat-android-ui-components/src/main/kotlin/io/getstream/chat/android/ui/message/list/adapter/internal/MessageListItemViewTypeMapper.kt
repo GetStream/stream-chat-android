@@ -17,12 +17,15 @@
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.common.extensions.internal.isImage
-import io.getstream.chat.android.ui.common.extensions.isError
-import io.getstream.chat.android.ui.common.extensions.isGiphyEphemeral
-import io.getstream.chat.android.ui.common.extensions.isSystem
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isError
+import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
+import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.CUSTOM_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE
@@ -39,7 +42,6 @@ import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.uiutils.constant.AttachmentType
 import io.getstream.chat.android.uiutils.extension.hasLink
 import io.getstream.chat.android.uiutils.extension.isUploading
 
@@ -70,7 +72,7 @@ internal object MessageListItemViewTypeMapper {
         val message = messageItem.message
 
         val (linksAndGiphy, _) = message.attachments.partition { attachment -> attachment.hasLink() }
-        val containsGiphy = linksAndGiphy.any { attachment -> attachment.type == ModelType.attach_giphy }
+        val containsGiphy = linksAndGiphy.any(Attachment::isGiphy)
         val hasAttachments = message.attachments.isNotEmpty()
 
         val containsOnlyLinks = message.containsOnlyLinkAttachments()
@@ -79,7 +81,7 @@ internal object MessageListItemViewTypeMapper {
             attachmentFactoryManager.canHandle(message) -> CUSTOM_ATTACHMENTS
             message.isError() -> ERROR_MESSAGE
             message.isSystem() -> SYSTEM_MESSAGE
-            message.deletedAt != null -> MESSAGE_DELETED
+            message.isDeleted() -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY
             containsGiphy -> GIPHY_ATTACHMENT
             containsOnlyLinks -> LINK_ATTACHMENTS
@@ -94,8 +96,8 @@ internal object MessageListItemViewTypeMapper {
      */
     private fun Message.isMediaAttachment(): Boolean {
         return attachments.isNotEmpty() &&
-            attachments.any { it.isImage() || it.type == AttachmentType.VIDEO } &&
-            attachments.all { it.isImage() || it.type == AttachmentType.VIDEO || it.hasLink() } &&
+            attachments.any { it.isImage() || it.isVideo() } &&
+            attachments.all { it.isImage() || it.isVideo() || it.hasLink() } &&
             attachments.none { it.isUploading() }
     }
 

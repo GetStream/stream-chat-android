@@ -35,9 +35,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isImgur
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
-import io.getstream.chat.android.uiutils.constant.AttachmentType
 
 /**
  * Builds an image attachment for a quoted message which is composed from a singe attachment previewing the attached
@@ -51,9 +54,9 @@ public fun MediaAttachmentQuotedContent(
     attachment: Attachment,
     modifier: Modifier = Modifier,
 ) {
-    val isImageContent = attachment.type == AttachmentType.IMAGE || attachment.type == AttachmentType.IMGUR
-    val isVideo = attachment.type == AttachmentType.VIDEO
-    val isGiphy = attachment.type == AttachmentType.GIPHY
+    val isImageContent = attachment.isImage() || attachment.isImgur()
+    val isVideo = attachment.isVideo()
+    val isGiphy = attachment.isGiphy()
 
     val backgroundColor =
         if (isImageContent || isGiphy) {

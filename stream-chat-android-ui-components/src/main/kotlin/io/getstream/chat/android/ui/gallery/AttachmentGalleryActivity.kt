@@ -33,11 +33,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -170,8 +170,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         val attachment = adapter.getItem(binding.galleryViewPager.currentItem)
 
         when (attachment.type) {
-            ModelType.attach_image -> shareImage(attachment = attachment)
-            ModelType.attach_video -> shareVideo(attachment = attachment)
+            AttachmentType.IMAGE -> shareImage(attachment = attachment)
+            AttachmentType.VIDEO -> shareVideo(attachment = attachment)
             else -> toastFailedShare()
         }
     }
@@ -238,8 +238,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         attachmentType: String?,
     ) {
         val type = when (attachmentType) {
-            ModelType.attach_image -> "image/*"
-            ModelType.attach_video -> "video/*"
+            AttachmentType.IMAGE -> "image/*"
+            AttachmentType.VIDEO -> "video/*"
             else -> {
                 toastFailedShare()
                 return
