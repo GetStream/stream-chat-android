@@ -140,6 +140,7 @@ import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.setup.state.internal.toMutableState
+import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.ConstantTokenProvider
@@ -187,7 +188,6 @@ import java.util.Calendar
 import java.util.Date
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.days
-import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
@@ -208,7 +208,7 @@ internal constructor(
     private val userScope: UserScope,
     internal val retryPolicy: RetryPolicy,
     private val appSettingsManager: AppSettingManager,
-    private val socketExperimental: ChatSocketExperimental,
+    private val chatSocket: ChatSocket,
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
     private val lifecycleObserver: StreamLifecycleObserver,
@@ -219,7 +219,7 @@ internal constructor(
 
     @InternalStreamChatApi
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
-    private val eventsObservable = ChatEventsObservable(waitConnection, userScope, socketExperimental)
+    private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
 
     @Deprecated(
@@ -400,7 +400,7 @@ internal constructor(
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
 
                 userStateService.onSetUser(user, isAnonymous)
-                socketExperimental.connectUser(user, isAnonymous)
+                chatSocket.connectUser(user, isAnonymous)
                 waitFirstConnection(timeoutMilliseconds)
             }
             userState is UserState.UserSet -> {
@@ -957,12 +957,12 @@ internal constructor(
     //endregion
 
     public fun disconnectSocket() {
-        socketExperimental.disconnect()
+        chatSocket.disconnect()
     }
 
     public fun reconnectSocket() {
         when (val userState = userStateService.state) {
-            is UserState.UserSet, is UserState.AnonymousUserSet -> socketExperimental.reconnectUser(
+            is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocket.reconnectUser(
                 userState.userOrError(),
                 userState is UserState.AnonymousUserSet
             )
@@ -971,11 +971,11 @@ internal constructor(
     }
 
     public fun addSocketListener(listener: SocketListener) {
-        socketExperimental.addListener(listener)
+        chatSocket.addListener(listener)
     }
 
     public fun removeSocketListener(listener: SocketListener) {
-        socketExperimental.removeListener(listener)
+        chatSocket.removeListener(listener)
     }
 
     public fun subscribe(
@@ -1129,7 +1129,7 @@ internal constructor(
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
         userStateService.onLogout()
-        socketExperimental.disconnect()
+        chatSocket.disconnect()
         clientState.awaitConnectionState(ConnectionState.OFFLINE)
         userScope.cancelChildren(userId)
 
@@ -2280,7 +2280,7 @@ internal constructor(
     }
 
     public fun getConnectionId(): String? {
-        return runCatching { socketExperimental.connectionIdOrError() }.getOrNull()
+        return runCatching { chatSocket.connectionIdOrError() }.getOrNull()
     }
 
     public fun getCurrentUser(): User? {
@@ -2305,7 +2305,7 @@ internal constructor(
         return appSettingsManager.getAppSettings()
     }
 
-    public fun isSocketConnected(): Boolean = socketExperimental.isConnected()
+    public fun isSocketConnected(): Boolean = chatSocket.isConnected()
 
     /**
      * Returns a [ChannelClient] for given type and id.
@@ -2914,7 +2914,7 @@ internal constructor(
                 userScope = userScope,
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
-                socketExperimental = module.experimentalSocket(),
+                chatSocket = module.chatSocket,
                 lifecycleObserver = module.lifecycleObserver,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider

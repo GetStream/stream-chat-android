@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.logging.StreamLog
@@ -33,12 +34,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import java.util.Date
-import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 internal class ChatEventsObservable(
     private val waitConnection: FlowCollector<Result<ConnectionData>>,
     private val scope: CoroutineScope,
-    private val chatSocketExperimental: ChatSocketExperimental,
+    private val chatSocket: ChatSocket,
 ) {
 
     private val logger = StreamLog.getLogger("Chat:EventsObservable")
@@ -73,7 +73,7 @@ internal class ChatEventsObservable(
 
     private fun checkIfEmpty() {
         if (subscriptions.isEmpty()) {
-            chatSocketExperimental.removeListener(eventsMapper)
+            chatSocket.removeListener(eventsMapper)
         }
     }
 
@@ -105,7 +105,7 @@ internal class ChatEventsObservable(
     private fun addSubscription(subscription: EventSubscription): Disposable {
         if (subscriptions.isEmpty()) {
             // add listener to socket events only once
-            chatSocketExperimental.addListener(eventsMapper)
+            chatSocket.addListener(eventsMapper)
         }
         subscriptions = subscriptions + subscription
         return subscription

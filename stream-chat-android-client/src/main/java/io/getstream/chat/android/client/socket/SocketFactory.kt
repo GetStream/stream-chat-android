@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.socket.experimental.ws.StreamWebSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.logging.StreamLog
 import okhttp3.OkHttpClient

@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.scope.UserScope
+import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
@@ -70,7 +71,6 @@ import io.getstream.logging.StreamLog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
-import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
 
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule(
@@ -90,8 +90,8 @@ internal open class BaseChatModule(
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, notificationConfig) }
     private val defaultApi by lazy { buildApi(config) }
-    private val chatSocketExperimental: ChatSocketExperimental by lazy {
-        buildExperimentalChatSocket(config, moshiParser)
+    internal val chatSocket: ChatSocket by lazy {
+        buildChatSocket(config, moshiParser)
     }
     private val defaultFileUploader by lazy {
         StreamFileUploader(buildRetrofitCdnApi())
@@ -104,7 +104,7 @@ internal open class BaseChatModule(
     val userStateService: UserStateService = UserStateService()
     val callPostponeHelper: CallPostponeHelper by lazy {
         CallPostponeHelper(
-            awaitConnection = chatSocketExperimental::awaitConnection,
+            awaitConnection = chatSocket::awaitConnection,
             userScope = scope,
         )
     }
@@ -112,8 +112,6 @@ internal open class BaseChatModule(
     //region Modules
 
     fun api(): ChatApi = defaultApi
-
-    fun experimentalSocket() = chatSocketExperimental
 
     fun notifications(): ChatNotifications = defaultNotifications
 
@@ -205,10 +203,10 @@ internal open class BaseChatModule(
         return { isAnonymousApi || config.isAnonymous }
     }
 
-    private fun buildExperimentalChatSocket(
+    private fun buildChatSocket(
         chatConfig: ChatClientConfig,
         parser: ChatParser,
-    ) = ChatSocketExperimental.create(
+    ) = ChatSocket.create(
         chatConfig.apiKey,
         chatConfig.wssUrl,
         tokenManager,
