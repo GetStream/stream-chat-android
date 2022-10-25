@@ -22,6 +22,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import androidx.annotation.ColorInt
+import androidx.annotation.LayoutRes
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
 import androidx.appcompat.content.res.AppCompatResources
@@ -86,6 +87,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @property iconFailedMessage Icon for message failed status. Default value is [R.drawable.stream_ui_ic_warning].
  * @property iconBannedMessage Icon for message when the current user is banned. Default value is [R.drawable.stream_ui_ic_warning].
  * @property systemMessageAlignment Changes the alignment of system messages.
+ * @property loadingMoreView Loading more view. Default value is [R.layout.stream_ui_message_list_loading_more_view].
  */
 public data class MessageListItemStyle(
     @ColorInt public val messageBackgroundColorMine: Int?,
@@ -131,6 +133,7 @@ public data class MessageListItemStyle(
     public val iconFailedMessage: Drawable,
     public val iconBannedMessage: Drawable,
     public val systemMessageAlignment: Int,
+    @LayoutRes public val loadingMoreView: Int,
 ) {
 
     @ColorInt
@@ -595,6 +598,11 @@ public data class MessageListItemStyle(
             val iconBannedMessage = attributes.getDrawable(R.styleable.MessageListView_streamUiIconBannedIndicator)
                 ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_warning)!!
 
+            val loadingMoreView = attributes.getResourceId(
+                R.styleable.MessageListView_streamUiMessageListLoadingMoreView,
+                R.layout.stream_ui_message_list_loading_more_view,
+            )
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -638,7 +646,8 @@ public data class MessageListItemStyle(
                 showMessageDeliveryStatusIndicator = showMessageDeliveryStatusIndicator,
                 iconFailedMessage = iconFailedMessage,
                 iconBannedMessage = iconBannedMessage,
-                systemMessageAlignment = systemMessageGravity
+                systemMessageAlignment = systemMessageGravity,
+                loadingMoreView = loadingMoreView,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
                 .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }

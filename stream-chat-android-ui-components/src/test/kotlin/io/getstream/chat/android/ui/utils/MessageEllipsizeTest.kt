@@ -33,7 +33,6 @@ internal class MessageEllipsizeTest {
         assertEquals(expected, result)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun tallMessagesShouldBeEllipsized() {
         val maxLineBreaks = 2

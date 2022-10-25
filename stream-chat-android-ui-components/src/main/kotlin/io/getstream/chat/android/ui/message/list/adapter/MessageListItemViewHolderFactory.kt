@@ -48,6 +48,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Fil
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.LoadingMoreViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
@@ -157,7 +158,7 @@ public open class MessageListItemViewHolderFactory {
             MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
             PLAIN_TEXT -> createPlainTextViewHolder(parentView)
             CUSTOM_ATTACHMENTS -> createCustomAttachmentsViewHolder(parentView)
-            LOADING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
+            LOADING_INDICATOR -> createLoadingMoreViewHolder(parentView)
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
             TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
             GIPHY -> createGiphyMessageItemViewHolder(parentView)
@@ -235,6 +236,18 @@ public open class MessageListItemViewHolderFactory {
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem> {
         return DateDividerViewHolder(parentView, decoratorProvider.decorators, style)
+    }
+
+    /**
+     * Creates a loading more view holder.
+     *
+     * @param parentView The parent container.
+     * @return The [BaseMessageItemViewHolder] that shows information about the deleted message.
+     */
+    protected fun createLoadingMoreViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<MessageListItem.LoadingMoreIndicatorItem> {
+        return LoadingMoreViewHolder(parentView, style)
     }
 
     /**

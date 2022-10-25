@@ -33,8 +33,6 @@ public class ChatNavigator(private val handler: ChatNavigationHandler = EMPTY_HA
 
     public companion object {
         @JvmField
-        public val EMPTY_HANDLER: ChatNavigationHandler = object : ChatNavigationHandler {
-            override fun navigate(destination: ChatDestination) = false
-        }
+        public val EMPTY_HANDLER: ChatNavigationHandler = ChatNavigationHandler { false }
     }
 }
