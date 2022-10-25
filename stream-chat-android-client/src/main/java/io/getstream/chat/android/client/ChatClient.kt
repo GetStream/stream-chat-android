@@ -400,9 +400,7 @@ internal constructor(
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
 
                 userStateService.onSetUser(user, isAnonymous)
-                if (ToggleService.isSocketExperimental()) {
-                    socketExperimental.connectUser(user, isAnonymous)
-                }
+                socketExperimental.connectUser(user, isAnonymous)
                 waitFirstConnection(timeoutMilliseconds)
             }
             userState is UserState.UserSet -> {
@@ -959,36 +957,25 @@ internal constructor(
     //endregion
 
     public fun disconnectSocket() {
-        if (ToggleService.isSocketExperimental()) {
-            socketExperimental.disconnect()
-        }
+        socketExperimental.disconnect()
     }
 
     public fun reconnectSocket() {
-        if (ToggleService.isSocketExperimental().not()) {
-        } else {
-            when (val userState = userStateService.state) {
-                is UserState.UserSet, is UserState.AnonymousUserSet -> socketExperimental.reconnectUser(
-                    userState.userOrError(),
-                    userState is UserState.AnonymousUserSet
-                )
-                else -> error("Invalid user state $userState without user being set!")
-            }
+        when (val userState = userStateService.state) {
+            is UserState.UserSet, is UserState.AnonymousUserSet -> socketExperimental.reconnectUser(
+                userState.userOrError(),
+                userState is UserState.AnonymousUserSet
+            )
+            else -> error("Invalid user state $userState without user being set!")
         }
     }
 
     public fun addSocketListener(listener: SocketListener) {
-        if (ToggleService.isSocketExperimental().not()) {
-        } else {
-            socketExperimental.addListener(listener)
-        }
+        socketExperimental.addListener(listener)
     }
 
     public fun removeSocketListener(listener: SocketListener) {
-        if (ToggleService.isSocketExperimental().not()) {
-        } else {
-            socketExperimental.removeListener(listener)
-        }
+        socketExperimental.removeListener(listener)
     }
 
     public fun subscribe(
@@ -1141,12 +1128,8 @@ internal constructor(
         notifications.onLogout(flushPersistence)
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
-        if (ToggleService.isSocketExperimental().not()) {
-            userStateService.onLogout()
-        } else {
-            userStateService.onLogout()
-            socketExperimental.disconnect()
-        }
+        userStateService.onLogout()
+        socketExperimental.disconnect()
         clientState.awaitConnectionState(ConnectionState.OFFLINE)
         userScope.cancelChildren(userId)
 
@@ -2297,13 +2280,7 @@ internal constructor(
     }
 
     public fun getConnectionId(): String? {
-        return runCatching {
-            if (ToggleService.isSocketExperimental().not()) {
-                null
-            } else {
-                socketExperimental.connectionIdOrError()
-            }
-        }.getOrNull()
+        return runCatching { socketExperimental.connectionIdOrError() }.getOrNull()
     }
 
     public fun getCurrentUser(): User? {
@@ -2328,10 +2305,7 @@ internal constructor(
         return appSettingsManager.getAppSettings()
     }
 
-    public fun isSocketConnected(): Boolean {
-        return if (ToggleService.isSocketExperimental().not()) false
-        else socketExperimental.isConnected()
-    }
+    public fun isSocketConnected(): Boolean = socketExperimental.isConnected()
 
     /**
      * Returns a [ChannelClient] for given type and id.

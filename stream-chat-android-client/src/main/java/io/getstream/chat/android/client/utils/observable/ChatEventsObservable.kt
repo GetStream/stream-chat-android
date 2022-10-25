@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
@@ -74,9 +73,7 @@ internal class ChatEventsObservable(
 
     private fun checkIfEmpty() {
         if (subscriptions.isEmpty()) {
-            if (ToggleService.isSocketExperimental()) {
-                chatSocketExperimental.removeListener(eventsMapper)
-            }
+            chatSocketExperimental.removeListener(eventsMapper)
         }
     }
 
@@ -108,13 +105,9 @@ internal class ChatEventsObservable(
     private fun addSubscription(subscription: EventSubscription): Disposable {
         if (subscriptions.isEmpty()) {
             // add listener to socket events only once
-            if (ToggleService.isSocketExperimental()) {
-                chatSocketExperimental.addListener(eventsMapper)
-            }
+            chatSocketExperimental.addListener(eventsMapper)
         }
-
         subscriptions = subscriptions + subscription
-
         return subscription
     }
 
