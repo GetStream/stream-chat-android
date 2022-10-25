@@ -16,11 +16,8 @@
 
 package io.getstream.realm.entity
 
-import com.squareup.moshi.JsonClass
-
 @Suppress("VariableNaming")
-@JsonClass(generateAdapter = true)
-internal class FilterNode(
+internal data class FilterNode(
     var filter_type: String? = null,
     var field: String? = null,
     var value: Any? = null,

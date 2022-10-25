@@ -106,7 +106,7 @@ public object Filters {
     public fun `in`(fieldName: String, vararg values: String): FilterObject = InFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun `in`(fieldName: String, values: List<Any>): FilterObject = InFilterObject(fieldName, values.toSet())
+    public fun `in`(fieldName: String, values: Iterable<Any>): FilterObject = InFilterObject(fieldName, values.toSet())
 
     @JvmStatic
     public fun `in`(fieldName: String, vararg values: Number): FilterObject = InFilterObject(fieldName, values.toSet())
@@ -116,7 +116,7 @@ public object Filters {
         NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun nin(fieldName: String, values: List<Any>): FilterObject = NotInFilterObject(fieldName, values.toSet())
+    public fun nin(fieldName: String, values: Iterable<Any>): FilterObject = NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
     public fun nin(fieldName: String, vararg values: Number): FilterObject =

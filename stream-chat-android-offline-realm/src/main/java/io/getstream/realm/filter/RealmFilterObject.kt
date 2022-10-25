@@ -67,9 +67,9 @@ internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
 
 @Suppress("ComplexMethod")
 internal fun FilterNode.toFilterObject(): FilterObject = when (this.filter_type) {
-    KEY_AND -> Filters.and((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
-    KEY_OR -> Filters.or((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
-    KEY_NOR -> Filters.nor((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
+    KEY_AND -> Filters.and((this.value as Set<FilterNode>).map(FilterNode::toFilterObject))
+    KEY_OR -> Filters.or((this.value as Set<FilterNode>).map(FilterNode::toFilterObject))
+    KEY_NOR -> Filters.nor((this.value as Set<FilterNode>).map(FilterNode::toFilterObject))
     KEY_EXIST -> this.field?.let(Filters::exists) ?: Filters.neutral()
     KEY_NOT_EXIST -> this.field?.let(Filters::notExists) ?: Filters.neutral()
     KEY_EQUALS -> Filters.eq(this.field ?: "", this.value ?: "")
@@ -79,8 +79,8 @@ internal fun FilterNode.toFilterObject(): FilterObject = when (this.filter_type)
     KEY_GREATER_THAN_OR_EQUALS -> Filters.greaterThanEquals(this.field ?: "", this.value ?: "")
     KEY_LESS_THAN -> Filters.lessThan(this.field ?: "", this.value ?: "")
     KEY_LESS_THAN_OR_EQUALS -> Filters.lessThanEquals(this.field ?: "", this.value ?: "")
-    KEY_IN -> Filters.`in`(this.field ?: "", (this.value as List<out Any>))
-    KEY_NOT_IN -> Filters.nin(this.field ?: "", (this.value as List<out Any>))
+    KEY_IN -> Filters.`in`(this.field ?: "", (this.value as Set<out Any>))
+    KEY_NOT_IN -> Filters.nin(this.field ?: "", (this.value as Set<out Any>))
     KEY_AUTOCOMPLETE -> Filters.autocomplete(this.field ?: "", this.value as String)
     else -> Filters.neutral()
 }
