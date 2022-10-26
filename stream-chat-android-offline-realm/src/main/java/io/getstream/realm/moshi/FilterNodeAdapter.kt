@@ -69,28 +69,21 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
             writer.value(nodeField)
         }
 
-
-
         value?.let { nodeValue ->
             writer.name("value")
 
             when {
                 isCompositeNode(type) -> {
-                    writer.beginArray()
-                    (nodeValue as Iterable<FilterNode>).forEach { filterNode ->
-                        toJson(writer, filterNode)
-                    }
-                    writer.endArray()
+                    writeCompositeNode(writer, nodeValue)
                 }
 
                 isMultipleValueNode(type) -> {
-                    writer.beginArray()
-                    (value as Set<String>).forEach(writer::value)
-                    writer.endArray()
+                    writeMultipleValueNode(writer, value)
                 }
 
                 else -> {
-                    writer.value(nodeValue as? String)
+                    (nodeValue as? Boolean)?.let(writer::value)
+                    (nodeValue as? String)?.let(writer::value)
                 }
             }
         }
@@ -117,4 +110,19 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
     private fun isMultipleValueNode(nodeType: String?): Boolean {
         return nodeType == KEY_IN || nodeType == KEY_NOT_IN
     }
+
+    private fun writeCompositeNode(writer: JsonWriter, nodeValue: Any) {
+        writer.beginArray()
+        (nodeValue as Iterable<FilterNode>).forEach { filterNode ->
+            toJson(writer, filterNode)
+        }
+        writer.endArray()
+    }
+
+    private fun writeMultipleValueNode(writer: JsonWriter, value: Any) {
+        writer.beginArray()
+        (value as Set<String>).forEach(writer::value)
+        writer.endArray()
+    }
+
 }
