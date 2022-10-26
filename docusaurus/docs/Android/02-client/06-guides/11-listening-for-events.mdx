@@ -1,0 +1,45 @@
+# Listening for Events
+
+As soon as you call `watchChannel` on a Channel or `queryChannels`, the SDK will start receiving events to stay up to date with changes. You can hook into specific events:
+
+```kotlin
+val channelClient = client.channel("messaging", "general")
+
+// Subscribe for new message events
+val disposable: Disposable = channelClient.subscribeFor<NewMessageEvent> { newMessageEvent ->
+    val message = newMessageEvent.message
+}
+
+// Dispose when you want to stop receiving events
+disposable.dispose()
+```
+
+As an example let's see how you can close the chat screen when the currently logged-in user is removed from the channel. You need to subscribe for `NotificationRemovedFromChannelEvent` events which are triggered when a user is removed from the list of channel members. Finally, if the removed user matches the currently logged-in user, you should dismiss the screen.
+
+```kotlin
+class ChatFragment : Fragment() {
+    
+    private lateinit var cid: String
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+        // ...
+
+        val chatClient = ChatClient.instance()
+        val channelClient = chatClient.channel(cid)
+
+        channelClient.subscribeFor<NotificationRemovedFromChannelEvent>(viewLifecycleOwner) { event ->
+            val removedUserId = event.member.user.id
+            val currentUserId = ChatClient.instance().getCurrentUser()?.id
+
+            if (removedUserId == currentUserId) {
+                // Close the current chat screen as the current user has been removed
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+        }
+    }
+}
+```
+
+In the example above you navigate away from the Fragment by calling `OnBackPressedDispatcher::onBackPressed` when the event is received. Notice that you don't need to dispose the subscription manually as you pass `viewLifecycleOwner` as a parameter and the subscription will be automatically canceled when the Fragment's view is destroyed.
