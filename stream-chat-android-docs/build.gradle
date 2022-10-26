@@ -105,6 +105,7 @@ dependencies {
 
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidxFragmentKtx
+    implementation Dependencies.androidxStartup
     implementation Dependencies.materialComponents
     implementation Dependencies.shimmer
     implementation Dependencies.firebaseMessaging

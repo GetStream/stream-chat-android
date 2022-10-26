@@ -44,22 +44,26 @@ import io.getstream.chat.android.ui.utils.lazyVar
 public object ChatUI {
     internal lateinit var appContext: Context
 
+    @JvmStatic
     public var style: ChatStyle = ChatStyle()
 
     /**
      * A class responsible for handling navigation to chat destinations. Allows overriding
      * a default navigation between chat components.
      */
+    @JvmStatic
     public var navigator: ChatNavigator = ChatNavigator()
 
     /**
      * Provides HTTP headers for image loading requests.
      */
+    @JvmStatic
     public var imageHeadersProvider: ImageHeadersProvider by StreamImageLoader.instance()::imageHeadersProvider
 
     /**
      * Allows setting default fonts used by UI components.
      */
+    @JvmStatic
     public var fonts: ChatFonts by lazyVar { ChatFontsImpl(style, appContext) }
 
     /**
@@ -68,6 +72,7 @@ public object ChatUI {
      * For example, it can be used to provide markdown support in chat or it can be used
      * to highlight specific messages by making them bold etc.
      */
+    @JvmStatic
     public var messageTextTransformer: ChatMessageTextTransformer by lazyVar {
         AutoLinkableTextTransformer { textView, messageItem ->
             // Customize the transformer if needed
@@ -78,21 +83,25 @@ public object ChatUI {
     /**
      * Allows intercepting and providing custom bitmap displayed with AvatarView.
      */
+    @JvmStatic
     public var avatarBitmapFactory: AvatarBitmapFactory by lazyVar { AvatarBitmapFactory(appContext) }
 
     /**
      * Allows overriding default set of message reactions available.
      */
+    @JvmStatic
     public var supportedReactions: SupportedReactions by lazyVar { SupportedReactions(appContext) }
 
     /**
      * Allows overriding default icons for attachments MIME types.
      */
+    @JvmStatic
     public var mimeTypeIconProvider: MimeTypeIconProvider by lazyVar { MimeTypeIconProviderImpl() }
 
     /**
      * Allows to generate a name for the given channel.
      */
+    @JvmStatic
     public var channelNameFormatter: ChannelNameFormatter by lazyVar {
         ChannelNameFormatter.defaultFormatter(appContext)
     }
@@ -100,6 +109,7 @@ public object ChatUI {
     /**
      *  Allows to generate a preview text for the given message.
      */
+    @JvmStatic
     public var messagePreviewFormatter: MessagePreviewFormatter by lazyVar {
         MessagePreviewFormatter.defaultFormatter(appContext)
     }
@@ -107,22 +117,26 @@ public object ChatUI {
     /**
      * Allows formatting date-time objects as strings.
      */
+    @JvmStatic
     public var dateFormatter: DateFormatter by lazyVar { DateFormatter.from(appContext) }
 
     /**
      * Allows adding support for custom attachments in the message list.
      */
+    @JvmStatic
     public var attachmentFactoryManager: AttachmentFactoryManager by lazyVar { AttachmentFactoryManager() }
 
     /**
      * Allows adding support for custom attachments in the preview section of the message composer.
      */
+    @JvmStatic
     public var attachmentPreviewFactoryManager: AttachmentPreviewFactoryManager by lazyVar { AttachmentPreviewFactoryManager() }
 
     /**
      * Allows adding support for custom attachment inside quoted messages in the message list. If none are found here
      * will default to [attachmentFactoryManager].
      */
+    @JvmStatic
     public var quotedAttachmentFactoryManager: QuotedAttachmentFactoryManager by lazyVar {
         QuotedAttachmentFactoryManager(
             listOf(DefaultQuotedAttachmentMessageFactory())
@@ -132,5 +146,6 @@ public object ChatUI {
     /**
      * Provides the currently logged in user.
      */
+    @JvmStatic
     public var currentUserProvider: CurrentUserProvider = CurrentUserProvider.defaultCurrentUserProvider()
 }
