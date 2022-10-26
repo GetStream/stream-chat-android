@@ -2738,6 +2738,11 @@ public final class io/getstream/chat/android/client/models/ConnectionState : jav
 	public static fun values ()[Lio/getstream/chat/android/client/models/ConnectionState;
 }
 
+public final class io/getstream/chat/android/client/models/Constants {
+	public static final field INSTANCE Lio/getstream/chat/android/client/models/Constants;
+	public static final field MB_IN_BYTES J
+}
+
 public final class io/getstream/chat/android/client/models/ContentUtils {
 	public static final fun getInitials (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/String;
 	public static final fun getInitials (Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
