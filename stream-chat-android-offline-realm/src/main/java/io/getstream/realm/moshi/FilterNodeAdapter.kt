@@ -90,7 +90,7 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
                 }
 
                 else -> {
-                    writer.value(nodeValue as String)
+                    writer.value(nodeValue as? String)
                 }
             }
         }
