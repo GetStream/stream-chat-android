@@ -86,11 +86,17 @@ messageListHeaderView.setSubtitleClickListener {
 <TabItem value="java" label="Java">
 
 ```java
+messageListHeaderView.setBackButtonClickListener(() -> {
+    // Handle back button click
+});
 messageListHeaderView.setAvatarClickListener(() -> {
     // Handle avatar click
 });
 messageListHeaderView.setTitleClickListener(() -> {
     // Handle title click
+});
+messageListHeaderView.setSubtitleClickListener(() -> {
+    // Handle subtitle click
 });
 ```
 </TabItem>

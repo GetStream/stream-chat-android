@@ -15,7 +15,7 @@ You can change the default behavior and force calls to always make new requests 
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-ChatClient.Builder.disableDistinctApiCalls()
+ChatClient.Builder(apiKey, context).disableDistinctApiCalls().build()
 ```
 </TabItem>
 

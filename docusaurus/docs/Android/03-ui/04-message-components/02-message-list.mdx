@@ -206,8 +206,17 @@ messageListView.setEnterThreadListener { message: Message ->
 messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
     // Listen to events when download click for an attachment happens
 }
-messageListView.setUserReactionClickListener{ message: Message, user: User, reaction: Reaction ->
+messageListView.setUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
     // Listen to clicks on user reactions on the message options overlay
+}
+messageListView.setMessageLongClickListener { message ->
+    // Handle long click on message
+}
+messageListView.setAttachmentClickListener { message, attachment ->
+    // Handle long click on attachment
+}
+messageListView.setUserClickListener { user ->
+    // Handle click on user avatar
 }
 ```
 </TabItem>

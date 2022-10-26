@@ -312,7 +312,6 @@ chatClient.updateMessage(messageToUpdate).enqueue { result ->
 
 ```java
 // Old approach of update message
-
 Message messageToUpdate = new Message();
 messageToUpdate.setText("Updated text");
 ChatDomain.instance().editMessage(messageToUpdate).enqueue { result ->

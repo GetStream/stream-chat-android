@@ -27,11 +27,17 @@ public class MessageListHeaderViewSnippets extends Fragment {
     }
 
     public void handlingActions() {
+        messageListHeaderView.setBackButtonClickListener(() -> {
+            // Handle back button click
+        });
         messageListHeaderView.setAvatarClickListener(() -> {
             // Handle avatar click
         });
         messageListHeaderView.setTitleClickListener(() -> {
             // Handle title click
+        });
+        messageListHeaderView.setSubtitleClickListener(() -> {
+            // Handle subtitle click
         });
     }
 }

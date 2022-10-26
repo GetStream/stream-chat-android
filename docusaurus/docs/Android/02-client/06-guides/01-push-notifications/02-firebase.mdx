@@ -67,7 +67,7 @@ ChatClient.Builder("apiKey", context)
 ```java
 boolean pushNotificationEnabled = true;
 List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new FirebasePushDeviceGenerator());
-NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
 new ChatClient.Builder("apiKey", context)
         .notifications(notificationConfig)
         .build();

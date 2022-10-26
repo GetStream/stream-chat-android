@@ -50,7 +50,7 @@ public class Push {
     public void configureNotification(Context context, NotificationHandler notificationHandler) {
         boolean pushNotificationEnabled = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<PushDeviceGenerator>();
-        NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
 
         new ChatClient.Builder("api-key", context)
                 .notifications(notificationConfig, notificationHandler)
@@ -63,7 +63,7 @@ public class Push {
     public void customNotificationHandler(Context context) {
         boolean pushNotificationEnabled = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<PushDeviceGenerator>();
-        NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
 
         NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, (messageId, channelType, channelId) -> {
             // Return the intent you want to be triggered when the notification is clicked
