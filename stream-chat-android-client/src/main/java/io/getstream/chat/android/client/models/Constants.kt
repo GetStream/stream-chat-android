@@ -16,9 +16,12 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
 /**
  * Represents constants used across all SDKs.
  */
+@InternalStreamChatApi
 public object Constants {
 
     /**
