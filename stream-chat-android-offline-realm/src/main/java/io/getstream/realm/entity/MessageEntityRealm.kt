@@ -154,7 +154,8 @@ internal fun MessageEntityRealm.toDomain(): Message {
         pinnedAt = this.pinned_at?.toDate(),
         pinExpires = this.pin_expires?.toDate(),
         pinnedBy = pinned_by_user?.toDomain() ?: User(),
-        threadParticipants = thread_participants_ids.map { entity -> entity.toDomain() }
+        threadParticipants = thread_participants_ids.map { entity -> entity.toDomain() },
+        attachments = attachments.map { attachmentEntity -> attachmentEntity.toDomain() }.toMutableList()
     )
 }
 
