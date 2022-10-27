@@ -24,7 +24,6 @@ import java.util.Date
  * Channel is where conversations take place between two or more chat users.
  * It contains a list of messages and have a list of the member users that are participating in the conversation.
  *
- * @param cid The channel id in the format messaging:123.
  * @param id Channel's unique ID.
  * @param type Type of the channel.
  * @param name Channel's name.
@@ -58,7 +57,6 @@ import java.util.Date
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
  */
 public data class Channel(
-    var cid: String = "",
     var id: String = "",
     var type: String = "",
     var name: String = "",
@@ -89,6 +87,12 @@ public data class Channel(
     var isInsideSearch: Boolean = false,
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 ) : CustomObject, ComparableFieldProvider {
+
+    /**
+     * The channel id in the format messaging:123.
+     */
+    val cid: String
+        get() = "$type:$id"
 
     /**
      * Determines the last updated date/time.

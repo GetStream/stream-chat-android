@@ -78,11 +78,10 @@ internal fun createUser(
 )
 
 internal fun createChannel(
-    cid: String = randomCID(),
     config: Config = Config(),
     extraData: MutableMap<String, Any> = mutableMapOf()
 ): Channel =
-    Channel(cid = cid, config = config, extraData = extraData)
+    Channel(config = config, extraData = extraData)
 
 internal fun createMessage(
     id: String = randomString(),

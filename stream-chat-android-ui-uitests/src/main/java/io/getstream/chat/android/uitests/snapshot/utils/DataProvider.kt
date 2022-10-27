@@ -56,7 +56,8 @@ internal fun randomUsers(size: Int = 30): List<User> {
 
 internal fun randomChannel(members: List<Member> = emptyList()): Channel {
     return Channel().apply {
-        cid = "${('A'..'Z').random()} ${('A'..'Z').random()}"
+        id = ('A'..'Z').random().toString()
+        type = ('A'..'Z').random().toString()
         name = "Sample Channel"
         this.members = members
     }

@@ -469,7 +469,6 @@ public fun randomChannelInfo(
 )
 
 public fun randomChannel(
-    cid: String = randomCID(),
     id: String = randomString(),
     type: String = randomString(),
     watcherCount: Int = randomInt(),
@@ -491,7 +490,6 @@ public fun randomChannel(
     hidden: Boolean? = randomBoolean(),
     hiddenMessagesBefore: Date? = randomDate(),
 ): Channel = Channel(
-    cid = cid,
     id = id,
     type = type,
     watcherCount = watcherCount,

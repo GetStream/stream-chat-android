@@ -27,9 +27,8 @@ import java.util.Date
  * A class that only stores the channel data and not the channel state that changes a lot
  * (for example messages, watchers, etc.).
  *
- * @param channelId Channel's unique ID.
+ * @param id Channel's unique ID.
  * @param type Type of the channel.
- * @param cid The channel id in the format messaging:123.
  * @param name Channel's name.
  * @param image Channel's image.
  * @param createdBy Creator of the channel.
@@ -46,9 +45,8 @@ import java.util.Date
  * @param membership Represents relationship of the current user to the channel.
  */
 public data class ChannelData(
-    var channelId: String,
+    var id: String,
     var type: String,
-    var cid: String = "%s:%s".format(type, channelId),
     var name: String = "",
     var image: String = "",
     var createdBy: User = User(),
@@ -65,6 +63,12 @@ public data class ChannelData(
 ) {
 
     /**
+     * The channel id in the format messaging:123.
+     */
+    val cid: String
+        get() = "$type:$id"
+
+    /**
      * Creates a [ChannelData] entity from a [Channel] object.
      * Keeps existing [ChannelData.ownCapabilities] if the [Channel] object comes with an empty set of capabilities.
      *
@@ -73,7 +77,7 @@ public data class ChannelData(
      */
     internal constructor(channel: Channel, currentOwnCapabilities: Set<String>) : this(
         type = channel.type,
-        channelId = channel.id,
+        id = channel.id,
         name = channel.name,
         image = channel.image,
         frozen = channel.frozen,
@@ -113,10 +117,9 @@ public data class ChannelData(
         val messagesList = if (insideSearch) cachedLatestMessages else messages
         return Channel(
             type = type,
-            id = channelId,
+            id = id,
             name = name,
             image = image,
-            cid = cid,
             frozen = frozen,
             createdAt = createdAt,
             updatedAt = updatedAt,
