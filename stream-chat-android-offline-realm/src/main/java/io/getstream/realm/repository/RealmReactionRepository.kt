@@ -94,6 +94,10 @@ internal class RealmReactionRepository(private val realm: Realm) : ReactionRepos
     }
 
     override suspend fun clear() {
-        // Implement
+        val allReactions = realm.query<ReactionEntityRealm>().find()
+
+        realm.write {
+            delete(allReactions)
+        }
     }
 }

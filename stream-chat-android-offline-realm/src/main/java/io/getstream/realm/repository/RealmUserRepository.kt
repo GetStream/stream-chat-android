@@ -30,10 +30,10 @@ import kotlinx.coroutines.flow.StateFlow
 public class RealmUserRepository(private val realm: Realm) : UserRepository {
 
     override suspend fun clear() {
-//    realm.writeBlocking {
-//      val allUsers = realm.query<UserEntityRealm>().find()
-//      delete(allUsers)
-//    }
+        val allUsers = realm.query<UserEntityRealm>().find()
+        realm.writeBlocking {
+            delete(allUsers)
+        }
     }
 
     override suspend fun insertCurrentUser(user: User) {

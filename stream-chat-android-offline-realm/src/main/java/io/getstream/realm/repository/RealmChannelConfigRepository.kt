@@ -51,6 +51,10 @@ internal class RealmChannelConfigRepository(private val realm: Realm) : ChannelC
     }
 
     override suspend fun clear() {
-        TODO("Not yet implemented")
+        val configs = realm.query<ConfigEntityRealm>().find()
+
+        realm.write {
+            delete(configs)
+        }
     }
 }

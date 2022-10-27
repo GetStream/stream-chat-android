@@ -28,7 +28,11 @@ import io.realm.kotlin.ext.query
 internal class RealmSyncStateRepository(private val realm: Realm) : SyncStateRepository {
 
     override suspend fun clear() {
-        // To implement
+        val syncStates = realm.query<SyncStateEntityRealm>().find()
+
+        realm.write {
+            delete(syncStates)
+        }
     }
 
     override suspend fun insertSyncState(syncState: SyncState) {

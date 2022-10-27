@@ -38,6 +38,10 @@ internal class RealmAttachmentRepository(private val realm: Realm) : AttachmentR
     }
 
     override suspend fun clear() {
-        // To implement
+        val allAttachments = realm.query<AttachmentEntityRealm>().find()
+
+        realm.write {
+            delete(allAttachments)
+        }
     }
 }
