@@ -1,7 +1,6 @@
 package io.getstream.chat.docs.java.ui.general;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -14,24 +13,20 @@ import androidx.core.content.ContextCompat;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.utils.DateFormatter;
 
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
-import org.threeten.bp.format.DateTimeFormatter;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.markdown.MarkdownTextTransformer;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.SupportedReactions;
-import io.getstream.chat.android.ui.avatar.AvatarStyle;
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator;
 import io.getstream.chat.android.ui.common.style.ChatFonts;
 import io.getstream.chat.android.ui.common.style.TextStyle;
 import io.getstream.chat.docs.R;
-import kotlin.coroutines.Continuation;
 
 /**
  * [General Configuration](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/)
@@ -127,27 +122,21 @@ public class Configuration {
     }
 
     public void customizingDateFormatter() {
-        ChatUI.setDateFormatter(new DateFormatter() {
-            private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yy MM dd");
-            private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        ChatUI.setDateFormatter(
+                new DateFormatter() {
+                    private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    private final DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
-            @NonNull
-            @Override
-            public String formatDate(@Nullable LocalDateTime localDateTime) {
-                if (localDateTime == null) {
-                    return "";
-                }
-                return dateFormatter.format(localDateTime);
-            }
+                    public String formatDate(Date date) {
+                        // Provide a way to format Date
+                        return dateFormat.format(date);
+                    }
 
-            @NonNull
-            @Override
-            public String formatTime(@Nullable LocalTime localTime) {
-                if (localTime == null) {
-                    return "";
+                    public String formatTime(Date date) {
+                        // Provide a way to format Time
+                        return timeFormat.format(date);
+                    }
                 }
-                return dateTimeFormatter.format(localTime);
-            }
-        });
+        );
     }
 }
