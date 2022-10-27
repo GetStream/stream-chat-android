@@ -160,9 +160,11 @@ internal class DefaultDateFormatter(
      * @return True if the calendar date is before another calendar date ignoring time.
      */
     private fun Calendar.isBeforeDay(calendar: Calendar): Boolean {
-        if (this[Calendar.YEAR] < calendar[Calendar.YEAR]) return true
-        if (this[Calendar.YEAR] > calendar[Calendar.YEAR]) return false
-        return this[Calendar.DAY_OF_YEAR] < calendar[Calendar.DAY_OF_YEAR]
+        return when {
+            this[Calendar.YEAR] < calendar[Calendar.YEAR] -> true
+            this[Calendar.YEAR] > calendar[Calendar.YEAR] -> false
+            else -> this[Calendar.DAY_OF_YEAR] < calendar[Calendar.DAY_OF_YEAR]
+        }
     }
 
     interface DateContext {
