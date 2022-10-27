@@ -189,5 +189,8 @@ internal fun Message.toRealm(): MessageEntityRealm {
         this.pinned_by_user = thisMessage.pinnedBy?.toRealm()
         this.thread_participants_ids =
             thisMessage.threadParticipants.map { participant -> participant.toRealm() }.toRealmList()
+        this.attachments = thisMessage.attachments.mapIndexed { i, attachment ->
+            attachment.toRealm(thisMessage.id, i)
+        }.toRealmList()
     }
 }
