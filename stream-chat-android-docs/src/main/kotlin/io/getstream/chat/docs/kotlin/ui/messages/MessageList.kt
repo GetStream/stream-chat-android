@@ -30,13 +30,9 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.I
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.docs.R
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 /**
  * [Message List](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
