@@ -50,6 +50,8 @@
 
         <attr name="streamUiAttachmentsPickerVideoIconVisible" format="boolean" />
         <attr name="streamUiAttachmentsPickerVideoIconDrawable" format="reference" />
+        <!-- The tint of the icon used for video files. -->
+        <attr name="streamUiAttachmentsPickerVideoIconDrawableTint" format="reference|color"/>
         <attr name="streamUiAttachmentsPickerMediaAttachmentNoMediaText" format="string" />
 
         <attr name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextSize" format="dimension" />

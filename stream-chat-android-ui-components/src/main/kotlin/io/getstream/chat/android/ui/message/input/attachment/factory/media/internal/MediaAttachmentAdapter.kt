@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaBinding
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
+import io.getstream.chat.android.ui.utils.extensions.applyTint
 
 internal class MediaAttachmentAdapter(
     private val style: AttachmentSelectionDialogStyle,
@@ -119,14 +120,17 @@ internal class MediaAttachmentAdapter(
 
         private fun bindAttachmentType(attachment: AttachmentMetaData) {
             if (attachment.type == AttachmentType.VIDEO) {
+                binding.videoInformationConstraintLayout.isVisible =
+                    style.videoLengthLabelVisible || style.videoIconVisible
                 binding.videoLengthTextView.isVisible = style.videoLengthLabelVisible
                 binding.videoLogoImageView.isVisible = style.videoIconVisible
-                binding.videoLogoImageView.setImageDrawable(style.videoIconDrawable)
+                binding.videoLogoImageView.setImageDrawable(
+                    style.videoIconDrawable.applyTint(style.videoIconDrawableTint)
+                )
                 binding.videoLengthTextView.setTextStyle(style.videoDurationTextStyle)
                 binding.videoLengthTextView.text = MediaStringUtil.convertVideoLength(attachment.videoLength)
             } else {
-                binding.videoLengthTextView.isVisible = false
-                binding.videoLogoImageView.isVisible = false
+                binding.videoInformationConstraintLayout.isVisible = false
                 binding.videoLengthTextView.text = ""
             }
         }

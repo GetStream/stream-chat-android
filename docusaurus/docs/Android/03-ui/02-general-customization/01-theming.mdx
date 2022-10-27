@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Theming
 
 Many aspects of the UI components can be changed and customized. For example, it's possible to change:
@@ -58,6 +61,9 @@ You have to set up any custom `StyleTransformer` instances *before* the View ins
 
 Here's an example using `TransformStyle` to change multiple appearance characteristics of all `MessageListView` instances:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
     defaultViewStyle.copy(
@@ -68,6 +74,18 @@ TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewS
     )
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMessageListItemStyleTransformer(source -> {
+    // Customize the style
+    return source;
+});
+```
+</TabItem>
+</Tabs>
 
 This will have the following result:
 
@@ -127,7 +145,7 @@ SDK contains following activities: `AttachmentMediaActivity`, `AttachmentActivit
 
 **AndroidManifest.xml**
 
-```
+```xml
 <activity
     android:name="io.getstream.chat.android.ui.gallery.AttachmentMediaActivity"
     android:theme="@style/MediaActivityStyle"
@@ -137,7 +155,7 @@ SDK contains following activities: `AttachmentMediaActivity`, `AttachmentActivit
 
 **themes.xml**
 
-```
+```xml
 <style name="MediaActivityStyle" parent="StreamUi.MediaActivity">
     <item name="streamUiMediaActivityIconStyle">@style/MediaActivityIconStyle</item>
 </style>
@@ -151,10 +169,27 @@ SDK contains following activities: `AttachmentMediaActivity`, `AttachmentActivit
 
 ### Choose Light/Dark Theme
 Our SDK already provide a DayNight theme. If you want to force Dark or Light mode, you need to follow the default Android mechanism to use it:
-```
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
 // Force Dark theme
 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
 // Force Light theme
 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Force Dark theme
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+// Force Light theme
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+```
+</TabItem>
+</Tabs>

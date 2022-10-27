@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Channel List Updates
 
 We update the `ChannelList` and `ChannelListView` components based on data from two sources:
@@ -38,6 +41,9 @@ You can fix that by providing two different event handlers.
 
 The first one is going to handle `public` channel updates:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 class PublicChatEventHandler(
     channels: StateFlow<Map<String, Channel>?>,
@@ -75,8 +81,56 @@ class PublicChatEventHandlerFactory : ChatEventHandlerFactory() {
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+public final class PublicChatEventHandler extends DefaultChatEventHandler {
+    public PublicChatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels, @NonNull ClientState clientState) {
+        super(channels, clientState);
+    }
+
+    @NonNull
+    @Override
+    public EventHandlingResult handleChannelEvent(@NonNull HasChannel event, @NonNull FilterObject filter) {
+        // If the channel event matches "public" type, handle it
+        if (event.getChannel().getCid().startsWith("public")) {
+            return super.handleChannelEvent(event, filter);
+        } else {
+            // Otherwise skip
+            return EventHandlingResult.Skip.INSTANCE;
+        }
+    }
+
+    @NonNull
+    @Override
+    public EventHandlingResult handleCidEvent(@NonNull CidEvent event, @NonNull FilterObject filter, @Nullable Channel cachedChannel) {
+        // If the channel event matches "public" type, handle it
+        if (event.getCid().startsWith("public")) {
+            return super.handleCidEvent(event, filter, cachedChannel);
+        } else {
+            // Otherwise skip
+            return EventHandlingResult.Skip.INSTANCE;
+        }
+    }
+}
+
+public final class PublicChatEventHandlerFactory extends ChatEventHandlerFactory {
+    @NonNull
+    @Override
+    public ChatEventHandler chatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels) {
+        return new PublicChatEventHandler(channels, ChatClient.instance().getClientState());
+    }
+}
+```
+</TabItem>
+</Tabs>
 
 The second one is for `private` channels updates:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 class PrivateChatEventHandler(
@@ -115,12 +169,81 @@ class PrivateChatEventHandlerFactory : ChatEventHandlerFactory() {
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+public final class PrivateChatEventHandler extends DefaultChatEventHandler {
+    public PrivateChatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels, @NonNull ClientState clientState) {
+        super(channels, clientState);
+    }
+
+    @NonNull
+    @Override
+    public EventHandlingResult handleChannelEvent(@NonNull HasChannel event, @NonNull FilterObject filter) {
+        // If the channel event matches "private" type, handle it
+        if (event.getChannel().getCid().startsWith("private")) {
+            return super.handleChannelEvent(event, filter);
+        } else {
+            // Otherwise skip
+            return EventHandlingResult.Skip.INSTANCE;
+        }
+    }
+
+    @NonNull
+    @Override
+    public EventHandlingResult handleCidEvent(@NonNull CidEvent event, @NonNull FilterObject filter, @Nullable Channel cachedChannel) {
+        // If the channel event matches "private" type, handle it
+        if (event.getCid().startsWith("private")) {
+            return super.handleCidEvent(event, filter, cachedChannel);
+        } else {
+            // Otherwise skip
+            return EventHandlingResult.Skip.INSTANCE;
+        }
+    }
+}
+
+public final class PrivateChatEventHandlerFactory extends ChatEventHandlerFactory {
+    @NonNull
+    @Override
+    public ChatEventHandler chatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels) {
+        return new PrivateChatEventHandler(channels, ChatClient.instance().getClientState());
+    }
+}
+```
+</TabItem>
+</Tabs>
 
 After that, we just need to apply the handlers to the proper `ChannelListViewModel`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 val factory = ChannelListViewModelFactory(chatEventHandlerFactory = chatEventHandlerFactory)
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+FilterObject filter = null;
+QuerySorter<Channel> sort = ChannelListViewModel.DEFAULT_SORT;
+int limit = 30;
+int messageLimit = 1;
+int memberLimit = 30;
+ChannelListViewModelFactory factory = new ChannelListViewModelFactory(
+        filter,
+        sort,
+        limit,
+        messageLimit,
+        memberLimit,
+        chatEventHandlerFactory
+);
+```
+</TabItem>
+</Tabs>
 
 With this approach, you can make sure each list in your app only receives and handles the events it should be aware of. The `public` channel list will ignore `private` channel events and vice-versa.
 

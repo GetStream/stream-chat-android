@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.notifications.handler
 /**
  * Push notifications configuration class
  */
-public data class NotificationConfig(
+public data class NotificationConfig @JvmOverloads constructor(
     /**
      * Enables/disables push notifications on the device.
      * Device's token won't be registered if push notifications are disabled.

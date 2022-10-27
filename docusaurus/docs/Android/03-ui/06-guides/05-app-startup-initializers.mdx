@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # App Startup Initializers
 
 The UI Components library relies on Jetpack [App Startup](https://developer.android.com/topic/libraries/app-startup) Initializers to initialize certain components. These run automatically when you include the UI Components library and start your application.
@@ -19,10 +22,6 @@ Specifically, you'll have to do the following:
         android:exported="false"
         tools:node="merge">
         <meta-data
-            android:name="com.getstream.sdk.chat.startup.ThreeTenInitializer"
-            tools:node="remove"
-        />
-        <meta-data
             android:name="io.getstream.chat.android.ui.common.ChatUIInitializer"
             tools:node="remove"
         />
@@ -31,12 +30,22 @@ Specifically, you'll have to do the following:
 
 2. Initialize them manually, **before any of the Stream UI Components are used in your application**.
 
-    ```kotlin
-    AppInitializer.getInstance(appContext).run {
-        initializeComponent(ThreeTenInitializer::class.java)
-        initializeComponent(ChatUIInitializer::class.java)
-    }
-    ```
-   :::note
-   You need to have a dependency on the [App Startup library](https://developer.android.com/jetpack/androidx/releases/startup) to access `AppInitializer`.
-   :::
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+AppInitializer.getInstance(appContext).initializeComponent(ChatUIInitializer::class.java)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+AppInitializer.getInstance(appContext).initializeComponent(ChatUIInitializer.class);
+```
+</TabItem>
+</Tabs>
+
+:::note
+You need to have a dependency on the [App Startup library](https://developer.android.com/jetpack/androidx/releases/startup) to access `AppInitializer`.
+:::

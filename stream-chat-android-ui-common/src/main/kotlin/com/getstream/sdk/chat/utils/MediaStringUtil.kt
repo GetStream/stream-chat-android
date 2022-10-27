@@ -24,14 +24,19 @@ import kotlin.math.pow
 private const val SECONDS_IN_A_HOUR = 3600
 private const val SECONDS_IN_A_MINUTE = 60
 private const val BYTE_UNIT_CONVERSION_FACTOR = 1024
+
 public object MediaStringUtil {
 
     @JvmStatic
     public fun convertVideoLength(videoLengthInSeconds: Long, locale: Locale = Locale.getDefault()): String {
-        val hours = videoLengthInSeconds / SECONDS_IN_A_HOUR
-        val minutes = videoLengthInSeconds % SECONDS_IN_A_HOUR / SECONDS_IN_A_MINUTE
-        val seconds = videoLengthInSeconds % SECONDS_IN_A_MINUTE
-        return String.format(locale, "%02d:%02d:%02d", hours, minutes, seconds)
+        return if (videoLengthInSeconds <= 0) {
+            "--:--:--"
+        } else {
+            val hours = videoLengthInSeconds / SECONDS_IN_A_HOUR
+            val minutes = videoLengthInSeconds % SECONDS_IN_A_HOUR / SECONDS_IN_A_MINUTE
+            val seconds = videoLengthInSeconds % SECONDS_IN_A_MINUTE
+            String.format(locale, "%02d:%02d:%02d", hours, minutes, seconds)
+        }
     }
 
     @JvmStatic
