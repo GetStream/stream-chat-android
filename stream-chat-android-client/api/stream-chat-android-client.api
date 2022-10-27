@@ -697,7 +697,9 @@ public abstract class io/getstream/chat/android/client/api/models/querysort/Base
 	public abstract fun comparatorFromNameAttribute (Lio/getstream/chat/android/client/api/models/querysort/internal/SortAttribute$FieldNameSortAttribute;Lio/getstream/chat/android/client/api/models/querysort/SortDirection;)Ljava/util/Comparator;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getComparator ()Ljava/util/Comparator;
+	public fun getSortSpecifications ()Ljava/util/List;
 	public fun hashCode ()I
+	public fun setSortSpecifications (Ljava/util/List;)V
 	public fun toDto ()Ljava/util/List;
 	public fun toString ()Ljava/lang/String;
 }
@@ -754,6 +756,8 @@ public abstract interface class io/getstream/chat/android/client/api/models/quer
 	public static final field LESS_ON_COMPARISON I
 	public static final field MORE_ON_COMPARISON I
 	public abstract fun getComparator ()Ljava/util/Comparator;
+	public abstract fun getSortSpecifications ()Ljava/util/List;
+	public abstract fun setSortSpecifications (Ljava/util/List;)V
 	public abstract fun toDto ()Ljava/util/List;
 }
 
@@ -767,10 +771,15 @@ public final class io/getstream/chat/android/client/api/models/querysort/QuerySo
 
 public final class io/getstream/chat/android/client/api/models/querysort/SortDirection : java/lang/Enum {
 	public static final field ASC Lio/getstream/chat/android/client/api/models/querysort/SortDirection;
+	public static final field Companion Lio/getstream/chat/android/client/api/models/querysort/SortDirection$Companion;
 	public static final field DESC Lio/getstream/chat/android/client/api/models/querysort/SortDirection;
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/querysort/SortDirection;
 	public static fun values ()[Lio/getstream/chat/android/client/api/models/querysort/SortDirection;
+}
+
+public final class io/getstream/chat/android/client/api/models/querysort/SortDirection$Companion {
+	public final fun fromNumber (I)Lio/getstream/chat/android/client/api/models/querysort/SortDirection;
 }
 
 public abstract class io/getstream/chat/android/client/api/models/querysort/internal/SortAttribute {
@@ -797,6 +806,19 @@ public final class io/getstream/chat/android/client/api/models/querysort/interna
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getField ()Lkotlin/reflect/KProperty1;
 	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/api/models/querysort/internal/SortSpecification {
+	public fun <init> (Lio/getstream/chat/android/client/api/models/querysort/internal/SortAttribute;Lio/getstream/chat/android/client/api/models/querysort/SortDirection;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/api/models/querysort/internal/SortAttribute;
+	public final fun component2 ()Lio/getstream/chat/android/client/api/models/querysort/SortDirection;
+	public final fun copy (Lio/getstream/chat/android/client/api/models/querysort/internal/SortAttribute;Lio/getstream/chat/android/client/api/models/querysort/SortDirection;)Lio/getstream/chat/android/client/api/models/querysort/internal/SortSpecification;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/querysort/internal/SortSpecification;Lio/getstream/chat/android/client/api/models/querysort/internal/SortAttribute;Lio/getstream/chat/android/client/api/models/querysort/SortDirection;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/querysort/internal/SortSpecification;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSortAttribute ()Lio/getstream/chat/android/client/api/models/querysort/internal/SortAttribute;
+	public final fun getSortDirection ()Lio/getstream/chat/android/client/api/models/querysort/SortDirection;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2840,6 +2862,7 @@ public final class io/getstream/chat/android/client/models/FileUploadConfig {
 
 public final class io/getstream/chat/android/client/models/Filters {
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/Filters;
+	public static final fun and (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun and ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun autocomplete (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun contains (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
@@ -2849,6 +2872,7 @@ public final class io/getstream/chat/android/client/models/Filters {
 	public static final fun greaterThan (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun greaterThanEquals (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun in (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
+	public static final fun in (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun in (Ljava/lang/String;[Ljava/lang/Number;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun in (Ljava/lang/String;[Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun lessThan (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
@@ -2856,10 +2880,13 @@ public final class io/getstream/chat/android/client/models/Filters {
 	public static final fun ne (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun neutral ()Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nin (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
+	public static final fun nin (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nin (Ljava/lang/String;[Ljava/lang/Number;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nin (Ljava/lang/String;[Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
+	public static final fun nor (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun nor ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun notExists (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
+	public static final fun or (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
 	public static final fun or ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
 }
 
