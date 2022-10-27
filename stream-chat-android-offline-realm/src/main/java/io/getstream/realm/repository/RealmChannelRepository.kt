@@ -24,13 +24,15 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.realm.entity.ChannelEntityRealm
 import io.getstream.realm.entity.toDomain
 import io.getstream.realm.entity.toRealm
+import io.getstream.realm.utils.toDate
 import io.getstream.realm.utils.toRealmInstant
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
-import java.util.*
+import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.ext.toRealmList
+import java.util.Date
 
-private const val LOG_TAG: String = "RealmChannelRepository"
 private const val NO_LIMIT: Int = -1
 
 @Suppress("TooManyFunctions")
@@ -56,7 +58,7 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
     }
 
     override suspend fun evictChannel(cid: String) {
-        // Nothing to do
+        // Nothing to do. There's no cache.
     }
 
     override suspend fun insertChannel(channel: Channel) {
@@ -137,15 +139,56 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
     }
 
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
-        // Nothing to do here
+        selectChannelByCidRealm(cid)?.let { channel ->
+            channel.run {
+                this.hidden = hidden
+                this.hide_messages_before = hideMessagesBefore.toRealmInstant()
+            }
+
+            realm.write {
+                copyToRealm(channel)
+            }
+        }
     }
 
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
-        // Nothing to do here
+        selectChannelByCidRealm(cid)?.let { channel ->
+            channel.messages.add(lastMessage.toRealm())
+
+            val messageCreatedAt = checkNotNull(
+                lastMessage.createdAt
+                    ?: lastMessage.createdLocallyAt
+            ) { "created at cant be null, be sure to set message.createdAt" }
+
+            val oldLastMessage = channel.messages.lastOrNull()
+            val updateNeeded = if (oldLastMessage != null) {
+                lastMessage.id == oldLastMessage.id ||
+                    channel.last_message_at == null ||
+                    messageCreatedAt.after(channel.last_message_at?.toDate())
+            } else {
+                true
+            }
+
+            if (updateNeeded) {
+                channel.apply {
+                    last_message_at = messageCreatedAt.toRealmInstant()
+                    messages = realmListOf(lastMessage.toRealm())
+                }
+                realm.write {
+                    copyToRealm(channel)
+                }
+            }
+        }
     }
 
     override suspend fun updateMembersForChannel(cid: String, members: List<Member>) {
-        // Nothing to do here
+        selectChannelByCidRealm(cid)?.let { channelRealm ->
+            channelRealm.members = members.map { it.toRealm() }.toRealmList()
+
+            realm.write {
+                copyToRealm(channelRealm)
+            }
+        }
     }
 
     private fun selectChannelByCidRealm(cid: String): ChannelEntityRealm? =
@@ -153,5 +196,3 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
             .first()
             .find()
 }
-
-private fun Iterable<Channel>.names(): String = joinToString { channel -> channel.name }
