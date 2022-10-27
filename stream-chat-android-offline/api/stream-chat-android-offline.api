@@ -36,7 +36,6 @@ public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflin
 
 public final class io/getstream/chat/android/offline/repository/database/converter/internal/QuerySortParser {
 	public fun <init> ()V
-	public final fun fromRawInfo (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 	public final fun fromSpecifications (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 }
 
