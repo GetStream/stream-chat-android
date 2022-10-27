@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.query.QueryChannelsSpec
-import io.getstream.logging.StreamLog
 import io.getstream.realm.filter.toFilterNode
 import io.getstream.realm.filter.toFilterObject
 import io.getstream.realm.moshi.FilterNodeAdapter
@@ -68,21 +67,16 @@ internal fun QueryChannelsEntityRealm.toDomain(): QueryChannelsSpec {
         .build()
         .adapter(FilterNode::class.java)
 
-    StreamLog.d("RealmQueryChannelsRepo") { "[toDomain] Starting to covert realm to domain" }
-
     val querySort: QuerySorter<Channel> = query_sort?.toDomain() ?: QuerySortByField.ascByName("name")
-    StreamLog.d("RealmQueryChannelsRepo") { "query sort done!! ------" }
 
     val filterAsString = filterAsString
         ?.let(adapter::fromJson)?.toFilterObject()
         ?: Filters.neutral()
-    StreamLog.d("RealmQueryChannelsRepo") { "filter done!!! ------" }
 
     return QueryChannelsSpec(
         querySort = querySort,
         filter = filterAsString,
     ).apply {
-        StreamLog.d("RealmQueryChannelsRepo") { "[toDomain] End of covert realm to domain" }
         cids = thisEntity.cids.toSet()
     }
 }

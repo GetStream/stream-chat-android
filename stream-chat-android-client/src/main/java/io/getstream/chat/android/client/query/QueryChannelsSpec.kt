@@ -25,13 +25,4 @@ public data class QueryChannelsSpec(
     val querySort: QuerySorter<Channel>
 ) {
     var cids: Set<String> = emptySet()
-
-    override fun toString(): String {
-        val specs = querySort.sortSpecifications.joinToString { spec ->
-            "attribute : ${spec.sortAttribute} - direction ${spec.sortDirection}"
-        }
-
-        val cids = cids.joinToString()
-        return "specs: $specs ; cids: $cids"
-    }
 }

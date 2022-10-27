@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
-import io.getstream.logging.StreamLog
 import io.getstream.realm.entity.QueryChannelsEntityRealm
 import io.getstream.realm.entity.generateQuerySpecId
 import io.getstream.realm.entity.toDomain
@@ -43,9 +42,6 @@ public class RealmQueryChannelsRepository(private val realm: Realm) : QueryChann
 
         realm.writeBlocking {
             copyToRealm(realmSpec, updatePolicy = UpdatePolicy.ALL)
-            StreamLog.d("RealmQueryChannelsRepo") { "Saving realm spec -------" }
-            realmSpec.log()
-            StreamLog.d("RealmQueryChannelsRepo") { "END of Saving realm spec -------" }
         }
     }
 
@@ -55,46 +51,11 @@ public class RealmQueryChannelsRepository(private val realm: Realm) : QueryChann
     ): QueryChannelsSpec? {
         val id = generateQuerySpecId(filter, querySort)
 
-        realm.query<QueryChannelsEntityRealm>()
-            .find()
-            .also { channelsRealm ->
-                StreamLog.d("RealmQueryChannelsRepo") {
-                    "Querying all QueryChannelsEntityRealm. Count: ${channelsRealm.size}"
-                }
-                channelsRealm.forEachIndexed { i, channelRealm ->
-                    channelRealm.log(i.toString())
-                }
-            }
+        realm.query<QueryChannelsEntityRealm>().find()
 
-        val query = "id == '$id'"
-
-        return realm.query<QueryChannelsEntityRealm>(query)
+        return realm.query<QueryChannelsEntityRealm>("id == '$id'")
             .first()
             .find()
-            .also { entity ->
-                StreamLog.d("RealmQueryChannelsRepo") { "Result of query: $query ----------" }
-                entity?.log("result!")
-                StreamLog.d("RealmQueryChannelsRepo") { "END of query: $query ----------" }
-            }
             ?.toDomain()
-            .also { entity ->
-                StreamLog.d("RealmQueryChannelsRepo") { "Result of query: $query - TO DOMAIN ----------" }
-                entity?.log("result!")
-            }
-    }
-
-    private fun QueryChannelsEntityRealm.log(index: String = "") {
-        StreamLog.d("RealmQueryChannelsRepo") {
-            "[QueryChannelsEntityRealm-$index]. id: ${this.id}. " +
-                "filter: ${this.filterAsString} " +
-                "query sort: ${this.query_sort} " +
-                "ids: ${this.cids.joinToString()}"
-        }
-    }
-
-    private fun QueryChannelsSpec.log(index: String = "") {
-        StreamLog.d("RealmQueryChannelsRepo") {
-            "[QueryChannelsSpec-$index] $this"
-        }
     }
 }
