@@ -648,6 +648,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getDateFormatter ()Lcom/getstream/sdk/chat/utils/DateFormatter;
 	public static final fun getFonts ()Lio/getstream/chat/android/ui/common/style/ChatFonts;
 	public static final fun getImageHeadersProvider ()Lcom/getstream/sdk/chat/images/ImageHeadersProvider;
+	public static fun getImageHeadersProvider$delegate ()Ljava/lang/Object;
 	public static final fun getMessagePreviewFormatter ()Lio/getstream/chat/android/ui/MessagePreviewFormatter;
 	public static final fun getMessageTextTransformer ()Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;
 	public static final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
