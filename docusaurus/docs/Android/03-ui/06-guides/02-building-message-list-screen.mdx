@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Building a Message List Screen
 
 The SDK provides multiple UI Components which can be used together to build a message list screen. This guide will show you how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageInputView`.
@@ -56,6 +59,9 @@ Just like other components, these three views come with [ViewModels](../01-overv
 
 After setting up the ViewModels, this screen also requires some additional setup to pass information between the different chat components.
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 // Create view models
 val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
@@ -100,6 +106,58 @@ messageListHeaderView.setBackButtonClickListener(backHandler)
 
 // You should also consider overriding default Activity's back button behaviour
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Create view models
+ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+        .cid("channelType:channelId")
+        .build();
+ViewModelProvider provider = new ViewModelProvider(this, factory);
+MessageListHeaderViewModel messageListHeaderViewModel = provider.get(MessageListHeaderViewModel.class);
+MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
+MessageInputViewModel messageInputViewModel = provider.get(MessageInputViewModel.class);
+
+// Bind view models
+MessageListHeaderViewModelBinding.bind(messageListHeaderViewModel, messageListHeaderView, this);
+boolean enforceUniqueReactions = true;
+MessageListViewModelBinding.bind(messageListViewModel, messageListView, this, enforceUniqueReactions);
+MessageInputViewModelBinding.bind(messageInputViewModel, messageInputView, this);
+
+// Let both message list header and message input know when we open a thread
+messageListViewModel.getMode().observe(this, mode -> {
+    if (mode instanceof Thread) {
+        Message parentMessage = ((Thread) mode).getParentMessage();
+        messageListHeaderViewModel.setActiveThread(parentMessage);
+        messageInputViewModel.setActiveThread(parentMessage);
+    } else if (mode instanceof Normal) {
+        messageListHeaderViewModel.resetThread();
+        messageInputViewModel.resetThread();
+    }
+});
+
+// Let the message input know when we are editing a message
+messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit);
+
+// Handle navigate up state
+messageListViewModel.getState().observe(this, state -> {
+    if (state instanceof MessageListViewModel.State.NavigateUp) {
+        // Handle navigate up
+    }
+});
+
+// Handle back button behaviour correctly when you're in a thread
+MessageListHeaderView.OnClickListener backHandler = () -> {
+    messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed.INSTANCE);
+};
+messageListHeaderView.setBackButtonClickListener(backHandler);
+
+// You should also consider overriding default Activity's back button behaviour
+```
+</TabItem>
+</Tabs>
 
 :::note
 `bindView` sets listeners on the View and the ViewModel. Any additional listeners should be set _after_ calling `bindView`.
