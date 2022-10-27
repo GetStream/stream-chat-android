@@ -114,7 +114,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         binding.recyclerView.adapter = membersAdapter
         binding.channelActionsContainer.background = style.background
         binding.channelMembersTextView.setTextStyle(style.memberNamesTextStyle)
-        binding.membersInfoTextView.setTextStyle(style.memberInfoTextStyle)
+        binding.channelMembersInfoTextView.setTextStyle(style.memberInfoTextStyle)
 
         channelActionsViewModel.channel.observe(viewLifecycleOwner) { channel ->
             this.channel = channel
@@ -131,7 +131,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
             channel = channel,
             currentUser = ChatUI.currentUserProvider.getCurrentUser()
         )
-        binding.membersInfoTextView.text = channel.getMembersStatusText(requireContext())
+        binding.channelMembersInfoTextView.text = channel.getMembersStatusText(requireContext())
 
         val channelMembers = channel.members
         val membersToDisplay = if (channel.isDirectMessaging()) {
