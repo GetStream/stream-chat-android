@@ -66,7 +66,7 @@ internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
 }
 
 @Suppress("ComplexMethod")
-internal fun FilterNode.toFilterObject(): FilterObject = when (this.filter_type) {
+internal fun FilterNode.toFilterObject(): FilterObject = when (this.filterType) {
     KEY_AND -> Filters.and((this.value as Set<FilterNode>).map(FilterNode::toFilterObject))
     KEY_OR -> Filters.or((this.value as Set<FilterNode>).map(FilterNode::toFilterObject))
     KEY_NOR -> Filters.nor((this.value as Set<FilterNode>).map(FilterNode::toFilterObject))
@@ -87,13 +87,13 @@ internal fun FilterNode.toFilterObject(): FilterObject = when (this.filter_type)
 
 private fun createBooleanLogicFilterNode(filterType: String?, value: Any): FilterNode =
     FilterNode().apply {
-        this.filter_type = filterType
+        this.filterType = filterType
         this.value = value
     }
 
 private fun createFilterNodeEntity(filterType: String?, field: String?, value: Any?): FilterNode =
     FilterNode().apply {
-        this.filter_type = filterType
+        this.filterType = filterType
         this.field = field
         this.value = value
     }

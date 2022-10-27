@@ -94,7 +94,7 @@ public class RealmQueryChannelsRepository(private val realm: Realm) : QueryChann
 
     private fun QueryChannelsSpec.log(index: String = "") {
         StreamLog.d("RealmQueryChannelsRepo") {
-            "[QueryChannelsSpec] $this"
+            "[QueryChannelsSpec-$index] $this"
         }
     }
 }

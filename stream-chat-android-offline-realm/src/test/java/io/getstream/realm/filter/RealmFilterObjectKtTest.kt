@@ -28,7 +28,7 @@ internal class RealmFilterObjectKtTest {
     @Test
     fun `it should be possible to convert a empty filter`() {
         val emptyFilerEntity = FilterNode().apply {
-            filter_type = ""
+            filterType = ""
             field = ""
             value = ""
         }
@@ -43,7 +43,7 @@ internal class RealmFilterObjectKtTest {
             Filters.exists("age")
         ).toFilterNode()
 
-        filterObject.filter_type `should be equal to` KEY_AND
+        filterObject.filterType `should be equal to` KEY_AND
     }
 
     @Test
@@ -53,7 +53,7 @@ internal class RealmFilterObjectKtTest {
         val originalFilter = Filters.`in`(field, args)
         val filterEntity = originalFilter.toFilterNode()
 
-        filterEntity.filter_type `should be equal to` KEY_IN
+        filterEntity.filterType `should be equal to` KEY_IN
 
         filterEntity.toFilterObject() `should be equal to` originalFilter
     }

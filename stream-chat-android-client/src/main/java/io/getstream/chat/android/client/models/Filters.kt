@@ -72,12 +72,14 @@ public object Filters {
 
     @JvmStatic
     public fun or(vararg filters: FilterObject): FilterObject = OrFilterObject(filters.toSet())
+
     @JvmStatic
 
     public fun or(filters: List<FilterObject>): FilterObject = OrFilterObject(filters.toSet())
 
     @JvmStatic
     public fun nor(vararg filters: FilterObject): FilterObject = NorFilterObject(filters.toSet())
+
     @JvmStatic
 
     public fun nor(filters: List<FilterObject>): FilterObject = NorFilterObject(filters.toSet())
@@ -116,7 +118,8 @@ public object Filters {
         NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
-    public fun nin(fieldName: String, values: Iterable<Any>): FilterObject = NotInFilterObject(fieldName, values.toSet())
+    public fun nin(fieldName: String, values: Iterable<Any>): FilterObject =
+        NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
     public fun nin(fieldName: String, vararg values: Number): FilterObject =

@@ -21,7 +21,6 @@ import io.getstream.realm.entity.ChannelEntityRealm
 import io.getstream.realm.entity.ChannelUserReadEntityRealm
 import io.getstream.realm.entity.CommandEntityRealm
 import io.getstream.realm.entity.ConfigEntityRealm
-import io.getstream.realm.entity.FilterNode
 import io.getstream.realm.entity.MemberEntityRealm
 import io.getstream.realm.entity.MessageEntityRealm
 import io.getstream.realm.entity.QueryChannelsEntityRealm
