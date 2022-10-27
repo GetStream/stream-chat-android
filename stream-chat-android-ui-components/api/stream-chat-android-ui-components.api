@@ -4278,3 +4278,8 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingI
 	public final fun messageId (Ljava/lang/String;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
 }
 
+public final class io/getstream/chat/android/ui/utils/extensions/ChannelKt {
+	public static final fun getMembersStatusText (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
+	public static synthetic fun getMembersStatusText$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Ljava/lang/String;
+}
+
