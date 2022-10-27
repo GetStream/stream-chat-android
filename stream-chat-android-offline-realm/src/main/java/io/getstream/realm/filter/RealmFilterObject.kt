@@ -41,12 +41,15 @@ import io.getstream.realm.entity.FilterNode
 internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
     is AndFilterObject -> createBooleanLogicFilterNode(
         KEY_AND,
-        this.filterObjects.map(FilterObject::toFilterNode)
+        this.filterObjects.map(FilterObject::toFilterNode).toSet()
     )
-    is OrFilterObject -> createBooleanLogicFilterNode(KEY_OR, this.filterObjects.map(FilterObject::toFilterNode))
+    is OrFilterObject -> createBooleanLogicFilterNode(
+        KEY_OR,
+        this.filterObjects.map(FilterObject::toFilterNode).toSet()
+    )
     is NorFilterObject -> createBooleanLogicFilterNode(
         KEY_NOR,
-        this.filterObjects.map(FilterObject::toFilterNode)
+        this.filterObjects.map(FilterObject::toFilterNode).toSet()
     )
     is ExistsFilterObject -> createFilterNodeEntity(KEY_EXIST, this.fieldName, null)
     is NotExistsFilterObject -> createFilterNodeEntity(KEY_NOT_EXIST, this.fieldName, null)
@@ -67,9 +70,9 @@ internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
 
 @Suppress("ComplexMethod")
 internal fun FilterNode.toFilterObject(): FilterObject = when (this.filterType) {
-    KEY_AND -> Filters.and((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
-    KEY_OR -> Filters.or((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
-    KEY_NOR -> Filters.nor((this.value as List<FilterNode>).map(FilterNode::toFilterObject))
+    KEY_AND -> Filters.and((this.value as Set<FilterNode>).map(FilterNode::toFilterObject))
+    KEY_OR -> Filters.or((this.value as Set<FilterNode>).map(FilterNode::toFilterObject))
+    KEY_NOR -> Filters.nor((this.value as Set<FilterNode>).map(FilterNode::toFilterObject))
     KEY_EXIST -> this.field?.let(Filters::exists) ?: Filters.neutral()
     KEY_NOT_EXIST -> this.field?.let(Filters::notExists) ?: Filters.neutral()
     KEY_EQUALS -> Filters.eq(this.field ?: "", this.value ?: false)
