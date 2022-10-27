@@ -2,7 +2,6 @@ package io.getstream.chat.docs.kotlin.ui.guides
 
 import android.content.Context
 import androidx.startup.AppInitializer
-import com.getstream.sdk.chat.startup.ThreeTenInitializer
 import io.getstream.chat.android.ui.common.ChatUIInitializer
 
 /**
@@ -11,9 +10,6 @@ import io.getstream.chat.android.ui.common.ChatUIInitializer
 class AppStartupInitializers {
 
     fun manualInitialization(appContext: Context) {
-        AppInitializer.getInstance(appContext).run {
-            initializeComponent(ThreeTenInitializer::class.java)
-            initializeComponent(ChatUIInitializer::class.java)
-        }
+        AppInitializer.getInstance(appContext).initializeComponent(ChatUIInitializer::class.java)
     }
 }

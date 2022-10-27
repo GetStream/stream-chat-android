@@ -4,8 +4,6 @@ import android.content.Context;
 
 import androidx.startup.AppInitializer;
 
-import com.getstream.sdk.chat.startup.ThreeTenInitializer;
-
 import io.getstream.chat.android.ui.common.ChatUIInitializer;
 
 /**
@@ -14,7 +12,6 @@ import io.getstream.chat.android.ui.common.ChatUIInitializer;
 public class AppStartupInitializers {
 
     public void manualInitialization(Context appContext) {
-        AppInitializer.getInstance(appContext).initializeComponent(ThreeTenInitializer.class);
         AppInitializer.getInstance(appContext).initializeComponent(ChatUIInitializer.class);
     }
 }
