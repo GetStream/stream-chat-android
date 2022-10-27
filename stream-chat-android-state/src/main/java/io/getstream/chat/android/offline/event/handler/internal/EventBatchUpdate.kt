@@ -182,7 +182,9 @@ internal class EventBatchUpdate private constructor(
             currentUserId: String?
         ): EventBatchUpdate {
             // Update users in DB in order to fetch channels and messages with sync data.
+            StreamLog.d(TAG) {"BUILD. Inserting users..."}
             repos.insertUsers(users)
+            StreamLog.d(TAG) {"BUILD. Inserting users... COMPLETE"}
             val messageMap: Map<String, Message> =
                 repos.selectMessages(messagesToFetch.toList(), forceCache = true).associateBy(Message::id)
             val channelMap: Map<String, Channel> =

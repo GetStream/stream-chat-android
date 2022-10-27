@@ -382,14 +382,18 @@ internal class EventHandlerSequential(
         batchBuilder.addToFetchMessages(messageIds)
 
         // actually fetch the data
+        StreamLog.d(TAG) { "batchBuilder.build" }
         val batch = batchBuilder.build(mutableGlobalState, repos, currentUserId)
 
         // step 2. second pass through the events, make a list of what we need to update
+        StreamLog.d(TAG) { "event handling" }
         for (event in events) {
             when (event) {
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     event.me.id mustBe currentUserId
+                    StreamLog.d(TAG) { "insertCurrentUser" }
                     repos.insertCurrentUser(event.me)
+                    StreamLog.d(TAG) { "insertCurrentUser - complete" }
                 }
                 // keep the data in Room updated based on the various events..
                 // note that many of these events should also update user information

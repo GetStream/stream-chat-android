@@ -28,6 +28,9 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.logging.StreamLog
+
+private const val TAG = "UploadAttachmentsWorker"
 
 internal class UploadAttachmentsWorker(
     private val channelType: String,
@@ -123,10 +126,14 @@ internal class UploadAttachmentsWorker(
         if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
             message.syncStatus = SyncStatus.FAILED_PERMANENTLY
         }
+        StreamLog.d(TAG) { "upsertMessage" }
         channelStateLogic.upsertMessage(message)
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
+        StreamLog.d(TAG) { "deleteChannelMessage" }
         messageRepository.deleteChannelMessage(message)
+        StreamLog.d(TAG) { "insertMessage" }
         messageRepository.insertMessage(message)
+        StreamLog.d(TAG) { "updateMessages - complete" }
     }
 
     private class ProgressCallbackImpl(
