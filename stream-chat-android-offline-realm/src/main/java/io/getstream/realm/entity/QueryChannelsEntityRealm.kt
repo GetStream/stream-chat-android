@@ -17,6 +17,7 @@
 package io.getstream.realm.entity
 
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.addAdapter
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
@@ -26,6 +27,7 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.logging.StreamLog
 import io.getstream.realm.filter.toFilterNode
 import io.getstream.realm.filter.toFilterObject
+import io.getstream.realm.moshi.FilterNodeAdapter
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
 import io.realm.kotlin.types.RealmList
@@ -44,11 +46,14 @@ internal class QueryChannelsEntityRealm : RealmObject {
 @OptIn(ExperimentalStdlibApi::class)
 internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
     val thisQuery = this
-    val moshi = Moshi.Builder().build()
+    val adapter = Moshi.Builder()
+        .addAdapter(FilterNodeAdapter())
+        .build()
+        .adapter(FilterNode::class.java)
 
     return QueryChannelsEntityRealm().apply {
         id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
-        filterAsString = moshi.adapter(FilterNode::class.java).toJson(thisQuery.filter.toFilterNode())
+        filterAsString = adapter.toJson(thisQuery.filter.toFilterNode())
         query_sort = thisQuery.querySort.toRealm()
         cids = thisQuery.cids.toRealmList()
     }
@@ -58,7 +63,10 @@ internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
 internal fun QueryChannelsEntityRealm.toDomain(): QueryChannelsSpec {
     val thisEntity = this
 
-    val moshi = Moshi.Builder().build()
+    val adapter = Moshi.Builder()
+        .addAdapter(FilterNodeAdapter())
+        .build()
+        .adapter(FilterNode::class.java)
 
     StreamLog.d("RealmQueryChannelsRepo") { "[toDomain] Starting to covert realm to domain" }
 
@@ -66,7 +74,7 @@ internal fun QueryChannelsEntityRealm.toDomain(): QueryChannelsSpec {
     StreamLog.d("RealmQueryChannelsRepo") { "query sort done!! ------" }
 
     val filterAsString = filterAsString
-        ?.let(moshi.adapter(FilterNode::class.java)::fromJson)?.toFilterObject()
+        ?.let(adapter::fromJson)?.toFilterObject()
         ?: Filters.neutral()
     StreamLog.d("RealmQueryChannelsRepo") { "filter done!!! ------" }
 
