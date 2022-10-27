@@ -46,8 +46,18 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
 
     private fun readSimpleNode(reader: JsonReader, type: String): FilterNode {
         val field = reader.nextString()
-        reader.skipName()
-        val value = reader.nextString()
+        var value: Any? = null
+        if (reader.hasNext()) {
+            reader.skipName()
+
+            value = when (reader.peek()) {
+                JsonReader.Token.STRING -> reader.nextString()
+                JsonReader.Token.NUMBER -> reader.nextDouble()
+                JsonReader.Token.BOOLEAN -> reader.nextBoolean()
+                JsonReader.Token.NULL -> reader.nextNull()
+                else -> null
+            }
+        }
 
         return FilterNode(filter_type = type, field = field, value = value)
     }
