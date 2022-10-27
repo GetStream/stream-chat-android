@@ -33,6 +33,10 @@ import io.getstream.chat.docs.R
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * [Message List](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
@@ -163,14 +167,17 @@ class MessageListViewSnippets : Fragment() {
     fun dateFormatter() {
         messageListView.setMessageDateFormatter(
             object : DateFormatter {
-                override fun formatDate(localDateTime: LocalDateTime?): String {
+                private val dateFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+                private val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
+
+                override fun formatDate(date: Date?): String {
                     // Provide a way to format Date
-                    return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDateTime)
+                    return dateFormat.format(date)
                 }
 
-                override fun formatTime(localTime: LocalTime?): String {
-                    // Provide a way to format Time.
-                    return DateTimeFormatter.ofPattern("HH:mm").format(localTime)
+                override fun formatTime(date: Date?): String {
+                    // Provide a way to format Time
+                    return timeFormat.format(date)
                 }
             }
         )

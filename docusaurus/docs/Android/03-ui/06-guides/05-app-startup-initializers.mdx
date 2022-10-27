@@ -19,10 +19,6 @@ Specifically, you'll have to do the following:
         android:exported="false"
         tools:node="merge">
         <meta-data
-            android:name="com.getstream.sdk.chat.startup.ThreeTenInitializer"
-            tools:node="remove"
-        />
-        <meta-data
             android:name="io.getstream.chat.android.ui.common.ChatUIInitializer"
             tools:node="remove"
         />
@@ -33,7 +29,6 @@ Specifically, you'll have to do the following:
 
     ```kotlin
     AppInitializer.getInstance(appContext).run {
-        initializeComponent(ThreeTenInitializer::class.java)
         initializeComponent(ChatUIInitializer::class.java)
     }
     ```

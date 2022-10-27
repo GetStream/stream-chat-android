@@ -18,12 +18,10 @@ package com.getstream.sdk.chat.utils
 
 import android.content.Context
 import android.text.format.DateFormat
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import android.text.format.DateUtils
 import io.getstream.chat.android.ui.common.R
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -35,18 +33,18 @@ public interface DateFormatter {
     /**
      * Formats the given date as a String.
      *
-     * @param localDateTime The [LocalDateTime] to format as a String.
+     * @param date The [Date] to format as a String.
      * @return The formatted date-time string.
      */
-    public fun formatDate(localDateTime: LocalDateTime?): String
+    public fun formatDate(date: Date?): String
 
     /**
      * Formats the given time as a String.
      *
-     * @param localTime The [LocalTime] object to format as a String.
+     * @param date The [Date] object to format as a String.
      * @return The formatted time string.
      */
-    public fun formatTime(localTime: LocalTime?): String
+    public fun formatTime(date: Date?): String
 
     public companion object {
         /**
@@ -61,75 +59,123 @@ public interface DateFormatter {
 }
 
 /**
- * Extension to be able to format objects of the deprecated [Date] type.
+ * The default implementation of [DateFormatter].
  */
-@InternalStreamChatApi
-public fun DateFormatter.formatDate(date: Date?): String {
-    return formatDate(date?.let(DateConverter::toLocalDateTime))
-}
-
-/**
- * Extension to be able to format objects of the deprecated [Date] type.
- */
-@InternalStreamChatApi
-public fun DateFormatter.formatTime(date: Date?): String {
-    return formatTime(date?.let(DateConverter::toLocalTime))
-}
-
 internal class DefaultDateFormatter(
-    private val dateContext: DateContext
+    private val dateContext: DateContext,
 ) : DateFormatter {
 
     constructor(context: Context) : this(DefaultDateContext(context))
 
-    private val timeFormatter12h = DateTimeFormatter.ofPattern("h:mm a")
-    private val timeFormatter24h = DateTimeFormatter.ofPattern("HH:mm")
-    private val dateFormatterDayOfWeek = DateTimeFormatter.ofPattern("EEEE")
-    private val dateFormatterFullDate: DateTimeFormatter
+    private val timeFormatter12h: SimpleDateFormat = SimpleDateFormat("h:mm a")
+    private val timeFormatter24h: SimpleDateFormat = SimpleDateFormat("HH:mm")
+    private val dateFormatterDayOfWeek: SimpleDateFormat = SimpleDateFormat("EEEE")
+    private val dateFormatterFullDate: SimpleDateFormat
         // Re-evaluated every time to account for runtime Locale changes
-        get() = DateTimeFormatter.ofPattern(dateContext.dateTimePattern())
+        get() = SimpleDateFormat(dateContext.dateTimePattern())
 
-    override fun formatDate(localDateTime: LocalDateTime?): String {
-        localDateTime ?: return ""
+    /**
+     * Formats the given date as a String.
+     *
+     * @param date The [Date] to format as a String.
+     * @return The formatted date-time string.
+     */
+    override fun formatDate(date: Date?): String {
+        date ?: return ""
 
-        val localDate = localDateTime.toLocalDate()
         return when {
-            localDate.isToday() -> formatTime(localDateTime.toLocalTime())
-            localDate.isYesterday() -> dateContext.yesterdayString()
-            localDate.isWithinLastWeek() -> dateFormatterDayOfWeek.format(localDate)
-            else -> dateFormatterFullDate.format(localDate)
+            date.isToday() -> formatTime(date)
+            date.isYesterday() -> dateContext.yesterdayString()
+            date.isWithinLastWeek() -> dateFormatterDayOfWeek.format(date)
+            else -> dateFormatterFullDate.format(date)
         }
     }
 
-    override fun formatTime(localTime: LocalTime?): String {
-        localTime ?: return ""
-        val formatter = if (dateContext.is24Hour()) timeFormatter24h else timeFormatter12h
-        return formatter.format(localTime).uppercase(Locale.getDefault())
+    /**
+     * Formats the given time as a String.
+     *
+     * @param date The [Date] object to format as a String.
+     * @return The formatted time string.
+     */
+    override fun formatTime(date: Date?): String {
+        date ?: return ""
+
+        val dateFormat = if (dateContext.is24Hour()) timeFormatter24h else timeFormatter12h
+        return dateFormat.format(date)
     }
 
-    private fun LocalDate.isToday(): Boolean {
-        return this == dateContext.now()
+    /**
+     * Checks if the supplied day is today.
+     *
+     * @return true if the date is today.
+     */
+    private fun Date.isToday(): Boolean {
+        val calendar1 = Calendar.getInstance().also { it.time = dateContext.now() }
+        val calendar2 = Calendar.getInstance().also { it.time = this }
+
+        return (calendar1[Calendar.YEAR] == calendar2[Calendar.YEAR]) &&
+            calendar1[Calendar.DAY_OF_YEAR] == calendar2[Calendar.DAY_OF_YEAR]
     }
 
-    private fun LocalDate.isYesterday(): Boolean {
-        return this == dateContext.now().minusDays(1)
+    /**
+     * Checks if the supplied date is yesterday.
+     *
+     * @return True if the date is yesterday.
+     */
+    private fun Date.isYesterday(): Boolean {
+        return Date(time + DateUtils.DAY_IN_MILLIS).isToday()
     }
 
-    private fun LocalDate.isWithinLastWeek(): Boolean {
-        return this > dateContext.now().minusDays(DAYS_IN_A_WEEK)
+    /**
+     * Checks if the supplied date is within last week.
+     *
+     * @return True is the date is within last week.
+     */
+    private fun Date.isWithinLastWeek(): Boolean {
+        return isWithinDays(DAYS_IN_WEEK - 1)
+    }
+
+    /**
+     * Checks if the supplied date is before today and within a number of days in the past.
+     *
+     * @param days The number of days before the current date.
+     * @return True is the date is within x days in the past.
+     */
+    private fun Date.isWithinDays(days: Int): Boolean {
+        val calendar: Calendar = Calendar.getInstance().also { it.time = this }
+
+        val currentDate = dateContext.now()
+        val start: Calendar = Calendar.getInstance().also {
+            it.time = currentDate
+            it.add(Calendar.DAY_OF_YEAR, -days)
+        }
+        val end: Calendar = Calendar.getInstance().also { it.time = currentDate }
+
+        return calendar.isBeforeDay(end) && !calendar.isBeforeDay(start)
+    }
+
+    /**
+     * Checks if the calendar date is before another calendar date ignoring time.
+     *
+     * @return True if the calendar date is before another calendar date ignoring time.
+     */
+    private fun Calendar.isBeforeDay(calendar: Calendar): Boolean {
+        if (this[Calendar.YEAR] < calendar[Calendar.YEAR]) return true
+        if (this[Calendar.YEAR] > calendar[Calendar.YEAR]) return false
+        return this[Calendar.DAY_OF_YEAR] < calendar[Calendar.DAY_OF_YEAR]
     }
 
     interface DateContext {
-        fun now(): LocalDate
+        fun now(): Date
         fun yesterdayString(): String
         fun is24Hour(): Boolean
         fun dateTimePattern(): String
     }
 
     private class DefaultDateContext(
-        private val context: Context
+        private val context: Context,
     ) : DateContext {
-        override fun now(): LocalDate = LocalDate.now()
+        override fun now(): Date = Date()
 
         override fun yesterdayString(): String {
             return context.getString(R.string.stream_ui_yesterday)
@@ -147,4 +193,7 @@ internal class DefaultDateFormatter(
     }
 }
 
-private const val DAYS_IN_A_WEEK = 7L
+/**
+ * The number of days in a week.
+ */
+private const val DAYS_IN_WEEK = 7
