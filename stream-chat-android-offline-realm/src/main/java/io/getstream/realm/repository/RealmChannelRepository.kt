@@ -16,7 +16,6 @@
 
 package io.getstream.realm.repository
 
-import android.util.Log
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -67,7 +66,6 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
     }
 
     override suspend fun insertChannels(channels: Collection<Channel>) {
-        Log.d(LOG_TAG, "inserting channels: ${channels.names()}")
         channels.forEach { channel -> insertChannel(channel) }
     }
 
