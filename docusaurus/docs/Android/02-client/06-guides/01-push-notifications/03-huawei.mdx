@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Huawei Push Kit
 
 This is the guide for using [Huawei Push Kit](https://developer.huawei.com/consumer/en/hms/huawei-pushkit/) to receive notifications from Stream Chat.
@@ -44,6 +47,9 @@ dependencies {
 
 Then, add a `HuaweiPushDeviceGenerator` to your `NotificationConfig`, and pass that into `ChatClient.Builder` when initializing the SDK:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin {3-6,10}
 val notificationConfig = NotificationConfig(
     pushDeviceGenerators = listOf(
@@ -57,6 +63,20 @@ ChatClient.Builder("apiKey", context)
     .notifications(notificationConfig)
     .build()
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+boolean pushNotificationEnabled = true;
+List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new HuaweiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", null));
+NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+new ChatClient.Builder("apiKey", context)
+        .notifications(notificationConfig)
+        .build();
+```
+</TabItem>
+</Tabs>
 
 :::caution
 _ChatClient_ must be initialized before handling push notifications. We recommend setting it up in your `Application` class.
@@ -70,13 +90,16 @@ The Stream Huawei push provider artifact contains a `HuaweiMessagingService` imp
 
 If you're using Huawei notifications for other purposes inside your app as well, you will need your own custom service to replace this.  Here, you have to call `HuaweiMessagingDelegate`'s `registerHuaweiToken` and `handleRemoteMessage` methods, like so:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin {6,14}
-inner class CustomHuaweiMessagingService : HmsMessageService() {
+class CustomHuaweiMessagingService : HmsMessageService() {
 
     override fun onNewToken(token: String) {
         // Update device's token on Stream backend
         try {
-            HuaweiMessagingDelegate.registerHuaweiToken(token)
+            HuaweiMessagingDelegate.registerHuaweiToken(token, "optional-provider-name")
         } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
@@ -95,6 +118,38 @@ inner class CustomHuaweiMessagingService : HmsMessageService() {
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+public final class CustomHuaweiMessagingService extends HmsMessageService {
+    @Override
+    public void onNewToken(String token) {
+        // Update device's token on Stream backend
+        try {
+            HuaweiMessagingDelegate.registerHuaweiToken(token, "optional-provider-name");
+        } catch (IllegalStateException exception){
+            // ChatClient was not initialized
+        }
+    }
+
+    @Override
+    public void onMessageReceived(com.huawei.hms.push.RemoteMessage remoteMessage) {
+        try {
+            if (HuaweiMessagingDelegate.handleRemoteMessage(remoteMessage)) {
+                // RemoteMessage was from Stream and it is already processed
+            } else {
+                // RemoteMessage wasn't sent from Stream and it needs to be handled by you
+            }
+        } catch (IllegalStateException exception){
+            // ChatClient was not initialized
+        }
+    }
+}
+```
+</TabItem>
+</Tabs>
 
 :::note
 Your custom service needs to have an [`<intent-filter>` priority](https://developer.android.com/guide/topics/manifest/intent-filter-element#priority) higher than `-1` to replace our default service. (This priority is `0` by default.)

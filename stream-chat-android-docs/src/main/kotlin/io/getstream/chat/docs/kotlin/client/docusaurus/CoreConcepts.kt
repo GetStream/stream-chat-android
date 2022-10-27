@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 class CoreConcepts {
 
     fun calls(channelClient: ChannelClient, message: Message) {
+        // Only call this from a background thread
         val messageResult = channelClient.sendMessage(message).execute()
     }
 
@@ -33,6 +34,9 @@ class CoreConcepts {
     }
 
     fun errorHandling(result: Result<Channel>) {
+        result.isSuccess
+        result.isError
+
         if (result.isSuccess) {
             // Use result.data()
         } else {

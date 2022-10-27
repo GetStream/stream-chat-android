@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.MessagePreviewFormatter
 import io.getstream.chat.android.ui.MimeTypeIconProvider
 import io.getstream.chat.android.ui.SupportedReactions
 import io.getstream.chat.android.ui.common.ChannelNameFormatter
@@ -130,6 +131,12 @@ private class ChatUiSnippets {
     fun customizingChannelNameFormatter() {
         ChatUI.channelNameFormatter = ChannelNameFormatter { channel, currentUser ->
             channel.name
+        }
+    }
+
+    fun customizingMessagePreview() {
+        ChatUI.messagePreviewFormatter = MessagePreviewFormatter { channel, message, currentUser ->
+            message.text
         }
     }
 

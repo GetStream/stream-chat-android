@@ -3,17 +3,15 @@
 package io.getstream.chat.docs.kotlin.ui.channels
 
 import android.graphics.Color
-import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -24,11 +22,12 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
 import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.docs.R
 
 /**
  * [Channel List](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/)
  */
-private class ChannelListViewSnippets() : Fragment() {
+private class ChannelListViewSnippets : Fragment() {
 
     private lateinit var channelListView: ChannelListView
 
@@ -120,26 +119,10 @@ private class ChannelListViewSnippets() : Fragment() {
         channelListView.setViewHolderFactory(customFactory)
     }
 
-    fun customizingDefaultViews() {
-        // Create loading view and layout params
-        val loadingView = ProgressBar(context)
-        val layoutParams = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.WRAP_CONTENT,
-            FrameLayout.LayoutParams.WRAP_CONTENT,
-            Gravity.CENTER
-        )
-        channelListView.setEmptyStateView(loadingView, layoutParams)
-
-        // Create empty state view and use default layout params
-        val emptyStateView = TextView(context).apply {
-            text = "No channels available"
-        }
-        channelListView.setEmptyStateView(emptyStateView)
-
-        // Set custom item separator drawable
-        channelListView.setItemSeparator(R.drawable.stream_ui_divider)
-
-        // Add separator to the last item
-        channelListView.setShouldDrawItemSeparatorOnLastItem(true)
+    fun customizingLoadingView() {
+        // Inflate loading view
+        val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, channelListView)
+        // Set loading view
+        channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
     }
 }
