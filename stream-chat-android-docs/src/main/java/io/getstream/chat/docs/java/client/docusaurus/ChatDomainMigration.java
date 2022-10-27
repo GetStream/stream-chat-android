@@ -60,23 +60,23 @@ public class ChatDomainMigration {
 
         // Old approach
         /*
-        chatDomain.sendMessage(message).enqueue((result -> {
+        chatDomain.sendMessage(message).enqueue(result -> {
             if (result.isSuccess()) {
                 // Handle success
             } else {
                 // Handle error
             }
-        }));
+        });
         */
 
         // New approach
-        chatClient.channel(cid).sendMessage(message).enqueue((result -> {
+        chatClient.channel(cid).sendMessage(message).enqueue(result -> {
             if (result.isSuccess()) {
                 // Handle success
             } else {
                 // Handle error
             }
-        }));
+        });
     }
 
     class State {
@@ -114,27 +114,26 @@ public class ChatDomainMigration {
             int messageLimit = 1;
             int memberLimit = 30;
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
-            chatClient.queryChannels(request).enqueue(
-                    (result) -> {
-                        if (result.isSuccess()) {
-                            // Request successful. Data will be propagated to the state object
-                        } else {
-                            // Handle error
-                        }
-                    });
+            chatClient.queryChannels(request).enqueue(result -> {
+                if (result.isSuccess()) {
+                    // Request successful. Data will be propagated to the state object
+                } else {
+                    // Handle error
+                }
+            });
             // 2. Get the state object associated with the above API call
             QueryChannelsState queryChannelsState = ChatClientExtensions.getState(chatClient).queryChannels(filter, sort);
         }
 
         public void watchChannel() {
             // Old approach - returns ChannelController object and performs watchChannel request
-            // ChatDomain.instance().watchChannel("messaging:sampleId", 30).enqueue((result -> {
+            // ChatDomain.instance().watchChannel("messaging:sampleId", 30).enqueue(result -> {
             //            if (result.isSuccess()) {
             //                // Handle success
             //            } else {
             //                // Handle error
             //            }
-            //        }));
+            //        });
 
             // New approach - returns the LiveData<ChannelState> object and performs watchChannel request
             StateFlow<ChannelState> channelState = ChatClientExtensions.watchChannelAsState(chatClient, "messaging:sampleId", 30);
@@ -158,35 +157,35 @@ public class ChatDomainMigration {
         // New approach of updating message
         Message messageToUpdate = new Message();
         messageToUpdate.setText("Updated text");
-        chatClient.updateMessage(messageToUpdate).enqueue((result -> {
+        chatClient.updateMessage(messageToUpdate).enqueue(result -> {
             if (result.isSuccess()) {
                 // Handle success
             } else {
                 // Handle error
             }
-        }));
+        });
 
         // Old approach of leaving channel
-        /*ChatDomain.instance().leaveChannel(cid).enqueue((result -> {
+        /*ChatDomain.instance().leaveChannel(cid).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Handle success
                 } else {
                     // Handle error
                 }
-            }));
+            });
         }*/
 
         String cid = "cid";
         // New approach of leaving channel
         User currentUser = chatClient.getCurrentUser();
         if (currentUser != null) {
-            chatClient.channel(cid).removeMembers(Collections.singletonList(currentUser.getId()), null).enqueue((result -> {
+            chatClient.channel(cid).removeMembers(Collections.singletonList(currentUser.getId()), null).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Handle success
                 } else {
                     // Handle error
                 }
-            }));
+            });
         }
     }
 }

@@ -106,7 +106,7 @@ class CustomPushMessageReceiver : PushMessageReceiver() {
     override fun onReceiveRegisterResult(context: Context, miPushCommandMessage: MiPushCommandMessage) {
         // Update device's token on Stream backend
         try {
-            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage)
+            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "optional-provider-name")
         } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
@@ -130,13 +130,13 @@ class CustomPushMessageReceiver : PushMessageReceiver() {
 <TabItem value="java" label="Java">
 
 ```java
-class CustomPushMessageReceiver extends PushMessageReceiver {
+public final class CustomPushMessageReceiver extends PushMessageReceiver {
 
     @Override
     public void onReceiveRegisterResult(Context context, MiPushCommandMessage miPushCommandMessage) {
         // Update device's token on Stream backend
         try {
-            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage);
+            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "optional-provider-name");
         } catch (IllegalStateException exception) {
             // ChatClient was not initialized
         }

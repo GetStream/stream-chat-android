@@ -124,7 +124,7 @@ public class MessageInputViewSnippets extends Fragment {
     }
 
     public void changingSendMessageButton() {
-        messageInputView.setMessageInputModeListener((inputMode) -> {
+        messageInputView.setMessageInputModeListener(inputMode -> {
             if (inputMode instanceof MessageInputView.InputMode.Edit) {
                 messageInputView.setSendMessageButtonEnabledDrawable(requireContext().getDrawable(R.drawable.stream_ui_ic_check_single));
                 messageInputView.setSendMessageButtonDisabledDrawable(requireContext().getDrawable(R.drawable.stream_ui_ic_close));
@@ -135,30 +135,30 @@ public class MessageInputViewSnippets extends Fragment {
         });
     }
 
+    public final class CustomCommandViewHolder extends BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
+
+        ItemCommandBinding binding;
+
+        public CustomCommandViewHolder(ItemCommandBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        @Override
+        public void bindItem(@NonNull SuggestionListItem.CommandItem item) {
+            binding.commandNameTextView.setText(item.getCommand().getName());
+        }
+    }
+
+    public final class CustomSuggestionListViewHolderFactory extends SuggestionListItemViewHolderFactory {
+        @NonNull
+        @Override
+        public BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> createCommandViewHolder(@NonNull ViewGroup parentView) {
+            return new CustomCommandViewHolder(ItemCommandBinding.inflate(LayoutInflater.from(parentView.getContext()), parentView, false));
+        }
+    }
+
     public void customSuggestionItems() {
-        class CustomCommandViewHolder extends BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
-
-            ItemCommandBinding binding;
-
-            public CustomCommandViewHolder(ItemCommandBinding binding) {
-                super(binding.getRoot());
-                this.binding = binding;
-            }
-
-            @Override
-            public void bindItem(@NonNull SuggestionListItem.CommandItem item) {
-                binding.commandNameTextView.setText(item.getCommand().getName());
-            }
-        }
-
-        class CustomSuggestionListViewHolderFactory extends SuggestionListItemViewHolderFactory {
-            @NonNull
-            @Override
-            public BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> createCommandViewHolder(@NonNull ViewGroup parentView) {
-                return new CustomCommandViewHolder(ItemCommandBinding.inflate(LayoutInflater.from(parentView.getContext()), parentView, false));
-            }
-        }
-
         messageInputView.setSuggestionListViewHolderFactory(new CustomSuggestionListViewHolderFactory());
     }
 

@@ -61,7 +61,6 @@ public object HuaweiMessagingDelegate {
      */
     @Throws(IllegalStateException::class)
     @JvmStatic
-    @JvmOverloads
     public fun registerHuaweiToken(
         token: String,
         providerName: String? = fallbackProviderName,

@@ -115,13 +115,13 @@ channelListView.setUserClickListener { user ->
 <TabItem value="java" label="Java">
 
 ```java
-channelListView.setChannelItemClickListener((channel) -> {
+channelListView.setChannelItemClickListener(channel -> {
     // Handle channel click
 });
-channelListView.setChannelInfoClickListener((channel) -> {
+channelListView.setChannelInfoClickListener(channel -> {
     // Handle channel info click
 });
-channelListView.setUserClickListener((user) -> {
+channelListView.setUserClickListener(user -> {
     // Handle member click
 });
 ```
@@ -324,7 +324,7 @@ class CustomChannelViewHolder(
 <TabItem value="java" label="Java">
 
 ```java
-class CustomChannelListItemViewHolderFactory extends ChannelListItemViewHolderFactory {
+public final class CustomChannelListItemViewHolderFactory extends ChannelListItemViewHolderFactory {
     @Override
     public int getItemViewType(@NonNull ChannelListItem item) {
         // Override together with createViewHolder() to introduce different view holder types

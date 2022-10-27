@@ -114,10 +114,10 @@ searchInputView.setDebouncedInputChangedListener { query ->
 <TabItem value="java" label="Java">
 
 ```java
-searchInputView.setContinuousInputChangedListener((query) -> {
+searchInputView.setContinuousInputChangedListener(query -> {
     // Search query changed
 });
-searchInputView.setDebouncedInputChangedListener((query) -> {
+searchInputView.setDebouncedInputChangedListener(query -> {
     // Search query changed and has been stable for a short while
 });
 ```
@@ -139,7 +139,7 @@ searchResultView.setSearchResultSelectedListener { message ->
 <TabItem value="java" label="Java">
 
 ```java
-searchInputView.setSearchStartedListener((query) -> {
+searchInputView.setSearchStartedListener(query -> {
     // Search is triggered
 });
 ```

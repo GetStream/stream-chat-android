@@ -45,7 +45,7 @@ class MyMessageListActivity : AppCompatActivity() {
 <TabItem value="java" label="Java">
 
 ```java
-class MyMessageListActivity extends AppCompatActivity {
+public final class MyMessageListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), MessageListFragment.BackPressListener 
 <TabItem value="java" label="Java">
 
 ```java
-class MainActivity extends AppCompatActivity implements MessageListFragment.BackPressListener {
+public final class MainActivity extends AppCompatActivity implements MessageListFragment.BackPressListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -183,7 +183,7 @@ class CustomMessageListActivity : MessageListActivity() {
 <TabItem value="java" label="Java">
 
 ```java
-class CustomMessageListFragment extends MessageListFragment {
+public final class CustomMessageListFragment extends MessageListFragment {
 
     @Override
     protected void setupMessageListHeader(@NonNull MessageListHeaderView messageListHeaderView) {
@@ -207,7 +207,7 @@ class CustomMessageListFragment extends MessageListFragment {
     }
 }
 
-class CustomMessageListActivity extends MessageListActivity {
+public final class CustomMessageListActivity extends MessageListActivity {
 
     @NonNull
     @Override

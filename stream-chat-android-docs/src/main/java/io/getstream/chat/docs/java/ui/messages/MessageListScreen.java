@@ -20,18 +20,16 @@ import kotlin.Unit;
  */
 public class MessageListScreen {
 
-    public void usage() {
-        class MyMessageListActivity extends AppCompatActivity {
-            @Override
-            protected void onCreate(@Nullable Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-                setContentView(R.layout.stream_ui_fragment_container);
+    public final class MyMessageListActivity extends AppCompatActivity {
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.stream_ui_fragment_container);
 
-                if (savedInstanceState == null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, MessageListFragment.newInstance("channelType:channelId"))
-                            .commit();
-                }
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, MessageListFragment.newInstance("channelType:channelId"))
+                        .commit();
             }
         }
     }
@@ -40,60 +38,56 @@ public class MessageListScreen {
         context.startActivity(MessageListActivity.createIntent(context, "channelType:channelId"));
     }
 
-    public void handlingActions() {
-        class MainActivity extends AppCompatActivity implements MessageListFragment.BackPressListener {
+    public final class MainActivity extends AppCompatActivity implements MessageListFragment.BackPressListener {
 
-            @Override
-            protected void onCreate(@Nullable Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-                // Add MessageListFragment to the layout
-            }
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            // Add MessageListFragment to the layout
+        }
 
-            @Override
-            public void onBackPress() {
-                // Handle back press
-            }
+        @Override
+        public void onBackPress() {
+            // Handle back press
         }
     }
 
-    public void customization() {
-        class CustomMessageListFragment extends MessageListFragment {
+    public final class CustomMessageListFragment extends MessageListFragment {
 
-            @Override
-            protected void setupMessageListHeader(@NonNull MessageListHeaderView messageListHeaderView) {
-                super.setupMessageListHeader(messageListHeaderView);
-                // Customize message list header view. For example, set a custom back button click listener:
-                messageListHeaderView.setBackButtonClickListener(() -> {
-                    // Handle back press
-                });
-            }
-
-            @Override
-            protected void setupMessageList(@NonNull MessageListView messageListView) {
-                super.setupMessageList(messageListView);
-                // Customize message list view
-            }
-
-            @Override
-            protected void setupMessageInput(@NonNull MessageInputView messageInputView) {
-                super.setupMessageInput(messageInputView);
-                // Customize message input view
-            }
+        @Override
+        protected void setupMessageListHeader(@NonNull MessageListHeaderView messageListHeaderView) {
+            super.setupMessageListHeader(messageListHeaderView);
+            // Customize message list header view. For example, set a custom back button click listener:
+            messageListHeaderView.setBackButtonClickListener(() -> {
+                // Handle back press
+            });
         }
 
-        class CustomMessageListActivity extends MessageListActivity {
+        @Override
+        protected void setupMessageList(@NonNull MessageListView messageListView) {
+            super.setupMessageList(messageListView);
+            // Customize message list view
+        }
 
-            @NonNull
-            @Override
-            protected MessageListFragment createMessageListFragment(@NonNull String cid, @Nullable String messageId) {
-                return MessageListFragment.newInstance(cid, builder -> {
-                    builder.setFragment(new CustomMessageListFragment());
-                    builder.customTheme(R.style.StreamUiTheme);
-                    builder.showHeader(true);
-                    builder.messageId(messageId);
-                    return Unit.INSTANCE;
-                });
-            }
+        @Override
+        protected void setupMessageInput(@NonNull MessageInputView messageInputView) {
+            super.setupMessageInput(messageInputView);
+            // Customize message input view
+        }
+    }
+
+    public final class CustomMessageListActivity extends MessageListActivity {
+
+        @NonNull
+        @Override
+        protected MessageListFragment createMessageListFragment(@NonNull String cid, @Nullable String messageId) {
+            return MessageListFragment.newInstance(cid, builder -> {
+                builder.setFragment(new CustomMessageListFragment());
+                builder.customTheme(R.style.StreamUiTheme);
+                builder.showHeader(true);
+                builder.messageId(messageId);
+                return Unit.INSTANCE;
+            });
         }
     }
 }

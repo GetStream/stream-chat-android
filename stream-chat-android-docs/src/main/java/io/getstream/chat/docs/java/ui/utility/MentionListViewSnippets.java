@@ -21,7 +21,7 @@ public class MentionListViewSnippets extends Fragment {
     }
 
     public void handlingActions() {
-        mentionListView.setMentionSelectedListener((message) -> {
+        mentionListView.setMentionSelectedListener(message -> {
             // Handle a mention item being clicked
         });
     }

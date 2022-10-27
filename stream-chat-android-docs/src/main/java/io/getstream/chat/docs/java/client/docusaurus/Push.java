@@ -49,7 +49,7 @@ public class Push {
      */
     public void configureNotification(Context context, NotificationHandler notificationHandler) {
         boolean pushNotificationEnabled = true;
-        List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<PushDeviceGenerator>();
+        List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
         NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
 
         new ChatClient.Builder("api-key", context)
@@ -62,7 +62,7 @@ public class Push {
      */
     public void customNotificationHandler(Context context) {
         boolean pushNotificationEnabled = true;
-        List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<PushDeviceGenerator>();
+        List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
         NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
 
         NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, (messageId, channelType, channelId) -> {
@@ -183,7 +183,7 @@ public class Push {
         /**
          * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service">Using a Custom Firebase Messaging Service</a>
          */
-        class CustomFirebaseMessagingService extends FirebaseMessagingService {
+        public final class CustomFirebaseMessagingService extends FirebaseMessagingService {
 
             @Override
             public void onNewToken(@NonNull String token) {
@@ -230,12 +230,12 @@ public class Push {
         /**
          * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/firebase/#using-a-custom-firebase-messaging-service">Using a Custom Service</a>
          */
-        class CustomHuaweiMessagingService extends HmsMessageService {
+        public final class CustomHuaweiMessagingService extends HmsMessageService {
             @Override
             public void onNewToken(String token) {
                 // Update device's token on Stream backend
                 try {
-                    HuaweiMessagingDelegate.registerHuaweiToken(token);
+                    HuaweiMessagingDelegate.registerHuaweiToken(token, "optional-provider-name");
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -281,7 +281,7 @@ public class Push {
             public void onReceiveRegisterResult(Context context, MiPushCommandMessage miPushCommandMessage) {
                 // Update device's token on Stream backend
                 try {
-                    XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage);
+                    XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "optional-provider-name");
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }

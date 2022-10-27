@@ -22,7 +22,7 @@ A best practice is to initialize `ChatClient` in the `Application` class:
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        val chatClient = ChatClient.Builder("apiKey", context).build()
+        val chatClient = ChatClient.Builder("apiKey", applicationContext).build()
     }
 }
 ```

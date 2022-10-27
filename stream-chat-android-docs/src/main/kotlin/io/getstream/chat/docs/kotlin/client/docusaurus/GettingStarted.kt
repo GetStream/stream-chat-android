@@ -15,11 +15,11 @@ import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFacto
  */
 class GettingStarted {
 
-    fun creatingAChatClient(context: Context) {
+    fun creatingAChatClient() {
         class App : Application() {
             override fun onCreate() {
                 super.onCreate()
-                val chatClient = ChatClient.Builder("apiKey", context).build()
+                val chatClient = ChatClient.Builder("apiKey", applicationContext).build()
             }
         }
 

@@ -25,7 +25,7 @@ class PinnedMessageListViewSnippets extends Fragment {
     }
 
     public void handlingActions() {
-        pinnedMessageListView.setPinnedMessageSelectedListener((message) -> {
+        pinnedMessageListView.setPinnedMessageSelectedListener(message -> {
             // Handle a mention item being clicked
         });
     }

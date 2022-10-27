@@ -96,7 +96,7 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         // Update device's token on Stream backend
         try {
-            FirebaseMessagingDelegate.registerFirebaseToken(token)
+            FirebaseMessagingDelegate.registerFirebaseToken(token, "optional-provider-name")
         } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
@@ -120,7 +120,7 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
 <TabItem value="java" label="Java">
 
 ```java
-class CustomFirebaseMessagingService extends FirebaseMessagingService {
+public final class CustomFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(@NonNull String token) {
