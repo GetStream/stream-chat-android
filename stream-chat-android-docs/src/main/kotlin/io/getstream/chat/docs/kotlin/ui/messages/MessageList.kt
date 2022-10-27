@@ -150,14 +150,10 @@ class MessageListViewSnippets : Fragment() {
         }
     }
 
-    fun emptyState() {
-        // When there's no results, show empty state
-        messageListView.showEmptyStateView()
-    }
-
-    fun loadingView() {
-        // When loading information, show loading view
-        messageListView.showLoadingView()
+    fun channelFeatureFlags() {
+        messageListView.setRepliesEnabled(false)
+        messageListView.setDeleteMessageEnabled(false)
+        messageListView.setEditMessageEnabled(false)
     }
 
     fun dateFormatter() {
