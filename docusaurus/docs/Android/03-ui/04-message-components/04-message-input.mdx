@@ -379,7 +379,7 @@ messageInputView.setMessageInputModeListener {
 <TabItem value="java" label="Java">
 
 ```java
-messageInputView.setMessageInputModeListener((inputMode) -> {
+messageInputView.setMessageInputModeListener(inputMode -> {
     if (inputMode instanceof MessageInputView.InputMode.Edit) {
         messageInputView.setSendMessageButtonEnabledDrawable(requireContext().getDrawable(R.drawable.stream_ui_ic_check_single));
         messageInputView.setSendMessageButtonDisabledDrawable(requireContext().getDrawable(R.drawable.stream_ui_ic_close));
@@ -447,7 +447,7 @@ class CustomSuggestionListViewHolderFactory : SuggestionListItemViewHolderFactor
 <TabItem value="java" label="Java">
 
 ```java
-class CustomCommandViewHolder extends BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
+public final class CustomCommandViewHolder extends BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> {
 
     ItemCommandBinding binding;
 
@@ -462,7 +462,7 @@ class CustomCommandViewHolder extends BaseSuggestionItemViewHolder<SuggestionLis
     }
 }
 
-class CustomSuggestionListViewHolderFactory extends SuggestionListItemViewHolderFactory {
+public final class CustomSuggestionListViewHolderFactory extends SuggestionListItemViewHolderFactory {
     @NonNull
     @Override
     public BaseSuggestionItemViewHolder<SuggestionListItem.CommandItem> createCommandViewHolder(@NonNull ViewGroup parentView) {

@@ -16,22 +16,22 @@ public class AttachmentGallery {
     private MessageListView messageListView;
 
     public void handlingActions() {
-        messageListView.setAttachmentReplyOptionClickHandler((resultItem) -> {
+        messageListView.setAttachmentReplyOptionClickHandler(resultItem -> {
             resultItem.getMessageId();
             // Handle reply to attachment
         });
 
-        messageListView.setAttachmentShowInChatOptionClickHandler((resultItem) -> {
+        messageListView.setAttachmentShowInChatOptionClickHandler(resultItem -> {
             resultItem.getMessageId();
             // Handle show in chat
         });
 
-        messageListView.setDownloadOptionHandler((resultItem) -> {
+        messageListView.setDownloadOptionHandler(resultItem -> {
             resultItem.getAssetUrl();
             // Handle download the attachment
         });
 
-        messageListView.setAttachmentDeleteOptionClickHandler((resultItem) -> {
+        messageListView.setAttachmentDeleteOptionClickHandler(resultItem -> {
             resultItem.getAssetUrl();
             resultItem.getImageUrl();
             // Handle delete
@@ -42,16 +42,16 @@ public class AttachmentGallery {
         // Create Attachment Gallery Destination
         AttachmentGalleryDestination destination = new AttachmentGalleryDestination(
                 activity,
-                (resultItem) -> {
+                resultItem -> {
                     // Handle reply
                 },
-                (resultItem) -> {
+                resultItem -> {
                     // Handle show image in chat
                 },
-                (resultItem) -> {
+                resultItem -> {
                     // Handle download image
                 },
-                (resultItem) -> {
+                resultItem -> {
                     // Handle delete image
                 }
         );

@@ -25,19 +25,17 @@ import kotlin.Unit;
  */
 public class ChannelListScreen {
 
-    public void usage() {
-        class MyChannelListActivity extends AppCompatActivity {
+    public final class MyChannelListActivity1 extends AppCompatActivity {
 
-            @Override
-            protected void onCreate(@Nullable Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-                setContentView(R.layout.stream_ui_fragment_container);
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.stream_ui_fragment_container);
 
-                if (savedInstanceState == null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, ChannelListFragment.newInstance())
-                            .commit();
-                }
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, ChannelListFragment.newInstance())
+                        .commit();
             }
         }
     }
@@ -46,100 +44,96 @@ public class ChannelListScreen {
         context.startActivity(ChannelListActivity.createIntent(context));
     }
 
-    public void handlingActions() {
-        class MyChannelListActivity extends AppCompatActivity implements
-                ChannelListFragment.HeaderActionButtonClickListener,
-                ChannelListFragment.HeaderUserAvatarClickListener,
-                ChannelListFragment.ChannelListItemClickListener,
-                ChannelListFragment.SearchResultClickListener {
+    public final class MyChannelListActivity2 extends AppCompatActivity implements
+            ChannelListFragment.HeaderActionButtonClickListener,
+            ChannelListFragment.HeaderUserAvatarClickListener,
+            ChannelListFragment.ChannelListItemClickListener,
+            ChannelListFragment.SearchResultClickListener {
 
-            @Override
-            protected void onCreate(@Nullable Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-                // Add ChannelListFragment to the layout
-            }
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            // Add ChannelListFragment to the layout
+        }
 
-            @Override
-            public void onUserAvatarClick() {
-                // Handle header avatar click
-            }
+        @Override
+        public void onUserAvatarClick() {
+            // Handle header avatar click
+        }
 
-            @Override
-            public void onActionButtonClick() {
-                // Handle header action button click
-            }
+        @Override
+        public void onActionButtonClick() {
+            // Handle header action button click
+        }
 
-            @Override
-            public void onChannelClick(@NonNull Channel channel) {
-                // Handle channel click
-            }
+        @Override
+        public void onChannelClick(@NonNull Channel channel) {
+            // Handle channel click
+        }
 
-            @Override
-            public void onSearchResultClick(@NonNull Message message) {
-                // Handle search result click
-            }
+        @Override
+        public void onSearchResultClick(@NonNull Message message) {
+            // Handle search result click
         }
     }
 
-    public void customizations() {
-        class CustomChannelListFragment extends ChannelListFragment {
+    public final class CustomChannelListFragment extends ChannelListFragment {
 
-            @Override
-            protected void setupChannelListHeader(@NonNull ChannelListHeaderView channelListHeaderView) {
-                super.setupChannelListHeader(channelListHeaderView);
-                // Customize channel list header view. For example, set a custom avatar click listener:
-                channelListHeaderView.setOnUserAvatarClickListener(() -> {
-                    // Handle avatar click
-                });
-            }
-
-            @Override
-            protected void setupChannelList(@NonNull ChannelListView channelListView) {
-                super.setupChannelList(channelListView);
-                // Customize channel list view
-            }
-
-            @Override
-            protected void setupSearchInput(@NonNull SearchInputView searchInputView) {
-                super.setupSearchInput(searchInputView);
-                // Customize search input field
-            }
-
-            @Override
-            protected void setupSearchResultList(@NonNull SearchResultListView searchResultListView) {
-                super.setupSearchResultList(searchResultListView);
-                // Customize search result list
-            }
-
-            @Nullable
-            @Override
-            protected FilterObject getFilter() {
-                // Provide custom filter
-                return super.getFilter();
-            }
-
-            @NonNull
-            @Override
-            protected QuerySorter<Channel> getSort() {
-                // Provide custom sort
-                return super.getSort();
-            }
+        @Override
+        protected void setupChannelListHeader(@NonNull ChannelListHeaderView channelListHeaderView) {
+            super.setupChannelListHeader(channelListHeaderView);
+            // Customize channel list header view. For example, set a custom avatar click listener:
+            channelListHeaderView.setOnUserAvatarClickListener(() -> {
+                // Handle avatar click
+            });
         }
 
-        class CustomChannelListActivity extends ChannelListActivity {
+        @Override
+        protected void setupChannelList(@NonNull ChannelListView channelListView) {
+            super.setupChannelList(channelListView);
+            // Customize channel list view
+        }
 
-            @NonNull
-            @Override
-            protected ChannelListFragment createChannelListFragment() {
-                return ChannelListFragment.newInstance(builder -> {
-                    builder.setFragment(new CustomChannelListFragment());
-                    builder.customTheme(R.style.StreamUiTheme);
-                    builder.showSearch(true);
-                    builder.showHeader(true);
-                    builder.headerTitle("Title");
-                    return Unit.INSTANCE;
-                });
-            }
+        @Override
+        protected void setupSearchInput(@NonNull SearchInputView searchInputView) {
+            super.setupSearchInput(searchInputView);
+            // Customize search input field
+        }
+
+        @Override
+        protected void setupSearchResultList(@NonNull SearchResultListView searchResultListView) {
+            super.setupSearchResultList(searchResultListView);
+            // Customize search result list
+        }
+
+        @Nullable
+        @Override
+        protected FilterObject getFilter() {
+            // Provide custom filter
+            return super.getFilter();
+        }
+
+        @NonNull
+        @Override
+        protected QuerySorter<Channel> getSort() {
+            // Provide custom sort
+            return super.getSort();
+        }
+    }
+
+    public final class CustomChannelListActivity extends ChannelListActivity {
+
+        @NonNull
+        @Override
+        protected ChannelListFragment createChannelListFragment() {
+            return ChannelListFragment.newInstance(builder -> {
+                builder.setFragment(new CustomChannelListFragment());
+                builder.customTheme(R.style.StreamUiTheme);
+                builder.showSearch(true);
+                builder.showHeader(true);
+                builder.headerTitle("Title");
+                return Unit.INSTANCE;
+            });
         }
     }
 }

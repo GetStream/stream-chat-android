@@ -46,7 +46,7 @@ class MyChannelListActivity : AppCompatActivity() {
 <TabItem value="java" label="Java">
 
 ```java
-class MyChannelListActivity extends AppCompatActivity {
+public final class MyChannelListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,7 +127,7 @@ class MyChannelListActivity : AppCompatActivity(),
 <TabItem value="java" label="Java">
 
 ```java
-class MyChannelListActivity extends AppCompatActivity implements
+public final class MyChannelListActivity extends AppCompatActivity implements
         ChannelListFragment.HeaderActionButtonClickListener,
         ChannelListFragment.HeaderUserAvatarClickListener,
         ChannelListFragment.ChannelListItemClickListener,
@@ -240,7 +240,7 @@ class CustomChannelListActivity : ChannelListActivity() {
 <TabItem value="java" label="Java">
 
 ```java
-class CustomChannelListFragment extends ChannelListFragment {
+public final class CustomChannelListFragment extends ChannelListFragment {
 
     @Override
     protected void setupChannelListHeader(@NonNull ChannelListHeaderView channelListHeaderView) {
@@ -284,7 +284,7 @@ class CustomChannelListFragment extends ChannelListFragment {
     }
 }
 
-class CustomChannelListActivity extends ChannelListActivity {
+public final class CustomChannelListActivity extends ChannelListActivity {
 
     @NonNull
     @Override

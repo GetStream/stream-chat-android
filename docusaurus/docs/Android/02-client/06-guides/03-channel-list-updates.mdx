@@ -86,7 +86,7 @@ class PublicChatEventHandlerFactory : ChatEventHandlerFactory() {
 <TabItem value="java" label="Java">
 
 ```java
-class PublicChatEventHandler extends DefaultChatEventHandler {
+public final class PublicChatEventHandler extends DefaultChatEventHandler {
     public PublicChatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels, @NonNull ClientState clientState) {
         super(channels, clientState);
     }
@@ -116,7 +116,7 @@ class PublicChatEventHandler extends DefaultChatEventHandler {
     }
 }
 
-class PublicChatEventHandlerFactory extends ChatEventHandlerFactory {
+public final class PublicChatEventHandlerFactory extends ChatEventHandlerFactory {
     @NonNull
     @Override
     public ChatEventHandler chatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels) {
@@ -174,7 +174,7 @@ class PrivateChatEventHandlerFactory : ChatEventHandlerFactory() {
 <TabItem value="java" label="Java">
 
 ```java
-class PrivateChatEventHandler extends DefaultChatEventHandler {
+public final class PrivateChatEventHandler extends DefaultChatEventHandler {
     public PrivateChatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels, @NonNull ClientState clientState) {
         super(channels, clientState);
     }
@@ -204,7 +204,7 @@ class PrivateChatEventHandler extends DefaultChatEventHandler {
     }
 }
 
-class PrivateChatEventHandlerFactory extends ChatEventHandlerFactory {
+public final class PrivateChatEventHandlerFactory extends ChatEventHandlerFactory {
     @NonNull
     @Override
     public ChatEventHandler chatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels) {
@@ -228,12 +228,17 @@ val factory = ChannelListViewModelFactory(chatEventHandlerFactory = chatEventHan
 <TabItem value="java" label="Java">
 
 ```java
+FilterObject filter = null;
+QuerySorter<Channel> sort = ChannelListViewModel.DEFAULT_SORT;
+int limit = 30;
+int messageLimit = 1;
+int memberLimit = 30;
 ChannelListViewModelFactory factory = new ChannelListViewModelFactory(
-        null,
-        ChannelListViewModel.DEFAULT_SORT,
-        30,
-        1,
-        30,
+        filter,
+        sort,
+        limit,
+        messageLimit,
+        memberLimit,
         chatEventHandlerFactory
 );
 ```

@@ -26,13 +26,13 @@ public class SearchView extends Fragment {
     }
 
     public void handlingActions() {
-        searchInputView.setContinuousInputChangedListener((query) -> {
+        searchInputView.setContinuousInputChangedListener(query -> {
             // Search query changed
         });
-        searchInputView.setDebouncedInputChangedListener((query) -> {
+        searchInputView.setDebouncedInputChangedListener(query -> {
             // Search query changed and has been stable for a short while
         });
-        searchInputView.setSearchStartedListener((query) -> {
+        searchInputView.setSearchStartedListener(query -> {
             // Search is triggered
         });
     }

@@ -22,15 +22,14 @@ public class Attachments {
         message.setText("Look at this attachment!");
         message.setAttachments(Collections.singletonList(attachment));
 
-        ChatClient.instance().sendMessage("messaging", "general", message)
-                .enqueue((result) -> {
-                            if (result.isSuccess()) {
-                                // Use result.data()
-                            } else {
-                                // Handle result.error()
-                            }
-                        }
-                );
+        ChatClient.instance().sendMessage("messaging", "general", message).enqueue(result -> {
+                    if (result.isSuccess()) {
+                        // Use result.data()
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+        );
     }
 
     public void attachmentWithoutFile() {

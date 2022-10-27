@@ -72,7 +72,6 @@ public object XiaomiMessagingDelegate {
      */
     @Throws(IllegalStateException::class)
     @JvmStatic
-    @JvmOverloads
     public fun registerXiaomiToken(
         miPushCommandMessage: MiPushCommandMessage,
         providerName: String? = fallbackProviderName,

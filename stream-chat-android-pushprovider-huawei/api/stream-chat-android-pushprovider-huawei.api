@@ -9,7 +9,6 @@ public final class io/getstream/chat/android/pushprovider/huawei/BuildConfig {
 public final class io/getstream/chat/android/pushprovider/huawei/HuaweiMessagingDelegate {
 	public static final field INSTANCE Lio/getstream/chat/android/pushprovider/huawei/HuaweiMessagingDelegate;
 	public static final fun handleRemoteMessage (Lcom/huawei/hms/push/RemoteMessage;)Z
-	public static final fun registerHuaweiToken (Ljava/lang/String;)V
 	public static final fun registerHuaweiToken (Ljava/lang/String;Ljava/lang/String;)V
 	public static synthetic fun registerHuaweiToken$default (Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
 }

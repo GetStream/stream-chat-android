@@ -53,13 +53,13 @@ public class ChannelListViewSnippets extends Fragment {
     }
 
     public void handlingActions() {
-        channelListView.setChannelItemClickListener((channel) -> {
+        channelListView.setChannelItemClickListener(channel -> {
             // Handle channel click
         });
-        channelListView.setChannelInfoClickListener((channel) -> {
+        channelListView.setChannelInfoClickListener(channel -> {
             // Handle channel info click
         });
-        channelListView.setUserClickListener((user) -> {
+        channelListView.setUserClickListener(user -> {
             // Handle member click
         });
     }
@@ -71,36 +71,36 @@ public class ChannelListViewSnippets extends Fragment {
         });
     }
 
-    public void customViewHolderFactory() {
-        class CustomChannelListItemViewHolderFactory extends ChannelListItemViewHolderFactory {
-            @Override
-            public int getItemViewType(@NonNull ChannelListItem item) {
-                // Override together with createViewHolder() to introduce different view holder types
-                return super.getItemViewType(item);
-            }
-
-            @NonNull
-            @Override
-            public BaseChannelListItemViewHolder createViewHolder(@NonNull ViewGroup parentView, int viewType) {
-                // Override to create custom create view holder logic
-                return super.createViewHolder(parentView, viewType);
-            }
-
-            @NonNull
-            @Override
-            protected BaseChannelListItemViewHolder createChannelViewHolder(@NonNull ViewGroup parentView) {
-                // Create custom channel view holder
-                return super.createChannelViewHolder(parentView);
-            }
-
-            @NonNull
-            @Override
-            protected BaseChannelListItemViewHolder createLoadingMoreViewHolder(@NonNull ViewGroup parentView) {
-                // Create custom loading more view holder
-                return super.createLoadingMoreViewHolder(parentView);
-            }
+    public final class CustomChannelListItemViewHolderFactory extends ChannelListItemViewHolderFactory {
+        @Override
+        public int getItemViewType(@NonNull ChannelListItem item) {
+            // Override together with createViewHolder() to introduce different view holder types
+            return super.getItemViewType(item);
         }
 
+        @NonNull
+        @Override
+        public BaseChannelListItemViewHolder createViewHolder(@NonNull ViewGroup parentView, int viewType) {
+            // Override to create custom create view holder logic
+            return super.createViewHolder(parentView, viewType);
+        }
+
+        @NonNull
+        @Override
+        protected BaseChannelListItemViewHolder createChannelViewHolder(@NonNull ViewGroup parentView) {
+            // Create custom channel view holder
+            return super.createChannelViewHolder(parentView);
+        }
+
+        @NonNull
+        @Override
+        protected BaseChannelListItemViewHolder createLoadingMoreViewHolder(@NonNull ViewGroup parentView) {
+            // Create custom loading more view holder
+            return super.createLoadingMoreViewHolder(parentView);
+        }
+    }
+
+    public void customViewHolderFactory() {
         // Create custom view holder factory
         CustomChannelListItemViewHolderFactory customFactory = new CustomChannelListItemViewHolderFactory();
 
