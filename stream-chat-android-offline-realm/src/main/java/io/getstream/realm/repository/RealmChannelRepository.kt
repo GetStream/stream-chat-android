@@ -24,12 +24,10 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.realm.entity.ChannelEntityRealm
 import io.getstream.realm.entity.toDomain
 import io.getstream.realm.entity.toRealm
-import io.getstream.realm.utils.toDate
 import io.getstream.realm.utils.toRealmInstant
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
-import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
 import java.util.Date
 
@@ -152,9 +150,7 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
     }
 
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
-        selectChannelByCidRealm(cid)?.let { channel ->
-            channel.messages.add(lastMessage.toRealm())
-
+        selectChannelByCid(cid)?.let { channel ->
             val messageCreatedAt = checkNotNull(
                 lastMessage.createdAt
                     ?: lastMessage.createdLocallyAt
@@ -163,19 +159,19 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
             val oldLastMessage = channel.messages.lastOrNull()
             val updateNeeded = if (oldLastMessage != null) {
                 lastMessage.id == oldLastMessage.id ||
-                    channel.last_message_at == null ||
-                    messageCreatedAt.after(channel.last_message_at?.toDate())
+                    channel.lastMessageAt == null ||
+                    messageCreatedAt.after(channel.lastMessageAt)
             } else {
                 true
             }
 
             if (updateNeeded) {
-                channel.apply {
-                    last_message_at = messageCreatedAt.toRealmInstant()
-                    messages = realmListOf(lastMessage.toRealm())
-                }
                 realm.write {
-                    copyToRealm(channel)
+                    channel.apply {
+                        lastMessageAt = messageCreatedAt
+                        messages = listOf(lastMessage)
+                    }
+                    copyToRealm(channel.toRealm(), updatePolicy = UpdatePolicy.ALL)
                 }
             }
         }
