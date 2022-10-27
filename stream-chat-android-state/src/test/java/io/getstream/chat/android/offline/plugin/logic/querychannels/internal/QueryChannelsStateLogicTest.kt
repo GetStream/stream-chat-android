@@ -18,6 +18,7 @@ package io.getstream.chat.android.offline.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.test.randomChannel
@@ -26,6 +27,7 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.`should contain same`
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -37,7 +39,9 @@ import org.mockito.kotlin.whenever
 
 internal class QueryChannelsStateLogicTest {
 
-    private val testCid = randomCID()
+    private val type = randomString()
+    private val id = randomString()
+    private val testCid = (type to id).toCid()
 
     private val queryChannelsSpec =
         QueryChannelsSpec(Filters.neutral(), QuerySortByField.descByName(""))
@@ -58,7 +62,7 @@ internal class QueryChannelsStateLogicTest {
 
     @Test
     fun `when a channel is inside the query spec and it is refreshed, it should be added`() {
-        val channel = randomChannel(cid = testCid)
+        val channel = randomChannel(type = type, id = id)
         val channelState: ChannelState = mock {
             on(it.toChannel()) doReturn channel
         }
@@ -75,7 +79,7 @@ internal class QueryChannelsStateLogicTest {
 
     @Test
     fun `when a channel is NOT inside the query spec and it is refreshed, it should NOT be added`() {
-        val channel = randomChannel(cid = testCid)
+        val channel = randomChannel(type = type, id = id)
         val channelState: ChannelState = mock {
             on(it.toChannel()) doReturn channel
         }
@@ -93,7 +97,7 @@ internal class QueryChannelsStateLogicTest {
 
     @Test
     fun `when a channel is inside the query spec and it is refreshed, but is not active, it should NOT be added`() {
-        val channel = randomChannel(cid = testCid)
+        val channel = randomChannel(type = type, id = id)
         val channelState: ChannelState = mock {
             on(it.toChannel()) doReturn channel
         }

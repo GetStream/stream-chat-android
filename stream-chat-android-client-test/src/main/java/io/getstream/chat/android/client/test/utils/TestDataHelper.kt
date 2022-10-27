@@ -113,7 +113,6 @@ public class TestDataHelper {
     public val channel1: Channel = Channel().copy(
         type = "messaging",
         id = "123-testing",
-        cid = "messaging:123-testing",
         watcherCount = 100,
         createdBy = user1,
         watchers = listOf(watcher1),
@@ -125,7 +124,6 @@ public class TestDataHelper {
     public val channel1WithNewMember: Channel = Channel().apply {
         type = "messaging"
         id = "123-testing"
-        cid = "messaging:123-testing"
         watcherCount = 100
         createdBy = user1
         watchers = listOf(watcher1)
@@ -136,7 +134,6 @@ public class TestDataHelper {
     public val channel1Updated: Channel = Channel().apply {
         type = "messaging"
         id = "123-testing"
-        cid = "messaging:123-testing"
         watcherCount = 100
         createdBy = user1
         watchers = listOf(watcher1)
@@ -148,7 +145,6 @@ public class TestDataHelper {
     public val channel2: Channel = Channel().apply {
         type = "messaging"
         id = "222-testing"
-        cid = "messaging:222-testing"
         watcherCount = 22
         createdBy = user1
         watchers = listOf(watcher1)
@@ -159,7 +155,6 @@ public class TestDataHelper {
     public val channel3: Channel = Channel().apply {
         type = "messaging"
         id = "333-testing"
-        cid = "messaging:333-testing"
         watcherCount = 232
         watchers = listOf(watcher1)
         members = listOf(member1)
@@ -171,7 +166,6 @@ public class TestDataHelper {
     public val channel4: Channel = Channel().apply {
         type = "messaging"
         id = "444-testing"
-        cid = "messaging:444-testing"
         watcherCount = 444
         watchers = listOf(watcher1)
         members = listOf(member1, member2)
@@ -181,7 +175,6 @@ public class TestDataHelper {
     public val channel5: Channel = Channel().apply {
         type = "messaging"
         id = "555-testing"
-        cid = "messaging:555-testing"
         watcherCount = 444
         watchers = listOf(watcher1)
         members = listOf(member1, member2)
