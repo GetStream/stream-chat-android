@@ -23,9 +23,9 @@ import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.docs.R
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 
 /**
  * [General Configuration](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/)
@@ -145,17 +145,17 @@ private class ChatUiSnippets {
      */
     fun customizingDateFormatter() {
         ChatUI.dateFormatter = object : DateFormatter {
-            private val dateFormatter = DateTimeFormatter.ofPattern("yy MM dd")
-            private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            private val dateFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+            private val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
 
-            override fun formatDate(localDateTime: LocalDateTime?): String {
-                localDateTime ?: return ""
-                return dateFormatter.format(localDateTime)
+            override fun formatDate(date: Date?): String {
+                date ?: return ""
+                return dateFormat.format(date)
             }
 
-            override fun formatTime(localTime: LocalTime?): String {
-                localTime ?: return ""
-                return dateTimeFormatter.format(localTime)
+            override fun formatTime(date: Date?): String {
+                date ?: return ""
+                return timeFormat.format(date)
             }
         }
     }

@@ -454,17 +454,17 @@ Overriding the `DateFormatter` allows you to change the way dates are formatted 
 
 ```kotlin
 ChatUI.dateFormatter = object: DateFormatter {
-    private val dateFormatter = DateTimeFormatter.ofPattern("yy MM dd")
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    private val dateFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+    private val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
 
-    override fun formatDate(localDateTime: LocalDateTime?): String {
-        localDateTime ?: return ""
-        return dateFormatter.format(localDateTime)
+    override fun formatDate(date: Date?): String {
+        date ?: return ""
+        return dateFormat.format(date)
     }
 
-    override fun formatTime(localTime: LocalTime?): String {
-        localTime ?: return ""
-        return dateTimeFormatter.format(localTime)
+    override fun formatTime(date: Date?): String {
+        date ?: return ""
+        return timeFormat.format(date)
     }
 }
 ```
@@ -474,27 +474,20 @@ ChatUI.dateFormatter = object: DateFormatter {
 
 ```java
 ChatUI.setDateFormatter(new DateFormatter() {
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yy MM dd");
-    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private final DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
-    @NonNull
-    @Override
-    public String formatDate(@Nullable LocalDateTime localDateTime) {
-        if (localDateTime == null) {
-            return "";
-        }
-        return dateFormatter.format(localDateTime);
+    public String formatDate(Date date) {
+        // Provide a way to format Date
+        return dateFormat.format(date);
     }
 
-    @NonNull
-    @Override
-    public String formatTime(@Nullable LocalTime localTime) {
-        if (localTime == null) {
-            return "";
-        }
-        return dateTimeFormatter.format(localTime);
+    public String formatTime(Date date) {
+        // Provide a way to format Time
+        return timeFormat.format(date);
     }
 });
+
 ```
 </TabItem>
 </Tabs>

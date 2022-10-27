@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -28,6 +29,8 @@ import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.TodayMessageListItemBinding
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -153,6 +156,25 @@ class MessageListViewSnippets : Fragment() {
         messageListView.setEditMessageEnabled(false)
     }
 
+    fun dateFormatter() {
+        messageListView.setMessageDateFormatter(
+            object : DateFormatter {
+                private val dateFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+                private val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
+
+                override fun formatDate(date: Date?): String {
+                    // Provide a way to format Date
+                    return dateFormat.format(date)
+                }
+
+                override fun formatTime(date: Date?): String {
+                    // Provide a way to format Time
+                    return timeFormat.format(date)
+                }
+            }
+        )
+    }
+
     fun customMessagesFilter() {
         val forbiddenWord = "secret"
         val predicate = MessageListView.MessageListItemPredicate { item ->
@@ -174,7 +196,6 @@ class MessageListViewSnippets : Fragment() {
                 binding.textLabel.text = data.message.text
             }
         }
-
 
         class CustomMessageViewHolderFactory : MessageListItemViewHolderFactory() {
             override fun getItemViewType(item: MessageListItem): Int {

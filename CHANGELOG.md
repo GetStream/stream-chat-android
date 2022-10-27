@@ -63,8 +63,10 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- `DateFormatter::formatDate` and `DateFormatter::formatTime` methods now accept Dates instead of classes from ThreeTenABP API. [#4320](https://github.com/GetStream/stream-chat-android/pull/4320)
 
 ### ❌ Removed
+- Removed ThreeTenABP dependency. [#4320](https://github.com/GetStream/stream-chat-android/pull/4320)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed

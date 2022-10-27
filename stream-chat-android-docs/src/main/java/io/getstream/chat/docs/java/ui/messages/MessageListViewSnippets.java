@@ -13,8 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
+import com.getstream.sdk.chat.utils.DateFormatter;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -128,6 +131,25 @@ public class MessageListViewSnippets extends Fragment {
         messageListView.setRepliesEnabled(false);
         messageListView.setDeleteMessageEnabled(false);
         messageListView.setEditMessageEnabled(false);
+    }
+
+    public void dateFormatter() {
+        messageListView.setMessageDateFormatter(
+                new DateFormatter() {
+                    private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    private final DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+                    public String formatDate(Date date) {
+                        // Provide a way to format Date
+                        return dateFormat.format(date);
+                    }
+
+                    public String formatTime(Date date) {
+                        // Provide a way to format Time
+                        return timeFormat.format(date);
+                    }
+                }
+        );
     }
 
     public void customMessagesFilter() {
