@@ -22,9 +22,15 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api.models.querysort.SortDirection
 import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 
+/**
+ * A parser to create [QuerySorter] from different ways.
+ */
 public class QuerySortParser<T : ComparableFieldProvider> {
 
-    public fun fromRawInfo(
+    /**
+     * Creates a query sort from a list of information.
+     */
+    internal fun fromRawInfo(
         specs: List<Map<String, Any>>,
     ): QuerySorter<T> {
         return specs.fold(QuerySortByField()) { sort, sortSpecMap ->
@@ -38,6 +44,9 @@ public class QuerySortParser<T : ComparableFieldProvider> {
         }
     }
 
+    /**
+     * Creates the query sort for a list of sort specifications.
+     */
     public fun fromSpecifications(specs: List<SortSpecification<T>>): QuerySorter<T> {
         return specs.fold(QuerySortByField()) { querySort, sortSpec ->
             val fieldName = sortSpec.sortAttribute.name
