@@ -48,14 +48,14 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
     }
 
     private fun readCompositeNode(reader: JsonReader, type: String): FilterNode {
-        val nodeList: List<FilterNode> = reader.readArrayToList { this.fromJson(reader) }
+        val nodeList: Set<FilterNode> = reader.readArray { this.fromJson(reader) }
         return FilterNode(filterType = type, field = null, value = nodeList)
     }
 
     private fun readMultipleNode(reader: JsonReader, type: String): FilterNode {
         val field = reader.nextString()
         reader.skipName()
-        val values = reader.readArrayToList(reader::nextString)
+        val values = reader.readArray(reader::nextString)
 
         return FilterNode(filterType = type, field = field, value = values)
     }
@@ -117,10 +117,10 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
         writer.endObject()
     }
 
-    private fun <T> JsonReader.readArrayToList(provider: () -> T): List<T> {
+    private fun <T> JsonReader.readArray(provider: () -> T): Set<T> {
         beginArray()
 
-        val values = mutableListOf<T>()
+        val values = mutableSetOf<T>()
         while (hasNext()) {
             values.add(provider.invoke())
         }
