@@ -59,11 +59,11 @@ internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
     is NeutralFilterObject -> createFilterNodeEntity(KEY_NEUTRAL, null, null)
 }
 
-@Suppress("ComplexMethod")
+@Suppress("ComplexMethod", "SpreadOperator")
 internal fun FilterNode.toFilterObject(): FilterObject = when (this.filterType) {
-    KEY_AND -> Filters.and(*(this.value as List<FilterNode>).map(FilterNode::toFilterObject).toTypedArray())
-    KEY_OR -> Filters.or(*(this.value as List<FilterNode>).map(FilterNode::toFilterObject).toTypedArray())
-    KEY_NOR -> Filters.nor(*(this.value as List<FilterNode>).map(FilterNode::toFilterObject).toTypedArray())
+    KEY_AND -> Filters.and(*(this.value as Iterable<FilterNode>).map(FilterNode::toFilterObject).toTypedArray())
+    KEY_OR -> Filters.or(*(this.value as Iterable<FilterNode>).map(FilterNode::toFilterObject).toTypedArray())
+    KEY_NOR -> Filters.nor(*(this.value as Iterable<FilterNode>).map(FilterNode::toFilterObject).toTypedArray())
     KEY_EXIST -> this.field?.let(Filters::exists) ?: Filters.neutral()
     KEY_NOT_EXIST -> this.field?.let(Filters::notExists) ?: Filters.neutral()
     KEY_EQUALS -> Filters.eq(this.field ?: "", this.value ?: false)
@@ -73,8 +73,8 @@ internal fun FilterNode.toFilterObject(): FilterObject = when (this.filterType) 
     KEY_GREATER_THAN_OR_EQUALS -> Filters.greaterThanEquals(this.field ?: "", this.value ?: "")
     KEY_LESS_THAN -> Filters.lessThan(this.field ?: "", this.value ?: "")
     KEY_LESS_THAN_OR_EQUALS -> Filters.lessThanEquals(this.field ?: "", this.value ?: "")
-    KEY_IN -> Filters.`in`(this.field ?: "", (this.value as List<out Any>))
-    KEY_NOT_IN -> Filters.nin(this.field ?: "", (this.value as List<out Any>))
+    KEY_IN -> Filters.`in`(this.field ?: "", (this.value as Iterable<out Any>).toList())
+    KEY_NOT_IN -> Filters.nin(this.field ?: "", (this.value as Iterable<out Any>).toList())
     KEY_AUTOCOMPLETE -> Filters.autocomplete(this.field ?: "", this.value as String)
     else -> Filters.neutral()
 }
