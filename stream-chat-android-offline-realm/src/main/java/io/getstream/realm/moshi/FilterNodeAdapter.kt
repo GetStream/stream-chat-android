@@ -48,14 +48,14 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
     }
 
     private fun readCompositeNode(reader: JsonReader, type: String): FilterNode {
-        val nodeList: Set<FilterNode> = reader.readArray { this.fromJson(reader) }
+        val nodeList: List<FilterNode> = reader.readArrayToList { this.fromJson(reader) }
         return FilterNode(filterType = type, field = null, value = nodeList)
     }
 
     private fun readMultipleNode(reader: JsonReader, type: String): FilterNode {
         val field = reader.nextString()
         reader.skipName()
-        val values = reader.readArray(reader::nextString)
+        val values = reader.readArrayToSet(reader::nextString)
 
         return FilterNode(filterType = type, field = field, value = values)
     }
@@ -117,7 +117,19 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
         writer.endObject()
     }
 
-    private fun <T> JsonReader.readArray(provider: () -> T): Set<T> {
+    private fun <T> JsonReader.readArrayToList(provider: () -> T): List<T> {
+        beginArray()
+
+        val values = mutableListOf<T>()
+        while (hasNext()) {
+            values.add(provider.invoke())
+        }
+
+        endArray()
+        return values
+    }
+
+    private fun <T> JsonReader.readArrayToSet(provider: () -> T): Set<T> {
         beginArray()
 
         val values = mutableSetOf<T>()
@@ -146,7 +158,7 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
 
     private fun writeMultipleValueNode(writer: JsonWriter, value: Any) {
         writer.beginArray()
-        (value as Set<String>).forEach(writer::value)
+        (value as Iterable<String>).forEach(writer::value)
         writer.endArray()
     }
 }
