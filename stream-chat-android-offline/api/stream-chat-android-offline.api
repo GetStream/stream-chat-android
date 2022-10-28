@@ -31,7 +31,6 @@ public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflin
 	public fun <init> (Lio/getstream/chat/android/offline/plugin/configuration/Config;Landroid/content/Context;)V
 	public fun createRepositoryFactory (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
 	public fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/plugin/Plugin;
-	public final fun setCustomRepositoryFactory (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;)V
 }
 
 public final class io/getstream/chat/android/offline/repository/database/converter/internal/QuerySortParser {
