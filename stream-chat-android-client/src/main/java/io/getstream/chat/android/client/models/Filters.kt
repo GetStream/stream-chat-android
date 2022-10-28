@@ -68,21 +68,10 @@ public object Filters {
     public fun and(vararg filters: FilterObject): FilterObject = AndFilterObject(filters.toSet())
 
     @JvmStatic
-    public fun and(filters: List<FilterObject>): FilterObject = AndFilterObject(filters.toSet())
-
-    @JvmStatic
     public fun or(vararg filters: FilterObject): FilterObject = OrFilterObject(filters.toSet())
 
     @JvmStatic
-
-    public fun or(filters: List<FilterObject>): FilterObject = OrFilterObject(filters.toSet())
-
-    @JvmStatic
     public fun nor(vararg filters: FilterObject): FilterObject = NorFilterObject(filters.toSet())
-
-    @JvmStatic
-
-    public fun nor(filters: List<FilterObject>): FilterObject = NorFilterObject(filters.toSet())
 
     @JvmStatic
     public fun eq(fieldName: String, value: Any): FilterObject = EqualsFilterObject(fieldName, value)

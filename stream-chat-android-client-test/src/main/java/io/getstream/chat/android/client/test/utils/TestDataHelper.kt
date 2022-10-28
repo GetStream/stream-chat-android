@@ -82,10 +82,10 @@ public class TestDataHelper {
     public val user1updated: User = User("broad-lake-3").apply { extraData = mutableMapOf("color" to "green") }
 
     public val filter1: FilterObject =
-        Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(user1.id)))
+        Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", user1.id))
 
     public val filter2: FilterObject =
-        Filters.and(Filters.eq("type", "livestream"), Filters.`in`("members", listOf(user1.id)))
+        Filters.and(Filters.eq("type", "livestream"), Filters.`in`("members", user1.id))
 
     public val query1: QueryChannelsSpec = QueryChannelsSpec(filter1, QuerySortByField())
 
