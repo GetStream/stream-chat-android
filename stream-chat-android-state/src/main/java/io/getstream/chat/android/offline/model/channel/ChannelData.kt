@@ -66,7 +66,11 @@ public data class ChannelData(
      * The channel id in the format messaging:123.
      */
     val cid: String
-        get() = "$type:$id"
+        get() = if (id.isEmpty() || type.isEmpty()) {
+            ""
+        } else {
+            "$type:$id"
+        }
 
     /**
      * Creates a [ChannelData] entity from a [Channel] object.
