@@ -71,19 +71,13 @@ public class StreamOfflinePluginFactory(
         }
     }
 
-    private var customRepositoryFactory: RepositoryFactory? = null
-
-    public fun setCustomRepositoryFactory(repositoryFactory: RepositoryFactory) {
-        customRepositoryFactory = repositoryFactory
-    }
-
     @Volatile
     private var _scope: CoroutineScope? = null
 
     override fun createRepositoryFactory(user: User): RepositoryFactory {
         logger.i { "[createRepositoryFactory] user.id: '${user.id}'" }
         val scope = ensureScope(user)
-        return customRepositoryFactory ?: DatabaseRepositoryFactory(
+        return DatabaseRepositoryFactory(
             database = createDatabase(scope, appContext, user, config.persistenceEnabled),
             currentUser = user,
         )
