@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.ui.message.input.MessageInputView
 import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
@@ -37,11 +38,11 @@ class BuildingAMessageListScreen: Fragment() {
         // Let both message list header and message input know when we open a thread
         messageListViewModel.mode.observe(this) { mode ->
             when (mode) {
-                is MessageListViewModel.Mode.Thread -> {
+                is MessageMode.MessageThread -> {
                     messageListHeaderViewModel.setActiveThread(mode.parentMessage)
                     messageInputViewModel.setActiveThread(mode.parentMessage)
                 }
-                MessageListViewModel.Mode.Normal -> {
+                MessageMode.Normal -> {
                     messageListHeaderViewModel.resetThread()
                     messageInputViewModel.resetThread()
                 }

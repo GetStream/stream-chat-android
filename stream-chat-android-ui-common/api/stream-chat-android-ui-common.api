@@ -145,7 +145,6 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageFooterVisibili
 public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
-	public static final fun isGiphy (Lio/getstream/chat/android/client/models/Message;)Z
 	public static final fun isModerationFailed (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/ChatClient;)Z
 }
 
@@ -206,6 +205,9 @@ public final class io/getstream/chat/android/common/composer/MessageComposerStat
 	public final fun getValidationErrors ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/common/extensions/MessageKt {
 }
 
 public final class io/getstream/chat/android/common/messagelist/CancelGiphy : io/getstream/chat/android/common/messagelist/GiphyAction {
@@ -725,6 +727,10 @@ public final class io/getstream/chat/android/common/state/ValidationError$Messag
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/common/state/ViewInfo : io/getstream/chat/android/common/state/ChannelAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+}
+
 public final class io/getstream/chat/android/common/state/messagelist/MessageFocusRemoved : io/getstream/chat/android/common/state/messagelist/MessageFocusState {
 	public static final field INSTANCE Lio/getstream/chat/android/common/state/messagelist/MessageFocusRemoved;
 }
@@ -785,10 +791,6 @@ public abstract interface class io/getstream/chat/android/common/util/ClipboardH
 public final class io/getstream/chat/android/common/util/ClipboardHandlerImpl : io/getstream/chat/android/common/util/ClipboardHandler {
 	public fun <init> (Landroid/content/ClipboardManager;)V
 	public fun copyMessage (Lio/getstream/chat/android/client/models/Message;)V
-}
-
-public final class io/getstream/chat/android/common/state/ViewInfo : io/getstream/chat/android/common/state/ChannelAction {
-	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
 public final class io/getstream/chat/android/ui/common/BuildConfig {

@@ -4188,6 +4188,11 @@ public final class io/getstream/chat/android/ui/typing/viewmodel/factory/TypingI
 	public final fun messageId (Ljava/lang/String;)Lio/getstream/chat/android/ui/typing/viewmodel/factory/TypingIndicatorViewModelFactory$Builder;
 }
 
+public final class io/getstream/chat/android/ui/utils/extensions/ChannelKt {
+	public static final fun getMembersStatusText (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
+	public static synthetic fun getMembersStatusText$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/utils/extensions/MessageListItemKt {
 	public static final fun toUiMessageListItem (Lio/getstream/chat/android/common/model/messsagelist/MessageListItem;)Lcom/getstream/sdk/chat/adapter/MessageListItem;
 }
@@ -4199,10 +4204,5 @@ public final class io/getstream/chat/android/ui/utils/extensions/MessageListStat
 public final class io/getstream/chat/android/ui/utils/extensions/MessagePositionKt {
 	public static final fun toCommonPosition (Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;)Lio/getstream/chat/android/common/state/messagelist/MessagePosition;
 	public static final fun toUiPosition (Lio/getstream/chat/android/common/state/messagelist/MessagePosition;)Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-}
-
-public final class io/getstream/chat/android/ui/utils/extensions/ChannelKt {
-	public static final fun getMembersStatusText (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
-	public static synthetic fun getMembersStatusText$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Ljava/lang/String;
 }
 

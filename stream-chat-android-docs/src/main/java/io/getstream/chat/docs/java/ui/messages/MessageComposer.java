@@ -89,9 +89,9 @@ public class MessageComposer extends Fragment {
 
             // Integrate MessageComposerView with MessageListView
             messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
-                if (mode instanceof MessageListViewModel.Mode.Thread) {
-                    messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageListViewModel.Mode.Thread) mode).getParentMessage(), null));
-                } else if (mode instanceof MessageListViewModel.Mode.Normal) {
+                if (mode instanceof MessageMode.MessageThread) {
+                    messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageMode.MessageThread) mode).getParentMessage(), null));
+                } else if (mode instanceof MessageMode.Normal) {
                     messageComposerViewModel.leaveThread();
                 }
             });

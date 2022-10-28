@@ -16,15 +16,14 @@
 
 package io.getstream.chat.android.common.extensions
 
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessageType
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
- * @return If the message type is system.
+ * @return Whether the message is a server message or not (a regular message).
  */
-internal fun Message.isSystem(): Boolean = type == ModelType.message_system
-
-/**
- * @return If the message type is error.
- */
-internal fun Message.isError(): Boolean = type == ModelType.message_error
+@InternalStreamChatApi
+public fun Message.isServerMessage(): Boolean {
+    return type == MessageType.SYSTEM || type == MessageType.ERROR
+}

@@ -18,13 +18,13 @@ package com.getstream.sdk.chat.messages
 
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.createMessageList
-import com.getstream.sdk.chat.utils.extensions.isDeleted
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.messagelist.MessageListState

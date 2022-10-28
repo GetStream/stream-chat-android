@@ -51,11 +51,11 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isThreadReply
+import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.CustomAction

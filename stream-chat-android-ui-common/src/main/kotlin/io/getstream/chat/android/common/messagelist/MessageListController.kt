@@ -17,7 +17,6 @@
 package io.getstream.chat.android.common.messagelist
 
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
-import com.getstream.sdk.chat.utils.extensions.isGiphy
 import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
@@ -34,8 +33,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.common.extensions.isError
-import io.getstream.chat.android.common.extensions.isSystem
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isError
+import io.getstream.chat.android.client.utils.message.isGiphy
+import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItem
 import io.getstream.chat.android.common.model.messsagelist.MessageItem
 import io.getstream.chat.android.common.model.messsagelist.MessageListItem
@@ -668,9 +669,9 @@ public class MessageListController(
             val shouldShowIfDeleted = when (deletedMessageVisibility) {
                 DeletedMessageVisibility.ALWAYS_VISIBLE -> true
                 DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-                    !(it.deletedAt != null && it.user.id != currentUser?.id)
+                    !(it.isDeleted() && it.user.id != currentUser?.id)
                 }
-                else -> it.deletedAt == null
+                DeletedMessageVisibility.ALWAYS_HIDDEN -> false
             }
             val isSystemMessage = it.isSystem() || it.isError()
 
