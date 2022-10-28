@@ -94,7 +94,6 @@ internal fun Channel.toRealm(): ChannelEntityRealm {
 
 internal fun ChannelEntityRealm.toDomain(): Channel =
     Channel(
-        cid = this.cid,
         id = this.channel_id,
         type = this.type,
         name = this.name,

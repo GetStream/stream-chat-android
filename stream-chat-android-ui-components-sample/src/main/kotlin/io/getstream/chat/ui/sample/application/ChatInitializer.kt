@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
@@ -88,7 +87,7 @@ class ChatInitializer(private val context: Context) {
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
             .withPlugins(offlinePluginFactory, statePluginFactory)
-            .withRepositoryFactoryProvider { RealmRepositoryFactory(configureRealm())   }
+            .withRepositoryFactoryProvider { RealmRepositoryFactory(configureRealm()) }
             .debugRequests(true)
             .build()
 
