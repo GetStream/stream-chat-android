@@ -63,8 +63,10 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- `DateFormatter::formatDate` and `DateFormatter::formatTime` methods now accept Dates instead of classes from ThreeTenABP API. [#4320](https://github.com/GetStream/stream-chat-android/pull/4320)
 
 ### ❌ Removed
+- Removed ThreeTenABP dependency. [#4320](https://github.com/GetStream/stream-chat-android/pull/4320)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -111,6 +113,7 @@
 - 🚨 Breaking change: Attribute `streamUiSaveImageEnabled` has been renamed to `streamUiSaveMediaEnabled`. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 - 🚨 Breaking change: Attribute `streamUiSaveImageIcon` has been renamed to `streamUiSaveMediaIcon`. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 - 🚨 Breaking change: String resource `stream_ui_attachment_gallery_save_image` has been renamed to `stream_ui_attachment_gallery_save_media`. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
+- Aligned the information displayed in the title and subtitle of `ChannelActionsDialogFragment` with the information in `MessageListHeaderView`. [#4306](https://github.com/GetStream/stream-chat-android/pull/4306)
 
 ### ❌ Removed
 - Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
