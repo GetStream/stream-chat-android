@@ -95,7 +95,7 @@ public object Filters {
 
     @JvmStatic
     public fun `in`(fieldName: String, vararg values: String): FilterObject = InFilterObject(fieldName, values.toSet())
-    
+
     @JvmStatic
     public fun `in`(fieldName: String, values: List<Any>): FilterObject = InFilterObject(fieldName, values.toSet())
 
