@@ -53,6 +53,7 @@ internal class UploadAttachmentsWorker(
                 ChatError("The message with id $messageId could not be found.")
             )
         } catch (e: Exception) {
+            StreamLog.d(TAG) { "An exception happened: $e" }
             message?.let { updateMessages(it) }
             Result.error(e)
         }

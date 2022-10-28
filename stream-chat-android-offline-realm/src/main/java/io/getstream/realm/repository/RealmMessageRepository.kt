@@ -37,15 +37,23 @@ public class RealmMessageRepository(private val realm: Realm) : MessageRepositor
     }
 
     override suspend fun deleteChannelMessage(message: Message) {
-        realm.writeBlocking {
-            delete(message.toRealm())
-        }
+        realm.query<MessageEntityRealm>("id == '${message.id}'")
+            .first()
+            .find()
+            ?.let { messageEntity ->
+                realm.writeBlocking {
+                    findLatest(messageEntity)?.let(::delete)
+                }
+            }
     }
 
     override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
         realm.query<MessageEntityRealm>("created_at < $0", hideMessagesBefore)
+            .find()
             .let { messagesBefore ->
-                realm.writeBlocking { delete(messagesBefore) }
+                realm.writeBlocking {
+                    messagesBefore.mapNotNull(::findLatest).forEach(::delete)
+                }
             }
     }
 
