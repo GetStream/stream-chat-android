@@ -63,7 +63,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
      * @param isSelected If the tab is selected.
      */
     @Composable
-    override fun pickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
+    override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_image_picker),
             contentDescription = stringResource(id = R.string.stream_compose_images_option),
@@ -85,7 +85,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
      */
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    override fun pickerTabContent(
+    override fun PickerTabContent(
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

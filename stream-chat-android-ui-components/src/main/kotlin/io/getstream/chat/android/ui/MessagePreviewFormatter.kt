@@ -23,13 +23,13 @@ import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.bold
 import io.getstream.chat.android.ui.common.extensions.internal.getAttachmentsText
 import io.getstream.chat.android.ui.common.extensions.internal.getSenderDisplayName
 import io.getstream.chat.android.ui.common.extensions.internal.italicize
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
-import io.getstream.chat.android.ui.common.extensions.isSystem
 
 /**
  * An interface that allows to generate a preview text for the given message.

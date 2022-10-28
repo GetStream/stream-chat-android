@@ -24,13 +24,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.MediaStringUtil
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaBinding
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
+import io.getstream.chat.android.ui.utils.extensions.applyTint
 
 internal class MediaAttachmentAdapter(
     private val style: AttachmentSelectionDialogStyle,
@@ -96,7 +97,7 @@ internal class MediaAttachmentAdapter(
         }
 
         private fun bindMediaImage(attachment: AttachmentMetaData) {
-            if (attachment.type == ModelType.attach_video) {
+            if (attachment.type == AttachmentType.VIDEO) {
                 binding.mediaThumbnailImageView.loadVideoThumbnail(
                     uri = attachment.uri,
                     placeholderResId = R.drawable.stream_ui_placeholder,
@@ -118,15 +119,18 @@ internal class MediaAttachmentAdapter(
         }
 
         private fun bindAttachmentType(attachment: AttachmentMetaData) {
-            if (attachment.type == ModelType.attach_video) {
+            if (attachment.type == AttachmentType.VIDEO) {
+                binding.videoInformationConstraintLayout.isVisible =
+                    style.videoLengthLabelVisible || style.videoIconVisible
                 binding.videoLengthTextView.isVisible = style.videoLengthLabelVisible
                 binding.videoLogoImageView.isVisible = style.videoIconVisible
-                binding.videoLogoImageView.setImageDrawable(style.videoIconDrawable)
+                binding.videoLogoImageView.setImageDrawable(
+                    style.videoIconDrawable.applyTint(style.videoIconDrawableTint)
+                )
                 binding.videoLengthTextView.setTextStyle(style.videoDurationTextStyle)
                 binding.videoLengthTextView.text = MediaStringUtil.convertVideoLength(attachment.videoLength)
             } else {
-                binding.videoLengthTextView.isVisible = false
-                binding.videoLogoImageView.isVisible = false
+                binding.videoInformationConstraintLayout.isVisible = false
                 binding.videoLengthTextView.text = ""
             }
         }

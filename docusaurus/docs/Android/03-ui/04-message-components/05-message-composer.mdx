@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Message Composer
 
 `MessageComposerView` replaces `MessageInputView`, addressing most of its pain-points, including
@@ -32,6 +35,9 @@ To use `MessageComposerView`, include it in your XML layout.
 
 The recommended way of setting up `MessageComposerView` is by binding it to the `MessageComposerViewModel`. This will make it fully functional by setting up any necessary listeners and data handling.
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 class ChatFragment : Fragment() {
     lateinit var messageComposerView: MessageComposerView
@@ -47,8 +53,36 @@ class ChatFragment : Fragment() {
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class ChatFragment extends Fragment {
+
+    private MessageComposerView messageComposerView;
+
+    // Create MessageComposerViewModel for a given channel
+    ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+            .cid("channelType:channelId")
+            .build();
+    ViewModelProvider provider = new ViewModelProvider(this, factory);
+    MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
+    }
+}
+```
+</TabItem>
+</Tabs>
 
 Because it doesn't make sense to use the `MessageComposerView` as a standalone component, you also need to integrate it with the `MessageListView`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 class ChatFragment : Fragment() {
@@ -85,6 +119,42 @@ class ChatFragment : Fragment() {
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class ChatFragment extends Fragment {
+
+    MessageComposerView messageComposerView;
+    MessageListView messageListView;
+    ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+            .cid("channelType:channelId")
+            .build();
+    ViewModelProvider provider = new ViewModelProvider(this, factory);
+    MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
+    MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
+
+        // Integrate MessageComposerView with MessageListView
+        messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
+            if (mode instanceof MessageListViewModel.Mode.Thread) {
+                messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageListViewModel.Mode.Thread) mode).getParentMessage(), null));
+            } else if (mode instanceof MessageListViewModel.Mode.Normal) {
+                messageComposerViewModel.leaveThread();
+            }
+        });
+        messageListView.setMessageReplyHandler((cid, message) -> messageComposerViewModel.performMessageAction(new Reply(message)));
+        messageListView.setMessageEditHandler((message) -> messageComposerViewModel.performMessageAction(new Edit(message)));
+    }
+}
+```
+</TabItem>
+</Tabs>
 
 In the snippet above, you initialize the message composer and integrate it with the `MessageListView` by passing actions from the message list to the composer.
 
@@ -95,6 +165,9 @@ This will produce a fully working solution, as shown in the image below.
 ## Handling Actions
 
 To handle actions supported by the `MessageComposerView` you can set the corresponding listeners:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 messageComposerView.sendMessageButtonClickListener = {
@@ -131,8 +204,64 @@ messageComposerView.attachmentsButtonClickListener = {
     // Handle attachments button click
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+messageComposerView.setSendMessageButtonClickListener(() -> {
+    // Handle send button click
+    return Unit.INSTANCE;
+});
+messageComposerView.setTextInputChangeListener((text) -> {
+    // Handle input text change
+    return Unit.INSTANCE;
+});
+messageComposerView.setAttachmentSelectionListener((attachments) -> {
+    // Handle attachment selection
+    return Unit.INSTANCE;
+});
+messageComposerView.setAttachmentRemovalListener((attachment) -> {
+    // Handle attachment removal
+    return Unit.INSTANCE;
+});
+messageComposerView.setMentionSelectionListener((user) -> {
+    // Handle mention selection
+    return Unit.INSTANCE;
+});
+messageComposerView.setCommandSelectionListener((command) -> {
+    // Handle command selection
+    return Unit.INSTANCE;
+});
+messageComposerView.setAlsoSendToChannelSelectionListener((checked) -> {
+    // Handle "also send to channel" checkbox selection
+    return Unit.INSTANCE;
+});
+messageComposerView.setDismissActionClickListener(() -> {
+    // Handle dismiss action button click
+    return Unit.INSTANCE;
+});
+messageComposerView.setCommandsButtonClickListener(() -> {
+    // Handle commands button click
+    return Unit.INSTANCE;
+});
+messageComposerView.setDismissSuggestionsListener(() -> {
+    // Handle when suggestions popup is dismissed
+    return Unit.INSTANCE;
+});
+messageComposerView.setAttachmentsButtonClickListener(() -> {
+    // Handle attachments button click
+    return Unit.INSTANCE;
+});
+
+```
+</TabItem>
+</Tabs>
 
 If you don't set your custom listeners, the default listeners from the `MessageComposerViewModel::bindView` method will be used:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 messageComposerView.sendMessageButtonClickListener = {
@@ -166,6 +295,58 @@ messageComposerView.dismissSuggestionsListener = {
     messageComposerViewModel.dismissSuggestionsPopup()
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+messageComposerView.setSendMessageButtonClickListener(() -> {
+    messageComposerViewModel.sendMessage(messageComposerViewModel.buildNewMessage());
+    return Unit.INSTANCE;
+});
+messageComposerView.setTextInputChangeListener((text) -> {
+    messageComposerViewModel.setMessageInput(text);
+    return Unit.INSTANCE;
+});
+messageComposerView.setAttachmentSelectionListener((attachments) -> {
+    messageComposerViewModel.addSelectedAttachments(attachments);
+    return Unit.INSTANCE;
+});
+messageComposerView.setAttachmentRemovalListener((attachment) -> {
+    messageComposerViewModel.removeSelectedAttachment(attachment);
+    return Unit.INSTANCE;
+});
+messageComposerView.setMentionSelectionListener((user) -> {
+    messageComposerViewModel.selectMention(user);
+    return Unit.INSTANCE;
+});
+messageComposerView.setCommandSelectionListener((command) -> {
+    messageComposerViewModel.selectCommand(command);
+    return Unit.INSTANCE;
+});
+messageComposerView.setAlsoSendToChannelSelectionListener((checked) -> {
+    messageComposerViewModel.setAlsoSendToChannel(checked);
+    return Unit.INSTANCE;
+});
+messageComposerView.setDismissActionClickListener(() -> {
+    messageComposerViewModel.dismissMessageActions();
+    return Unit.INSTANCE;
+});
+messageComposerView.setCommandsButtonClickListener(() -> {
+    messageComposerViewModel.toggleCommandsVisibility();
+    return Unit.INSTANCE;
+});
+messageComposerView.setDismissSuggestionsListener(() -> {
+    messageComposerViewModel.dismissSuggestionsPopup();
+    return Unit.INSTANCE;
+});
+messageComposerView.setAttachmentsButtonClickListener(() -> {
+    // Handle attachments button click
+    return Unit.INSTANCE;
+});
+```
+</TabItem>
+</Tabs>
 
 Now let's see how to customize the view.
 
@@ -202,6 +383,9 @@ Different configurations can be used to achieve the desired appearance of `Messa
 
 You can use [TransformStyle](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/TransformStyle.kt) to apply global style transformations to all `MessageComposerView` instances. For example, you can create set up a `messageComposerStyleTransformer` like this one to change the input text color:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 TransformStyle.messageComposerStyleTransformer = StyleTransformer { viewStyle ->
     viewStyle.copy(
@@ -211,6 +395,18 @@ TransformStyle.messageComposerStyleTransformer = StyleTransformer { viewStyle ->
     )
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMessageComposerStyleTransformer(source -> {
+    // Customize the style
+    return source;
+});
+```
+</TabItem>
+</Tabs>
 
 :::note 
 The transformer should be set before the View is rendered to make sure that the new style was applied.
@@ -229,6 +425,9 @@ With the new `MessageComposerView` you can replace certain parts of the layout w
 * **Mention suggestions content**: Represents the content inside the mention suggestions popup.
 
 The available methods with the default content view implementations are listed below:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 messageComposerView.setLeadingContent(
@@ -271,8 +470,51 @@ messageComposerView.setMentionSuggestionsContent(
     }
 )
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+DefaultMessageComposerLeadingContent leadingContent = new DefaultMessageComposerLeadingContent(context);
+leadingContent.setAttachmentsButtonClickListener(() -> messageComposerView.getAttachmentsButtonClickListener().invoke());
+leadingContent.setCommandsButtonClickListener(() -> messageComposerView.getCommandsButtonClickListener().invoke());
+
+messageComposerView.setLeadingContent(leadingContent);
+
+DefaultMessageComposerCenterContent centerContent = new DefaultMessageComposerCenterContent(context);
+centerContent.setTextInputChangeListener((text) -> messageComposerView.getTextInputChangeListener().invoke(text));
+centerContent.setAttachmentRemovalListener((attachment -> messageComposerView.getAttachmentRemovalListener().invoke(attachment)));
+
+messageComposerView.setCenterContent(centerContent);
+
+DefaultMessageComposerTrailingContent trailingContent = new DefaultMessageComposerTrailingContent(context);
+trailingContent.setSendMessageButtonClickListener(() -> messageComposerView.getSendMessageButtonClickListener().invoke());
+
+messageComposerView.setTrailingContent(trailingContent);
+
+DefaultMessageComposerHeaderContent headerContent = new DefaultMessageComposerHeaderContent(context);
+headerContent.setDismissActionClickListener(() -> messageComposerView.getDismissActionClickListener().invoke());
+messageComposerView.setHeaderContent(headerContent);
+
+DefaultMessageComposerFooterContent footerContent = new DefaultMessageComposerFooterContent(context);
+footerContent.setAlsoSendToChannelSelectionListener((checked) -> messageComposerView.getAlsoSendToChannelSelectionListener().invoke(checked));
+messageComposerView.setFooterContent(footerContent);
+
+DefaultMessageComposerCommandSuggestionsContent commandSuggestionsContent = new DefaultMessageComposerCommandSuggestionsContent(context);
+commandSuggestionsContent.setCommandSelectionListener((command) -> messageComposerView.getCommandSelectionListener().invoke(command));
+messageComposerView.setCommandSuggestionsContent(commandSuggestionsContent);
+
+DefaultMessageComposerMentionSuggestionsContent mentionSuggestionsContent = new DefaultMessageComposerMentionSuggestionsContent(context);
+mentionSuggestionsContent.setMentionSelectionListener((user) -> messageComposerView.getMentionSelectionListener().invoke(user));
+messageComposerView.setMentionSuggestionsContent(mentionSuggestionsContent);
+```
+</TabItem>
+</Tabs>
 
 To create a custom content view you need to create an Android View that implements the `MessageComposerContent` interface:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
@@ -296,8 +538,40 @@ class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent 
         // Render the state of the component
     }
 }
-
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+public class CustomMessageComposerLeadingContent extends FrameLayout implements MessageComposerContent {
+
+    public CustomMessageComposerLeadingContent(@NonNull Context context) {
+        this(context, null);
+    }
+
+    public CustomMessageComposerLeadingContent(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public CustomMessageComposerLeadingContent(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    public void attachContext(@NonNull MessageComposerContext messageComposerContext) {
+        // Access the style if necessary
+        MessageComposerViewStyle style = messageComposerContext.getStyle();
+    }
+
+    @Override
+    public void renderState(@NonNull MessageComposerState state) {
+        // Render the state of the component
+    }
+}
+```
+</TabItem>
+</Tabs>
 
 Notice that you need to implement 2 methods from the `MessageComposerContent` interface:
 
@@ -306,9 +580,22 @@ Notice that you need to implement 2 methods from the `MessageComposerContent` in
 
 Finally, you need to pass the created content view to the `MessageComposerView`:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 messageComposerView.setLeadingContent(CustomMessageComposerLeadingContent(context))
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+CustomMessageComposerLeadingContent leadingContent = new CustomMessageComposerLeadingContent(context);
+messageComposerView.setLeadingContent(leadingContent);
+```
+</TabItem>
+</Tabs>
 
 Here is an example of how the leading content can be customized to show a date picker button:
 
@@ -323,6 +610,9 @@ Here is an example of how the leading content can be customized to show a date p
     android:layout_marginVertical="16dp"
     android:src="@drawable/ic_calendar" />
 ```
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
@@ -354,6 +644,50 @@ class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent 
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+public class CustomMessageComposerLeadingContent extends FrameLayout implements MessageComposerContent {
+
+    private MessageComposerLeadingContentBinding binding;
+    public Function0<Unit> datePickerButtonClickListener = () -> null;
+
+
+    public CustomMessageComposerLeadingContent(@NonNull Context context) {
+        this(context, null);
+    }
+
+    public CustomMessageComposerLeadingContent(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public CustomMessageComposerLeadingContent(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        binding = MessageComposerLeadingContentBinding.inflate(LayoutInflater.from(context), this, true);
+        binding.datePickerButton.setOnClickListener((view) -> {
+            datePickerButtonClickListener.invoke();
+        });
+    }
+
+    @Override
+    public void attachContext(@NonNull MessageComposerContext messageComposerContext) {
+        // Access the style if necessary
+        MessageComposerViewStyle style = messageComposerContext.getStyle();
+    }
+
+    @Override
+    public void renderState(@NonNull MessageComposerState state) {
+        // Render the state of the component
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 messageComposerView.setLeadingContent(
@@ -372,6 +706,25 @@ messageComposerView.setLeadingContent(
     }
 )
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+MaterialDatePicker<Long> datePickerDialog = MaterialDatePicker.Builder.datePicker().build();
+datePickerDialog.addOnPositiveButtonClickListener(selection -> {
+    // Handle date selection
+});
+CustomMessageComposerLeadingContent leadingContent = new CustomMessageComposerLeadingContent(context);
+leadingContent.datePickerButtonClickListener = () -> {
+    datePickerDialog.show(fragmentManager, null);
+    return Unit.INSTANCE;
+};
+
+messageComposerView.setLeadingContent(leadingContent);
+```
+</TabItem>
+</Tabs>
 
 In the example above, we inflated a simple layout with just one date picker button and defined a listener to handle clicks on the button. A dialog is shown when the button is clicked.
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.state.channels.list
+package io.getstream.chat.android.common.state
 
 import io.getstream.chat.android.client.models.Channel
 

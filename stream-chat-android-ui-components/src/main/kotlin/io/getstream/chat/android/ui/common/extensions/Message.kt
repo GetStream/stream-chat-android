@@ -16,34 +16,22 @@
 
 package io.getstream.chat.android.ui.common.extensions
 
-import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.message.isEphemeral
+import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.ui.ChatUI
 import java.util.Date
 
-public fun Message.isDeleted(): Boolean = deletedAt != null
-
 public fun Message.isFailed(): Boolean {
-    return this.syncStatus == SyncStatus.FAILED_PERMANENTLY || this.type == ModelType.message_error
+    return this.syncStatus == SyncStatus.FAILED_PERMANENTLY || isError()
 }
-
-public fun Message.isInThread(): Boolean = !parentId.isNullOrEmpty()
 
 public fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
-public fun Message.isRegular(): Boolean = type == ModelType.message_regular
-
-public fun Message.isEphemeral(): Boolean = type == ModelType.message_ephemeral
-
-public fun Message.isSystem(): Boolean = type == ModelType.message_system
-
-public fun Message.isError(): Boolean = type == ModelType.message_error
-
-public fun Message.isGiphyEphemeral(): Boolean = isEphemeral() && command == ModelType.attach_giphy
-
-public fun Message.isGiphyNotEphemeral(): Boolean = isEphemeral().not() && command == ModelType.attach_giphy
+public fun Message.isGiphyNotEphemeral(): Boolean = isEphemeral().not() && command == AttachmentType.GIPHY
 
 public fun Message.getCreatedAtOrNull(): Date? = createdAt ?: createdLocallyAt
 
@@ -78,7 +66,5 @@ public val Message.supportedReactionCounts: Map<String, Int>
             reactionCounts.filterKeys { ChatUI.supportedReactions.isReactionTypeSupported(it) }
         }
     }
-
-public fun Message.isReply(): Boolean = replyTo != null
 
 public fun Message.hasText(): Boolean = text.isNotEmpty()

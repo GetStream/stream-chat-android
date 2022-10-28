@@ -53,11 +53,12 @@
         <item name="android:paddingStart">@dimen/stream_ui_spacing_medium</item>
         <item name="android:paddingEnd">@dimen/stream_ui_spacing_medium</item>
         <item name="android:drawablePadding">@dimen/stream_ui_spacing_medium</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/stream_ui_channel_actions_item_height</item>
         <item name="android:textSize">@dimen/stream_ui_text_medium</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:singleLine">true</item>
+        <item name="android:background">?selectableItemBackground</item>
     </style>
 
     <style name="StreamUiAttachmentBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
@@ -1039,6 +1040,7 @@
         <item name="streamUiAttachmentsRecentFilesText">@string/stream_ui_message_input_recent_files</item>
         <item name="streamUiAttachmentsFileManagerIcon">@drawable/stream_ui_ic_file_manager</item>
         <item name="streamUiAttachmentVideoLogoIcon">@drawable/stream_ui_ic_video</item>
+        <item name="streamUiAttachmentVideoLogoIconTint">@color/stream_ui_black</item>
         <item name="streamUiAttachmentVideoLengthVisible">true</item>
         <item name="streamUiAttachmentVideoIconVisible">true</item>
         <item name="streamUiCommandInputCancelIcon">@drawable/stream_ui_ic_clear</item>
@@ -1193,9 +1195,10 @@
         <item name="streamUiAttachmentsPickerAllowAccessToMediaIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
         <item name="streamUiAttachmentsPickerVideoLengthTextVisible">true</item>
         <item name="streamUiAttachmentsPickerVideoLengthTextSize">@dimen/stream_ui_text_small</item>
-        <item name="streamUiAttachmentsPickerVideoLengthTextColor">@color/stream_ui_white</item>
+        <item name="streamUiAttachmentsPickerVideoLengthTextColor">@color/stream_ui_black</item>
         <item name="streamUiAttachmentsPickerVideoIconVisible">true</item>
         <item name="streamUiAttachmentsPickerVideoIconDrawable">@drawable/stream_ui_ic_video</item>
+        <item name="streamUiAttachmentsPickerVideoIconDrawableTint">@color/stream_ui_black</item>
         <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaText">@string/stream_ui_message_composer_no_files</item>
         <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextColor">@color/stream_ui_text_color_primary</item>

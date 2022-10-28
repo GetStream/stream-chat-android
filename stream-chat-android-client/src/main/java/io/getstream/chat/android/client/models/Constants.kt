@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.extensions.internal
+package io.getstream.chat.android.client.models
 
-import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
-internal fun Attachment.isImage(): Boolean = type == ModelType.attach_image
+/**
+ * Represents constants used across all SDKs.
+ */
+@InternalStreamChatApi
+public object Constants {
 
-internal fun Attachment.isGiphy(): Boolean = type == ModelType.attach_giphy
+    /**
+     * Number of bytes in a megabyte.
+     */
+    public const val MB_IN_BYTES: Long = 1024 * 1024
+
+    /**
+     * Maximum request body length in bytes.
+     */
+    internal const val MAX_REQUEST_BODY_LENGTH = 1 * MB_IN_BYTES
+}

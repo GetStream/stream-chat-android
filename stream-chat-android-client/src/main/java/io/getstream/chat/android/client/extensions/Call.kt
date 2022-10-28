@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("CallExtensions")
+
 package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.call.Call

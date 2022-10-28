@@ -46,6 +46,8 @@ public object NotificationHandlerFactory {
      * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
      */
     @SuppressLint("NewApi")
+    @JvmOverloads
+    @JvmStatic
     public fun createNotificationHandler(
         context: Context,
         newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null,

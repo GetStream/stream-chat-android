@@ -220,7 +220,7 @@ class Push {
             override fun onNewToken(token: String) {
                 // Update device's token on Stream backend
                 try {
-                    HuaweiMessagingDelegate.registerHuaweiToken(token)
+                    HuaweiMessagingDelegate.registerHuaweiToken(token, "optional-provider-name")
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized
                 }
@@ -270,7 +270,7 @@ class Push {
             override fun onReceiveRegisterResult(context: Context, miPushCommandMessage: MiPushCommandMessage) {
                 // Update device's token on Stream backend
                 try {
-                    XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage)
+                    XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "optional-provider-name")
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized
                 }

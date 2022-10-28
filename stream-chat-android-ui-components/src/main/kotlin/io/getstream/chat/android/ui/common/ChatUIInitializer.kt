@@ -20,16 +20,14 @@ import android.content.Context
 import androidx.startup.Initializer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
-import kotlinx.coroutines.runBlocking
 
 /**
  * Jetpack Startup Initializer for Stream's Chat UI Components.
  */
 public class ChatUIInitializer : Initializer<Unit> {
 
-    override fun create(context: Context): Unit = runBlocking(DispatcherProvider.IO) {
+    override fun create(context: Context) {
         ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.UI_COMPONENTS
         ChatUI.appContext = context
     }

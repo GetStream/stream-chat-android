@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.constant
+package io.getstream.chat.android.client.models
 
 /**
  * Represents types of attachments.

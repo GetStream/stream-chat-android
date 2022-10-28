@@ -241,10 +241,7 @@ private object MessageComposerCustomizationSnippet {
         messageComposerView.setLeadingContent(
             DefaultMessageComposerLeadingContent(context).also {
                 it.attachmentsButtonClickListener = {
-                    val attachmentSelectionListener = { attachments: List<Attachment> ->
-                        messageComposerViewModel.addSelectedAttachments(attachments)
-                    }
-                    // Show attachment dialog and invoke attachmentSelectionListener
+                    // Show attachment dialog and invoke messageComposerViewModel.addSelectedAttachments(attachments)
                 }
                 it.commandsButtonClickListener = { messageComposerViewModel.toggleCommandsVisibility() }
             }

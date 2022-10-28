@@ -25,12 +25,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
 /**
- * @return if the message has been deleted.
- */
-@InternalStreamChatApi
-internal fun Message.isDeleted(): Boolean = deletedAt != null
-
-/**
  * @return if the message was sent by current user.
  */
 @InternalStreamChatApi

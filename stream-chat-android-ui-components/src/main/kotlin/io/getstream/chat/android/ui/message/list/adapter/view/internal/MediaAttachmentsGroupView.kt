@@ -25,7 +25,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.horizontalChainInParent
 import com.getstream.sdk.chat.utils.extensions.isBottomPosition
@@ -35,6 +34,8 @@ import com.google.android.material.shape.CornerSize
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
@@ -73,7 +74,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     fun showAttachments(attachments: List<Attachment>) {
         val media = attachments.filter { attachment ->
             !attachment.hasLink() &&
-                (attachment.type == ModelType.attach_image || attachment.type == ModelType.attach_video)
+                (attachment.isImage() || attachment.isVideo())
         }
         when (media.size) {
             0 -> Unit

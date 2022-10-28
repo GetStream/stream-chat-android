@@ -44,6 +44,7 @@ internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(context: Conte
             videoDurationTextStyle = videoLengthTextStyle,
             videoIconVisible = videoIconVisible,
             videoIconDrawable = videoIconDrawable,
+            videoIconDrawableTint = videoIconDrawableTint,
             // File attachments tab
             fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
             fileAttachmentIcon = fileAttachmentsTabIconDrawable,
