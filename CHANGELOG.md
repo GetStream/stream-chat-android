@@ -22,6 +22,7 @@
 - Exposed `MessageType`, `AttachmentType` and `ChannelType` classes containing useful constants. [#4285](https://github.com/GetStream/stream-chat-android/pull/4285)
 
 ### ⚠️ Changed
+- Removed `Channel::cid` from constructor. It's now an immutable property calculated based on `type` and `id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
 
 ### ❌ Removed
 
@@ -50,6 +51,8 @@
 - Separated `QueryChannelListenerState` into state and databased focused classes. [#4188](https://github.com/GetStream/stream-chat-android/pull/4188)
 - Separated `ThreadQueryListener` into state and databased focused classes. [#4208](https://github.com/GetStream/stream-chat-android/pull/4208)
 - Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
+- Renamed `ChannelData::channelId` to `ChannelData::id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
+- Removed `ChannelData::cid` from constructor. It's now an immutable property calculated based on `type` and `id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
 
 ### ❌ Removed
 - Removed `EventHandlerImpl` from the codebase. [#4207](https://github.com/GetStream/stream-chat-android/pull/4207)

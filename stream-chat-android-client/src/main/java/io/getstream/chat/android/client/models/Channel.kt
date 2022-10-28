@@ -92,7 +92,11 @@ public data class Channel(
      * The channel id in the format messaging:123.
      */
     val cid: String
-        get() = "$type:$id"
+        get() = if (id.isEmpty() || type.isEmpty()) {
+            ""
+        } else {
+            "$type:$id"
+        }
 
     /**
      * Determines the last updated date/time.
