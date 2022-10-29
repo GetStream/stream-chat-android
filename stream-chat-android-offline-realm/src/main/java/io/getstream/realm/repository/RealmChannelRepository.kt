@@ -47,11 +47,12 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
     }
 
     override suspend fun deleteChannel(cid: String) {
+        val channel = realm.query<ChannelEntityRealm>("cid == '$cid'")
+            .first()
+            .find()
+
         realm.writeBlocking {
-            realm.query<ChannelEntityRealm>("cid == '$cid'")
-                .first()
-                .find()
-                ?.let(this::delete)
+            channel?.let(::findLatest)?.let(::delete)
         }
     }
 
