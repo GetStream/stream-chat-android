@@ -16,6 +16,7 @@
 
 package com.getstream.sdk.chat.utils
 
+import io.getstream.chat.android.client.models.Constants
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -23,10 +24,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  */
 @InternalStreamChatApi
 public object AttachmentConstants {
-    /**
-     * Number of bytes in a megabyte.
-     */
-    public const val MB_IN_BYTES: Long = 1024 * 1024
 
     /**
      * Default max upload size in MB.
@@ -36,7 +33,7 @@ public object AttachmentConstants {
     /**
      * Default max upload size in bytes.
      */
-    public const val MAX_UPLOAD_FILE_SIZE: Long = MB_IN_BYTES * MAX_UPLOAD_SIZE_IN_MB
+    public const val MAX_UPLOAD_FILE_SIZE: Long = Constants.MB_IN_BYTES * MAX_UPLOAD_SIZE_IN_MB
 
     /**
      * Default max number of attachments.

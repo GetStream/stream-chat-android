@@ -181,7 +181,6 @@ internal object EventArguments {
     private val channel = Channel(
         id = channelId,
         type = channelType,
-        cid = cid,
         lastMessageAt = date,
         createdAt = date,
         updatedAt = date,

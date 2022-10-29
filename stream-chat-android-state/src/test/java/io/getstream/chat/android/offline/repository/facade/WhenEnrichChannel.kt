@@ -61,8 +61,8 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
         sut.run {
             val message1 = randomMessage()
             val message2 = randomMessage()
-            val channel = randomChannel(cid = "cid1")
-            val messageMap = mapOf("cid1" to listOf(message1, message2))
+            val channel = randomChannel()
+            val messageMap = mapOf(channel.cid to listOf(message1, message2))
 
             channel.enrichChannel(messageMap, Config())
 
@@ -79,8 +79,8 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val message1 = randomMessage()
             val message2 = randomMessage()
             val message3 = randomMessage()
-            val channel = randomChannel(cid = "cid1", messages = listOf(message1, message3))
-            val messageMap = mapOf("cid1" to listOf(message1, message2))
+            val channel = randomChannel(messages = listOf(message1, message3))
+            val messageMap = mapOf(channel.cid to listOf(message1, message2))
 
             channel.enrichChannel(messageMap, Config())
 
@@ -99,8 +99,8 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val commonMessage = randomMessage(id = commonMessageId)
             val message2 = randomMessage()
             val message3 = randomMessage()
-            val channel = randomChannel(cid = "cid1", messages = listOf(randomMessage(id = commonMessageId), message3))
-            val messageMap = mapOf("cid1" to listOf(commonMessage, message2))
+            val channel = randomChannel(messages = listOf(randomMessage(id = commonMessageId), message3))
+            val messageMap = mapOf(channel.cid to listOf(commonMessage, message2))
 
             channel.enrichChannel(messageMap, Config())
 
@@ -118,7 +118,7 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val message1 = randomMessage()
             val message2 = randomMessage()
             val message3 = randomMessage()
-            val channel = randomChannel(cid = "cid1", messages = listOf(message1))
+            val channel = randomChannel(messages = listOf(message1))
             val messageMap = mapOf("cid2" to listOf(message2, message3))
 
             channel.enrichChannel(messageMap, Config())

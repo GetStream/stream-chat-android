@@ -2,6 +2,9 @@
 slug: /client/guides/push-notifications/
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Overview
 
 Besides [Events](https://getstream.io/chat/docs/android/event_listening/?language=kotlin), push notifications are another way to stay up to date with changes in your chat in real time.
@@ -19,6 +22,9 @@ We support the following providers:
 
 We ship an individual artifact for each of these to make client-side integration with their service quick and simple. See their individual documentation pages linked above for details.
 You need to add the list of `PushDeviceGenerator` you want to use:
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin {1-5,8}
 val notificationConfig = NotificationConfig(
     pushDeviceGenerators = listOf(
@@ -30,6 +36,21 @@ ChatClient.Builder("api-key", context)
     .notifications(notificationConfig, notificationHandler)
     .build()
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+boolean pushNotificationEnabled = true;
+List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
+NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+
+new ChatClient.Builder("api-key", context)
+        .notifications(notificationConfig, notificationHandler)
+        .build();
+```
+</TabItem>
+</Tabs>
 
 :::note
 Push notifications are disabled by default on the client side. You can enable it by setting the `NotificationConfig::pushNotificationEnabled` property to `true`.
@@ -61,6 +82,9 @@ The SDK supports multiple languages. Make sure to override resources in all lang
 Our `NotificationHandlerFactory` provides a way to create a default implementation of `NotificationHandler` based on the Android API Level and lets you customize an intent that a user triggers by clicking the notification.
 This function lets you provide a custom `Intent` that can point to any `Activity` in your app. You can also add custom data to the `Intent` if you need it.
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin {1-12,15}
 val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
     context = context,
@@ -80,12 +104,37 @@ ChatClient.Builder("api-key", context)
     .build()
 
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+boolean pushNotificationEnabled = true;
+List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
+NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
+
+NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, (messageId, channelType, channelId) -> {
+    // Return the intent you want to be triggered when the notification is clicked
+    Intent intent = new Intent();
+
+    return intent;
+});
+
+new ChatClient.Builder("api-key", context)
+        .notifications(notificationConfig, notificationHandler)
+        .build();
+```
+</TabItem>
+</Tabs>
 
 ### Customize Notification Style
 
 The SDK lets you define the theming and behavior of the notification UI that users see after they receive a push notification.
 To do this, implement the `NotificationHandler` interface and show your own notification.
 If you want to dismiss notifications when a user visits a channel or logs off of the app, you will need to implement methods for dismissing notifications on the `NotificationHandler` class.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin {6,13,17}
 class MyNotificationHandler(private val context: Context) : NotificationHandler {
@@ -126,8 +175,72 @@ class MyNotificationHandler(private val context: Context) : NotificationHandler 
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class MyNotificationHandler implements NotificationHandler {
+
+    NotificationManager notificationManager;
+
+    public MyNotificationHandler(Context context) {
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE) ;
+    }
+
+    @Override
+    public void onNotificationPermissionStatus(@NonNull NotificationPermissionStatus status) {
+        switch (status) {
+            case REQUESTED:
+                // invoked when POST_NOTIFICATIONS permission is requested
+                break;
+            case GRANTED:
+                // invoked when POST_NOTIFICATIONS permission is granted
+                break;
+            case DENIED:
+                // invoked when POST_NOTIFICATIONS permission is denied
+                break;
+            case RATIONALE_NEEDED:
+                // invoked when POST_NOTIFICATIONS permission requires rationale
+                break;
+        }
+    }
+
+    @Override
+    public void showNotification(@NonNull Channel channel, @NonNull Message message) {
+        Notification notification = new NotificationCompat.Builder(context, notificationChannelId)
+                .build();
+        notificationManager.notify(notificationId, notification);
+    }
+
+    @Override
+    public void dismissChannelNotifications(@NonNull String channelType, @NonNull String channelId) {
+        // Dismiss all notification related with this channel
+    }
+
+    @Override
+    public void dismissAllNotifications() {
+        // Dismiss all notifications
+    }
+
+    @Override
+    public boolean onChatEvent(@NonNull NewMessageEvent event) {
+        return true;
+    }
+
+    @Override
+    public boolean onPushMessage(@NonNull PushMessage message) {
+        return false;
+    }
+}
+```
+</TabItem>
+</Tabs>
 
 Finally, pass as the `NotificationHandler` implementation to the `ChatClient.Builder` when initializing the Stream Android SDK:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin {4}
 val notificationHandler = MyNotificationHandler(context)
@@ -136,6 +249,19 @@ ChatClient.Builder("api-key", context)
     .notifications(notificationConfig, notificationHandler)
     .build()
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+NotificationHandler notificationHandler = new MyNotificationHandler(context);
+
+new ChatClient.Builder("api-key", context)
+        .notifications(notificationConfig, notificationHandler)
+        .build();
+```
+</TabItem>
+</Tabs>
 
 ### Dismissing notifications
 
@@ -143,9 +269,21 @@ Our [`MessageListView`](../../../03-ui/04-message-components/02-message-list.mdx
 
 If you need to dismiss them manually (for example, if you are using a custom `MessageListView` component) you can call the `ChatClient::dismissChannelNotifications` method, providing the `channelType` and `channelId` from the `Channel` that you would like to dismiss notifications:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 ChatClient.dismissChannelNotifications("messaging", "general")
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatClient.dismissChannelNotifications("messaging", "general");
+```
+</TabItem>
+</Tabs>
 
 Notifications are also automatically dismissed when the user logs out from the SDK.
 
@@ -153,6 +291,10 @@ Notifications are also automatically dismissed when the user logs out from the S
 
 In some cases you could be interested on configure different PushProvider by the same Provider (For example, 2 different Firebase project) with different configuration.
 To achieve it you need to setup Multi-Bundle configuration on the `Dashboard` giving a name to each provider. Then, when a new device is registered, you need to add the desired `providerName`.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin {4}
 Device(
     token = "token-generated-by-provider",
@@ -160,5 +302,18 @@ Device(
     providerName = "providerName",
 )
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+new Device(
+        "token-generated-by-provider",
+        PushProvider.FIREBASE, // your push provider
+        "providerName"
+);
+```
+</TabItem>
+</Tabs>
 
 If you are using any of the artifacts integration we support, you can set them by adding an extra attribute on the constructor of the `PushProviderGenerator` class implementation.

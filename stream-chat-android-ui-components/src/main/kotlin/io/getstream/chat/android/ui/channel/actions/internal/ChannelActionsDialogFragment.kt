@@ -20,7 +20,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
@@ -28,13 +28,16 @@ import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.common.state.ChannelAction
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
-import io.getstream.chat.android.ui.common.extensions.getLastSeenText
+import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
+import io.getstream.chat.android.ui.utils.extensions.getMembersStatusText
 
 /**
  * A bottom sheet with the list of actions users can take with the selected channel.
@@ -55,9 +58,14 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private lateinit var channel: Channel
 
     /**
-     * A listener that handles clicks on channel action items.
+     * A callback for clicks on channel options.
      */
-    private var channelActionListener: ChannelActionListener? = null
+    private var channelOptionClickListener: ChannelOptionClickListener? = null
+
+    /**
+     * A callback for clicks on members.
+     */
+    private var channelMemberClickListener: ChannelMemberClickListener? = null
 
     /**
      * The full channel id, i.e. "messaging:123".
@@ -65,22 +73,17 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private val cid get() = channel.cid
 
     /**
-     * If the channel is not one-to-one conversation.
-     */
-    private val isGroup get() = !channel.isDirectMessaging()
-
-    /**
      * [ViewModel] for the dialog.
      */
     private val channelActionsViewModel: ChannelActionsViewModel by viewModels {
-        ChannelActionsViewModelFactory(cid, isGroup)
+        ChannelActionsViewModelFactory(cid)
     }
 
     /**
      * An [RecyclerView.Adapter] for the list of channel members.
      */
     private val membersAdapter: ChannelMembersAdapter = ChannelMembersAdapter {
-        channelActionListener?.onMemberSelected(it)
+        channelMemberClickListener?.onMemberClick(it)
     }
 
     override fun onCreateView(
@@ -110,19 +113,68 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun setupDialog() {
         binding.recyclerView.adapter = membersAdapter
         binding.channelActionsContainer.background = style.background
+        binding.channelMembersTextView.setTextStyle(style.memberNamesTextStyle)
+        binding.channelMembersInfoTextView.setTextStyle(style.memberInfoTextStyle)
 
-        setupViewInfoAction()
-        setupLeaveGroupButton()
-        setupCancelButton()
-        setupDeleteConversationButton()
-
-        channelActionsViewModel.state.observe(viewLifecycleOwner) { state ->
-            membersAdapter.submitList(state.members)
-            bindMemberNames(state.members)
-            bindMembersInfo(state.members)
-            bindDeleteConversationButton(state.canDeleteChannel)
-            bindLeaveGroupButton(state.canLeaveChannel)
+        channelActionsViewModel.channel.observe(viewLifecycleOwner) { channel ->
+            this.channel = channel
+            bindChannelInfo()
+            bindChannelOptions()
         }
+    }
+
+    /**
+     * Updates the channel name, the member status text and the list of channel members.
+     */
+    private fun bindChannelInfo() {
+        binding.channelMembersTextView.text = ChatUI.channelNameFormatter.formatChannelName(
+            channel = channel,
+            currentUser = ChatUI.currentUserProvider.getCurrentUser()
+        )
+        binding.channelMembersInfoTextView.text = channel.getMembersStatusText(requireContext())
+
+        val channelMembers = channel.members
+        val membersToDisplay = if (channel.isDirectMessaging()) {
+            channelMembers.filter { !it.user.isCurrentUser() }
+        } else {
+            channelMembers
+        }
+        membersAdapter.submitList(membersToDisplay)
+    }
+
+    /**
+     * Updates the list of channel options.
+     */
+    private fun bindChannelOptions() {
+        binding.optionsContainer.removeAllViews()
+
+        ChannelOptionItemsFactory.defaultFactory(requireContext())
+            .createChannelOptionItems(
+                selectedChannel = channel,
+                ownCapabilities = channel.ownCapabilities,
+                style = style,
+            ).forEach { option ->
+                val channelOptionTextView = requireContext().streamThemeInflater.inflate(
+                    R.layout.stream_ui_channel_option_item,
+                    binding.optionsContainer,
+                    false
+                ) as TextView
+                channelOptionTextView.text = option.optionText
+                channelOptionTextView.setStartDrawable(option.optionIcon)
+                channelOptionTextView.setOnClickListener {
+                    channelOptionClickListener?.onChannelOptionClick(option.channelAction)
+                    dismiss()
+                }
+                channelOptionTextView.setTextStyle(
+                    if (option.isWarningItem) {
+                        style.warningItemTextStyle
+                    } else {
+                        style.itemTextStyle
+                    }
+                )
+
+                binding.optionsContainer.addView(channelOptionTextView)
+            }
     }
 
     override fun onDestroyView() {
@@ -151,142 +203,35 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     }
 
     /**
-     * Sets a click listener for channel action.
+     * Allows clients to set a click listener for channel option items.
      *
-     * @param channelActionListener The listener to set.
+     * @param channelOptionClickListener The callback to be invoked on channel option item click.
      */
-    fun setChannelActionListener(channelActionListener: ChannelActionListener) {
-        this.channelActionListener = channelActionListener
+    fun setChannelOptionClickListener(channelOptionClickListener: ChannelOptionClickListener) {
+        this.channelOptionClickListener = channelOptionClickListener
     }
 
     /**
-     * Initializes the "View Info" action button.
+     * Allows clients to set a click listener for channel member items.
+     *
+     * @param channelMemberClickListener The callback to be invoked on channel member item click.
      */
-    private fun setupViewInfoAction() {
-        binding.viewInfoButton.apply {
-            if (style.viewInfoEnabled) {
-                setStartDrawable(style.viewInfoIcon)
-                setTextStyle(style.itemTextStyle)
-                setOnClickListener {
-                    channelActionListener?.onChannelInfoSelected(cid)
-                    dismiss()
-                }
-            } else {
-                isVisible = false
-            }
-        }
+    fun setChannelMemberClickListener(channelMemberClickListener: ChannelMemberClickListener) {
+        this.channelMemberClickListener = channelMemberClickListener
     }
 
     /**
-     * Initializes the "Leave Group" action button.
+     * A listener for member clicks.
      */
-    private fun setupLeaveGroupButton() {
-        binding.leaveGroupButton.apply {
-            if (style.leaveGroupEnabled) {
-                setStartDrawable(style.leaveGroupIcon)
-                setTextStyle(style.itemTextStyle)
-                setOnClickListener {
-                    channelActionListener?.onLeaveChannelClicked(cid)
-                    dismiss()
-                }
-            } else {
-                isVisible = false
-            }
-        }
+    fun interface ChannelMemberClickListener {
+        fun onMemberClick(member: Member)
     }
 
     /**
-     * Initializes the "Delete Conversation" action button.
+     * A listener for channel option clicks.
      */
-    private fun setupDeleteConversationButton() {
-        binding.deleteButton.apply {
-            if (style.deleteConversationEnabled) {
-                setStartDrawable(style.deleteConversationIcon)
-                setTextStyle(style.warningItemTextStyle)
-                setOnClickListener {
-                    channelActionListener?.onDeleteConversationClicked(cid)
-                    dismiss()
-                }
-            } else {
-                isVisible = false
-            }
-        }
-    }
-
-    /**
-     * Initializes the "Cancel" action button.
-     */
-    private fun setupCancelButton() {
-        binding.cancelButton.apply {
-            if (style.cancelEnabled) {
-                setStartDrawable(style.cancelIcon)
-                setTextStyle(style.itemTextStyle)
-                setOnClickListener {
-                    dismiss()
-                }
-            } else {
-                isVisible = false
-            }
-        }
-    }
-
-    /**
-     * Used to change the visibility of the delete conversation button
-     * once the [ChannelActionsViewModel.state] updates.
-     */
-    private fun bindDeleteConversationButton(canDeleteChannel: Boolean) {
-        binding.deleteButton.isVisible = canDeleteChannel && style.deleteConversationEnabled
-    }
-
-    /**
-     * Used to change the visibility of the leave group button
-     * once the [ChannelActionsViewModel.state] updates.
-     */
-    private fun bindLeaveGroupButton(canLeaveChannel: Boolean) {
-        binding.leaveGroupButton.isVisible = canLeaveChannel && style.leaveGroupEnabled
-    }
-
-    /**
-     * Updates the title with the member names.
-     */
-    private fun bindMemberNames(members: List<Member>) {
-        style.memberNamesTextStyle.apply(binding.channelMembersTextView)
-        binding.channelMembersTextView.text = if (isGroup) {
-            members.joinToString { it.user.name }
-        } else {
-            members.getOrNull(0)?.user?.name ?: ""
-        }
-    }
-
-    /**
-     * Updates the subtitle with the status text.
-     */
-    private fun bindMembersInfo(members: List<Member>) {
-        style.memberInfoTextStyle.apply(binding.membersInfoTextView)
-        binding.membersInfoTextView.text = if (isGroup) {
-            requireContext().resources.getQuantityString(
-                R.plurals.stream_ui_channel_list_member_info,
-                members.size,
-                members.size,
-                members.count { it.user.online }
-            )
-        } else {
-            members
-                .getOrNull(0)
-                ?.user
-                ?.getLastSeenText(requireContext())
-                ?: ""
-        }
-    }
-
-    /**
-     * A listener for channel action clicks. Also, allows to listen for channel member clicks.
-     */
-    interface ChannelActionListener {
-        fun onMemberSelected(member: Member)
-        fun onDeleteConversationClicked(cid: String)
-        fun onLeaveChannelClicked(cid: String)
-        fun onChannelInfoSelected(cid: String)
+    fun interface ChannelOptionClickListener {
+        fun onChannelOptionClick(channelAction: ChannelAction)
     }
 
     companion object {

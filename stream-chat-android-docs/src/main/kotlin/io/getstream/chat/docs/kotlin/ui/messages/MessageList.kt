@@ -3,8 +3,10 @@
 package io.getstream.chat.docs.kotlin.ui.messages
 
 import android.graphics.Color
-import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -12,7 +14,6 @@ import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -22,17 +23,16 @@ import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory
-import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactory
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.InnerAttachmentViewHolder
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.docs.R
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
+import io.getstream.chat.docs.databinding.TodayMessageListItemBinding
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 /**
  * [Message List](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
@@ -150,156 +150,111 @@ class MessageListViewSnippets : Fragment() {
         }
     }
 
-    fun emptyState() {
-        // When there's no results, show empty state
-        messageListView.showEmptyStateView()
-    }
-
-    fun loadingView() {
-        // When loading information, show loading view
-        messageListView.showLoadingView()
+    fun channelFeatureFlags() {
+        messageListView.setRepliesEnabled(false)
+        messageListView.setDeleteMessageEnabled(false)
+        messageListView.setEditMessageEnabled(false)
     }
 
     fun dateFormatter() {
         messageListView.setMessageDateFormatter(
             object : DateFormatter {
-                override fun formatDate(localDateTime: LocalDateTime?): String {
+                private val dateFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+                private val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
+
+                override fun formatDate(date: Date?): String {
                     // Provide a way to format Date
-                    return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(localDateTime)
+                    return dateFormat.format(date)
                 }
 
-                override fun formatTime(localTime: LocalTime?): String {
-                    // Provide a way to format Time.
-                    return DateTimeFormatter.ofPattern("HH:mm").format(localTime)
+                override fun formatTime(date: Date?): String {
+                    // Provide a way to format Time
+                    return timeFormat.format(date)
                 }
             }
+        )
+    }
+
+    fun customMessagesFilter() {
+        val forbiddenWord = "secret"
+        val predicate = MessageListView.MessageListItemPredicate { item ->
+            !(item is MessageListItem.MessageItem && item.message.text.contains(forbiddenWord))
+        }
+        messageListView.setMessageListItemPredicate(predicate)
+    }
+
+    fun customMessagesView() {
+        class TodayViewHolder(
+            parentView: ViewGroup,
+            private val binding: TodayMessageListItemBinding = TodayMessageListItemBinding.inflate(LayoutInflater.from(
+                parentView.context),
+                parentView,
+                false),
+        ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
+
+            override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+                binding.textLabel.text = data.message.text
+            }
+        }
+
+        class CustomMessageViewHolderFactory : MessageListItemViewHolderFactory() {
+            override fun getItemViewType(item: MessageListItem): Int {
+                return if (item is MessageListItem.MessageItem &&
+                    item.isTheirs &&
+                    item.message.attachments.isEmpty() &&
+                    item.message.createdAt.isLessThenDayAgo()
+                ) {
+                    TODAY_VIEW_HOLDER_TYPE
+                } else {
+                    super.getItemViewType(item)
+                }
+            }
+
+            private fun Date?.isLessThenDayAgo(): Boolean {
+                if (this == null) {
+                    return false
+                }
+                val dayInMillis = TimeUnit.DAYS.toMillis(1)
+                return time >= System.currentTimeMillis() - dayInMillis
+            }
+
+            override fun createViewHolder(
+                parentView: ViewGroup,
+                viewType: Int,
+            ): BaseMessageItemViewHolder<out MessageListItem> {
+                return if (viewType == TODAY_VIEW_HOLDER_TYPE) {
+                    TodayViewHolder(parentView)
+                } else {
+                    super.createViewHolder(parentView, viewType)
+                }
+            }
+
+            private val TODAY_VIEW_HOLDER_TYPE = 1
+        }
+
+        fun setCustomViewHolderFactory() {
+            messageListView.setMessageViewHolderFactory(CustomMessageViewHolderFactory())
+        }
+    }
+
+    fun customEmptyState() {
+        val textView = TextView(context).apply {
+            text = "There are no messages yet"
+            setTextColor(Color.RED)
+        }
+        messageListView.setEmptyStateView(
+            view = textView,
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+            )
         )
     }
 
     fun avatarPredicate() {
         messageListView.setShowAvatarPredicate { messageItem ->
             messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
-        }
-    }
-
-    fun customMessagesFilter() {
-        messageListView.setMessageListItemPredicate { messageList ->
-            // Boolean logic here
-            true
-        }
-    }
-
-    fun setNewMessageBehaviour() {
-        messageListView.setNewMessagesBehaviour(MessageListView.NewMessagesBehaviour.COUNT_UPDATE)
-    }
-
-    fun setEndRegionReachedHandler(viewModel: MessageListViewModel) {
-        messageListView.setEndRegionReachedHandler {
-            // Handle pagination and include new logic
-
-            // Option to log the event and use the viewModel
-            viewModel.onEvent(MessageListViewModel.Event.EndRegionReached)
-            Log.e("LogTag", "On load more")
-        }
-    }
-
-    fun displayNewMessage() {
-        val messageItem = MessageListItem.MessageItem(
-            message = Message(text = "Lorem ipsum dolor"),
-            positions = listOf(MessageListItem.Position.TOP),
-            isMine = true
-        )
-
-        val messageItemListWrapper = MessageListItemWrapper(listOf(messageItem))
-        messageListView.displayNewMessages(messageItemListWrapper)
-    }
-
-    fun attachmentReply() {
-        messageListView.setAttachmentReplyOptionClickHandler { resultItem ->
-            resultItem.messageId
-            // Handle reply to attachment
-        }
-
-        messageListView.setAttachmentShowInChatOptionClickHandler { resultItem ->
-            resultItem.messageId
-            // Handle show in chat
-        }
-
-        messageListView.setDownloadOptionHandler { resultItem ->
-            resultItem.assetUrl
-            // Handle download the attachment
-        }
-
-        messageListView.setAttachmentDeleteOptionClickHandler { resultItem ->
-            resultItem.assetUrl
-            resultItem.imageUrl
-            // Handle delete
-        }
-    }
-
-    class CustomViewHolderFactory {
-        private lateinit var messageListView: MessageListView
-
-        private class CustomViewHolderFactory : MessageListItemViewHolderFactory() {
-            override fun createViewHolder(
-                parentView: ViewGroup,
-                viewType: Int,
-            ): BaseMessageItemViewHolder<out MessageListItem> {
-                // Create a new type of view holder here, if needed
-                return super.createViewHolder(parentView, viewType)
-            }
-        }
-
-        fun setCustomViewHolderFactory() {
-            val customViewHolderFactory: MessageListItemViewHolderFactory = CustomViewHolderFactory()
-            messageListView.setMessageViewHolderFactory(customViewHolderFactory)
-        }
-    }
-
-    class CustomAttachmentFactory() {
-        private lateinit var messageListView: MessageListView
-
-        private class CustomAttachmentFactory : AttachmentFactory {
-            private val MY_URL_ADDRESS = "https://myurl.com"
-
-            override fun canHandle(message: Message): Boolean {
-                return message.attachments.any { it.imageUrl?.contains(MY_URL_ADDRESS) == true }
-            }
-
-            override fun createViewHolder(
-                message: Message,
-                listeners: MessageListListenerContainer?,
-                parent: ViewGroup,
-            ): InnerAttachmentViewHolder {
-                // put your custom attachment view creation here
-                return CustomInnerAttachmentViewHolder(TextView(parent.context), listeners)
-            }
-        }
-
-        private class CustomInnerAttachmentViewHolder(
-            private val textView: TextView,
-            listeners: MessageListListenerContainer?,
-        ) : InnerAttachmentViewHolder(textView) {
-
-            private lateinit var message: Message
-
-            init {
-                textView.setOnClickListener {
-                    listeners?.attachmentClickListener?.onAttachmentClick(message, message.attachments.first())
-                }
-            }
-
-            override fun onBindViewHolder(message: Message) {
-                this.message = message
-
-                textView.text = "Image URL: ${message.attachments.first().imageUrl}"
-            }
-        }
-
-        fun setAttachmentFactory() {
-            val customAttachmentFactory = CustomAttachmentFactory()
-            val attachmentFactoryManager = AttachmentFactoryManager(listOf(customAttachmentFactory))
-            messageListView.setAttachmentFactoryManager(attachmentFactoryManager)
         }
     }
 }
