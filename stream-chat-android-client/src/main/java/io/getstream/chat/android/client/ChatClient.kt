@@ -2323,8 +2323,12 @@ internal constructor(
         }.getOrNull()
     }
 
-    public fun getCurrentUser(): User? {
+    internal fun getCurrentUser(): User? {
         return runCatching { userStateService.state.userOrError() }.getOrNull()
+    }
+
+    public fun getCurrentUserId(): String? {
+        return getCurrentUser()?.id
     }
 
     public fun getCurrentToken(): String? {

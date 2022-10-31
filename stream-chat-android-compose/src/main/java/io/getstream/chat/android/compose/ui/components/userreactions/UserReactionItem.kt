@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.previewdata.PreviewUserReactionData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.offline.extensions.globalState
 
 /**
  * Represent a reaction item with the user who left it.
@@ -58,7 +59,7 @@ public fun UserReactionItem(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val isMine = user.id == ChatClient.instance().getCurrentUser()?.id
+        val isMine = user.id == ChatClient.instance().globalState.user.value?.id
         val isStartAlignment = ChatTheme.messageOptionsUserReactionAlignment.isStartAlignment(isMine)
         val alignment = if (isStartAlignment) Alignment.BottomStart else Alignment.BottomEnd
 

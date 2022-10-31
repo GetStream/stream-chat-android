@@ -402,7 +402,7 @@ public class ChannelListViewModel(
     public fun leaveGroup(channel: Channel) {
         dismissChannelAction()
 
-        chatClient.getCurrentUser()?.let { user ->
+        chatClient.globalState.user.value?.let { user ->
             chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue()
         }
     }
