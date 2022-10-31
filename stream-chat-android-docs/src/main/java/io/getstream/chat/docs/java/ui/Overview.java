@@ -23,7 +23,6 @@ public class Overview extends AppCompatActivity {
         ViewModelProvider provider = new ViewModelProvider(this, factory);
         MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class); // 2
 
-        boolean enforceUniqueReactions = true;
-        MessageListViewModelBinding.bind(messageListViewModel, messageListView, viewLifecycleOwner, enforceUniqueReactions); // 3
+        MessageListViewModelBinding.bind(messageListViewModel, messageListView, viewLifecycleOwner); // 3
     }
 }

@@ -70,8 +70,7 @@ ViewModelProvider provider = new ViewModelProvider(this, factory);
 MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
 
 // Bind view and viewModel
-boolean enforceUniqueReactions = true;
-MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner(), enforceUniqueReactions);
+MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
 ```
 </TabItem>
 </Tabs>

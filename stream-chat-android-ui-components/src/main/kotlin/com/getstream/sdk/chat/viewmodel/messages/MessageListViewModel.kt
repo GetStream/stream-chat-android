@@ -221,7 +221,7 @@ public class MessageListViewModel(
                 messageListController.resendMessage(event.message)
             }
             is Event.MessageReaction -> {
-                onMessageReaction(event.message, event.reactionType, event.enforceUnique)
+                onMessageReaction(event.message, event.reactionType)
             }
             is Event.MuteUser -> {
                 messageListController.muteUser(event.user)
@@ -405,15 +405,14 @@ public class MessageListViewModel(
      *
      * @param message The message the user is reacting to.
      * @param reactionType The exact reaction type.
-     * @param enforceUnique Whether the user is able to leave multiple reactions.
      */
-    private fun onMessageReaction(message: Message, reactionType: String, enforceUnique: Boolean) {
+    private fun onMessageReaction(message: Message, reactionType: String) {
         val reaction = Reaction().apply {
             messageId = message.id
             type = reactionType
             score = 1
         }
-        messageListController.reactToMessage(reaction, message, enforceUnique)
+        messageListController.reactToMessage(reaction, message)
     }
 
     /**
@@ -563,12 +562,10 @@ public class MessageListViewModel(
          *
          * @param message The message the user is reacting to
          * @param reactionType The reaction type.
-         * @param enforceUnique Whether the user is able to leave multiple reactions.
          */
         public data class MessageReaction(
             val message: Message,
             val reactionType: String,
-            val enforceUnique: Boolean,
         ) : Event()
 
         /**

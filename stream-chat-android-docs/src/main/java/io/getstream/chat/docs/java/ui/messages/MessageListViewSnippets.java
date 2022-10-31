@@ -46,8 +46,7 @@ public class MessageListViewSnippets extends Fragment {
         MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
 
         // Bind view and viewModel
-        boolean enforceUniqueReactions = true;
-        MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner(), enforceUniqueReactions);
+        MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
     }
 
     public void handlingActions() {

@@ -116,6 +116,7 @@ import io.getstream.chat.android.common.state.Flag as FlagMessage
  * @param showSystemMessages Determines if the system messages should be shown or not.
  * @param messageFooterVisibility Determines if and when the message footer is visible or not.
  * @param enforceUniqueReactions Determines whether the user can send only a single or multiple reactions to a message.
+ * If it is true the new reaction will override the old reaction.
  * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
  * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  * @param messagePositionHandler Determines the position of the message inside a group.
@@ -979,7 +980,7 @@ public class MessageListController(
                 _messageActions.value = _messageActions.value + messageAction
             }
             is Copy -> copyMessage(messageAction.message)
-            is React -> reactToMessage(messageAction.reaction, messageAction.message, enforceUniqueReactions)
+            is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)
             else -> {
                 // no op, custom user action
@@ -1198,9 +1199,8 @@ public class MessageListController(
      *
      * @param reaction The reaction to add or remove.
      * @param message The currently selected message.
-     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
      */
-    public fun reactToMessage(reaction: Reaction, message: Message, enforceUnique: Boolean = enforceUniqueReactions) {
+    public fun reactToMessage(reaction: Reaction, message: Message) {
         if (message.ownReactions.any { it.type == reaction.type }) {
             chatClient.deleteReaction(
                 messageId = message.id,
@@ -1216,7 +1216,7 @@ public class MessageListController(
             )
         } else {
             chatClient.sendReaction(
-                enforceUnique = enforceUnique,
+                enforceUnique = enforceUniqueReactions,
                 reaction = reaction,
                 cid = cid
             ).enqueue(

@@ -38,8 +38,7 @@ public class BuildingAMessageListScreen extends Fragment {
 
         // Bind view models
         MessageListHeaderViewModelBinding.bind(messageListHeaderViewModel, messageListHeaderView, this);
-        boolean enforceUniqueReactions = true;
-        MessageListViewModelBinding.bind(messageListViewModel, messageListView, this, enforceUniqueReactions);
+        MessageListViewModelBinding.bind(messageListViewModel, messageListView, this);
         MessageInputViewModelBinding.bind(messageInputViewModel, messageInputView, this);
 
         // Let both message list header and message input know when we open a thread
