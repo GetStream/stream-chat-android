@@ -34,7 +34,7 @@ ChatClient.Builder("api-key", context)
 ```java
 boolean pushNotificationEnabled = true;
 List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
-NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
 
 new ChatClient.Builder("api-key", context)
         .notifications(notificationConfig, notificationHandler)
