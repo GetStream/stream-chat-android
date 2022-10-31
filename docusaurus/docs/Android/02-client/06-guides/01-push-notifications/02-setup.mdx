@@ -128,7 +128,7 @@ If you want to dismiss notifications when a user visits a channel or logs off of
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
-```kotlin {6,13,17}
+```kotlin {23,30,34}
 class MyNotificationHandler(private val context: Context) : NotificationHandler {
     private val notificationManager: NotificationManager by lazy {
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
