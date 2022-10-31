@@ -124,28 +124,24 @@ object TestData {
     fun channel1() = Channel().apply {
         type = "messaging"
         id = "channel1"
-        cid = "messaging:channel1"
         unreadCount = 0
     }
 
     fun channel2() = Channel().apply {
         type = "messaging"
         id = "channel2"
-        cid = "messaging:channel2"
         unreadCount = 0
     }
 
     fun channel3() = Channel().apply {
         type = "messaging"
         id = "channel3"
-        cid = "messaging:channel3"
         unreadCount = 0
     }
 
     fun channel4() = Channel().apply {
         type = "messaging"
         id = "channel4"
-        cid = "messaging:channel4"
         unreadCount = 0
     }
 

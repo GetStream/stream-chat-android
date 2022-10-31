@@ -329,7 +329,7 @@ internal class MessageListControllerTests {
         fun givenChannelState(
             channelData: ChannelData = ChannelData(
                 type = CHANNEL_TYPE,
-                channelId = CHANNEL_ID,
+                id = CHANNEL_ID,
             ),
             messageState: MessagesState = MessagesState.Result(
                 messages = emptyList()

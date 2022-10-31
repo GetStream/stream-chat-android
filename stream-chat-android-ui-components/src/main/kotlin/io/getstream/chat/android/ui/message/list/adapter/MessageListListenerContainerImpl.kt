@@ -41,8 +41,8 @@ internal class MessageListListenerContainerImpl(
     linkClickListener: LinkClickListener = LinkClickListener(EmptyFunctions.ONE_PARAM),
 ) : MessageListListenerContainer {
     private object EmptyFunctions {
-        val ONE_PARAM: (Any) -> Unit = { _ -> Unit }
-        val TWO_PARAM: (Any, Any) -> Unit = { _, _ -> Unit }
+        val ONE_PARAM: (Any) -> Unit = { _ -> }
+        val TWO_PARAM: (Any, Any) -> Unit = { _, _ -> }
     }
 
     override var messageClickListener: MessageClickListener by ListenerDelegate(

@@ -1,45 +1,21 @@
+---
+title: Xiaomi Mi Push
+---
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import XiaomiContent from '../../../../../../shared/_dashboard-xiaomi-config.md'
+import PayloadContent from '../../../../../../shared/_push-notification-payload.md'
 
-# Xiaomi Mi Push
-
-Follow this guide to get push notifications from Stream Chat using  [Xiaomi Mi Push](http://mipush.global.xiaomi.com/).
-
-## Setting up Notifications on the Stream Dashboard
-
-First, to get notifications from Stream, you'll need to provide your Xiaomi app details on the Stream dashboard.
-
-Go to the [Xiaomi Console](https://admin.xmpush.xiaomi.com/en/app/nav), and select the project your app belongs to.
-
-:::info
-Create a new Xiaomi project here if you don't have one yet.
-:::
-
-Click on **App Info** and locate the **App ID** and **App secret**, and copy them (if values are not shown, you need to click **View** button):
-
-![Locating your Xiaomi App](../../../assets/notifications_xiaomi_setup_step_1.png)
-
-![Locating your Xiaomi Credentials](../../../assets/notifications_xiaomi_setup_step_2.png)
-
-Open the [Stream Dashboard](https://dashboard.getstream.io/), and go to the Chat **Overview** page.
-
-![Navigating to the Chat Overview page on the Stream Dashboard](../../../assets/notifications_xiaomi_setup_step_3.png)
-
-Find and select the **Xiaomi** switch. Paste your **App ID** and **App secret**, and click **Save** to confirm your changes.
-
-![Setting up your Xiaomi App ID and App Secret on the Stream Dashboard](../../../assets/notifications_xiaomi_setup_step_4.png)
-
-That's all you need to configure on the dashboard. You can now set up the client-side integration.
+<XiaomiContent/>
 
 ## Receiving Notifications in the Client
 
-First, [add Xiaomi to your Android project](https://dev.mi.com/console/doc/detail?pId=1244). You need to download Xiaomi Mi Push SDK and add it to your project. At the time of writing this documentation, they don't provide any Maven repository that you can use, so you need to download the .jar file manually and add it to the `libs` folder of your app, following their instructions.
-
-![Adding MiPush .jar file to your libs folder](../../../assets/notifications_xiaomi_setup_step_5.png)
+First, [add Xiaomi to your Android project](https://dev.mi.com/console/doc/detail?pId=2626). You need to download Xiaomi Mi Push SDK and add it to your project. At the time of writing this documentation, they don't provide any Maven repository that you can use, so you need to download the .aar file manually and add it to the `libs` folder of your app, following their instructions.
 
 ```groovy
 dependencies {
-    implementation files('libs/MiPush_SDK_Client_4_8_2.jar')
+    implementation files('libs/MiPush_SDK_Client_5_0_6-G_3rd.aar')
 }
 ```
 
@@ -162,3 +138,7 @@ public final class CustomPushMessageReceiver extends PushMessageReceiver {
 :::note
 Your custom receiver needs to have an [`<intent-filter>` priority](https://developer.android.com/guide/topics/manifest/intent-filter-element#priority) higher than `-1` to replace our SDK's service. (By default, this priority is `0`.)
 :::
+
+### Push Notification Payload
+
+<PayloadContent />
