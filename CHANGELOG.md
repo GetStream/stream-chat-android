@@ -208,6 +208,11 @@
 
 ### ❌ Removed
 
+# October 31th, 2022 - 5.11.3
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed `OutOfMemoryException` in `HttpLoggingInterceptor` when sending big attachments. [#4314](https://github.com/GetStream/stream-chat-android/pull/4314)
+
 # October 17th, 2022 - 5.11.2
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
