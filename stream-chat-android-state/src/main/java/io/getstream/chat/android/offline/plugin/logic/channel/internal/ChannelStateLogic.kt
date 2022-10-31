@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.offline.model.channel.ChannelData
@@ -49,13 +48,11 @@ import java.util.Date
  *
  * @property mutableState [ChannelMutableState]
  * @property globalMutableState [MutableGlobalState]
- * @property clientState [ClientState]
  * @property attachmentUrlValidator [AttachmentUrlValidator]
  */
 internal class ChannelStateLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
-    private val clientState: ClientState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
     coroutineScope: CoroutineScope,
@@ -91,7 +88,7 @@ internal class ChannelStateLogic(
      * @param message [Message].
      */
     fun incrementUnreadCountIfNecessary(message: Message) {
-        val user = clientState.user.value ?: return
+        val user = globalMutableState.user.value ?: return
         val currentUserId = user.id
 
         /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
@@ -157,7 +154,7 @@ internal class ChannelStateLogic(
      * @param event The start typing event or null if user stops typing.
      */
     fun setTyping(userId: String, event: TypingStartEvent?) {
-        if (userId != clientState.user.value?.id) {
+        if (userId != globalMutableState.user.value?.id) {
             typingEventPruner.processEvent(userId, typingStartEvent = event)
         }
     }

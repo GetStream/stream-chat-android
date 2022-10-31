@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.offline.extensions.globalState
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -42,7 +43,7 @@ public class MediaGalleryPreviewViewModel(
     /**
      * The currently logged in user.
      */
-    public val user: StateFlow<User?> = chatClient.clientState.user
+    public val user: StateFlow<User?> = chatClient.globalState.user
 
     /**
      * Indicates if we have fetched the complete message from the backend.

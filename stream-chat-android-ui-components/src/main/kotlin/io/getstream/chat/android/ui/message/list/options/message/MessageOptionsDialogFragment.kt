@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -119,7 +120,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         MessageListItem.MessageItem(
             message,
             positions = listOf(MessageListItem.Position.BOTTOM),
-            isMine = message.user.id == ChatClient.instance().clientState.user.value?.id
+            isMine = message.user.id == ChatClient.instance().globalState.user.value?.id
         )
     }
 
@@ -263,7 +264,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         with(binding.userReactionsView) {
             isVisible = true
             configure(style)
-            ChatClient.instance().clientState.user.value?.let { user -> setMessage(message, user) }
+            ChatClient.instance().globalState.user.value?.let { user -> setMessage(message, user) }
 
             setOnUserReactionClickListener { user, reaction ->
                 userReactionClickListener?.let {

@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEve
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -40,6 +41,7 @@ import kotlinx.coroutines.flow.StateFlow
 public open class DefaultChatEventHandler(
     protected val channels: StateFlow<Map<String, Channel>?>,
     protected val clientState: ClientState,
+    private val globalState: GlobalState
 ) : BaseChatEventHandler() {
 
     /**
@@ -112,7 +114,7 @@ public open class DefaultChatEventHandler(
      * @return [EventHandlingResult] Result of handling.
      */
     private fun removeIfCurrentUserLeftChannel(cid: String, member: Member): EventHandlingResult {
-        return if (member.getUserId() != clientState.user.value?.id) {
+        return if (member.getUserId() != globalState.user.value?.id) {
             EventHandlingResult.Skip
         } else {
             removeIfChannelExists(cid)
@@ -147,7 +149,7 @@ public open class DefaultChatEventHandler(
      * @return [EventHandlingResult] Result of handling.
      */
     protected fun addIfCurrentUserJoinedChannel(channel: Channel?, member: Member): EventHandlingResult {
-        return if (clientState.user.value?.id == member.getUserId()) {
+        return if (globalState.user.value?.id == member.getUserId()) {
             addIfChannelIsAbsent(channel)
         } else {
             EventHandlingResult.Skip

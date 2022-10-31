@@ -317,7 +317,7 @@ internal constructor(
 
                 clientState.toMutableState()?.run {
                     setConnectionState(ConnectionState.CONNECTED)
-                    setUser(user)
+                    // setUser(user) Todo: fix this!
                 }
             }
             is NewMessageEvent -> {
@@ -408,7 +408,8 @@ internal constructor(
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
-                clientState.toMutableState()?.setUser(user)
+                // clientState.toMutableState()?.setUser(user) Todo: fix this!
+
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {
                     socketExperimental.connectUser(user, isAnonymous)
@@ -1164,7 +1165,7 @@ internal constructor(
     }
 
     private suspend fun disconnectUserSuspend(flushPersistence: Boolean) {
-        val userId = clientState.user.value?.id
+        val userId = getCurrentUser()?.id
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
         notifications.onLogout(flushPersistence)
@@ -1654,7 +1655,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        val userId = clientState.user.value?.id
+        val userId = getCurrentUser()?.id
         val scopedUserId = userScope.userId.value
         val isConnectionRequired = request.watch || request.presence
         logger.d {

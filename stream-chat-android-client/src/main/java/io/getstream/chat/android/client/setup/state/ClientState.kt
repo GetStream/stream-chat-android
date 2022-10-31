@@ -28,11 +28,6 @@ import kotlinx.coroutines.flow.StateFlow
 public interface ClientState {
 
     /**
-     * The current user in the OfflinePlugin state.
-     */
-    public val user: StateFlow<User?>
-
-    /**
      * The state of the initialization process of the SDK.
      */
     public val initializationState: StateFlow<InitializationState>

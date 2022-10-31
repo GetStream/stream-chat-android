@@ -21,6 +21,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -29,7 +31,10 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param clientState The client used to obtain current user.
  */
-public open class ChatEventHandlerFactory(private val clientState: ClientState = ChatClient.instance().clientState) {
+public open class ChatEventHandlerFactory(
+    private val clientState: ClientState = ChatClient.instance().clientState,
+    private val globalState: GlobalState = ChatClient.instance().globalState,
+) {
 
     /**
      * Creates a [ChatEventHandler] instance.
@@ -37,6 +42,6 @@ public open class ChatEventHandlerFactory(private val clientState: ClientState =
      * @param channels The visible channels map.
      */
     public open fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>): ChatEventHandler {
-        return DefaultChatEventHandler(channels = channels, clientState = clientState)
+        return DefaultChatEventHandler(channels = channels, clientState = clientState, globalState = globalState)
     }
 }

@@ -150,7 +150,7 @@ private fun <T> ChatClient.getStateOrNull(
     coroutineScope: CoroutineScope,
     producer: () -> T,
 ): StateFlow<T?> {
-    return clientState.user.map { it?.id }.distinctUntilChanged().map { userId ->
+    return globalState.user.map { it?.id }.distinctUntilChanged().map { userId ->
         if (userId == null) {
             null
         } else {

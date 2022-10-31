@@ -57,6 +57,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryLis
 import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.offline.sync.internal.SyncManager
 import kotlin.reflect.KClass
@@ -83,6 +84,7 @@ public class StatePlugin internal constructor(
     private val stateRegistry: StateRegistry,
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
+    private val globalState: GlobalState
 ) : StateAwarePlugin,
     DependencyResolver,
     QueryChannelsListener by QueryChannelsListenerState(logic),
@@ -94,7 +96,7 @@ public class StatePlugin internal constructor(
     MarkAllReadListener by MarkAllReadListenerState(logic, stateRegistry),
     DeleteReactionListener by DeleteReactionListenerState(logic, clientState),
     SendReactionListener by SendReactionListenerState(logic, clientState),
-    DeleteMessageListener by DeleteMessageListenerState(logic, clientState),
+    DeleteMessageListener by DeleteMessageListenerState(logic, clientState, globalState),
     SendGiphyListener by SendGiphyListenerState(logic),
     ShuffleGiphyListener by ShuffleGiphyListenerState(logic),
     SendMessageListener by SendMessageListenerState(logic),

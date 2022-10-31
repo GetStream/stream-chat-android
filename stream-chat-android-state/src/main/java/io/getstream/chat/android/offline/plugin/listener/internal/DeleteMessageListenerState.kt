@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import java.util.Date
 
 /**
@@ -35,6 +36,7 @@ import java.util.Date
 internal class DeleteMessageListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
+    private val globalState: GlobalState
 ) : DeleteMessageListener {
 
     /**
@@ -46,7 +48,7 @@ internal class DeleteMessageListenerState(
         val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
         return channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == clientState.user.value?.id &&
+            val isModerationFailed = message.user.id == globalState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
@@ -72,7 +74,7 @@ internal class DeleteMessageListenerState(
         val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
         channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == clientState.user.value?.id &&
+            val isModerationFailed = message.user.id == globalState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 

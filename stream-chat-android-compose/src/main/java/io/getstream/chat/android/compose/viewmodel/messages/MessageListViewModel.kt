@@ -73,6 +73,7 @@ import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorStat
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadNewestMessages
@@ -221,7 +222,7 @@ public class MessageListViewModel(
      * Gives us information about the logged in user state.
      */
     public val user: StateFlow<User?>
-        get() = chatClient.clientState.user
+        get() = chatClient.globalState.user
 
     /**
      * [Job] that's used to keep the thread data loading operations. We cancel it when the user goes
