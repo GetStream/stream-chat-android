@@ -46,7 +46,7 @@ public class GettingStarted {
         // An enumeration of various network types used as a constraint inside upload attachments worker.
         UploadAttachmentsNetworkType uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING;
 
-        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(new Config(backgroundSyncEnabled, userPresence, persistenceEnabled, uploadAttachmentsNetworkType), context);
+        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(new Config(backgroundSyncEnabled, userPresence, persistenceEnabled), context);
         new ChatClient.Builder("apiKey", context).withPlugins(offlinePluginFactory).build();
     }
 
