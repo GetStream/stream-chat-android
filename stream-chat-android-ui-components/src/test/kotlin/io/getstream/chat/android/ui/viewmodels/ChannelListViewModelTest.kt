@@ -307,7 +307,7 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 sort = initialSort,
                 filter = initialFilters,
-                chatEventHandlerFactory = ChatEventHandlerFactory(clientState = clientState)
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState = clientState, globalState = globalState)
             )
         }
     }

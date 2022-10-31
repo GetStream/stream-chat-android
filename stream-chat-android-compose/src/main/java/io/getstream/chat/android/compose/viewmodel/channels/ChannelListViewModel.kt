@@ -74,7 +74,8 @@ public class ChannelListViewModel(
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+    private val chatEventHandlerFactory: ChatEventHandlerFactory =
+        ChatEventHandlerFactory(chatClient.clientState, chatClient.globalState),
 ) : ViewModel() {
 
     /**
