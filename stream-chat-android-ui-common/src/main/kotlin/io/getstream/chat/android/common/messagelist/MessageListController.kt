@@ -671,7 +671,7 @@ public class MessageListController(
                 DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
                     !(it.isDeleted() && it.user.id != currentUser?.id)
                 }
-                DeletedMessageVisibility.ALWAYS_HIDDEN -> false
+                DeletedMessageVisibility.ALWAYS_HIDDEN -> !it.isDeleted()
             }
             val isSystemMessage = it.isSystem() || it.isError()
 
