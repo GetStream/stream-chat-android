@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.test.randomCID
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -37,15 +36,14 @@ import org.mockito.kotlin.whenever
 
 internal class DeleteMessageListenerDatabaseTest {
 
-    private val clientState: ClientState = mock {
-        on(it.user) doReturn MutableStateFlow(randomUser())
-    }
+    private val clientState: ClientState = mock()
 
+    private val currentUser = randomUser()
     private val messageRepository: MessageRepository = mock()
     private val userRepository: UserRepository = mock()
 
     private val deleteMessageListenerState: DeleteMessageListenerDatabase =
-        DeleteMessageListenerDatabase(clientState, messageRepository, userRepository)
+        DeleteMessageListenerDatabase(clientState, currentUser, messageRepository, userRepository)
 
     @Test
     fun `when internet is available, the message should be updated as in progress before the request`() = runTest {

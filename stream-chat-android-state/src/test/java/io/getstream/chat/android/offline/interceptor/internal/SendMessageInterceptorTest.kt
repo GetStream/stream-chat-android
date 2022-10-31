@@ -28,7 +28,6 @@ import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.Th
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
@@ -43,9 +42,7 @@ import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SendMessageInterceptorTest {
-    private val clientState: ClientState = mock {
-        on(it.user) doReturn MutableStateFlow(randomUser())
-    }
+    private val clientState: ClientState = mock()
 
     private val channelLogic: ChannelLogic = mock {
         on(it.toChannel()) doReturn randomChannel()

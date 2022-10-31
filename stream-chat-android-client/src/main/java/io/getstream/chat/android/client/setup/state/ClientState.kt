@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.setup.state
 
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.InitializationState
-import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.flow.StateFlow
 
 /**

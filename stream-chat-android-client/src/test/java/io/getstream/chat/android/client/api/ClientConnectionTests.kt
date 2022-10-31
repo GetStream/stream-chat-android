@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
@@ -129,8 +128,6 @@ internal class ClientConnectionTests {
             socketListener = invocationOnMock.getArgument(0)
             socketListener.onEvent(disconnectedEvent)
         }
-
-        whenever(clientState.user) doReturn MutableStateFlow(user)
 
         client = ChatClient(
             config,
