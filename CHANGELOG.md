@@ -109,6 +109,9 @@
 - Added the attribute `streamUiAttachmentsPickerVideoIconDrawableTint` to the `AttachmentsPickerDialog` styleable. You can use this attribute to change to tint of the video drawable displayed in the attachment picker video previews. [#4299](https://github.com/GetStream/stream-chat-android/pull/4299)
 - Added the attribute `streamUiAttachmentVideoLogoIconTint` to the `MessageInputView` styleable. You can use this attribute to change to tint of the video drawable displayed in the attachment picker video previews. [#4299](https://github.com/GetStream/stream-chat-android/pull/4299)
 - Added the property `videoIconDrawableTint` to `AttachmentSelectionDialogStyle`. You can use this property to change to tint of the video drawable displayed in the attachment picker video previews. [#4299](https://github.com/GetStream/stream-chat-android/pull/4299)
+- Added a guide that demonstrates how use events to close the chat screen when the current user has been removed from the channel. [#4078](https://github.com/GetStream/stream-chat-android/issues/4078)
+- Added loading more indicator to `MessageListView`. [#4309](https://github.com/GetStream/stream-chat-android/pull/4309)
+- Added the `streamUiMessageListLoadingMoreView` attribute to customize the layout of loading more indicator in `MessageListView`. [#4309](https://github.com/GetStream/stream-chat-android/pull/4309)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
@@ -207,6 +210,11 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# October 31th, 2022 - 5.11.3
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed `OutOfMemoryException` in `HttpLoggingInterceptor` when sending big attachments. [#4314](https://github.com/GetStream/stream-chat-android/pull/4314)
 
 # October 17th, 2022 - 5.11.2
 ## stream-chat-android-ui-components

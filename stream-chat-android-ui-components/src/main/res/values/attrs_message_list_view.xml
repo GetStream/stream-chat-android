@@ -450,6 +450,7 @@
             <flag name="italic" value="2" />
         </attr>
         <attr name="streamUiMessageListLoadingView" format="reference" />
+        <attr name="streamUiMessageListLoadingMoreView" format="reference" />
         <attr name="streamUiEmptyStateTextSize" format="dimension|reference" />
         <attr name="streamUiEmptyStateTextColor" format="color|reference" />
         <attr name="streamUiEmptyStateTextFont" format="reference" />
