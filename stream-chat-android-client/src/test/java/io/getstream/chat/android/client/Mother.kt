@@ -112,7 +112,6 @@ internal object Mother {
 
     fun mockedClientState(): ClientState {
         return object : ClientState {
-            override val user: StateFlow<User?> = MutableStateFlow(randomUser())
 
             override val initializationState: StateFlow<InitializationState> =
                 MutableStateFlow(InitializationState.COMPLETE)
