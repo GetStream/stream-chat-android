@@ -23,16 +23,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.isMine
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
-import io.getstream.chat.android.uiutils.extension.isFile
+import io.getstream.chat.android.uiutils.extension.isAnyFileType
 
 /**
  * Default text element for quoted messages, with extra styling and padding for the chat bubble.
@@ -64,13 +65,13 @@ public fun QuotedMessageText(
 
             attachment.text != null -> attachment.text
 
-            attachment.type == ModelType.attach_image -> {
+            attachment.isImage() -> {
                 stringResource(R.string.stream_compose_quoted_message_image_tag)
             }
-            attachment.type == ModelType.attach_giphy -> {
+            attachment.isGiphy() -> {
                 stringResource(R.string.stream_compose_quoted_message_giphy_tag)
             }
-            attachment.isFile() -> {
+            attachment.isAnyFileType() -> {
                 stringResource(R.string.stream_compose_quoted_message_file_tag)
             }
             else -> message.text

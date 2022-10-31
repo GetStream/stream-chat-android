@@ -1,0 +1,103 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Listening for Events
+
+As soon as you call `watchChannel` on a Channel or `queryChannels`, the SDK will start receiving events to stay up to date with changes. You can hook into specific events:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val chatClient = ChatClient.instance()
+val channelClient = client.channel("messaging", "general")
+
+// Subscribe for new message events
+val disposable: Disposable = channelClient.subscribeFor<NewMessageEvent> { newMessageEvent ->
+    val message = newMessageEvent.message
+}
+
+// Dispose when you want to stop receiving events
+disposable.dispose()
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatClient chatClient = ChatClient.instance();
+ChannelClient channelClient = chatClient.channel("messaging", "general");
+
+// Subscribe for new message events
+Disposable disposable = channelClient.subscribeFor(
+        new Class[]{NewMessageEvent.class},
+        (ChatEvent event) -> {
+            Message message = ((NewMessageEvent) event).getMessage();
+        }
+);
+
+// Dispose when you want to stop receiving events
+disposable.dispose();
+```
+</TabItem>
+</Tabs>
+
+As an example, let's see how you can close the chat screen when the currently logged-in user is removed from the channel. You need to subscribe for `NotificationRemovedFromChannelEvent` events which are triggered when a user is removed from the list of channel members. If the removed user matches the currently logged-in user, you should dismiss the screen.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+class ChatFragment : Fragment() {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Setup chat screen components
+
+        val chatClient = ChatClient.instance()
+        val channelClient = chatClient.channel("messaging", "general")
+        channelClient.subscribeFor<NotificationRemovedFromChannelEvent>(viewLifecycleOwner) { event ->
+            val removedUserId = event.member.user.id
+            val currentUserId = chatClient.getCurrentUser()?.id
+            if (removedUserId == currentUserId) {
+                // Close the current chat screen as the current user has been removed
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class ChatFragment extends Fragment {
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Setup chat screen components
+
+        ChatClient chatClient = ChatClient.instance();
+        ChannelClient channelClient = chatClient.channel("messaging", "general");
+        channelClient.subscribeFor(
+                new Class[]{NotificationRemovedFromChannelEvent.class},
+                (ChatEvent event) -> {
+                    Member member = ((NotificationRemovedFromChannelEvent) event).getMember();
+
+                    String removedUserId = member.getUser().getId();
+                    String currentUserId = chatClient.getCurrentUser().getId();
+                    if (removedUserId.equals(currentUserId)) {
+                        // Close the current chat screen as the current user has been removed
+                        requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                    }
+                }
+        );
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+In the example above you navigate away from the Fragment by calling `OnBackPressedDispatcher::onBackPressed` when the event is received. Notice that you don't need to dispose the subscription manually as you pass `viewLifecycleOwner` as a parameter and the subscription will be automatically canceled when the Fragment's view is destroyed.

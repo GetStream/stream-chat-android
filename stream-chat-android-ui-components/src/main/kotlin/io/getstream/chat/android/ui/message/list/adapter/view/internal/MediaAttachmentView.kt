@@ -22,13 +22,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -130,8 +131,8 @@ internal class MediaAttachmentView : ConstraintLayout {
      */
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url =
-            if (attachment.type == ModelType.attach_image ||
-                (attachment.type == ModelType.attach_video && ChatUI.videoThumbnailsEnabled)
+            if (attachment.isImage() ||
+                (attachment.isVideo() && ChatUI.videoThumbnailsEnabled)
             ) {
                 attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: attachment.upload ?: return
             } else {
@@ -145,10 +146,10 @@ internal class MediaAttachmentView : ConstraintLayout {
 
         showMediaPreview(
             mediaUrl = url,
-            showImagePlaceholder = attachment.type == ModelType.attach_image
+            showImagePlaceholder = attachment.isImage()
         ) {
             showMore()
-            binding.playIconImageView.isVisible = attachment.type == ModelType.attach_video
+            binding.playIconImageView.isVisible = attachment.isVideo()
         }
 
         setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }

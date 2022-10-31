@@ -58,6 +58,10 @@ module.exports = {
                         }
                     ]
                 },
+                {
+                    type: 'doc',
+                    id: 'client/guides/listening-for-events',
+                },
             ]
             // items: [
             //     {

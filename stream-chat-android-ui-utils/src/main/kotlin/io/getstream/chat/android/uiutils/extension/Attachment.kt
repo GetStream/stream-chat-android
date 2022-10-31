@@ -18,17 +18,19 @@ package io.getstream.chat.android.uiutils.extension
 
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.uiutils.constant.AttachmentType
+import io.getstream.chat.android.client.utils.attachment.isAudio
+import io.getstream.chat.android.client.utils.attachment.isFile
+import io.getstream.chat.android.client.utils.attachment.isVideo
 
 /**
  * @return If the [Attachment] is a file or not.
  */
-public fun Attachment.isFile(): Boolean {
+public fun Attachment.isAnyFileType(): Boolean {
     return uploadId != null ||
         upload != null ||
-        type == AttachmentType.FILE ||
-        type == AttachmentType.VIDEO ||
-        type == AttachmentType.AUDIO
+        isFile() ||
+        isVideo() ||
+        isAudio()
 }
 
 /**

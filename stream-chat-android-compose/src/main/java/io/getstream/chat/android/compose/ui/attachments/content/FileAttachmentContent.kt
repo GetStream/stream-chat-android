@@ -46,13 +46,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler.Companion.PayloadAttachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
-import io.getstream.chat.android.uiutils.constant.AttachmentType
 
 /**
  * Builds a file attachment message which shows a list of files.
@@ -198,8 +199,8 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
  */
 @Composable
 public fun FileAttachmentImage(attachment: Attachment) {
-    val isImage = attachment.type == AttachmentType.IMAGE
-    val isVideoWithThumbnails = attachment.type == AttachmentType.VIDEO && ChatTheme.videoThumbnailsEnabled
+    val isImage = attachment.isImage()
+    val isVideoWithThumbnails = attachment.isVideo() && ChatTheme.videoThumbnailsEnabled
 
     val painter = when {
         isImage -> {

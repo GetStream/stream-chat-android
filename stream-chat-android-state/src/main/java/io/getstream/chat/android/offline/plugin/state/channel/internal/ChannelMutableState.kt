@@ -183,7 +183,7 @@ internal class ChannelMutableState(
             SharingStarted.Eagerly,
             ChannelData(
                 type = channelType,
-                channelId = channelId,
+                id = channelId,
             )
         )
 
@@ -493,6 +493,8 @@ internal class ChannelMutableState(
     fun updateCachedLatestMessages(messages: Map<String, Message>) {
         cachedLatestMessages.value = messages
     }
+
+    override fun getMessageById(id: String): Message? = _messages.value[id]
 
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L

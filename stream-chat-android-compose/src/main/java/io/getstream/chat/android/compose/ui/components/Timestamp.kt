@@ -21,8 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.utils.formatDate
-import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.state.DateFormatType.DATE
 import io.getstream.chat.android.compose.state.DateFormatType.TIME

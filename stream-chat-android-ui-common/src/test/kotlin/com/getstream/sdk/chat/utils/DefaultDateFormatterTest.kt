@@ -21,22 +21,23 @@ import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.threeten.bp.DateTimeUtils
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalTime
+import org.threeten.bp.ZoneId
+import java.util.Date
 
 @RunWith(TestParameterInjector::class)
 internal class DefaultDateFormatterTest {
 
-    companion object {
-        const val YESTERDAY_STRING = "YESTERDAY_STRING"
-    }
-
     class TestDateContext(
-        private val now: LocalDate,
+        private val now: Date,
         private val is24Hour: Boolean = false,
         private val dateTimePattern: String = "yyyy-MM-dd",
     ) : DefaultDateFormatter.DateContext {
-        override fun now(): LocalDate = now
+        override fun now(): Date = now
         override fun yesterdayString() = YESTERDAY_STRING
         override fun is24Hour(): Boolean = is24Hour
         override fun dateTimePattern(): String = dateTimePattern
@@ -45,10 +46,10 @@ internal class DefaultDateFormatterTest {
     @Test
     fun `Date formatting is correct`(@TestParameter testCase: TestCase) {
         val formatter: DateFormatter = DefaultDateFormatter(
-            TestDateContext(testCase.now, testCase.is24Hour, testCase.dateTimePattern)
+            TestDateContext(testCase.now.toDate(), testCase.is24Hour, testCase.dateTimePattern)
         )
 
-        val formattedDate = formatter.formatDate(testCase.dateToFormat)
+        val formattedDate = formatter.formatDate(testCase.dateToFormat?.toDate())
 
         formattedDate shouldBeEqualTo testCase.expectedResult
     }
@@ -99,5 +100,23 @@ internal class DefaultDateFormatterTest {
             dateTimePattern = "dd/MM/yy",
             expectedResult = "30/11/20",
         ),
+    }
+
+    companion object {
+        const val YESTERDAY_STRING = "YESTERDAY_STRING"
+
+        private fun LocalDateTime.toDate(): Date {
+            val instant = atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+            return Date(instant)
+        }
+
+        private fun LocalDate.toDate(): Date {
+            val instant: Instant = atTime(LocalTime.of(0, 0))
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+            return DateTimeUtils.toDate(instant)
+        }
     }
 }

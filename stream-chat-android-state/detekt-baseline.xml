@@ -64,6 +64,5 @@
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
-    <ID>UnusedPrivateMember:UploadAttachmentsIntegrationTests.kt$UploadAttachmentsIntegrationTests$private val currentUser = randomUser()</ID>
   </CurrentIssues>
 </SmellBaseline>

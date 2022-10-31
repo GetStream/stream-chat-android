@@ -30,12 +30,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.utils.extensions.showToast
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.DeleteConversation
+import io.getstream.chat.android.common.state.LeaveGroup
+import io.getstream.chat.android.common.state.ViewInfo
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.actions.internal.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelListItemPredicate
+import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelListUpdateListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelLongClickListener
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ErrorEventHandler
 import io.getstream.chat.android.ui.channel.list.ChannelListView.UserClickListener
@@ -413,31 +416,23 @@ public class ChannelListView : FrameLayout {
                 ChannelActionsDialogFragment
                     .newInstance(channel, actionDialogStyle)
                     .apply {
-                        setChannelActionListener(
-                            object : ChannelActionsDialogFragment.ChannelActionListener {
-                                override fun onDeleteConversationClicked(cid: String) {
-                                    simpleChannelListView.listenerContainer.deleteClickListener.onClick(
-                                        simpleChannelListView.getChannel(cid)
-                                    )
+                        setChannelOptionClickListener { channelAction ->
+                            when (channelAction) {
+                                is ViewInfo -> channelInfoListener.onClick(channelAction.channel)
+                                is LeaveGroup -> channelLeaveListener.onClick(channelAction.channel)
+                                is DeleteConversation -> {
+                                    simpleChannelListView.listenerContainer
+                                        .deleteClickListener
+                                        .onClick(channelAction.channel)
                                 }
-
-                                override fun onLeaveChannelClicked(cid: String) {
-                                    channelLeaveListener.onClick(
-                                        simpleChannelListView.getChannel(cid)
-                                    )
-                                }
-
-                                override fun onMemberSelected(member: Member) {
-                                    simpleChannelListView.listenerContainer.userClickListener.onClick(member.user)
-                                }
-
-                                override fun onChannelInfoSelected(cid: String) {
-                                    channelInfoListener.onClick(
-                                        simpleChannelListView.getChannel(cid)
-                                    )
-                                }
+                                else -> Unit
                             }
-                        )
+                        }
+                        setChannelMemberClickListener { member ->
+                            simpleChannelListView.listenerContainer
+                                .userClickListener
+                                .onClick(member.user)
+                        }
                     }
                     .show(fragmentManager, null)
             }

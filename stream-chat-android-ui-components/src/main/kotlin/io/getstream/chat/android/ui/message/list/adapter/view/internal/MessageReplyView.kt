@@ -24,12 +24,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.isMine
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.attachment.isLink
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -171,7 +171,7 @@ internal class MessageReplyView : FrameLayout {
     }
 
     private fun isLink(message: Message) = message.attachments.run {
-        size == 1 && last().type == ModelType.attach_link
+        size == 1 && last().isLink()
     }
 
     private fun setAttachmentImage(message: Message) {
@@ -192,8 +192,7 @@ internal class MessageReplyView : FrameLayout {
                 message.text
             }
         } else {
-            val type = attachment.type
-            if (type == ModelType.attach_link) {
+            if (attachment.isLink()) {
                 attachment.titleLink ?: attachment.ogUrl
             } else {
                 attachment.title ?: attachment.name

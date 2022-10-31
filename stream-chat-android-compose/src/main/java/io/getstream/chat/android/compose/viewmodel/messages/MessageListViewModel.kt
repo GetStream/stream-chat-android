@@ -33,6 +33,9 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isError
+import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -67,8 +70,6 @@ import io.getstream.chat.android.compose.state.messages.list.SendGiphy
 import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
 import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
-import io.getstream.chat.android.compose.ui.util.isError
-import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
@@ -400,7 +401,7 @@ public class MessageListViewModel(
             val shouldShowIfDeleted = when (deletedMessageVisibility) {
                 DeletedMessageVisibility.ALWAYS_VISIBLE -> true
                 DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-                    !(it.deletedAt != null && it.user.id != currentUser?.id)
+                    !(it.isDeleted() && it.user.id != currentUser?.id)
                 }
                 else -> it.deletedAt == null
             }

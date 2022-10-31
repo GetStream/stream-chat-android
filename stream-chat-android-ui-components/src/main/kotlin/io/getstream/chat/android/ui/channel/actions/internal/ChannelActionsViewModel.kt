@@ -17,44 +17,34 @@
 package io.getstream.chat.android.ui.channel.actions.internal
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 
 /**
  * Used by [ChannelActionsDialogFragment] to provide the correct state
  * containing information about the channel.
  *
  * @param cid The full channel id, i.e. "messaging:123".
- * @param isGroup True if the Channel is a group channel, false otherwise.
  * @param chatClient The main entry point for all low-level chat operations.
  */
 internal class ChannelActionsViewModel(
     cid: String,
-    private val isGroup: Boolean,
     chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
     /**
      * Holds information about the current channel and is actively updated.
      */
-    val channelState: Flow<ChannelState> =
+    private val channelState: Flow<ChannelState> =
         chatClient.watchChannelAsState(
             cid = cid,
             messageLimit = DEFAULT_MESSAGE_LIMIT,
@@ -62,110 +52,22 @@ internal class ChannelActionsViewModel(
         ).filterNotNull()
 
     /**
-     * Holds information about the abilities the current user
-     * is able to exercise in the given channel.
+     * The current [Channel] created from [ChannelState]. It emits new data either when
+     * channel data or the list of members in [ChannelState] updates.
      *
-     * e.g. send messages, delete messages, etc...
-     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     * Combining the two is important because members changing online status does not result in
+     * channel events being received.
      */
-    private val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
-        .map { it.ownCapabilities }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = setOf()
-        )
-
-    /**
-     * The initial empty state.
-     */
-    private val initialState = State()
-
-    /**
-     * The current state containing channel information.
-     */
-    private var currentState = initialState
-
-    /**
-     * The state containing channel information wrapped in MutableLiveData.
-     */
-    private val _state = MediatorLiveData<State>()
-
-    /**
-     * The state containing channel information wrapped in LiveData.
-     */
-    val state: LiveData<State> = Transformations.distinctUntilChanged(_state)
-
-    init {
-        _state.postValue(currentState)
-
-        channelState.flatMapLatest { it.members }.onEach { members ->
-            onAction(Action.UpdateMembers(members))
-        }.launchIn(viewModelScope)
-    }
-
-    /**
-     * Processes actions and updates the state accordingly.
-     *
-     * @param action The action to process. Results in a state update as a side-effect.
-     */
-    fun onAction(action: Action) {
-        currentState = reduce(action)
-        _state.postValue(currentState)
-    }
-
-    /**
-     * Checks against available actions and produces state accordingly.
-     *
-     * @param action The action to process.
-     *
-     * @return Returns the updated [State].
-     */
-    private fun reduce(action: Action): State {
-        return when (action) {
-            is Action.UpdateMembers -> updateMembers(action.members)
-        }
-    }
-
-    /**
-     * Returns the updated state containing all current members.
-     * Filters out the current user if the channel is not a group
-     * channel.
-     *
-     * @param members List of all members belonging to the channel.
-     *
-     * @return Returns the updated [State].
-     */
-    private fun updateMembers(members: List<Member>): State {
-        val canDeleteChannel = ownCapabilities.value.contains(ChannelCapabilities.DELETE_CHANNEL)
-        val canLeaveChannel = ownCapabilities.value.contains(ChannelCapabilities.LEAVE_CHANNEL)
-
-        return currentState.copy(
-            members = members.filter { isGroup || !it.user.isCurrentUser() },
-            canDeleteChannel = canDeleteChannel,
-            canLeaveChannel = canLeaveChannel
-        )
-    }
-
-    /**
-     * Holds information about the channel.
-     *
-     * @param members List of members belonging to the channel.
-     * @param canDeleteChannel If the current user has the ability to delete the channel.
-     */
-    data class State(
-        val members: List<Member> = listOf(),
-        val canDeleteChannel: Boolean = false,
-        val canLeaveChannel: Boolean = false
-    )
-
-    /**
-     * Describes actions that are meant to be taken and result in a state
-     * update.
-     */
-    sealed class Action {
-        data class UpdateMembers(val members: List<Member>) : Action()
-    }
+    val channel: LiveData<Channel> =
+        channelState.flatMapLatest { state ->
+            combine(
+                state.channelData,
+                state.members,
+                state.watcherCount
+            ) { _, _, _ ->
+                state.toChannel()
+            }
+        }.asLiveData()
 
     private companion object {
 

@@ -115,7 +115,7 @@ public fun AttachmentsPicker(
                     color = ChatTheme.colors.barsBackground,
                 ) {
                     tabFactories.getOrNull(selectedTabIndex)
-                        ?.pickerTabContent(
+                        ?.PickerTabContent(
                             attachments = attachmentsPickerViewModel.attachments,
                             onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                             onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
@@ -160,7 +160,7 @@ private fun AttachmentPickerOptions(
                 IconButton(
                     enabled = isEnabled,
                     content = {
-                        tabFactory.pickerTabIcon(
+                        tabFactory.PickerTabIcon(
                             isEnabled = isEnabled,
                             isSelected = isSelected
                         )

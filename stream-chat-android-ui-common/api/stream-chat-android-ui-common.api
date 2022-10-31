@@ -87,25 +87,15 @@ public final class com/getstream/sdk/chat/model/AttachmentMetaData {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/getstream/sdk/chat/startup/ThreeTenInitializer : androidx/startup/Initializer {
-	public fun <init> ()V
-	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
-	public fun create (Landroid/content/Context;)V
-	public fun dependencies ()Ljava/util/List;
-}
-
 public abstract interface class com/getstream/sdk/chat/utils/DateFormatter {
 	public static final field Companion Lcom/getstream/sdk/chat/utils/DateFormatter$Companion;
-	public abstract fun formatDate (Lorg/threeten/bp/LocalDateTime;)Ljava/lang/String;
-	public abstract fun formatTime (Lorg/threeten/bp/LocalTime;)Ljava/lang/String;
+	public abstract fun formatDate (Ljava/util/Date;)Ljava/lang/String;
+	public abstract fun formatTime (Ljava/util/Date;)Ljava/lang/String;
 	public static fun from (Landroid/content/Context;)Lcom/getstream/sdk/chat/utils/DateFormatter;
 }
 
 public final class com/getstream/sdk/chat/utils/DateFormatter$Companion {
 	public final fun from (Landroid/content/Context;)Lcom/getstream/sdk/chat/utils/DateFormatter;
-}
-
-public final class com/getstream/sdk/chat/utils/DateFormatterKt {
 }
 
 public final class com/getstream/sdk/chat/utils/MediaStringUtil {
@@ -258,6 +248,15 @@ public final class io/getstream/chat/android/common/notifications/permissions/Sn
 	public fun onPermissionRequested ()V
 }
 
+public final class io/getstream/chat/android/common/state/Cancel : io/getstream/chat/android/common/state/ChannelAction {
+	public static final field INSTANCE Lio/getstream/chat/android/common/state/Cancel;
+}
+
+public abstract class io/getstream/chat/android/common/state/ChannelAction {
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Channel;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+}
+
 public final class io/getstream/chat/android/common/state/Copy : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
@@ -270,6 +269,10 @@ public final class io/getstream/chat/android/common/state/CustomAction : io/gets
 
 public final class io/getstream/chat/android/common/state/Delete : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/DeleteConversation : io/getstream/chat/android/common/state/ChannelAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
 public final class io/getstream/chat/android/common/state/DeletedMessageVisibility : java/lang/Enum {
@@ -286,6 +289,10 @@ public final class io/getstream/chat/android/common/state/Edit : io/getstream/ch
 
 public final class io/getstream/chat/android/common/state/Flag : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/LeaveGroup : io/getstream/chat/android/common/state/ChannelAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
 public abstract class io/getstream/chat/android/common/state/MessageAction {
@@ -335,6 +342,10 @@ public final class io/getstream/chat/android/common/state/MessageMode$Normal : i
 	public static final field INSTANCE Lio/getstream/chat/android/common/state/MessageMode$Normal;
 }
 
+public final class io/getstream/chat/android/common/state/MuteChannel : io/getstream/chat/android/common/state/ChannelAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+}
+
 public final class io/getstream/chat/android/common/state/Pin : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
@@ -354,6 +365,10 @@ public final class io/getstream/chat/android/common/state/Resend : io/getstream/
 
 public final class io/getstream/chat/android/common/state/ThreadReply : io/getstream/chat/android/common/state/MessageAction {
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+}
+
+public final class io/getstream/chat/android/common/state/UnmuteChannel : io/getstream/chat/android/common/state/ChannelAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
 public abstract class io/getstream/chat/android/common/state/ValidationError {
@@ -400,6 +415,10 @@ public final class io/getstream/chat/android/common/state/ValidationError$Messag
 	public final fun getMessageLength ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/common/state/ViewInfo : io/getstream/chat/android/common/state/ChannelAction {
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
 }
 
 public final class io/getstream/chat/android/ui/common/BuildConfig {

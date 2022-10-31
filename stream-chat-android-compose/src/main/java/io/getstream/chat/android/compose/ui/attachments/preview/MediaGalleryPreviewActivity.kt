@@ -131,10 +131,14 @@ import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
 import io.getstream.chat.android.compose.handlers.PermissionHandler
@@ -162,7 +166,6 @@ import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.uiutils.constant.AttachmentType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -230,7 +233,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                 val message = mediaGalleryPreviewViewModel.message
 
-                if (message.deletedAt != null) {
+                if (message.isDeleted()) {
                     finish()
                     return@ChatTheme
                 }
@@ -656,9 +659,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             state = pagerState,
             count = attachments.size,
         ) { page ->
-            if (attachments[page].type == AttachmentType.IMAGE) {
+            if (attachments[page].isImage()) {
                 ImagePreviewContent(attachment = attachments[page], pagerState = pagerState, page = page)
-            } else if (attachments[page].type == AttachmentType.VIDEO) {
+            } else if (attachments[page].isVideo()) {
                 VideoPreviewContent(
                     attachment = attachments[page],
                     pagerState = pagerState,
@@ -736,7 +739,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             ) {
                 MediaPreviewPlaceHolder(
                     asyncImagePainterState = painter.state,
-                    isImage = attachment.type == AttachmentType.IMAGE,
+                    isImage = attachment.isImage(),
                     progressIndicatorStrokeWidth = 6.dp,
                     progressIndicatorFillMaxSizePercentage = 0.2f
                 )
@@ -1425,8 +1428,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         user: User,
         pagerState: PagerState,
     ) {
-        val isImage = attachment.type == AttachmentType.IMAGE
-        val isVideo = attachment.type == AttachmentType.VIDEO
+        val isImage = attachment.isImage()
+        val isVideo = attachment.isVideo()
 
         // Used as a workaround for Coil's lack of a retry policy.
         // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
