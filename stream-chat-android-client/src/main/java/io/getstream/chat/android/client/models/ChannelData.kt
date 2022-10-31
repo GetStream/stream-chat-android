@@ -104,6 +104,7 @@ public data class ChannelData(
      *
      * @return A [Channel] object.
      */
+    @Suppress("LongParameterList")
     public fun toChannel(
         messages: List<Message>,
         cachedLatestMessages: List<Message>,
