@@ -207,7 +207,7 @@ internal class MessageListViewModelTest {
                     message = messageWithOwnReaction,
                     reactionType = reaction1.type,
                 )
-            )gi
+            )
 
             verify(chatClient).deleteReaction(
                 messageId = messageWithOwnReaction.id,
