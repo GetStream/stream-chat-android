@@ -41,15 +41,13 @@ internal class ChatEventsObservableTest {
     @get:Rule
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()
 
-    private lateinit var socket: FakeSocket
     private lateinit var observable: ChatEventsObservable
     private lateinit var result: MutableList<ChatEvent>
     private val streamDateFormatter = StreamDateFormatter()
 
     @Before
     fun before() {
-        socket = FakeSocket()
-        observable = ChatEventsObservable(socket, mock(), testCoroutines.scope, mock())
+        observable = ChatEventsObservable(mock(), testCoroutines.scope, mock())
         result = mutableListOf()
     }
 
@@ -61,7 +59,7 @@ internal class ChatEventsObservableTest {
         val event = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, User(), "")
         observable.subscribe { result.add(it) }
 
-        socket.sendEvent(event)
+        // socket.sendEvent(event)
 
         result shouldBeEqualTo listOf(event)
     }
@@ -88,9 +86,9 @@ internal class ChatEventsObservableTest {
         val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
         observable.subscribe { result.add(it) }
 
-        socket.sendEvent(eventA)
-        socket.sendEvent(eventB)
-        socket.sendEvent(eventC)
+        // socket.sendEvent(eventA)
+        // socket.sendEvent(eventB)
+        // socket.sendEvent(eventC)
 
         result shouldBeEqualTo listOf(eventA, eventB, eventC)
     }
@@ -111,9 +109,9 @@ internal class ChatEventsObservableTest {
             result.add(it)
         }
 
-        socket.sendEvent(eventA)
-        socket.sendEvent(eventB)
-        socket.sendEvent(eventC)
+        // socket.sendEvent(eventA)
+        // socket.sendEvent(eventB)
+        // socket.sendEvent(eventC)
 
         result shouldBeEqualTo listOf(eventB)
     }
@@ -129,12 +127,12 @@ internal class ChatEventsObservableTest {
 
         val subscription = observable.subscribe { result.add(it) }
 
-        socket.sendEvent(eventA)
-        socket.sendEvent(eventB)
+        // socket.sendEvent(eventA)
+        // socket.sendEvent(eventB)
 
         subscription.dispose()
 
-        socket.sendEvent(eventC)
+        // socket.sendEvent(eventC)
 
         result shouldBeEqualTo listOf(eventA, eventB)
     }

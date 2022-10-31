@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.chatclient
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.ConnectionData
@@ -26,7 +25,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -51,7 +49,6 @@ internal class WhenConnectUser : BaseChatClientTest() {
         val user = Mother.randomUser { id = "userId" }
         val sut = Fixture()
             .givenUserAndToken(user, "token")
-            .givenIdleConnectionState()
             .givenUserSetState(Mother.randomUser { id = "userId" })
             .givenPluginFactory(pluginFactory)
             .get()
@@ -72,7 +69,6 @@ internal class WhenConnectUser : BaseChatClientTest() {
     fun `Given user set and socket in idle state and user with different id Should Not connect to the socket, update the user and token provider`() {
         val sut = Fixture()
             .givenUserAndToken(Mother.randomUser { id = "differentUserId" }, "token")
-            .givenIdleConnectionState()
             .givenUserSetState(Mother.randomUser { id = "userId" })
             .get()
 
@@ -164,22 +160,6 @@ internal class WhenConnectUser : BaseChatClientTest() {
     }
 
     inner class Fixture {
-        fun givenIdleConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Idle
-        }
-
-        fun givenPendingConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Pending
-        }
-
-        fun givenConnectedConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Connected(randomString())
-        }
-
-        fun givenDisconnectedConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Disconnected
-        }
-
         fun givenUserSetState(user: User) = apply {
             whenever(userStateService.state) doReturn UserState.UserSet(user)
         }

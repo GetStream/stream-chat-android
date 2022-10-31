@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
@@ -49,9 +48,6 @@ internal open class BaseChatClientTest {
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
-
-    @Mock
-    protected lateinit var socketStateService: SocketStateService
 
     @Mock
     protected lateinit var userStateService: UserStateService
@@ -86,13 +82,9 @@ internal open class BaseChatClientTest {
         chatClient = ChatClient(
             config = config,
             api = api,
-            socket = socket,
             notifications = mock(),
             tokenManager = tokenManager,
-            socketStateService = socketStateService,
-            callPostponeHelper = CallPostponeHelper(userScope) {
-                socketStateService.awaitConnection()
-            },
+            callPostponeHelper = CallPostponeHelper(userScope) { },
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
@@ -100,7 +92,7 @@ internal open class BaseChatClientTest {
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            socketExperimental = mock(),
+            chatSocket = mock(),
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
@@ -108,7 +100,6 @@ internal open class BaseChatClientTest {
         )
 
         Mockito.reset(
-            socketStateService,
             userStateService,
             socket,
             tokenManager,

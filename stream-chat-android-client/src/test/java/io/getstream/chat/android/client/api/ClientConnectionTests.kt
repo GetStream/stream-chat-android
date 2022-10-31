@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -113,11 +112,8 @@ internal class ClientConnectionTests {
         val clientScope = ClientTestScope(testCoroutines.scope)
         val userScope = UserTestScope(clientScope)
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
-        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val callPostponeHelper = CallPostponeHelper(userScope) {
-            socketStateService.awaitConnection()
-        }
+        val callPostponeHelper = CallPostponeHelper(userScope) { }
         val tokenUtils: TokenUtils = mock()
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = mock()
@@ -134,10 +130,8 @@ internal class ClientConnectionTests {
         client = ChatClient(
             config,
             api,
-            socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            socketStateService = socketStateService,
             callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
@@ -146,7 +140,7 @@ internal class ClientConnectionTests {
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            socketExperimental = mock(),
+            chatSocket = mock(),
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,

@@ -17,10 +17,8 @@
 package io.getstream.chat.android.client.chatclient
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Disabled
@@ -35,7 +33,7 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
 
     @Test
     fun `Given idle connection state Should do nothing`() {
-        val sut = Fixture().givenIdleConnectionState().clearSocketInvocations().get()
+        val sut = Fixture().clearSocketInvocations().get()
 
         sut.reconnectSocket()
 
@@ -44,7 +42,7 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
 
     @Test
     fun `Given pending connection state Should do nothing`() {
-        val sut = Fixture().givenPendingConnectionState().clearSocketInvocations().get()
+        val sut = Fixture().clearSocketInvocations().get()
 
         sut.reconnectSocket()
 
@@ -53,7 +51,7 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
 
     @Test
     fun `Given connected connection state Should do nothing`() {
-        val sut = Fixture().givenConnectedConnectionState().clearSocketInvocations().get()
+        val sut = Fixture().clearSocketInvocations().get()
 
         sut.reconnectSocket()
 
@@ -63,7 +61,7 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
     @Test
     fun `Given disconnected connection state And User set state Should connect to socket`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenDisconnectedConnectionState().givenUserSetState(user).get()
+        val sut = Fixture().givenUserSetState(user).get()
 
         sut.reconnectSocket()
 
@@ -73,7 +71,7 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
     @Test
     fun `Given disconnected connection state And Anonymous user set state Should connect to socket anonymously`() {
         val user = Mother.randomUser()
-        val sut = Fixture().givenDisconnectedConnectionState().givenAnonymousUserSetState(user).get()
+        val sut = Fixture().givenAnonymousUserSetState(user).get()
 
         sut.reconnectSocket()
 
@@ -83,28 +81,12 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
     @Disabled
     @Test
     fun `Given disconnected connection state And user not set state Should throw exception`() {
-        val sut = Fixture().givenDisconnectedConnectionState().givenUserNotSetState().get()
+        val sut = Fixture().givenUserNotSetState().get()
 
         invoking { sut.reconnectSocket() }.shouldThrow(IllegalStateException::class)
     }
 
     inner class Fixture {
-        fun givenIdleConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Idle
-        }
-
-        fun givenPendingConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Pending
-        }
-
-        fun givenConnectedConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Connected(randomString())
-        }
-
-        fun givenDisconnectedConnectionState() = apply {
-            whenever(socketStateService.state) doReturn SocketState.Disconnected
-        }
-
         fun givenUserSetState(user: User) = apply {
             whenever(userStateService.state) doReturn UserState.UserSet(user)
         }
