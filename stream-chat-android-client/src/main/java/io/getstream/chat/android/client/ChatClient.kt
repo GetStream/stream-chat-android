@@ -315,10 +315,7 @@ internal constructor(
                 }
                 notifications.onSetUser()
 
-                clientState.toMutableState()?.run {
-                    setConnectionState(ConnectionState.CONNECTED)
-                    // setUser(user)
-                }
+                clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTED)
             }
             is NewMessageEvent -> {
                 notifications.onNewMessageEvent(event)
@@ -408,7 +405,6 @@ internal constructor(
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
-                // clientState.toMutableState()?.setUser(user)
 
                 userStateService.onSetUser(user, isAnonymous)
                 if (ToggleService.isSocketExperimental()) {
