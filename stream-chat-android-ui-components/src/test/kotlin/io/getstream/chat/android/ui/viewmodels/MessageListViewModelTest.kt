@@ -180,7 +180,6 @@ internal class MessageListViewModelTest {
             MessageListViewModel.Event.MessageReaction(
                 message = message1,
                 reactionType = reaction1.type,
-                enforceUnique = true
             )
         )
 
@@ -207,9 +206,8 @@ internal class MessageListViewModelTest {
                 MessageListViewModel.Event.MessageReaction(
                     message = messageWithOwnReaction,
                     reactionType = reaction1.type,
-                    enforceUnique = true
                 )
-            )
+            )gi
 
             verify(chatClient).deleteReaction(
                 messageId = messageWithOwnReaction.id,
