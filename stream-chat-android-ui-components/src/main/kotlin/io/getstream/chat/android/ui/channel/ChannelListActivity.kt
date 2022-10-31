@@ -58,6 +58,7 @@ public open class ChannelListActivity : AppCompatActivity() {
     }
 
     public companion object {
+        @JvmStatic
         public fun createIntent(context: Context): Intent {
             return Intent(context, ChannelListActivity::class.java)
         }

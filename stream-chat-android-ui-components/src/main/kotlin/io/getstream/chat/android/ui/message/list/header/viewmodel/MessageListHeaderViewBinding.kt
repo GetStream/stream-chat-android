@@ -22,9 +22,8 @@ import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
-import io.getstream.chat.android.uiutils.extension.getMembersStatusText
+import io.getstream.chat.android.ui.utils.extensions.getMembersStatusText
 
 /**
  * Binds [MessageListHeaderView] with [MessageListHeaderViewModel], updating the view's state
@@ -42,17 +41,7 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
         )
         view.setTitle(channelName)
         view.setAvatar(channel)
-
-        val memberStatus = channel.getMembersStatusText(
-            context = view.context,
-            currentUser = ChatUI.currentUserProvider.getCurrentUser(),
-            userOnlineResId = R.string.stream_ui_user_status_online,
-            userLastSeenJustNowResId = R.string.stream_ui_user_status_last_seen_just_now,
-            userLastSeenResId = R.string.stream_ui_user_status_last_seen,
-            memberCountResId = R.plurals.stream_ui_message_list_header_member_count,
-            memberCountWithOnlineResId = R.string.stream_ui_message_list_header_member_count_online,
-        )
-        view.setOnlineStateSubtitle(memberStatus)
+        view.setOnlineStateSubtitle(channel.getMembersStatusText(view.context))
     }
 
     online.observe(lifecycle) { onlineState ->

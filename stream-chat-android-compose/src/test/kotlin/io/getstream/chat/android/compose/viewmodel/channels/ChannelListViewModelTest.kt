@@ -30,7 +30,7 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
+import io.getstream.chat.android.common.state.DeleteConversation
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
@@ -350,13 +350,11 @@ internal class ChannelListViewModelTest {
         private val channel1: Channel = Channel().apply {
             type = "messaging"
             id = "channel1"
-            cid = "messaging:channel1"
             unreadCount = 0
         }
         private val channel2: Channel = Channel().apply {
             type = "messaging"
             id = "channel2"
-            cid = "messaging:channel2"
             unreadCount = 0
         }
     }

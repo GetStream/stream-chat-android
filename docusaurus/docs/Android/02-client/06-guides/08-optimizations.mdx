@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Optimizations
 
 The SDK is optimized to avoid waste of resources and improve performance. You can freely choose which optimizations should be enabled or disabled.
@@ -8,15 +11,59 @@ After version `5.3.0`, the SDK prevents the user from making multiple calls to t
 
 You can change the default behavior and force calls to always make new requests to API and never merge two requests into one by using:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatClient.Builder(apiKey, context).disableDistinctApiCalls().build()
 ```
-ChatClient.Builder.disableDistinctApiCalls()
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+new ChatClient.Builder(apiKey, context).disableDistinctApiCalls().build();
 ```
+</TabItem>
+</Tabs>
 
 If you want to control new requests to API in a more granular way, you can use the extension function:
 
-```
+```kotlin
 Call<T>.forceNewRequest(): Call<T>
 ```
+
+For example, you can use the snippet presented below for query channels request:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatClient.instance().queryChannels(queryChannelsRequest).forceNewRequest().enqueue { result ->
+    if (result.isSuccess) {
+        // Handle success
+    } else {
+        // Handle error
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+Call<List<Channel>> queryChannelsCall = ChatClient.instance().queryChannels(queryChannelsRequest);
+CallExtensions.forceNewRequest(queryChannelsCall);
+queryChannelsCall.enqueue(result -> {
+    if (result.isSuccess()) {
+        // Handle success
+    } else {
+        // Handle error
+    }
+});
+```
+</TabItem>
+</Tabs>
 
 The returned `Call` will be forced to make a new request to API. 
 

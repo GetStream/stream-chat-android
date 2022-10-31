@@ -72,7 +72,6 @@ internal suspend fun ChannelEntity.toModel(
     id = channelId,
     name = name,
     image = image,
-    cid = cid,
     frozen = frozen,
     createdAt = createdAt,
     updatedAt = updatedAt,

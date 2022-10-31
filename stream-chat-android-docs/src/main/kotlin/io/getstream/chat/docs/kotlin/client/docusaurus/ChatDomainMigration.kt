@@ -82,8 +82,6 @@ class ChatDomainMigration {
     }
 
     inner class State {
-        val chatClient = ChatClient.instance()
-
         val filter = Filters.eq("type", "messaging")
         val sort = QuerySortByField.descByName<Channel>("lastUpdated")
         private val queryChannelsRequest = QueryChannelsRequest(filter = Filters.eq("type", "messaging"), limit = 30)
@@ -114,7 +112,7 @@ class ChatDomainMigration {
                 messageLimit = 1,
                 memberLimit = 30,
             )
-            ChatClient.instance().queryChannels(request).enqueue { result ->
+            chatClient.queryChannels(request).enqueue { result ->
                 if (result.isSuccess) {
                     // Request successful. Data will be propagated to the state object
                 } else {
@@ -122,7 +120,7 @@ class ChatDomainMigration {
                 }
             }
             // 2. Get the state object associated with the above API call
-            val queryChannelsState = ChatClient.instance().state.queryChannels(filter = filter, sort = sort)
+            val queryChannelsState = chatClient.state.queryChannels(filter = filter, sort = sort)
         }
 
         fun watchChannel() {
@@ -158,7 +156,7 @@ class ChatDomainMigration {
 
         // New approach of updating message
         val messageToUpdate = Message(text = "Updated text")
-        ChatClient.instance().updateMessage(messageToUpdate).enqueue { result ->
+        chatClient.updateMessage(messageToUpdate).enqueue { result ->
             if (result.isSuccess) {
                 // Handle success
             } else {
@@ -178,7 +176,7 @@ class ChatDomainMigration {
         val cid = "cid"
         // New approach of leaving channel
         chatClient.getCurrentUser()?.let { currentUser ->
-            ChatClient.instance().channel(cid).removeMembers(listOf(currentUser.id)).enqueue { result ->
+            chatClient.channel(cid).removeMembers(listOf(currentUser.id)).enqueue { result ->
                 if (result.isSuccess) {
                     // Handle success
                 } else {

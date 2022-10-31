@@ -56,15 +56,15 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             val paginationRequest = AnyChannelPaginationRequest(0)
             val user = randomUser(id = "userId")
             whenever(users.selectUser("userId")) doReturn user
-            val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
-            val channel2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            whenever(channels.selectChannels(eq(listOf("cid1", "cid2")), any())) doReturn listOf(channel1, channel2)
+            val channel1 = randomChannel(messages = emptyList(), id = "id1", type = "type", createdBy = user)
+            val channel2 = randomChannel(messages = emptyList(), id = "id2", type = "type", createdBy = user)
+            whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")), any())) doReturn listOf(channel1, channel2)
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
+            val result = sut.selectChannels(listOf("type:id1", "type:id2"), paginationRequest)
 
             result.size shouldBeEqualTo 2
-            result.any { it.cid == "cid1" && it.messages.isEmpty() } shouldBeEqualTo true
-            result.any { it.cid == "cid2" && it.messages.isEmpty() } shouldBeEqualTo true
+            result.any { it.cid == "type:id1" && it.messages.isEmpty() } shouldBeEqualTo true
+            result.any { it.cid == "type:id2" && it.messages.isEmpty() } shouldBeEqualTo true
         }
 
     @Test
@@ -73,26 +73,26 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             val paginationRequest = AnyChannelPaginationRequest(100)
             val user = randomUser(id = "userId")
             whenever(users.selectUser("userId")) doReturn user
-            val message1 = randomMessage(id = "messageId1", cid = "cid1", user = user)
-            val message2 = randomMessage(id = "messageId2", cid = "cid2", user = user)
-            whenever(messages.selectMessagesForChannel(eq("cid1"), eq(paginationRequest))) doReturn listOf(
+            val message1 = randomMessage(id = "messageId1", cid = "type:id1", user = user)
+            val message2 = randomMessage(id = "messageId2", cid = "type:id2", user = user)
+            whenever(messages.selectMessagesForChannel(eq("type:id1"), eq(paginationRequest))) doReturn listOf(
                 message1
             )
-            whenever(messages.selectMessagesForChannel(eq("cid2"), eq(paginationRequest))) doReturn listOf(
+            whenever(messages.selectMessagesForChannel(eq("type:id2"), eq(paginationRequest))) doReturn listOf(
                 message2
             )
-            val channel1 = randomChannel(messages = emptyList(), cid = "cid1", createdBy = user)
-            val channelEntity2 = randomChannel(messages = emptyList(), cid = "cid2", createdBy = user)
-            whenever(channels.selectChannels(eq(listOf("cid1", "cid2")), any())) doReturn listOf(
+            val channel1 = randomChannel(messages = emptyList(), id = "id1", type = "type", createdBy = user)
+            val channelEntity2 = randomChannel(messages = emptyList(), id = "id2", type = "type", createdBy = user)
+            whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")), any())) doReturn listOf(
                 channel1,
                 channelEntity2
             )
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest)
+            val result = sut.selectChannels(listOf("type:id1", "type:id2"), paginationRequest)
 
             result.size shouldBeEqualTo 2
-            result.any { it.cid == "cid1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
-            result.any { it.cid == "cid2" && it.messages.size == 1 && it.messages.first().id == "messageId2" } shouldBeEqualTo true
+            result.any { it.cid == "type:id1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
+            result.any { it.cid == "type:id2" && it.messages.size == 1 && it.messages.first().id == "messageId2" } shouldBeEqualTo true
         }
 
     @Test

@@ -31,11 +31,17 @@ private class MessageListHeaderViewSnippets : Fragment() {
      * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#handling-actions)
      */
     fun handlingActions() {
+        messageListHeaderView.setBackButtonClickListener {
+            // Handle back button click
+        }
         messageListHeaderView.setAvatarClickListener {
             // Handle avatar click
         }
         messageListHeaderView.setTitleClickListener {
             // Handle title click
+        }
+        messageListHeaderView.setSubtitleClickListener {
+            // Handle subtitle click
         }
     }
 }
