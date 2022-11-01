@@ -40,7 +40,12 @@ public fun QuotedMessageContent(
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
     attachmentContent: @Composable (Message) -> Unit = { DefaultQuotedMessageAttachmentContent(it) },
-    textContent: @Composable (Message) -> Unit = { DefaultQuotedMessageTextContent(it, replyMessage) },
+    textContent: @Composable (Message) -> Unit = {
+        DefaultQuotedMessageTextContent(
+            message = it,
+            replyMessage = replyMessage,
+        )
+    },
 ) {
     val messageBubbleShape = if (message.isMine(ChatClient.instance())) {
         ChatTheme.shapes.myMessageBubble
@@ -48,7 +53,7 @@ public fun QuotedMessageContent(
         ChatTheme.shapes.otherMessageBubble
     }
 
-    // The quoted section color depends on the author of the reply (outer message).
+    // The quoted section color depends on the author of the reply.
     val messageBubbleColor = if (replyMessage?.isMine(ChatClient.instance()) != false) {
         ChatTheme.colors.ownMessageQuotedBackground
     } else {
