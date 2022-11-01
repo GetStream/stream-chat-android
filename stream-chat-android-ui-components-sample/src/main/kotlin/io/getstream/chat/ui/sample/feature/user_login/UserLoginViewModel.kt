@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
@@ -76,7 +77,7 @@ class UserLoginViewModel : ViewModel() {
                     _events.postValue(Event(UiEvent.RedirectToChannels))
                 }.enqueue(::handleUserConnection)
             } else {
-                if (getCurrentUser() == null) {
+                if (globalState.user.value == null) {
                     connectUser(chatUser, user.token).enqueue(::handleUserConnection)
                 }
 

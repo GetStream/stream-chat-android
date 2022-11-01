@@ -37,7 +37,7 @@ public class ChannelListViewSnippets extends Fragment {
         // Instantiate the ViewModel
         FilterObject filter = Filters.and(
                 Filters.eq("type", "messaging"),
-                Filters.in("members", Collections.singletonList(ChatClient.instance().getCurrentUser().getId()))
+                Filters.in("members", Collections.singletonList(ChatClient.instance().getCurrentUserId()))
         );
 
         ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()

@@ -273,7 +273,7 @@ public class ChannelListViewModel(
      * @param channel The channel that the current user will leave.
      */
     public fun leaveChannel(channel: Channel) {
-        chatClient.getCurrentUser()?.let { user ->
+        chatClient.globalState.user.value?.let { user ->
             chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue(
                 onError = { chatError ->
                     logger.e {

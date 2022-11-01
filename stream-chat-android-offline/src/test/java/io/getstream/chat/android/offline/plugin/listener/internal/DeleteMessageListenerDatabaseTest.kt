@@ -43,7 +43,7 @@ internal class DeleteMessageListenerDatabaseTest {
     private val userRepository: UserRepository = mock()
 
     private val deleteMessageListenerState: DeleteMessageListenerDatabase =
-        DeleteMessageListenerDatabase(clientState, currentUser, messageRepository, userRepository)
+        DeleteMessageListenerDatabase(clientState, currentUser.id, messageRepository, userRepository)
 
     @Test
     fun `when internet is available, the message should be updated as in progress before the request`() = runTest {

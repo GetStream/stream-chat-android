@@ -105,7 +105,7 @@ class GroupChatInfoViewModel(
 
     private fun leaveChannel() {
         viewModelScope.launch {
-            val result = chatClient.getCurrentUser()?.let { user ->
+            val result = chatClient.globalState.user.value?.let { user ->
                 val message = Message(text = "${user.name} left")
                 chatClient.channel(channelClient.channelType, channelClient.channelId)
                     .removeMembers(listOf(user.id), message)

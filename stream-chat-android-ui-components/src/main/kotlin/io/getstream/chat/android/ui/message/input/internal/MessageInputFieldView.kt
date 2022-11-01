@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.models.Constants
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.EMPTY
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -348,7 +349,7 @@ internal class MessageInputFieldView : FrameLayout {
         switchToMessageMode()
         binding.messageReplyView.setMessage(
             currentMode.repliedMessage,
-            ChatClient.instance().getCurrentUser()?.id == currentMode.repliedMessage.user.id,
+            ChatClient.instance().globalState.user.value?.id == currentMode.repliedMessage.user.id,
             null,
         )
         binding.messageReplyView.isVisible = true

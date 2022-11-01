@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 
 public class UnreadCounts {
     private ChatClient client;
@@ -110,7 +111,7 @@ public class UnreadCounts {
         public void unreadMentions() {
             // Get channel
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
-            User currentUser = client.getCurrentUser();
+            User currentUser = ChatClientExtensions.getGlobalState(client).getUser().getValue();
             if (currentUser == null) {
                 // Handle user not connected state
                 return;

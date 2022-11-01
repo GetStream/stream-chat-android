@@ -39,7 +39,7 @@ private object SelectedChannelMenuUsageSnippet {
                 QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId() ?: ""))
                 )
             )
         }
@@ -99,7 +99,7 @@ private object SelectedChannelMenuHandlingActionsSnippet {
                 QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId() ?: ""))
                 )
             )
         }
@@ -165,7 +165,7 @@ private object SelectedChannelMenuCustomizationSnippet {
                 QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId() ?: ""))
                 )
             )
         }

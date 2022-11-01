@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,9 +77,14 @@ class AddChannelViewModel : ViewModel() {
         }
     }
 
-    private fun createSearchQuery(querySearch: String, offset: Int, usersLimit: Int, userPresence: Boolean): QueryUsersRequest {
+    private fun createSearchQuery(
+        querySearch: String,
+        offset: Int,
+        usersLimit: Int,
+        userPresence: Boolean,
+    ): QueryUsersRequest {
         val filter = if (querySearch.isEmpty()) {
-            val currentUserId = chatClient.getCurrentUser()?.id
+            val currentUserId = chatClient.globalState.user.value?.id
             if (currentUserId != null) {
                 Filters.ne(FIELD_ID, currentUserId)
             } else {
@@ -87,7 +93,7 @@ class AddChannelViewModel : ViewModel() {
         } else {
             createFilter(
                 Filters.autocomplete(FIELD_NAME, querySearch),
-                chatClient.getCurrentUser()?.id?.let { id -> Filters.ne(FIELD_ID, id) }
+                chatClient.globalState.user.value?.id?.let { id -> Filters.ne(FIELD_ID, id) }
             )
         }
         return QueryUsersRequest(
@@ -125,7 +131,8 @@ class AddChannelViewModel : ViewModel() {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
-            val currentUserId = chatClient.getCurrentUser()?.id ?: error("User must be set before create new channel!")
+            val currentUserId =
+                chatClient.globalState.user.value?.id ?: error("User must be set before create new channel!")
             val result = chatClient.createChannel(
                 channelType = CHANNEL_MESSAGING_TYPE,
                 channelId = "",

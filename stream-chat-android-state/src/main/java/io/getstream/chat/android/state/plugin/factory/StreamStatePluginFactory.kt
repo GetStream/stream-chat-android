@@ -86,7 +86,7 @@ public class StreamStatePluginFactory(
             clearState()
             setUser(user)
         }
-        
+
         val stateRegistry = StateRegistry.create(
             scope.coroutineContext.job, scope, globalState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )

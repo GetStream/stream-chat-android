@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
@@ -50,7 +51,7 @@ class ChannelListFragment : Fragment() {
     private val viewModel: ChannelListViewModel by viewModels {
         val user = App.instance.userRepository.getUser()
         val userId = if (user == SampleUser.None) {
-            ChatClient.instance().getCurrentUser()?.id ?: ""
+            ChatClient.instance().globalState.user.value?.id ?: ""
         } else {
             user.id
         }

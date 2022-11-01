@@ -16,7 +16,7 @@ class HandlingUserConnection {
         )
 
         // Check if the user is not already set
-        if (ChatClient.instance().getCurrentUser() == null) {
+        if (ChatClient.instance().getCurrentUserId() == null) {
             ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
                 .enqueue { result ->
                     if (result.isSuccess) {

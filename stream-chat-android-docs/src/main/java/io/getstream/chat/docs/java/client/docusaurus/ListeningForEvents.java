@@ -55,7 +55,7 @@ public class ListeningForEvents {
                         Member member = ((NotificationRemovedFromChannelEvent) event).getMember();
 
                         String removedUserId = member.getUser().getId();
-                        String currentUserId = chatClient.getCurrentUser().getId();
+                        String currentUserId = chatClient.getCurrentUserId();
                         if (removedUserId.equals(currentUserId)) {
                             // Close the current chat screen as the current user has been removed
                             requireActivity().getOnBackPressedDispatcher().onBackPressed();

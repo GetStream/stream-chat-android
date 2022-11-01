@@ -37,7 +37,7 @@ private object ChannelItemUsageSnippet {
                 QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId() ?: ""))
                 )
             )
         }
@@ -79,7 +79,7 @@ private object ChannelItemHandlingActionsSnippet {
                 QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId() ?: ""))
                 )
             )
         }
@@ -125,7 +125,7 @@ private object ChannelItemCustomizationSnippet {
                 QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId() ?: ""))
                 )
             )
         }
