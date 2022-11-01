@@ -83,7 +83,12 @@ public fun QuotedMessageText(
         "quotedMessageText is null. Cannot display invalid message title."
     }
 
-    val styledText = buildAnnotatedMessageText(quotedMessageText, message.isMine(ChatClient.instance()))
+    val textColor = if (message.isMine(ChatClient.instance())) {
+        ChatTheme.colors.ownMessageQuotedText
+    } else {
+        ChatTheme.colors.otherMessageQuotedText
+    }
+    val styledText = buildAnnotatedMessageText(quotedMessageText, textColor)
 
     val horizontalPadding = ChatTheme.dimens.quotedMessageTextHorizontalPadding
     val verticalPadding = ChatTheme.dimens.quotedMessageTextVerticalPadding
