@@ -39,12 +39,14 @@ import io.getstream.chat.android.uiutils.extension.isFile
  *
  * @param message Message to show.
  * @param modifier Modifier for styling.
+ * @param replyMessage The message that contains the reply.
  * @param quoteMaxLines Max number of lines quoted text can have.
  */
 @Composable
 public fun QuotedMessageText(
     message: Message,
     modifier: Modifier = Modifier,
+    replyMessage: Message? = null,
     quoteMaxLines: Int = DefaultQuoteMaxLines,
 ) {
     val attachment = message.attachments.firstOrNull()
@@ -83,7 +85,7 @@ public fun QuotedMessageText(
         "quotedMessageText is null. Cannot display invalid message title."
     }
 
-    val textColor = if (message.isMine(ChatClient.instance())) {
+    val textColor = if (replyMessage?.isMine(ChatClient.instance()) != false) {
         ChatTheme.colors.ownMessageQuotedText
     } else {
         ChatTheme.colors.otherMessageQuotedText

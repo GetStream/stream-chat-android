@@ -40,7 +40,7 @@ public fun QuotedMessageContent(
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
     attachmentContent: @Composable (Message) -> Unit = { DefaultQuotedMessageAttachmentContent(it) },
-    textContent: @Composable (Message) -> Unit = { DefaultQuotedMessageTextContent(it) },
+    textContent: @Composable (Message) -> Unit = { DefaultQuotedMessageTextContent(it, replyMessage) },
 ) {
     val messageBubbleShape = if (message.isMine(ChatClient.instance())) {
         ChatTheme.shapes.myMessageBubble
@@ -92,10 +92,15 @@ internal fun DefaultQuotedMessageAttachmentContent(message: Message) {
  * By default we show the message text if there is any or show the previewed attachment name.
  *
  * @param message The quoted message.
+ * @param replyMessage The message that contains the reply.
  */
 @Composable
-internal fun DefaultQuotedMessageTextContent(message: Message) {
+internal fun DefaultQuotedMessageTextContent(
+    message: Message,
+    replyMessage: Message? = null,
+) {
     QuotedMessageText(
-        message = message
+        message = message,
+        replyMessage = replyMessage,
     )
 }
