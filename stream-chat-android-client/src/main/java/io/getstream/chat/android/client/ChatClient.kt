@@ -1161,7 +1161,7 @@ internal constructor(
     }
 
     private suspend fun disconnectUserSuspend(flushPersistence: Boolean) {
-        val userId = getCurrentUser()?.id
+        val userId = getCurrentUserId()
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
         notifications.onLogout(flushPersistence)
@@ -1651,7 +1651,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        val userId = getCurrentUser()?.id
+        val userId = getCurrentUserId()
         val scopedUserId = userScope.userId.value
         val isConnectionRequired = request.watch || request.presence
         logger.d {

@@ -20,10 +20,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -32,9 +30,7 @@ import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.search.internal.SearchResultListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.search.list.SearchResultListView.SearchResultSelectedListener
 
-internal class SearchResultListAdapter(
-    private val globalState: GlobalState = ChatClient.instance().globalState,
-) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
+internal class SearchResultListAdapter : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var searchResultSelectedListener: SearchResultSelectedListener? = null
 
@@ -71,7 +67,7 @@ internal class SearchResultListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            binding.root.setMessage(message, globalState.user.value?.asMention(context))
+            binding.root.setMessage(message, ChatUI.currentUserProvider.getCurrentUser()?.asMention(context))
         }
     }
 

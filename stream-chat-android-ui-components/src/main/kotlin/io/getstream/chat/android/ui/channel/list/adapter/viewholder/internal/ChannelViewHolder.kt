@@ -22,14 +22,11 @@ import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
@@ -65,9 +62,8 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         parent,
         false
     ),
-    private val globalState: GlobalState = ChatClient.instance().globalState,
 ) : SwipeViewHolder(binding.root) {
-    private val currentUser = globalState.user
+    private val currentUser = ChatUI.currentUserProvider.getCurrentUser()
 
     private var optionsCount = 1
 
@@ -94,7 +90,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             itemForegroundView.apply {
                 channelAvatarView.setOnClickListener {
                     when {
-                        channel.isDirectMessaging() -> currentUser.value?.let(userClickListener::onClick)
+                        channel.isDirectMessaging() -> currentUser?.let(userClickListener::onClick)
                         else -> channelClickListener.onClick(channel)
                     }
                 }
@@ -287,7 +283,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         // delivered - if the last message belongs to the current user and reads indicate it wasn't read
         // pending - if the sync status says it's pending
 
-        val currentUserSentLastMessage = lastMessage.user.id == globalState.user.value?.id
+        val currentUserSentLastMessage = lastMessage.user.id == currentUser?.id
         if (!currentUserSentLastMessage) {
             messageStatusImageView.setImageDrawable(null)
             return

@@ -19,9 +19,7 @@
 package io.getstream.chat.android.ui.message.list.header.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 import io.getstream.chat.android.ui.utils.extensions.getMembersStatusText
@@ -38,7 +36,7 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
     channel.observe(lifecycle) { channel ->
         val channelName = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
-            currentUser = ChatClient.instance().globalState.user.value
+            currentUser = ChatUI.currentUserProvider.getCurrentUser()
         )
         view.setTitle(channelName)
         view.setAvatar(channel)
