@@ -9,7 +9,7 @@
 
 ### ⚠️ Changed
 - Separated `state` and `offline` modules. (#4214)[https://github.com/GetStream/stream-chat-android/pull/4214]
-
+- Moved `ClientState.user` to `GlobalState.user` because the state module is the one that correctly updates the user in the SDK. [#4333](https://github.com/GetStream/stream-chat-android/pull/4333)
 ### ❌ Removed
 
 ## stream-chat-android-client
