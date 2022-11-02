@@ -47,6 +47,10 @@ import io.getstream.chat.android.compose.R
  * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
  * @param ownMessageText Used for message text color for the current user. [textHighEmphasis] by default.
  * @param otherMessageText Used for message text color for other users. [textHighEmphasis] by default.
+ * @param ownMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by the current user.
+ * @param otherMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by other users.
+ * @param ownMessageQuotedText Changes the text color of the quoted message contained in a reply sent by the current user. [textHighEmphasis] by default.
+ * @param otherMessageQuotedText Changes the text color of the quoted message contained in a reply sent by other users. [textHighEmphasis] by default.
  */
 @Immutable
 public data class StreamColors(
@@ -71,7 +75,11 @@ public data class StreamColors(
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
     public val ownMessageText: Color = textHighEmphasis,
-    public val otherMessageText: Color = textHighEmphasis
+    public val otherMessageText: Color = textHighEmphasis,
+    public val ownMessageQuotedBackground: Color = otherMessagesBackground,
+    public val otherMessageQuotedBackground: Color = ownMessagesBackground,
+    public val ownMessageQuotedText: Color = textHighEmphasis,
+    public val otherMessageQuotedText: Color = textHighEmphasis,
 ) {
 
     public companion object {
