@@ -17,33 +17,67 @@
 package io.getstream.chat.android.common.messagelist
 
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.models.Message
 
 /**
  * A SAM designed to evaluate if a date separator should be added between messages.
  */
 public fun interface DateSeparatorHandler {
+
+    /**
+     * Determines whether we should add the date separator or not.
+     *
+     * @param previousMessage The [Message] before the one we are currently evaluating.
+     * @param message The [Message] before which we want to add a date separator or not.
+     *
+     * @return Whether to add the date separator or not.
+     */
     public fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean
 
     public companion object {
-        public fun getDefaultDateSeparator(separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold):
+
+        /**
+         * @param separatorTimeMillis Time difference between two message after which we add the date separator.
+         *
+         * @return The default normal list date separator handler.
+         */
+        public fun getDefaultDateSeparatorHandler(separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold):
             DateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
             if (previousMessage == null) {
                 true
             } else {
-                val timeDifference = message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time
-                timeDifference > separatorTimeMillis
+                shouldAddDateSeparator(previousMessage, message, separatorTimeMillis)
             }
         }
 
-        public fun getDefaultThreadDateSeparator(separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold):
+        /**
+         * @param separatorTimeMillis Time difference between two message after which we add the date separator.
+         *
+         * @return The default thread date separator handler.
+         */
+        public fun getDefaultThreadDateSeparatorHandler(separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold):
             DateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
             if (previousMessage == null) {
                 false
             } else {
-                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) >
-                    separatorTimeMillis
+                shouldAddDateSeparator(previousMessage, message, separatorTimeMillis)
             }
+        }
+
+        /**
+         * @param previousMessage The [Message] before the one we are currently evaluating.
+         * @param message The [Message] before which we want to add a date separator or not.
+         *
+         * @return Whether to add the date separator or not depending on the time difference.
+         */
+        private fun shouldAddDateSeparator(
+            previousMessage: Message?,
+            message: Message,
+            separatorTimeMillis: Long,
+        ): Boolean {
+            return (message.getCreatedAtOrThrow().time - (previousMessage?.getCreatedAtOrThrow()?.time ?: NEVER.time)) >
+                separatorTimeMillis
         }
 
         /**

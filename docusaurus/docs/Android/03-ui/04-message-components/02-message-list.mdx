@@ -118,7 +118,7 @@ messageListView.setMessagePinHandler { message: Message ->
 messageListView.setMessageUnpinHandler { message: Message ->
     // Handle when message is going to be unpinned
 }
-messageListView.setGiphySendHandler { message: Message, giphyAction: GiphyAction ->
+messageListView.setGiphySendHandler { giphyAction: GiphyAction ->
     // Handle when some giphyAction is going to be performed
 }
 messageListView.setMessageRetryHandler { message: Message ->
@@ -160,7 +160,7 @@ messageListView.setMessagePinHandler((message) -> {
 messageListView.setMessageUnpinHandler((message) -> {
     // Handle when message is going to be unpinned
 });
-messageListView.setGiphySendHandler((message, giphyAction) -> {
+messageListView.setGiphySendHandler((giphyAction) -> {
     // Handle when some giphyAction is going to be performed
 });
 messageListView.setMessageRetryHandler((message) -> {

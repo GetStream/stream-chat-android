@@ -63,8 +63,9 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val showSystemMessages: Boolean = true,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
-    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
+    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
+    private val threadDateSeparatorHandler: DateSeparatorHandler =
+        DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
 ) : ViewModelProvider.Factory {
 
@@ -122,9 +123,9 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         private var showSystemMessages: Boolean = true
         private var deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
         private var messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference()
-        private var dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator()
+        private var dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler()
         private var threadDateSeparatorHandler: DateSeparatorHandler =
-            DateSeparatorHandler.getDefaultThreadDateSeparator()
+            DateSeparatorHandler.getDefaultThreadDateSeparatorHandler()
         private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
 
         /**

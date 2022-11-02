@@ -28,7 +28,7 @@ public fun interface MessagePositionHandler {
     /**
      * Determines the position of a message inside a group.
      *
-     * @param prevMessage The previous [Message] in the list.
+     * @param previousMessage The previous [Message] in the list.
      * @param message The current [Message] in the list.
      * @param nextMessage The next [Message] in the list.
      * @param isAfterDateSeparator If a date separator was added before the current [Message].
@@ -36,7 +36,7 @@ public fun interface MessagePositionHandler {
      * @return The position of the current message inside the group.
      */
     public fun handleMessagePosition(
-        prevMessage: Message?,
+        previousMessage: Message?,
         message: Message,
         nextMessage: Message?,
         isAfterDateSeparator: Boolean,
@@ -52,20 +52,22 @@ public fun interface MessagePositionHandler {
         @Suppress("ComplexCondition")
         public fun defaultHandler(): MessagePositionHandler {
             return MessagePositionHandler {
-                    prevMessage: Message?,
+                    previousMessage: Message?,
                     message: Message,
                     nextMessage: Message?,
                     isAfterDateSeparator: Boolean,
                 ->
-                val prevUser = prevMessage?.user
+                val previousUser = previousMessage?.user
                 val user = message.user
                 val nextUser = nextMessage?.user
 
                 mutableListOf<MessagePosition>().apply {
-                    if (prevMessage == null || prevUser != user || prevMessage.isSystem() || isAfterDateSeparator) {
+                    if (previousMessage == null || previousUser != user || previousMessage.isSystem() ||
+                        isAfterDateSeparator
+                    ) {
                         add(MessagePosition.TOP)
                     }
-                    if (prevMessage != null && nextMessage != null && prevUser == user && nextUser == user) {
+                    if (previousMessage != null && nextMessage != null && previousUser == user && nextUser == user) {
                         add(MessagePosition.MIDDLE)
                     }
                     if (nextMessage == null || nextUser != user || nextMessage.isServerMessage()) {

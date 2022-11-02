@@ -78,14 +78,6 @@ public final class com/getstream/sdk/chat/adapter/MessageListItem$TypingItem : c
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/getstream/sdk/chat/enums/GiphyAction : java/lang/Enum {
-	public static final field CANCEL Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public static final field SEND Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public static final field SHUFFLE Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public static fun values ()[Lcom/getstream/sdk/chat/enums/GiphyAction;
-}
-
 public final class com/getstream/sdk/chat/images/ViewExtensionsKt {
 }
 
@@ -313,14 +305,12 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$GiphyActionSelected : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun component2 ()Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$GiphyActionSelected;
-	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$GiphyActionSelected;Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$GiphyActionSelected;
+	public fun <init> (Lio/getstream/chat/android/common/messagelist/GiphyAction;)V
+	public final fun component1 ()Lio/getstream/chat/android/common/messagelist/GiphyAction;
+	public final fun copy (Lio/getstream/chat/android/common/messagelist/GiphyAction;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$GiphyActionSelected;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$GiphyActionSelected;Lio/getstream/chat/android/common/messagelist/GiphyAction;ILjava/lang/Object;)Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$GiphyActionSelected;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAction ()Lcom/getstream/sdk/chat/enums/GiphyAction;
-	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public final fun getAction ()Lio/getstream/chat/android/common/messagelist/GiphyAction;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2888,11 +2878,11 @@ public abstract interface class io/getstream/chat/android/ui/message/list/Messag
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$GiphySendHandler {
-	public abstract fun onSendGiphy (Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;)V
+	public abstract fun onSendGiphy (Lio/getstream/chat/android/common/messagelist/GiphyAction;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$GiphySendListener {
-	public abstract fun onGiphySend (Lio/getstream/chat/android/client/models/Message;Lcom/getstream/sdk/chat/enums/GiphyAction;)V
+	public abstract fun onGiphySend (Lio/getstream/chat/android/common/messagelist/GiphyAction;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$LastMessageReadHandler {

@@ -20,7 +20,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
@@ -33,6 +32,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
+import io.getstream.chat.android.common.messagelist.GiphyAction
 import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.messagelist.MessagePositionHandler
 import io.getstream.chat.android.common.model.messsagelist.MessageItem
@@ -50,9 +50,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onSubscription
-import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
-import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
-import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphyCommon
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 /**
@@ -343,12 +340,7 @@ public class MessageListViewModel(
      * @param event The type of action the user has selected.
      */
     private fun onGiphyActionSelected(event: Event.GiphyActionSelected) {
-        val action = when (event.action) {
-            GiphyAction.SEND -> SendGiphyCommon(event.message)
-            GiphyAction.SHUFFLE -> ShuffleGiphyCommon(event.message)
-            GiphyAction.CANCEL -> CancelGiphyCommon(event.message)
-        }
-        messageListController.performGiphyAction(action)
+        messageListController.performGiphyAction(event.action)
     }
 
     /**
@@ -545,10 +537,9 @@ public class MessageListViewModel(
          * When the user selects a Giphy message.
          * e.g. send, shuffle or cancel.
          *
-         * @param message The Giphy message.
          * @param action The Giphy action. e.g. send, shuffle or cancel.
          */
-        public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
+        public data class GiphyActionSelected(val action: GiphyAction) : Event()
 
         /**
          * Retry sending a message that has failed to send.

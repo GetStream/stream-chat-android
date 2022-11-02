@@ -31,7 +31,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.ListenerDelegate
 import com.getstream.sdk.chat.utils.StartStopBuffer
@@ -55,6 +54,7 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isThreadReply
+import io.getstream.chat.android.common.messagelist.GiphyAction
 import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.common.state.Copy
@@ -216,7 +216,7 @@ public class MessageListView : ConstraintLayout {
     private var messageUnpinHandler = MessageUnpinHandler {
         throw IllegalStateException("onMessageUnpinHandler must be set.")
     }
-    private var giphySendHandler = GiphySendHandler { _, _ ->
+    private var giphySendHandler = GiphySendHandler {
         throw IllegalStateException("onSendGiphyHandler must be set.")
     }
     private var messageRetryHandler = MessageRetryHandler {
@@ -535,8 +535,8 @@ public class MessageListView : ConstraintLayout {
         }
     private val defaultUserClickListener = UserClickListener { /* Empty */ }
     private val defaultGiphySendListener =
-        GiphySendListener { message, action ->
-            giphySendHandler.onSendGiphy(message, action)
+        GiphySendListener { action ->
+            giphySendHandler.onSendGiphy(action)
         }
     private val defaultLinkClickListener = LinkClickListener { url ->
         ChatUI.navigator.navigate(WebLinkDestination(context, url))
@@ -1656,7 +1656,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface GiphySendListener {
-        public fun onGiphySend(message: Message, action: GiphyAction)
+        public fun onGiphySend(action: GiphyAction)
     }
 
     public fun interface LinkClickListener {
@@ -1748,7 +1748,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface GiphySendHandler {
-        public fun onSendGiphy(message: Message, action: GiphyAction)
+        public fun onSendGiphy(action: GiphyAction)
     }
 
     public fun interface CustomActionHandler {

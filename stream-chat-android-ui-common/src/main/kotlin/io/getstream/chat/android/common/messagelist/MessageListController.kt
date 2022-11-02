@@ -131,8 +131,9 @@ public class MessageListController(
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     private val enforceUniqueReactions: Boolean = true,
-    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
-    private val threadDateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultThreadDateSeparator(),
+    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
+    private val threadDateSeparatorHandler: DateSeparatorHandler =
+        DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
 ) {
 
@@ -582,7 +583,7 @@ public class MessageListController(
             val shouldAddDateSeparator = dateSeparatorHandler.shouldAddDateSeparator(previousMessage, message)
 
             val position = messagePositionHandler.handleMessagePosition(
-                prevMessage = previousMessage,
+                previousMessage = previousMessage,
                 message = message,
                 nextMessage = nextMessage,
                 isAfterDateSeparator = shouldAddDateSeparator

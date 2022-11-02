@@ -37,7 +37,7 @@ internal class MessageListListenerContainerImpl(
     attachmentDownloadClickListener: AttachmentDownloadClickListener = AttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM),
     reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
     userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
-    giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM),
+    giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.ONE_PARAM),
     linkClickListener: LinkClickListener = LinkClickListener(EmptyFunctions.ONE_PARAM),
 ) : MessageListListenerContainer {
     private object EmptyFunctions {
@@ -112,8 +112,8 @@ internal class MessageListListenerContainerImpl(
     override var giphySendListener: GiphySendListener by ListenerDelegate(
         giphySendListener
     ) { realListener ->
-        GiphySendListener { message, action ->
-            realListener().onGiphySend(message, action)
+        GiphySendListener { action ->
+            realListener().onGiphySend(action)
         }
     }
 

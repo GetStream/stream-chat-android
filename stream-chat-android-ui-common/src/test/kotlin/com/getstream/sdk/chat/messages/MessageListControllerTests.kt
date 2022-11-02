@@ -357,7 +357,7 @@ internal class MessageListControllerTests {
         }
 
         fun get(
-            dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparator(),
+            dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
             deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
         ): MessageListController {
             return MessageListController(

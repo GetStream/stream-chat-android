@@ -12,13 +12,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.messagelist.GiphyAction
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.message.list.MessageListView
@@ -79,7 +79,7 @@ class MessageListViewSnippets : Fragment() {
         messageListView.setMessageUnpinHandler { message: Message ->
             // Handle when message is going to be unpinned
         }
-        messageListView.setGiphySendHandler { message: Message, giphyAction: GiphyAction ->
+        messageListView.setGiphySendHandler { giphyAction: GiphyAction ->
             // Handle when some giphyAction is going to be performed
         }
         messageListView.setMessageRetryHandler { message: Message ->

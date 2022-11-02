@@ -71,7 +71,7 @@ public class MessageListViewSnippets extends Fragment {
         messageListView.setMessageUnpinHandler((message) -> {
             // Handle when message is going to be unpinned
         });
-        messageListView.setGiphySendHandler((message, giphyAction) -> {
+        messageListView.setGiphySendHandler((giphyAction) -> {
             // Handle when some giphyAction is going to be performed
         });
         messageListView.setMessageRetryHandler((message) -> {

@@ -220,10 +220,10 @@ public abstract interface class io/getstream/chat/android/common/messagelist/Dat
 }
 
 public final class io/getstream/chat/android/common/messagelist/DateSeparatorHandler$Companion {
-	public final fun getDefaultDateSeparator (J)Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;
-	public static synthetic fun getDefaultDateSeparator$default (Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler$Companion;JILjava/lang/Object;)Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;
-	public final fun getDefaultThreadDateSeparator (J)Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;
-	public static synthetic fun getDefaultThreadDateSeparator$default (Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler$Companion;JILjava/lang/Object;)Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;
+	public final fun getDefaultDateSeparatorHandler (J)Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;
+	public static synthetic fun getDefaultDateSeparatorHandler$default (Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler$Companion;JILjava/lang/Object;)Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;
+	public final fun getDefaultThreadDateSeparatorHandler (J)Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;
+	public static synthetic fun getDefaultThreadDateSeparatorHandler$default (Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler$Companion;JILjava/lang/Object;)Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;
 }
 
 public abstract class io/getstream/chat/android/common/messagelist/GiphyAction {
