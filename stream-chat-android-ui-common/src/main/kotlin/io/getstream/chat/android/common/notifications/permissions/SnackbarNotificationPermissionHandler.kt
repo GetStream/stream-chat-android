@@ -19,18 +19,14 @@ package io.getstream.chat.android.common.notifications.permissions
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import android.view.ViewGroup
 import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.client.notifications.permissions.ActivityLifecycleCallbacks
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.ui.common.R
+import io.getstream.chat.android.uiutils.util.openSystemSettings
 import io.getstream.logging.StreamLog
-
-private const val SCHEME_PACKAGE = "package"
 
 /**
  * Shows a [Snackbar] with a link to app settings on [android.Manifest.permission.POST_NOTIFICATIONS] permission denial.
@@ -84,14 +80,7 @@ public class SnackbarNotificationPermissionHandler(
             R.string.stream_ui_message_input_permission_notifications_message,
             Snackbar.LENGTH_LONG
         ).setAction(R.string.stream_ui_message_input_permissions_setting_button) {
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                data = Uri.Builder()
-                    .scheme(SCHEME_PACKAGE)
-                    .opaquePart(packageName)
-                    .build()
-            }
-            startActivity(intent)
+            openSystemSettings()
         }.show()
     }
 }
