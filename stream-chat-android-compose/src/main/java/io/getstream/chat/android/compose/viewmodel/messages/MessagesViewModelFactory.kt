@@ -41,7 +41,7 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
  * @param channelId The current channel ID, to load the messages from.
  * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param chatClient The client to use for API calls.
- * @param messageLimit The limit of the messages to load in a single page.
+ * @param messageLimit The number of messages to load in a single page.
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
