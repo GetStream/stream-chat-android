@@ -90,6 +90,7 @@
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
+- Fix multi-bundle feature when using Firebase as Push Provider. [#4341](https://github.com/GetStream/stream-chat-android/pull/4341)
 
 ### ⬆️ Improved
 
