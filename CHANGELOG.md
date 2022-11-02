@@ -71,7 +71,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `ownMessageQuotedBackground`, `otherMessageQuotedBackground`, `ownMessageQuotedText` and `otherMessageQuotedText` options to `StreamColors`, to make it possible to customize the appearance of quoted message via `ChatTheme`. [#4335](https://github.com/GetStream/stream-chat-android/pull/4335)
+- Added `ownMessageQuotedBackground`, `otherMessageQuotedBackground`, `ownMessageQuotedText` and `otherMessageQuotedText` options to `StreamColors`, to make it possible to customize the appearance of quoted messages via `ChatTheme`. [#4335](https://github.com/GetStream/stream-chat-android/pull/4335)
 
 ### ⚠️ Changed
 
