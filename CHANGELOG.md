@@ -120,6 +120,7 @@
 - 🚨 Breaking change: Attribute `streamUiSaveImageIcon` has been renamed to `streamUiSaveMediaIcon`. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 - 🚨 Breaking change: String resource `stream_ui_attachment_gallery_save_image` has been renamed to `stream_ui_attachment_gallery_save_media`. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 - Aligned the information displayed in the title and subtitle of `ChannelActionsDialogFragment` with the information in `MessageListHeaderView`. [#4306](https://github.com/GetStream/stream-chat-android/pull/4306)
+- Replaced the Dexter library for checking runtime permissions with the PermissionX library. [#4338](https://github.com/GetStream/stream-chat-android/pull/4338)
 
 ### ❌ Removed
 - Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
