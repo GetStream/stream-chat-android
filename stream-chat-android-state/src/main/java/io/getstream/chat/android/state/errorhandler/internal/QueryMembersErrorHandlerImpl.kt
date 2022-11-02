@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.call.onErrorReturn
-import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.QueryMembersErrorHandler
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.models.Member
@@ -81,10 +80,4 @@ internal class QueryMembersErrorHandlerImpl(
             }
         }
     }
-
-    override val name: String
-        get() = "QueryMembersErrorHandlerImpl"
-
-    override val priority: Int
-        get() = ErrorHandler.DEFAULT_PRIORITY
 }

@@ -78,10 +78,4 @@ internal class CreateChannelErrorHandlerImpl(
             }
         }
     }
-
-    override val name: String
-        get() = "CreateChannelErrorHandlerImpl"
-
-    override val priority: Int
-        get() = ErrorHandler.DEFAULT_PRIORITY
 }

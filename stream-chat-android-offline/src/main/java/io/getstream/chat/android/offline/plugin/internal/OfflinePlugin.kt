@@ -83,7 +83,7 @@ internal class OfflinePlugin(
     CreateChannelListener by createChannelListener,
     SendAttachmentListener by sendAttachmentListener {
 
-    override val errorHandlers: List<ErrorHandler> = emptyList()
+
     override fun onUserSet(user: User) { /* No-Op */ }
 
     override fun onUserDisconnected() { /* No-Op */ }
