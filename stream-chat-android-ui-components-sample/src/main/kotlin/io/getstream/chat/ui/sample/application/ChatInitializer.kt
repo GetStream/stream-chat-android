@@ -23,12 +23,15 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
 import io.getstream.chat.android.pushprovider.xiaomi.XiaomiPushDeviceGenerator
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
+import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig

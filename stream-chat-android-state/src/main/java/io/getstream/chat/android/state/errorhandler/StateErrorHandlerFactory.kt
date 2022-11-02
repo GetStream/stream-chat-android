@@ -17,6 +17,8 @@
 package io.getstream.chat.android.state.errorhandler
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.offline.errorhandler.internal.CreateChannelErrorHandlerImpl
 import io.getstream.chat.android.offline.errorhandler.internal.DeleteReactionErrorHandlerImpl
@@ -25,9 +27,9 @@ import io.getstream.chat.android.offline.errorhandler.internal.SendReactionError
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 
-internal class StateErrorHandlerFactory {
+public class StateErrorHandlerFactory : ErrorHandlerFactory {
 
-    fun create(channelRepository: ChannelRepository): StateErrorHandler {
+    override fun create(channelRepository: ChannelRepository): ErrorHandler {
         val scope = StateRegistry.get().scope
         val logicRegistry = LogicRegistry.get()
         val clientState = ChatClient.instance().clientState
