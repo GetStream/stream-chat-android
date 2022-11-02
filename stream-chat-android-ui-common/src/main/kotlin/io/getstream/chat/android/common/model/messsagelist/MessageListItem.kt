@@ -25,7 +25,7 @@ import io.getstream.chat.android.common.state.messagelist.MessagePosition
 import java.util.Date
 
 /**
- * Represents an list item inside a message list.
+ * Represents a list item inside a message list.
  */
 public sealed class MessageListItem
 
