@@ -47,7 +47,7 @@ import io.getstream.chat.android.compose.R
  * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
  * @param ownMessageText Used for message text color for the current user. [textHighEmphasis] by default.
  * @param otherMessageText Used for message text color for other users. [textHighEmphasis] by default.
- * @param ownMessageQuotedBackground Used as a quoted section background color for the messages sent by the current user.
+ * @param ownMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by the current user.
  * @param otherMessageQuotedBackground Used as a quoted section background color for the messages sent by other users.
  * @param ownMessageQuotedText Used as a quoted section text color for the messages sent by the current user. [textHighEmphasis] by default.
  * @param otherMessageQuotedText Used as a quoted section text color for the messages sent by other users. [textHighEmphasis] by default.
