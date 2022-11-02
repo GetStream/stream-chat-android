@@ -66,7 +66,7 @@
 - Updated Compose compiler version to `1.3.2`. (#4247)[https://github.com/GetStream/stream-chat-android/pull/4247]
 
 ### ✅ Added
-- Added `MessageListController` which generalizes message list state and actions, exposing them to each of the SDK-s ViewModels. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Added `MessageListController` which generalizes message list state and actions, exposing them to each SDK's ViewModel. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - Added `MessageListState`, `MessageListItem`, `MessageItem`, `DateSeparatorItem`, `ThreadSeparatorItem`, `SystemMessageITem`, `TypingItem`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState` to keep track of the message list states. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files) 
 - Added `ClipboardHandler` that handles copy/pasting. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - Added `DateSeparatorHandler` that handles when date separators should be shown. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
