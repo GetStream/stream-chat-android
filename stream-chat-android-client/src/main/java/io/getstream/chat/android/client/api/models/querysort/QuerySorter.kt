@@ -24,6 +24,9 @@ import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecif
  */
 public interface QuerySorter<T : Any> {
 
+    /**
+     * Sort specifications that compose this QuerySorter
+     */
     public var sortSpecifications: List<SortSpecification<T>>
 
     /**

@@ -25,6 +25,11 @@ public enum class SortDirection(public val value: Int) {
     ASC(1);
 
     public companion object {
+        /**
+         * Returns the [SortDirection] from the number that represents the direction.
+         *
+         * @param value Int the number of the direction.
+         */
         public fun fromNumber(value: Int): SortDirection =
             when (value) {
                 1 -> ASC
