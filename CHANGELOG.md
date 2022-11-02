@@ -149,6 +149,7 @@
 - Added a page about [Sample Apps](https://getstream.io/chat/docs/sdk/android/resources/sample-apps/) to the docs. [#4282](https://github.com/GetStream/stream-chat-android/pull/4282)
 - Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 - Added `MessageLazyListState` to replace the default `LazyListState`. `MessageLazyListState` is used to track the scroll position of the message list as well as the focused message offset. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Added properties `showMoreOverlay` and `showMoreCountText` to `ChatTheme`. These properties are designed to change the appearance of the show more count that appears when a message contains more media attachments than are able to be displayed in the message list media content preview. [#4293](https://github.com/GetStream/stream-chat-android/pull/4293)
 
 ### ⚠️ Changed
 - Changed the way ChannelsScreen and MessagesScreen components are built. Instead of exposing a ton of parameters for customization, we now expose a ViewModelFactory that accepts them. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
