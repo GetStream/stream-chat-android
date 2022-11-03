@@ -18,6 +18,7 @@ package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholde
 
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.state.messagelist.MessagePosition
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachment7z
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachmentDoc
@@ -33,31 +34,31 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentPdf)),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = listOf(MessagePosition.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(
                     attachments = mutableListOf(attachment7z, attachmentPdf)
                 ),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessagePosition.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(
                     attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt)
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentDoc, attachmentXls)),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = listOf(MessagePosition.TOP),
                 isMine = false
             ),
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z)),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessagePosition.MIDDLE),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -69,7 +70,7 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
                         attachmentDoc
                     )
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -83,7 +84,7 @@ class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponen
                         attachmentXls,
                     )
                 ),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = true
             )
         )

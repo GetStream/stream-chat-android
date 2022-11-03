@@ -717,7 +717,7 @@ Is it possible to configure when the avatar for messages appears. You can use `M
 ```kotlin
 messageListView.setShowAvatarPredicate(
     ShowAvatarPredicate { messageItem ->
-        messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
+        messageItem.positions.contains(MessagePosition.BOTTOM) && messageItem.isTheirs
     }
 )
 ```
@@ -726,7 +726,7 @@ messageListView.setShowAvatarPredicate(
 <TabItem value="java" label="Java">
 
 ```java
-messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs());
+messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessagePosition.BOTTOM) && messageItem.isTheirs());
 ```
 </TabItem>
 </Tabs>

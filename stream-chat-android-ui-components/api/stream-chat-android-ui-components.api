@@ -42,14 +42,6 @@ public final class com/getstream/sdk/chat/adapter/MessageListItem$MessageItem : 
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/getstream/sdk/chat/adapter/MessageListItem$Position : java/lang/Enum {
-	public static final field BOTTOM Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-	public static final field MIDDLE Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-	public static final field TOP Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-	public static fun values ()[Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
-}
-
 public final class com/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem : com/getstream/sdk/chat/adapter/MessageListItem {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem;
 }
@@ -4189,10 +4181,5 @@ public final class io/getstream/chat/android/ui/utils/extensions/MessageListItem
 
 public final class io/getstream/chat/android/ui/utils/extensions/MessageListStateKt {
 	public static final fun toMessageListItemWrapper (Lio/getstream/chat/android/common/messagelist/MessageListState;)Lcom/getstream/sdk/chat/view/messages/MessageListItemWrapper;
-}
-
-public final class io/getstream/chat/android/ui/utils/extensions/MessagePositionKt {
-	public static final fun toCommonPosition (Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;)Lio/getstream/chat/android/common/state/messagelist/MessagePosition;
-	public static final fun toUiPosition (Lio/getstream/chat/android/common/state/messagelist/MessagePosition;)Lcom/getstream/sdk/chat/adapter/MessageListItem$Position;
 }
 

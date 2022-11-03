@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.messagelist.MessageListController
+import io.getstream.chat.android.common.state.messagelist.MessagePosition
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -354,9 +355,9 @@ internal class MessageListViewModelTest {
         private fun List<Message>.toMessageItemList(): List<MessageListItem.MessageItem> {
             return this.mapIndexed { index, message ->
                 val position = when {
-                    index == 0 -> MessageListItem.Position.TOP
-                    this.size > 2 && index != this.size -> MessageListItem.Position.MIDDLE
-                    else -> MessageListItem.Position.BOTTOM
+                    index == 0 -> MessagePosition.TOP
+                    this.size > 2 && index != this.size -> MessagePosition.MIDDLE
+                    else -> MessagePosition.BOTTOM
                 }
 
                 MessageListItem.MessageItem(

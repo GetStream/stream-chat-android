@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.common.state.messagelist.MessagePosition
 import java.util.Date
 
 /**
@@ -54,7 +55,7 @@ public sealed class MessageListItem {
 
     public data class MessageItem(
         val message: Message,
-        val positions: List<Position> = listOf(),
+        val positions: List<MessagePosition> = listOf(),
         val isMine: Boolean = false,
         val messageReadBy: List<ChannelUserRead> = listOf(),
         val isThreadMode: Boolean = false,
@@ -77,12 +78,6 @@ public sealed class MessageListItem {
     public object LoadingMoreIndicatorItem : MessageListItem()
 
     public object ThreadPlaceholderItem : MessageListItem()
-
-    public enum class Position {
-        TOP,
-        MIDDLE,
-        BOTTOM,
-    }
 
     private companion object {
         private const val TYPING_ITEM_STABLE_ID = 1L

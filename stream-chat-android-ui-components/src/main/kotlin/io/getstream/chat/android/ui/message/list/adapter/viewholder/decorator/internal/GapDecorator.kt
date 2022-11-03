@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.common.state.messagelist.MessagePosition
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
@@ -100,7 +101,7 @@ internal class GapDecorator : BaseDecorator() {
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     private fun setupGapView(gapView: GapView, data: MessageListItem.MessageItem) {
-        if (data.positions.contains(MessageListItem.Position.TOP)) {
+        if (data.positions.contains(MessagePosition.TOP)) {
             gapView.showBigGap()
         } else {
             gapView.showSmallGap()

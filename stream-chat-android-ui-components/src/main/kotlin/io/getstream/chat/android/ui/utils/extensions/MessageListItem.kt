@@ -22,11 +22,11 @@ import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.model.messsagelist.SystemMessageState
 import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorState
 import io.getstream.chat.android.common.model.messsagelist.TypingItemState
+import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.common.model.messsagelist.MessageListItemState as MessageListItemCommon
 
 /**
- * Converts [MessageListItemCommon] to [MessageListItem] to be shown inside
- * [io.getstream.chat.android.ui.message.list.MessageListView].
+ * Converts [MessageListItemCommon] to [MessageListItem] to be shown inside [MessageListView].
  *
  * @return [MessageListItem] derived from [MessageListItemCommon].
  */
@@ -38,7 +38,7 @@ public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
         is TypingItemState -> MessageListItem.TypingItem(users = typingUsers)
         is MessageItemState -> MessageListItem.MessageItem(
             message = message,
-            positions = groupPosition.mapNotNull { it.toUiPosition() },
+            positions = groupPosition,
             isMine = isMine,
             messageReadBy = messageReadBy,
             isThreadMode = isInThread,

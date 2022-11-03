@@ -132,12 +132,14 @@
 - 🚨 Breaking change: `MessageListViewModel` now uses `MessageListController` for state and action handling. Updated `MessageListViewModelFactory` with new parameters to be able to build `MessageListController`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: `MessageListViewModel.Event.MessageReaction` no longer takes `enforceUnique` as a parameter, instead it is handled as part of `enforceUniqueReaction` inside `MessageListViewModelFactory` and `MessageListController`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: `ui-common` module `GiphyAction`s are now used instead of removed `GiphyAction` enum inside `ui-components` module. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- 🚨 Breaking change: `MessageListItem` now uses `MessagePosition` from `ui-common`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ### ❌ Removed
 - Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
 - The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - `ImageAttachmentViewStyle` has been removed and replaced by `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - Removed `GiphyAction` enum. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Removed `MessageListItem.Position` enum. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed

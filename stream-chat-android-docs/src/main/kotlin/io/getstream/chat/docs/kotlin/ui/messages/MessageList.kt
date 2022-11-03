@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.messagelist.GiphyAction
+import io.getstream.chat.android.common.state.messagelist.MessagePosition
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.message.list.MessageListView
@@ -254,7 +255,7 @@ class MessageListViewSnippets : Fragment() {
 
     fun avatarPredicate() {
         messageListView.setShowAvatarPredicate { messageItem ->
-            messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
+            messageItem.positions.contains(MessagePosition.BOTTOM) && messageItem.isTheirs
         }
     }
 }
