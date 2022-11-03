@@ -113,7 +113,7 @@ internal class ChannelStateLogic(
             if (shouldIncrementUnreadCount) {
                 StreamLog.d(TAG) {
                     "It is necessary to increment the unread count for channel: " +
-                        "${mutableState.channelData.value.channelId}. The last seen message was " +
+                        "${mutableState.channelData.value.id}. The last seen message was " +
                         "at: $lastMessageSeenDate. " +
                         "New unread count: ${unreadCount + 1}"
                 }

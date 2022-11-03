@@ -192,7 +192,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     }
 
     /**
-     * Allows clients to set a click listener for reactions in the reaction butbble.
+     * Allows clients to set a click listener for message option items.
      *
      * @param messageOptionClickListener The callback to be invoked on message option item click.
      */

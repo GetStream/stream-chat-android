@@ -121,7 +121,7 @@ internal class CreateChannelTests {
             val channelType = "channelType"
             val channelId = "channelId"
             val result =
-                Result.success(randomChannel(id = channelId, type = channelType, cid = "$channelType:$channelId"))
+                Result.success(randomChannel(id = channelId, type = channelType))
 
             sut.onCreateChannelResult(
                 channelType = channelType,
@@ -164,7 +164,7 @@ internal class CreateChannelTests {
             val channelId = "channel"
             val cid = "$channelType:$channelId"
             val channel =
-                randomChannel(id = channelId, type = channelType, cid = cid, syncStatus = SyncStatus.IN_PROGRESS)
+                randomChannel(id = channelId, type = channelType, syncStatus = SyncStatus.IN_PROGRESS)
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }
@@ -198,7 +198,7 @@ internal class CreateChannelTests {
             val channelId = "channel"
             val cid = "$channelType:$channelId"
             val channel =
-                randomChannel(id = channelId, type = channelType, cid = cid, syncStatus = SyncStatus.IN_PROGRESS)
+                randomChannel(id = channelId, type = channelType, syncStatus = SyncStatus.IN_PROGRESS)
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }

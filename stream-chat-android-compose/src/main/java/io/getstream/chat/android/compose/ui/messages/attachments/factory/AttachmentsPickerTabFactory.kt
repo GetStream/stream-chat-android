@@ -39,7 +39,7 @@ public interface AttachmentsPickerTabFactory {
      * @param isSelected If the tab is selected.
      */
     @Composable
-    public fun pickerTabIcon(isEnabled: Boolean, isSelected: Boolean)
+    public fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean)
 
     /**
      * Emits a content for the tab.
@@ -50,7 +50,7 @@ public interface AttachmentsPickerTabFactory {
      * @param onAttachmentsSubmitted Handler to submit the selected attachments to the message composer.
      */
     @Composable
-    public fun pickerTabContent(
+    public fun PickerTabContent(
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

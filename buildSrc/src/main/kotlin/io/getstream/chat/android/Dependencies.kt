@@ -73,7 +73,6 @@ object Versions {
     internal const val STFALCON_IMAGE_VIEWER = "1.0.1"
     internal const val TEST_PARAMETER_INJECTOR = "1.8"
     internal const val THREETENBP = "1.6.1"
-    internal const val THREETENABP = "1.4.0"
     internal const val TIMBER = "5.0.1"
     internal const val TURBINE = "0.10.0"
     internal const val WORK = "2.7.1"
@@ -199,7 +198,6 @@ object Dependencies {
     const val testParameterInjector =
         "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"
     const val threeTenBp = "org.threeten:threetenbp:${Versions.THREETENBP}"
-    const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:${Versions.THREETENABP}"
     const val timber = "com.jakewharton.timber:timber:${Versions.TIMBER}"
     const val turbine = "app.cash.turbine:turbine:${Versions.TURBINE}"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:${Versions.WORK}"

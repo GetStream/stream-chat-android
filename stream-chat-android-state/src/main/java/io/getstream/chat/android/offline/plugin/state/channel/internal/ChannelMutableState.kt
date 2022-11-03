@@ -183,7 +183,7 @@ internal class ChannelMutableState(
             SharingStarted.Eagerly,
             ChannelData(
                 type = channelType,
-                channelId = channelId,
+                id = channelId,
             )
         )
 

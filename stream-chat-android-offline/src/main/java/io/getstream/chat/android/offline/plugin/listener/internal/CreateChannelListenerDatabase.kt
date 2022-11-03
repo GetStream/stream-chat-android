@@ -68,7 +68,6 @@ internal class CreateChannelListenerDatabase(
         val channel = Channel(
             id = generatedChannelId,
             type = channelType,
-            cid = "$channelType:$generatedChannelId",
             members = getMembers(memberIds),
             extraData = extraData.toMutableMap(),
             createdAt = Date(),

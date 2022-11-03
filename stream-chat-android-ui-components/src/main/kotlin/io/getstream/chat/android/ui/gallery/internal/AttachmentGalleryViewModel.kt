@@ -21,7 +21,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class AttachmentGalleryViewModel : ViewModel() {

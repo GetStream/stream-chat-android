@@ -167,6 +167,8 @@
         <attr name="streamUiFileCheckBoxDeselectedDrawable" format="reference" />
         <attr name="streamUiFileCheckBoxSelectorTextColor" format="reference" />
         <attr name="streamUiAttachmentVideoLogoIcon" format="reference" />
+        <!-- The tint of the icon used for video files. -->
+        <attr name="streamUiAttachmentVideoLogoIconTint" format="reference|color"/>
         <attr name="streamUiAttachmentVideoLengthTextSize" format="dimension" />
         <attr name="streamUiAttachmentVideoLengthTextColor" format="reference|color" />
         <attr name="streamUiAttachmentVideoLengthFontAssets" format="string" />

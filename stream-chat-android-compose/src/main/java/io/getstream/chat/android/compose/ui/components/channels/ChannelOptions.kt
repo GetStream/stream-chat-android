@@ -34,16 +34,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
+import io.getstream.chat.android.common.state.Cancel
+import io.getstream.chat.android.common.state.ChannelAction
+import io.getstream.chat.android.common.state.DeleteConversation
+import io.getstream.chat.android.common.state.LeaveGroup
+import io.getstream.chat.android.common.state.MuteChannel
+import io.getstream.chat.android.common.state.UnmuteChannel
+import io.getstream.chat.android.common.state.ViewInfo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
-import io.getstream.chat.android.compose.state.channels.list.Cancel
-import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
-import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
-import io.getstream.chat.android.compose.state.channels.list.LeaveGroup
-import io.getstream.chat.android.compose.state.channels.list.MuteChannel
-import io.getstream.chat.android.compose.state.channels.list.UnmuteChannel
-import io.getstream.chat.android.compose.state.channels.list.ViewInfo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.toSet
 
@@ -99,6 +99,8 @@ public fun ChannelOptions(
  *
  * @param selectedChannel The currently selected channel.
  * @param isMuted If the channel is muted or not.
+ * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * @return The list of channel option items to display.
  */
 @Composable
 public fun buildDefaultChannelOptionsState(
