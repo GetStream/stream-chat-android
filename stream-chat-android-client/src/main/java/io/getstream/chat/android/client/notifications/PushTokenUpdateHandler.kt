@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.notifications
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.client.models.Device
@@ -34,12 +35,12 @@ internal class PushTokenUpdateHandler(context: Context) {
 
     private var userPushToken: UserPushToken
         set(value) {
-            prefs.edit()
-                .putString(KEY_USER_ID, value.userId)
-                .putString(KEY_TOKEN, value.token)
-                .putString(KEY_PUSH_PROVIDER, value.pushProvider)
-                .putString(KEY_PUSH_PROVIDER_NAME, value.providerName)
-                .apply()
+            prefs.edit(true) {
+                putString(KEY_USER_ID, value.userId)
+                putString(KEY_TOKEN, value.token)
+                putString(KEY_PUSH_PROVIDER, value.pushProvider)
+                putString(KEY_PUSH_PROVIDER_NAME, value.providerName)
+            }
         }
         get() {
             return UserPushToken(
