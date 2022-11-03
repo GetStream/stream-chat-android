@@ -116,6 +116,7 @@ internal class MockClientBuilder(
             appSettingsManager = mock(),
             chatSocket = mock(),
             pluginFactories = emptyList(),
+            errorHandlerFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
         )
