@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 
 /**
- * Updates the database of the SDK accordingly with request to send attachments to backend.
+ * Updates the database of the SDK accordingly with the request to send the attachments to the backend.
  */
 internal class SendAttachmentsListenerDatabase(
     private val messageRepository: MessageRepository,
