@@ -26,7 +26,7 @@ public interface SendAttachmentListener {
     /**
      * Updates the SDK before the attachments are sent to backend. It can be used to update the
      * database with the message whose attachments are going to be sent or to change the state
-     * of the messages that are presented to the end user. 
+     * of the messages that are presented to the end user.
      *
      * @param channelType String
      * @param channelId String
