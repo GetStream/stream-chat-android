@@ -46,13 +46,17 @@ internal class QueryChannelsListenerState(private val logicProvider: LogicRegist
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         logicProvider.queryChannels(request).run {
+            loadingPerPage(true, request.offset > 0)
             setCurrentRequest(request)
             queryOffline(request.toPagination())
         }
     }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        logicProvider.queryChannels(request).onQueryChannelsResult(result, request)
+        logicProvider.queryChannels(request).run {
+            onQueryChannelsResult(result, request)
+            loadingPerPage(false, request.offset > 0)
+        }
     }
 
     private companion object {

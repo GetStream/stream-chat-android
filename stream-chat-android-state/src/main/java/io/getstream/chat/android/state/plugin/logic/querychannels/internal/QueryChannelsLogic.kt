@@ -65,14 +65,12 @@ internal class QueryChannelsLogic(
                 .also { channels ->
                     if (channels.isNotEmpty()) {
                         addChannels(channels)
-
-                        loadingPerPage(false, hasOffset)
                     }
                 }
         }
     }
 
-    private fun loadingPerPage(isLoading: Boolean, hasOffset: Boolean) {
+    internal fun loadingPerPage(isLoading: Boolean, hasOffset: Boolean) {
         if (hasOffset) {
             queryChannelsStateLogic.setLoadingMore(isLoading)
         } else {
@@ -141,7 +139,7 @@ internal class QueryChannelsLogic(
             updateOnlineChannels(request, result.value)
         }
 
-        loadingPerPage(false, request.offset > 0)
+        logger.d { "loadingPerPage: false. success: $result.isSuccess" }
     }
 
     /**

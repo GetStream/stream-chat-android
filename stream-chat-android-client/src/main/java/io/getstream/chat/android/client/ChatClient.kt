@@ -2888,6 +2888,7 @@ internal constructor(
                 )
 
             val appSettingsManager = AppSettingManager(module.api())
+            val clientState = ClientStateImpl(module.networkStateProvider)
 
             return ChatClient(
                 config,
