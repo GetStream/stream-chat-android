@@ -42,6 +42,7 @@ public interface ChannelState {
     /** A replied message state in this channel. By default is null. There is a value if you're replying some message.*/
     public val repliedMessage: StateFlow<Message?>
 
+    /** The message collection of this channel. */
     public val messages: StateFlow<List<Message>>
 
     /** Strong typed state of message collection of this channel. See [MessagesState] for more details.*/
