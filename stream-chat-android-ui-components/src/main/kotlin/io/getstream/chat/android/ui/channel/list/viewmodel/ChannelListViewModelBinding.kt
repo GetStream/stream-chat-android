@@ -51,11 +51,19 @@ public fun ChannelListViewModel.bindView(
 
         list to (state?.isLoading == true)
     }.distinctUntilChanged().observe(lifecycleOwner) { (list, isLoading) ->
-        if (isLoading) {
-            view.showLoadingView()
-        } else {
-            view.hideLoadingView()
-            view.setChannels(list)
+
+        when {
+            isLoading && list.isEmpty() -> view.showLoadingView()
+
+            list.isNotEmpty()-> {
+                view.hideLoadingView()
+                view.setChannels(list)
+            }
+
+            else -> {
+                view.hideLoadingView()
+                view.setChannels(emptyList())
+            }
         }
     }
 

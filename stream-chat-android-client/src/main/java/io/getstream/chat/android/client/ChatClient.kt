@@ -2976,6 +2976,7 @@ internal constructor(
                 )
 
             val appSettingsManager = AppSettingManager(module.api())
+            val clientState = ClientStateImpl(module.networkStateProvider)
 
             return ChatClient(
                 config,
@@ -2984,7 +2985,12 @@ internal constructor(
                 module.notifications(),
                 tokenManager,
                 module.socketStateService,
-                module.callPostponeHelper,
+                CallPostponeHelper(
+                    userScope = userScope,
+                    awaitConnection = {
+                        clientState.connectionState.first { it == ConnectionState.CONNECTED }
+                    }
+                ),
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 clientScope = clientScope,
