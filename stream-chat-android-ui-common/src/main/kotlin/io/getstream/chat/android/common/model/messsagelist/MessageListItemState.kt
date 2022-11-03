@@ -40,7 +40,8 @@ public sealed class MessageListItemState
  * @param currentUser The currently logged in user.
  * @param groupPosition The [MessagePosition] of the item inside a group.
  * @param isMessageRead Whether the message has been read or not.
- * @param deletedMessageVisibility The [DeletedMessageVisibility] which determines the behavior of deleted messages.
+ * @param deletedMessageVisibility The [DeletedMessageVisibility] which determines the visibility of deleted messages in
+ * the UI.
  * @param focusState The current [MessageFocusState] of the message, used to focus the message in the ui.
  */
 public data class MessageItemState(
@@ -72,7 +73,7 @@ public data class DateSeparatorState(
  * @param date The date show on the separator.
  * @param replyCount Number of messages inside the thread.
  */
-public data class ThreadSeparatorState(
+public data class ThreadDateSeparatorState(
     public val date: Date,
     public val replyCount: Int,
 ) : MessageListItemState()

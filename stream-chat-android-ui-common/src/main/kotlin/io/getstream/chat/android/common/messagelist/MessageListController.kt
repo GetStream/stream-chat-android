@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
@@ -42,7 +43,7 @@ import io.getstream.chat.android.common.model.messsagelist.DateSeparatorState
 import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
 import io.getstream.chat.android.common.model.messsagelist.SystemMessageState
-import io.getstream.chat.android.common.model.messsagelist.ThreadSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorState
 import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
@@ -85,6 +86,7 @@ import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -113,6 +115,7 @@ import io.getstream.chat.android.common.state.Flag as FlagMessage
  * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param chatClient The client used to communicate with the API.
+ * @param clientState The current state of the SDK.
  * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list.
  * @param showSystemMessages Determines if the system messages should be shown or not.
  * @param messageFooterVisibility Determines if and when the message footer is visible or not.
@@ -128,6 +131,7 @@ public class MessageListController(
     private val messageId: String? = null,
     public val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val clientState: ClientState = chatClient.clientState,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
@@ -157,6 +161,8 @@ public class MessageListController(
     public val channelState: StateFlow<ChannelState?> =
         chatClient.watchChannelAsState(
             cid = cid,
+            // Using 0 as limit will skip insertion of new messages if we are loading a specific message when
+            // opening the MessageList screen. Prevents race condition where wrong messages might get loaded.
             messageLimit = if (messageId != null) 0 else messageLimit,
             coroutineScope = scope,
         )
@@ -164,12 +170,12 @@ public class MessageListController(
     /**
      * Gives us information about the online state of the device.
      */
-    public val connectionState: StateFlow<ConnectionState> = chatClient.clientState.connectionState
+    public val connectionState: StateFlow<ConnectionState> = clientState.connectionState
 
     /**
      * Gives us information about the logged in user state.
      */
-    public val user: StateFlow<User?> = chatClient.clientState.user
+    public val user: StateFlow<User?> = clientState.user
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -320,7 +326,7 @@ public class MessageListController(
     private var focusedMessage: MutableStateFlow<Message?> = MutableStateFlow(null)
 
     /**
-     * Holds the information of which needs to be removed from focus.
+     * Holds the information of which message needs to be removed from focus.
      */
     private var removeFocusedMessageJob: Pair<String, Job>? = null
 
@@ -344,7 +350,7 @@ public class MessageListController(
     init {
         observeMessagesListState()
 
-        messageId?.takeUnless { it.isNullOrBlank() }?.let { messageId ->
+        messageId?.takeUnless { it.isBlank() }?.let { messageId ->
             scope.launch {
                 _messageListState
                     .onCompletion { scrollToMessage(messageId) }
@@ -635,7 +641,7 @@ public class MessageListController(
 
             if (index == 0 && isInThread) {
                 groupedMessages.add(
-                    ThreadSeparatorState(
+                    ThreadDateSeparatorState(
                         date = message.createdAt ?: message.createdLocallyAt ?: Date(),
                         replyCount = message.replyCount
                     )
@@ -668,7 +674,7 @@ public class MessageListController(
         val currentUser = user.value
 
         return messages.filter {
-            val shouldShowIfDeleted = when (deletedMessageVisibility) {
+            val shouldNotShowIfDeleted = when (deletedMessageVisibility) {
                 DeletedMessageVisibility.ALWAYS_VISIBLE -> true
                 DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
                     !(it.isDeleted() && it.user.id != currentUser?.id)
@@ -677,7 +683,7 @@ public class MessageListController(
             }
             val isSystemMessage = it.isSystem() || it.isError()
 
-            shouldShowIfDeleted || (isSystemMessage && showSystemMessages)
+            shouldNotShowIfDeleted || (isSystemMessage && showSystemMessages)
         }
     }
 
@@ -745,7 +751,7 @@ public class MessageListController(
      */
     public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = this.messageLimit) {
         if (isInThread ||
-            chatClient.clientState.isOffline ||
+            clientState.isOffline ||
             channelState.value?.endOfNewerMessages?.value == true
         ) return
 
@@ -758,7 +764,7 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadOlderMessages(messageLimit: Int = this.messageLimit) {
-        if (chatClient.clientState.isOffline) return
+        if (clientState.isOffline) return
 
         _mode.value.run {
             when (this) {
@@ -772,7 +778,7 @@ public class MessageListController(
     }
 
     /**
-     * Load older messages for the specified thread [MessageMode.MessageThread.parentMessage].
+     * Loads older messages for the specified thread [MessageMode.MessageThread.parentMessage].
      *
      * @param threadMode Current thread mode containing information about the thread.
      * @param messageLimit The size of the message list page to load.
@@ -798,7 +804,7 @@ public class MessageListController(
      *  Changes the current [_mode] to be [MessageMode.MessageThread] and uses [ChatClient] to get the [ThreadState] for
      *  the current thread.
      *
-     * @param parentMessage The message with the thread we want to observe.
+     * @param parentMessage The root [Message] which contains the thread we want to show.
      * @param messageLimit The size of the message list page to load.
      */
     public fun enterThreadMode(parentMessage: Message, messageLimit: Int = this.messageLimit) {
@@ -831,11 +837,20 @@ public class MessageListController(
      * @param onResult Handler that notifies the result of the load action.
      */
     public fun loadMessageById(messageId: String, onResult: (Result<Message>) -> Unit = {}) {
-        chatClient.loadMessageById(cid, messageId).enqueue { result -> onResult(result) }
+        chatClient.loadMessageById(cid, messageId).enqueue { result ->
+            onResult(result)
+            if (result.isError) {
+                val error = result.error()
+                logger.e {
+                    "Could not load the message with id: $messageId inside channel: $cid. " +
+                        "Error: ${error.cause?.message}. Message: ${error.message}"
+                }
+            }
+        }
     }
 
     /**
-     * Scrolls to selected message. If the message is not currently in the list it will first load a page with the
+     * Scrolls to the selected message. If the message is not currently in the list it will first load a page with the
      * message in the middle of it, add it to the list and then notify to scroll to the message.
      *
      * @param messageId The id of the [Message] we wish to scroll to.
@@ -851,7 +866,7 @@ public class MessageListController(
      *
      * @param messageId The ID of the message.
      */
-    public fun focusMessage(messageId: String) {
+    private fun focusMessage(messageId: String) {
         val message = getMessageWithId(messageId)
 
         if (message != null) {
@@ -1016,7 +1031,7 @@ public class MessageListController(
     }
 
     /**
-     * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessage' to null.
+     * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessageState' to null.
      */
     public fun removeOverlay() {
         _threadListState.value = _threadListState.value.copy(selectedMessageState = null)
@@ -1243,7 +1258,7 @@ public class MessageListController(
      *
      * @param messageId The [Message] id we are looking for.
      *
-     * @return [Message] with the request id or null if the message is not in the list.
+     * @return The [Message] with the given id or null if the message is not in the list.
      */
     public fun getMessageWithId(messageId: String): Message? {
         return (
@@ -1344,7 +1359,7 @@ public class MessageListController(
     }
 
     /**
-     * Removes the shaddow ban for the given user inside
+     * Removes the shadow ban for the given user inside
      * this channel.
      *
      * @param userId The ID of the user for which the shadow ban is removed.
@@ -1432,7 +1447,7 @@ public class MessageListController(
     }
 
     /**
-     * Sets thread date separator handler which determines when to add date separators inside the thread.
+     * Sets the thread date separator handler which determines when to add date separators inside the thread.
      * @see setDateSeparatorHandler
      *
      * @param threadDateSeparatorHandler The handler to use. If null, [_messageListState] won't contain date separators.
@@ -1464,23 +1479,34 @@ public class MessageListController(
     /**
      * Sets whether the system messages should be visible.
      *
-     * @param showSystemMessages Whether system messages should be visible or not.
+     * @param areSystemMessagesVisible Whether system messages should be visible or not.
      */
-    public fun setAreSystemMessagesVisible(showSystemMessages: Boolean) {
-        _showSystemMessagesState.value = showSystemMessages
+    public fun setSystemMessageVisibility(areSystemMessagesVisible: Boolean) {
+        _showSystemMessagesState.value = areSystemMessagesVisible
     }
 
     /**
-     * Quality of life function that notifies the result of an action and logs and error in case the action has failed.
+     * Quality of life function that notifies the result of an action and logs any error in case the action has failed.
      *
      * @param error The [ChatError] thrown if the action fails.
      * @param defaultError The default error to be shown on the screen if we can't get the error from the result.
      * @param onError Handler to wrap [ChatError] into [ErrorEvent] depending on action.
      */
-    private fun onActionResult(error: ChatError, defaultError: String, onError: (ChatError) -> ErrorEvent) {
+    private fun onActionResult(
+        error: ChatError,
+        defaultError: String,
+        onError: (ChatError) -> ErrorEvent,
+    ) {
         val errorMessage = error.message ?: error.cause?.message ?: defaultError
         logger.e { errorMessage }
         _errorEvents.value = onError(error)
+    }
+
+    /**
+     * Cancels any pending work when the parent ViewModel is about to be destroyed.
+     */
+    public fun onCleared() {
+        scope.cancel()
     }
 
     /**

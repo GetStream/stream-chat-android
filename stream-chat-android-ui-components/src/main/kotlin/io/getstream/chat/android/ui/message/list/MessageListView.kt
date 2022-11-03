@@ -1090,7 +1090,7 @@ public class MessageListView : ConstraintLayout {
      *
      * @param unreadCount The count of unread [Message]s for the thread/channel.
      */
-    public fun setUnreadCount(unreadCount: Int) {
+    internal fun setUnreadCount(unreadCount: Int) {
         binding.scrollToBottomButton.setUnreadCount(unreadCount)
     }
 
@@ -1314,7 +1314,7 @@ public class MessageListView : ConstraintLayout {
         this.userReactionClickListener = userReactionClickListener ?: defaultUserReactionClickListener
     }
 
-    /** Set the click listener to be used when a message that is a reply is clicked
+    /** Sets the click listener to be used when a message that is a reply is clicked.
      *
      * @param replyMessageClickListener The listener to use. If null, no behaviour is added.
      */

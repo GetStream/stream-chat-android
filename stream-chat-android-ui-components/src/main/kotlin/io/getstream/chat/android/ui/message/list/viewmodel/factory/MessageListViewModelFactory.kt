@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
@@ -35,12 +36,13 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageInputViewModel.
  *
  * @param cid The current channel ID, to load the messages from.
- * @param messageId The message id to which we want to scroll to when opening the message list.
+ * @param messageId The message ID to which we want to scroll to when opening the message list.
  * @param chatClient The client to use for API calls.
+ * @param clientState The current state of the SDK.
  * @param messageLimit The limit of the messages to load in a single page.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
+ * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 100mb for Stream CDN.
  * @param showSystemMessages If we should show system message items in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
@@ -56,6 +58,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val clientState: ClientState = chatClient.clientState,
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val enforceUniqueReactions: Boolean = true,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
@@ -81,6 +84,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     messageLimit = messageLimit,
                     messageId = messageId,
                     chatClient = chatClient,
+                    clientState = clientState,
                     enforceUniqueReactions = enforceUniqueReactions,
                     showSystemMessages = showSystemMessages,
                     deletedMessageVisibility = deletedMessageVisibility,

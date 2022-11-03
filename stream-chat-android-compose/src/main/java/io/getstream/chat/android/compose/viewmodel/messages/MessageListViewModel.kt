@@ -353,16 +353,6 @@ public class MessageListViewModel(
     }
 
     /**
-     * Sets the focused message to be the message with the given ID, after which it removes it from
-     * focus with a delay.
-     *
-     * @param messageId The ID of the message.
-     */
-    public fun focusMessage(messageId: String) {
-        messageListController.focusMessage(messageId = messageId)
-    }
-
-    /**
      * Returns a message with the given ID from the [currentMessagesState].
      *
      * @param messageId The ID of the selected message.
@@ -384,10 +374,10 @@ public class MessageListViewModel(
     /**
      * Scrolls to message if in list otherwise get the message from backend. Does not work for threads.
      *
-     * @param message The message we wish to scroll to.
+     * @param messageId The [Message] id we wish to scroll to.
      */
-    public fun scrollToSelectedMessage(message: Message) {
-        messageListController.scrollToMessage(messageId = message.id)
+    public fun scrollToMessage(messageId: String) {
+        messageListController.scrollToMessage(messageId = messageId)
     }
 
     /**
@@ -423,7 +413,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Sets thread date separator handler which determines when to add date separators inside the thread.
+     * Sets the thread date separator handler which determines when to add date separators inside the thread.
      *
      * @param threadDateSeparatorHandler The handler to use. If null, the thread messages list won't contain date
      * separators.
@@ -455,9 +445,17 @@ public class MessageListViewModel(
     /**
      * Sets whether the system messages should be visible.
      *
-     * @param showSystemMessages Whether system messages should be visible or not.
+     * @param areSystemMessagesVisible Whether system messages should be visible or not.
      */
-    public fun setAreSystemMessagesVisible(showSystemMessages: Boolean) {
-        messageListController.setAreSystemMessagesVisible(showSystemMessages)
+    public fun setSystemMessageVisibility(areSystemMessagesVisible: Boolean) {
+        messageListController.setSystemMessageVisibility(areSystemMessagesVisible)
+    }
+
+    /**
+     * Clears the [MessageListController] coroutine scope.
+     */
+    override fun onCleared() {
+        messageListController.onCleared()
+        super.onCleared()
     }
 }

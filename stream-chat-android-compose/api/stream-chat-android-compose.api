@@ -1876,7 +1876,6 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun dismissAllMessageActions ()V
 	public final fun dismissMessageAction (Lio/getstream/chat/android/common/state/MessageAction;)V
 	public final fun flagMessage (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun focusMessage (Ljava/lang/String;)V
 	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getCurrentMessagesState ()Lio/getstream/chat/android/common/messagelist/MessageListState;
@@ -1905,15 +1904,15 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun removeShadowBanFromUser (Ljava/lang/String;)V
 	public final fun scrollToBottom (ILkotlin/jvm/functions/Function0;)V
 	public static synthetic fun scrollToBottom$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
-	public final fun scrollToSelectedMessage (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun scrollToMessage (Ljava/lang/String;)V
 	public final fun selectExtendedReactions (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun selectMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun selectReactions (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun setAreSystemMessagesVisible (Z)V
 	public final fun setDateSeparatorHandler (Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;)V
 	public final fun setDeletedMessageVisibility (Lio/getstream/chat/android/common/state/DeletedMessageVisibility;)V
 	public final fun setMessageFooterVisibility (Lio/getstream/chat/android/common/state/MessageFooterVisibility;)V
 	public final fun setMessagePositionHandler (Lio/getstream/chat/android/common/messagelist/MessagePositionHandler;)V
+	public final fun setSystemMessageVisibility (Z)V
 	public final fun setThreadDateSeparatorHandler (Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;)V
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
 	public static synthetic fun shadowBanUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
@@ -1924,8 +1923,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ILio/getstream/chat/android/common/util/ClipboardHandler;ZIJZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/MessagePositionHandler;)V
-	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ILio/getstream/chat/android/common/util/ClipboardHandler;ZIJZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/MessagePositionHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;ILio/getstream/chat/android/common/util/ClipboardHandler;ZIJZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/MessagePositionHandler;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;ILio/getstream/chat/android/common/util/ClipboardHandler;ZIJZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/DateSeparatorHandler;Lio/getstream/chat/android/common/messagelist/MessagePositionHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

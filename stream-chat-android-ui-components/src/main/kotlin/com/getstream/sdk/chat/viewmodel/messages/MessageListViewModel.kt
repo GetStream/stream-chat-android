@@ -441,7 +441,15 @@ public class MessageListViewModel(
      * @param showSystemMessages Whether system messages should be visible or not.
      */
     public fun setAreSystemMessagesVisible(showSystemMessages: Boolean) {
-        messageListController.setAreSystemMessagesVisible(showSystemMessages)
+        messageListController.setSystemMessageVisibility(showSystemMessages)
+    }
+
+    /**
+     * Clears the [MessageListController] coroutine scope.
+     */
+    override fun onCleared() {
+        messageListController.onCleared()
+        super.onCleared()
     }
 
     /**

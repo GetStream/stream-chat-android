@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.utils.AttachmentConstants
 import com.getstream.sdk.chat.utils.AttachmentFilter
 import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.composer.MessageComposerController
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
@@ -41,6 +42,7 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
  * @param channelId The current channel ID, to load the messages from.
  * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param chatClient The client to use for API calls.
+ * @param clientState The current state of the SDK.
  * @param messageLimit The number of messages to load in a single page.
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
@@ -58,6 +60,7 @@ public class MessagesViewModelFactory(
     private val channelId: String,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val clientState: ClientState = chatClient.clientState,
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val clipboardHandler: ClipboardHandler =
         ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
@@ -95,6 +98,7 @@ public class MessagesViewModelFactory(
                     messageId = messageId,
                     messageLimit = messageLimit,
                     chatClient = chatClient,
+                    clientState = clientState,
                     enforceUniqueReactions = enforceUniqueReactions,
                     showSystemMessages = showSystemMessages,
                     deletedMessageVisibility = deletedMessageVisibility,

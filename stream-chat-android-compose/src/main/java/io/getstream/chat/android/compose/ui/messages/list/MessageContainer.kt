@@ -37,7 +37,7 @@ import io.getstream.chat.android.common.model.messsagelist.DateSeparatorState
 import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
 import io.getstream.chat.android.common.model.messsagelist.SystemMessageState
-import io.getstream.chat.android.common.model.messsagelist.ThreadSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorState
 import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -71,7 +71,7 @@ public fun MessageContainer(
     dateSeparatorContent: @Composable (DateSeparatorState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
     },
-    threadSeparatorContent: @Composable (ThreadSeparatorState) -> Unit = {
+    threadSeparatorContent: @Composable (ThreadDateSeparatorState) -> Unit = {
         DefaultMessageThreadSeparatorContent(threadSeparator = it)
     },
     systemMessageContent: @Composable (SystemMessageState) -> Unit = {
@@ -92,7 +92,7 @@ public fun MessageContainer(
 ) {
     when (messageListItemState) {
         is DateSeparatorState -> dateSeparatorContent(messageListItemState)
-        is ThreadSeparatorState -> threadSeparatorContent(messageListItemState)
+        is ThreadDateSeparatorState -> threadSeparatorContent(messageListItemState)
         is SystemMessageState -> systemMessageContent(messageListItemState)
         is MessageItemState -> messageItemContent(messageListItemState)
         is TypingItemState -> typingIndicatorContent(messageListItemState)
@@ -135,7 +135,7 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorStat
  * @param threadSeparator The data used to show the separator text.
  */
 @Composable
-internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadSeparatorState) {
+internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSeparatorState) {
     val backgroundGradient = Brush.verticalGradient(
         listOf(
             ChatTheme.colors.threadSeparatorGradientStart,

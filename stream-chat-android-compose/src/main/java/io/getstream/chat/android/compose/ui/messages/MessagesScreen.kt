@@ -191,7 +191,7 @@ public fun MessagesScreen(
                         }
 
                         MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
-                            listViewModel.focusMessage(result.messageId)
+                            listViewModel.scrollToMessage(result.messageId)
                         }
                         null -> Unit
                     }
