@@ -277,7 +277,7 @@ internal fun RowScope.MultipleMediaAttachments(
                         )
 
                         if (!isUploading) {
-                            MediaAttachmentViewMoreOverlay(
+                            MediaAttachmentShowMoreOverlay(
                                 mediaCount = attachmentCount,
                                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                                 modifier = Modifier.align(Alignment.Center)
@@ -461,7 +461,7 @@ internal fun PlayButton(
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun MediaAttachmentViewMoreOverlay(
+internal fun MediaAttachmentShowMoreOverlay(
     mediaCount: Int,
     maximumNumberOfPreviewedItems: Int,
     modifier: Modifier = Modifier,
@@ -471,7 +471,7 @@ internal fun MediaAttachmentViewMoreOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = ChatTheme.colors.overlay),
+            .background(color = ChatTheme.colors.showMoreOverlay),
     ) {
         Text(
             modifier = modifier
@@ -480,7 +480,7 @@ internal fun MediaAttachmentViewMoreOverlay(
                 id = R.string.stream_compose_remaining_media_attachments_count,
                 remainingMediaCount
             ),
-            color = ChatTheme.colors.barsBackground,
+            color = ChatTheme.colors.showMoreCountText,
             style = ChatTheme.typography.title1,
             textAlign = TextAlign.Center
         )

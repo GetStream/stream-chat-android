@@ -30,6 +30,11 @@ public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflin
 	public fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/plugin/Plugin;
 }
 
+public final class io/getstream/chat/android/offline/repository/database/converter/internal/QuerySortParser {
+	public fun <init> ()V
+	public final fun fromSpecifications (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
+}
+
 public final class io/getstream/chat/android/offline/repository/database/internal/ChatDatabase_Impl {
 	public static final field Companion Lio/getstream/chat/android/offline/repository/database/internal/ChatDatabase$Companion;
 	public fun <init> ()V
