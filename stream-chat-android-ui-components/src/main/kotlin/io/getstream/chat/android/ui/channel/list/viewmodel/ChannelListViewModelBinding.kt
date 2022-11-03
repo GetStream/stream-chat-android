@@ -55,7 +55,7 @@ public fun ChannelListViewModel.bindView(
         when {
             isLoading && list.isEmpty() -> view.showLoadingView()
 
-            list.isNotEmpty()-> {
+            list.isNotEmpty() -> {
                 view.hideLoadingView()
                 view.setChannels(list)
             }
