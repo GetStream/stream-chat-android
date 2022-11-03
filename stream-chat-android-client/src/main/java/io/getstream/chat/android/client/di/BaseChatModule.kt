@@ -50,7 +50,6 @@ import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
@@ -109,17 +108,6 @@ internal open class BaseChatModule(
     }
     val socketStateService: SocketStateService = SocketStateService()
     val userStateService: UserStateService = UserStateService()
-    val callPostponeHelper: CallPostponeHelper by lazy {
-        CallPostponeHelper(
-            awaitConnection = {
-                when (ToggleService.isSocketExperimental()) {
-                    true -> chatSocketExperimental.awaitConnection()
-                    else -> socketStateService.awaitConnection()
-                }
-            },
-            userScope = scope,
-        )
-    }
 
     //region Modules
 
@@ -259,6 +247,7 @@ internal open class BaseChatModule(
         buildRetrofitApi<VideoCallApi>(),
         buildRetrofitApi<FileDownloadApi>(),
         scope,
+        scope
     ).let { originalApi ->
         DistinctChatApiEnabler(DistinctChatApi(scope, originalApi)) {
             chatConfig.distinctApiCalls

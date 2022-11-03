@@ -219,7 +219,6 @@ internal constructor(
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val socketStateService: SocketStateService = SocketStateService(),
-    private val callPostponeHelper: CallPostponeHelper,
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
@@ -1684,10 +1683,7 @@ internal constructor(
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
         val isConnectionRequired = request.watch || request.presence
         logger.d { "[queryChannelsInternal] request: $request, isConnectionRequired: $isConnectionRequired" }
-
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryChannels(request)
-        }
+        return api.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) { api.queryChannels(request) }
     }
 
     /**
@@ -1708,7 +1704,7 @@ internal constructor(
                 "isConnectionRequired: $isConnectionRequired"
         }
 
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
+        return api.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
             api.queryChannel(channelType, channelId, request)
         }
     }
@@ -1876,7 +1872,7 @@ internal constructor(
      */
     @CheckResult
     public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
-        return callPostponeHelper.postponeCall { api.stopWatching(channelType, channelId) }
+        return api.postponeCall { api.stopWatching(channelType, channelId) }
     }
 
     /**
@@ -2092,9 +2088,7 @@ internal constructor(
         val isConnectionRequired = query.presence
         logger.d { "[queryUsers] isConnectionRequired: $isConnectionRequired, query: $query" }
 
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryUsers(query)
-        }
+        return api.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) { api.queryUsers(query) }
     }
 
     /**
@@ -2985,12 +2979,6 @@ internal constructor(
                 module.notifications(),
                 tokenManager,
                 module.socketStateService,
-                CallPostponeHelper(
-                    userScope = userScope,
-                    awaitConnection = {
-                        clientState.connectionState.first { it == ConnectionState.CONNECTED }
-                    }
-                ),
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 clientScope = clientScope,

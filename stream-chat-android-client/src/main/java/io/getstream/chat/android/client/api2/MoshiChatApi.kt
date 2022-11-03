@@ -86,6 +86,7 @@ import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
@@ -104,20 +105,21 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.VideoCallInfo
 import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.parser.toMap
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 
 @Suppress("TooManyFunctions", "LargeClass")
-internal class MoshiChatApi
-@Suppress("LongParameterList")
-constructor(
+internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     private val fileUploader: FileUploader,
     private val userApi: UserApi,
     private val guestApi: GuestApi,
@@ -130,9 +132,19 @@ constructor(
     private val callApi: VideoCallApi,
     private val fileDownloadApi: FileDownloadApi,
     private val coroutineScope: CoroutineScope,
+    private val userScope: UserScope
 ) : ChatApi {
 
     private val logger = StreamLog.getLogger("Chat:MoshiChatApi")
+
+    val callPostponeHelper: CallPostponeHelper by lazy {
+        CallPostponeHelper(
+            awaitConnection = {
+                _connectionId.first { id -> id.isNotEmpty() }
+            },
+            userScope = userScope,
+        )
+    }
 
     @Volatile
     private var userId: String = ""
@@ -143,19 +155,20 @@ constructor(
             return field
         }
 
-    @Volatile
-    private var connectionId: String = ""
+    private val _connectionId: MutableStateFlow<String> = MutableStateFlow("")
+
+    private val connectionId: String
         get() {
-            if (field == "") {
+            if (_connectionId.value == "") {
                 logger.e { "connectionId accessed before being set. Did you forget to call ChatClient.connectUser()?" }
             }
-            return field
+            return _connectionId.value
         }
 
     override fun setConnection(userId: String, connectionId: String) {
         logger.d { "[setConnection] userId: '$userId', connectionId: '$connectionId'" }
         this.userId = userId
-        this.connectionId = connectionId
+        this._connectionId.value = connectionId
     }
 
     override fun appSettings(): Call<AppSettings> {
@@ -911,5 +924,13 @@ constructor(
 
     private fun <T : Any> noConnectionIdError(): ErrorCall<T> {
         return ErrorCall(coroutineScope, ChatError("setUser is either not called or not finished"))
+    }
+
+    override fun <T : Any> postponeCallIfNeeded(shouldPostpone: Boolean, call: () -> Call<T>): Call<T> {
+        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone, call)
+    }
+
+    override fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
+        return callPostponeHelper.postponeCall(call)
     }
 }
