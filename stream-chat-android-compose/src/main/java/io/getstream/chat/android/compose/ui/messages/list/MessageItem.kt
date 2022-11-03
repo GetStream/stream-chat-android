@@ -564,8 +564,9 @@ internal fun DefaultMessageTextContent(
     Column {
         if (quotedMessage != null) {
             QuotedMessage(
-                modifier = Modifier.padding(2.dp),
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 message = quotedMessage,
+                replyMessage = message,
                 onLongItemClick = { onLongItemClick(message) },
                 onQuotedMessageClick = onQuotedMessageClick
             )
