@@ -32,21 +32,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.messagelist.GiphyAction
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
+import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
+import io.getstream.chat.android.common.model.messsagelist.SystemMessageState
+import io.getstream.chat.android.common.model.messsagelist.ThreadSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
-import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
-import io.getstream.chat.android.compose.state.messages.list.GiphyAction
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
-import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
-import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
-import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
-import io.getstream.chat.android.compose.state.messages.list.TypingItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Represents the message item container that allows us to customize each type of item in the MessageList.
  *
- * @param messageListItem The state of the message list item.
+ * @param messageListItemState The state of the message list item.
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
@@ -61,7 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  */
 @Composable
 public fun MessageContainer(
-    messageListItem: MessageListItemState,
+    messageListItemState: MessageListItemState,
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -90,12 +90,12 @@ public fun MessageContainer(
     },
     typingIndicatorContent: @Composable (TypingItemState) -> Unit = { }
 ) {
-    when (messageListItem) {
-        is DateSeparatorState -> dateSeparatorContent(messageListItem)
-        is ThreadSeparatorState -> threadSeparatorContent(messageListItem)
-        is SystemMessageState -> systemMessageContent(messageListItem)
-        is MessageItemState -> messageItemContent(messageListItem)
-        is TypingItemState -> typingIndicatorContent(messageListItem)
+    when (messageListItemState) {
+        is DateSeparatorState -> dateSeparatorContent(messageListItemState)
+        is ThreadSeparatorState -> threadSeparatorContent(messageListItemState)
+        is SystemMessageState -> systemMessageContent(messageListItemState)
+        is MessageItemState -> messageItemContent(messageListItemState)
+        is TypingItemState -> typingIndicatorContent(messageListItemState)
     }
 }
 

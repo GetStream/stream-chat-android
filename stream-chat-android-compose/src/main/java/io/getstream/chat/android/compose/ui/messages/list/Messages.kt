@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -39,12 +40,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.compose.state.messages.MessagesState
-import io.getstream.chat.android.compose.state.messages.MyOwn
-import io.getstream.chat.android.compose.state.messages.NewMessageState
-import io.getstream.chat.android.compose.state.messages.list.MessageFocused
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
-import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
+import io.getstream.chat.android.common.messagelist.MessageListState
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
+import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
+import io.getstream.chat.android.common.state.messagelist.MessageFocused
+import io.getstream.chat.android.common.state.messagelist.MyOwn
+import io.getstream.chat.android.common.state.messagelist.NewMessageState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.messages.MessagesScrollingOption
 import kotlinx.coroutines.launch
@@ -77,7 +78,7 @@ import kotlin.math.abs
 @Composable
 @Suppress("LongParameterList", "LongMethod", "ComplexMethod")
 public fun Messages(
-    messagesState: MessagesState,
+    messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
     onMessagesStartReached: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
@@ -98,10 +99,10 @@ public fun Messages(
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
-    val endOfMessages = messagesState.oldestMessageLoaded
-    val startOfMessages = messagesState.newestMessageLoaded
-    val isLoadingMoreNewMessages = messagesState.isLoadingMoreNewMessages
-    val isLoadingMoreOldMessages = messagesState.isLoadingMoreOldMessages
+    val endOfMessages = messagesState.endOfOldMessagesReached
+    val startOfMessages = messagesState.endOfNewMessagesReached
+    val isLoadingMoreNewMessages = messagesState.isLoadingNewerMessages
+    val isLoadingMoreOldMessages = messagesState.isLoadingOlderMessages
 
     val density = LocalDensity.current
 
@@ -213,9 +214,10 @@ private fun OnLastVisibleItemChanged(lazyListState: LazyListState, onChanged: (f
  * @param messagesLazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
  * @param scrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  */
+@SuppressLint("UnrememberedMutableState")
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
-    messagesState: MessagesState,
+    messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
     scrollToBottom: (() -> Unit) -> Unit,
 ) {
@@ -223,7 +225,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val messages = messagesState.messageItems
     val newMessageState = messagesState.newMessageState
-    val areNewestMessagesLoaded = messagesState.newestMessageLoaded
+    val areNewestMessagesLoaded = messagesState.endOfNewMessagesReached
     val isMessageInThread = messagesState.parentMessageId != null
 
     val coroutineScope = rememberCoroutineScope()

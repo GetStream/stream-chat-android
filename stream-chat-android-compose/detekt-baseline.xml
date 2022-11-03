@@ -4,7 +4,7 @@
   <CurrentIssues>
     <ID>ComplexCondition:MediaAttachmentQuotedContent.kt$isImageContent || isGiphy || (isVideo &amp;&amp; ChatTheme.videoThumbnailsEnabled)</ID>
     <ID>ComplexCondition:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$data != null &amp;&amp; page == pagerState.currentPage &amp;&amp; mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &amp;&amp; painter.state is AsyncImagePainter.State.Error</ID>
-    <ID>ComplexCondition:MessageItem.kt$!messageItem.isMine &amp;&amp; ( messageItem.shouldShowFooter || messageItem.groupPosition == Bottom || messageItem.groupPosition == None )</ID>
+    <ID>ComplexCondition:MessageItem.kt$!messageItem.isMine &amp;&amp; ( messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(MessagePosition.NONE) )</ID>
     <ID>ComplexCondition:MessageOptions.kt$((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; !selectedMessage.isGiphy()</ID>
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ComplexCondition:Messages.kt$!startOfMessages &amp;&amp; index == 0 &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>

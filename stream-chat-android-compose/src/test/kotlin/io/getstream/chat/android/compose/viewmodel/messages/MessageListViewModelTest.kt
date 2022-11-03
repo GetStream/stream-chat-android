@@ -25,8 +25,8 @@ import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.messagelist.MessageListController
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.state.React
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState

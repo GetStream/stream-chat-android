@@ -24,28 +24,20 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
+import io.getstream.chat.android.common.messagelist.GiphyAction
 import io.getstream.chat.android.common.messagelist.MessageListController
+import io.getstream.chat.android.common.messagelist.MessageListState
 import io.getstream.chat.android.common.messagelist.MessagePositionHandler
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.compose.state.messages.MessagesState
-import io.getstream.chat.android.compose.state.messages.NewMessageState
-import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
-import io.getstream.chat.android.compose.state.messages.list.GiphyAction
-import io.getstream.chat.android.compose.state.messages.list.SendGiphy
-import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
+import io.getstream.chat.android.common.state.messagelist.NewMessageState
 import io.getstream.chat.android.compose.util.extensions.asState
-import io.getstream.chat.android.compose.util.extensions.toComposeState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import io.getstream.chat.android.common.messagelist.CancelGiphy as CancelGiphyCommon
-import io.getstream.chat.android.common.messagelist.GiphyAction as GiphyActionCommon
-import io.getstream.chat.android.common.messagelist.SendGiphy as SendGiphyCommon
-import io.getstream.chat.android.common.messagelist.ShuffleGiphy as ShuffleGiphyCommon
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
@@ -62,20 +54,22 @@ public class MessageListViewModel(
      *
      * It chooses between [threadMessagesState] and [messagesState] based on if we're in a thread or not.
      */
-    public val currentMessagesState: MessagesState
+    public val currentMessagesState: MessageListState
         get() = if (isInThread) threadMessagesState else messagesState
 
     /**
      * State of the screen, for [MessageMode.Normal].
      */
-    private val messagesState: MessagesState by messageListController.messageListState.map { it.toComposeState() }
-        .asState(viewModelScope, MessagesState())
+    private val messagesState: MessageListState by messageListController.messageListState
+        .map { it.copy(messageItems = it.messageItems.reversed()) }
+        .asState(viewModelScope, MessageListState())
 
     /**
      * State of the screen, for [MessageMode.MessageThread].
      */
-    private val threadMessagesState: MessagesState by messageListController.threadListState.map { it.toComposeState() }
-        .asState(viewModelScope, MessagesState())
+    private val threadMessagesState: MessageListState by messageListController.threadListState
+        .map { it.copy(messageItems = it.messageItems.reversed()) }
+        .asState(viewModelScope, MessageListState())
 
     /**
      * Holds the current [MessageMode] that's used for the messages list. [MessageMode.Normal] by default.
@@ -337,14 +331,14 @@ public class MessageListViewModel(
     }
 
     /**
-     * Leaves the thread we're in and resets the state of the [messageMode] and both of the [MessagesState]s.
+     * Leaves the thread we're in and resets the state of the [messageMode] and both of the [MessageListState]s.
      */
     public fun leaveThread() {
         messageListController.enterNormalMode()
     }
 
     /**
-     * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessage' to null.
+     * Resets the [MessageListState]s, to remove the message overlay, by setting 'selectedMessage' to null.
      */
     public fun removeOverlay() {
         messageListController.removeOverlay()
@@ -384,12 +378,7 @@ public class MessageListViewModel(
      * @param action The action to be executed.
      */
     public fun performGiphyAction(action: GiphyAction) {
-        val actionToPerform: GiphyActionCommon = when (action) {
-            is CancelGiphy -> CancelGiphyCommon(action.message)
-            is SendGiphy -> SendGiphyCommon(action.message)
-            is ShuffleGiphy -> ShuffleGiphyCommon(action.message)
-        }
-        messageListController.performGiphyAction(actionToPerform)
+        messageListController.performGiphyAction(action)
     }
 
     /**

@@ -67,7 +67,7 @@
 
 ### ✅ Added
 - Added `MessageListController` which generalizes message list state and actions, exposing them to each SDK's ViewModel. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
-- Added `MessageListState`, `MessageListItem`, `MessageItem`, `DateSeparatorItem`, `ThreadSeparatorItem`, `SystemMessageITem`, `TypingItem`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState` to keep track of the message list states. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files) 
+- Added `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `TypingItemState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState` to keep track of the message list states. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files) 
 - Added `ClipboardHandler` that handles copy/pasting. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - Added `DateSeparatorHandler` that handles when date separators should be shown. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - Added `MessagePositionHandler` that determines the message group position inside the list. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
@@ -178,10 +178,12 @@
 - Started the deprecation process for `ImageAttachmentFactory`, please use `MediaAttachmentFactory` as it has all the functionality of the previous factory while adding additional features such as displaying video previews modifiable number of tiles in a group preview. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Started the deprecation process for `ImageAttachmentContent`, please use `MediaAttachmentContent` as it has all the functionality of the previous component while adding additional features such as displaying video previous and modifiable number of tiles in a group preview. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Started the deprecation process for `ImageAttachmentQuotedContent`, please use `MediaAttachmentQuotedContent` as it retains all of the previous functionality while adding the ability to preview video attachments. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- 🚨 Breaking change: Compose now uses `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `TypingItemState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState` found in `ui-common` package. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: `MessageListViewModel` now uses `MessageListController` for state and action handling. Updated `MessagesViewModelFactory` with new parameters to be able to build `MessageListController`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ### ❌ Removed
- - 🚨 Breaking change: Removed compose `MessageMode` indicating whether the list is in thread mode or normal mode in favor of ui-common `MessageMode`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- 🚨 Breaking change: Removed compose `MessageMode` indicating whether the list is in thread mode or normal mode in favor of ui-common `MessageMode`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `TypingItemState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed

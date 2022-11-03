@@ -27,7 +27,7 @@ import java.util.Date
 /**
  * Represents a list item inside a message list.
  */
-public sealed class MessageListItem
+public sealed class MessageListItemState
 
 /**
  * Represents a message item inside the messages list.
@@ -43,7 +43,7 @@ public sealed class MessageListItem
  * @param deletedMessageVisibility The [DeletedMessageVisibility] which determines the behavior of deleted messages.
  * @param focusState The current [MessageFocusState] of the message, used to focus the message in the ui.
  */
-public data class MessageItem(
+public data class MessageItemState(
     public val message: Message = Message(),
     public val parentMessageId: String? = null,
     public val isMine: Boolean = false,
@@ -55,42 +55,42 @@ public data class MessageItem(
     public val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN,
     public val focusState: MessageFocusState? = null,
     public val messageReadBy: List<ChannelUserRead> = emptyList()
-) : MessageListItem()
+) : MessageListItemState()
 
 /**
  * Represents a date separator inside the message list.
  *
  * @param date The date to show on the separator.
  */
-public data class DateSeparatorItem(
+public data class DateSeparatorState(
     val date: Date,
-) : MessageListItem()
+) : MessageListItemState()
 
 /**
  * Represents a date separator inside thread messages list.
  *
  * @param date The date show on the separator.
- * @param messageCount Number of messages inside the thread.
+ * @param replyCount Number of messages inside the thread.
  */
-public data class ThreadSeparatorItem(
+public data class ThreadSeparatorState(
     public val date: Date,
-    public val messageCount: Int,
-) : MessageListItem()
+    public val replyCount: Int,
+) : MessageListItemState()
 
 /**
  * Represents a system message inside the message list.
  *
  * @param message The [Message] to show as the system message inside the list.
  */
-public data class SystemMessageItem(
+public data class SystemMessageState(
     public val message: Message,
-) : MessageListItem()
+) : MessageListItemState()
 
 /**
  * Represents a typing indicator item inside a message list.
  *
  * @param typingUsers The list of the [User]s currently typing a message.
  */
-public data class TypingItem(
+public data class TypingItemState(
     public val typingUsers: List<User>,
-) : MessageListItem()
+) : MessageListItemState()

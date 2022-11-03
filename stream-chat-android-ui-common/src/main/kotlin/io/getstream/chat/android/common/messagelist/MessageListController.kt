@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Flag
@@ -37,12 +38,12 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.client.utils.message.isSystem
-import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItem
-import io.getstream.chat.android.common.model.messsagelist.MessageItem
-import io.getstream.chat.android.common.model.messsagelist.MessageListItem
-import io.getstream.chat.android.common.model.messsagelist.SystemMessageItem
-import io.getstream.chat.android.common.model.messsagelist.ThreadSeparatorItem
-import io.getstream.chat.android.common.model.messsagelist.TypingItem
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
+import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
+import io.getstream.chat.android.common.model.messsagelist.SystemMessageState
+import io.getstream.chat.android.common.model.messsagelist.ThreadSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -174,7 +175,7 @@ public class MessageListController(
      * Holds information about the abilities the current user is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
-     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     * For a full list @see [ChannelCapabilities].
      */
     public val ownCapabilities: StateFlow<Set<String>> = channelState.filterNotNull()
         .flatMapLatest { it.channelData }
@@ -347,7 +348,7 @@ public class MessageListController(
             scope.launch {
                 _messageListState
                     .onCompletion { scrollToMessage(messageId) }
-                    .first { it.messages.isNotEmpty() }
+                    .first { it.messageItems.isNotEmpty() }
             }
         }
     }
@@ -388,7 +389,7 @@ public class MessageListController(
                     is MessagesState.OfflineNoResults -> _messageListState.value.copy(isLoading = false)
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
-                        messages = groupMessages(
+                        messageItems = groupMessages(
                             messages = filterMessagesToShow(
                                 messages = state.messages,
                                 showSystemMessages = showSystemMessages,
@@ -410,27 +411,25 @@ public class MessageListController(
         }.catch {
             it.cause?.printStackTrace()
             showEmptyState()
-        }
-            .distinctUntilChanged()
-            .onEach { newState ->
-                if (_messageListState.value.messages.isEmpty() &&
-                    !newState.endOfNewMessagesReached &&
-                    messageId == null
-                ) return@onEach
+        }.onEach { newState ->
+            if (_messageListState.value.messageItems.isEmpty() &&
+                !newState.endOfNewMessagesReached &&
+                messageId == null
+            ) return@onEach
 
-                val newLastMessage =
-                    newState.messages.lastOrNull { it is MessageItem || it is SystemMessageItem }?.let {
-                        when (it) {
-                            is MessageItem -> it.message
-                            is SystemMessageItem -> it.message
-                            else -> null
-                        }
+            val newLastMessage =
+                newState.messageItems.lastOrNull { it is MessageItemState || it is SystemMessageState }?.let {
+                    when (it) {
+                        is MessageItemState -> it.message
+                        is SystemMessageState -> it.message
+                        else -> null
                     }
+                }
 
-                val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
-                _messageListState.value = newState.copy(newMessageState = newMessageState)
-                if (newMessageState != null) lastLoadedMessage = newLastMessage
-            }.launchIn(scope)
+            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+            _messageListState.value = newState.copy(newMessageState = newMessageState)
+            if (newMessageState != null) lastLoadedMessage = newLastMessage
+        }.launchIn(scope)
 
         channelState.filterNotNull().flatMapLatest { it.endOfOlderMessages }.onEach {
             _messageListState.value = _messageListState.value.copy(endOfOldMessagesReached = it)
@@ -461,7 +460,7 @@ public class MessageListController(
      *
      * @param threadId The message id with the thread we want to observe.
      * @param messages State flow source of thread messages.
-     * @param endOfOlderMessages State flow of flag which show if we reached the end of available messages.
+     * @param endOfOlderMessages State flow which signals when end of older messages is reached.
      * @param reads State flow source of read states.
      */
     @Suppress("MagicNumber")
@@ -494,7 +493,7 @@ public class MessageListController(
 
                 _threadListState.value.copy(
                     isLoading = false,
-                    messages = groupMessages(
+                    messageItems = groupMessages(
                         messages = filterMessagesToShow(
                             messages = messages,
                             showSystemMessages = showSystemMessages,
@@ -513,7 +512,8 @@ public class MessageListController(
                     endOfNewMessagesReached = true
                 )
             }.collect { newState ->
-                val newLastMessage = (newState.messages.lastOrNull { it is MessageItem } as? MessageItem)?.message
+                val newLastMessage =
+                    (newState.messageItems.lastOrNull { it is MessageItemState } as? MessageItemState)?.message
                 val newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
                 _threadListState.value = newState.copy(newMessageState = newMessageState)
                 if (newMessageState != null) lastLoadedThreadMessage = newLastMessage
@@ -550,7 +550,7 @@ public class MessageListController(
      * @param typingUsers The list of the users currently typing.
      * @param focusedMessage The message we wish to scroll/focus in center of the screen.
      *
-     * @return A list of [MessageListItem]s, each containing a position.
+     * @return A list of [MessageListItemState]s, each containing a position.
      */
     private fun groupMessages(
         messages: List<Message>,
@@ -562,10 +562,10 @@ public class MessageListController(
         messagePositionHandler: MessagePositionHandler,
         typingUsers: List<User>,
         focusedMessage: Message?,
-    ): List<MessageListItem> {
+    ): List<MessageListItemState> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
-        val groupedMessages = mutableListOf<MessageListItem>()
+        val groupedMessages = mutableListOf<MessageListItemState>()
         val lastRead = reads
             .filter { it.user.id != currentUser?.id }
             .mapNotNull { it.lastRead }
@@ -599,11 +599,11 @@ public class MessageListController(
             )
 
             if (shouldAddDateSeparator) {
-                groupedMessages.add(DateSeparatorItem(message.getCreatedAtOrThrow()))
+                groupedMessages.add(DateSeparatorState(message.getCreatedAtOrThrow()))
             }
 
             if (message.isSystem() || message.isError()) {
-                groupedMessages.add(SystemMessageItem(message = message))
+                groupedMessages.add(SystemMessageState(message = message))
             } else {
                 val isMessageRead = message.createdAt
                     ?.let { lastRead != null && it <= lastRead }
@@ -617,7 +617,7 @@ public class MessageListController(
                 if (isMessageFocused) removeMessageFocus(message.id)
 
                 groupedMessages.add(
-                    MessageItem(
+                    MessageItemState(
                         message = message,
                         currentUser = currentUser,
                         groupPosition = position,
@@ -635,16 +635,16 @@ public class MessageListController(
 
             if (index == 0 && isInThread) {
                 groupedMessages.add(
-                    ThreadSeparatorItem(
+                    ThreadSeparatorState(
                         date = message.createdAt ?: message.createdLocallyAt ?: Date(),
-                        messageCount = message.replyCount
+                        replyCount = message.replyCount
                     )
                 )
             }
         }
 
         if (typingUsers.isNotEmpty()) {
-            groupedMessages.add(TypingItem(typingUsers))
+            groupedMessages.add(TypingItemState(typingUsers))
         }
 
         return groupedMessages
@@ -873,14 +873,14 @@ public class MessageListController(
             removeFocusedMessageJob = messageId to scope.launch {
                 delay(REMOVE_MESSAGE_FOCUS_DELAY)
 
-                val messages = messagesState.messages.map {
-                    if (it is MessageItem && it.message.id == messageId) {
+                val messages = messagesState.messageItems.map {
+                    if (it is MessageItemState && it.message.id == messageId) {
                         it.copy(focusState = MessageFocusRemoved)
                     } else {
                         it
                     }
                 }
-                _messageListState.value = _messageListState.value.copy(messages = messages)
+                _messageListState.value = _messageListState.value.copy(messageItems = messages)
 
                 if (focusedMessage.value?.id == messageId) {
                     focusedMessage.value = null
@@ -1235,7 +1235,7 @@ public class MessageListController(
      * Clears the messages list and shows a clear list state.
      */
     private fun showEmptyState() {
-        _messageListState.value = _messageListState.value.copy(isLoading = false, messages = emptyList())
+        _messageListState.value = _messageListState.value.copy(isLoading = false, messageItems = emptyList())
     }
 
     /**
@@ -1247,9 +1247,9 @@ public class MessageListController(
      */
     public fun getMessageWithId(messageId: String): Message? {
         return (
-            _messageListState.value.messages.firstOrNull {
-                it is MessageItem && it.message.id == messageId
-            } as? MessageItem
+            _messageListState.value.messageItems.firstOrNull {
+                it is MessageItemState && it.message.id == messageId
+            } as? MessageItemState
             )?.message
     }
 

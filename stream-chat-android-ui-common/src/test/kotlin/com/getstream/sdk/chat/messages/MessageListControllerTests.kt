@@ -28,9 +28,9 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.messagelist.MessageListState
-import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItem
-import io.getstream.chat.android.common.model.messsagelist.MessageItem
-import io.getstream.chat.android.common.model.messsagelist.TypingItem
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
+import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.messagelist.MessagePosition
 import io.getstream.chat.android.offline.model.channel.ChannelData
@@ -88,8 +88,8 @@ internal class MessageListControllerTests {
         val expectedResult = MessageListState(
             currentUser = user1,
             endOfNewMessagesReached = true,
-            messages = listOf(
-                TypingItem(listOf(user2))
+            messageItems = listOf(
+                TypingItemState(listOf(user2))
             )
         )
 
@@ -109,8 +109,8 @@ internal class MessageListControllerTests {
             )
             .get(dateSeparatorHandler = { _, _ -> false })
 
-        val expectedLastItem = TypingItem(listOf(user2))
-        val lastItem = controller.messageListState.value.messages.last()
+        val expectedLastItem = TypingItemState(listOf(user2))
+        val lastItem = controller.messageListState.value.messageItems.last()
 
         lastItem `should be equal to` expectedLastItem
     }
@@ -129,7 +129,7 @@ internal class MessageListControllerTests {
                 .get(dateSeparatorHandler = { _, _ -> false })
 
             val expectedPosition = listOf(MessagePosition.MIDDLE)
-            val messagePosition = (controller.messageListState.value.messages[1] as MessageItem).groupPosition
+            val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition
         }
@@ -151,7 +151,7 @@ internal class MessageListControllerTests {
                 .get(dateSeparatorHandler = { _, _ -> false })
 
             val expectedPosition = listOf(MessagePosition.TOP, MessagePosition.BOTTOM)
-            val messagePosition = (controller.messageListState.value.messages[1] as MessageItem).groupPosition
+            val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition
         }
@@ -173,7 +173,7 @@ internal class MessageListControllerTests {
                 .get(dateSeparatorHandler = { _, _ -> false })
 
             val expectedPosition = listOf(MessagePosition.TOP, MessagePosition.BOTTOM)
-            val messagePosition = (controller.messageListState.value.messages[1] as MessageItem).groupPosition
+            val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition
         }
@@ -194,7 +194,7 @@ internal class MessageListControllerTests {
             .givenChannelState(messageState = messageState)
             .get()
 
-        val dateSeparatorCount = controller.messageListState.value.messages.count { it is DateSeparatorItem }
+        val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is DateSeparatorState }
 
         dateSeparatorCount `should be equal to` 3
     }
@@ -214,7 +214,7 @@ internal class MessageListControllerTests {
             .givenChannelState(messageState = messageState)
             .get(dateSeparatorHandler = { _, _ -> false })
 
-        val dateSeparatorCount = controller.messageListState.value.messages.count { it is DateSeparatorItem }
+        val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is DateSeparatorState }
 
         dateSeparatorCount `should be equal to` 0
     }
@@ -235,7 +235,7 @@ internal class MessageListControllerTests {
             .givenChannelState(messageState = messageState)
             .get(deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN)
 
-        val deletedMessageCount = controller.messageListState.value.messages.count { it is MessageItem && it.message.isDeleted() }
+        val deletedMessageCount = controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
         deletedMessageCount `should be equal to` 0
     }
 
@@ -254,7 +254,7 @@ internal class MessageListControllerTests {
             .givenChannelState(messageState = messageState)
             .get()
 
-        val messagesCount = controller.messageListState.value.messages.count { it is MessageItem }
+        val messagesCount = controller.messageListState.value.messageItems.count { it is MessageItemState }
         messagesCount `should be equal to` 10
     }
 
@@ -273,7 +273,7 @@ internal class MessageListControllerTests {
             .givenChannelState(messageState = messageState)
             .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
 
-        val deletedMessageCount = controller.messageListState.value.messages.count { it is MessageItem && it.message.isDeleted() }
+        val deletedMessageCount = controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
         deletedMessageCount `should be equal to` 0
     }
 
@@ -294,7 +294,7 @@ internal class MessageListControllerTests {
                 .givenChannelState(messageState = messageState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val dateSeparatorCount = controller.messageListState.value.messages.count { it is MessageItem && it.showMessageFooter }
+            val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is MessageItemState && it.showMessageFooter }
 
             dateSeparatorCount `should be equal to` 3
         }

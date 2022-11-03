@@ -35,7 +35,7 @@ import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.GiphyAction
 import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.messagelist.MessagePositionHandler
-import io.getstream.chat.android.common.model.messsagelist.MessageItem
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.common.state.MessageMode
@@ -62,7 +62,7 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 @Suppress("TooManyFunctions")
 public class MessageListViewModel(
     private val messageListController: MessageListController,
-    private val chatClient: ChatClient = ChatClient.instance()
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
     /**
@@ -133,7 +133,8 @@ public class MessageListViewModel(
      * a push notification or similar.
      */
     public val targetMessage: LiveData<Message> = messageListController.messageListState.map {
-        (it.messages.firstOrNull { it is MessageItem && it.focusState == MessageFocused } as? MessageItem)?.message
+        (it.messageItems.firstOrNull { it is MessageItemState && it.focusState == MessageFocused } as? MessageItemState)
+            ?.message
             ?: Message()
     }.distinctUntilChanged { old, new -> old.id == new.id }.asLiveData()
 
@@ -358,7 +359,7 @@ public class MessageListViewModel(
      */
     private fun onBottomEndRegionReached(
         baseMessageId: String?,
-        messageLimit: Int = messageListController.messageLimit
+        messageLimit: Int = messageListController.messageLimit,
     ) {
         if (baseMessageId != null) {
             messageListController.loadNewerMessages(baseMessageId, messageLimit)

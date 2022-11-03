@@ -18,14 +18,14 @@ package io.getstream.chat.android.common.messagelist
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.model.messsagelist.MessageListItem
+import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
 import io.getstream.chat.android.common.state.messagelist.NewMessageState
 import io.getstream.chat.android.common.state.messagelist.SelectedMessageState
 
 /**
  * Holds the state of the messages list screen.
  *
- * @param messages The list of [MessageListItem]s to be shown in the list.
+ * @param messageItems The list of [MessageListItemState]s to be shown in the list.
  * @param endOfNewMessagesReached Whether the user has reached the newest message or not.
  * @param endOfOldMessagesReached Whether the user has reached the older message or not.
  * @param isLoading Whether the initial loading is in progress or not.
@@ -38,7 +38,7 @@ import io.getstream.chat.android.common.state.messagelist.SelectedMessageState
  * @param selectedMessageState The current [SelectedMessageState].
  */
 public data class MessageListState(
-    public val messages: List<MessageListItem> = emptyList(),
+    public val messageItems: List<MessageListItemState> = emptyList(),
     public val endOfNewMessagesReached: Boolean = true,
     public val endOfOldMessagesReached: Boolean = false,
     public val isLoading: Boolean = false,

@@ -17,12 +17,12 @@
 package io.getstream.chat.android.ui.utils.extensions
 
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItem
-import io.getstream.chat.android.common.model.messsagelist.MessageItem
-import io.getstream.chat.android.common.model.messsagelist.SystemMessageItem
-import io.getstream.chat.android.common.model.messsagelist.ThreadSeparatorItem
-import io.getstream.chat.android.common.model.messsagelist.TypingItem
-import io.getstream.chat.android.common.model.messsagelist.MessageListItem as MessageListItemCommon
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
+import io.getstream.chat.android.common.model.messsagelist.SystemMessageState
+import io.getstream.chat.android.common.model.messsagelist.ThreadSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.TypingItemState
+import io.getstream.chat.android.common.model.messsagelist.MessageListItemState as MessageListItemCommon
 
 /**
  * Converts [MessageListItemCommon] to [MessageListItem] to be shown inside
@@ -32,11 +32,11 @@ import io.getstream.chat.android.common.model.messsagelist.MessageListItem as Me
  */
 public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
     return when (this) {
-        is DateSeparatorItem -> MessageListItem.DateSeparatorItem(date = date)
-        is SystemMessageItem -> MessageListItem.MessageItem(message = message)
-        is ThreadSeparatorItem -> MessageListItem.ThreadSeparatorItem(date = date, messageCount = messageCount)
-        is TypingItem -> MessageListItem.TypingItem(users = typingUsers)
-        is MessageItem -> MessageListItem.MessageItem(
+        is DateSeparatorState -> MessageListItem.DateSeparatorItem(date = date)
+        is SystemMessageState -> MessageListItem.MessageItem(message = message)
+        is ThreadSeparatorState -> MessageListItem.ThreadSeparatorItem(date = date, messageCount = replyCount)
+        is TypingItemState -> MessageListItem.TypingItem(users = typingUsers)
+        is MessageItemState -> MessageListItem.MessageItem(
             message = message,
             positions = groupPosition.mapNotNull { it.toUiPosition() },
             isMine = isMine,
