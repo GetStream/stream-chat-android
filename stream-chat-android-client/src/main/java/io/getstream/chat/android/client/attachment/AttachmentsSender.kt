@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 /**
- * Class responsible for logic related to send attachments to backend.
+ * Class responsible for sending attachments to the backend.
  *
  * @param context Context.
  * @param networkType [UploadAttachmentsNetworkType]

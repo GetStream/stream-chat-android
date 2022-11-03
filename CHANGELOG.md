@@ -53,7 +53,7 @@
 - Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
 - Renamed `ChannelData::channelId` to `ChannelData::id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
 - Removed `ChannelData::cid` from constructor. It's now an immutable property calculated based on `type` and `id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322) 
-- Move send attachment logic to LLC module [#4244](https://github.com/GetStream/stream-chat-android/pull/4244)
+- Moved the send attachment logic to the LLC (Low Level Client) module [#4244](https://github.com/GetStream/stream-chat-android/pull/4244)
 
 
 ### ❌ Removed
