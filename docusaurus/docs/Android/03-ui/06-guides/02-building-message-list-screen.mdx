@@ -121,28 +121,35 @@ ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
 ViewModelProvider provider = new ViewModelProvider(this, factory);
 MessageListHeaderViewModel messageListHeaderViewModel = provider.get(MessageListHeaderViewModel.class);
 MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
-MessageInputViewModel messageInputViewModel = provider.get(MessageInputViewModel.class);
+MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
 
 // Bind view models
 MessageListHeaderViewModelBinding.bind(messageListHeaderViewModel, messageListHeaderView, this);
 boolean enforceUniqueReactions = true;
 MessageListViewModelBinding.bind(messageListViewModel, messageListView, this, enforceUniqueReactions);
-MessageInputViewModelBinding.bind(messageInputViewModel, messageInputView, this);
+MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, this);
 
 // Let both message list header and message input know when we open a thread
 messageListViewModel.getMode().observe(this, mode -> {
     if (mode instanceof Thread) {
         Message parentMessage = ((Thread) mode).getParentMessage();
         messageListHeaderViewModel.setActiveThread(parentMessage);
-        messageInputViewModel.setActiveThread(parentMessage);
+        messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(parentMessage, null));
     } else if (mode instanceof Normal) {
         messageListHeaderViewModel.resetThread();
-        messageInputViewModel.resetThread();
+        messageComposerViewModel.leaveThread();
     }
 });
 
-// Let the message input know when we are editing a message
-messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit);
+// Let the message composer know when we are replying to a message
+messageListView.setMessageReplyHandler((cid, message) ->
+    messageComposerViewModel.performMessageAction(new Reply(message))
+);
+
+// Let the message composer know when we are editing a message
+messageListView.setMessageEditHandler(message ->
+    messageComposerViewModel.performMessageAction(new Edit(message))
+);
 
 // Handle navigate up state
 messageListViewModel.getState().observe(this, state -> {
