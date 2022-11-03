@@ -1,0 +1,146 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Logging
+
+SDK logs are disabled by default. You can enable logs and set a log level when initializing `ChatClient`.
+
+You can set logs at the following levels:
+
+- `ChatLogLevel.ALL` to see all log entries.
+- `ChatLogLevel.DEBUG` to see debug, warning, and error entries.
+- `ChatLogLevel.WARN` to see warning and error entries.
+- `ChatLogLevel.ERROR` to see error entries.
+- `ChatLogLevel.NOTHING` to not show any logs.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val client = ChatClient.Builder("apiKey", context)
+    .logLevel(ChatLogLevel.ALL)
+    .build()
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatClient client = new ChatClient.Builder("apiKey", context)
+        .logLevel(ChatLogLevel.ALL)
+        .build();
+```
+</TabItem>
+</Tabs>
+
+:::note
+You should only enable logging in development builds.
+:::
+
+### Intercepting Logs
+
+To intercept logs from the SDK, you can also pass in your own `ChatLoggerHandler`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val client = ChatClient.Builder("apiKey", context)
+    .logLevel(ChatLogLevel.ALL)
+    .loggerHandler(object : ChatLoggerHandler {
+        override fun logT(throwable: Throwable) {
+            // custom logging
+        }
+
+        override fun logT(tag: Any, throwable: Throwable) {
+            // custom logging
+        }
+
+        override fun logI(tag: Any, message: String) {
+            // custom logging
+        }
+
+        override fun logD(tag: Any, message: String) {
+            // custom logging
+        }
+
+        override fun logW(tag: Any, message: String) {
+            // custom logging
+        }
+
+        override fun logE(tag: Any, message: String) {
+            // custom logging
+        }
+
+        override fun logE(tag: Any, message: String, throwable: Throwable) {
+            // custom logging
+        }
+    })
+    .build()
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatClient client = new ChatClient.Builder("apiKey", context)
+        .logLevel(ChatLogLevel.ALL)
+        .loggerHandler(new ChatLoggerHandler() {
+            @Override
+            public void logV(@NonNull Object tag, @NonNull String message) {
+                // custom logging
+            }
+
+            @Override
+            public void logT(@NonNull Throwable throwable) {
+                // custom logging
+            }
+
+            @Override
+            public void logT(@NonNull Object tag, @NonNull Throwable throwable) {
+                // custom logging
+            }
+
+            @Override
+            public void logI(@NonNull Object tag, @NonNull String message) {
+                // custom logging
+            }
+
+            @Override
+            public void logD(@NonNull Object tag, @NonNull String message) {
+                // custom logging
+            }
+
+            @Override
+            public void logW(@NonNull Object tag, @NonNull String message) {
+                // custom logging
+            }
+
+            @Override
+            public void logE(@NonNull Object tag, @NonNull String message) {
+                // custom logging
+            }
+
+            @Override
+            public void logE(@NonNull Object tag, @NonNull String message, @NonNull Throwable throwable) {
+                // custom logging
+            }
+        })
+        .build();
+```
+</TabItem>
+</Tabs>
+
+### Filtering Logs
+
+All SDK log tags have `Chat:` as a prefix that you can use when filtering logs.
+
+```bash
+adb logcat com.your.package | grep "Chat:"
+```
+
+Here's a set of useful tags for debugging network communication:
+
+- `Chat:Http` to see HTTP requests made from the `ChatClient` and the responses returned by Stream.
+- `Chat:Events` to see a list of [events](https://getstream.github.io/stream-chat-android/stream-chat-android-client/io.getstream.chat.android.client.events/-chat-event/) that the `ChatClient` emits.
+- `Chat:SocketService` to see socket related events.
