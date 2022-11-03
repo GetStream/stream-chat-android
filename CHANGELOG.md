@@ -71,7 +71,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `ownMessageQuotedBackground`, `otherMessageQuotedBackground`, `ownMessageQuotedText` and `otherMessageQuotedText` options to `StreamColors`, to make it possible to customize the appearance of quoted messages via `ChatTheme`. [#4335](https://github.com/GetStream/stream-chat-android/pull/4335)
 
 ### ⚠️ Changed
 
@@ -90,7 +89,6 @@
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
-- Fix multi-bundle feature when using Firebase as Push Provider. [#4341](https://github.com/GetStream/stream-chat-android/pull/4341)
 
 ### ⬆️ Improved
 
@@ -121,6 +119,15 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# November 3th, 2022 - 5.11.4
+## stream-chat-android-compose
+### ✅ Added
+- Added `ownMessageQuotedBackground`, `otherMessageQuotedBackground`, `ownMessageQuotedText` and `otherMessageQuotedText` options to `StreamColors`, to make it possible to customize the appearance of quoted messages via `ChatTheme`. [#4335](https://github.com/GetStream/stream-chat-android/pull/4335)
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+- Fix multi-bundle feature when using Firebase as Push Provider. [#4341](https://github.com/GetStream/stream-chat-android/pull/4341)
 
 # October 31th, 2022 - 5.11.3
 ## stream-chat-android-client
