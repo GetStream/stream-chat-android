@@ -24,9 +24,9 @@ import java.util.UUID
 
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
-    creationFunction: (Int) -> Attachment = {
+    createAttachment: (Int) -> Attachment = {
         Attachment(upload = randomFile()).apply {
             uploadId = "upload_id_${UUID.randomUUID()}"
         }
     },
-): List<Attachment> = (1..size).map(creationFunction)
+): List<Attachment> = (1..size).map(createAttachment)
