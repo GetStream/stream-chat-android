@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.chatclient
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.errors.ChatError
@@ -30,6 +31,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -97,6 +99,16 @@ internal class WhenQueryChannel : BaseChatClientTest() {
     private inner class Fixture {
 
         init {
+            whenever(api.postponeCall(any<() -> Call<Any>>())) doAnswer { invocation ->
+                val arg = invocation.arguments[0] as (() -> Call<Any>)
+                arg.invoke()
+            }
+
+            whenever(api.postponeCallIfNeeded(anyBoolean(), any<() -> Call<Any>>())) doAnswer { invocation ->
+                val arg = invocation.arguments[1] as (() -> Call<Any>)
+                arg.invoke()
+            }
+
             whenever(socketStateService.state) doReturn SocketState.Connected(connectionId = "connectionId")
             whenever(api.queryChannel(any(), any(), any())) doReturn mock<Channel>().asCall()
         }
