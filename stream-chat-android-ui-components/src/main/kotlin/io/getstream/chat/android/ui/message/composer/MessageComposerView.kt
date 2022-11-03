@@ -273,6 +273,7 @@ public class MessageComposerView : ConstraintLayout {
      * @param layoutParams The layout parameters to set on the content view.
      * @see [DefaultMessageComposerLeadingContent]
      */
+    @JvmOverloads
     public fun <V> setLeadingContent(
         contentView: V,
         layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
@@ -294,6 +295,7 @@ public class MessageComposerView : ConstraintLayout {
      * @param layoutParams The layout parameters to set on the content view.
      * @see [DefaultMessageComposerCenterContent]
      */
+    @JvmOverloads
     public fun <V> setCenterContent(
         contentView: V,
         layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
@@ -314,6 +316,7 @@ public class MessageComposerView : ConstraintLayout {
      * @param layoutParams The layout parameters to set on the content view.
      * @see [DefaultMessageComposerTrailingContent]
      */
+    @JvmOverloads
     public fun <V> setTrailingContent(
         contentView: V,
         layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
@@ -335,6 +338,7 @@ public class MessageComposerView : ConstraintLayout {
      * @param layoutParams The layout parameters to set on the content view.
      * @see [DefaultMessageComposerFooterContent]
      */
+    @JvmOverloads
     public fun <V> setFooterContent(
         contentView: V,
         layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
@@ -355,6 +359,7 @@ public class MessageComposerView : ConstraintLayout {
      * @param layoutParams The layout parameters to set on the content view.
      * @see [DefaultMessageComposerHeaderContent]
      */
+    @JvmOverloads
     public fun <V> setHeaderContent(
         contentView: V,
         layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(

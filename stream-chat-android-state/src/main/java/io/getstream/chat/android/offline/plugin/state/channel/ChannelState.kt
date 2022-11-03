@@ -111,4 +111,10 @@ public interface ChannelState {
 
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel
+
+    /**
+     * Gets message using the ID. This is a more performatic way to request one message than request the whole list
+     * of messages
+     */
+    public fun getMessageById(id: String): Message?
 }

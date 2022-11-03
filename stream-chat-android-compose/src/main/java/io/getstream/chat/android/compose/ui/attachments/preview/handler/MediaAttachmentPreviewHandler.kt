@@ -17,8 +17,8 @@
 package io.getstream.chat.android.compose.ui.attachments.preview.handler
 
 import android.content.Context
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaPreviewActivity
 
 /**
@@ -34,10 +34,10 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
         return when {
             assetUrl.isNullOrEmpty() -> false
             mimeType.isBlank() && type.isBlank() -> false
-            ModelType.attach_audio in mimeType -> true
-            ModelType.attach_video in mimeType -> true
-            ModelType.attach_audio in type -> true
-            ModelType.attach_video in type -> true
+            AttachmentType.AUDIO in mimeType -> true
+            AttachmentType.VIDEO in mimeType -> true
+            AttachmentType.AUDIO in type -> true
+            AttachmentType.VIDEO in type -> true
             buildMimeSubTypeList().any { subtype -> mimeType.contains(subtype) } -> true
             else -> false
         }

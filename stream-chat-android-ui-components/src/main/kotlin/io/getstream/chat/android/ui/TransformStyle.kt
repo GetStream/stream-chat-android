@@ -44,31 +44,85 @@ import io.getstream.chat.android.ui.search.list.SearchResultListViewStyle
 import io.getstream.chat.android.ui.typing.TypingIndicatorViewStyle
 
 public object TransformStyle {
+    @JvmStatic
     public var avatarStyleTransformer: StyleTransformer<AvatarStyle> = noopTransformer()
+
+    @JvmStatic
     public var channelListStyleTransformer: StyleTransformer<ChannelListViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var messageListStyleTransformer: StyleTransformer<MessageListViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var messageListItemStyleTransformer: StyleTransformer<MessageListItemStyle> = noopTransformer()
+
+    @JvmStatic
     public var scrollButtonStyleTransformer: StyleTransformer<ScrollButtonViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var viewReactionsStyleTransformer: StyleTransformer<ViewReactionsViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var editReactionsStyleTransformer: StyleTransformer<EditReactionsViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var singleReactionViewStyleTransformer: StyleTransformer<SingleReactionViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var channelActionsDialogStyleTransformer: StyleTransformer<ChannelActionsDialogViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var giphyViewHolderStyleTransformer: StyleTransformer<GiphyViewHolderStyle> = noopTransformer()
+
+    @JvmStatic
     public var mediaAttachmentStyleTransformer: StyleTransformer<MediaAttachmentViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var messageReplyStyleTransformer: StyleTransformer<MessageReplyStyle> = noopTransformer()
+
+    @JvmStatic
     public var fileAttachmentStyleTransformer: StyleTransformer<FileAttachmentViewStyle> = noopTransformer()
-    public var unsupportedAttachmentStyleTransformer: StyleTransformer<UnsupportedAttachmentViewStyle> = noopTransformer()
+
+    @JvmStatic
+    public var unsupportedAttachmentStyleTransformer: StyleTransformer<UnsupportedAttachmentViewStyle> =
+        noopTransformer()
+
+    @JvmStatic
     public var messageListHeaderStyleTransformer: StyleTransformer<MessageListHeaderViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var mentionListViewStyleTransformer: StyleTransformer<MentionListViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var searchInputViewStyleTransformer: StyleTransformer<SearchInputViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var searchResultListViewStyleTransformer: StyleTransformer<SearchResultListViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var typingIndicatorViewStyleTransformer: StyleTransformer<TypingIndicatorViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var pinnedMessageListViewStyleTransformer: StyleTransformer<PinnedMessageListViewStyle> = noopTransformer()
-    public var defaultQuotedAttachmentViewStyleTransformer: StyleTransformer<DefaultQuotedAttachmentViewStyle> = noopTransformer()
-    public var attachmentGalleryOptionsStyleTransformer: StyleTransformer<AttachmentGalleryOptionsViewStyle> = noopTransformer()
+
+    @JvmStatic
+    public var defaultQuotedAttachmentViewStyleTransformer: StyleTransformer<DefaultQuotedAttachmentViewStyle> =
+        noopTransformer()
+
+    @JvmStatic
+    public var attachmentGalleryOptionsStyleTransformer: StyleTransformer<AttachmentGalleryOptionsViewStyle> =
+        noopTransformer()
+
+    @JvmStatic
     public var messageComposerStyleTransformer: StyleTransformer<MessageComposerViewStyle> = noopTransformer()
+
+    @JvmStatic
     public var attachmentsPickerStyleTransformer: StyleTransformer<AttachmentsPickerDialogStyle> = noopTransformer()
+
+    @JvmStatic
     public var attachmentGalleryViewMediaStyle: StyleTransformer<AttachmentGalleryViewMediaStyle> = noopTransformer()
+
+    @JvmStatic
     public var mediaAttachmentGridViewStyle: StyleTransformer<MediaAttachmentGridViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }

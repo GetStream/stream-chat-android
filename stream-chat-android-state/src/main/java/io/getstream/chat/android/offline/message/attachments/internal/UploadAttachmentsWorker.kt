@@ -42,7 +42,8 @@ internal class UploadAttachmentsWorker(
     suspend fun uploadAttachmentsForMessage(
         messageId: String,
     ): Result<Unit> {
-        val message = messageRepository.selectMessage(messageId)
+        val message = channelStateLogic.listenForChannelState().getMessageById(messageId)
+            ?: messageRepository.selectMessage(messageId)
 
         return try {
             message?.let { sendAttachments(it) } ?: Result.error(

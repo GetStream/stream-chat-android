@@ -23,7 +23,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
@@ -199,9 +199,9 @@ public class StorageHelper {
 
     private fun getModelType(mimeType: String?): String {
         return when {
-            isImage(mimeType) -> ModelType.attach_image
-            isVideo(mimeType) -> ModelType.attach_video
-            else -> ModelType.attach_file
+            isImage(mimeType) -> AttachmentType.IMAGE
+            isVideo(mimeType) -> AttachmentType.VIDEO
+            else -> AttachmentType.FILE
         }
     }
 

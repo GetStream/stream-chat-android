@@ -44,12 +44,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.common.state.DeleteConversation
+import io.getstream.chat.android.common.state.LeaveGroup
+import io.getstream.chat.android.common.state.MuteChannel
+import io.getstream.chat.android.common.state.UnmuteChannel
+import io.getstream.chat.android.common.state.ViewInfo
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.channels.list.DeleteConversation
-import io.getstream.chat.android.compose.state.channels.list.LeaveGroup
-import io.getstream.chat.android.compose.state.channels.list.MuteChannel
-import io.getstream.chat.android.compose.state.channels.list.UnmuteChannel
-import io.getstream.chat.android.compose.state.channels.list.ViewInfo
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList

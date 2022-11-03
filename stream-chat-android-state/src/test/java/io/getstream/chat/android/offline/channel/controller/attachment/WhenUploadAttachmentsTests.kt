@@ -299,6 +299,7 @@ internal class WhenUploadAttachmentsTests {
         private val channelStateLogic: ChannelStateLogic =
             mock {
                 on(it.writeChannelState()) doReturn channelMutableState
+                on(it.listenForChannelState()) doReturn channelMutableState
             }
 
         private val chatClient = mock<ChatClient> {

@@ -18,8 +18,8 @@ package com.getstream.sdk.chat.utils
 
 import androidx.core.content.MimeTypeFilter
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -55,7 +55,7 @@ public class AttachmentFilter(
         val blockedImageMimeTypes = imageUploadConfig.blockedMimeTypes.toTypedArray()
 
         return attachments.filter { attachment ->
-            val isImage = attachment.type == ModelType.attach_image
+            val isImage = attachment.type == AttachmentType.IMAGE
 
             matchesUploadConfig(
                 attachment = attachment,

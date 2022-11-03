@@ -17,6 +17,7 @@
 package com.getstream.sdk.chat.utils.extensions
 
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 

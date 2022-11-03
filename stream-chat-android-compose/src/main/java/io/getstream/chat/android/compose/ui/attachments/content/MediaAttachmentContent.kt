@@ -59,9 +59,12 @@ import coil.request.ImageRequest
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
@@ -70,7 +73,6 @@ import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
-import io.getstream.chat.android.uiutils.constant.AttachmentType
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
@@ -110,10 +112,9 @@ public fun MediaAttachmentContent(
             ),
         horizontalArrangement = Arrangement.spacedBy(gridSpacing)
     ) {
-        val attachments =
-            message.attachments.filter {
-                !it.hasLink() && (it.type == AttachmentType.IMAGE || it.type == AttachmentType.VIDEO)
-            }
+        val attachments = message.attachments.filter {
+            !it.hasLink() && (it.isImage() || it.isVideo())
+        }
         val attachmentCount = attachments.size
 
         if (attachmentCount == 1) {
@@ -160,7 +161,7 @@ internal fun SingleMediaAttachment(
     onLongItemClick: (Message) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
-    val isVideo = attachment.type == AttachmentType.VIDEO
+    val isVideo = attachment.isVideo()
     // Depending on the CDN, images might not contain their original dimensions
     val ratio: Float? by remember(key1 = attachment.originalWidth, key2 = attachment.originalHeight) {
         derivedStateOf {
@@ -276,7 +277,7 @@ internal fun RowScope.MultipleMediaAttachments(
                         )
 
                         if (!isUploading) {
-                            MediaAttachmentViewMoreOverlay(
+                            MediaAttachmentShowMoreOverlay(
                                 mediaCount = attachmentCount,
                                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                                 modifier = Modifier.align(Alignment.Center)
@@ -327,8 +328,8 @@ internal fun MediaAttachmentContentItem(
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
     val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
-    val isImage = attachment.type == AttachmentType.IMAGE
-    val isVideo = attachment.type == AttachmentType.VIDEO
+    val isImage = attachment.isImage()
+    val isVideo = attachment.isVideo()
 
     // Used as a workaround for Coil's lack of a retry policy.
     // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
@@ -460,7 +461,7 @@ internal fun PlayButton(
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun MediaAttachmentViewMoreOverlay(
+internal fun MediaAttachmentShowMoreOverlay(
     mediaCount: Int,
     maximumNumberOfPreviewedItems: Int,
     modifier: Modifier = Modifier,
@@ -470,7 +471,7 @@ internal fun MediaAttachmentViewMoreOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = ChatTheme.colors.overlay),
+            .background(color = ChatTheme.colors.showMoreOverlay),
     ) {
         Text(
             modifier = modifier
@@ -479,7 +480,7 @@ internal fun MediaAttachmentViewMoreOverlay(
                 id = R.string.stream_compose_remaining_media_attachments_count,
                 remainingMediaCount
             ),
-            color = ChatTheme.colors.barsBackground,
+            color = ChatTheme.colors.showMoreCountText,
             style = ChatTheme.typography.title1,
             textAlign = TextAlign.Center
         )

@@ -26,15 +26,14 @@ import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import com.getstream.sdk.chat.utils.extensions.isNotBottomPosition
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
-import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.common.extensions.getUpdatedAtOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
-import io.getstream.chat.android.ui.common.extensions.isDeleted
-import io.getstream.chat.android.ui.common.extensions.isEphemeral
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle

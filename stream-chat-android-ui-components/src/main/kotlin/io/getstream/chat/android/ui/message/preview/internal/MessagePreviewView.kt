@@ -21,7 +21,6 @@ import android.text.Html
 import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R

@@ -25,6 +25,7 @@ import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -47,6 +48,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param videoLengthTextStyle The text style used for video duration caption in each tile.
  * @param videoIconVisible If the video icon is displayed.
  * @param videoIconDrawable The icon used for video files.
+ * @param videoIconDrawableTint The tint of the icon used for video files.
  * @param mediaAttachmentNoMediaText The text that will be displayed if there are no media files on the device.
  * @param mediaAttachmentNoMediaTextStyle The text style for the the no media files text.
  * @param fileAttachmentsTabEnabled If the file attachments tab is displayed in the picker.
@@ -83,6 +85,7 @@ public data class AttachmentsPickerDialogStyle(
     val videoLengthTextStyle: TextStyle,
     val videoIconVisible: Boolean,
     val videoIconDrawable: Drawable,
+    @ColorInt val videoIconDrawableTint: Int?,
     val mediaAttachmentNoMediaText: String,
     val mediaAttachmentNoMediaTextStyle: TextStyle,
     // File attachments tab
@@ -179,7 +182,7 @@ public data class AttachmentsPickerDialogStyle(
                     )
                     .color(
                         R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerVideoLengthTextColor,
-                        context.getColorCompat(R.color.stream_ui_white)
+                        context.getColorCompat(R.color.stream_ui_black)
                     )
                     .font(
                         R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerVideoLengthTextFontAssets,
@@ -199,6 +202,9 @@ public data class AttachmentsPickerDialogStyle(
                 val videoIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerVideoIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!
+
+                val videoIconDrawableTint =
+                    a.getColorOrNull(R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerVideoIconDrawableTint)
 
                 val mediaAttachmentNoMediaText = a.getString(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerMediaAttachmentNoMediaText
@@ -378,6 +384,7 @@ public data class AttachmentsPickerDialogStyle(
                     videoLengthTextStyle = videoLengthTextStyle,
                     videoIconVisible = videoIconVisible,
                     videoIconDrawable = videoIconDrawable,
+                    videoIconDrawableTint = videoIconDrawableTint,
                     mediaAttachmentNoMediaText = mediaAttachmentNoMediaText,
                     mediaAttachmentNoMediaTextStyle = mediaAttachmentNoMediaTextStyle,
                     // File attachments tab

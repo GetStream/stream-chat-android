@@ -20,7 +20,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.ContentScale
-import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
@@ -52,7 +53,7 @@ public fun GiphyAttachmentFactory(
     contentScale: ContentScale = ContentScale.Crop,
 ): AttachmentFactory =
     AttachmentFactory(
-        canHandle = { attachments -> attachments.any { it.type == ModelType.attach_giphy } },
+        canHandle = { attachments -> attachments.any(Attachment::isGiphy) },
         content = @Composable { modifier, state ->
             GiphyAttachmentContent(
                 modifier = modifier.wrapContentSize(),

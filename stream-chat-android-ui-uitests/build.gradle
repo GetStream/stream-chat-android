@@ -103,6 +103,7 @@ dependencies {
     androidTestImplementation Dependencies.composeUiTestManifest
     androidTestImplementation Dependencies.testParameterInjector
     androidTestImplementation Dependencies.okhttpMockWebserver
+    androidTestImplementation Dependencies.threeTenBp
 
     detektPlugins(Dependencies.detektFormatting)
 }

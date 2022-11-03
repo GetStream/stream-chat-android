@@ -45,6 +45,7 @@ import kotlinx.coroutines.launch
  * @param dismissSuggestionsListener Click listener invoked when suggestion popup is dismissed.
  */
 @JvmName("bind")
+@JvmOverloads
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,

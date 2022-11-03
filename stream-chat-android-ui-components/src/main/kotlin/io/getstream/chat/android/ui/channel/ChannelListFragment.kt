@@ -340,6 +340,8 @@ public open class ChannelListFragment : Fragment() {
          *
          * @param initializer The initializer to customize builder params.
          */
+        @JvmStatic
+        @JvmOverloads
         public fun newInstance(initializer: (Builder.() -> Unit)? = null): ChannelListFragment {
             val builder = Builder()
             initializer?.invoke(builder)

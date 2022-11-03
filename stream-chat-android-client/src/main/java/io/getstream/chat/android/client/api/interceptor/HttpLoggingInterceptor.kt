@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
+import io.getstream.chat.android.client.models.Constants
+import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.logging.SilentStreamLogger
 import io.getstream.logging.StreamLog
 import okhttp3.Headers
@@ -70,7 +72,7 @@ internal class HttpLoggingInterceptor : Interceptor {
 
             logger.i { "" }
             if (buffer.isProbablyUtf8()) {
-                logger.i { buffer.readString(charset) }
+                logRequestBody(buffer, charset)
                 logger.i { "--> END ${request.method} (${requestBody.contentLength()}-byte body)" }
             } else {
                 logger.i {
@@ -94,8 +96,10 @@ internal class HttpLoggingInterceptor : Interceptor {
         val contentLength = responseBody.contentLength()
         val bodySize = if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
         logger.i {
-            "<-- ${response.code}${if (response.message.isEmpty()) "" else ' ' +
-                response.message} ${response.request.url} (${tookMs}ms${", $bodySize body"})"
+            "<-- ${response.code}${
+            if (response.message.isEmpty()) "" else ' ' +
+                response.message
+            } ${response.request.url} (${tookMs}ms${", $bodySize body"})"
         }
 
         if (!response.promisesBody()) {
@@ -130,6 +134,15 @@ internal class HttpLoggingInterceptor : Interceptor {
         }
 
         return response
+    }
+
+    @StreamHandsOff(
+        reason = "Request body shouldn't be log entirely as it might produce OutOfMemory " +
+            "exceptions when sending big files." +
+            " The log will be limited to ${Constants.MAX_REQUEST_BODY_LENGTH} bytes."
+    )
+    private fun logRequestBody(buffer: Buffer, charset: Charset) {
+        logger.i { buffer.readString(minOf(buffer.size, Constants.MAX_REQUEST_BODY_LENGTH), charset) }
     }
 
     private fun bodyHasUnknownEncoding(headers: Headers): Boolean {

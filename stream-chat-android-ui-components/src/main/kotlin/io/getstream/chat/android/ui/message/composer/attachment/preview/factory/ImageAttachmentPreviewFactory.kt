@@ -17,9 +17,10 @@
 package io.getstream.chat.android.ui.message.composer.attachment.preview.factory
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.model.ModelType
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -38,7 +39,7 @@ public class ImageAttachmentPreviewFactory : AttachmentPreviewFactory {
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
     public override fun canHandle(attachment: Attachment): Boolean {
-        return attachment.type in mediaAttachmentTypes
+        return attachment.isImage() || attachment.isGiphy()
     }
 
     /**
@@ -84,15 +85,5 @@ public class ImageAttachmentPreviewFactory : AttachmentPreviewFactory {
 
             binding.thumbImageView.loadAttachmentThumb(attachment)
         }
-    }
-
-    private companion object {
-        /**
-         * Attachment types that represent media content.
-         */
-        private val mediaAttachmentTypes: Collection<String> = listOf(
-            ModelType.attach_image,
-            ModelType.attach_giphy
-        )
     }
 }

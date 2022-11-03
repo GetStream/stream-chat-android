@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loadingViewContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="64dp"
+    app:shimmer_auto_start="true"
+    app:shimmer_base_color="#CCCCCC"
+    app:shimmer_colored="true"
+    app:shimmer_highlight_color="#FFFFFF"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <include layout="@layout/item_loading_view" />
+
+        <include layout="@layout/item_loading_view" />
+
+        <include layout="@layout/item_loading_view" />
+
+        <include layout="@layout/item_loading_view" />
+
+        <include layout="@layout/item_loading_view" />
+
+        <include layout="@layout/item_loading_view" />
+
+    </LinearLayout>
+
+</com.facebook.shimmer.ShimmerFrameLayout>

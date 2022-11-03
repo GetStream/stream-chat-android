@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.models.User
 
 internal fun DownstreamChannelDto.toDomain(): Channel =
     Channel(
-        cid = cid,
         id = id,
         type = type,
         name = name ?: "",

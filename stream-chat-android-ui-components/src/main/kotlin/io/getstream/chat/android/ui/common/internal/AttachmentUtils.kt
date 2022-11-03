@@ -24,9 +24,11 @@ import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.Round
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.images.loadVideoThumbnail
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 
@@ -35,9 +37,9 @@ private val FILE_THUMB_TRANSFORMATION = RoundedCorners(3.dpToPxPrecise())
 internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
     return with(attachment) {
         when {
-            type == ModelType.attach_video && ChatUI.videoThumbnailsEnabled && !thumbUrl.isNullOrBlank() ->
+            isVideo() && ChatUI.videoThumbnailsEnabled && !thumbUrl.isNullOrBlank() ->
                 load(data = thumbUrl, transformation = FILE_THUMB_TRANSFORMATION)
-            type == ModelType.attach_image && !imageUrl.isNullOrBlank() ->
+            isImage() && !imageUrl.isNullOrBlank() ->
                 load(data = imageUrl, transformation = FILE_THUMB_TRANSFORMATION)
             else -> {
                 // The mime type, or a best guess based on the extension
@@ -61,11 +63,11 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
 internal fun ImageView.loadAttachmentThumb(attachment: AttachmentMetaData): Disposable {
     return with(attachment) {
         when (type) {
-            ModelType.attach_video -> loadVideoThumbnail(
+            AttachmentType.VIDEO -> loadVideoThumbnail(
                 uri = uri,
                 transformation = FILE_THUMB_TRANSFORMATION
             )
-            ModelType.attach_image -> load(data = uri, transformation = FILE_THUMB_TRANSFORMATION)
+            AttachmentType.IMAGE -> load(data = uri, transformation = FILE_THUMB_TRANSFORMATION)
             else -> load(data = ChatUI.mimeTypeIconProvider.getIconRes(mimeType))
         }
     }
