@@ -137,7 +137,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
 
     private val logger = StreamLog.getLogger("Chat:MoshiChatApi")
 
-    val callPostponeHelper: CallPostponeHelper by lazy {
+    private val callPostponeHelper: CallPostponeHelper by lazy {
         CallPostponeHelper(
             awaitConnection = {
                 _connectionId.first { id -> id.isNotEmpty() }

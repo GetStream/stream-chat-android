@@ -67,7 +67,6 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.logging.StreamLog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
