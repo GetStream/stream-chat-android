@@ -152,10 +152,10 @@ public suspend inline fun <A : Any, B : ChatError> Result<A, B>.onSuccessSuspend
 public inline fun <A : Any, B : ChatError> Result<A, B>.onError(
     crossinline errorSideEffect: (B) -> Unit,
 ): Result<A, B> =
-    apply {
-        when (this) {
+    also {
+        when (it) {
             is Result.Success -> Unit
-            is Result.Failure -> errorSideEffect(value)
+            is Result.Failure -> errorSideEffect(it.value)
         }
     }
 
