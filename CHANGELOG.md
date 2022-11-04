@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixing postponing api calls to avoid showing empty screen in the wrong moment. [#4344](https://github.com/GetStream/stream-chat-android/pull/4344)
 
 ### ⬆️ Improved
 
