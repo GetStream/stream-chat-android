@@ -79,7 +79,7 @@ public class StreamOfflinePluginFactory(
         val scope = ensureScope(user)
         return DatabaseRepositoryFactory(
             database = createDatabase(scope, appContext, user, config.persistenceEnabled),
-            currentUser = user
+            currentUser = user,
         )
     }
 
