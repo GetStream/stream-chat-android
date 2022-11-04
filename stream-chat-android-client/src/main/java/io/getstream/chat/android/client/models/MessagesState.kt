@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.plugin.state.channel
-
-import io.getstream.chat.android.client.models.Message
+package io.getstream.chat.android.client.models
 
 /**
  * Represents of possible state of messages for [ChannelState].

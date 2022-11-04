@@ -77,7 +77,6 @@ class ChatInitializer(private val context: Context) {
             config = StatePluginConfig(
                 backgroundSyncEnabled = true,
                 userPresence = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = context
         )
@@ -88,6 +87,7 @@ class ChatInitializer(private val context: Context) {
             .logLevel(logLevel)
             .withPlugins(offlinePlugin, statePluginFactory)
             .debugRequests(true)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
 
         // Using markdown as text transformer

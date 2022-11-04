@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.plugin.logic.internal
+package io.getstream.chat.android.offline.utils
 
-import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.chat.android.test.randomFile
+import java.util.UUID
 
-/**
- * Provider for state {ChannelStateLogic}
- */
-internal interface ChannelStateLogicProvider {
-
-    /**
-     * Provides [ChannelStateLogic] for the channelType and channelId
-     *
-     * @param channelType String
-     * @param channelId String
-     */
-    fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic
-}
+internal fun randomAttachmentsWithFile(
+    size: Int = positiveRandomInt(10),
+    createAttachment: (Int) -> Attachment = {
+        Attachment(upload = randomFile()).apply {
+            uploadId = "upload_id_${UUID.randomUUID()}"
+        }
+    },
+): List<Attachment> = (1..size).map(createAttachment)

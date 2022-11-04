@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.interceptor.internal
+package io.getstream.chat.android.client.attachment
 
 import android.content.Context
+import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
-import io.getstream.chat.android.client.extensions.internal.populateMentions
-import io.getstream.chat.android.client.interceptor.MessageInterceptor
-import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
-import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsAndroidWorker
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
@@ -40,60 +33,38 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 /**
- * Implementation of [MessageInterceptor] that upload attachments, update original message
- * with new attachments and return updated message.
+ * Class responsible for sending attachments to the backend.
+ *
+ * @param context Context.
+ * @param networkType [UploadAttachmentsNetworkType]
+ * @param clientState [ClientState]
+ * @param scope [CoroutineScope]
  */
-@Suppress("LongParameterList")
-internal class SendMessageInterceptor(
+internal class AttachmentsSender(
     private val context: Context,
-    private val logic: LogicRegistry,
-    private val clientState: ClientState,
-    private val channelRepository: ChannelRepository,
-    private val messageRepository: MessageRepository,
-    private val attachmentRepository: AttachmentRepository,
-    private val scope: CoroutineScope,
     private val networkType: UploadAttachmentsNetworkType,
-    private val prepareMessageLogic: PrepareMessageLogic,
-    private val user: User
-) : MessageInterceptor {
+    private val clientState: ClientState,
+    private val scope: CoroutineScope,
+) {
 
     private var jobsMap: Map<String, Job> = emptyMap()
     private val uploadIds = mutableMapOf<String, UUID>()
 
-    override suspend fun interceptMessage(
+    internal suspend fun sendAttachments(
+        message: Message,
         channelType: String,
         channelId: String,
-        message: Message,
         isRetrying: Boolean,
+        repositoryFacade: RepositoryFacade,
     ): Result<Message> {
-        val channel = logic.channel(channelType, channelId)
-
-        val preparedMessage = prepareMessageLogic.prepareMessage(message, channelId, channelType, user).apply {
-            message.populateMentions(channel.toChannel())
-        }
-
-        logic.channelFromMessage(message)?.upsertMessage(preparedMessage)
-        logic.threadFromMessage(message)?.upsertMessage(preparedMessage)
-        // we insert early to ensure we don't lose messages
-        messageRepository.insertMessage(preparedMessage)
-        channelRepository.updateLastMessageForChannel(message.cid, preparedMessage)
-
-        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
-        // Update flow for currently running queries
-        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannelState(channel.cid) }
-
-        if (preparedMessage.replyMessageId != null) {
-            channel.replyMessage(null)
-        }
-
         return if (!isRetrying) {
-            if (preparedMessage.hasPendingAttachments()) {
-                uploadAttachments(preparedMessage, channelType, channelId)
+            if (message.hasPendingAttachments()) {
+                uploadAttachments(message, channelType, channelId, repositoryFacade)
             } else {
-                Result.success(preparedMessage)
+                Result.success(message)
             }
         } else {
-            retryMessage(preparedMessage, channelType, channelId)
+            retryMessage(message, channelType, channelId, repositoryFacade)
         }
     }
 
@@ -106,8 +77,13 @@ internal class SendMessageInterceptor(
      *
      * @return [Result] having message with latest attachments state or error if there was any.
      */
-    private suspend fun retryMessage(message: Message, channelType: String, channelId: String): Result<Message> =
-        uploadAttachments(message, channelType, channelId)
+    private suspend fun retryMessage(
+        message: Message,
+        channelType: String,
+        channelId: String,
+        repositoryFacade: RepositoryFacade,
+    ): Result<Message> =
+        uploadAttachments(message, channelType, channelId, repositoryFacade)
 
     /**
      * Uploads the attachment of this message if there is any pending attachments and return the updated message.
@@ -116,9 +92,14 @@ internal class SendMessageInterceptor(
      *
      * @return [Result] having message with latest attachments state or error if there was any.
      */
-    private suspend fun uploadAttachments(message: Message, channelType: String, channelId: String): Result<Message> {
+    private suspend fun uploadAttachments(
+        message: Message,
+        channelType: String,
+        channelId: String,
+        repositoryFacade: RepositoryFacade,
+    ): Result<Message> {
         return if (clientState.isNetworkAvailable) {
-            waitForAttachmentsToBeSent(message, channelType, channelId)
+            waitForAttachmentsToBeSent(message, channelType, channelId, repositoryFacade)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)
             Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
@@ -134,6 +115,7 @@ internal class SendMessageInterceptor(
         newMessage: Message,
         channelType: String,
         channelId: String,
+        repositoryFacade: RepositoryFacade,
     ): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
         var allAttachmentsUploaded = false
@@ -141,12 +123,12 @@ internal class SendMessageInterceptor(
 
         jobsMap = jobsMap + (
             newMessage.id to scope.launch {
-                attachmentRepository.observeAttachmentsForMessage(newMessage.id)
+                repositoryFacade.observeAttachmentsForMessage(newMessage.id)
                     .filterNot(Collection<Attachment>::isEmpty)
                     .collect { attachments ->
                         when {
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
-                                messageToBeSent = messageRepository.selectMessage(newMessage.id) ?: newMessage.copy(
+                                messageToBeSent = repositoryFacade.selectMessage(newMessage.id) ?: newMessage.copy(
                                     attachments = attachments.toMutableList()
                                 )
                                 allAttachmentsUploaded = true

@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.interceptor.MessageInterceptor
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -39,6 +38,7 @@ import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
@@ -61,6 +61,7 @@ public interface Plugin :
     ShuffleGiphyListener,
     DeleteMessageListener,
     SendMessageListener,
+    SendAttachmentListener,
     EditMessageListener,
     QueryChannelListener,
     QueryChannelsListener,
@@ -70,7 +71,6 @@ public interface Plugin :
     ChannelMarkReadListener,
     CreateChannelListener {
 
-    public val interceptors: List<MessageInterceptor>
     public val errorHandlers: List<ErrorHandler>
 
     override suspend fun onQueryMembersResult(
@@ -279,6 +279,10 @@ public interface Plugin :
         channelId: String,
         memberIds: List<String>,
     ): Result<Unit> = Result.success(Unit)
+
+    override suspend fun onAttachmentSendRequest(channelType: String, channelId: String, message: Message) {
+        /* No-Op */
+    }
 
     public fun onUserSet(user: User)
 
