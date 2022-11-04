@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -117,7 +118,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private val messageItem: MessageListItem.MessageItem by lazy {
         MessageListItem.MessageItem(
             message,
-            positions = listOf(MessageListItem.Position.BOTTOM),
+            positions = listOf(MessagePosition.BOTTOM),
             isMine = message.user.id == ChatUI.currentUserProvider.getCurrentUser()?.id
         )
     }

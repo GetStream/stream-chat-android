@@ -3,7 +3,7 @@
 package io.getstream.chat.android
 
 object Versions {
-    internal const val ANDROID_GRADLE_PLUGIN = "7.2.1"
+    internal const val ANDROID_GRADLE_PLUGIN = "7.3.0"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.8.2.1"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.5.1"
@@ -23,8 +23,9 @@ object Versions {
     internal const val COMPOSE_ACCOMPANIST = "0.25.1"
     internal const val COMPOSE_ACTIVITY = "1.5.1"
     internal const val COMPOSE_VIEW_MODEL = "2.5.1"
-    internal const val COMPOSE = "1.2.1"
+    internal const val COMPOSE = "1.3.0"
     public const val COMPOSE_COMPILER = "1.3.2"
+    public const val COMPOSE_RUNTIME = "1.3.0"
     internal const val CONSTRAINT_LAYOUT = "2.1.4"
     internal const val COROUTINES = "1.6.4"
     internal const val DETEKT_PLUGIN = "1.21.0"
@@ -53,7 +54,7 @@ object Versions {
     internal const val KLUENT = "1.68"
     internal const val KOTLIN = "1.7.20"
     internal const val KOTLIN_BINARY_VALIDATOR = "0.11.1"
-    internal const val KSP = "1.7.20-1.0.6"
+    internal const val KSP = "1.7.20-1.0.7"
     internal const val LEAK_CANARY = "2.4"
     internal const val MATERIAL_COMPONENTS = "1.6.1"
     internal const val MARKWON = "4.6.2"
@@ -106,6 +107,7 @@ object Dependencies {
     const val coilVideo = "io.coil-kt:coil-video:${Versions.COIL}"
     const val composeCoil = "io.coil-kt:coil-compose:${Versions.COIL}"
     const val composeCompiler = "androidx.compose.compiler:compiler:${Versions.COMPOSE_COMPILER}"
+    const val composeRuntime= "androidx.compose.runtime:runtime:${Versions.COMPOSE_RUNTIME}"
     const val composeUi = "androidx.compose.ui:ui:${Versions.COMPOSE}"
     const val composeUiTest = "androidx.compose.ui:ui-test-junit4:${Versions.COMPOSE}"
     const val composeUiTestManifest = "androidx.compose.ui:ui-test-manifest:${Versions.COMPOSE}"

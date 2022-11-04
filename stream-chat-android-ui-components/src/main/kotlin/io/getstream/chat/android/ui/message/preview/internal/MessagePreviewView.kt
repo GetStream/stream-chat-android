@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.getAttachmentsText
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
 import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 
@@ -62,9 +63,9 @@ internal class MessagePreviewView : FrameLayout {
 
     fun styleView(messagePreviewStyle: MessagePreviewStyle) {
         messagePreviewStyle.run {
-            messageSenderTextStyle.apply(binding.senderNameLabel)
-            messageTextStyle.apply(binding.messageLabel)
-            messageTimeTextStyle.apply(binding.messageTimeLabel)
+            binding.senderNameLabel.setTextStyle(messageSenderTextStyle)
+            binding.messageLabel.setTextStyle(messageTextStyle)
+            binding.messageTimeLabel.setTextStyle(messageTimeTextStyle)
         }
     }
 

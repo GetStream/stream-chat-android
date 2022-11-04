@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import io.getstream.chat.android.common.state.message.list.MessagePosition;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder;
@@ -46,8 +47,7 @@ public class MessageListViewSnippets extends Fragment {
         MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
 
         // Bind view and viewModel
-        boolean enforceUniqueReactions = true;
-        MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner(), enforceUniqueReactions);
+        MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
     }
 
     public void handlingActions() {
@@ -72,7 +72,7 @@ public class MessageListViewSnippets extends Fragment {
         messageListView.setMessageUnpinHandler((message) -> {
             // Handle when message is going to be unpinned
         });
-        messageListView.setGiphySendHandler((message, giphyAction) -> {
+        messageListView.setGiphySendHandler((giphyAction) -> {
             // Handle when some giphyAction is going to be performed
         });
         messageListView.setMessageRetryHandler((message) -> {
@@ -237,6 +237,6 @@ public class MessageListViewSnippets extends Fragment {
     }
 
     public void avatarPredicate() {
-        messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs());
+        messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessagePosition.BOTTOM) && messageItem.isTheirs());
     }
 }

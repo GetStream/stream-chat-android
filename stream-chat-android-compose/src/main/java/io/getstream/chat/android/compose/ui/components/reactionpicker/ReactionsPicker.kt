@@ -56,7 +56,6 @@ private const val DefaultNumberOfReactions = 5
  * @param centerContent The content shown at the center of [ReactionsPicker].
  * By default displays all available reactions.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ReactionsPicker(
     message: Message,

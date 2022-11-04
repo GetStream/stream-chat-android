@@ -32,20 +32,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.message.list.GiphyAction
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItemState
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
+import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
+import io.getstream.chat.android.common.model.messsagelist.SystemMessageItemState
+import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorItemState
+import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
-import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
-import io.getstream.chat.android.compose.state.messages.list.GiphyAction
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
-import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
-import io.getstream.chat.android.compose.state.messages.list.SystemMessageState
-import io.getstream.chat.android.compose.state.messages.list.ThreadSeparatorState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Represents the message item container that allows us to customize each type of item in the MessageList.
  *
- * @param messageListItem The state of the message list item.
+ * @param messageListItemState The state of the message list item.
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
@@ -56,23 +57,24 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param threadSeparatorContent Composable that represents thread separators.
  * @param systemMessageContent Composable that represents system messages.
  * @param messageItemContent Composable that represents regular messages.
+ * @param typingIndicatorContent Composable that represents a typing indicator.
  */
 @Composable
 public fun MessageContainer(
-    messageListItem: MessageListItemState,
+    messageListItemState: MessageListItemState,
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
-    dateSeparatorContent: @Composable (DateSeparatorState) -> Unit = {
+    dateSeparatorContent: @Composable (DateSeparatorItemState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
     },
-    threadSeparatorContent: @Composable (ThreadSeparatorState) -> Unit = {
+    threadSeparatorContent: @Composable (ThreadDateSeparatorItemState) -> Unit = {
         DefaultMessageThreadSeparatorContent(threadSeparator = it)
     },
-    systemMessageContent: @Composable (SystemMessageState) -> Unit = {
+    systemMessageContent: @Composable (SystemMessageItemState) -> Unit = {
         DefaultSystemMessageContent(systemMessageState = it)
     },
     messageItemContent: @Composable (MessageItemState) -> Unit = {
@@ -86,12 +88,14 @@ public fun MessageContainer(
             onQuotedMessageClick = onQuotedMessageClick,
         )
     },
+    typingIndicatorContent: @Composable (TypingItemState) -> Unit = { }
 ) {
-    when (messageListItem) {
-        is DateSeparatorState -> dateSeparatorContent(messageListItem)
-        is ThreadSeparatorState -> threadSeparatorContent(messageListItem)
-        is SystemMessageState -> systemMessageContent(messageListItem)
-        is MessageItemState -> messageItemContent(messageListItem)
+    when (messageListItemState) {
+        is DateSeparatorItemState -> dateSeparatorContent(messageListItemState)
+        is ThreadDateSeparatorItemState -> threadSeparatorContent(messageListItemState)
+        is SystemMessageItemState -> systemMessageContent(messageListItemState)
+        is MessageItemState -> messageItemContent(messageListItemState)
+        is TypingItemState -> typingIndicatorContent(messageListItemState)
     }
 }
 
@@ -101,7 +105,7 @@ public fun MessageContainer(
  * @param dateSeparator The data used to show the separator text.
  */
 @Composable
-internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorState) {
+internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItemState) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Surface(
             modifier = Modifier
@@ -131,7 +135,7 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorStat
  * @param threadSeparator The data used to show the separator text.
  */
 @Composable
-internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadSeparatorState) {
+internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSeparatorItemState) {
     val backgroundGradient = Brush.verticalGradient(
         listOf(
             ChatTheme.colors.threadSeparatorGradientStart,
@@ -168,7 +172,7 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadSeparat
  * @param systemMessageState The system message item to show.
  */
 @Composable
-internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState) {
+internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemState) {
     Text(
         modifier = Modifier
             .fillMaxWidth()

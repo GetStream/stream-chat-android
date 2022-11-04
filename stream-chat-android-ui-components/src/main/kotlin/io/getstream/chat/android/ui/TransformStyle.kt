@@ -23,9 +23,8 @@ import io.getstream.chat.android.ui.gallery.AttachmentGalleryViewMediaStyle
 import io.getstream.chat.android.ui.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 import io.getstream.chat.android.ui.mention.list.MentionListViewStyle
-import io.getstream.chat.android.ui.message.composer.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
-import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
+import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.list.DefaultQuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
@@ -42,7 +41,6 @@ import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsVie
 import io.getstream.chat.android.ui.pinned.list.PinnedMessageListViewStyle
 import io.getstream.chat.android.ui.search.SearchInputViewStyle
 import io.getstream.chat.android.ui.search.list.SearchResultListViewStyle
-import io.getstream.chat.android.ui.suggestion.list.SuggestionListViewStyle
 import io.getstream.chat.android.ui.typing.TypingIndicatorViewStyle
 
 public object TransformStyle {
@@ -57,9 +55,6 @@ public object TransformStyle {
 
     @JvmStatic
     public var messageListItemStyleTransformer: StyleTransformer<MessageListItemStyle> = noopTransformer()
-
-    @JvmStatic
-    public var messageInputStyleTransformer: StyleTransformer<MessageInputViewStyle> = noopTransformer()
 
     @JvmStatic
     public var scrollButtonStyleTransformer: StyleTransformer<ScrollButtonViewStyle> = noopTransformer()
@@ -91,9 +86,6 @@ public object TransformStyle {
     @JvmStatic
     public var unsupportedAttachmentStyleTransformer: StyleTransformer<UnsupportedAttachmentViewStyle> =
         noopTransformer()
-
-    @JvmStatic
-    public var suggestionListStyleTransformer: StyleTransformer<SuggestionListViewStyle> = noopTransformer()
 
     @JvmStatic
     public var messageListHeaderStyleTransformer: StyleTransformer<MessageListHeaderViewStyle> = noopTransformer()

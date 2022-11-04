@@ -31,11 +31,12 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
+import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogFragment
+import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCenterContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCommandSuggestionsContent
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerFooterContent
@@ -47,17 +48,11 @@ import io.getstream.chat.android.ui.message.composer.content.MessageComposerCont
 import io.getstream.chat.android.ui.message.composer.internal.MessageComposerSuggestionsPopup
 import io.getstream.chat.android.ui.message.composer.internal.ValidationErrorRenderer
 import io.getstream.chat.android.ui.message.composer.internal.toAttachment
-import io.getstream.chat.android.ui.message.composer.internal.toMessageInputViewStyle
-import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionListener
-import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 
 /**
  * UI component designed for handling message text input, attachments, actions,
  * and sending the message.
  */
-@ExperimentalStreamChatApi
 public class MessageComposerView : ConstraintLayout {
     /**
      * Generated binding class for the XML layout.
@@ -65,9 +60,9 @@ public class MessageComposerView : ConstraintLayout {
     private lateinit var binding: StreamUiMessageComposerBinding
 
     /**
-     * Legacy style that is needed for [AttachmentSelectionDialogFragment].
+     * Legacy style that is needed for the attachments picker dialog.
      */
-    private lateinit var messageInputViewStyle: MessageInputViewStyle
+    private lateinit var attachmentsPickerDialogStyle: AttachmentsPickerDialogStyle
 
     /**
      * The context that will be propagated to each content view.
@@ -134,15 +129,11 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var attachmentsButtonClickListener: () -> Unit = {
         context.getFragmentManager()?.let {
-            AttachmentSelectionDialogFragment.newInstance(messageInputViewStyle)
-                .apply {
-                    val listener =
-                        AttachmentSelectionListener { attachments: Set<AttachmentMetaData>, _: AttachmentSource ->
-                            attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
-                        }
-                    setAttachmentSelectionListener(listener)
-                    show(it, AttachmentSelectionDialogFragment.TAG)
+            AttachmentsPickerDialogFragment.newInstance(attachmentsPickerDialogStyle).apply {
+                setAttachmentSelectionListener { attachments: List<AttachmentMetaData> ->
+                    attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
                 }
+            }.show(it, AttachmentsPickerDialogFragment.TAG)
         }
     }
 
@@ -217,12 +208,12 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Initializing the view with default contents.
      */
-    private fun init(attr: AttributeSet? = null) {
+    private fun init(attrs: AttributeSet? = null) {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
 
         validationErrorRenderer = ValidationErrorRenderer(context, this)
-        messageInputViewStyle = AttachmentsPickerDialogStyle(context, attr).toMessageInputViewStyle(context)
-        messageComposerContext = MessageComposerContext(MessageComposerViewStyle(context, attr))
+        messageComposerContext = MessageComposerContext(MessageComposerViewStyle(context, attrs))
+        attachmentsPickerDialogStyle = AttachmentsPickerDialogStyle(context, attrs)
 
         setBackgroundColor(messageComposerContext.style.backgroundColor)
         binding.separator.background = messageComposerContext.style.dividerBackgroundDrawable

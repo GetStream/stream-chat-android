@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import kotlinx.coroutines.launch
 
@@ -47,7 +46,6 @@ import kotlinx.coroutines.launch
  */
 @JvmName("bind")
 @JvmOverloads
-@ExperimentalStreamChatApi
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,

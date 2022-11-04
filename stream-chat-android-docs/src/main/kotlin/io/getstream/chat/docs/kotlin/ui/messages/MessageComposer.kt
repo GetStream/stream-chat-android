@@ -36,7 +36,6 @@ import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
 import io.getstream.chat.docs.R
-import io.getstream.chat.docs.databinding.CustomMessageComposerLeadingContentBinding
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding
 
 /**
@@ -77,10 +76,10 @@ private object MessageComposerUsageSnippet : Fragment() {
             // Integrate MessageComposerView with MessageListView
             messageListViewModel.mode.observe(viewLifecycleOwner) {
                 when (it) {
-                    is MessageListViewModel.Mode.Thread -> {
+                    is MessageMode.MessageThread -> {
                         messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
                     }
-                    is MessageListViewModel.Mode.Normal -> {
+                    is MessageMode.Normal -> {
                         messageComposerViewModel.leaveThread()
                     }
                 }

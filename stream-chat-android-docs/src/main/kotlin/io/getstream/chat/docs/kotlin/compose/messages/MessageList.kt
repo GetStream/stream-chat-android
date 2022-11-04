@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.models.initials
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.messages.list.MessageList

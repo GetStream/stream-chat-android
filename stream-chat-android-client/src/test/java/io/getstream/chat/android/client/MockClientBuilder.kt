@@ -19,6 +19,7 @@ package io.getstream.chat.android.client
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
+import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -80,6 +81,7 @@ internal class MockClientBuilder(
     lateinit var api: MoshiChatApi
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var client: ChatClient
+    lateinit var attachmentSender: AttachmentsSender
 
     fun build(): ChatClient {
         val config = ChatClientConfig(
@@ -103,6 +105,7 @@ internal class MockClientBuilder(
         notificationsManager = mock()
 
         api = mock()
+        attachmentSender = mock()
 
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
@@ -132,6 +135,8 @@ internal class MockClientBuilder(
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
         )
+
+        client.attachmentsSender = attachmentSender
 
         client.connectUser(user, token).enqueue()
 

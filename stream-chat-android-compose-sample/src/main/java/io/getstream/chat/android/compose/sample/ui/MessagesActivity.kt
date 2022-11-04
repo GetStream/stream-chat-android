@@ -51,12 +51,12 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.common.state.message.list.SelectedMessageOptionsState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
-import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
@@ -135,7 +135,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     onMediaGalleryPreviewResult = { result ->
                         when (result?.resultType) {
                             MediaGalleryPreviewResultType.QUOTE -> {
-                                val message = listViewModel.getMessageWithId(result.messageId)
+                                val message = listViewModel.getMessageById(result.messageId)
 
                                 if (message != null) {
                                     composerViewModel.performMessageAction(Reply(message))

@@ -30,6 +30,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.supportedLatestReactions
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiUserReactionsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 
@@ -69,7 +70,7 @@ public class UserReactionsView : FrameLayout {
 
     internal fun configure(messageListViewStyle: MessageListViewStyle) {
         binding.userReactionsContainer.setCardBackgroundColor(messageListViewStyle.userReactionsBackgroundColor)
-        messageListViewStyle.userReactionsTitleText.apply(binding.userReactionsTitleTextView)
+        binding.userReactionsTitleTextView.setTextStyle(messageListViewStyle.userReactionsTitleText)
         userReactionsAdapter.messageOptionsUserReactionAlignment = messageListViewStyle
             .messageOptionsUserReactionAlignment.getUserReactionAlignment()
     }

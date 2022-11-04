@@ -72,7 +72,6 @@ object ChatHelper {
             config = StatePluginConfig(
                 backgroundSyncEnabled = true,
                 userPresence = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = context
         )
@@ -83,6 +82,7 @@ object ChatHelper {
             .notifications(notificationConfig, notificationHandler)
             .withPlugins(offlinePlugin, statePluginFactory)
             .logLevel(logLevel)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
     }
 

@@ -17,14 +17,12 @@
 package io.getstream.chat.android.ui.message.composer.content
 
 import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 
 /**
  * An interface that must be implemented by the content views of [MessageComposerView].
  */
-@ExperimentalStreamChatApi
 public interface MessageComposerContent {
     /**
      * Initializes the content view with [MessageComposerContext].

@@ -138,9 +138,9 @@ public class PermissionChecker {
     ) {
         checkPermissions(
             view,
-            view.context.getString(R.string.stream_ui_message_input_permission_storage_title),
-            view.context.getString(R.string.stream_ui_message_input_permission_storage_message),
-            view.context.getString(R.string.stream_ui_message_input_permission_setting_message),
+            view.context.getString(R.string.stream_ui_message_composer_permission_storage_title),
+            view.context.getString(R.string.stream_ui_message_composer_permission_storage_message),
+            view.context.getString(R.string.stream_ui_message_composer_permission_setting_message),
             permissions,
             onPermissionDenied,
             onPermissionGranted
@@ -167,9 +167,9 @@ public class PermissionChecker {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || Environment.isExternalStorageLegacy()) {
             checkPermissions(
                 view,
-                view.context.getString(R.string.stream_ui_message_input_permission_storage_title),
-                view.context.getString(R.string.stream_ui_message_input_permission_storage_message),
-                view.context.getString(R.string.stream_ui_message_input_permission_setting_message),
+                view.context.getString(R.string.stream_ui_message_composer_permission_storage_title),
+                view.context.getString(R.string.stream_ui_message_composer_permission_storage_message),
+                view.context.getString(R.string.stream_ui_message_composer_permission_setting_message),
                 listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 onPermissionDenied,
                 onPermissionGranted
@@ -186,9 +186,9 @@ public class PermissionChecker {
     ) {
         checkPermissions(
             view,
-            view.context.getString(R.string.stream_ui_message_input_permission_camera_title),
-            view.context.getString(R.string.stream_ui_message_input_permission_camera_message),
-            view.context.getString(R.string.stream_ui_message_input_permission_camera_message),
+            view.context.getString(R.string.stream_ui_message_composer_permission_camera_title),
+            view.context.getString(R.string.stream_ui_message_composer_permission_camera_message),
+            view.context.getString(R.string.stream_ui_message_composer_permission_camera_message),
             listOf(Manifest.permission.CAMERA),
             onPermissionDenied,
             onPermissionGranted
@@ -254,7 +254,7 @@ public class PermissionChecker {
     ): SnackbarOnAnyDeniedMultiplePermissionsListener =
         SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
             .with(view, snackbarMessage)
-            .withOpenSettingsButton(R.string.stream_ui_message_input_permissions_setting_button)
+            .withOpenSettingsButton(R.string.stream_ui_message_composer_permissions_setting_button)
             .withCallback(object : Snackbar.Callback() {
                 override fun onShown(sb: Snackbar?) {
                     sb?.view?.elevation = SNACKBAR_ELEVATION_IN_DP.dpToPxPrecise()

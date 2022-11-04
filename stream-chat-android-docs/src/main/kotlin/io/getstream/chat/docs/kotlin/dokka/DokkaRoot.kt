@@ -45,13 +45,13 @@ class DokkaRoot {
                 backgroundSyncEnabled = true,
                 userPresence = true,
                 persistenceEnabled = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = applicationContext,
         )
 
         val client = ChatClient.Builder(apiKey, applicationContext)
             .withPlugins(offlinePluginFactory)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
     }
 

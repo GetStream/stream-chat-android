@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.client.interceptor.message.internal
 
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.models.Attachment
@@ -30,6 +32,7 @@ import java.util.UUID
 
 internal class PrepareMessageLogicImpl(
     private val clientState: ClientState,
+    private val channelStateLogicProvider: ChannelStateLogicProvider?
 ) : PrepareMessageLogic {
 
     /**
@@ -45,6 +48,8 @@ internal class PrepareMessageLogicImpl(
      * Then this message is inserted in database (Optimistic UI update) and final message is returned.
      */
     override fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message {
+        val channel = channelStateLogicProvider?.channelStateLogic(channelType, channelId)
+
         return message.copy().apply {
             if (id.isEmpty()) {
                 id = generateMessageId(user.id)
@@ -73,6 +78,12 @@ internal class PrepareMessageLogicImpl(
                 attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
                 clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
+            }
+
+            channel?.listenForChannelState()?.toChannel()?.let(message::populateMentions)
+        }.also { preparedMessage ->
+            if (preparedMessage.replyMessageId != null) {
+                channel?.replyMessage(null)
             }
         }
     }

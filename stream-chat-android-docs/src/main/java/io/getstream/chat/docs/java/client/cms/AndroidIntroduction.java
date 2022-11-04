@@ -26,7 +26,7 @@ import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.offline.plugin.configuration.Config;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState;
+import io.getstream.chat.android.client.channel.state.ChannelState;
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig;
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
 import kotlinx.coroutines.flow.StateFlow;
@@ -40,11 +40,11 @@ public class AndroidIntroduction {
         String apiKey = "{{ api_key }}";
         String token = "{{ chat_user_token }}";
         // Step 1 - Set up the OfflinePlugin for offline storage
-        Config config = new Config(true, true, true, UploadAttachmentsNetworkType.NOT_ROAMING);
+        Config config = new Config(true, true, true);
         StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(config, applicationContext);
 
         StreamStatePluginFactory streamStatePluginFactory = new StreamStatePluginFactory(
-                new StatePluginConfig(true, true, UploadAttachmentsNetworkType.NOT_ROAMING),
+                new StatePluginConfig(true, true),
                 applicationContext
         );
 
@@ -53,6 +53,7 @@ public class AndroidIntroduction {
                 // Change log level
                 .logLevel(ChatLogLevel.ALL)
                 .withPlugins(offlinePluginFactory, streamStatePluginFactory)
+                .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
                 .build();
 
         // Step 3 - Authenticate and connect the user
