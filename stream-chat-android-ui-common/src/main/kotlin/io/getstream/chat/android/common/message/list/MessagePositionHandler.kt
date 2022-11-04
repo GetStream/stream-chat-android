@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.common.messagelist
+package io.getstream.chat.android.common.message.list
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.common.extensions.isServerMessage
-import io.getstream.chat.android.common.state.messagelist.MessagePosition
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 
 /**
  * A handler to determine the position of a message inside a group.

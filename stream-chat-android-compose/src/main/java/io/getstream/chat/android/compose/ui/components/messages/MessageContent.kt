@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
-import io.getstream.chat.android.common.messagelist.GiphyAction
+import io.getstream.chat.android.common.message.list.GiphyAction
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent

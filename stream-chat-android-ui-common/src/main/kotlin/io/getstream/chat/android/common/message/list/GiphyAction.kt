@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.common.state.messagelist
+package io.getstream.chat.android.common.message.list
+
+import io.getstream.chat.android.client.models.Message
 
 /**
- * Represents the state when a new message arrives to the channel.
+ * Represents the list of actions users can take with ephemeral giphy messages.
+ *
+ * @param message The ephemeral giphy message.
  */
-public sealed class NewMessageState
+public sealed class GiphyAction(public val message: Message)
 
 /**
- * If the message is our own (we sent it), we scroll to the bottom of the list.
+ * Send the selected giphy message to the channel.
  */
-public object MyOwn : NewMessageState()
+public class SendGiphy(message: Message) : GiphyAction(message)
 
 /**
- * If the message is someone else's (we didn't send it), we show a "New message" bubble.
+ * Perform the giphy shuffle operation.
  */
-public object Other : NewMessageState()
+public class ShuffleGiphy(message: Message) : GiphyAction(message)
+
+/**
+ * Cancel the ephemeral message.
+ */
+public class CancelGiphy(message: Message) : GiphyAction(message)

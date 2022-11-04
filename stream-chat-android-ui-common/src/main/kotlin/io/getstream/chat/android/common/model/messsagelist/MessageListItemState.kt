@@ -20,8 +20,8 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.messagelist.MessageFocusState
-import io.getstream.chat.android.common.state.messagelist.MessagePosition
+import io.getstream.chat.android.common.state.message.list.MessageFocusState
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import java.util.Date
 
 /**

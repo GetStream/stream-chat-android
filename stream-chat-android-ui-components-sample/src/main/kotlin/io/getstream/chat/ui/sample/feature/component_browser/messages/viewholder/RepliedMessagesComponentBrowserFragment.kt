@@ -19,7 +19,7 @@ package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholde
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.state.messagelist.MessagePosition
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachment7z

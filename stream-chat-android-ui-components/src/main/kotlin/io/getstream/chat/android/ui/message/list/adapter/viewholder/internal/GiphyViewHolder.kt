@@ -22,9 +22,9 @@ import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.common.messagelist.CancelGiphy
-import io.getstream.chat.android.common.messagelist.SendGiphy
-import io.getstream.chat.android.common.messagelist.ShuffleGiphy
+import io.getstream.chat.android.common.message.list.CancelGiphy
+import io.getstream.chat.android.common.message.list.SendGiphy
+import io.getstream.chat.android.common.message.list.ShuffleGiphy
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle

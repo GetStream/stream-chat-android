@@ -40,12 +40,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.messagelist.MessageListState
 import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
-import io.getstream.chat.android.common.state.messagelist.MessageFocused
-import io.getstream.chat.android.common.state.messagelist.MyOwn
-import io.getstream.chat.android.common.state.messagelist.NewMessageState
+import io.getstream.chat.android.common.state.message.list.MessageFocused
+import io.getstream.chat.android.common.state.message.list.MessageListState
+import io.getstream.chat.android.common.state.message.list.MyOwn
+import io.getstream.chat.android.common.state.message.list.NewMessageState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.messages.MessagesScrollingOption
 import kotlinx.coroutines.launch

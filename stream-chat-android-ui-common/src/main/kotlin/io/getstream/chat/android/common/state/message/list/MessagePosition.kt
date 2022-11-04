@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.common.state.messagelist
+package io.getstream.chat.android.common.state.message.list
 
 /**
  * Represents the group position of a message, if the message is in a group. Otherwise represented as [NONE].

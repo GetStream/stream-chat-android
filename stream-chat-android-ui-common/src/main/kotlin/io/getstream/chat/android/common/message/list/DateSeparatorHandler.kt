@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.common.messagelist
+package io.getstream.chat.android.common.message.list
 
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.client.extensions.internal.NEVER

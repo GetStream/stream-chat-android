@@ -54,8 +54,8 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isThreadReply
-import io.getstream.chat.android.common.messagelist.GiphyAction
-import io.getstream.chat.android.common.messagelist.MessageListController
+import io.getstream.chat.android.common.message.list.GiphyAction
+import io.getstream.chat.android.common.message.list.MessageListController
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.CustomAction

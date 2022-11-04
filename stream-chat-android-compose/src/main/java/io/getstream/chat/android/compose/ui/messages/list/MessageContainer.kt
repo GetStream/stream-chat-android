@@ -32,7 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.messagelist.GiphyAction
+import io.getstream.chat.android.common.message.list.GiphyAction
 import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageListItemState

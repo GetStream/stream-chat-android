@@ -24,9 +24,9 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.composer.MessageComposerController
-import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
-import io.getstream.chat.android.common.messagelist.MessageListController
-import io.getstream.chat.android.common.messagelist.MessagePositionHandler
+import io.getstream.chat.android.common.message.list.DateSeparatorHandler
+import io.getstream.chat.android.common.message.list.MessageListController
+import io.getstream.chat.android.common.message.list.MessagePositionHandler
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel

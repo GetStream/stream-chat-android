@@ -58,11 +58,11 @@ import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageFailedModerationState
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageOptionsState
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageReactionsState
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageFailedModerationState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageOptionsState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState

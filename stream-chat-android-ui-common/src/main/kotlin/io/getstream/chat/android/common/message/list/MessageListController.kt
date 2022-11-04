@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.common.messagelist
+package io.getstream.chat.android.common.message.list
 
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
@@ -31,6 +32,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesState
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -56,17 +58,18 @@ import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
-import io.getstream.chat.android.common.state.messagelist.MessageFocusRemoved
-import io.getstream.chat.android.common.state.messagelist.MessageFocused
-import io.getstream.chat.android.common.state.messagelist.MessagePosition
-import io.getstream.chat.android.common.state.messagelist.MyOwn
-import io.getstream.chat.android.common.state.messagelist.NewMessageState
-import io.getstream.chat.android.common.state.messagelist.Other
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageFailedModerationState
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageOptionsState
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageReactionsState
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageState
+import io.getstream.chat.android.common.state.message.list.MessageFocusRemoved
+import io.getstream.chat.android.common.state.message.list.MessageFocused
+import io.getstream.chat.android.common.state.message.list.MessageListState
+import io.getstream.chat.android.common.state.message.list.MessagePosition
+import io.getstream.chat.android.common.state.message.list.MyOwn
+import io.getstream.chat.android.common.state.message.list.NewMessageState
+import io.getstream.chat.android.common.state.message.list.Other
+import io.getstream.chat.android.common.state.message.list.SelectedMessageFailedModerationState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageOptionsState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageState
 import io.getstream.chat.android.common.util.ClipboardHandler
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -79,8 +82,6 @@ import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger

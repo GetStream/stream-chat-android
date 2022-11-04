@@ -18,8 +18,8 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.messagelist.GiphyAction
-import io.getstream.chat.android.common.state.messagelist.MessagePosition
+import io.getstream.chat.android.common.message.list.GiphyAction
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.message.list.MessageListView

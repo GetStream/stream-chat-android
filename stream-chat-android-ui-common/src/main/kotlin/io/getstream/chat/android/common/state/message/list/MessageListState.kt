@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.common.messagelist
+package io.getstream.chat.android.common.state.message.list
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
-import io.getstream.chat.android.common.state.messagelist.NewMessageState
-import io.getstream.chat.android.common.state.messagelist.SelectedMessageState
 
 /**
  * Holds the state of the messages list screen.

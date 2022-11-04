@@ -20,7 +20,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.common.state.messagelist.MessagePosition
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 

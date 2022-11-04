@@ -56,11 +56,11 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.client.utils.message.isThreadStart
-import io.getstream.chat.android.common.messagelist.GiphyAction
+import io.getstream.chat.android.common.message.list.GiphyAction
 import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.messagelist.MessageFocused
-import io.getstream.chat.android.common.state.messagelist.MessagePosition
+import io.getstream.chat.android.common.state.message.list.MessageFocused
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState

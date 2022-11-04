@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.common.state.messagelist
+package io.getstream.chat.android.common.state.message.list
 
 import io.getstream.chat.android.client.models.Message
 

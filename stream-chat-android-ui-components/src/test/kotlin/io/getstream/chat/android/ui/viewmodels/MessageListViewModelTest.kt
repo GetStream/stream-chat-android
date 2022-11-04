@@ -30,9 +30,8 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.common.messagelist.MessageListController
-import io.getstream.chat.android.common.state.messagelist.MessagePosition
-import io.getstream.chat.android.offline.model.channel.ChannelData
+import io.getstream.chat.android.common.message.list.MessageListController
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
