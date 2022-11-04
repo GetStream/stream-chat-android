@@ -106,8 +106,6 @@ val backHandler = {
     messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
 }
 messageListHeaderView.setBackButtonClickListener(backHandler)
-
-// You should also consider overriding default Activity's back button behaviour
 ```
 </TabItem>
 
@@ -163,8 +161,6 @@ MessageListHeaderView.OnClickListener backHandler = () -> {
     messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed.INSTANCE);
 };
 messageListHeaderView.setBackButtonClickListener(backHandler);
-
-// You should also consider overriding default Activity's back button behaviour
 ```
 </TabItem>
 </Tabs>

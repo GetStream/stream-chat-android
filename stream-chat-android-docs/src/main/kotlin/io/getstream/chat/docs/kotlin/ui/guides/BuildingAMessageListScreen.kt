@@ -73,7 +73,5 @@ class BuildingAMessageListScreen : Fragment() {
             messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
         }
         messageListHeaderView.setBackButtonClickListener(backHandler)
-
-        // You should also consider overriding default Activity's back button behaviour
     }
 }
