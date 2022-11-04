@@ -116,9 +116,9 @@ public suspend inline fun <A : Any, B : ChatError, C : Any> Result<A, B>.flatMap
 public inline fun <A : Any, B : ChatError> Result<A, B>.onSuccess(
     crossinline successSideEffect: (A) -> Unit,
 ): Result<A, B> =
-    apply {
-        when (this) {
-            is Result.Success -> successSideEffect(this.value)
+    also {
+        when (it) {
+            is Result.Success -> successSideEffect(it.value)
             is Result.Failure -> Unit
         }
     }
