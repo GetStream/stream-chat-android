@@ -23,6 +23,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemDateDividerBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
@@ -51,8 +52,7 @@ internal class DateDividerViewHolder(
                 DateUtils.FORMAT_ABBREV_RELATIVE
             )
 
-        style.textStyleDateSeparator.apply(binding.dateLabel)
-
+        binding.dateLabel.setTextStyle(style.textStyleDateSeparator)
         binding.dateLabel.background = ShapeAppearanceModel.Builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS).build()
             .let(::MaterialShapeDrawable).apply { setTint(style.dateSeparatorBackgroundColor) }
     }

@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Building a Message List Screen
 
-The SDK provides multiple UI Components which can be used together to build a message list screen. This guide will show you how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageInputView`.
+The SDK provides multiple UI Components which can be used together to build a message list screen. This guide will show you how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageComposerView`.
 
 This is what a screen made with these three components looks like:
 
@@ -18,8 +18,7 @@ To add these Views to your app, first create them in an XML layout:
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
         android:id="@+id/messagesHeaderView"
@@ -27,8 +26,7 @@ To add these Views to your app, first create them in an XML layout:
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <io.getstream.chat.android.ui.message.list.MessageListView
         android:id="@+id/messageListView"
@@ -36,21 +34,19 @@ To add these Views to your app, first create them in an XML layout:
         android:layout_height="0dp"
         android:layout_marginHorizontal="0dp"
         android:clipToPadding="false"
-        app:layout_constraintBottom_toTopOf="@+id/messageInputView"
+        app:layout_constraintBottom_toTopOf="@+id/messageComposerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView" />
 
-    <io.getstream.chat.android.ui.message.input.MessageInputView
-        android:id="@+id/messageInputView"
+    <io.getstream.chat.android.ui.message.composer.MessageComposerView
+        android:id="@+id/messageComposerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageListView"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/messageListView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
@@ -67,29 +63,36 @@ After setting up the ViewModels, this screen also requires some additional setup
 val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
 val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
 val messageListViewModel: MessageListViewModel by viewModels { factory }
-val messageInputViewModel: MessageInputViewModel by viewModels { factory }
+val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
 // Bind view models
 messageListHeaderViewModel.bindView(messageListHeaderView, viewLifecycleOwner)
 messageListViewModel.bindView(messageListView, viewLifecycleOwner)
-messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
+messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
 
 // Let both message list header and message input know when we open a thread
 messageListViewModel.mode.observe(this) { mode ->
     when (mode) {
         is MessageListViewModel.Mode.Thread -> {
             messageListHeaderViewModel.setActiveThread(mode.parentMessage)
-            messageInputViewModel.setActiveThread(mode.parentMessage)
+            messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
         }
         MessageListViewModel.Mode.Normal -> {
             messageListHeaderViewModel.resetThread()
-            messageInputViewModel.resetThread()
+            messageComposerViewModel.leaveThread()
         }
     }
 }
 
-// Let the message input know when we are editing a message
-messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit)
+// Let the message composer know when we are replying to a message
+messageListView.setMessageReplyHandler { _, message ->
+    messageComposerViewModel.performMessageAction(Reply(message))
+}
+
+// Let the message composer know when we are editing a message
+messageListView.setMessageEditHandler { message ->
+    messageComposerViewModel.performMessageAction(Edit(message))
+}
 
 // Handle navigate up state
 messageListViewModel.state.observe(this) { state ->
@@ -103,8 +106,6 @@ val backHandler = {
     messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
 }
 messageListHeaderView.setBackButtonClickListener(backHandler)
-
-// You should also consider overriding default Activity's back button behaviour
 ```
 </TabItem>
 
@@ -118,28 +119,35 @@ ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
 ViewModelProvider provider = new ViewModelProvider(this, factory);
 MessageListHeaderViewModel messageListHeaderViewModel = provider.get(MessageListHeaderViewModel.class);
 MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
-MessageInputViewModel messageInputViewModel = provider.get(MessageInputViewModel.class);
+MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
 
 // Bind view models
 MessageListHeaderViewModelBinding.bind(messageListHeaderViewModel, messageListHeaderView, this);
 boolean enforceUniqueReactions = true;
 MessageListViewModelBinding.bind(messageListViewModel, messageListView, this, enforceUniqueReactions);
-MessageInputViewModelBinding.bind(messageInputViewModel, messageInputView, this);
+MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, this);
 
 // Let both message list header and message input know when we open a thread
 messageListViewModel.getMode().observe(this, mode -> {
     if (mode instanceof Thread) {
         Message parentMessage = ((Thread) mode).getParentMessage();
         messageListHeaderViewModel.setActiveThread(parentMessage);
-        messageInputViewModel.setActiveThread(parentMessage);
+        messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(parentMessage, null));
     } else if (mode instanceof Normal) {
         messageListHeaderViewModel.resetThread();
-        messageInputViewModel.resetThread();
+        messageComposerViewModel.leaveThread();
     }
 });
 
-// Let the message input know when we are editing a message
-messageListView.setMessageEditHandler(messageInputViewModel::postMessageToEdit);
+// Let the message composer know when we are replying to a message
+messageListView.setMessageReplyHandler((cid, message) ->
+    messageComposerViewModel.performMessageAction(new Reply(message))
+);
+
+// Let the message composer know when we are editing a message
+messageListView.setMessageEditHandler(message ->
+    messageComposerViewModel.performMessageAction(new Edit(message))
+);
 
 // Handle navigate up state
 messageListViewModel.getState().observe(this, state -> {
@@ -153,8 +161,6 @@ MessageListHeaderView.OnClickListener backHandler = () -> {
     messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed.INSTANCE);
 };
 messageListHeaderView.setBackButtonClickListener(backHandler);
-
-// You should also consider overriding default Activity's back button behaviour
 ```
 </TabItem>
 </Tabs>

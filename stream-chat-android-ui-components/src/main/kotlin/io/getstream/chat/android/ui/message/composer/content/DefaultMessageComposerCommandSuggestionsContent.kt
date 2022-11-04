@@ -24,7 +24,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -40,7 +39,6 @@ import io.getstream.chat.android.ui.utils.extensions.applyTint
 /**
  * Represents the default command suggestion list popup shown above [MessageComposerView].
  */
-@ExperimentalStreamChatApi
 public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.

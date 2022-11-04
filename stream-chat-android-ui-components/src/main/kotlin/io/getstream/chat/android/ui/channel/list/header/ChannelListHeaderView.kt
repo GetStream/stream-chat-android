@@ -33,6 +33,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListHeaderViewBinding
 
 /**
@@ -93,11 +94,11 @@ public class ChannelListHeaderView : ConstraintLayout {
     }
 
     private fun configOnlineTitle(typedArray: TypedArray) {
-        getOnlineTitleTextStyle(typedArray).apply(binding.onlineTextView)
+        binding.onlineTextView.setTextStyle(getOnlineTitleTextStyle(typedArray))
     }
 
     private fun configOfflineTitleContainer(typedArray: TypedArray) {
-        getOfflineTitleTextStyle(typedArray).apply(binding.offlineTextView)
+        binding.offlineTextView.setTextStyle(getOfflineTitleTextStyle(typedArray))
 
         binding.offlineProgressBar.apply {
             isVisible =

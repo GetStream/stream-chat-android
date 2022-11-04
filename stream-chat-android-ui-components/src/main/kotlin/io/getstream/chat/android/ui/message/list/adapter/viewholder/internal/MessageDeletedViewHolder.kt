@@ -21,6 +21,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageDeletedBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
@@ -43,7 +44,7 @@ internal class MessageDeletedViewHolder(
 
         if (diff?.deleted == false) return
 
-        style.textStyleMessageDeleted.apply(binding.deleteLabel)
+        binding.deleteLabel.setTextStyle(style.textStyleMessageDeleted)
 
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             horizontalBias = if (data.isTheirs) 0f else 1f

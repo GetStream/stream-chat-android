@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
@@ -101,11 +102,11 @@ internal class GiphyViewHolder(
 
             giphyIconImageView.setImageDrawable(style.giphyIcon)
 
-            style.labelTextStyle.apply(giphyLabelTextView)
-            style.queryTextStyle.apply(giphyQueryTextView)
-            style.cancelButtonTextStyle.apply(cancelButton)
-            style.shuffleButtonTextStyle.apply(shuffleButton)
-            style.sendButtonTextStyle.apply(sendButton)
+            giphyLabelTextView.setTextStyle(style.labelTextStyle)
+            giphyQueryTextView.setTextStyle(style.queryTextStyle)
+            cancelButton.setTextStyle(style.cancelButtonTextStyle)
+            shuffleButton.setTextStyle(style.shuffleButtonTextStyle)
+            sendButton.setTextStyle(style.sendButtonTextStyle)
         }
     }
 

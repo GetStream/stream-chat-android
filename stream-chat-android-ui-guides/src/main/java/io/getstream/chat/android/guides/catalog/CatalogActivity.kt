@@ -46,8 +46,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.guides.login.LoginActivity
 import io.getstream.chat.android.guides.catalog.compose.customattachments.ChannelsActivity as ComposeCustomAttachmentsActivity
-import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.ChannelsActivity as MessageComposerCustomAttachmentsActivity
-import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.ChannelsActivity as MessageInputCustomAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.ChannelsActivity as UiComponentsCustomAttachmentsActivity
 
 /**
  * An Activity with a list of guides and samples.
@@ -89,8 +88,8 @@ class CatalogActivity : AppCompatActivity() {
             GuideSection(stringResource(R.string.catalog_section_compose))
 
             GuideItem(
-                titleText = stringResource(R.string.custom_attachments_guide_compose_title),
-                descriptionText = stringResource(R.string.custom_attachments_guide_compose_description)
+                titleText = stringResource(R.string.compose_custom_attachments_guide_title),
+                descriptionText = stringResource(R.string.compose_custom_attachments_guide_description)
             ) {
                 startActivity(ComposeCustomAttachmentsActivity.createIntent(this@CatalogActivity))
             }
@@ -98,17 +97,10 @@ class CatalogActivity : AppCompatActivity() {
             GuideSection(stringResource(R.string.catalog_section_uicomponents))
 
             GuideItem(
-                titleText = stringResource(R.string.custom_attachments_guide_message_input_title),
-                descriptionText = stringResource(R.string.custom_attachments_guide_message_input_description)
+                titleText = stringResource(R.string.uicomponents_custom_attachments_guide_title),
+                descriptionText = stringResource(R.string.uicomponents_custom_attachments_guide_description)
             ) {
-                startActivity(MessageInputCustomAttachmentsActivity.createIntent(this@CatalogActivity))
-            }
-
-            GuideItem(
-                titleText = stringResource(R.string.custom_attachments_guide_message_composer_title),
-                descriptionText = stringResource(R.string.custom_attachments_guide_message_composer_description)
-            ) {
-                startActivity(MessageComposerCustomAttachmentsActivity.createIntent(this@CatalogActivity))
+                startActivity(UiComponentsCustomAttachmentsActivity.createIntent(this@CatalogActivity))
             }
         }
     }

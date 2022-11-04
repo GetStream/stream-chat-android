@@ -14,7 +14,7 @@ import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.message.MessageListActivity
 import io.getstream.chat.android.ui.message.MessageListFragment
-import io.getstream.chat.android.ui.message.input.MessageInputView
+import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 import io.getstream.chat.android.ui.search.SearchInputView
@@ -217,9 +217,9 @@ class Screens {
                 // Customize message list view
             }
 
-            override fun setupMessageInput(messageInputView: MessageInputView) {
-                super.setupMessageInput(messageInputView)
-                // Customize message input view
+            override fun setupMessageComposer(messageComposerView: MessageComposerView) {
+                super.setupMessageComposer(messageComposerView)
+                // Customize message composer view
             }
         }
     }

@@ -27,6 +27,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.style.setTextStyle
 
 public class TypingIndicatorView : LinearLayout {
 
@@ -61,7 +62,7 @@ public class TypingIndicatorView : LinearLayout {
         streamThemeInflater.inflate(style.typingIndicatorAnimationView, this)
 
         addView(
-            userTypingTextView.apply { style.typingIndicatorUsersTextStyle.apply(this) },
+            userTypingTextView.apply { setTextStyle(style.typingIndicatorUsersTextStyle) },
             LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                 marginStart = 8.dpToPx()
             },
