@@ -55,6 +55,14 @@ import io.getstream.chat.android.compose.R
  * Most visible in placeholders before the video previews are loaded.
  * @param imageBackgroundMediaGalleryPicker Used to set the background colour of videos inside the media gallery picker
  * in the media gallery preview screen. Most visible in placeholders before the videos previews are loaded.
+ * @param showMoreOverlay The color of the overlay displaying how many more media attachments the message contains,
+ * given it contains more than can be displayed in the message list media attachment preview.
+ * @param showMoreCountText The color of the text displaying how many more media attachments the message contains,
+ * given it contains more than can be displayed in the message list media attachment preview.
+ * @param ownMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by the current user.
+ * @param otherMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by other users.
+ * @param ownMessageQuotedText Changes the text color of the quoted message contained in a reply sent by the current user. [textHighEmphasis] by default.
+ * @param otherMessageQuotedText Changes the text color of the quoted message contained in a reply sent by other users. [textHighEmphasis] by default.
  */
 @Immutable
 public data class StreamColors(
@@ -84,6 +92,12 @@ public data class StreamColors(
     public val imageBackgroundMediaGalleryPicker: Color,
     public val videoBackgroundMessageList: Color,
     public val videoBackgroundMediaGalleryPicker: Color,
+    public val showMoreOverlay: Color,
+    public val showMoreCountText: Color,
+    public val ownMessageQuotedBackground: Color = otherMessagesBackground,
+    public val otherMessageQuotedBackground: Color = ownMessagesBackground,
+    public val ownMessageQuotedText: Color = textHighEmphasis,
+    public val otherMessageQuotedText: Color = textHighEmphasis,
 ) {
 
     public companion object {
@@ -120,6 +134,8 @@ public data class StreamColors(
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
             videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
             videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
+            showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay),
+            showMoreCountText = colorResource(R.color.stream_compose_show_more_text),
         )
 
         /**
@@ -155,6 +171,8 @@ public data class StreamColors(
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
             videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
             videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
+            showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay_dark),
+            showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
         )
     }
 }

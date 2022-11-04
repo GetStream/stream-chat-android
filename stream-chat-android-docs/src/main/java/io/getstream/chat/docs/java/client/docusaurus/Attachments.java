@@ -22,7 +22,7 @@ public class Attachments {
         message.setText("Look at this attachment!");
         message.setAttachments(Collections.singletonList(attachment));
 
-        ChatClient.instance().sendMessage("messaging", "general", message).enqueue(result -> {
+        ChatClient.instance().sendMessage("messaging", "general", message, false).enqueue(result -> {
                     if (result.isSuccess()) {
                         // Use result.data()
                     } else {

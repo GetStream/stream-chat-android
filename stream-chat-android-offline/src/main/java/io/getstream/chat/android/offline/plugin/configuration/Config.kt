@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.configuration
 
-import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
-
 /**
  * Provides a configuration for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  *
@@ -30,5 +28,4 @@ public data class Config @JvmOverloads constructor(
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
     public val persistenceEnabled: Boolean = true,
-    public val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
 )

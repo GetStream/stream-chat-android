@@ -17,6 +17,8 @@
 package io.getstream.chat.android.offline.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -25,6 +27,7 @@ import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -33,8 +36,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.message.attachments.internal.AttachmentUrlValidator
-import io.getstream.chat.android.offline.model.channel.ChannelData
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.offline.utils.internal.isChannelMutedForCurrentUser
@@ -59,7 +60,7 @@ internal class ChannelStateLogic(
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
     coroutineScope: CoroutineScope,
-) {
+) : ChannelMessagesUpdateLogic {
 
     /**
      * Used to prune stale active typing events when the sender
@@ -75,7 +76,7 @@ internal class ChannelStateLogic(
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state without changing it.
      */
-    fun listenForChannelState(): ChannelState {
+    override fun listenForChannelState(): ChannelState {
         return mutableState
     }
 
@@ -190,7 +191,7 @@ internal class ChannelStateLogic(
      *
      * @param message The message to be added or updated.
      */
-    fun upsertMessage(message: Message) {
+    override fun upsertMessage(message: Message) {
         if (mutableState.visibleMessages.value.containsKey(message.id) || !mutableState.insideSearch.value) {
             upsertMessages(listOf(message))
         } else {
@@ -205,7 +206,7 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false): Unit =
+    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean): Unit =
         when (shouldRefreshMessages) {
             true -> mutableState.setMessages(messages)
             false -> {
@@ -326,7 +327,7 @@ internal class ChannelStateLogic(
      *
      * @param repliedMessage The message that contains the reply.
      */
-    fun replyMessage(repliedMessage: Message?) {
+    override fun replyMessage(repliedMessage: Message?) {
         mutableState.setRepliedMessage(repliedMessage)
     }
 
