@@ -56,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed an edge case in which deleting an attachment using the attachment gallery would not delete it given the message was freshly uploaded.  [4349](https://github.com/GetStream/stream-chat-android/pull/4349)
 
 ### ⬆️ Improved
 
