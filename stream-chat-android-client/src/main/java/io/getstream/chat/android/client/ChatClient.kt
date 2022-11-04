@@ -1225,12 +1225,12 @@ internal constructor(
     }
 
     @CheckResult
-    public fun deleteDevice(device: Device): Call<Unit> {
+    internal fun deleteDevice(device: Device): Call<Unit> {
         return api.deleteDevice(device)
     }
 
     @CheckResult
-    public fun addDevice(device: Device): Call<Unit> {
+    internal fun addDevice(device: Device): Call<Unit> {
         return api.addDevice(device)
     }
 
