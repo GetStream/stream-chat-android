@@ -9,9 +9,6 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.ui.message.input.MessageInputView
-import io.getstream.chat.android.ui.message.input.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel

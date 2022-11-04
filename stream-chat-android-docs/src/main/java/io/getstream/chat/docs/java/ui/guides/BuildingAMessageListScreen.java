@@ -4,8 +4,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Mode.Normal;
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Mode.Thread;
 
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.common.state.Edit;
@@ -15,10 +13,6 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerView;
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel;
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelBinding;
 
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.common.state.MessageMode;
-import io.getstream.chat.android.ui.message.input.MessageInputView;
-import io.getstream.chat.android.ui.message.input.viewmodel.MessageInputViewModelBinding;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel;
