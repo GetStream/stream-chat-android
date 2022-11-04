@@ -34,7 +34,6 @@ class AndroidIntroduction {
                 backgroundSyncEnabled = true,
                 userPresence = true,
                 persistenceEnabled = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = applicationContext,
         )
@@ -43,7 +42,6 @@ class AndroidIntroduction {
             config = StatePluginConfig(
                 backgroundSyncEnabled = true,
                 userPresence = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = applicationContext
         )
@@ -53,6 +51,7 @@ class AndroidIntroduction {
             // Change log level
             .logLevel(ChatLogLevel.ALL)
             .withPlugins(offlinePluginFactory, statePluginFactory)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
 
         // Step 3 - Authenticate and connect the user

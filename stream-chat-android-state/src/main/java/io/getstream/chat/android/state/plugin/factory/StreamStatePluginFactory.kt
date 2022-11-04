@@ -19,7 +19,6 @@ package io.getstream.chat.android.state.plugin.factory
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
@@ -27,7 +26,6 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
-import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptor
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
@@ -99,18 +97,7 @@ public class StreamStatePluginFactory(
             coroutineScope = scope,
         )
 
-        val sendMessageInterceptor = SendMessageInterceptor(
-            context = appContext,
-            logic = logic,
-            clientState = clientState,
-            channelRepository = repositoryFacade,
-            messageRepository = repositoryFacade,
-            attachmentRepository = repositoryFacade,
-            scope = scope,
-            networkType = config.uploadAttachmentsNetworkType,
-            user = user,
-            prepareMessageLogic = PrepareMessageLogicFactory().create()
-        )
+        chatClient.logicRegistry = logic
 
         val syncManager = SyncManager(
             currentUserId = user.id,
@@ -142,7 +129,6 @@ public class StreamStatePluginFactory(
         }
 
         return StatePlugin(
-            sendMessageInterceptor = sendMessageInterceptor,
             logic = logic,
             repositoryFacade = repositoryFacade,
             clientState = clientState,
