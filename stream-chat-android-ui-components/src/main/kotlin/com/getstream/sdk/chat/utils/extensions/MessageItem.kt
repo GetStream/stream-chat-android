@@ -17,11 +17,12 @@
 package com.getstream.sdk.chat.utils.extensions
 
 import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
 public fun MessageListItem.MessageItem.isBottomPosition(): Boolean {
-    return MessageListItem.Position.BOTTOM in positions
+    return MessagePosition.BOTTOM in positions
 }
 
 @InternalStreamChatApi

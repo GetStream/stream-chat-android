@@ -43,11 +43,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.common.message.list.CancelGiphy
+import io.getstream.chat.android.common.message.list.GiphyAction
+import io.getstream.chat.android.common.message.list.SendGiphy
+import io.getstream.chat.android.common.message.list.ShuffleGiphy
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
-import io.getstream.chat.android.compose.state.messages.list.GiphyAction
-import io.getstream.chat.android.compose.state.messages.list.SendGiphy
-import io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 

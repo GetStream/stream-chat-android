@@ -142,11 +142,11 @@ class ChatFragment : Fragment() {
             bindView(binding.messageComposerView, viewLifecycleOwner)
             messageListViewModel.mode.observe(viewLifecycleOwner) {
                 when (it) {
-                    is MessageListViewModel.Mode.Thread -> {
+                    is MessageMode.MessageThread -> {
                         headerViewModel.setActiveThread(it.parentMessage)
                         messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
                     }
-                    is MessageListViewModel.Mode.Normal -> {
+                    is MessageMode.Normal -> {
                         headerViewModel.resetThread()
                         messageComposerViewModel.leaveThread()
                     }
@@ -159,7 +159,7 @@ class ChatFragment : Fragment() {
                 messageComposerViewModel.performMessageAction(Edit(message))
             }
             binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
-                messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
+                messageListViewModel.getMessageById(result.messageId)?.let { message ->
                     messageComposerViewModel.performMessageAction(Reply(message))
                 }
             }

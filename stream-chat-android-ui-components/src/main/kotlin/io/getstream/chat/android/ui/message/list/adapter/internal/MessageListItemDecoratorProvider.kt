@@ -53,7 +53,7 @@ internal class MessageListItemDecoratorProvider(
     messageListViewStyle: MessageListViewStyle,
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
     messageBackgroundFactory: MessageBackgroundFactory,
-    deletedMessageVisibility: DeletedMessageVisibility,
+    deletedMessageVisibility: () -> DeletedMessageVisibility,
     isCurrentUserBanned: () -> Boolean,
 ) : DecoratorProvider {
 

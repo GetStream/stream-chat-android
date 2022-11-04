@@ -194,11 +194,11 @@ public open class MessageListFragment : Fragment() {
 
         messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
             when (mode) {
-                is MessageListViewModel.Mode.Thread -> {
+                is MessageMode.MessageThread -> {
                     messageListHeaderViewModel.setActiveThread(mode.parentMessage)
                     messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
                 }
-                is MessageListViewModel.Mode.Normal -> {
+                is MessageMode.Normal -> {
                     messageListHeaderViewModel.resetThread()
                     messageComposerViewModel.leaveThread()
                 }
@@ -219,7 +219,7 @@ public open class MessageListFragment : Fragment() {
             }
         }
         binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
-            messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
+            messageListViewModel.getMessageById(result.messageId)?.let { message ->
                 messageComposerViewModel.performMessageAction(Reply(message))
             }
         }

@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.state.messages
+package io.getstream.chat.android.common.extensions
+
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessageType
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
- * Represents the state when a new message arrives to the channel.
+ * @return Whether the message is a server message or not (a regular message).
  */
-public sealed class NewMessageState
-
-/**
- * If the message is our own (we sent it), we scroll to the bottom of the list.
- */
-public object MyOwn : NewMessageState()
-
-/**
- * If the message is someone else's (we didn't send it), we show a "New message" bubble.
- */
-public object Other : NewMessageState()
+@InternalStreamChatApi
+public fun Message.isServerMessage(): Boolean {
+    return type == MessageType.SYSTEM || type == MessageType.ERROR
+}

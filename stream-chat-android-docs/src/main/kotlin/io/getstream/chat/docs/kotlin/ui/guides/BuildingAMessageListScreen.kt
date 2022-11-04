@@ -40,11 +40,11 @@ class BuildingAMessageListScreen : Fragment() {
         // Let both message list header and message input know when we open a thread
         messageListViewModel.mode.observe(this) { mode ->
             when (mode) {
-                is MessageListViewModel.Mode.Thread -> {
+                is MessageMode.MessageThread -> {
                     messageListHeaderViewModel.setActiveThread(mode.parentMessage)
                     messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
                 }
-                MessageListViewModel.Mode.Normal -> {
+                MessageMode.Normal -> {
                     messageListHeaderViewModel.resetThread()
                     messageComposerViewModel.leaveThread()
                 }

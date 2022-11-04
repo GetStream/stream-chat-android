@@ -58,14 +58,14 @@ import io.getstream.chat.android.common.state.Flag
 import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
+import io.getstream.chat.android.common.state.message.list.SelectedMessageFailedModerationState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageOptionsState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageState
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
@@ -183,7 +183,7 @@ public fun MessagesScreen(
                 onMediaGalleryPreviewResult = { result ->
                     when (result?.resultType) {
                         MediaGalleryPreviewResultType.QUOTE -> {
-                            val message = listViewModel.getMessageWithId(result.messageId)
+                            val message = listViewModel.getMessageById(result.messageId)
 
                             if (message != null) {
                                 composerViewModel.performMessageAction(Reply(message))
@@ -191,7 +191,7 @@ public fun MessagesScreen(
                         }
 
                         MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
-                            listViewModel.focusMessage(result.messageId)
+                            listViewModel.scrollToMessage(result.messageId)
                         }
                         null -> Unit
                     }

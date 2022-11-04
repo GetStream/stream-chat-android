@@ -27,8 +27,9 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.common.message.list.MessageListController
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.state.React
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -161,6 +162,9 @@ internal class MessageListViewModelTest {
                 whenever(it.endOfNewerMessages) doReturn MutableStateFlow(true)
                 whenever(it.toChannel()) doReturn Channel(type = CHANNEL_TYPE, id = CHANNEL_ID)
                 whenever(it.unreadCount) doReturn MutableStateFlow(0)
+                whenever(it.insideSearch) doReturn MutableStateFlow(false)
+                whenever(it.loadingNewerMessages) doReturn MutableStateFlow(false)
+                whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
             whenever(stateRegistry.scope) doReturn testCoroutines.scope
@@ -168,9 +172,12 @@ internal class MessageListViewModelTest {
 
         fun get(): MessageListViewModel {
             return MessageListViewModel(
-                chatClient = chatClient,
-                channelId = channelId,
-                clipboardHandler = mock(),
+                MessageListController(
+                    chatClient = chatClient,
+                    cid = channelId,
+                    clipboardHandler = mock(),
+                )
+
             )
         }
     }

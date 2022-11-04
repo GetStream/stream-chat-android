@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageType
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 class GiphyMessageComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
@@ -40,7 +41,7 @@ class GiphyMessageComponentBrowserFragment : BaseMessagesComponentBrowserFragmen
                         )
                     )
                 ),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = true
             )
         )

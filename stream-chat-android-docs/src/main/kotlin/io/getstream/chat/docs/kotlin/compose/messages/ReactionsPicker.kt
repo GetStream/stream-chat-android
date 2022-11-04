@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel

@@ -31,7 +31,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.utils.DateFormatter
 import com.getstream.sdk.chat.utils.ListenerDelegate
 import com.getstream.sdk.chat.utils.StartStopBuffer
@@ -42,7 +41,6 @@ import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.extensions.showToast
 import com.getstream.sdk.chat.view.EndlessMessageListScrollListener
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
@@ -56,6 +54,8 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isThreadReply
+import io.getstream.chat.android.common.message.list.GiphyAction
+import io.getstream.chat.android.common.message.list.MessageListController
 import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.CustomAction
@@ -69,7 +69,6 @@ import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
@@ -100,7 +99,6 @@ import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMess
 import io.getstream.chat.android.ui.message.list.MessageListView.CustomActionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EnterThreadListener
-import io.getstream.chat.android.ui.message.list.MessageListView.ErrorEventHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.FlagMessageResultHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendListener
@@ -218,7 +216,7 @@ public class MessageListView : ConstraintLayout {
     private var messageUnpinHandler = MessageUnpinHandler {
         throw IllegalStateException("onMessageUnpinHandler must be set.")
     }
-    private var giphySendHandler = GiphySendHandler { _, _ ->
+    private var giphySendHandler = GiphySendHandler {
         throw IllegalStateException("onSendGiphyHandler must be set.")
     }
     private var messageRetryHandler = MessageRetryHandler {
@@ -299,14 +297,14 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
-    private var errorEventHandler = ErrorEventHandler { errorEvent ->
-        when (errorEvent) {
-            is MessageListViewModel.ErrorEvent.MuteUserError -> R.string.stream_ui_message_list_error_mute_user
-            is MessageListViewModel.ErrorEvent.UnmuteUserError -> R.string.stream_ui_message_list_error_unmute_user
-            is MessageListViewModel.ErrorEvent.BlockUserError -> R.string.stream_ui_message_list_error_block_user
-            is MessageListViewModel.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
-            is MessageListViewModel.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
-            is MessageListViewModel.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
+    private var errorEventHandler = ErrorEventHandler { error ->
+        when (error) {
+            is MessageListController.ErrorEvent.MuteUserError -> R.string.stream_ui_message_list_error_mute_user
+            is MessageListController.ErrorEvent.UnmuteUserError -> R.string.stream_ui_message_list_error_unmute_user
+            is MessageListController.ErrorEvent.BlockUserError -> R.string.stream_ui_message_list_error_block_user
+            is MessageListController.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
+            is MessageListController.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
+            is MessageListController.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
         }.let(::showToast)
     }
 
@@ -537,8 +535,8 @@ public class MessageListView : ConstraintLayout {
         }
     private val defaultUserClickListener = UserClickListener { /* Empty */ }
     private val defaultGiphySendListener =
-        GiphySendListener { message, action ->
-            giphySendHandler.onSendGiphy(message, action)
+        GiphySendListener { action ->
+            giphySendHandler.onSendGiphy(action)
         }
     private val defaultLinkClickListener = LinkClickListener { url ->
         ChatUI.navigator.navigate(WebLinkDestination(context, url))
@@ -798,7 +796,7 @@ public class MessageListView : ConstraintLayout {
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
             messageBackgroundFactory = messageBackgroundFactory,
-            deletedMessageVisibility = deletedMessageVisibility,
+            deletedMessageVisibility = { deletedMessageVisibility },
             isCurrentUserBanned = { channel.isCurrentUserBanned() },
         )
 
@@ -895,11 +893,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Shows a error for one of the reasons defined in [MessageListViewModel.ErrorEvent].
+     * Shows a error for one of the reasons defined in [MessageListController.ErrorEvent].
      *
      * @param errorEvent The error event containing information about the error.
      */
-    public fun showError(errorEvent: MessageListViewModel.ErrorEvent) {
+    public fun showError(errorEvent: MessageListController.ErrorEvent) {
         errorEventHandler.onErrorEvent(errorEvent)
     }
 
@@ -1088,6 +1086,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the messages unread count to the scroll to bottom button.
+     *
+     * @param unreadCount The count of unread [Message]s for the thread/channel.
+     */
+    internal fun setUnreadCount(unreadCount: Int) {
+        binding.scrollToBottomButton.setUnreadCount(unreadCount)
+    }
+
+    /**
      * Allows clients to set an instance of [AttachmentFactoryManager] that holds
      * a list of custom attachment factories. Use this method to create a custom
      * content view for the message attachments.
@@ -1127,7 +1134,8 @@ public class MessageListView : ConstraintLayout {
             withContext(DispatcherProvider.Main) {
                 buffer.hold()
 
-                val isThreadStart = !adapter.isThread && listItem.isThread
+                val isThreadStart = !adapter.isThread && listItem.isThread ||
+                    (listItem.isThread && listItem.items.size > 1 && adapter.itemCount <= 1)
                 val isNormalModeStart = adapter.isThread && !listItem.isThread
                 val isOldListEmpty = adapter.currentList.isEmpty()
                 if (isThreadStart) {
@@ -1306,10 +1314,10 @@ public class MessageListView : ConstraintLayout {
         this.userReactionClickListener = userReactionClickListener ?: defaultUserReactionClickListener
     }
 
-    /* Set the click listener to be used when a message that is a reply is clicked
-    *
-    * @param replyMessageClickListener The listener to use. If null, no behaviour is added.
-    */
+    /** Sets the click listener to be used when a message that is a reply is clicked.
+     *
+     * @param replyMessageClickListener The listener to use. If null, no behaviour is added.
+     */
     public fun setReplyMessageClickListener(replyMessageClickListener: ReplyMessageClickListener) {
         this.replyMessageClickListener = replyMessageClickListener
     }
@@ -1523,7 +1531,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Sets the handler used when handling the errors defined in [MessageListViewModel.ErrorEvent].
+     * Sets the handler used when handling the errors defined in [MessageListController.ErrorEvent].
      *
      * @param handler The handler to use.
      */
@@ -1533,23 +1541,14 @@ public class MessageListView : ConstraintLayout {
 
     /**
      * Sets the value used to filter deleted messages.
-     *
-     * Use this only if you are using your own ViewModel, if you are using our [MessageListViewModel]
-     * setting this is a part of the binding process and re-setting it manually will introduce
-     * bugs.
      * @see DeletedMessageVisibility
      *
      * @param deletedMessageVisibility Changes the visibility of deleted messages.
      */
-    @InternalStreamChatApi
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        if (this.deletedMessageVisibility != deletedMessageVisibility) {
-            check(!isAdapterInitialized()) {
-                "Adapter was already initialized, please set DeletedMessageVisibility first. " +
-                    "If you are using MessageListViewModel, please set the visibility before binding " +
-                    "it to MessageListView."
-            }
-            this.deletedMessageVisibility = deletedMessageVisibility
+        this.deletedMessageVisibility = deletedMessageVisibility
+        if (isAdapterInitialized()) {
+            adapter.notifyItemRangeChanged(0, adapter.itemCount)
         }
     }
 
@@ -1657,7 +1656,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface GiphySendListener {
-        public fun onGiphySend(message: Message, action: GiphyAction)
+        public fun onGiphySend(action: GiphyAction)
     }
 
     public fun interface LinkClickListener {
@@ -1749,7 +1748,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface GiphySendHandler {
-        public fun onSendGiphy(message: Message, action: GiphyAction)
+        public fun onSendGiphy(action: GiphyAction)
     }
 
     public fun interface CustomActionHandler {
@@ -1761,7 +1760,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface ErrorEventHandler {
-        public fun onErrorEvent(errorEvent: MessageListViewModel.ErrorEvent)
+        public fun onErrorEvent(errorEvent: MessageListController.ErrorEvent)
     }
 
     public fun interface ModeratedMessageOptionHandler {

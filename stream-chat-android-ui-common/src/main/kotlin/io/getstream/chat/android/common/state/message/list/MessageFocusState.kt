@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.state.messages.list
+package io.getstream.chat.android.common.state.message.list
 
 /**
  * Represents the message focus state, in case the user jumps to a message.

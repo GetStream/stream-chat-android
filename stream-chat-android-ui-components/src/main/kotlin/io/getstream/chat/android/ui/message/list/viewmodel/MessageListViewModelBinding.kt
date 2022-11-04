@@ -45,13 +45,11 @@ import io.getstream.chat.android.ui.message.list.MessageListView
  *
  * @param view The [MessageListView] to bind the ViewModel to.
  * @param lifecycleOwner Current owner of the lifecycle in which the events are handled.
- * @param enforceUniqueReactions If message reactions are unique or a single user can post multiple reactions.
  */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(
     view: MessageListView,
     lifecycleOwner: LifecycleOwner,
-    enforceUniqueReactions: Boolean = true,
 ) {
 
     deletedMessageVisibility.observe(lifecycleOwner) {
@@ -69,12 +67,12 @@ public fun MessageListViewModel.bindView(
     view.setMessageFlagHandler { onEvent(FlagMessage(it, view::handleFlagMessageResult)) }
     view.setMessagePinHandler { onEvent(MessageListViewModel.Event.PinMessage(it)) }
     view.setMessageUnpinHandler { onEvent(MessageListViewModel.Event.UnpinMessage(it)) }
-    view.setGiphySendHandler { message, giphyAction ->
-        onEvent(GiphyActionSelected(message, giphyAction))
+    view.setGiphySendHandler { giphyAction ->
+        onEvent(GiphyActionSelected(giphyAction))
     }
     view.setMessageRetryHandler { onEvent(RetryMessage(it)) }
     view.setMessageReactionHandler { message, reactionType ->
-        onEvent(MessageReaction(message, reactionType, enforceUnique = enforceUniqueReactions))
+        onEvent(MessageReaction(message, reactionType))
     }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }
     view.setAttachmentDownloadHandler { downloadAttachmentCall ->
@@ -110,6 +108,7 @@ public fun MessageListViewModel.bindView(
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
     insideSearch.observe(lifecycleOwner, view::shouldRequestMessagesAtBottom)
+    unreadCount.observe(lifecycleOwner, view::setUnreadCount)
 
     view.setAttachmentReplyOptionClickHandler { result ->
         onEvent(MessageListViewModel.Event.ReplyAttachment(result.cid, result.messageId))

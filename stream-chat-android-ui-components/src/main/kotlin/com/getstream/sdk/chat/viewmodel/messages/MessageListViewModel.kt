@@ -18,139 +18,95 @@ package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.DateSeparatorHandler
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.MessagePositionHandler
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
-import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.MessagesState
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.message.isError
-import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.common.message.list.DateSeparatorHandler
+import io.getstream.chat.android.common.message.list.GiphyAction
+import io.getstream.chat.android.common.message.list.MessageListController
+import io.getstream.chat.android.common.message.list.MessagePositionHandler
+import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
-import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
-import io.getstream.chat.android.offline.extensions.getRepliesAsState
-import io.getstream.chat.android.offline.extensions.loadMessageById
-import io.getstream.chat.android.offline.extensions.loadNewerMessages
-import io.getstream.chat.android.offline.extensions.loadNewestMessages
-import io.getstream.chat.android.offline.extensions.loadOlderMessages
+import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.message.list.MessageFocused
 import io.getstream.chat.android.offline.extensions.setMessageForReply
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import kotlin.properties.Delegates
+import kotlinx.coroutines.flow.onSubscription
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 /**
- * View model class for [com.getstream.sdk.chat.view.MessageListView].
+ * View model class for [io.getstream.chat.android.ui.message.list.MessageListView].
  * Responsible for updating the list of messages.
  * Can be bound to the view using [MessageListViewModel.bindView] function.
  *
- * @param cid The full channel id, i.e. "messaging:123"
- * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
- * queries executed on screen initialization.
- * @param chatClient Entry point for all low-level operations.
- * @param clientState Client state of SDK that contains information such as the current user and connection state.
- * such as the current user, connection state, unread counts etc.
+ * @param messageListController Controller used to relay the logic and fetch the state.
  */
 @Suppress("TooManyFunctions")
 public class MessageListViewModel(
-    private val cid: String,
-    private val messageId: String? = null,
+    private val messageListController: MessageListController,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val clientState: ClientState = chatClient.clientState,
 ) : ViewModel() {
+
+    /**
+     * The logger used to print to errors, warnings, information and other things to log.
+     */
+    private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
 
     /**
      * Holds information about the current channel and is actively updated.
      */
-    public val channelState: StateFlow<ChannelState?> =
-        chatClient.watchChannelAsState(
-            cid = cid,
-            messageLimit = if (messageId == null) DEFAULT_MESSAGES_LIMIT else 0,
-            coroutineScope = viewModelScope,
-        )
+    public val channelState: StateFlow<ChannelState?> = messageListController.channelState
 
     /**
-     * Holds information about the abilities the current user
-     * is able to exercise in the given channel.
+     *  The current channel used to load the message list data.
+     */
+    public val channel: LiveData<Channel> = messageListController.channel.asLiveData()
+
+    /**
+     * Holds information about the abilities the current user is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
      */
-    public val ownCapabilities: LiveData<Set<String>> = channelState.filterNotNull()
-        .flatMapLatest { it.channelData }
-        .map { it.ownCapabilities }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = setOf()
-        ).asLiveData()
+    public val ownCapabilities: LiveData<Set<String>> = messageListController.ownCapabilities.asLiveData()
 
     /**
-     * Contains a list of messages along with additional
-     * information about the message list.
+     * Determines whether we should show system messages or not.
      */
-    private var messageListData: MessageListItemLiveData? = null
-
-    /**
-     * Contains a list of messages along with additional
-     * information about the message list. Sets the
-     */
-    private var threadListData: MessageListItemLiveData? = null
-
-    /**
-     * Regulates the visibility of deleted messages.
-     */
-    private var _deletedMessageVisibility: MutableLiveData<DeletedMessageVisibility> =
-        MutableLiveData(DeletedMessageVisibility.ALWAYS_VISIBLE)
-
-    /**
-     * Regulates the visibility of deleted messages.
-     */
-    public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> = _deletedMessageVisibility
+    public val showSystemMessagesState: LiveData<Boolean> = messageListController.showSystemMessagesState.asLiveData()
 
     /**
      * Regulates the message footer visibility.
      */
-    private var messageFooterVisibility: MutableLiveData<MessageFooterVisibility> =
-        MutableLiveData(MessageFooterVisibility.WithTimeDifference())
+    public val messageFooterVisibilityState: LiveData<MessageFooterVisibility> = messageListController
+        .messageFooterVisibilityState.asLiveData()
 
     /**
-     * Represents the current state of the message list
-     * that is a product of multiple sources.
+     * Regulates the visibility of deleted messages.
+     */
+    public val deletedMessageVisibility: LiveData<DeletedMessageVisibility> =
+        messageListController.deletedMessageVisibilityState.asLiveData()
+
+    /**
+     * Represents the current state of the message list that is a product of multiple sources.
      */
     private val stateMerger = MediatorLiveData<State>()
 
@@ -162,270 +118,65 @@ public class MessageListViewModel(
 
     /**
      * Whether the user is viewing a thread.
-     * @see Mode
+     * @see MessageMode
      */
-    private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode ->
-        _mode.postValue(newMode)
-    }
+    public val mode: LiveData<MessageMode> = messageListController.mode.asLiveData()
 
     /**
-     * Whether the user is viewing a thread.
-     * @see Mode
+     * Emits true if we should are loading more older messages.
      */
-    private val _mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
+    public val loadMoreLiveData: LiveData<Boolean> = messageListController.messageListState
+        .map { it.isLoadingOlderMessages }.asLiveData()
 
     /**
-     * Whether the user is viewing a thread.
-     * @see Mode
-     */
-    public val mode: LiveData<Mode> = _mode
-
-    /**
-     * Holds information about the number of unread messages
-     * by the current user in the given channel.
-     */
-    private val _reads: MediatorLiveData<List<ChannelUserRead>> = MediatorLiveData()
-
-    /**
-     * Holds information about the number of unread messages
-     * by the current user in the given channel.
-     */
-    private val reads: LiveData<List<ChannelUserRead>> = _reads
-
-    /**
-     * Emits true if we should load more messages.
-     */
-    private val _loadMoreLiveData = MediatorLiveData<Boolean>()
-
-    /**
-     * Emits true if we should load more messages.
-     */
-    public val loadMoreLiveData: LiveData<Boolean> = _loadMoreLiveData
-
-    /**
-     *  The current channel used to load the message list data.
-     */
-    private val _channel = MediatorLiveData<Channel>()
-
-    /**
-     *  The current channel used to load the message list data.
-     */
-    public val channel: LiveData<Channel> = _channel
-
-    /**
-     * The target message that the list should scroll to.
-     * Used when scrolling to a pinned message, a message opened from
+     * The target message that the list should scroll to. Used when scrolling to a pinned message, a message opened from
      * a push notification or similar.
      */
-    private val _targetMessage: MutableLiveData<Message> = MutableLiveData()
-
-    /**
-     * The target message that the list should scroll to.
-     * Used when scrolling to a pinned message, a message opened from
-     * a push notification or similar.
-     */
-    public val targetMessage: LiveData<Message> = _targetMessage
+    public val targetMessage: LiveData<Message> = messageListController.messageListState.map {
+        (it.messageItems.firstOrNull { it is MessageItemState && it.focusState == MessageFocused } as? MessageItemState)
+            ?.message
+            ?: Message()
+    }.distinctUntilChanged { old, new -> old.id == new.id }.asLiveData()
 
     /**
      * Emits error events.
      */
-    private val _errorEvents: MutableLiveData<EventWrapper<ErrorEvent>> = MutableLiveData()
-
-    /**
-     * Emits error events.
-     */
-    public val errorEvents: LiveData<EventWrapper<ErrorEvent>> = _errorEvents
+    public val errorEvents: LiveData<EventWrapper<MessageListController.ErrorEvent>> = messageListController.errorEvents
+        .filterNotNull().map { EventWrapper(it) }.asLiveData()
 
     /**
      * The currently logged in user.
      */
-    public val user: LiveData<User?> = clientState.user.asLiveData()
+    public val user: LiveData<User?> = messageListController.user.asLiveData()
 
     /**
-     * The logger used to print to errors, warnings, information
-     * and other things to log.
+     * Unread count of the channel or thread depending on [MessageMode].
      */
-    private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
-
-    /**
-     * Tracks if the initial load of the list has finished or not. Helps with initial scroll state.
-     * Will be removed in the next pr for MessageListController.
-     */
-    private var initialLoadFinished: Boolean = false
-
-    /**
-     * Evaluates whether date separators should be added to the message list.
-     */
-    private var dateSeparatorHandler: DateSeparatorHandler? =
-        DateSeparatorHandler { previousMessage: Message?, message: Message ->
-            if (previousMessage == null) {
-                true
-            } else {
-                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > SEPARATOR_TIME
-            }
-        }
-
-    /**
-     * Evaluates whether thread separators should be added to the message list.
-     */
-    private var threadDateSeparatorHandler: DateSeparatorHandler? =
-        DateSeparatorHandler { previousMessage: Message?, message: Message ->
-            if (previousMessage == null) {
-                false
-            } else {
-                (message.getCreatedAtOrThrow().time - previousMessage.getCreatedAtOrThrow().time) > SEPARATOR_TIME
-            }
-        }
-
-    /**
-     * Determines the position of a message inside a group.
-     */
-    private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
-
-    /**
-     * A background job used for view model initialization.
-     * The job should be canceled after receiving the first, non-null value from the watch channel request.
-     */
-    private var initialJob: Job? = null
+    public val unreadCount: LiveData<Int> = messageListController.unreadCount.asLiveData()
 
     /**
      * Emits the status of searching situation. True when inside a search and false otherwise.
      */
-    private val _insideSearch = MediatorLiveData<Boolean>()
+    public val insideSearch: LiveData<Boolean> = messageListController.isInsideSearch.asLiveData()
 
     /**
-     * Emits the status of searching situation. True when inside a search and false otherwise.
+     * Initializes the full message list state conversion and collection.
      */
-    public val insideSearch: LiveData<Boolean> = _insideSearch
-
     init {
-        stateMerger.addSource(MutableLiveData(State.Loading)) { stateMerger.value = it }
-
-        initialJob = viewModelScope.launch {
-            channelState.collect { channelState ->
-                if (channelState != null) {
-                    initWithOfflinePlugin(channelState)
-                    initialJob?.cancel()
+        val listState = messageListController.listState
+            .onSubscription { State.Loading }
+            .map {
+                if (it.isLoading) {
+                    State.Loading
+                } else {
+                    State.Result(it.toMessageListItemWrapper())
                 }
-            }
-        }
+            }.asLiveData()
+        stateMerger.addSource(listState) { stateMerger.value = it }
     }
 
     /**
-     * Initializes the ViewModel with offline capabilities using
-     * [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin] after connecting the user.
-     *
-     * @param channelState State container for particular channel.
-     */
-    private fun initWithOfflinePlugin(channelState: ChannelState) {
-        ChatClient.dismissChannelNotifications(
-            channelType = channelState.channelType,
-            channelId = channelState.channelId
-        )
-
-        val channelDataLiveData = channelState.channelData.asLiveData()
-        _channel.addSource(channelDataLiveData) {
-            _channel.value = channelState.toChannel()
-            // Channel should be propagated only once because it's used to initialize MessageListView
-            _channel.removeSource(channelDataLiveData)
-        }
-        val typingIds = channelState.typing
-            .map { (_, idList) -> idList }
-            .asLiveData()
-
-        messageListData = MessageListItemLiveData(
-            currentUser = user,
-            messages = channelState.messages.asLiveData(),
-            readsLd = channelState.reads.asLiveData(),
-            typingLd = typingIds,
-            isThread = false,
-            dateSeparatorHandler = dateSeparatorHandler,
-            deletedMessageVisibility = deletedMessageVisibility,
-            messageFooterVisibility = messageFooterVisibility,
-            messagePositionHandlerProvider = ::messagePositionHandler,
-            endOfNewMessages = channelState.endOfNewerMessages.asLiveData(),
-        )
-        _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
-        _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
-        _insideSearch.addSource(channelState.insideSearch.asLiveData()) { _insideSearch.value = it }
-
-        stateMerger.apply {
-            val messagesStateLiveData = channelState.messagesState.asLiveData()
-            addSource(messagesStateLiveData) { messageState ->
-                when (messageState) {
-                    MessagesState.Loading,
-                    MessagesState.NoQueryActive,
-                    -> value = State.Loading
-                    MessagesState.OfflineNoResults -> value = State.Result(MessageListItemWrapper())
-                    is MessagesState.Result -> {
-                        removeSource(messagesStateLiveData)
-                        onNormalModeEntered()
-                    }
-                }
-            }
-        }
-        messageId.takeUnless { it.isNullOrBlank() }?.let { targetMessageId ->
-            viewModelScope.launch {
-                clientState.initializationState.filterNotNull().first { it == InitializationState.COMPLETE }
-                stateMerger.observeForever(object : Observer<State> {
-                    override fun onChanged(state: State?) {
-                        if (state is State.Result) {
-                            onEvent(Event.LoadMessage(targetMessageId))
-                            stateMerger.removeObserver(this)
-                        }
-                    }
-                })
-            }
-        }
-    }
-
-    /**
-     * Moves the message list into thread mode.
-     *
-     * @param threadMessages The messages that belong to the thread.
-     */
-    private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
-        threadListData = MessageListItemLiveData(
-            currentUser = user,
-            messages = threadMessages,
-            readsLd = reads,
-            typingLd = null,
-            isThread = true,
-            dateSeparatorHandler = threadDateSeparatorHandler,
-            deletedMessageVisibility = deletedMessageVisibility,
-            messageFooterVisibility = messageFooterVisibility,
-            messagePositionHandlerProvider = ::messagePositionHandler,
-            endOfNewMessages = MutableLiveData(true)
-        )
-        threadListData?.let { tld ->
-            messageListData?.let { mld ->
-                stateMerger.apply {
-                    removeSource(mld)
-                    addSource(tld) { value = State.Result(it) }
-                }
-            }
-        }
-    }
-
-    /**
-     * Moves the message list into normal mode.
-     */
-    private fun resetThread() {
-        threadListData?.let {
-            stateMerger.removeSource(it)
-        }
-        messageListData?.let {
-            stateMerger.addSource(it) { messageListItemWrapper ->
-                if (!messageListItemWrapper.areNewestMessagesLoaded && !initialLoadFinished) return@addSource
-                initialLoadFinished = true
-                stateMerger.value = State.Result(messageListItemWrapper)
-            }
-        }
-    }
-
-    /**
-     * Handles an [event] coming from the View layer.
-     * @see Event
+     * Handles an [Event] coming from the View layer.
      */
     @Suppress("LongMethod", "ComplexMethod")
     public fun onEvent(event: Event) {
@@ -439,16 +190,7 @@ public class MessageListViewModel(
             }
 
             is Event.LastMessageRead -> {
-                cid.cidToTypeAndId().let { (channelType, channelId) ->
-                    chatClient.markRead(channelType, channelId).enqueue(
-                        onError = { chatError ->
-                            logger.e {
-                                "Could not mark cid: $cid as read. Error message: ${chatError.message}. " +
-                                    "Cause message: ${chatError.cause?.message}"
-                            }
-                        }
-                    )
-                }
+                messageListController.markLastMessageRead()
             }
             is Event.ThreadModeEntered -> {
                 onThreadModeEntered(event.parentMessage)
@@ -457,134 +199,49 @@ public class MessageListViewModel(
                 onBackButtonPressed()
             }
             is Event.DeleteMessage -> {
-                chatClient.deleteMessage(event.message.id, event.hard)
-                    .enqueue(
-                        onError = { chatError ->
-                            logger.e {
-                                "Could not delete message: ${chatError.message}, Hard: ${event.hard}. " +
-                                    "Cause: ${chatError.cause?.message}. If you're using OfflinePlugin, the message " +
-                                    "should be deleted in the database and it will be deleted in the backend when " +
-                                    "the SDK sync its information."
-                            }
-                        }
-                    )
+                messageListController.deleteMessage(event.message, event.hard)
             }
             is Event.FlagMessage -> {
-                chatClient.flagMessage(event.message.id).enqueue { result ->
+                messageListController.flagMessage(event.message) { result ->
                     event.resultHandler(result)
-                    if (result.isError) {
-                        logger.e { "Could not flag message: ${result.error().message}" }
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.FlagMessageError(result.error())))
-                    }
                 }
             }
             is Event.PinMessage -> {
-                chatClient.pinMessage(Message(id = event.message.id)).enqueue(
-                    onError = { chatError ->
-                        logger.e { "Could not pin message: ${chatError.message}. Cause: ${chatError.cause?.message}" }
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.PinMessageError(chatError)))
-                    }
-                )
+                messageListController.pinMessage(event.message)
             }
             is Event.UnpinMessage -> {
-                chatClient.unpinMessage(Message(id = event.message.id)).enqueue(
-                    onError = { chatError ->
-                        logger.e { "Could not unpin message: ${chatError.message}. Cause: ${chatError.cause?.message}" }
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.UnpinMessageError(chatError)))
-                    }
-                )
+                messageListController.unpinMessage(event.message)
             }
             is Event.GiphyActionSelected -> {
                 onGiphyActionSelected(event)
             }
             is Event.RetryMessage -> {
-                val (channelType, channelId) = event.message.cid.cidToTypeAndId()
-                chatClient.sendMessage(channelType, channelId, event.message)
-                    .enqueue(
-                        onError = { chatError ->
-                            logger.e {
-                                "(Retry) Could not send message: ${chatError.message}. " +
-                                    "Cause: ${chatError.cause?.message}"
-                            }
-                        }
-                    )
+                messageListController.resendMessage(event.message)
             }
             is Event.MessageReaction -> {
-                onMessageReaction(event.message, event.reactionType, event.enforceUnique)
+                onMessageReaction(event.message, event.reactionType)
             }
             is Event.MuteUser -> {
-                chatClient.muteUser(event.user.id).enqueue(
-                    onError = { chatError ->
-                        logger.e { "Could not mute user: ${chatError.message}" }
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.MuteUserError(chatError)))
-                    }
-                )
+                messageListController.muteUser(event.user)
             }
             is Event.UnmuteUser -> {
-                chatClient.unmuteUser(event.user.id).enqueue(
-                    onError = { chatError ->
-                        logger.e { "Could not unmute user: ${chatError.message}" }
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.UnmuteUserError(chatError)))
-                    }
-                )
+                messageListController.unmuteUser(event.user)
             }
             is Event.BanUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.banUser(
-                    targetId = event.user.id,
+                messageListController.banUser(
+                    userId = event.user.id,
                     reason = event.reason,
-                    timeout = event.timeout,
-                ).enqueue(
-                    onError = { chatError ->
-                        val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to ban the user"
-                        logger.e { errorMessage }
-
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
-                    }
+                    timeout = event.timeout
                 )
             }
             is Event.UnbanUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.unbanUser(
-                    targetId = event.user.id,
-                ).enqueue(
-                    onError = { chatError ->
-                        val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unban the user"
-                        logger.e { errorMessage }
-
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
-                    }
-                )
+                messageListController.unbanUser(event.user.id)
             }
             is Event.ShadowBanUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.shadowBanUser(
-                    targetId = event.user.id,
-                    reason = event.reason,
-                    timeout = event.timeout,
-                ).enqueue(
-                    onError = { chatError ->
-                        val errorMessage =
-                            chatError.message ?: chatError.cause?.message ?: "Unable to shadow ban the user"
-                        logger.e { errorMessage }
-
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
-                    }
-                )
+                messageListController.shadowBanUser(event.user.id)
             }
             is Event.RemoveShadowBanFromUser -> {
-                val channelClient = chatClient.channel(cid)
-                channelClient.removeShadowBan(
-                    targetId = event.user.id,
-                ).enqueue(
-                    onError = { chatError ->
-                        val errorMessage =
-                            chatError.message ?: chatError.cause?.message ?: "Unable to remove the user shadow ban"
-                        logger.e { errorMessage }
-
-                        _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
-                    }
-                )
+                messageListController.removeShadowBanFromUser(event.user.id)
             }
             is Event.ReplyMessage -> {
                 chatClient.setMessageForReply(event.cid, event.repliedMessage).enqueue(
@@ -607,78 +264,15 @@ public class MessageListViewModel(
                 )
             }
             is Event.ShowMessage -> {
-                val message = messageListData?.value
-                    ?.items
-                    ?.asSequence()
-                    ?.filterIsInstance<MessageListItem.MessageItem>()
-                    ?.find { messageItem -> messageItem.message.id == event.messageId }
-                    ?.message
-
-                if (message != null) {
-                    _targetMessage.value = message!!
-                } else {
-                    chatClient.loadMessageById(
-                        cid,
-                        event.messageId
-                    ).enqueue { result ->
-                        if (result.isSuccess) {
-                            _targetMessage.value = result.data()
-                        } else {
-                            val error = result.error()
-                            logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
-                        }
-                    }
-                }
-            }
-            is Event.LoadMessage -> {
-                chatClient.loadMessageById(
-                    cid,
-                    event.messageId
-                ).enqueue { result ->
-                    if (result.isSuccess) {
-                        _targetMessage.value = result.data()
-                    } else {
-                        val error = result.error()
-                        logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
-                    }
-                }
+                messageListController.scrollToMessage(event.messageId)
             }
             is Event.RemoveAttachment -> {
-                val attachmentToBeDeleted = event.attachment
-                chatClient.loadMessageById(
-                    cid,
-                    event.messageId
-                ).enqueue { result ->
-                    if (result.isSuccess) {
-                        val message = result.data()
-                        message.attachments.removeAll { attachment ->
-                            if (attachmentToBeDeleted.assetUrl != null) {
-                                attachment.assetUrl == attachmentToBeDeleted.assetUrl
-                            } else {
-                                attachment.imageUrl == attachmentToBeDeleted.imageUrl
-                            }
-                        }
-
-                        chatClient.updateMessage(message).enqueue(
-                            onError = { chatError ->
-                                logger.e {
-                                    "Could not edit message to remove its attachments: ${chatError.message}. " +
-                                        "Cause: ${chatError.cause?.message}"
-                                }
-                            }
-                        )
-                    } else {
-                        logger.e { "Could not load message: ${result.error()}" }
-                    }
-                }
+                messageListController.removeAttachment(event.messageId, event.attachment)
             }
             is Event.ReplyAttachment -> {
                 val messageId = event.repliedMessageId
                 val cid = event.cid
-                chatClient.loadMessageById(
-                    cid,
-                    messageId
-                ).enqueue { result ->
+                messageListController.loadMessageById(messageId) { result ->
                     if (result.isSuccess) {
                         val message = result.data()
                         onEvent(Event.ReplyMessage(cid, message))
@@ -692,60 +286,44 @@ public class MessageListViewModel(
     }
 
     /**
-     * Returns a message with the given ID from the [messageListData].
+     * Returns a message with the given ID from the messages list.
      *
      * @param messageId The ID of the selected message.
      * @return The [Message] with the ID, if it exists.
      */
-    public fun getMessageWithId(messageId: String): Message? {
-        val messageItem = messageListData?.value?.items?.firstOrNull {
-            it is MessageListItem.MessageItem && it.message.id == messageId
-        }
-
-        return (messageItem as? MessageListItem.MessageItem)?.message
-    }
+    public fun getMessageById(messageId: String): Message? = messageListController.getMessageById(messageId)
 
     /**
      * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest
      * messages. If the messages are not loaded we need to load them first and then scroll to the bottom of the
      * list.
+     *
+     * @param messageLimit The limit of messages to load when loading newest messages.
+     * @param scrollToBottom The handler that notifies when the data has been loaded to scroll to the bottom.
      */
-    public fun scrollToBottom(scrollToBottom: () -> Unit) {
-        if (_mode.value is Mode.Thread || messageListData?.value?.areNewestMessagesLoaded == true) {
-            scrollToBottom()
-        } else {
-            chatClient.loadNewestMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue { result ->
-                if (result.isSuccess) {
-                    scrollToBottom()
-                } else {
-                    val error = result.error()
-                    logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
-                }
-            }
-            if (chatClient.clientState.isOffline) {
-                scrollToBottom()
-            }
-        }
+    public fun scrollToBottom(messageLimit: Int = messageListController.messageLimit, scrollToBottom: () -> Unit) {
+        messageListController.scrollToBottom(messageLimit, scrollToBottom)
     }
 
     /**
      * Sets the date separator handler which determines when to add date separators.
      * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
      *
-     * @param dateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
+     * @param dateSeparatorHandler The handler to use. If null, the messages list won't contain date separators.
      */
     public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
-        this.dateSeparatorHandler = dateSeparatorHandler
+        messageListController.setDateSeparatorHandler(dateSeparatorHandler)
     }
 
     /**
      * Sets thread date separator handler which determines when to add date separators inside the thread.
      * @see setDateSeparatorHandler
      *
-     * @param threadDateSeparatorHandler The handler to use. If null, [messageListData] won't contain date separators.
+     * @param threadDateSeparatorHandler The handler to use. If null, the thread message list won't contain date
+     * separators.
      */
     public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
-        this.threadDateSeparatorHandler = threadDateSeparatorHandler
+        messageListController.setThreadDateSeparatorHandler(threadDateSeparatorHandler)
     }
 
     /**
@@ -754,7 +332,7 @@ public class MessageListViewModel(
      * @param messagePositionHandler The handler to use.
      */
     public fun setMessagePositionHandler(messagePositionHandler: MessagePositionHandler) {
-        this.messagePositionHandler = messagePositionHandler
+        messageListController.setMessagePositionHandler(messagePositionHandler)
     }
 
     /**
@@ -763,106 +341,43 @@ public class MessageListViewModel(
      * @param event The type of action the user has selected.
      */
     private fun onGiphyActionSelected(event: Event.GiphyActionSelected) {
-        when (event.action) {
-            GiphyAction.SEND -> {
-                chatClient.sendGiphy(event.message).enqueue(
-                    onError = { chatError ->
-                        logger.e {
-                            "Could not send giphy for message id: ${event.message.id}. " +
-                                "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                        }
-                    }
-                )
-            }
-            GiphyAction.SHUFFLE -> {
-                chatClient.shuffleGiphy(event.message).enqueue(
-                    onError = { chatError ->
-                        logger.e {
-                            "Could not shuffle giphy for message id: ${event.message.id}. " +
-                                "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                        }
-                    }
-                )
-            }
-            GiphyAction.CANCEL -> {
-                chatClient.cancelEphemeralMessage(event.message).enqueue(
-                    onError = { chatError ->
-                        logger.e {
-                            "Could not cancel giphy for message id: ${event.message.id}. " +
-                                "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                        }
-                    }
-                )
-            }
-        }
+        messageListController.performGiphyAction(event.action)
     }
 
     /**
-     * Loads more messages if we have reached
-     * the oldest message currently loaded.
+     * Loads more messages if we have reached the oldest message currently loaded.
      */
     private fun onEndRegionReached() {
-        currentMode.run {
-            when (this) {
-                is Mode.Normal -> {
-                    messageListData?.loadingMoreOldMessagesChanged(true)
-                    chatClient.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue {
-                        messageListData?.loadingMoreOldMessagesChanged(false)
-                    }
-                }
-                is Mode.Thread -> threadLoadMore(this)
-            }
-        }
+        messageListController.loadOlderMessages()
     }
 
     /**
      * Loads more messages if we have reached the newest messages currently loaded and we are handling search.
+     *
+     * @param baseMessageId The id of the currently newest loaded [Message].
+     * @param messageLimit The limit of messages to be loaded in the next page.
      */
-    private fun onBottomEndRegionReached(baseMessageId: String?) {
+    private fun onBottomEndRegionReached(
+        baseMessageId: String?,
+        messageLimit: Int = messageListController.messageLimit,
+    ) {
         if (baseMessageId != null) {
-            messageListData?.loadingMoreNewMessagesChanged(true)
-            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
-                .enqueue { result ->
-                    messageListData?.loadingMoreNewMessagesChanged(false)
-                }
+            messageListController.loadNewerMessages(baseMessageId, messageLimit)
         } else {
             logger.e { "There's no base message to request more message at bottom of limit" }
         }
     }
 
     /**
-     * Load older messages for the specified thread [Mode.Thread.parentMessage].
-     *
-     * @param threadMode Current thread mode.
-     */
-    private fun threadLoadMore(threadMode: Mode.Thread) {
-        threadListData?.loadingMoreOldMessagesChanged(true)
-        if (threadMode.threadState != null) {
-            chatClient.getRepliesMore(
-                messageId = threadMode.parentMessage.id,
-                firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
-                limit = DEFAULT_MESSAGES_LIMIT,
-            ).enqueue {
-                threadListData?.loadingMoreOldMessagesChanged(false)
-            }
-        } else {
-            threadListData?.loadingMoreOldMessagesChanged(false)
-            logger.w { "Thread state must be not null for offline plugin thread load more!" }
-        }
-    }
-
-    /**
-     * Evaluates whether a navigation event should occur
-     * or if we should switch from thread mode back to
-     * normal mode.
+     * Evaluates whether a navigation event should occur or if we should switch from thread mode back to normal mode.
      */
     private fun onBackButtonPressed() {
-        currentMode.run {
+        mode.value?.run {
             when (this) {
-                is Mode.Normal -> {
+                is MessageMode.Normal -> {
                     stateMerger.postValue(State.NavigateUp)
                 }
-                is Mode.Thread -> {
+                is MessageMode.MessageThread -> {
                     onNormalModeEntered()
                 }
             }
@@ -875,19 +390,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun onThreadModeEntered(parentMessage: Message) {
-        loadThreadWithOfflinePlugin(parentMessage)
-    }
-
-    /**
-     * Move [currentMode] to [Mode.Thread] and loads thread data using ChatClient directly. The data is observed by
-     * using [ThreadState].
-     *
-     * @param parentMessage The message with the thread we want to observe.
-     */
-    private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
-        val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
-        currentMode = Mode.Thread(parentMessage, state)
-        setThreadMessages(state.messages.asLiveData())
+        messageListController.enterThreadMode(parentMessage)
     }
 
     /**
@@ -895,69 +398,58 @@ public class MessageListViewModel(
      *
      * @param message The message the user is reacting to.
      * @param reactionType The exact reaction type.
-     * @param enforceUnique Whether the user is able to leave multiple reactions.
      */
-    private fun onMessageReaction(message: Message, reactionType: String, enforceUnique: Boolean) {
+    private fun onMessageReaction(message: Message, reactionType: String) {
         val reaction = Reaction().apply {
             messageId = message.id
             type = reactionType
             score = 1
         }
-        if (message.ownReactions.any { it.type == reactionType }) {
-            chatClient.deleteReaction(
-                messageId = message.id,
-                reactionType = reaction.type,
-                cid = cid
-            ).enqueue(
-                onError = { chatError ->
-                    logger.e {
-                        "Could not delete reaction for message with id: ${reaction.messageId} " +
-                            "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                    }
-                }
-            )
-        } else {
-            chatClient.sendReaction(
-                enforceUnique = enforceUnique,
-                reaction = reaction,
-                cid = cid
-            ).enqueue(
-                onError = { chatError ->
-                    logger.e {
-                        "Could not send reaction for message with id: ${reaction.messageId} " +
-                            "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
-                    }
-                }
-            )
-        }
+        messageListController.reactToMessage(reaction, message)
     }
 
     /**
-     * Called when upon initialization or exiting thread mode.
+     * Called when upon initialization or when exiting thread mode.
      */
     private fun onNormalModeEntered() {
-        currentMode = Mode.Normal
-        resetThread()
+        messageListController.enterNormalMode()
     }
 
     /**
      * Sets the value used to filter deleted messages.
      * @see DeletedMessageVisibility
      *
-     * @param deletedMessageVisibility Changes the visibility of deleted messages.
+     * @param deletedMessageVisibility Determines the visibility of deleted messages.
      */
     public fun setDeletedMessageVisibility(deletedMessageVisibility: DeletedMessageVisibility) {
-        this._deletedMessageVisibility.value = deletedMessageVisibility
+        messageListController.setDeletedMessageVisibility(deletedMessageVisibility)
     }
 
     /**
      * Sets the value used to determine if message footer content is shown.
      * @see MessageFooterVisibility
      *
-     * @param messageFooterVisibility Changes the visibility of message footers.
+     * @param messageFooterVisibility Determines the visibility of message footers.
      */
     public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
-        this.messageFooterVisibility.value = messageFooterVisibility
+        messageListController.setMessageFooterVisibility(messageFooterVisibility)
+    }
+
+    /**
+     * Sets whether the system messages should be visible.
+     *
+     * @param showSystemMessages Whether system messages should be visible or not.
+     */
+    public fun setAreSystemMessagesVisible(showSystemMessages: Boolean) {
+        messageListController.setSystemMessageVisibility(showSystemMessages)
+    }
+
+    /**
+     * Clears the [MessageListController] coroutine scope.
+     */
+    override fun onCleared() {
+        messageListController.onCleared()
+        super.onCleared()
     }
 
     /**
@@ -1054,10 +546,9 @@ public class MessageListViewModel(
          * When the user selects a Giphy message.
          * e.g. send, shuffle or cancel.
          *
-         * @param message The Giphy message.
          * @param action The Giphy action. e.g. send, shuffle or cancel.
          */
-        public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
+        public data class GiphyActionSelected(val action: GiphyAction) : Event()
 
         /**
          * Retry sending a message that has failed to send.
@@ -1071,12 +562,10 @@ public class MessageListViewModel(
          *
          * @param message The message the user is reacting to
          * @param reactionType The reaction type.
-         * @param enforceUnique Whether the user is able to leave multiple reactions.
          */
         public data class MessageReaction(
             val message: Message,
             val reactionType: String,
-            val enforceUnique: Boolean,
         ) : Event()
 
         /**
@@ -1170,159 +659,11 @@ public class MessageListViewModel(
         public data class ShowMessage(val messageId: String) : Event()
 
         /**
-         * When we need to display a particular message to the user.
-         * Usually triggered when coming from search and clicking on a push notification.
-         *
-         * @param messageId The id of the message we need to navigate to.
-         */
-        public data class LoadMessage(val messageId: String) : Event()
-
-        /**
          * When the user removes an attachment from a message that was previously sent.
          *
          * @param messageId The message from which an attachment will be deleted.
          * @param attachment The attachment to be deleted.
          */
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
-    }
-
-    /**
-     * The modes the message list can be in.
-     */
-    public sealed class Mode {
-
-        /**
-         * Thread mode. Occurs when a user enters a thread.
-         *
-         * @param parentMessage The original message all messages in a thread are replying to.
-         * @param threadState Contains information about the state of the thread, such as
-         * if we are loading older messages, have reached the oldest message available, etc.
-         */
-        public data class Thread(val parentMessage: Message, val threadState: ThreadState? = null) : Mode()
-
-        /**
-         * Normal mode. When the user is not participating in a thread.
-         */
-        public object Normal : Mode()
-    }
-
-    /**
-     * A class designed for error event propagation.
-     *
-     * @param chatError Contains the original [Throwable] along with a message.
-     */
-    public sealed class ErrorEvent(public open val chatError: ChatError) {
-
-        /**
-         * When an error occurs while muting a user.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        public data class MuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while unmuting a user.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        public data class UnmuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while flagging a message.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        public data class FlagMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while blocking a user.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        public data class BlockUserError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while pinning a message.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        public data class PinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
-
-        /**
-         * When an error occurs while unpinning a message.
-         *
-         * @param chatError Contains the original [Throwable] along with a message.
-         */
-        public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
-    }
-
-    /**
-     * A SAM designed to evaluate if a date separator should be added between messages.
-     */
-    public fun interface DateSeparatorHandler {
-        public fun shouldAddDateSeparator(previousMessage: Message?, message: Message): Boolean
-    }
-
-    /**
-     * A handler to determine the position of a message inside a group.
-     */
-    public fun interface MessagePositionHandler {
-        /**
-         * Determines the position of a message inside a group.
-         *
-         * @param prevMessage The previous [Message] in the list.
-         * @param message The current [Message] in the list.
-         * @param nextMessage The next [Message] in the list.
-         * @param isAfterDateSeparator If a date separator was added before the current [Message].
-         *
-         * @return The position of the current message inside the group.
-         */
-        public fun handleMessagePosition(
-            prevMessage: Message?,
-            message: Message,
-            nextMessage: Message?,
-            isAfterDateSeparator: Boolean,
-        ): List<MessageListItem.Position>
-
-        public companion object {
-            /**
-             * The default implementation of the [MessagePositionHandler] interface which can be taken
-             * as a reference when implementing a custom one.
-             *
-             * @return The default implementation of [MessagePositionHandler].
-             */
-            internal fun defaultHandler(): MessagePositionHandler {
-                return MessagePositionHandler { prevMessage: Message?, message: Message, nextMessage: Message?, isAfterDateSeparator: Boolean ->
-                    val prevUser = prevMessage?.user
-                    val user = message.user
-                    val nextUser = nextMessage?.user
-
-                    fun Message.isServerMessage(): Boolean {
-                        return isSystem() || isError()
-                    }
-
-                    mutableListOf<MessageListItem.Position>().apply {
-                        if (prevMessage == null || prevUser != user || prevMessage.isServerMessage() || isAfterDateSeparator) {
-                            add(MessageListItem.Position.TOP)
-                        }
-                        if (prevMessage != null && nextMessage != null && prevUser == user && nextUser == user) {
-                            add(MessageListItem.Position.MIDDLE)
-                        }
-                        if (nextMessage == null || nextUser != user || nextMessage.isServerMessage()) {
-                            add(MessageListItem.Position.BOTTOM)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    internal companion object {
-        /**
-         * The default limit of messages to load.
-         */
-        const val DEFAULT_MESSAGES_LIMIT = 30
-
-        const val SEPARATOR_TIME = 1000 * 60 * 60 * 4
     }
 }

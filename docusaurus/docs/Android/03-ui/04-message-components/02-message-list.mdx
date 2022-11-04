@@ -70,8 +70,7 @@ ViewModelProvider provider = new ViewModelProvider(this, factory);
 MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
 
 // Bind view and viewModel
-boolean enforceUniqueReactions = true;
-MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner(), enforceUniqueReactions);
+MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
 ```
 </TabItem>
 </Tabs>
@@ -119,7 +118,7 @@ messageListView.setMessagePinHandler { message: Message ->
 messageListView.setMessageUnpinHandler { message: Message ->
     // Handle when message is going to be unpinned
 }
-messageListView.setGiphySendHandler { message: Message, giphyAction: GiphyAction ->
+messageListView.setGiphySendHandler { giphyAction: GiphyAction ->
     // Handle when some giphyAction is going to be performed
 }
 messageListView.setMessageRetryHandler { message: Message ->
@@ -161,7 +160,7 @@ messageListView.setMessagePinHandler((message) -> {
 messageListView.setMessageUnpinHandler((message) -> {
     // Handle when message is going to be unpinned
 });
-messageListView.setGiphySendHandler((message, giphyAction) -> {
+messageListView.setGiphySendHandler((giphyAction) -> {
     // Handle when some giphyAction is going to be performed
 });
 messageListView.setMessageRetryHandler((message) -> {
@@ -718,7 +717,7 @@ Is it possible to configure when the avatar for messages appears. You can use `M
 ```kotlin
 messageListView.setShowAvatarPredicate(
     ShowAvatarPredicate { messageItem ->
-        messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
+        messageItem.positions.contains(MessagePosition.BOTTOM) && messageItem.isTheirs
     }
 )
 ```
@@ -727,7 +726,7 @@ messageListView.setShowAvatarPredicate(
 <TabItem value="java" label="Java">
 
 ```java
-messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs());
+messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessagePosition.BOTTOM) && messageItem.isTheirs());
 ```
 </TabItem>
 </Tabs>

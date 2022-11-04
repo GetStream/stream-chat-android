@@ -20,9 +20,11 @@ import android.content.res.ColorStateList
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.images.load
 import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.common.message.list.CancelGiphy
+import io.getstream.chat.android.common.message.list.SendGiphy
+import io.getstream.chat.android.common.message.list.ShuffleGiphy
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
@@ -50,13 +52,13 @@ internal class GiphyViewHolder(
         binding.run {
             listeners?.let { container ->
                 cancelButton.setOnClickListener {
-                    container.giphySendListener.onGiphySend(data.message, GiphyAction.CANCEL)
+                    container.giphySendListener.onGiphySend(CancelGiphy(data.message))
                 }
                 shuffleButton.setOnClickListener {
-                    container.giphySendListener.onGiphySend(data.message, GiphyAction.SHUFFLE)
+                    container.giphySendListener.onGiphySend(ShuffleGiphy(data.message))
                 }
                 sendButton.setOnClickListener {
-                    container.giphySendListener.onGiphySend(data.message, GiphyAction.SEND)
+                    container.giphySendListener.onGiphySend(SendGiphy(data.message))
                 }
             }
         }

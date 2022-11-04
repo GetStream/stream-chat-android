@@ -30,6 +30,8 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.common.message.list.MessageListController
+import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
@@ -91,10 +93,10 @@ internal class MessageListViewModelTest {
                 items = listOf(
                     MessageListItem.DateSeparatorItem(messageStartDate),
                 ) + messageItems,
-                hasNewMessages = false,
+                hasNewMessages = true,
                 isTyping = false,
                 isThread = false,
-                areNewestMessagesLoaded = true
+                areNewestMessagesLoaded = true,
             )
         )
 
@@ -179,7 +181,6 @@ internal class MessageListViewModelTest {
             MessageListViewModel.Event.MessageReaction(
                 message = message1,
                 reactionType = reaction1.type,
-                enforceUnique = true
             )
         )
 
@@ -206,7 +207,6 @@ internal class MessageListViewModelTest {
                 MessageListViewModel.Event.MessageReaction(
                     message = messageWithOwnReaction,
                     reactionType = reaction1.type,
-                    enforceUnique = true
                 )
             )
 
@@ -286,6 +286,9 @@ internal class MessageListViewModelTest {
                 whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)
                 whenever(it.toChannel()) doReturn Channel(type = CHANNEL_TYPE, id = CHANNEL_ID)
                 whenever(it.endOfNewerMessages) doReturn MutableStateFlow(true)
+                whenever(it.loading) doReturn MutableStateFlow(true)
+                whenever(it.unreadCount) doReturn MutableStateFlow(0)
+                whenever(it.loadingNewerMessages) doReturn MutableStateFlow(false)
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
             whenever(stateRegistry.scope) doReturn testCoroutines.scope
@@ -293,8 +296,12 @@ internal class MessageListViewModelTest {
 
         fun get(): MessageListViewModel {
             return MessageListViewModel(
-                chatClient = chatClient,
-                cid = channelId,
+                MessageListController(
+                    chatClient = chatClient,
+                    cid = channelId,
+                    clipboardHandler = mock()
+                )
+
             )
         }
     }
@@ -348,15 +355,16 @@ internal class MessageListViewModelTest {
         private fun List<Message>.toMessageItemList(): List<MessageListItem.MessageItem> {
             return this.mapIndexed { index, message ->
                 val position = when {
-                    index == 0 -> MessageListItem.Position.TOP
-                    this.size > 2 && index != this.size -> MessageListItem.Position.MIDDLE
-                    else -> MessageListItem.Position.BOTTOM
+                    index == 0 -> MessagePosition.TOP
+                    this.size > 2 && index != this.size -> MessagePosition.MIDDLE
+                    else -> MessagePosition.BOTTOM
                 }
 
                 MessageListItem.MessageItem(
                     message = message,
                     showMessageFooter = index == this.size - 1,
-                    positions = listOf(position)
+                    positions = listOf(position),
+                    isMessageRead = false
                 )
             }
         }
