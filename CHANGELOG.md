@@ -140,6 +140,7 @@
 - Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
 - The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - `ImageAttachmentViewStyle` has been removed and replaced by `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
+- 🚨 Breaking change: Removed the old `MessageInputView`. Use `MessageComposerView` instead. [#4289](https://github.com/GetStream/stream-chat-android/pull/4289)
 - Removed `GiphyAction` enum. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - Removed `MessageListItem.Position` enum. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 

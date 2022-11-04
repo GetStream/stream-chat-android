@@ -11,23 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 
-import java.util.List;
-
-import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.common.composer.MessageComposerState;
 import io.getstream.chat.android.common.state.Edit;
-import io.getstream.chat.android.common.state.MessageAction;
 import io.getstream.chat.android.common.state.MessageMode;
 import io.getstream.chat.android.common.state.Reply;
-import io.getstream.chat.android.ui.StyleTransformer;
 import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext;
 import io.getstream.chat.android.ui.message.composer.MessageComposerView;

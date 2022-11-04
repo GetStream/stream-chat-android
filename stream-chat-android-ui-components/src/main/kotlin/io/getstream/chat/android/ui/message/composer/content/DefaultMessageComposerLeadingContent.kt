@@ -23,7 +23,6 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
@@ -38,7 +37,6 @@ import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
 /**
  * Represents the default content shown at the start of [MessageComposerView].
  */
-@ExperimentalStreamChatApi
 public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.

@@ -77,7 +77,7 @@ The `MessageList` component exposes the following actions, as per the signature:
 ```kotlin
 @Composable
 fun MessageList(
-	..., // State & UI
+    ..., // State & UI
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
@@ -164,7 +164,7 @@ We allow for a few ways of customizing the `MessageList` component, as per the s
 ```kotlin
 @Composable
 fun MessageList(
-	..., // State and actions
+    ..., // State and actions
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(...),
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },

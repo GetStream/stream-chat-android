@@ -16,14 +16,11 @@
 
 package io.getstream.chat.android.ui.message.composer
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-
 /**
  * An object with the data that will be propagated to each content view.
  *
  * @param style Style for [MessageComposerView].
  */
-@ExperimentalStreamChatApi
 public data class MessageComposerContext(
     val style: MessageComposerViewStyle,
 )

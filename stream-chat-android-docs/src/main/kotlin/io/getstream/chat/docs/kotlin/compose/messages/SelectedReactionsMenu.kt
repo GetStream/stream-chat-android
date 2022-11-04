@@ -40,7 +40,6 @@ private object SelectedReactionsMenuUsageSnippet {
 
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -97,7 +96,6 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
         val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -152,7 +150,6 @@ private object SelectedReactionsMenuCustomizationSnippet {
 
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 

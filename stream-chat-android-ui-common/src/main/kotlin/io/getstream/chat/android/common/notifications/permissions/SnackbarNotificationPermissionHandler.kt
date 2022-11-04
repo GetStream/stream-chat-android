@@ -83,7 +83,7 @@ public class SnackbarNotificationPermissionHandler(
             contentLayout,
             R.string.stream_ui_message_input_permission_notifications_message,
             Snackbar.LENGTH_LONG
-        ).setAction(R.string.stream_ui_message_input_permissions_setting_button) {
+        ).setAction(R.string.stream_ui_message_composer_permissions_setting_button) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 data = Uri.Builder()

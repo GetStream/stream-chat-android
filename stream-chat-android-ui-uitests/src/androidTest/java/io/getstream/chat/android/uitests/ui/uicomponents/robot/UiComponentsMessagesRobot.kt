@@ -46,8 +46,8 @@ internal class MessagesRobotUiComponents : BaseUiComponentsTestRobot() {
      * Clicks the "send message" button.
      */
     fun clickSendButton() {
-        waitForViewWithId(R.id.sendButtonContainer)
-        clickElementById(R.id.sendButtonContainer)
+        waitForViewWithId(R.id.sendMessageButton)
+        clickElementById(R.id.sendMessageButton)
     }
 
     /**

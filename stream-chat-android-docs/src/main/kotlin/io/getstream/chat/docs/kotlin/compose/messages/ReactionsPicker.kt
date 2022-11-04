@@ -41,7 +41,6 @@ private object ReactionsPickerUsageSnippet {
 
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -94,7 +93,6 @@ private object ReactionsPickerHandlingActionsSnippet {
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
         val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -147,7 +145,6 @@ private object ReactionsPickerCustomizationSnippet {
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
         val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 

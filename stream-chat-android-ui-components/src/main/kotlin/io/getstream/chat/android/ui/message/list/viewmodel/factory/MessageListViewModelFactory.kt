@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.message.list.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.utils.AttachmentConstants
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -33,7 +32,7 @@ import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerVi
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
 
 /**
- * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageInputViewModel.
+ * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageComposerViewModel.
  *
  * @param cid The current channel ID, to load the messages from.
  * @param messageId The message ID to which we want to scroll to when opening the message list.
@@ -50,9 +49,9 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  * @param threadDateSeparatorHandler Handler that determines when the thread date separators should be visible.
  * @param messagePositionHandler Determines the position of the message inside a group.
  *
- * @see MessageListViewModel
  * @see MessageListHeaderViewModel
- * @see MessageInputViewModel
+ * @see MessageListViewModel
+ * @see MessageComposerViewModel
  */
 public class MessageListViewModelFactory @JvmOverloads constructor(
     private val cid: String,
@@ -74,8 +73,14 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid, messageId = messageId) },
-        MessageInputViewModel::class.java to { MessageInputViewModel(cid, messageId = messageId) },
-        MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid, messageId = messageId)) },
+        MessageComposerViewModel::class.java to {
+            MessageComposerViewModel(
+                MessageComposerController(
+                    cid,
+                    messageId = messageId
+                )
+            )
+        },
         MessageListViewModel::class.java to {
             MessageListViewModel(
                 messageListController = MessageListController(

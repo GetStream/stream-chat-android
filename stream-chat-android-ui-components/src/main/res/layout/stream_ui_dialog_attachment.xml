@@ -23,12 +23,11 @@
     android:background="@color/stream_ui_white_smoke"
     >
 
-    <RadioGroup
+    <LinearLayout
         android:id="@+id/attachmentButtonsContainer"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/stream_ui_attachment_dialog_button_section_height"
         android:layout_marginHorizontal="4dp"
-        android:checkedButton="@+id/mediaAttachmentsButton"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/pagerContainer"

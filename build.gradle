@@ -120,6 +120,7 @@ apiValidation {
             'stream-chat-android-ui-components-sample',
             'stream-chat-android-test',
             'stream-chat-android-compose-sample',
+            'stream-chat-android-ui-guides',
             'libraries',
             'logging',
             'stream-logger',
