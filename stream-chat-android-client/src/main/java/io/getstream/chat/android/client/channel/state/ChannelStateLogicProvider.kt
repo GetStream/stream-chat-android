@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.sample.util.extensions
+package io.getstream.chat.android.client.channel.state
 
-import io.getstream.chat.android.client.models.ChannelData
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 
-public fun ChannelData.isAnonymousChannel(): Boolean = id.startsWith("!members")
+/**
+ * Provider for state {ChannelStateLogic}
+ */
+public interface ChannelStateLogicProvider {
+
+    /**
+     * Provides [ChannelStateLogic] for the channelType and channelId
+     *
+     * @param channelType String
+     * @param channelId String
+     */
+    public fun channelStateLogic(channelType: String, channelId: String): ChannelMessagesUpdateLogic
+}

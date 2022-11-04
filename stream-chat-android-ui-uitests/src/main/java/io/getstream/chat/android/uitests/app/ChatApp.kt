@@ -39,7 +39,6 @@ class ChatApp : Application() {
             config = StatePluginConfig(
                 backgroundSyncEnabled = true,
                 userPresence = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = this
         )
@@ -47,6 +46,7 @@ class ChatApp : Application() {
         ChatClient.Builder("hrwwzsgrzapv", this)
             .withPlugins(offlinePluginFactory, statePluginFactory)
             .logLevel(ChatLogLevel.NOTHING)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
     }
 }

@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdenti
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.doOnResult
@@ -58,6 +59,7 @@ import io.getstream.chat.android.client.call.share
 import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
@@ -91,6 +93,7 @@ import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
+import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -116,6 +119,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
+import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.models.User
@@ -292,6 +296,10 @@ internal constructor(
      */
     private val errorHandlers: List<ErrorHandler>
         get() = plugins.flatMap { it.errorHandlers }.sorted()
+
+    public var logicRegistry: ChannelStateLogicProvider? = null
+
+    internal lateinit var attachmentsSender: AttachmentsSender
 
     init {
         eventsObservable.subscribeSuspend { event ->
@@ -1217,12 +1225,12 @@ internal constructor(
     }
 
     @CheckResult
-    public fun deleteDevice(device: Device): Call<Unit> {
+    internal fun deleteDevice(device: Device): Call<Unit> {
         return api.deleteDevice(device)
     }
 
     @CheckResult
-    public fun addDevice(device: Device): Call<Unit> {
+    internal fun addDevice(device: Device): Call<Unit> {
         return api.addDevice(device)
     }
 
@@ -1503,41 +1511,52 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for sending a message.
      */
-    @CheckResult
-    @JvmOverloads
     public fun sendMessage(
         channelType: String,
         channelId: String,
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-
         return CoroutineCall(userScope) {
-            // Message is first prepared i.e. all its attachments are uploaded and message is updated with
-            // these attachments.
-            plugins
-                .flatMap { it.interceptors }
-                .fold(Result.success(message)) { message, interceptor ->
-                    if (message.isSuccess) {
-                        interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
-                    } else message
-                }.flatMapSuspend { newMessage ->
-                    api.sendMessage(channelType, channelId, newMessage)
-                        .retry(userScope, retryPolicy)
-                        .doOnResult(userScope) { result ->
-                            logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
-                            plugins.forEach { listener ->
-                                logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                                listener.onMessageSendResult(
-                                    result,
-                                    channelType,
-                                    channelId,
-                                    newMessage
-                                )
-                            }
-                        }.await()
+            sendAttachments(channelType, channelId, message, isRetrying)
+                .flatMapSuspend { newMessage ->
+                    doSendMessage(channelType, channelId, newMessage)
                 }
         }
+    }
+
+    private suspend fun doSendMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+    ): Result<Message> {
+        return api.sendMessage(channelType, channelId, message)
+            .retry(userScope, retryPolicy)
+            .doOnResult(userScope) { result ->
+                logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
+                plugins.forEach { listener ->
+                    logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                    listener.onMessageSendResult(result, channelType, channelId, message)
+                }
+            }.await()
+    }
+
+    private suspend fun sendAttachments(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        isRetrying: Boolean = false,
+    ): Result<Message> {
+        val prepareMessageLogic = PrepareMessageLogicImpl(clientState, logicRegistry)
+
+        val preparedMessage = getCurrentUser()?.let { user ->
+            prepareMessageLogic.prepareMessage(message, channelId, channelType, user)
+        } ?: message
+
+        plugins.forEach { listener -> listener.onAttachmentSendRequest(channelType, channelId, preparedMessage) }
+
+        return attachmentsSender
+            .sendAttachments(preparedMessage, channelType, channelId, isRetrying, repositoryFacade)
     }
 
     /**
@@ -2710,6 +2729,7 @@ internal constructor(
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
+        private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING
 
         /**
          * Sets the log level to be used by the client.
@@ -2883,6 +2903,10 @@ internal constructor(
             this.distinctApiCalls = false
         }
 
+        public fun uploadAttachmentsNetworkType(type: UploadAttachmentsNetworkType): Builder = apply {
+            this.uploadAttachmentsNetworkType = type
+        }
+
         public override fun build(): ChatClient {
             return super.build()
         }
@@ -2967,7 +2991,14 @@ internal constructor(
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
                 clientState = ClientStateImpl(module.networkStateProvider)
-            )
+            ).apply {
+                attachmentsSender = AttachmentsSender(
+                    appContext,
+                    uploadAttachmentsNetworkType,
+                    clientState,
+                    clientScope
+                )
+            }
         }
 
         private fun setupStreamLog() {

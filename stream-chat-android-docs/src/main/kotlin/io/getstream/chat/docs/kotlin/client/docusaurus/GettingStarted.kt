@@ -43,7 +43,6 @@ class GettingStarted {
                 // Enables using the database as an internal caching mechanism.
                 persistenceEnabled = true,
                 // An enumeration of various network types used as a constraint inside upload attachments worker.
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = context,
         )
@@ -52,13 +51,13 @@ class GettingStarted {
             config = StatePluginConfig(
                 backgroundSyncEnabled = true,
                 userPresence = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
             appContext = context
         )
 
         ChatClient.Builder(apiKey, context)
             .withPlugins(offlinePluginFactory, statePluginFactory)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
     }
 

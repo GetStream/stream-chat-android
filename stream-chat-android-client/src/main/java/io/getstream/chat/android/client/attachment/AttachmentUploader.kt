@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.message.attachments.internal
+package io.getstream.chat.android.client.attachment
 
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
@@ -22,11 +22,11 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.io.File
 
-internal class AttachmentUploader(
-    private val client: ChatClient = ChatClient.instance(),
-) {
+@InternalStreamChatApi
+public class AttachmentUploader(private val client: ChatClient = ChatClient.instance()) {
 
     /**
      * Uploads the given attachment.
@@ -39,7 +39,8 @@ internal class AttachmentUploader(
      *
      * @return The resulting uploaded attachment.
      */
-    internal suspend fun uploadAttachment(
+    @InternalStreamChatApi
+    public suspend fun uploadAttachment(
         channelType: String,
         channelId: String,
         attachment: Attachment,
@@ -89,6 +90,7 @@ internal class AttachmentUploader(
      *
      * @return The resulting uploaded attachment.
      */
+    @Suppress("LongParameterList")
     private suspend fun uploadImage(
         channelType: String,
         channelId: String,
@@ -137,6 +139,7 @@ internal class AttachmentUploader(
      *
      * @return The resulting uploaded attachment.
      */
+    @Suppress("LongParameterList")
     private suspend fun uploadFile(
         channelType: String,
         channelId: String,
