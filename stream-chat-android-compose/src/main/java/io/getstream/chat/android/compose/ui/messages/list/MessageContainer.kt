@@ -33,11 +33,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.messagelist.GiphyAction
-import io.getstream.chat.android.common.model.messsagelist.DateSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
-import io.getstream.chat.android.common.model.messsagelist.SystemMessageState
-import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.SystemMessageItemState
+import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorItemState
 import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -68,13 +68,13 @@ public fun MessageContainer(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
-    dateSeparatorContent: @Composable (DateSeparatorState) -> Unit = {
+    dateSeparatorContent: @Composable (DateSeparatorItemState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
     },
-    threadSeparatorContent: @Composable (ThreadDateSeparatorState) -> Unit = {
+    threadSeparatorContent: @Composable (ThreadDateSeparatorItemState) -> Unit = {
         DefaultMessageThreadSeparatorContent(threadSeparator = it)
     },
-    systemMessageContent: @Composable (SystemMessageState) -> Unit = {
+    systemMessageContent: @Composable (SystemMessageItemState) -> Unit = {
         DefaultSystemMessageContent(systemMessageState = it)
     },
     messageItemContent: @Composable (MessageItemState) -> Unit = {
@@ -91,9 +91,9 @@ public fun MessageContainer(
     typingIndicatorContent: @Composable (TypingItemState) -> Unit = { }
 ) {
     when (messageListItemState) {
-        is DateSeparatorState -> dateSeparatorContent(messageListItemState)
-        is ThreadDateSeparatorState -> threadSeparatorContent(messageListItemState)
-        is SystemMessageState -> systemMessageContent(messageListItemState)
+        is DateSeparatorItemState -> dateSeparatorContent(messageListItemState)
+        is ThreadDateSeparatorItemState -> threadSeparatorContent(messageListItemState)
+        is SystemMessageItemState -> systemMessageContent(messageListItemState)
         is MessageItemState -> messageItemContent(messageListItemState)
         is TypingItemState -> typingIndicatorContent(messageListItemState)
     }
@@ -105,7 +105,7 @@ public fun MessageContainer(
  * @param dateSeparator The data used to show the separator text.
  */
 @Composable
-internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorState) {
+internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItemState) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Surface(
             modifier = Modifier
@@ -135,7 +135,7 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorStat
  * @param threadSeparator The data used to show the separator text.
  */
 @Composable
-internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSeparatorState) {
+internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSeparatorItemState) {
     val backgroundGradient = Brush.verticalGradient(
         listOf(
             ChatTheme.colors.threadSeparatorGradientStart,
@@ -172,7 +172,7 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
  * @param systemMessageState The system message item to show.
  */
 @Composable
-internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState) {
+internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemState) {
     Text(
         modifier = Modifier
             .fillMaxWidth()

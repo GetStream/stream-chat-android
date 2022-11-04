@@ -291,7 +291,7 @@ public class MessageListViewModel(
      * @param messageId The ID of the selected message.
      * @return The [Message] with the ID, if it exists.
      */
-    public fun getMessageWithId(messageId: String): Message? = messageListController.getMessageWithId(messageId)
+    public fun getMessageById(messageId: String): Message? = messageListController.getMessageById(messageId)
 
     /**
      * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest

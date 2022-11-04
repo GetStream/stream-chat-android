@@ -183,7 +183,7 @@ public fun MessagesScreen(
                 onMediaGalleryPreviewResult = { result ->
                     when (result?.resultType) {
                         MediaGalleryPreviewResultType.QUOTE -> {
-                            val message = listViewModel.getMessageWithId(result.messageId)
+                            val message = listViewModel.getMessageById(result.messageId)
 
                             if (message != null) {
                                 composerViewModel.performMessageAction(Reply(message))

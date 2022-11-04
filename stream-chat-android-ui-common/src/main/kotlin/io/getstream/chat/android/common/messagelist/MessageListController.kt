@@ -39,11 +39,11 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.client.utils.message.isSystem
-import io.getstream.chat.android.common.model.messsagelist.DateSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
-import io.getstream.chat.android.common.model.messsagelist.SystemMessageState
-import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.SystemMessageItemState
+import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorItemState
 import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.common.state.Copy
 import io.getstream.chat.android.common.state.Delete
@@ -424,10 +424,10 @@ public class MessageListController(
             ) return@onEach
 
             val newLastMessage =
-                newState.messageItems.lastOrNull { it is MessageItemState || it is SystemMessageState }?.let {
+                newState.messageItems.lastOrNull { it is MessageItemState || it is SystemMessageItemState }?.let {
                     when (it) {
                         is MessageItemState -> it.message
-                        is SystemMessageState -> it.message
+                        is SystemMessageItemState -> it.message
                         else -> null
                     }
                 }
@@ -605,11 +605,11 @@ public class MessageListController(
             )
 
             if (shouldAddDateSeparator) {
-                groupedMessages.add(DateSeparatorState(message.getCreatedAtOrThrow()))
+                groupedMessages.add(DateSeparatorItemState(message.getCreatedAtOrThrow()))
             }
 
             if (message.isSystem() || message.isError()) {
-                groupedMessages.add(SystemMessageState(message = message))
+                groupedMessages.add(SystemMessageItemState(message = message))
             } else {
                 val isMessageRead = message.createdAt
                     ?.let { lastRead != null && it <= lastRead }
@@ -641,7 +641,7 @@ public class MessageListController(
 
             if (index == 0 && isInThread) {
                 groupedMessages.add(
-                    ThreadDateSeparatorState(
+                    ThreadDateSeparatorItemState(
                         date = message.createdAt ?: message.createdLocallyAt ?: Date(),
                         replyCount = message.replyCount
                     )
@@ -867,7 +867,7 @@ public class MessageListController(
      * @param messageId The ID of the message.
      */
     private fun focusMessage(messageId: String) {
-        val message = getMessageWithId(messageId)
+        val message = getMessageById(messageId)
 
         if (message != null) {
             focusedMessage.value = message
@@ -1260,7 +1260,7 @@ public class MessageListController(
      *
      * @return The [Message] with the given id or null if the message is not in the list.
      */
-    public fun getMessageWithId(messageId: String): Message? {
+    public fun getMessageById(messageId: String): Message? {
         return (
             _messageListState.value.messageItems.firstOrNull {
                 it is MessageItemState && it.message.id == messageId

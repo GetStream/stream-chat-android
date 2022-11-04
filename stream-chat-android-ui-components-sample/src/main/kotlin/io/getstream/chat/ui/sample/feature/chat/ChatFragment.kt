@@ -202,7 +202,7 @@ class ChatFragment : Fragment() {
                 }
             }
             binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
-                messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
+                messageListViewModel.getMessageById(result.messageId)?.let { message ->
                     messageComposerViewModel.performMessageAction(Reply(message))
                 }
             }

@@ -199,8 +199,8 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getInsideSearch ()Landroidx/lifecycle/LiveData;
 	public final fun getLoadMoreLiveData ()Landroidx/lifecycle/LiveData;
+	public final fun getMessageById (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 	public final fun getMessageFooterVisibilityState ()Landroidx/lifecycle/LiveData;
-	public final fun getMessageWithId (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 	public final fun getMode ()Landroidx/lifecycle/LiveData;
 	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
 	public final fun getShowSystemMessagesState ()Landroidx/lifecycle/LiveData;

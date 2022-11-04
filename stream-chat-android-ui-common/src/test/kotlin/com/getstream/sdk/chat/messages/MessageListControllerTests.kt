@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.common.messagelist.DateSeparatorHandler
 import io.getstream.chat.android.common.messagelist.MessageListController
 import io.getstream.chat.android.common.messagelist.MessageListState
-import io.getstream.chat.android.common.model.messsagelist.DateSeparatorState
+import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItemState
 import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
@@ -194,7 +194,7 @@ internal class MessageListControllerTests {
             .givenChannelState(messageState = messageState)
             .get()
 
-        val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is DateSeparatorState }
+        val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is DateSeparatorItemState }
 
         dateSeparatorCount `should be equal to` 3
     }
@@ -214,7 +214,7 @@ internal class MessageListControllerTests {
             .givenChannelState(messageState = messageState)
             .get(dateSeparatorHandler = { _, _ -> false })
 
-        val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is DateSeparatorState }
+        val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is DateSeparatorItemState }
 
         dateSeparatorCount `should be equal to` 0
     }

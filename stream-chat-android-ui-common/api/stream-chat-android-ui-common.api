@@ -268,10 +268,10 @@ public final class io/getstream/chat/android/common/messagelist/MessageListContr
 	public final fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getListState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMessageActions ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getMessageById (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 	public final fun getMessageFooterVisibilityState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMessageLimit ()I
 	public final fun getMessageListState ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getMessageWithId (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 	public final fun getMode ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getOwnCapabilities ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getShowSystemMessagesState ()Lkotlinx/coroutines/flow/StateFlow;
@@ -488,12 +488,12 @@ public final class io/getstream/chat/android/common/model/SendAnyway : io/getstr
 	public static final field INSTANCE Lio/getstream/chat/android/common/model/SendAnyway;
 }
 
-public final class io/getstream/chat/android/common/model/messsagelist/DateSeparatorState : io/getstream/chat/android/common/model/messsagelist/MessageListItemState {
+public final class io/getstream/chat/android/common/model/messsagelist/DateSeparatorItemState : io/getstream/chat/android/common/model/messsagelist/MessageListItemState {
 	public static final field $stable I
 	public fun <init> (Ljava/util/Date;)V
 	public final fun component1 ()Ljava/util/Date;
-	public final fun copy (Ljava/util/Date;)Lio/getstream/chat/android/common/model/messsagelist/DateSeparatorState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/common/model/messsagelist/DateSeparatorState;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/common/model/messsagelist/DateSeparatorState;
+	public final fun copy (Ljava/util/Date;)Lio/getstream/chat/android/common/model/messsagelist/DateSeparatorItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/common/model/messsagelist/DateSeparatorItemState;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/common/model/messsagelist/DateSeparatorItemState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDate ()Ljava/util/Date;
 	public fun hashCode ()I
@@ -538,25 +538,25 @@ public abstract class io/getstream/chat/android/common/model/messsagelist/Messag
 	public static final field $stable I
 }
 
-public final class io/getstream/chat/android/common/model/messsagelist/SystemMessageState : io/getstream/chat/android/common/model/messsagelist/MessageListItemState {
+public final class io/getstream/chat/android/common/model/messsagelist/SystemMessageItemState : io/getstream/chat/android/common/model/messsagelist/MessageListItemState {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
-	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/common/model/messsagelist/SystemMessageState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/common/model/messsagelist/SystemMessageState;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/common/model/messsagelist/SystemMessageState;
+	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/common/model/messsagelist/SystemMessageItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/common/model/messsagelist/SystemMessageItemState;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/common/model/messsagelist/SystemMessageItemState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/common/model/messsagelist/ThreadDateSeparatorState : io/getstream/chat/android/common/model/messsagelist/MessageListItemState {
+public final class io/getstream/chat/android/common/model/messsagelist/ThreadDateSeparatorItemState : io/getstream/chat/android/common/model/messsagelist/MessageListItemState {
 	public static final field $stable I
 	public fun <init> (Ljava/util/Date;I)V
 	public final fun component1 ()Ljava/util/Date;
 	public final fun component2 ()I
-	public final fun copy (Ljava/util/Date;I)Lio/getstream/chat/android/common/model/messsagelist/ThreadDateSeparatorState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/common/model/messsagelist/ThreadDateSeparatorState;Ljava/util/Date;IILjava/lang/Object;)Lio/getstream/chat/android/common/model/messsagelist/ThreadDateSeparatorState;
+	public final fun copy (Ljava/util/Date;I)Lio/getstream/chat/android/common/model/messsagelist/ThreadDateSeparatorItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/common/model/messsagelist/ThreadDateSeparatorItemState;Ljava/util/Date;IILjava/lang/Object;)Lio/getstream/chat/android/common/model/messsagelist/ThreadDateSeparatorItemState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDate ()Ljava/util/Date;
 	public final fun getReplyCount ()I

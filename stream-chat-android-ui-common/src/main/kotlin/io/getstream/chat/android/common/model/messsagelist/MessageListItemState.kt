@@ -63,7 +63,7 @@ public data class MessageItemState(
  *
  * @param date The date to show on the separator.
  */
-public data class DateSeparatorState(
+public data class DateSeparatorItemState(
     val date: Date,
 ) : MessageListItemState()
 
@@ -73,7 +73,7 @@ public data class DateSeparatorState(
  * @param date The date show on the separator.
  * @param replyCount Number of messages inside the thread.
  */
-public data class ThreadDateSeparatorState(
+public data class ThreadDateSeparatorItemState(
     public val date: Date,
     public val replyCount: Int,
 ) : MessageListItemState()
@@ -83,7 +83,7 @@ public data class ThreadDateSeparatorState(
  *
  * @param message The [Message] to show as the system message inside the list.
  */
-public data class SystemMessageState(
+public data class SystemMessageItemState(
     public val message: Message,
 ) : MessageListItemState()
 

@@ -358,8 +358,8 @@ public class MessageListViewModel(
      * @param messageId The ID of the selected message.
      * @return The [Message] with the ID, if it exists.
      */
-    public fun getMessageWithId(messageId: String): Message? {
-        return messageListController.getMessageWithId(messageId)
+    public fun getMessageById(messageId: String): Message? {
+        return messageListController.getMessageById(messageId)
     }
 
     /**

@@ -1889,9 +1889,9 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun getCurrentMessagesState ()Lio/getstream/chat/android/common/messagelist/MessageListState;
 	public final fun getDeletedMessageVisibilityState ()Lio/getstream/chat/android/common/state/DeletedMessageVisibility;
 	public final fun getMessageActions ()Ljava/util/Set;
+	public final fun getMessageById (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 	public final fun getMessageFooterVisibilityState ()Lio/getstream/chat/android/common/state/MessageFooterVisibility;
 	public final fun getMessageMode ()Lio/getstream/chat/android/common/state/MessageMode;
-	public final fun getMessageWithId (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 	public final fun getShowSystemMessagesState ()Z
 	public final fun getTypingUsers ()Ljava/util/List;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
