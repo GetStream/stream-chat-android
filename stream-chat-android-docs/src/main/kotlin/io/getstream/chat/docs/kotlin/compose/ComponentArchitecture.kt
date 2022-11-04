@@ -68,7 +68,7 @@ private object ComponentArchitectureBoundComponentUsageSnippet {
                 QuerySortByField.descByName("last_updated"),
                 Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId() ?: ""))
+                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
                 )
             )
         }

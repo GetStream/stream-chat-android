@@ -15,7 +15,7 @@ public class HandlingUserConnection {
         user.setImage("https://bit.ly/321RmWb");
 
         // Check if the user is not already set
-        if (ChatClient.instance().getCurrentUserId() == null) {
+        if (ChatClient.instance().getCurrentUser() == null) {
             ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
                     .enqueue((result) -> {
                         if (result.isSuccess()) {

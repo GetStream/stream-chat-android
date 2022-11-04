@@ -27,7 +27,7 @@ class BuildingAChannelListScreen: Fragment() {
         val channelListFactory: ChannelListViewModelFactory = ChannelListViewModelFactory(
             filter = Filters.and(
                 Filters.eq("type", "messaging"),
-                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId()!!)),
+                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
             ),
             sort = QuerySortByField.descByName("lastUpdated"),
             limit = 30,

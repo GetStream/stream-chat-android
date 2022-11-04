@@ -30,7 +30,7 @@ public class BuildingAChannelListScreen extends Fragment {
 
         FilterObject filter = Filters.and(
                 Filters.eq("type", "messaging"),
-                Filters.in("members", Collections.singletonList(ChatClient.instance().getCurrentUserId()))
+                Filters.in("members", Collections.singletonList(ChatClient.instance().getCurrentUser().getId()))
         );
 
         ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()

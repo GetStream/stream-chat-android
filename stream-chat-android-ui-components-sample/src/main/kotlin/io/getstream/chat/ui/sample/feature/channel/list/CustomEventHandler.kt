@@ -84,7 +84,7 @@ class CustomChatEventHandler(channels: StateFlow<Map<String, Channel>?>) :
 
     private fun handleChannelUpdate(channel: Channel): EventHandlingResult {
         val hasMember = channel.members.any { member ->
-            ChatClient.instance().getCurrentUserId() == member.getUserId()
+            ChatClient.instance().getCurrentUser()?.id == member.getUserId()
         }
 
         return if (hasMember) {

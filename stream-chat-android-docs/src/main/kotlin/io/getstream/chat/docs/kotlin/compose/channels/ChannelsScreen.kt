@@ -80,7 +80,7 @@ private object ChannelsScreenCustomizationSnippet {
                         viewModelFactory = ChannelViewModelFactory(
                             filters = Filters.and(
                                 Filters.eq("type", "messaging"),
-                                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId() ?: ""))
+                                Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
                             ),
                             querySort = QuerySortByField.descByName("last_updated"),
                             channelLimit = 30,

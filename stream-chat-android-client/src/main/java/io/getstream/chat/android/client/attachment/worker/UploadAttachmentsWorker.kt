@@ -57,7 +57,7 @@ public class UploadAttachmentsWorker(
     }
 
     private suspend fun sendAttachments(message: Message): Result<Unit> {
-        if (chatClient.getCurrentUserId() == null) {
+        if (chatClient.getCurrentUser() == null) {
             if (!chatClient.containsStoredCredentials()) {
                 return Result.error(ChatError("Could not set user"))
             }

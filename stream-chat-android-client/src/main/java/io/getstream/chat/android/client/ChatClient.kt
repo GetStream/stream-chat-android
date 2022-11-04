@@ -1169,7 +1169,7 @@ internal constructor(
     }
 
     private suspend fun disconnectUserSuspend(flushPersistence: Boolean) {
-        val userId = getCurrentUserId()
+        val userId = getCurrentUser()?.id
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
         notifications.onLogout(flushPersistence)
@@ -1670,7 +1670,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        val userId = getCurrentUserId()
+        val userId = getCurrentUser()?.id
         val scopedUserId = userScope.userId.value
         val isConnectionRequired = request.watch || request.presence
         logger.d {
@@ -2342,12 +2342,8 @@ internal constructor(
         }.getOrNull()
     }
 
-    internal fun getCurrentUser(): User? {
+    public fun getCurrentUser(): User? {
         return runCatching { userStateService.state.userOrError() }.getOrNull()
-    }
-
-    public fun getCurrentUserId(): String? {
-        return getCurrentUser()?.id
     }
 
     public fun getCurrentToken(): String? {

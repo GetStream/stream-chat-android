@@ -40,7 +40,7 @@ private class ChannelListViewSnippets : Fragment() {
             ChannelListViewModelFactory(
                 filter = Filters.and(
                     Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUserId()!!)),
+                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
                 ),
                 sort = ChannelListViewModel.DEFAULT_SORT,
                 limit = 30,

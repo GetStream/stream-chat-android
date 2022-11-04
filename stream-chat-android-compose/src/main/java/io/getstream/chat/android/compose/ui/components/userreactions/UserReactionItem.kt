@@ -58,7 +58,7 @@ public fun UserReactionItem(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val isMine = user.id == ChatClient.instance().getCurrentUserId()
+        val isMine = user.id == ChatClient.instance().getCurrentUser()?.id
         val isStartAlignment = ChatTheme.messageOptionsUserReactionAlignment.isStartAlignment(isMine)
         val alignment = if (isStartAlignment) Alignment.BottomStart else Alignment.BottomEnd
 

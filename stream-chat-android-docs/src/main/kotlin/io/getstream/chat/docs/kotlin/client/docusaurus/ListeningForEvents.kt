@@ -42,7 +42,7 @@ class ListeningForEventsSnippets {
             val channelClient = chatClient.channel("messaging", "general")
             channelClient.subscribeFor<NotificationRemovedFromChannelEvent>(viewLifecycleOwner) { event ->
                 val removedUserId = event.member.user.id
-                val currentUserId = chatClient.getCurrentUserId()
+                val currentUserId = chatClient.getCurrentUser()?.id
                 if (removedUserId == currentUserId) {
                     // Close the current chat screen as the current user has been removed
                     requireActivity().onBackPressedDispatcher.onBackPressed()
