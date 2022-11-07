@@ -29,7 +29,7 @@ public class UnreadCounts {
             User user = new User();
             user.setId("user-id");
             client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     User userRes = ((Result.Success<ConnectionData>) result).getValue().getUser();
                     int unreadChannels = userRes.getUnreadChannels();
                     int totalUnreadCount = userRes.getTotalUnreadCount();
@@ -41,7 +41,7 @@ public class UnreadCounts {
 
         public void markRead() {
             channelClient.markRead().enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Messages in the channel marked as read
                 } else {
                     // Handle error
@@ -89,7 +89,7 @@ public class UnreadCounts {
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // readState is the list of read states for each user on the channel
                     List<ChannelUserRead> readState = ((Result.Success<Channel>) result).getValue().getRead();
                 } else {
@@ -103,7 +103,7 @@ public class UnreadCounts {
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Unread count for the current user
                     Integer unreadCount = ((Result.Success<Channel>) result).getValue().getUnreadCount();
                 } else {
@@ -122,7 +122,7 @@ public class UnreadCounts {
             }
 
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Unread mentions
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                     Integer unreadCount = ChannelExtensionKt.countUnreadMentionsForUser(channel, currentUser);
@@ -134,7 +134,7 @@ public class UnreadCounts {
 
         public void markAllAsRead() {
             client.markAllRead().enqueue((result) -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Handle success
                 } else {
                     // Handle error

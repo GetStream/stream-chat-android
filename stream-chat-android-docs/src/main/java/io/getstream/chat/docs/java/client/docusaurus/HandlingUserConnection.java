@@ -19,7 +19,7 @@ public class HandlingUserConnection {
         if (ChatClient.instance().getCurrentUser() == null) {
             ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
                     .enqueue((result) -> {
-                        if (result instanceof Result.Success) {
+                        if (result.isSuccess()) {
                             // Handle success
                         } else {
                             // Handle error
@@ -31,7 +31,7 @@ public class HandlingUserConnection {
     public void disconnectTheUser() {
         boolean flushPersistence = false;
         ChatClient.instance().disconnect(flushPersistence).enqueue((result) -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 // Handle success
             } else {
                 // Handle error
@@ -48,7 +48,7 @@ public class HandlingUserConnection {
         // Connect the first user
         ChatClient.instance().connectUser(user1, "userToken") // Replace with a real token
                 .enqueue((result) -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // Handle success
                     } else {
                         // Handle error
@@ -62,7 +62,7 @@ public class HandlingUserConnection {
 
         ChatClient.instance().switchUser(user2, "userToken") // Replace with a real token
                 .enqueue((result) -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // Handle success
                     } else {
                         // Handle error

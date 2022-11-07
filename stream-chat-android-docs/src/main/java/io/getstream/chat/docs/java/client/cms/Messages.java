@@ -45,7 +45,7 @@ public class Messages {
             message.setText("Josh, I told them I was pesca-pescatarian. Which is one who eats solely fish who eat other fish.");
 
             channelClient.sendMessage(message).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Message sentMessage = ((Result.Success<Message>) result).getValue();
                 } else {
                     // Handle error
@@ -77,7 +77,7 @@ public class Messages {
          */
         public void getAMessage() {
             channelClient.getMessage("message-id").enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Message message = ((Result.Success<Message>) result).getValue();
                 } else {
                     // Handle error
@@ -94,7 +94,7 @@ public class Messages {
 
             // Send the message to the channel
             channelClient.updateMessage(message).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Message updatedMessage = ((Result.Success<Message>) result).getValue();
                 } else {
                     // Handle error
@@ -108,7 +108,7 @@ public class Messages {
 
             // Send the message to the channel
             channelClient.updateMessage(message).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Message updatedMessage = ((Result.Success<Message>) result).getValue();
                 } else {
                     // Handle error
@@ -121,7 +121,7 @@ public class Messages {
          */
         public void deleteAMessage() {
             channelClient.deleteMessage("message-id", false).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Message deletedMessage = ((Result.Success<Message>) result).getValue();
                 } else {
                     // Handle error
@@ -154,7 +154,7 @@ public class Messages {
 
             // Upload an image without detailed progress
             channelClient.sendImage(imageFile).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Successful upload, you can now attach this image
                     // to a message that you then send to a channel
                     String imageUrl = ((Result.Success<UploadedImage>) result).getValue().getFile();
@@ -228,7 +228,7 @@ public class Messages {
 
             boolean enforceUnique = false; // Don't remove other existing reactions
             channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Reaction sentReaction = ((Result.Success<Reaction>) result).getValue();
                 } else {
                     // Handle error
@@ -238,7 +238,7 @@ public class Messages {
             // Add reaction 'like' and replace all other reactions of this user by it
             enforceUnique = true;
             channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Reaction sentReaction = ((Result.Success<Reaction>) result).getValue();
                 } else {
                     // Handle error
@@ -252,7 +252,7 @@ public class Messages {
         public void removeAReaction() {
             String reactionType = "like";
             channelClient.deleteReaction("message-id", reactionType).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Message message = ((Result.Success<Message>) result).getValue();
                 } else {
                     // Handle error
@@ -268,7 +268,7 @@ public class Messages {
             int offset = 0;
             int limit = 10;
             channelClient.getReactions("message-id", offset, limit).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Reaction> reactions = ((Result.Success<List<Reaction>>) result).getValue();
                 } else {
                     // Handle error
@@ -311,7 +311,7 @@ public class Messages {
 
             // Send the message to the channel
             channelClient.sendMessage(message).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Message sentMessage = ((Result.Success<Message>) result).getValue();
                 } else {
                     // Handle error
@@ -326,7 +326,7 @@ public class Messages {
             int limit = 20;
             // Retrieve the first 20 messages inside the thread
             client.getReplies(parentMessage.getId(), limit).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Message> replies = ((Result.Success<List<Message>>) result).getValue();
                 } else {
                     // Handle error
@@ -383,7 +383,7 @@ public class Messages {
                     null,
                     null
             ).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Message> messages = ((Result.Success<SearchMessagesResult>) result).getValue().getMessages();
                 } else {
                     // Handle error
@@ -424,7 +424,7 @@ public class Messages {
 
         public void retrievePinnedMessages() {
             channelClient.query(new QueryChannelRequest()).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Message> pinnedMessages = ((Result.Success<Channel>) result).getValue().getPinnedMessages();
                 } else {
                     // Handle error
@@ -436,7 +436,7 @@ public class Messages {
             // List the first page of pinned messages, pinned before now, of the channel with descending direction (newest on top)
             channelClient.getPinnedMessages(10, QuerySortByField.descByName("pinnedAt"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
                     .enqueue(result -> {
-                        if (result instanceof Result.Success) {
+                        if (result.isSuccess()) {
                             List<Message> pinnedMessages = ((Result.Success<List<Message>>) result).getValue();
                         } else {
                             // Handle error
@@ -448,7 +448,7 @@ public class Messages {
             // List the next page of pinned messages
             channelClient.getPinnedMessages(10, QuerySortByField.descByName("pinnedAt"), new PinnedMessagesPagination.BeforeDate(nextDate, false))
                     .enqueue(result -> {
-                        if (result instanceof Result.Success) {
+                        if (result.isSuccess()) {
                             List<Message> pinnedMessages = ((Result.Success<List<Message>>) result).getValue();
                         } else {
                             // Handle error
@@ -470,10 +470,10 @@ public class Messages {
             message.setText("Hello, I would like to have more information about your product.");
 
             channelClient.sendMessage(message).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     String messageId = ((Result.Success<Message>) result).getValue().getId();
                     client.translate(messageId, "fr").enqueue(translationResult -> {
-                        if (result instanceof Result.Success) {
+                        if (result.isSuccess()) {
                             Message translatedMessage = ((Result.Success<Message>) result).getValue();
                             String translation = translatedMessage.getI18n().get("fr_text");
                         }

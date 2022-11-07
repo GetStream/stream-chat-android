@@ -30,7 +30,7 @@ public class UserPresence {
         user.setId("user-id");
         user.setInvisible(true);
         client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 User userRes = ((Result.Success<ConnectionData>) result).getValue().getUser();
             } else {
                 // Handle error
@@ -50,7 +50,7 @@ public class UserPresence {
         watchRequest.setPresence(true);
         watchRequest.getData().put("members", Arrays.asList("john", "jack"));
         channelClient.watch(watchRequest).enqueue(result -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 Channel channel = ((Result.Success<Channel>) result).getValue();
             } else {
                 // Handle error
@@ -76,7 +76,7 @@ public class UserPresence {
                 memberLimit
         );
         client.queryChannels(channelsRequest).enqueue(result -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
             } else {
                 // Handle error
@@ -90,7 +90,7 @@ public class UserPresence {
         QueryUsersRequest usersQuery = new QueryUsersRequest(usersFilter, usersOffset, usersLimit);
         usersQuery.setPresence(true);
         client.queryUsers(usersQuery).enqueue(result -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 List<User> users = ((Result.Success<List<User>>) result).getValue();
             } else {
                 // Handle error

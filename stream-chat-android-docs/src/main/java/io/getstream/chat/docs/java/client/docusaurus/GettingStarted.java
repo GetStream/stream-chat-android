@@ -59,7 +59,7 @@ public class GettingStarted {
 
         ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
                 .enqueue((result) -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // Handle success
                     } else {
                         // Handle error

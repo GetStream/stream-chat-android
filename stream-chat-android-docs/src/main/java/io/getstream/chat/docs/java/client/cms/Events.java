@@ -118,7 +118,7 @@ public class Events {
 
             // Send a custom event to all users watching the channel
             channelClient.sendEvent("friendship_request", extraData).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     ChatEvent channel = ((Result.Success<ChatEvent>) result).getValue();
                 } else {
                     // Handle error

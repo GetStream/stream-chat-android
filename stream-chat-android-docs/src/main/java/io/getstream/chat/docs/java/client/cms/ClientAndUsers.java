@@ -51,7 +51,7 @@ public class ClientAndUsers {
             // 1. Setup the current user with a JWT token
             String token = "{{ chat_user_token }}";
             client.connectUser(user, token).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Logged in
                     User userRes = ((Result.Success<ConnectionData>) result).getValue().getUser();
                     String connectionId = ((Result.Success<ConnectionData>) result).getValue().getConnectionId();
@@ -150,7 +150,7 @@ public class ClientAndUsers {
             QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
 
             client.queryUsers(request).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<User> users = ((Result.Success<List<User>>) result).getValue();
                 } else {
                     // Handle error
@@ -201,7 +201,7 @@ public class ClientAndUsers {
             String token = "token";
 
             client.disconnect(true).enqueue(disconnectResult -> {
-                if (disconnectResult instanceof Result.Success) {
+                if (disconnectResult.isSuccess()) {
                     client.connectUser(user, token).enqueue(loginResult -> { /* ... */ });
                 } else {
                     // Handle result error

@@ -25,7 +25,7 @@ public class Attachments {
         message.setAttachments(Collections.singletonList(attachment));
 
         ChatClient.instance().sendMessage("messaging", "general", message, false).enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // Handle success
                     } else {
                         // Handle error

@@ -42,6 +42,8 @@ public class io/getstream/chat/android/client/errors/ChatError {
 }
 
 public abstract class io/getstream/chat/android/client/utils/Result {
+	public final fun isFailure ()Z
+	public final fun isSuccess ()Z
 	public final synthetic fun map (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public final synthetic fun mapSuspend (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun toUnitResult ()Lio/getstream/chat/android/client/utils/Result;

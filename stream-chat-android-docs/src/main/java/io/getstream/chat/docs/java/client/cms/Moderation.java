@@ -31,7 +31,7 @@ public class Moderation {
 
             public void flag() {
                 client.flagMessage("message-id").enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // Message was flagged
                         Flag flag = ((Result.Success<Flag>) result).getValue();
                     } else {
@@ -40,7 +40,7 @@ public class Moderation {
                 });
 
                 client.flagUser("user-id").enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // User was flagged
                         Flag flag = ((Result.Success<Flag>) result).getValue();
                     } else {
@@ -57,7 +57,7 @@ public class Moderation {
 
             public void mutes() {
                 client.muteUser("user-id").enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // User was muted
                         Mute mute = ((Result.Success<Mute>) result).getValue();
                     } else {
@@ -66,7 +66,7 @@ public class Moderation {
                 });
 
                 client.unmuteUser("user-id").enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // User was unmuted
                     } else {
                         // Handle error
@@ -84,7 +84,7 @@ public class Moderation {
             public void banUser() {
                 // Ban user for 60 minutes from a channel
                 channelClient.banUser("user-id", "Bad words", 60).enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // User was banned
                     } else {
                         // Handle error
@@ -92,7 +92,7 @@ public class Moderation {
                 });
 
                 channelClient.unbanUser("user-id").enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // User was unbanned
                     } else {
                         // Handle error
@@ -111,7 +111,7 @@ public class Moderation {
                 FilterObject filter = Filters.eq("banned", true);
                 QueryUsersRequest request = new QueryUsersRequest(filter, 0, 10);
                 client.queryUsers(request).enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         List<User> users = ((Result.Success<List<User>>) result).getValue();
                     } else {
                         // Handle error
@@ -121,7 +121,7 @@ public class Moderation {
                 // Query for banned members from one channel
                 FilterObject channelFilter = Filters.eq("channel_cid", "ChannelType:ChannelId");
                 client.queryBannedUsers(channelFilter).enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         List<BannedUser> bannedUsers = ((Result.Success<List<BannedUser>>) result).getValue();
                     } else {
                         // Handle error
@@ -134,7 +134,7 @@ public class Moderation {
                 FilterObject filter = Filters.eq("channel_cid", "livestream:123");
                 QuerySorter<BannedUsersSort> sort = QuerySortByField.descByName("createdAt");
                 client.queryBannedUsers(filter, sort).enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         List<BannedUser> bannedUsers = ((Result.Success<List<BannedUser>>) result).getValue();
                     } else {
                         // Handle error
@@ -143,7 +143,7 @@ public class Moderation {
 
                 // Get the page of bans which where created before or equal date for the same channel
                 client.queryBannedUsers(filter, sort, null, null, null, null, null, new Date()).enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         List<BannedUser> bannedUsers = ((Result.Success<List<BannedUser>>) result).getValue();
                     } else {
                         // Handle error
@@ -160,7 +160,7 @@ public class Moderation {
             public void shadowBanUser() {
                 // Shadow ban user for 60 minutes from a channel
                 channelClient.shadowBanUser("user-id", "Bad words", 60).enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // User was shadow banned
                     } else {
                         // Handle error
@@ -168,7 +168,7 @@ public class Moderation {
                 });
 
                 channelClient.removeShadowBan("user-id").enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // Shadow ban was removed
                     } else {
                         // Handle error

@@ -18,7 +18,7 @@ public class CoreConcepts {
     public void runningCallsAsynchronously(ChannelClient channelClient, Message message) {
         // Safe to call from the main thread
         channelClient.sendMessage(message).enqueue((result) -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 Message sentMessage = ((Result.Success<Message>) result).getValue();
             } else {
                 // Handle error
@@ -27,10 +27,10 @@ public class CoreConcepts {
     }
 
     public void errorHandling(Result<Channel> result) {
-        Boolean isSuccess = result instanceof Result.Success;
-        Boolean isFailure = result instanceof Result.Failure;
+        Boolean isSuccess = result.isSuccess();
+        Boolean isFailure = result.isFailure();
 
-        if (result instanceof Result.Success) {
+        if (result.isSuccess()) {
             // Handle success
         } else {
             // Handle error

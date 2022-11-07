@@ -24,6 +24,18 @@ import io.getstream.chat.android.client.errors.ChatError
 public sealed class Result<out A : Any> {
 
     /**
+     * Checks if the result is a [Success].
+     */
+    public val isSuccess: Boolean
+        inline get() = this is Success
+
+    /**
+     * Check if the result is a [Failure].
+     */
+    public val isFailure: Boolean
+        inline get() = this is Failure
+
+    /**
      * Represents successful result.
      *
      * @param value The [A] data associated with the result.

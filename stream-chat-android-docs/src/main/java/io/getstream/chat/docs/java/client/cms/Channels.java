@@ -54,7 +54,7 @@ public class Channels {
 
             channelClient.create(memberIds, extraData)
                     .enqueue(result -> {
-                        if (result instanceof Result.Success) {
+                        if (result.isSuccess()) {
                             Channel newChannel = ((Result.Success<Channel>) result).getValue();
                         } else {
                             // Handle error
@@ -75,7 +75,7 @@ public class Channels {
 
             channelClient.create(memberIds, extraData)
                     .enqueue(result -> {
-                        if (result instanceof Result.Success) {
+                        if (result.isSuccess()) {
                             Channel newChannel = ((Result.Success<Channel>) result).getValue();
                         } else {
                             // Handle error
@@ -92,7 +92,7 @@ public class Channels {
             ChannelClient channelClient = client.channel("messaging", "general");
 
             channelClient.watch().enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -117,7 +117,7 @@ public class Channels {
 
             // Run query on ChatClient
             client.queryChannels(request).enqueue((result) -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
                 } else {
                     // Handle error
@@ -130,7 +130,7 @@ public class Channels {
          */
         public void unwatchAChannel() {
             channelClient.stopWatching().enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Channel unwatched
                 } else {
                     // Handle error
@@ -141,7 +141,7 @@ public class Channels {
         public void watcherCount() {
             QueryChannelRequest request = new QueryChannelRequest().withState();
             channelClient.query(request).enqueue((result) -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                     channel.getWatcherCount();
                 } else {
@@ -155,7 +155,7 @@ public class Channels {
             int offset = 0;
             QueryChannelRequest request = new QueryChannelRequest().withWatchers(limit, offset);
             channelClient.query(request).enqueue((result) -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                     List<User> watchers = channel.getWatchers();
                 } else {
@@ -247,7 +247,7 @@ public class Channels {
             updateMessage.setText("Thierry changed the channel color to green");
 
             channelClient.update(updateMessage, channelData).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -269,7 +269,7 @@ public class Channels {
 
             // Add members with ids "thierry" and "josh"
             channelClient.addMembers(Arrays.asList("thierry", "josh"), null).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -278,7 +278,7 @@ public class Channels {
 
             // Remove member with id "tommaso"
             channelClient.removeMembers(Arrays.asList("tommaso"), null).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -296,7 +296,7 @@ public class Channels {
             addMemberSystemMessage.setText("Thierry and Josh were added to this channel");
             // Add members with ids "thierry" and "josh"
             channelClient.addMembers(Arrays.asList("thierry", "josh"), addMemberSystemMessage).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -307,7 +307,7 @@ public class Channels {
             addMemberSystemMessage.setText("Tommaso was removed from this channel");
             // Remove member with id "tommaso"
             channelClient.removeMembers(Arrays.asList("tommaso"), removeMemberSystemMessage).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -336,7 +336,7 @@ public class Channels {
                     .withState();
 
             client.queryChannels(request).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
                 } else {
                     // Handle error
@@ -374,7 +374,7 @@ public class Channels {
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
 
             client.queryChannels(request).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
                 } else {
                     // Handle error
@@ -385,7 +385,7 @@ public class Channels {
             int nextOffset = 10; // Skips first 10
             QueryChannelsRequest nextRequest = new QueryChannelsRequest(filter, nextOffset, limit, sort, messageLimit, memberLimit);
             client.queryChannels(nextRequest).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
                 } else {
                     // Handle error
@@ -408,7 +408,7 @@ public class Channels {
             // paginate by user_id in descending order
             QuerySorter<Member> sort = QuerySortByField.descByName("userId");
             channelClient.queryMembers(offset, limit, filterByName, sort, emptyList()).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Member> members = ((Result.Success<List<Member>>) result).getValue();
                 } else {
                     // Handle error
@@ -418,7 +418,7 @@ public class Channels {
             // paginate by created at in ascending order
             QuerySorter<Member> createdAtSort = QuerySortByField.ascByName("createdAt");
             channelClient.queryMembers(offset, limit, filterByName, createdAtSort, emptyList()).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Member> members = ((Result.Success<List<Member>>) result).getValue();
                 } else {
                     // Handle error
@@ -438,7 +438,7 @@ public class Channels {
             FilterObject filterByName = Filters.eq("name", "tommaso");
             // 2. Call queryMembers with that filter
             channelClient.queryMembers(offset, limit, filterByName, sort, emptyList()).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Member> members = ((Result.Success<List<Member>>) result).getValue();
                 } else {
                     // Handle error
@@ -488,7 +488,7 @@ public class Channels {
                     .withMessages(pageSize);
 
             channelClient.query(request).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Message> messages = ((Result.Success<Channel>) result).getValue().getMessages();
                     if (messages.size() < pageSize) {
                         // All messages loaded
@@ -514,7 +514,7 @@ public class Channels {
             ChannelClient channelClient = client.channel("messaging", "general");
 
             channelClient.query(new QueryChannelRequest()).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
 
                     Set<String> capabilities = channel.getOwnCapabilities();
@@ -543,7 +543,7 @@ public class Channels {
             data.put("invites", Arrays.asList("nick"));
 
             channelClient.create(memberIds, data).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -556,7 +556,7 @@ public class Channels {
          */
         public void acceptingAnInvite() {
             channelClient.acceptInvite("Nick joined this channel!").enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -569,7 +569,7 @@ public class Channels {
          */
         public void rejectingAnInvite() {
             channelClient.rejectInvite().enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Invite rejected
                 } else {
                     // Handle error
@@ -590,7 +590,7 @@ public class Channels {
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
 
             client.queryChannels(request).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Channel> channel = ((Result.Success<List<Channel>>) result).getValue();
                 } else {
                     // Handle error
@@ -611,7 +611,7 @@ public class Channels {
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
 
             client.queryChannels(request).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Channel> channel = ((Result.Success<List<Channel>>) result).getValue();
                 } else {
                     // Handle error
@@ -632,7 +632,7 @@ public class Channels {
             QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
 
             client.queryChannels(request).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<Channel> channel = ((Result.Success<List<Channel>>) result).getValue();
                 } else {
                     // Handle error
@@ -655,7 +655,7 @@ public class Channels {
                 // Mute a channel
                 ChannelClient channelClient = client.channel("messaging", "general");
                 channelClient.mute().enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // Channel is muted
                     } else {
                         // Handle error
@@ -666,7 +666,7 @@ public class Channels {
                 User user = new User();
                 user.setId("user-id");
                 client.connectUser(user, "token").enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // Result contains the list of channel mutes
                         List<ChannelMute> mutes = ((Result.Success<ConnectionData>) result).getValue().getUser().getChannelMutes();
                     } else {
@@ -721,7 +721,7 @@ public class Channels {
                         sort,
                         messageLimit,
                         memberLimit)).enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
                     } else {
                         // Handle error
@@ -735,7 +735,7 @@ public class Channels {
             public void removeAChannelMute() {
                 // Unmute channel for current user
                 channelClient.unmute().enqueue(result -> {
-                    if (result instanceof Result.Success) {
+                    if (result.isSuccess()) {
                         // Channel is unmuted
                     } else {
                         // Handle error
@@ -750,7 +750,7 @@ public class Channels {
         public void hidingAChannel() {
             // Hides the channel until a new message is added there
             channelClient.hide(false).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Channel is hidden
                 } else {
                     // Handle error
@@ -759,7 +759,7 @@ public class Channels {
 
             // Shows a previously hidden channel
             channelClient.show().enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Channel is shown
                 } else {
                     // Handle error
@@ -768,7 +768,7 @@ public class Channels {
 
             // Hide the channel and clear the message history
             channelClient.hide(true).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Channel is hidden
                 } else {
                     // Handle error
@@ -789,7 +789,7 @@ public class Channels {
             List<String> unset = new ArrayList<>();
 
             channelClient.updatePartial(set, unset).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -804,7 +804,7 @@ public class Channels {
             unset.add("freeze");
 
             channelClient.updatePartial(set, unset).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -822,7 +822,7 @@ public class Channels {
             ChannelClient channelClient = client.channel("messaging", "general");
 
             channelClient.delete().enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -840,7 +840,7 @@ public class Channels {
         public void truncateAChannel() {
             // Removes all of the messages of the channel but doesn't affect the channel data or members
             channelClient.truncate().enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     // Channel is truncated
                 } else {
                     // Handle error
@@ -877,7 +877,7 @@ public class Channels {
 
             // Get the cooldown value
             channelClient.query(new QueryChannelRequest()).enqueue(channelResult -> {
-                if (channelResult instanceof Result.Success) {
+                if (channelResult.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) channelResult).getValue();
                     int cooldown = channel.getCooldown();
 

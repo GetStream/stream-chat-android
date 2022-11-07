@@ -64,7 +64,7 @@ public class AndroidIntroduction {
         user.setImage("https://bit.ly/2TIt8NR");
 
         client.connectUser(user, token).enqueue((result) -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 // Handle success
             } else {
                 // Handler error
@@ -84,7 +84,7 @@ public class AndroidIntroduction {
 
         // Creating a channel with the low level client
         channelClient.create(memberIds, extraData).enqueue((result) -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 Channel channel = ((Result.Success<Channel>) result).getValue();
                 // Use channel by calling methods on channelClient
             } else {
@@ -122,7 +122,7 @@ public class AndroidIntroduction {
 
 
         channelClient.sendMessage(message).enqueue((result) -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 Message sentMessage = ((Result.Success<Message>) result).getValue();
             } else {
                 // Handle error
@@ -144,7 +144,7 @@ public class AndroidIntroduction {
         QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit).withWatch().withState();
 
         client.queryChannels(request).enqueue((result) -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
             } else {
                 // Handle error

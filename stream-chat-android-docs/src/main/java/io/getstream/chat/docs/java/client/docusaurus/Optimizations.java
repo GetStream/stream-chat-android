@@ -22,7 +22,7 @@ public class Optimizations {
         Call<List<Channel>> queryChannelsCall = ChatClient.instance().queryChannels(queryChannelsRequest);
         CallExtensions.forceNewRequest(queryChannelsCall);
         queryChannelsCall.enqueue(result -> {
-            if (result instanceof Result.Success) {
+            if (result.isSuccess()) {
                 // Handle success
             } else {
                 // Handle error

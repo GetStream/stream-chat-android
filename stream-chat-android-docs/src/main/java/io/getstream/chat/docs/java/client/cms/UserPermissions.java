@@ -27,7 +27,7 @@ public class UserPermissions {
             List<String> memberIds = new LinkedList<>();
             extraData.put("team", "red");
             client.createChannel("messaging", "red-general", memberIds, extraData).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     Channel channel = ((Result.Success<Channel>) result).getValue();
                 } else {
                     // Handle error
@@ -48,7 +48,7 @@ public class UserPermissions {
             int offset = 0;
             int limit = 1;
             client.queryUsers(new QueryUsersRequest(filter, offset, limit)).enqueue(result -> {
-                if (result instanceof Result.Success) {
+                if (result.isSuccess()) {
                     List<User> users = ((Result.Success<List<User>>) result).getValue();
                 } else {
                     // Handle error
