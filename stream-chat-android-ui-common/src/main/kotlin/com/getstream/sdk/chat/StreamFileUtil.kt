@@ -138,7 +138,7 @@ public object StreamFileUtil {
     ): Result<Uri> {
         return try {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
-                is Result.Failure -> return getOrCreateCacheDirResult
+                is Result.Failure -> getOrCreateCacheDirResult
                 is Result.Success -> {
                     val streamCacheDir = getOrCreateCacheDirResult.value
 
@@ -195,7 +195,7 @@ public object StreamFileUtil {
     ): Result<Uri> {
         val runCatching = kotlin.runCatching {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
-                is Result.Failure -> return getOrCreateCacheDirResult
+                is Result.Failure -> getOrCreateCacheDirResult
                 is Result.Success -> {
                     val streamCacheDir = getOrCreateCacheDirResult.value
 
@@ -204,7 +204,7 @@ public object StreamFileUtil {
 
                     val file = File(streamCacheDir, fileName)
 
-                    return if (file.exists() &&
+                    if (file.exists() &&
                         attachmentHashCode != null &&
                         file.length() == attachment.fileSize.toLong()
                     ) {
