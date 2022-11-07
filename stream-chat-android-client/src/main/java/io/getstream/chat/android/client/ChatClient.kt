@@ -701,21 +701,14 @@ internal constructor(
         return CoroutineCall(clientScope) {
             logger.d { "[connectGuestUser] userId: '$userId', username: '$username'" }
             userScope.userId.value = userId
-            val guestTokenResult = getGuestToken(userId, username).await()
-                .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
 
-            when (guestTokenResult) {
-                is Result.Success -> {
-                    guestTokenResult.value.also { result ->
-                        logger.v {
-                            "[connectAnonymousUser] completed: ${
-                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
-                            }"
-                        }
+            getGuestToken(userId, username).await()
+                .flatMapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
+                .onSuccess { connectionData ->
+                    logger.v {
+                        "[connectGuestUser] completed: ConnectionData(connectionId=${connectionData.connectionId})"
                     }
                 }
-                is Result.Failure -> guestTokenResult
-            }
         }
     }
 
