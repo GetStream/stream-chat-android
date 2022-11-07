@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 
 @Suppress("TooManyFunctions", "LongParameterList")
-internal class ChatSocket private constructor(
+internal open class ChatSocket(
     private val apiKey: String,
     private val wssUrl: String,
     private val tokenManager: TokenManager,
@@ -299,24 +299,5 @@ internal class ChatSocket private constructor(
 
     companion object {
         private const val DEFAULT_CONNECTION_TIMEOUT = 60_000L
-
-        fun create(
-            apiKey: String,
-            wssUrl: String,
-            tokenManager: TokenManager,
-            socketFactory: SocketFactory,
-            coroutineScope: UserScope,
-            lifecycleObserver: StreamLifecycleObserver,
-            networkStateProvider: NetworkStateProvider,
-        ): ChatSocket =
-            ChatSocket(
-                apiKey,
-                wssUrl,
-                tokenManager,
-                socketFactory,
-                coroutineScope,
-                lifecycleObserver,
-                networkStateProvider,
-            )
     }
 }

@@ -206,7 +206,7 @@ internal open class BaseChatModule(
     private fun buildChatSocket(
         chatConfig: ChatClientConfig,
         parser: ChatParser,
-    ) = ChatSocket.create(
+    ) = ChatSocket(
         chatConfig.apiKey,
         chatConfig.wssUrl,
         tokenManager,
