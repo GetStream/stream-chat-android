@@ -67,14 +67,13 @@ internal class TotalUnreadCountTest {
     fun setUp() {
         data = TestDataHelper()
         userStateFlow = MutableStateFlow(data.user1)
-        clientMutableState = mock {
-            on(it.user) doReturn userStateFlow
-        }
+        clientMutableState = mock()
 
         globalMutableState = mock {
             on(it.channelMutes) doReturn MutableStateFlow(emptyList())
             on(it.totalUnreadCount) doReturn totalUnreadCount
             on(it.channelUnreadCount) doReturn channelUnreadCount
+            on(it.user) doReturn userStateFlow
         }
         GlobalMutableState.instance = globalMutableState
     }

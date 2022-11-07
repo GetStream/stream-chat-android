@@ -83,6 +83,7 @@ import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -133,6 +134,7 @@ public class MessageListController(
     public val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    globalState: GlobalState = chatClient.globalState,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
@@ -176,7 +178,7 @@ public class MessageListController(
     /**
      * Gives us information about the logged in user state.
      */
-    public val user: StateFlow<User?> = clientState.user
+    public val user: StateFlow<User?> = globalState.user
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.

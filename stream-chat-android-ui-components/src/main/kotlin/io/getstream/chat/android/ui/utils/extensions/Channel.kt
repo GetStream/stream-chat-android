@@ -20,12 +20,13 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.uiutils.extension.getMembersStatusText
 
 internal fun Channel.isCurrentUserBanned(): Boolean {
-    val currentUserId = ChatClient.instance().getCurrentUser()?.id ?: return false
+    val currentUserId = ChatClient.instance().globalState.user.value?.id ?: return false
     return members.any { it.user.id == currentUserId && it.banned }
 }
 

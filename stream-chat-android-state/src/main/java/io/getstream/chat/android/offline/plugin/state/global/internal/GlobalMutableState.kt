@@ -22,6 +22,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
@@ -41,6 +42,8 @@ public class GlobalMutableState private constructor(
     private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
     private val _typingChannels = MutableStateFlow(emptyMap<String, TypingEvent>())
 
+    private val _user = MutableStateFlow<User?>(null)
+
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount
 
     override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount
@@ -53,12 +56,14 @@ public class GlobalMutableState private constructor(
 
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels
 
+    override val user: StateFlow<User?> = _user
+
     public companion object {
+
         @InternalStreamChatApi
         @VisibleForTesting
         @Volatile
         public var instance: GlobalMutableState? = null
-
         /**
          * Gets the singleton of [GlobalMutableState] or creates it in the first call.
          */
@@ -79,6 +84,10 @@ public class GlobalMutableState private constructor(
 
         _mutedUsers.value = emptyList()
         _channelMutes.value = emptyList()
+    }
+
+    override fun setUser(user: User) {
+        _user.value = user
     }
 
     override fun setTotalUnreadCount(totalUnreadCount: Int) {

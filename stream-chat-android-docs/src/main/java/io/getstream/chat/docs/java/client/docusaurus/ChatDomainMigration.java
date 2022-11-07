@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import java.util.Collections;
 
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.ClientExtensionsKt;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
@@ -175,7 +176,7 @@ public class ChatDomainMigration {
 
         String cid = "cid";
         // New approach of leaving channel
-        User currentUser = chatClient.getCurrentUser();
+        User currentUser = ChatClientExtensions.getGlobalState(chatClient).getUser().getValue();
         if (currentUser != null) {
             chatClient.channel(cid).removeMembers(Collections.singletonList(currentUser.getId()), null).enqueue(result -> {
                 if (result.isSuccess()) {

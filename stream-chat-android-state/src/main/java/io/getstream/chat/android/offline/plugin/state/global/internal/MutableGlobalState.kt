@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.plugin.state.global.internal
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
@@ -29,6 +30,8 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
 internal interface MutableGlobalState : GlobalState {
 
     val clientState: ClientState
+
+    fun setUser(user: User)
 
     fun setTotalUnreadCount(totalUnreadCount: Int)
 

@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
@@ -94,7 +95,7 @@ object ChatHelper {
         onError: (ChatError) -> Unit = {},
     ) {
         ChatClient.instance().run {
-            if (getCurrentUser() == null) {
+            if (globalState.user.value == null) {
                 connectUser(userCredentials.user, userCredentials.token)
                     .enqueue { result ->
                         if (result.isSuccess) {

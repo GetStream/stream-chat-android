@@ -174,7 +174,7 @@ class ChatDomainMigration {
 
         val cid = "cid"
         // New approach of leaving channel
-        chatClient.getCurrentUser()?.let { currentUser ->
+        chatClient.globalState.user.value?.let { currentUser ->
             chatClient.channel(cid).removeMembers(listOf(currentUser.id)).enqueue { result ->
                 if (result.isSuccess) {
                     // Handle success

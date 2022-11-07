@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.extensions.globalState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -37,7 +38,7 @@ public class ImagePreviewViewModel(
     /**
      * The currently logged in user.
      */
-    public val user: StateFlow<User?> = chatClient.clientState.user
+    public val user: StateFlow<User?> = chatClient.globalState.user
 
     /**
      * Represents the message that we observe to show the UI data.

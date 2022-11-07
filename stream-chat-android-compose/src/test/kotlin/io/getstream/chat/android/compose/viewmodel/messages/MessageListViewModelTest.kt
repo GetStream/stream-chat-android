@@ -126,7 +126,7 @@ internal class MessageListViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
-            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {

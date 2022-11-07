@@ -353,7 +353,7 @@ internal class MessageComposerViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
-            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
             whenever(chatClient.clientState) doReturn clientState
         }
 

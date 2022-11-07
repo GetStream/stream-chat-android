@@ -32,9 +32,10 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -44,7 +45,7 @@ class ChatInfoViewModel(
     private val cid: String?,
     userData: UserData?,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val clientState: ClientState = chatClient.clientState,
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     /**
@@ -67,7 +68,7 @@ class ChatInfoViewModel(
             _state.value = State()
             viewModelScope.launch {
                 // Update channel mute status
-                clientState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
+                globalState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
                 _state.addSource(channelState.flatMapLatest { it.members }.asLiveData()) { memberList ->
                     // Updates only if the user state is already set
@@ -87,7 +88,7 @@ class ChatInfoViewModel(
                     channelClient.queryMembers(
                         offset = 0,
                         limit = 1,
-                        filter = clientState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
+                        filter = globalState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
                         sort = QuerySortByField()
                     ).await()
 

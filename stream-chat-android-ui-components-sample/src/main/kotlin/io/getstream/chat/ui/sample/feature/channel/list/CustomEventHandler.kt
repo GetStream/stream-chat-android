@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.flow.StateFlow
 
@@ -37,7 +38,7 @@ class CustomChatEventHandlerFactory : ChatEventHandlerFactory() {
 }
 
 class CustomChatEventHandler(channels: StateFlow<Map<String, Channel>?>) :
-    DefaultChatEventHandler(channels, ChatClient.instance().clientState) {
+    DefaultChatEventHandler(channels, ChatClient.instance().clientState, ChatClient.instance().globalState) {
 
     override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
         return when (event) {

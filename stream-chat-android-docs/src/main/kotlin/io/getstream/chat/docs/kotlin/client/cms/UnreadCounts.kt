@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.extensions.countUnreadMentionsForUser
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.offline.extensions.globalState
 
 class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
 
@@ -112,7 +113,7 @@ class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
         fun unreadMentions() {
             // Get channel
             val queryChannelRequest = QueryChannelRequest().withState()
-            val currentUser = client.getCurrentUser()
+            val currentUser = client.globalState.user.value
             if (currentUser == null) {
                 // Handle user not connected state
                 return

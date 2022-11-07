@@ -94,9 +94,10 @@ internal class SyncManagerTest {
             on(it.getActiveChannelsLogic()) doReturn listOf(channelLogic)
         }
         stateRegistry = mock()
-        globalState = mock()
-        clientState = mock {
+        globalState = mock {
             on(it.user) doReturn MutableStateFlow(user)
+        }
+        clientState = mock {
             on(it.connectionState) doReturn connectionState
         }
         repositoryFacade = mock {

@@ -20,6 +20,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
@@ -58,7 +59,7 @@ class ChatInfoSharedGroupsViewHolder(
             channelAvatarView.setChannel(channel)
             nameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
                 channel = channel,
-                currentUser = ChatClient.instance().getCurrentUser()
+                currentUser = ChatClient.instance().globalState.user.value
             )
             membersCountTextView.text = itemView.context.resources.getQuantityString(
                 R.plurals.members_count_title,

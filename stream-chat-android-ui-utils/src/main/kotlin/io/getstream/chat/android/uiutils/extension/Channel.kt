@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.message.isRegular
 import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.offline.extensions.globalState
 
 /**
  * Returns channel's last regular or system message if exists.
@@ -59,7 +60,7 @@ public fun Channel.getPreviewMessage(currentUser: User?): Message? =
  */
 public fun Channel.getDisplayName(
     context: Context,
-    currentUser: User? = ChatClient.instance().getCurrentUser(),
+    currentUser: User? = ChatClient.instance().globalState.user.value,
     @StringRes fallback: Int,
     maxMembers: Int = 5,
 ): String {
