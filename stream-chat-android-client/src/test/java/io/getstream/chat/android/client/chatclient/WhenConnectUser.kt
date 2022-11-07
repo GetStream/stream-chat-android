@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -59,14 +58,14 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         val result = sut.connectUser(user, "token").await()
 
-        verify(userStateService, times(2)).state
+        verify(userStateService, times(3)).state
         verify(userStateService).onLogout()
         verify(socket).disconnect()
         verifyNoMoreInteractions(socket)
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
         verifyNoInteractions(pluginFactory)
-        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you haven't connected a user already."))
+        result `should be equal to` Result.Failure(ChatError("Failed to connect user. Please check you haven't connected a user already."))
     }
 
     @Test
@@ -161,7 +160,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(Mother.randomUser { id = "userId2" }, "token").enqueue(connectionDataCallback)
         delay(100L)
-        verify(connectionDataCallback).onResult(argThat { isError })
+        verify(connectionDataCallback).onResult(argThat { this is Result.Failure })
     }
 
     inner class Fixture {
@@ -204,7 +203,6 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         fun givenUserAndToken(user: User, token: String) = apply {
             whenever(tokenUtils.getUserId(token)) doReturn user.id
-            whenever(clientState.user) doReturn MutableStateFlow(user)
         }
 
         fun clearSocketInvocations() = apply {

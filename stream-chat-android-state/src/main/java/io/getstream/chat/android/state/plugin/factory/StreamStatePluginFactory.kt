@@ -82,10 +82,11 @@ public class StreamStatePluginFactory(
         val clientState = chatClient.clientState
         val globalState = GlobalMutableState.get(chatClient.clientState).apply {
             clearState()
+            setUser(user)
         }
 
         val stateRegistry = StateRegistry.create(
-            scope.coroutineContext.job, scope, clientState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
+            scope.coroutineContext.job, scope, globalState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )
         val logic = LogicRegistry.create(
             stateRegistry = stateRegistry,
@@ -135,6 +136,7 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             syncManager = syncManager,
             eventHandler = eventHandler,
+            globalState = globalState
         )
     }
 

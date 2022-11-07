@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal class ZipCall<A : Any, B : Any>(
     private val callA: Call<A>,
-    private val callB: Call<B>
+    private val callB: Call<B>,
 ) : Call<Pair<A, B>> {
     private val canceled = AtomicBoolean(false)
 
@@ -41,12 +41,13 @@ internal class ZipCall<A : Any, B : Any>(
     override fun enqueue(callback: Call.Callback<Pair<A, B>>) {
         callA.enqueue { resultA ->
             when {
-                canceled.get() -> { /* no-op */ }
-                resultA.isSuccess -> callB.enqueue { resultB ->
+                canceled.get() -> { /* no-op */
+                }
+                resultA is Result.Success -> callB.enqueue { resultB ->
                     when {
                         canceled.get() -> null
-                        resultB.isSuccess -> resultA.combine(resultB)
-                        else -> getErrorB<A, B>(resultB)
+                        resultB is Result.Success -> resultA.combine(resultB)
+                        else -> getErrorB(resultB)
                     }?.let(callback::onResult)
                 }
                 else -> callback.onResult(getErrorA<A, B>(resultA).also { callB.cancel() })
@@ -55,15 +56,29 @@ internal class ZipCall<A : Any, B : Any>(
     }
 
     private fun <A : Any, B : Any> getErrorA(resultA: Result<A>): Result<Pair<A, B>> {
-        return Result(ChatError("Error executing callA", resultA.error().cause))
+        val cause = when (resultA) {
+            is Result.Failure -> resultA.value.cause
+            is Result.Success -> null
+        }
+
+        return Result.Failure(ChatError("Error executing callA", cause))
     }
 
     private fun <A : Any, B : Any> getErrorB(resultB: Result<B>): Result<Pair<A, B>> {
-        return Result(ChatError("Error executing callB", resultB.error().cause))
+        val cause = when (resultB) {
+            is Result.Failure -> resultB.value.cause
+            is Result.Success -> null
+        }
+        return Result.Failure(ChatError("Error executing callB", cause))
     }
 
-    private fun <A : Any, B : Any> Result<A>.combine(result: Result<B>): Result<Pair<A, B>> =
-        Result(Pair(this.data(), result.data()))
+    private fun <A : Any, B : Any> Result<A>.combine(result: Result<B>): Result<Pair<A, B>> {
+        return if (this is Result.Success && result is Result.Success) {
+            Result.Success(Pair(this.value, result.value))
+        } else {
+            Result.Failure(ChatError("Cannot combine results because one of them failed."))
+        }
+    }
 
     override suspend fun await(): Result<Pair<A, B>> = withContext(DispatcherProvider.IO) {
         val deferredA = async { callA.await() }
@@ -71,14 +86,14 @@ internal class ZipCall<A : Any, B : Any>(
 
         val resultA = deferredA.await()
         if (canceled.get()) return@withContext Call.callCanceledError()
-        if (resultA.isError) {
+        if (resultA is Result.Failure) {
             deferredB.cancel()
             return@withContext getErrorA(resultA)
         }
 
         val resultB = deferredB.await()
         if (canceled.get()) return@withContext Call.callCanceledError()
-        if (resultB.isError) {
+        if (resultB is Result.Failure) {
             return@withContext getErrorB(resultB)
         }
 

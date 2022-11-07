@@ -136,6 +136,7 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -1060,13 +1061,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                     attachment = attachment
                                 )
 
-                                if (result.isSuccess) {
-                                    shareAttachment(
-                                        mediaUri = result.data(),
-                                        attachmentType = attachment.type
+                                when (result) {
+                                    is Result.Success -> shareAttachment(
+                                        mediaUri = result.value,
+                                        attachmentType = attachment.type,
                                     )
-                                } else {
-                                    mediaGalleryPreviewViewModel.promptedAttachment = attachment
+                                    is Result.Failure -> mediaGalleryPreviewViewModel.promptedAttachment = attachment
                                 }
                             }
                             else -> shareAttachment(attachment)
@@ -1320,13 +1320,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
         mediaGalleryPreviewViewModel.isSharingInProgress = false
 
-        if (result.isSuccess) {
-            shareAttachment(
-                mediaUri = result.data(),
-                attachmentType = attachment.type
+        when (result) {
+            is Result.Success -> shareAttachment(
+                mediaUri = result.value,
+                attachmentType = attachment.type,
             )
-        } else {
-            toastFailedShare()
+            is Result.Failure -> toastFailedShare()
         }
     }
 

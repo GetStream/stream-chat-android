@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.plugin.state.global
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import kotlinx.coroutines.flow.StateFlow
 
@@ -26,6 +27,11 @@ import kotlinx.coroutines.flow.StateFlow
  * Global state of [StatePlugin].
  */
 public interface GlobalState {
+
+    /**
+     * The current user in the OfflinePlugin state.
+     */
+    public val user: StateFlow<User?>
 
     /**
      * The total unread message count for the current user.

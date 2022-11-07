@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.offline.plugin.configuration.Config;
@@ -84,10 +85,10 @@ public class AndroidIntroduction {
         // Creating a channel with the low level client
         channelClient.create(memberIds, extraData).enqueue((result) -> {
             if (result.isSuccess()) {
-                Channel channel = result.data();
+                Channel channel = ((Result.Success<Channel>) result).getValue();
                 // Use channel by calling methods on channelClient
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 
@@ -122,9 +123,9 @@ public class AndroidIntroduction {
 
         channelClient.sendMessage(message).enqueue((result) -> {
             if (result.isSuccess()) {
-                Message sentMessage = result.data();
+                Message sentMessage = ((Result.Success<Message>) result).getValue();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
     }
@@ -144,9 +145,9 @@ public class AndroidIntroduction {
 
         client.queryChannels(request).enqueue((result) -> {
             if (result.isSuccess()) {
-                List<Channel> channels = result.data();
+                List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
     }

@@ -117,8 +117,8 @@ internal class QueryChannelsLogic(
     internal suspend fun watchAndAddChannel(cid: String) {
         val result = client.channel(cid = cid).watch().await()
 
-        if (result.isSuccess) {
-            addChannel(result.data())
+        if (result is Result.Success) {
+            addChannel(result.value)
         }
     }
 
@@ -133,12 +133,12 @@ internal class QueryChannelsLogic(
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
+        logger.d { "[onQueryChannelsResult] result.isSuccess: ${result is Result.Success}, request: $request" }
         onOnlineQueryResult(result, request)
 
-        if (result.isSuccess) {
-            logger.d { "Number of returned channels: ${result.data().size}" }
-            updateOnlineChannels(request, result.data())
+        if (result is Result.Success) {
+            logger.d { "Number of returned channels: ${result.value.size}" }
+            updateOnlineChannels(request, result.value)
         }
 
         loadingPerPage(false, request.offset > 0)
@@ -166,20 +166,23 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun onOnlineQueryResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        queryChannelsStateLogic.setRecoveryNeeded(!result.isSuccess)
+        queryChannelsStateLogic.setRecoveryNeeded(result is Result.Failure)
 
-        if (result.isSuccess) {
-            // store the results in the database
-            val channelsResponse = result.data().toSet()
-            queryChannelsStateLogic.setEndOfChannels(channelsResponse.size < request.limit)
+        when (result) {
+            is Result.Success -> {
+                // store the results in the database
+                val channelsResponse = result.value.toSet()
+                queryChannelsStateLogic.setEndOfChannels(channelsResponse.size < request.limit)
 
-            val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
-            // first things first, store the configs
-            queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
-            logger.i { "[onOnlineQueryResult] api call returned ${channelsResponse.size} channels" }
-            storeStateForChannelsInDb(channelsResponse)
-        } else {
-            logger.i { "[onOnlineQueryResult] query with filter ${request.filter} failed; recovery needed" }
+                val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
+                // first things first, store the configs
+                queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
+                logger.i { "[onOnlineQueryResult] api call returned ${channelsResponse.size} channels" }
+                storeStateForChannelsInDb(channelsResponse)
+            }
+            is Result.Failure -> {
+                logger.i { "[onOnlineQueryResult] query with filter ${request.filter} failed; recovery needed" }
+            }
         }
     }
 

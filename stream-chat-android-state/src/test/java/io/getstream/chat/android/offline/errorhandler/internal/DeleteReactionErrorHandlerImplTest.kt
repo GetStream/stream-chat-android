@@ -38,7 +38,7 @@ internal class DeleteReactionErrorHandlerImplTest {
         // We would like to check that no exceptions happens, so there's no need to assert anything.
         DeleteReactionErrorHandlerImpl(testCoroutines.scope, mock(), mock())
             .onDeleteReactionError(
-                TestCall(Result(randomMessage())),
+                TestCall(Result.Success(randomMessage())),
                 null,
                 randomString()
             )

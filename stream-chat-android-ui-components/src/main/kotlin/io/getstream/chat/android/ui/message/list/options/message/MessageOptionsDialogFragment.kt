@@ -29,7 +29,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMarginsRelative
 import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -120,7 +119,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         MessageListItem.MessageItem(
             message,
             positions = listOf(MessagePosition.BOTTOM),
-            isMine = message.user.id == ChatClient.instance().clientState.user.value?.id
+            isMine = message.user.id == ChatUI.currentUserProvider.getCurrentUser()?.id
         )
     }
 
@@ -264,7 +263,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         with(binding.userReactionsView) {
             isVisible = true
             configure(style)
-            ChatClient.instance().clientState.user.value?.let { user -> setMessage(message, user) }
+            ChatUI.currentUserProvider.getCurrentUser()?.let { user -> setMessage(message, user) }
 
             setOnUserReactionClickListener { user, reaction ->
                 userReactionClickListener?.let {

@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +46,8 @@ internal class DeleteMessageListenerStateTest {
         on(it.stateLogic()) doReturn channelStateLogic
     }
 
-    private val clientState: ClientState = mock {
+    private val clientState: ClientState = mock()
+    private val globalState: GlobalState = mock {
         on(it.user) doReturn MutableStateFlow(randomUser())
     }
     private val logicRegistry: LogicRegistry = mock {
@@ -55,7 +57,7 @@ internal class DeleteMessageListenerStateTest {
     }
 
     private val deleteMessageListenerState: DeleteMessageListenerState =
-        DeleteMessageListenerState(logicRegistry, clientState)
+        DeleteMessageListenerState(logicRegistry, clientState, globalState)
 
     @Test
     fun `when internet is available, the message should be updated as in progress before the request`() = runTest {
@@ -107,7 +109,7 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.success(testMessage))
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Success(testMessage))
 
         verify(channelLogic).upsertMessage(
             argThat { message ->
@@ -127,7 +129,7 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Companion.error(ChatError()))
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(ChatError()))
 
         verify(channelLogic).upsertMessage(
             argThat { message ->

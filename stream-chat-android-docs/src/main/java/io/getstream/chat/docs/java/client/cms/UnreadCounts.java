@@ -12,7 +12,10 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent;
 import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.ConnectionData;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
+import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 
 public class UnreadCounts {
     private ChatClient client;
@@ -27,9 +30,11 @@ public class UnreadCounts {
             user.setId("user-id");
             client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
                 if (result.isSuccess()) {
-                    User userRes = result.data().getUser();
+                    User userRes = ((Result.Success<ConnectionData>) result).getValue().getUser();
                     int unreadChannels = userRes.getUnreadChannels();
                     int totalUnreadCount = userRes.getTotalUnreadCount();
+                } else {
+                    // Handle error
                 }
             });
         }
@@ -39,7 +44,7 @@ public class UnreadCounts {
                 if (result.isSuccess()) {
                     // Messages in the channel marked as read
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -86,9 +91,9 @@ public class UnreadCounts {
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // readState is the list of read states for each user on the channel
-                    List<ChannelUserRead> readState = result.data().getRead();
+                    List<ChannelUserRead> readState = ((Result.Success<Channel>) result).getValue().getRead();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -99,10 +104,10 @@ public class UnreadCounts {
 
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
-                    // Unread count for current user
-                    Integer unreadCount = result.data().getUnreadCount();
+                    // Unread count for the current user
+                    Integer unreadCount = ((Result.Success<Channel>) result).getValue().getUnreadCount();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -110,7 +115,7 @@ public class UnreadCounts {
         public void unreadMentions() {
             // Get channel
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
-            User currentUser = client.getCurrentUser();
+            User currentUser = ChatClientExtensions.getGlobalState(client).getUser().getValue();
             if (currentUser == null) {
                 // Handle user not connected state
                 return;
@@ -119,10 +124,10 @@ public class UnreadCounts {
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // Unread mentions
-                    Channel channel = result.data();
+                    Channel channel = ((Result.Success<Channel>) result).getValue();
                     Integer unreadCount = ChannelExtensionKt.countUnreadMentionsForUser(channel, currentUser);
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -130,9 +135,9 @@ public class UnreadCounts {
         public void markAllAsRead() {
             client.markAllRead().enqueue((result) -> {
                 if (result.isSuccess()) {
-                    //Handle success
+                    // Handle success
                 } else {
-                    //Handle failure
+                    // Handle error
                 }
             });
         }

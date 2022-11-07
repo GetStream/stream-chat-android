@@ -61,7 +61,7 @@ internal class AttachmentsSender(
             if (message.hasPendingAttachments()) {
                 uploadAttachments(message, channelType, channelId, repositoryFacade)
             } else {
-                Result.success(message)
+                Result.Success(message)
             }
         } else {
             retryMessage(message, channelType, channelId, repositoryFacade)
@@ -102,7 +102,11 @@ internal class AttachmentsSender(
             waitForAttachmentsToBeSent(message, channelType, channelId, repositoryFacade)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)
-            Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
+            Result.Failure(
+                ChatError(
+                    "Chat is offline, not sending message with id ${message.id} and text ${message.text}",
+                )
+            )
         }
     }
 
@@ -145,9 +149,9 @@ internal class AttachmentsSender(
         enqueueAttachmentUpload(newMessage, channelType, channelId)
         jobsMap[newMessage.id]?.join()
         return if (allAttachmentsUploaded) {
-            Result.success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
+            Result.Success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
         } else {
-            Result.error(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
+            Result.Failure(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
         }.also {
             uploadIds.remove(newMessage.id)
         }

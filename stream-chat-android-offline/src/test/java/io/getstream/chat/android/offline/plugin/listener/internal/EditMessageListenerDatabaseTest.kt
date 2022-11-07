@@ -84,7 +84,7 @@ internal class EditMessageListenerDatabaseTest {
 
         val testMessage = randomMessage()
 
-        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.success(testMessage))
+        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.Success(testMessage))
 
         verify(userRepository).insertUsers(testMessage.users())
         verify(messageRepository).insertMessage(
@@ -101,7 +101,7 @@ internal class EditMessageListenerDatabaseTest {
 
         val testMessage = randomMessage()
 
-        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.error(ChatError()))
+        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.Failure(ChatError()))
 
         verify(userRepository).insertUsers(testMessage.users())
         verify(messageRepository).insertMessage(

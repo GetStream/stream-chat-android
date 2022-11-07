@@ -83,6 +83,7 @@ import io.getstream.chat.android.offline.extensions.loadNewestMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -133,6 +134,7 @@ public class MessageListController(
     public val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    globalState: GlobalState = chatClient.globalState,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
@@ -176,7 +178,7 @@ public class MessageListController(
     /**
      * Gives us information about the logged in user state.
      */
-    public val user: StateFlow<User?> = clientState.user
+    public val user: StateFlow<User?> = globalState.user
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -733,11 +735,11 @@ public class MessageListController(
             scrollToBottom()
         } else {
             chatClient.loadNewestMessages(cid, messageLimit).enqueue { result ->
-                if (result.isSuccess) {
-                    scrollToBottom()
-                } else {
-                    val error = result.error()
-                    logger.e { "Could not load newest messages. Cause: ${error.cause?.message}" }
+                when (result) {
+                    is Result.Success -> scrollToBottom()
+                    is Result.Failure -> {
+                        logger.e { "Could not load newest messages. Cause: ${result.value.cause?.message}" }
+                    }
                 }
             }
         }
@@ -840,8 +842,8 @@ public class MessageListController(
     public fun loadMessageById(messageId: String, onResult: (Result<Message>) -> Unit = {}) {
         chatClient.loadMessageById(cid, messageId).enqueue { result ->
             onResult(result)
-            if (result.isError) {
-                val error = result.error()
+            if (result is Result.Failure) {
+                val error = result.value
                 logger.e {
                     "Could not load the message with id: $messageId inside channel: $cid. " +
                         "Error: ${error.cause?.message}. Message: ${error.message}"
@@ -873,8 +875,11 @@ public class MessageListController(
         if (message != null) {
             focusedMessage.value = message
         } else {
-            loadMessageById(messageId) {
-                focusedMessage.value = it.data()
+            loadMessageById(messageId) { result ->
+                focusedMessage.value = when (result) {
+                    is Result.Success -> result.value
+                    is Result.Failure -> null
+                }
             }
         }
     }
@@ -1105,8 +1110,8 @@ public class MessageListController(
         _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
         chatClient.flagMessage(message.id).enqueue { response ->
             onResult(response)
-            if (response.isError) {
-                val error = response.error()
+            if (response is Result.Failure) {
+                val error = response.value
                 onActionResult(error, "Unable to flag message: ${error.message}") {
                     ErrorEvent.FlagMessageError(it)
                 }
@@ -1403,27 +1408,28 @@ public class MessageListController(
             cid,
             messageId
         ).enqueue { result ->
-            if (result.isSuccess) {
-                val message = result.data()
-                message.attachments.removeAll { attachment ->
-                    if (attachmentToBeDeleted.assetUrl != null) {
-                        attachment.assetUrl == attachmentToBeDeleted.assetUrl
-                    } else {
-                        val isSame = attachment.imageUrl == attachmentToBeDeleted.imageUrl
-                        isSame
-                    }
-                }
-
-                chatClient.updateMessage(message).enqueue(
-                    onError = { chatError ->
-                        logger.e {
-                            "Could not edit message to remove its attachments: ${chatError.message}. " +
-                                "Cause: ${chatError.cause?.message}"
+            when (result) {
+                is Result.Success -> {
+                    val message = result.value
+                    message.attachments.removeAll { attachment ->
+                        if (attachmentToBeDeleted.assetUrl != null) {
+                            attachment.assetUrl == attachmentToBeDeleted.assetUrl
+                        } else {
+                            val isSame = attachment.imageUrl == attachmentToBeDeleted.imageUrl
+                            isSame
                         }
                     }
-                )
-            } else {
-                logger.e { "Could not load message: ${result.error()}" }
+
+                    chatClient.updateMessage(message).enqueue(
+                        onError = { chatError ->
+                            logger.e {
+                                "Could not edit message to remove its attachments: ${chatError.message}. " +
+                                    "Cause: ${chatError.cause?.message}"
+                            }
+                        }
+                    )
+                }
+                is Result.Failure -> logger.e { "Could not load message: ${result.value}" }
             }
         }
     }

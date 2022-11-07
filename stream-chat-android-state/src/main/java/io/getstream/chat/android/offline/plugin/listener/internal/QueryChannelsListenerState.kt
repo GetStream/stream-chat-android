@@ -41,7 +41,7 @@ import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 internal class QueryChannelsListenerState(private val logicProvider: LogicRegistry) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
-        return Result.success(Unit)
+        return Result.Success(Unit)
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {

@@ -258,7 +258,7 @@ internal class ChannelListViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
             whenever(chatClient.getCurrentUser()) doReturn currentUser
         }
 
@@ -307,7 +307,7 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 sort = initialSort,
                 filter = initialFilters,
-                chatEventHandlerFactory = ChatEventHandlerFactory(clientState = clientState)
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState = clientState, globalState = globalState)
             )
         }
     }

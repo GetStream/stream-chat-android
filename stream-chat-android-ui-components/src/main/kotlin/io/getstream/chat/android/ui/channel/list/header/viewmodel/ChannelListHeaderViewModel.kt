@@ -23,6 +23,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 
 /**
  * ViewModel class for [io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView].
@@ -34,12 +36,13 @@ import io.getstream.chat.android.client.setup.state.ClientState
  */
 public class ChannelListHeaderViewModel @JvmOverloads constructor(
     clientState: ClientState = ChatClient.instance().clientState,
+    globalState: GlobalState = ChatClient.instance().globalState,
 ) : ViewModel() {
 
     /**
      * The user who is currently logged in.
      */
-    public val currentUser: LiveData<User?> = clientState.user.asLiveData()
+    public val currentUser: LiveData<User?> = globalState.user.asLiveData()
 
     /**
      * The state of the connection for the user currently logged in.

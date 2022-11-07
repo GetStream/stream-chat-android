@@ -366,7 +366,7 @@ constructor(
                 userId = userId,
                 url = url
             )
-            Result(Unit)
+            Result.Success(Unit)
         }
     }
 
@@ -378,7 +378,7 @@ constructor(
                 userId = userId,
                 url = url
             )
-            Result(Unit)
+            Result.Success(Unit)
         }
     }
 

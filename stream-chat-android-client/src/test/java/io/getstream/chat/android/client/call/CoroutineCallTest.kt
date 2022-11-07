@@ -44,7 +44,7 @@ internal class CoroutineCallTest {
     }
 
     val resultValue = Mother.randomString()
-    val validResult: Result<String> = Result.success(resultValue)
+    val validResult: Result<String> = Result.Success(resultValue)
 
     @Test
     fun `Call should be executed and return a valid result`() = runTest {

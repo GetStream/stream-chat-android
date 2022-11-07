@@ -94,9 +94,10 @@ internal class SyncManagerTest {
             on(it.getActiveChannelsLogic()) doReturn listOf(channelLogic)
         }
         stateRegistry = mock()
-        globalState = mock()
-        clientState = mock {
+        globalState = mock {
             on(it.user) doReturn MutableStateFlow(user)
+        }
+        clientState = mock {
             on(it.connectionState) doReturn connectionState
         }
         repositoryFacade = mock {
@@ -160,7 +161,7 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
 
         whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
-            Result.success(listOf(mockedChatEvent))
+            Result.Success(listOf(mockedChatEvent))
         )
         val connectingEvent = ConnectedEvent(
             type = "type",

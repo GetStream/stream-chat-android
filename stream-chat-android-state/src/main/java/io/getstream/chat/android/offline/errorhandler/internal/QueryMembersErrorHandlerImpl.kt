@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.errorhandler.QueryMembersErrorHandler
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.logging.StreamLog
@@ -38,7 +37,6 @@ import kotlinx.coroutines.CoroutineScope
  *
  * @param scope [CoroutineScope]
  * @param clientState [ClientState] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
- * @param repos [RepositoryFacade] to access datasource.
  */
 internal class QueryMembersErrorHandlerImpl(
     private val scope: CoroutineScope,
@@ -65,7 +63,7 @@ internal class QueryMembersErrorHandlerImpl(
             }
 
             if (clientState.isOnline) {
-                Result.error(originalError)
+                Result.Failure(originalError)
             } else {
                 // retrieve from database
                 val clampedOffset = offset.coerceAtLeast(0)
@@ -79,7 +77,7 @@ internal class QueryMembersErrorHandlerImpl(
                             members.take(clampedLimit)
                         } else members
                     }
-                Result(membersFromDatabase)
+                Result.Success(membersFromDatabase)
             }
         }
     }

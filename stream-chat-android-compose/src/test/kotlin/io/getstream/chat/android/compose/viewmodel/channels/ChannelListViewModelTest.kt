@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.common.state.DeleteConversation
+import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
@@ -284,7 +285,7 @@ internal class ChannelListViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
@@ -335,6 +336,7 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 initialSort = initialSort,
                 initialFilters = initialFilters,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState, globalState)
             )
         }
     }

@@ -100,7 +100,6 @@ internal class MockClientBuilder(
         val tokenUtil: TokenUtils = mock()
         val clientState: ClientState = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
-        Mockito.`when`(clientState.user) doReturn userStateFlow
         socket = FakeSocket()
         fileUploader = mock()
         notificationsManager = mock()

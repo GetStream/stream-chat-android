@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.logging.StreamLog
 import okhttp3.Response
@@ -47,10 +48,12 @@ internal class EventsParser(
     override fun onMessage(webSocket: WebSocket, text: String) {
         try {
             logger.i { text }
-            val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
-            val errorData = errorMessage.data()
-            if (errorMessage.isSuccess && errorData.error != null) {
-                handleErrorEvent(errorData.error)
+            val error = when (val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)) {
+                is Result.Success -> errorMessage.value.error
+                is Result.Failure -> null
+            }
+            if (error != null) {
+                handleErrorEvent(error)
             } else {
                 handleEvent(text)
             }
@@ -92,21 +95,23 @@ internal class EventsParser(
     }
 
     private fun handleEvent(text: String) {
-        val eventResult = parser.fromJsonOrError(text, ChatEvent::class.java)
-        if (eventResult.isSuccess) {
-            val event = eventResult.data()
-            if (!connectionEventReceived) {
-                if (event is ConnectedEvent) {
-                    connectionEventReceived = true
-                    onConnectionResolved(event)
+        when (val eventResult = parser.fromJsonOrError(text, ChatEvent::class.java)) {
+            is Result.Success -> {
+                val event = eventResult.value
+                if (!connectionEventReceived) {
+                    if (event is ConnectedEvent) {
+                        connectionEventReceived = true
+                        onConnectionResolved(event)
+                    } else {
+                        onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))
+                    }
                 } else {
-                    onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))
+                    onEvent(event)
                 }
-            } else {
-                onEvent(event)
             }
-        } else {
-            onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error().cause))
+            is Result.Failure -> {
+                onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.value.cause))
+            }
         }
     }
 

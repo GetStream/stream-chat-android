@@ -23,7 +23,7 @@ public abstract interface class io/getstream/chat/android/offline/event/handler/
 }
 
 public class io/getstream/chat/android/offline/event/handler/chat/DefaultChatEventHandler : io/getstream/chat/android/offline/event/handler/chat/BaseChatEventHandler {
-	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/setup/state/ClientState;)V
+	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/setup/state/ClientState;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;)V
 	protected final fun addIfChannelIsAbsent (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	protected final fun addIfCurrentUserJoinedChannel (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Member;)Lio/getstream/chat/android/offline/event/handler/chat/EventHandlingResult;
 	protected final fun getChannels ()Lkotlinx/coroutines/flow/StateFlow;
@@ -75,8 +75,8 @@ public final class io/getstream/chat/android/offline/event/handler/chat/EventHan
 
 public class io/getstream/chat/android/offline/event/handler/chat/factory/ChatEventHandlerFactory {
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/client/setup/state/ClientState;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/setup/state/ClientState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/setup/state/ClientState;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/setup/state/ClientState;Lio/getstream/chat/android/offline/plugin/state/global/GlobalState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun chatEventHandler (Lkotlinx/coroutines/flow/StateFlow;)Lio/getstream/chat/android/offline/event/handler/chat/ChatEventHandler;
 }
 
@@ -132,6 +132,7 @@ public abstract interface class io/getstream/chat/android/offline/plugin/state/g
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingChannels ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/global/internal/GlobalMutableState$Companion {

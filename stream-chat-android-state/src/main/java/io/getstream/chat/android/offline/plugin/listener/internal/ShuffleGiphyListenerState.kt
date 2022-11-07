@@ -37,8 +37,8 @@ internal class ShuffleGiphyListenerState(private val logic: LogicRegistry) : Shu
      * @param result The API call result.
      */
     override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) {
-        if (result.isSuccess) {
-            val processedMessage = result.data().apply {
+        if (result is Result.Success) {
+            val processedMessage = result.value.apply {
                 syncStatus = SyncStatus.COMPLETED
             }
             logic.channelFromMessage(processedMessage)?.upsertMessage(processedMessage)

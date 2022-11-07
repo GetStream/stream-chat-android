@@ -273,12 +273,14 @@ public class MessageListViewModel(
                 val messageId = event.repliedMessageId
                 val cid = event.cid
                 messageListController.loadMessageById(messageId) { result ->
-                    if (result.isSuccess) {
-                        val message = result.data()
-                        onEvent(Event.ReplyMessage(cid, message))
-                    } else {
-                        val error = result.error()
-                        logger.e { "Could not load message to reply: ${error.message}. Cause: ${error.cause?.message}" }
+                    when (result) {
+                        is Result.Success -> onEvent(Event.ReplyMessage(cid, result.value))
+                        is Result.Failure -> {
+                            val error = result.value
+                            logger.e {
+                                "Could not load message to reply: ${error.message}. Cause: ${error.cause?.message}"
+                            }
+                        }
                     }
                 }
             }

@@ -20,9 +20,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
@@ -32,9 +31,7 @@ import io.getstream.chat.android.ui.mention.list.internal.MentionListAdapter.Mes
 import io.getstream.chat.android.ui.message.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.message.preview.internal.MessagePreviewView
 
-internal class MentionListAdapter(
-    private val clientState: ClientState = ChatClient.instance().clientState,
-) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
+internal class MentionListAdapter : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var mentionSelectedListener: MentionSelectedListener? = null
 
@@ -71,7 +68,7 @@ internal class MentionListAdapter(
 
         internal fun bind(message: Message) {
             this.message = message
-            view.setMessage(message, clientState.user.value?.asMention(context))
+            view.setMessage(message, ChatUI.currentUserProvider.getCurrentUser()?.asMention(context))
         }
     }
 

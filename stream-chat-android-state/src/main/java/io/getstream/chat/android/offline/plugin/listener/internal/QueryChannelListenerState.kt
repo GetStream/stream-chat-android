@@ -35,7 +35,7 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     /**
      * The method that should be called before a call to query channel is made.

@@ -131,7 +131,7 @@ internal class ChannelLogic(
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (mutableState.loading.value) {
             logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
-            return Result.error(
+            return Result.Failure(
                 ChatError("Another request to watch this channel is in progress. Ignoring this request.")
             )
         }
@@ -181,8 +181,8 @@ internal class ChannelLogic(
                 .await()
 
         return when {
-            onlineResult.isSuccess -> onlineResult
-            offlineChannel != null -> Result.success(offlineChannel)
+            onlineResult is Result.Success -> onlineResult
+            offlineChannel != null -> Result.Success(offlineChannel)
             else -> onlineResult
         }
     }

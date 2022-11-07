@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.socket.SocketErrorMessage
-import io.getstream.chat.android.client.utils.map
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.recover
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,6 +34,7 @@ import okhttp3.WebSocketListener
 private const val EVENTS_BUFFER_SIZE = 100
 private const val CLOSE_SOCKET_CODE = 1000
 private const val CLOSE_SOCKET_REASON = "Connection close by client"
+
 internal class StreamWebSocket(
     private val parser: ChatParser,
     socketCreator: (WebSocketListener) -> WebSocket,
@@ -67,23 +68,25 @@ internal class StreamWebSocket(
 
     private fun parseMessage(text: String): StreamWebSocketEvent =
         parser.fromJsonOrError(text, ChatEvent::class.java)
-            .map { StreamWebSocketEvent.Message(it) as StreamWebSocketEvent }
+            .map { StreamWebSocketEvent.Message(it) }
             .recover { parseChatError ->
-                StreamWebSocketEvent.Error(
-                    parser.fromJsonOrError(text, SocketErrorMessage::class.java)
-                        .takeIf { it.isSuccess }
-                        ?.data()
-                        ?.error
-                        ?.let {
-                            ChatNetworkError.create(
-                                it.code,
-                                it.message,
-                                it.statusCode
-                            )
+                val errorResponse =
+                    when (val chatErrorResult = parser.fromJsonOrError(text, SocketErrorMessage::class.java)) {
+                        is Result.Success -> {
+                            chatErrorResult.value.error
                         }
-                        ?: ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, parseChatError.cause)
+                        is Result.Failure -> null
+                    }
+                StreamWebSocketEvent.Error(
+                    errorResponse?.let {
+                        ChatNetworkError.create(
+                            it.code,
+                            it.message,
+                            it.statusCode
+                        )
+                    } ?: ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, parseChatError.cause)
                 )
-            }.data()
+            }.value
 }
 
 internal sealed class StreamWebSocketEvent {

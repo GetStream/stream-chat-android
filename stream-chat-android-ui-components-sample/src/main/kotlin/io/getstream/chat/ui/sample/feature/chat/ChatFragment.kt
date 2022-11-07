@@ -218,7 +218,7 @@ class ChatFragment : Fragment() {
             }
 
             setFlagMessageResultHandler { result ->
-                if (result.isSuccess || result.isAlreadyExistsError()) {
+                if (result is Result.Success || result.isAlreadyExistsError()) {
                     ConfirmationDialogFragment.newMessageFlaggedInstance(requireContext())
                         .show(parentFragmentManager, null)
                 }
@@ -248,10 +248,9 @@ class ChatFragment : Fragment() {
     }
 
     private fun Result<Flag>.isAlreadyExistsError(): Boolean {
-        if (!isError) {
-            return false
+        return when (this) {
+            is Result.Success -> false
+            is Result.Failure -> (value as ChatNetworkError).streamCode == 4
         }
-        val chatError = error() as ChatNetworkError
-        return chatError.streamCode == 4
     }
 }

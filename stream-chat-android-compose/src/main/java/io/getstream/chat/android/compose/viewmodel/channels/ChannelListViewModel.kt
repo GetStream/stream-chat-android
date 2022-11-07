@@ -74,7 +74,8 @@ public class ChannelListViewModel(
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+    private val chatEventHandlerFactory: ChatEventHandlerFactory =
+        ChatEventHandlerFactory(chatClient.clientState, chatClient.globalState),
 ) : ViewModel() {
 
     /**
@@ -131,7 +132,7 @@ public class ChannelListViewModel(
     /**
      * The state of the currently logged in user.
      */
-    public val user: StateFlow<User?> = chatClient.clientState.user
+    public val user: StateFlow<User?> = chatClient.globalState.user
 
     /**
      * Gives us the information about the list of channels mutes by the current user.
@@ -142,7 +143,7 @@ public class ChannelListViewModel(
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
     private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
+        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
     }
 
     /**
@@ -401,7 +402,7 @@ public class ChannelListViewModel(
     public fun leaveGroup(channel: Channel) {
         dismissChannelAction()
 
-        chatClient.getCurrentUser()?.let { user ->
+        chatClient.globalState.user.value?.let { user ->
             chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue()
         }
     }

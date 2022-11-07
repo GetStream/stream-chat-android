@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import java.util.Date
 
 /**
@@ -35,6 +36,7 @@ import java.util.Date
 internal class DeleteMessageListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
+    private val globalState: GlobalState
 ) : DeleteMessageListener {
 
     /**
@@ -46,21 +48,24 @@ internal class DeleteMessageListenerState(
         val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
         return channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == clientState.user.value?.id &&
+            val isModerationFailed = message.user.id == globalState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
             if (isModerationFailed) {
                 deleteMessage(message)
-                Result.error(
-                    MessageModerationDeletedException(
-                        "Message with failed moderation has been deleted locally: $messageId"
+                Result.Failure(
+                    ChatError(
+                        cause =
+                        MessageModerationDeletedException(
+                            "Message with failed moderation has been deleted locally: $messageId"
+                        )
                     )
                 )
             } else {
-                Result.success(Unit)
+                Result.Success(Unit)
             }
-        } ?: Result.error(ChatError(message = "No message found with id: $messageId"))
+        } ?: Result.Failure(ChatError(message = "No message found with id: $messageId"))
     }
 
     /**
@@ -72,7 +77,7 @@ internal class DeleteMessageListenerState(
         val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
         channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == clientState.user.value?.id &&
+            val isModerationFailed = message.user.id == globalState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
@@ -97,21 +102,25 @@ internal class DeleteMessageListenerState(
      * @param result the result of the API call.
      */
     override suspend fun onMessageDeleteResult(originalMessageId: String, result: Result<Message>) {
-        if (result.isSuccess) {
-            val deletedMessage = result.data()
-            deletedMessage.syncStatus = SyncStatus.COMPLETED
-            updateMessage(deletedMessage)
-        } else {
-            logic.channelFromMessageId(originalMessageId)
-                ?.getMessage(originalMessageId)
-                ?.let { originalMessage ->
-                    val failureMessage = originalMessage.copy(
-                        syncStatus = SyncStatus.SYNC_NEEDED,
-                        updatedLocallyAt = Date(),
-                    )
-
-                    updateMessage(failureMessage)
+        when (result) {
+            is Result.Success -> {
+                val deletedMessage = result.value.apply {
+                    syncStatus = SyncStatus.COMPLETED
                 }
+                updateMessage(deletedMessage)
+            }
+            is Result.Failure -> {
+                logic.channelFromMessageId(originalMessageId)
+                    ?.getMessage(originalMessageId)
+                    ?.let { originalMessage ->
+                        val failureMessage = originalMessage.copy(
+                            syncStatus = SyncStatus.SYNC_NEEDED,
+                            updatedLocallyAt = Date(),
+                        )
+
+                        updateMessage(failureMessage)
+                    }
+            }
         }
     }
 

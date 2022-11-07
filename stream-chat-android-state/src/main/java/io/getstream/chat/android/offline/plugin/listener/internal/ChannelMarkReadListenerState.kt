@@ -45,9 +45,9 @@ internal class ChannelMarkReadListenerState(private val state: StateRegistry) : 
         )
 
         return if (shouldMarkRead) {
-            Result.success(Unit)
+            Result.Success(Unit)
         } else {
-            Result.error(ChatError("Can not mark channel as read with channel id: $channelId"))
+            Result.Failure(ChatError("Can not mark channel as read with channel id: $channelId"))
         }
     }
 }

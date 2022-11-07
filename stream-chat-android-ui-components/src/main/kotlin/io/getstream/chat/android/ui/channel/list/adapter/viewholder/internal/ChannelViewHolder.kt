@@ -22,12 +22,10 @@ import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -65,9 +63,8 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         parent,
         false
     ),
-    private val clientState: ClientState = ChatClient.instance().clientState,
 ) : SwipeViewHolder(binding.root) {
-    private val currentUser = clientState.user
+    private val currentUser = ChatUI.currentUserProvider.getCurrentUser()
 
     private var optionsCount = 1
 
@@ -94,7 +91,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             itemForegroundView.apply {
                 channelAvatarView.setOnClickListener {
                     when {
-                        channel.isDirectMessaging() -> currentUser.value?.let(userClickListener::onClick)
+                        channel.isDirectMessaging() -> currentUser?.let(userClickListener::onClick)
                         else -> channelClickListener.onClick(channel)
                     }
                 }
@@ -287,7 +284,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         // delivered - if the last message belongs to the current user and reads indicate it wasn't read
         // pending - if the sync status says it's pending
 
-        val currentUserSentLastMessage = lastMessage.user.id == clientState.user.value?.id
+        val currentUserSentLastMessage = lastMessage.user.id == currentUser?.id
         if (!currentUserSentLastMessage) {
             messageStatusImageView.setImageDrawable(null)
             return

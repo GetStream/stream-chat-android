@@ -121,22 +121,21 @@ internal class SendReactionListenerState(
     override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
-                Result.error(ChatError(message = "Current user is null!"))
+                Result.Failure(ChatError(message = "Current user is null!"))
             }
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.error(ChatError(message = "Reaction::messageId and Reaction::type cannot be empty!"))
+                Result.Failure(ChatError(message = "Reaction::messageId and Reaction::type cannot be empty!"))
             }
             else -> {
-                Result.success(Unit)
+                Result.Success(Unit)
             }
         }
     }
 
     private fun Reaction.updateSyncStatus(result: Result<*>) {
-        if (result.isSuccess) {
-            syncStatus = SyncStatus.COMPLETED
-        } else {
-            updateFailedReactionSyncStatus(result.error())
+        when (result) {
+            is Result.Success -> syncStatus = SyncStatus.COMPLETED
+            is Result.Failure -> updateFailedReactionSyncStatus(result.value)
         }
     }
 

@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomTypingStartEvent
@@ -72,7 +71,6 @@ internal class ChannelStateLogicTest {
         channelStateLogic = ChannelStateLogic(
             mutableState,
             globalMutableState = globalMutableState,
-            clientState = clientState,
             searchLogic = SearchLogic(mutableState),
             attachmentUrlValidator = attachmentUrlValidator,
             coroutineScope = testCoroutines.scope
@@ -114,10 +112,9 @@ internal class ChannelStateLogicTest {
     }
     private val globalMutableState: GlobalMutableState = mock {
         on(it.channelMutes) doReturn MutableStateFlow(emptyList())
-    }
-    private val clientState: ClientState = mock {
         on(it.user) doReturn MutableStateFlow(user)
     }
+
     private val attachmentUrlValidator: AttachmentUrlValidator = mock {
         on(it.updateValidAttachmentsUrl(any(), any())) doAnswer { invocationOnMock ->
             invocationOnMock.arguments[0] as List<Message>

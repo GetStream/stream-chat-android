@@ -24,9 +24,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -124,10 +124,9 @@ public class SearchViewModel : ViewModel() {
                 query = currentState.query,
                 offset = currentState.results.size
             )
-            if (result.isSuccess) {
-                handleSearchMessageSuccess(result.data())
-            } else {
-                handleSearchMessagesError(result.error())
+            when (result) {
+                is Result.Success -> handleSearchMessageSuccess(result.value)
+                is Result.Failure -> handleSearchMessagesError(result.value)
             }
         }
     }
@@ -167,7 +166,7 @@ public class SearchViewModel : ViewModel() {
      */
     private suspend fun searchMessages(query: String, offset: Int): Result<List<Message>> {
         logger.d { "Searching for \"$query\" with offset: $offset" }
-        val currentUser = requireNotNull(ChatClient.instance().getCurrentUser())
+        val currentUser = requireNotNull(ChatClient.instance().globalState.user.value)
         // TODO: use the pagination based on "limit" nad "next" params here
         return ChatClient.instance()
             .searchMessages(

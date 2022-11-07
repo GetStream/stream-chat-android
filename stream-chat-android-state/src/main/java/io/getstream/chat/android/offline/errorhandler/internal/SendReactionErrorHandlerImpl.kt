@@ -60,9 +60,9 @@ internal class SendReactionErrorHandlerImpl(
     ): ReturnOnErrorCall<Reaction> {
         return originalCall.onErrorReturn(scope) { originalError ->
             if (clientState.isOnline) {
-                Result.error(originalError)
+                Result.Failure(originalError)
             } else {
-                Result.success(
+                Result.Success(
                     reaction.enrichWithDataBeforeSending(
                         currentUser = currentUser,
                         isOnline = clientState.isOnline,

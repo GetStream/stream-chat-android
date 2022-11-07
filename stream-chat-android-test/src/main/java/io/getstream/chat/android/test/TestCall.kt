@@ -35,19 +35,19 @@ public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
     override suspend fun await(): Result<T> = result
 }
 
-public fun <T : Any> callFrom(valueProvider: () -> T): Call<T> = TestCall(Result(valueProvider()))
+public fun <T : Any> callFrom(valueProvider: () -> T): Call<T> = TestCall(Result.Success(valueProvider()))
 
-public fun <T : Any> T.asCall(): Call<T> = TestCall(Result(this))
+public fun <T : Any> T.asCall(): Call<T> = TestCall(Result.Success(this))
 
 public inline fun <reified T : Any> failedCall(message: String = "", cause: Throwable? = null): Call<T> {
     return object : Call<T> {
         public var cancelled: Boolean = false
 
-        override fun execute(): Result<T> = Result(ChatError(message, cause))
+        override fun execute(): Result<T> = Result.Failure(ChatError(message, cause))
         override suspend fun await(): Result<T> = execute()
 
         override fun enqueue(callback: Call.Callback<T>) {
-            callback.onResult(Result(ChatError(message, cause)))
+            callback.onResult(Result.Failure(ChatError(message, cause)))
         }
 
         override fun cancel() {

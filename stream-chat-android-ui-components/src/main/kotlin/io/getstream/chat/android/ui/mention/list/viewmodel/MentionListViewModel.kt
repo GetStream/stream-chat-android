@@ -22,8 +22,10 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -96,7 +98,7 @@ public class MentionListViewModel : ViewModel() {
 
     private suspend fun fetchServerResults() {
         val currentState = _state.value!!
-        val currentUser = requireNotNull(ChatClient.instance().getCurrentUser())
+        val currentUser = requireNotNull(ChatClient.instance().globalState.user.value)
         val channelFilter = Filters.`in`("members", listOf(currentUser.id))
         val messageFilter = Filters.contains("mentioned_users.id", currentUser.id)
 
@@ -113,21 +115,24 @@ public class MentionListViewModel : ViewModel() {
             )
             .await()
 
-        if (result.isSuccess) {
-            val messages = result.data().messages
-            logger.d { "Got ${messages.size} messages" }
-            _state.value = currentState.copy(
-                results = currentState.results + messages,
-                isLoading = false,
-                canLoadMore = messages.size == QUERY_LIMIT
-            )
-        } else {
-            logger.d { "Error ${result.error().message}" }
-            _state.value = currentState.copy(
-                isLoading = false,
-                canLoadMore = true,
-            )
-            _errorEvents.setValue(Event(Unit))
+        when (result) {
+            is Result.Success -> {
+                val messages = result.value.messages
+                logger.d { "Got ${messages.size} messages" }
+                _state.value = currentState.copy(
+                    results = currentState.results + messages,
+                    isLoading = false,
+                    canLoadMore = messages.size == QUERY_LIMIT
+                )
+            }
+            is Result.Failure -> {
+                logger.d { "Error ${result.value.message}" }
+                _state.value = currentState.copy(
+                    isLoading = false,
+                    canLoadMore = true,
+                )
+                _errorEvents.setValue(Event(Unit))
+            }
         }
     }
 }

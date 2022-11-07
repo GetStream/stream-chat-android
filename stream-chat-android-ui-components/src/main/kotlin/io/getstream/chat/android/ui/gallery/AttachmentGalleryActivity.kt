@@ -37,6 +37,7 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -219,10 +220,9 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 )
             }
 
-            if (result.isSuccess) {
-                launchShareActivity(mediaUri = result.data(), attachmentType = attachment.type)
-            } else {
-                withContext(DispatcherProvider.Main) {
+            when (result) {
+                is Result.Success -> launchShareActivity(mediaUri = result.value, attachmentType = attachment.type)
+                is Result.Failure -> withContext(DispatcherProvider.Main) {
                     toastFailedShare()
                 }
             }

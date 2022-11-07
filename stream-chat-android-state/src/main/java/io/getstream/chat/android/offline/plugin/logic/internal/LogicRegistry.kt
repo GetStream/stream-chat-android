@@ -103,7 +103,6 @@ internal class LogicRegistry internal constructor(
                 mutableState = mutableState,
                 globalMutableState = globalState,
                 searchLogic = SearchLogic(mutableState),
-                clientState = clientState,
                 coroutineScope = coroutineScope
             )
 
