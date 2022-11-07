@@ -37,7 +37,7 @@ class GettingStarted {
     fun addingTheOfflinePlugin(apiKey: String, context: Context) {
         val offlinePluginFactory = StreamOfflinePluginFactory(
             config = Config(
-                // Enables background sync which is performed to sync user actions done while offline.
+                // Enables background sync which syncs user actions performed while offline.
                 backgroundSyncEnabled = true,
                 // Enables the ability to receive information about user activity such as last active date and if they are online right now.
                 userPresence = true,

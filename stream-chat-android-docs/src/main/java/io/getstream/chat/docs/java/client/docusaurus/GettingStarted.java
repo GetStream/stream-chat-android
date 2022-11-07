@@ -38,7 +38,7 @@ public class GettingStarted {
     }
 
     public void addingTheOfflinePlugin(String apiKey, Context context) {
-        // Enables background sync which is performed to sync user actions done while offline.
+        // Enables background sync which syncs user actions performed while offline.
         boolean backgroundSyncEnabled = true;
         // Enables the ability to receive information about user activity such as last active date and if they are online right now.
         boolean userPresence = true;
