@@ -67,10 +67,9 @@ public fun mergeReactions(
  */
 @InternalStreamChatApi
 public fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
-    return if (result.isSuccess) {
-        copy(syncStatus = SyncStatus.COMPLETED)
-    } else {
-        updateFailedReactionSyncStatus(result.error())
+    return when (result) {
+        is Result.Success -> copy(syncStatus = SyncStatus.COMPLETED)
+        is Result.Failure -> updateFailedReactionSyncStatus(result.value)
     }
 }
 

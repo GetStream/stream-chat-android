@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
 import io.getstream.chat.android.offline.extensions.globalState
@@ -98,11 +99,12 @@ object ChatHelper {
             if (globalState.user.value == null) {
                 connectUser(userCredentials.user, userCredentials.token)
                     .enqueue { result ->
-                        if (result.isSuccess) {
-                            ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
-                            onSuccess()
-                        } else {
-                            onError(result.error())
+                        when (result) {
+                            is Result.Success -> {
+                                ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
+                                onSuccess()
+                            }
+                            is Result.Failure -> onError(result.value)
                         }
                     }
             } else {

@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.logging.StreamLog
@@ -154,23 +155,26 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
         )
             .await()
 
-        if (result.isSuccess) {
-            val messages = result.data()
-            logger.d { "Got ${messages.size} messages" }
-            _state.value = currentState.copy(
-                results = (currentState.results + messages).filter { it.id.isNotEmpty() },
-                isLoading = false,
-                canLoadMore = messages.size == QUERY_LIMIT,
-                // currentState.nextDate should only be assigned when messages are empty
-                nextDate = messages.lastOrNull()?.pinnedAt ?: currentState.nextDate
-            )
-        } else {
-            logger.d { "Error ${result.error().message}" }
-            _state.value = currentState.copy(
-                isLoading = false,
-                canLoadMore = true,
-            )
-            _errorEvents.setValue(Event(Unit))
+        when (result) {
+            is Result.Success -> {
+                val messages = result.value
+                logger.d { "Got ${messages.size} messages" }
+                _state.value = currentState.copy(
+                    results = (currentState.results + messages).filter { it.id.isNotEmpty() },
+                    isLoading = false,
+                    canLoadMore = messages.size == QUERY_LIMIT,
+                    // currentState.nextDate should only be assigned when messages are empty
+                    nextDate = messages.lastOrNull()?.pinnedAt ?: currentState.nextDate
+                )
+            }
+            is Result.Failure -> {
+                logger.d { "Error ${result.value.message}" }
+                _state.value = currentState.copy(
+                    isLoading = false,
+                    canLoadMore = true,
+                )
+                _errorEvents.setValue(Event(Unit))
+            }
         }
     }
 }

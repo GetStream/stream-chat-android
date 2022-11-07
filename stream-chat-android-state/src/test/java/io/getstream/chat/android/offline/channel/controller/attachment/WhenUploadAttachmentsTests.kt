@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.channel.controller.attachment
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -32,8 +33,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMu
 import io.getstream.chat.android.test.positiveRandomLong
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be`
-import org.amshove.kluent.shouldBeTrue
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
@@ -81,7 +81,7 @@ internal class WhenUploadAttachmentsTests {
                 defaultMessageSentAttachments.id,
             )
 
-            result.isSuccess `should be` true
+            result shouldBeInstanceOf Result.Success::class
         }
 
     @Test
@@ -110,7 +110,7 @@ internal class WhenUploadAttachmentsTests {
                 defaultMessagePendingAttachments.id,
             )
 
-        result.isError.shouldBeTrue()
+        result shouldBeInstanceOf Result.Failure::class
     }
 
     @Test
@@ -123,7 +123,7 @@ internal class WhenUploadAttachmentsTests {
                 defaultMessagePendingAttachments.id,
             )
 
-        result.isError.shouldBeTrue()
+        result shouldBeInstanceOf Result.Failure::class
     }
 
     @Test
@@ -209,7 +209,7 @@ internal class WhenUploadAttachmentsTests {
                             any(),
                             any()
                         )
-                    ) doReturn Result.error(IllegalArgumentException("Error:-)"))
+                    ) doReturn Result.Failure(ChatError(cause = IllegalArgumentException("Error:-)")))
                 }
             val repository = mock<MessageRepository>()
             val message = randomMessage(
@@ -252,7 +252,7 @@ internal class WhenUploadAttachmentsTests {
                 mock<AttachmentUploader> {
                     on(it.uploadAttachment(any(), any(), any(), any())) doAnswer { invocation ->
                         val attachment = invocation.arguments[2] as Attachment
-                        Result(attachment.copy(uploadState = Attachment.UploadState.Success))
+                        Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success))
                     }
                 }
             val repository = mock<MessageRepository>()

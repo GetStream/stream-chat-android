@@ -23,8 +23,6 @@ import io.getstream.chat.android.client.models.UploadedFile
 import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.map
-import io.getstream.chat.android.client.utils.toUnitResult
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File

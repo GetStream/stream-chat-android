@@ -65,7 +65,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
         verifyNoInteractions(pluginFactory)
-        result `should be equal to` Result.error(ChatError("Failed to connect user. Please check you haven't connected a user already."))
+        result `should be equal to` Result.Failure(ChatError("Failed to connect user. Please check you haven't connected a user already."))
     }
 
     @Test
@@ -160,7 +160,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
 
         sut.connectUser(Mother.randomUser { id = "userId2" }, "token").enqueue(connectionDataCallback)
         delay(100L)
-        verify(connectionDataCallback).onResult(argThat { isError })
+        verify(connectionDataCallback).onResult(argThat { this is Result.Failure })
     }
 
     inner class Fixture {

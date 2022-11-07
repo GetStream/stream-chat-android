@@ -50,7 +50,10 @@ internal class UploadAttachmentsAndroidWorker(
         ).uploadAttachmentsForMessage(
             messageId
         ).let { result ->
-            if (result.isSuccess) Result.success() else Result.failure()
+            when (result) {
+                is io.getstream.chat.android.client.utils.Result.Success -> Result.success()
+                is io.getstream.chat.android.client.utils.Result.Failure -> Result.failure()
+            }
         }
     }
 

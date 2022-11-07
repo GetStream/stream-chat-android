@@ -2,6 +2,7 @@ package io.getstream.chat.docs.java.client.docusaurus;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/channel-list-updates/">Channel List Updates</a>
@@ -18,7 +19,7 @@ public class HandlingUserConnection {
         if (ChatClient.instance().getCurrentUser() == null) {
             ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
                     .enqueue((result) -> {
-                        if (result.isSuccess()) {
+                        if (result instanceof Result.Success) {
                             // Handle success
                         } else {
                             // Handle error
@@ -30,7 +31,7 @@ public class HandlingUserConnection {
     public void disconnectTheUser() {
         boolean flushPersistence = false;
         ChatClient.instance().disconnect(flushPersistence).enqueue((result) -> {
-            if (result.isSuccess()) {
+            if (result instanceof Result.Success) {
                 // Handle success
             } else {
                 // Handle error
@@ -47,7 +48,7 @@ public class HandlingUserConnection {
         // Connect the first user
         ChatClient.instance().connectUser(user1, "userToken") // Replace with a real token
                 .enqueue((result) -> {
-                    if (result.isSuccess()) {
+                    if (result instanceof Result.Success) {
                         // Handle success
                     } else {
                         // Handle error
@@ -61,7 +62,7 @@ public class HandlingUserConnection {
 
         ChatClient.instance().switchUser(user2, "userToken") // Replace with a real token
                 .enqueue((result) -> {
-                    if (result.isSuccess()) {
+                    if (result instanceof Result.Success) {
                         // Handle success
                     } else {
                         // Handle error

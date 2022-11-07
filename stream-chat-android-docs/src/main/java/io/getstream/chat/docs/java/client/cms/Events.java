@@ -11,7 +11,9 @@ import io.getstream.chat.android.client.events.ConnectingEvent;
 import io.getstream.chat.android.client.events.DisconnectedEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
+import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Disposable;
 
 public class Events {
@@ -116,10 +118,10 @@ public class Events {
 
             // Send a custom event to all users watching the channel
             channelClient.sendEvent("friendship_request", extraData).enqueue(result -> {
-                if (result.isSuccess()) {
-                    ChatEvent chatEvent = result.data();
+                if (result instanceof Result.Success) {
+                    ChatEvent channel = ((Result.Success<ChatEvent>) result).getValue();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }

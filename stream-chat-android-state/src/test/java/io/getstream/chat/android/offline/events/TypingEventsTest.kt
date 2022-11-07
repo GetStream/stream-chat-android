@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -28,6 +29,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.mock
@@ -57,7 +59,7 @@ internal class TypingEventsTest {
             channelId,
             emptyMap(),
             Date()
-        ).isSuccess `should be equal to` false
+        ) shouldBeInstanceOf Result.Failure::class
     }
 
     @Test
@@ -75,7 +77,7 @@ internal class TypingEventsTest {
                 channelId,
                 emptyMap(),
                 eventTime
-            ).isSuccess `should be equal to` true
+            ) shouldBeInstanceOf Result.Success::class
 
             sut.onTypingEventRequest(EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
             sut.onTypingEventResult(mock(), EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
@@ -86,7 +88,7 @@ internal class TypingEventsTest {
                 channelId,
                 emptyMap(),
                 Date()
-            ).isError `should be equal to` true
+            ) shouldBeInstanceOf Result.Failure::class
 
             Thread.sleep(3001)
 
@@ -96,7 +98,7 @@ internal class TypingEventsTest {
                 channelId,
                 emptyMap(),
                 Date()
-            ).isSuccess `should be equal to` true
+            ) shouldBeInstanceOf Result.Success::class
         }
 
     @Test
@@ -112,7 +114,7 @@ internal class TypingEventsTest {
                 channelId,
                 emptyMap(),
                 Date()
-            ).isSuccess `should be equal to` false
+            ) shouldBeInstanceOf Result.Failure::class
         }
 
     @Test
@@ -136,7 +138,7 @@ internal class TypingEventsTest {
                 channelId,
                 emptyMap(),
                 Date()
-            ).isSuccess `should be equal to` true
+            ) shouldBeInstanceOf Result.Success::class
 
             sut.onTypingEventRequest(
                 EventType.TYPING_STOP,

@@ -159,7 +159,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
-import io.getstream.chat.android.client.utils.mapSuspend
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -404,7 +403,7 @@ internal constructor(
                 logger.e {
                     "The user_id provided on the JWT token doesn't match with the current user you try to connect"
                 }
-                Result.error(
+                Result.Failure(
                     ChatError(
                         "The user_id provided on the JWT token doesn't match with the current user you try to connect"
                     )
@@ -431,20 +430,20 @@ internal constructor(
                 when {
                     userState.user.id != user.id -> {
                         logger.e { "[setUser] Trying to set different user without disconnect previous one." }
-                        Result.error(
+                        Result.Failure(
                             ChatError(
                                 "User cannot be set until the previous one is disconnected."
                             )
                         )
                     }
                     else -> {
-                        getConnectionId()?.let { Result.success(ConnectionData(userState.user, it)) }
+                        getConnectionId()?.let { Result.Success(ConnectionData(userState.user, it)) }
                             ?: run {
                                 logger.e {
                                     "[setUser] Trying to connect the same user twice without a previously completed " +
                                         "connection."
                                 }
-                                Result.error(
+                                Result.Failure(
                                     ChatError(
                                         "Failed to connect user. Please check you haven't connected a user already."
                                     )
@@ -455,7 +454,7 @@ internal constructor(
             }
             else -> {
                 logger.e { "[setUser] Failed to connect user. Please check you don't have connected user already." }
-                Result.error(ChatError("Failed to connect user. Please check you don't have connected user already."))
+                Result.Failure(ChatError("Failed to connect user. Please check you don't have connected user already."))
             }
         }.onErrorSuspend {
             disconnectSuspend(flushPersistence = true)
@@ -689,7 +688,7 @@ internal constructor(
     private suspend fun waitFirstConnection(timeoutMilliseconds: Long?): Result<ConnectionData> =
         timeoutMilliseconds?.let {
             withTimeoutOrNull(timeoutMilliseconds) { waitConnection.first() }
-                ?: Result.error(ChatError("Connection wasn't established in ${timeoutMilliseconds}ms"))
+                ?: Result.Failure(ChatError("Connection wasn't established in ${timeoutMilliseconds}ms"))
         } ?: waitConnection.first()
 
     @CheckResult
@@ -702,16 +701,21 @@ internal constructor(
         return CoroutineCall(clientScope) {
             logger.d { "[connectGuestUser] userId: '$userId', username: '$username'" }
             userScope.userId.value = userId
-            getGuestToken(userId, username).await()
+            val guestTokenResult = getGuestToken(userId, username).await()
                 .mapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
-                .data()
-                .also { result ->
-                    logger.v {
-                        "[connectAnonymousUser] completed: ${
-                        result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
-                        }"
+
+            when (guestTokenResult) {
+                is Result.Success -> {
+                    guestTokenResult.value.also { result ->
+                        logger.v {
+                            "[connectAnonymousUser] completed: ${
+                            result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
+                            }"
+                        }
                     }
                 }
+                is Result.Failure -> guestTokenResult
+            }
         }
     }
 
@@ -1160,7 +1164,7 @@ internal constructor(
         CoroutineCall(clientScope) {
             logger.d { "[disconnect] flushPersistence: $flushPersistence" }
             disconnectSuspend(flushPersistence)
-            Result.success(Unit)
+            Result.Success(Unit)
         }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
@@ -1203,7 +1207,7 @@ internal constructor(
     @Suppress("TooGenericExceptionCaught")
     private suspend fun ClientState.awaitConnectionState(
         state: ConnectionState,
-        timeoutInMillis: Long = DEFAULT_CONNECTION_STATE_TIMEOUT
+        timeoutInMillis: Long = DEFAULT_CONNECTION_STATE_TIMEOUT,
     ) = try {
         withTimeout(timeoutInMillis) {
             connectionState.first {
@@ -1722,7 +1726,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-        skipOnRequest: Boolean = false
+        skipOnRequest: Boolean = false,
     ): Call<Channel> {
         logger.d { "[queryChannel] cid: $channelType:$channelId" }
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
@@ -2524,13 +2528,13 @@ internal constructor(
     private fun checkSyncHistoryPreconditions(channelsIds: List<String>, lastSyncAt: Date): Result<Unit> {
         return when {
             channelsIds.isEmpty() -> {
-                Result.error(ChatError("channelsIds must contain at least 1 id."))
+                Result.Failure(ChatError("channelsIds must contain at least 1 id."))
             }
             lastSyncAt.isLaterThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
-                Result.error(ChatError("lastSyncAt cannot by later than 30 days."))
+                Result.Failure(ChatError("lastSyncAt cannot by later than 30 days."))
             }
             else -> {
-                Result.success(Unit)
+                Result.Success(Unit)
             }
         }
     }
@@ -2687,15 +2691,14 @@ internal constructor(
         preconditionCheck: suspend R.() -> Result<Unit>,
     ): Call<T> =
         withPrecondition(userScope) {
-            pluginsList.fold(Result.success(Unit)) { result, plugin ->
-                if (result.isError) {
-                    result
-                } else {
-                    val preconditionResult = preconditionCheck(plugin)
-                    if (preconditionResult.isError) {
-                        preconditionResult
-                    } else {
-                        result
+            pluginsList.fold(Result.Success(Unit) as Result<Unit>) { result, plugin ->
+                when (result) {
+                    is Result.Failure -> result
+                    is Result.Success -> {
+                        when (val preconditionResult = preconditionCheck(plugin)) {
+                            is Result.Failure -> preconditionResult
+                            is Result.Success -> result
+                        }
                     }
                 }
             }

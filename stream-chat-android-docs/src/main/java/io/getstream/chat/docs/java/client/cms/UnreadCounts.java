@@ -12,7 +12,9 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent;
 import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.ConnectionData;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 
 public class UnreadCounts {
@@ -27,20 +29,22 @@ public class UnreadCounts {
             User user = new User();
             user.setId("user-id");
             client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
-                if (result.isSuccess()) {
-                    User userRes = result.data().getUser();
+                if (result instanceof Result.Success) {
+                    User userRes = ((Result.Success<ConnectionData>) result).getValue().getUser();
                     int unreadChannels = userRes.getUnreadChannels();
                     int totalUnreadCount = userRes.getTotalUnreadCount();
+                } else {
+                    // Handle error
                 }
             });
         }
 
         public void markRead() {
             channelClient.markRead().enqueue(result -> {
-                if (result.isSuccess()) {
+                if (result instanceof Result.Success) {
                     // Messages in the channel marked as read
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -85,11 +89,11 @@ public class UnreadCounts {
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
-                if (result.isSuccess()) {
+                if (result instanceof Result.Success) {
                     // readState is the list of read states for each user on the channel
-                    List<ChannelUserRead> readState = result.data().getRead();
+                    List<ChannelUserRead> readState = ((Result.Success<Channel>) result).getValue().getRead();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -99,11 +103,11 @@ public class UnreadCounts {
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
 
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
-                if (result.isSuccess()) {
-                    // Unread count for current user
-                    Integer unreadCount = result.data().getUnreadCount();
+                if (result instanceof Result.Success) {
+                    // Unread count for the current user
+                    Integer unreadCount = ((Result.Success<Channel>) result).getValue().getUnreadCount();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -118,22 +122,22 @@ public class UnreadCounts {
             }
 
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
-                if (result.isSuccess()) {
+                if (result instanceof Result.Success) {
                     // Unread mentions
-                    Channel channel = result.data();
+                    Channel channel = ((Result.Success<Channel>) result).getValue();
                     Integer unreadCount = ChannelExtensionKt.countUnreadMentionsForUser(channel, currentUser);
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
 
         public void markAllAsRead() {
             client.markAllRead().enqueue((result) -> {
-                if (result.isSuccess()) {
-                    //Handle success
+                if (result instanceof Result.Success) {
+                    // Handle success
                 } else {
-                    //Handle failure
+                    // Handle error
                 }
             });
         }

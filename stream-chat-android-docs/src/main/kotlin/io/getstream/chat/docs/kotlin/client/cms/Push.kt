@@ -4,7 +4,9 @@ import android.content.Context
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate
 
 class Push(val context: Context, val client: ChatClient) {
@@ -49,10 +51,13 @@ class Push(val context: Context, val client: ChatClient) {
 
         fun listDevices() {
             client.getDevices().enqueue { result ->
-                if (result.isSuccess) {
-                    val devices: List<Device> = result.data()
-                } else {
-                    // Handle result.error()
+                when (result) {
+                    is Result.Success -> {
+                        val devices: List<Device> = result.value
+                    }
+                    is Result.Failure -> {
+                        // Handler error
+                    }
                 }
             }
         }

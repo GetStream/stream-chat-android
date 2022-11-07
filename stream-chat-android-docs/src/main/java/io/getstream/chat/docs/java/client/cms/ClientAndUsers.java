@@ -11,9 +11,12 @@ import java.util.List;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ConnectionData;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.token.TokenProvider;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.docs.TokenService;
 
 public class ClientAndUsers {
@@ -48,12 +51,12 @@ public class ClientAndUsers {
             // 1. Setup the current user with a JWT token
             String token = "{{ chat_user_token }}";
             client.connectUser(user, token).enqueue(result -> {
-                if (result.isSuccess()) {
+                if (result instanceof Result.Success) {
                     // Logged in
-                    User userRes = result.data().getUser();
-                    String connectionId = result.data().getConnectionId();
+                    User userRes = ((Result.Success<ConnectionData>) result).getValue().getUser();
+                    String connectionId = ((Result.Success<ConnectionData>) result).getValue().getConnectionId();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
 
@@ -147,10 +150,10 @@ public class ClientAndUsers {
             QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit);
 
             client.queryUsers(request).enqueue(result -> {
-                if (result.isSuccess()) {
-                    List<User> users = result.data();
+                if (result instanceof Result.Success) {
+                    List<User> users = ((Result.Success<List<User>>) result).getValue();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -198,10 +201,10 @@ public class ClientAndUsers {
             String token = "token";
 
             client.disconnect(true).enqueue(disconnectResult -> {
-                if (disconnectResult.isSuccess()) {
+                if (disconnectResult instanceof Result.Success) {
                     client.connectUser(user, token).enqueue(loginResult -> { /* ... */ });
                 } else {
-                    // Handle result.error()
+                    // Handle result error
                 }
             });
         }

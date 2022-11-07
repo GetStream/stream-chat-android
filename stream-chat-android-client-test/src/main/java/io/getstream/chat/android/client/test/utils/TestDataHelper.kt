@@ -723,7 +723,7 @@ public class TestDataHelper {
         UserUpdatedEvent(EventType.USER_UPDATED, createdAt, streamFormatter.format(createdAt), user1updated)
     }
     public val syncHistoryResult: Result<List<ChatEvent>> =
-        Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2))
+        Result.Success(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2))
 
     public val channelTruncatedEvent: ChannelTruncatedEvent by lazy {
         val createdAt = Date()

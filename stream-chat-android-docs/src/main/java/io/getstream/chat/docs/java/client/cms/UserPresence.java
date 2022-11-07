@@ -13,8 +13,10 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
 import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ConnectionData;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
 
 public class UserPresence {
     private ChatClient client;
@@ -28,10 +30,10 @@ public class UserPresence {
         user.setId("user-id");
         user.setInvisible(true);
         client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
-            if (result.isSuccess()) {
-                User userRes = result.data().getUser();
+            if (result instanceof Result.Success) {
+                User userRes = ((Result.Success<ConnectionData>) result).getValue().getUser();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
     }
@@ -48,10 +50,10 @@ public class UserPresence {
         watchRequest.setPresence(true);
         watchRequest.getData().put("members", Arrays.asList("john", "jack"));
         channelClient.watch(watchRequest).enqueue(result -> {
-            if (result.isSuccess()) {
-                Channel channel = result.data();
+            if (result instanceof Result.Success) {
+                Channel channel = ((Result.Success<Channel>) result).getValue();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 
@@ -74,10 +76,10 @@ public class UserPresence {
                 memberLimit
         );
         client.queryChannels(channelsRequest).enqueue(result -> {
-            if (result.isSuccess()) {
-                List<Channel> channels = result.data();
+            if (result instanceof Result.Success) {
+                List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 
@@ -88,10 +90,10 @@ public class UserPresence {
         QueryUsersRequest usersQuery = new QueryUsersRequest(usersFilter, usersOffset, usersLimit);
         usersQuery.setPresence(true);
         client.queryUsers(usersQuery).enqueue(result -> {
-            if (result.isSuccess()) {
-                List<User> users = result.data();
+            if (result instanceof Result.Success) {
+                List<User> users = ((Result.Success<List<User>>) result).getValue();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 

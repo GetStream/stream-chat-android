@@ -271,7 +271,7 @@ internal class ChatClientTest {
     fun `Sync with empty cids`() = runTest {
         /* Given */
         whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
-            Result.error(
+            Result.Failure(
                 ChatNetworkError.create(
                     statusCode = 400,
                     streamCode = 4,
@@ -284,7 +284,7 @@ internal class ChatClientTest {
         val result = client.getSyncHistory(emptyList(), Date()).await()
 
         /* Then */
-        result shouldBeEqualTo Result.error(ChatError("channelsIds must contain at least 1 id."))
+        result shouldBeEqualTo Result.Failure(ChatError("channelsIds must contain at least 1 id."))
     }
 
     @Test
@@ -294,7 +294,7 @@ internal class ChatClientTest {
         val rawDate = streamDateFormatter.format(date)
 
         whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
-            Result.success(
+            Result.Success(
                 listOf(
                     HealthEvent(
                         type = "type",
@@ -310,7 +310,7 @@ internal class ChatClientTest {
         val result = client.getSyncHistory(listOf("test"), Date()).await()
 
         /* Then */
-        result shouldBeEqualTo Result.success(
+        result shouldBeEqualTo Result.Success(
             listOf(
                 HealthEvent(
                     type = "type",

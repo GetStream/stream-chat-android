@@ -35,9 +35,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
-import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.message.isEphemeral
-import io.getstream.chat.android.client.utils.toResultError
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.extensions.internal.logic
@@ -170,16 +168,16 @@ private fun <T> ChatClient.getStateOrNull(
 @CheckResult
 public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult(cid)
 
-        if (cidValidationResult.isSuccess) {
-            val (channelType, channelId) = cid.cidToTypeAndId()
-            state.mutableChannel(channelType = channelType, channelId = channelId).run {
-                setRepliedMessage(message)
+        when (val cidValidationResult = validateCidWithResult(cid)) {
+            is Result.Success -> {
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                state.mutableChannel(channelType = channelType, channelId = channelId).run {
+                    setRepliedMessage(message)
+                }
+                Result.Success(Unit)
             }
-            Result(Unit)
-        } else {
-            cidValidationResult.error().toResultError()
+            is Result.Failure -> cidValidationResult
         }
     }
 }
@@ -208,9 +206,9 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
                     .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, subPath)
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             )
-            Result.success(Unit)
+            Result.Success(Unit)
         } catch (exception: Exception) {
-            Result.error(exception)
+            Result.Failure(ChatError(cause = exception))
         }
     }
 }
@@ -225,14 +223,13 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
  */
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult(cid)
-
-        if (cidValidationResult.isSuccess) {
-            val (channelType, channelId) = cid.cidToTypeAndId()
-            logic.channel(channelType = channelType, channelId = channelId)
-                .loadOlderMessages(messageLimit = messageLimit)
-        } else {
-            cidValidationResult.error().toResultError()
+        when (val cidValidationResult = validateCidWithResult(cid)) {
+            is Result.Success -> {
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                logic.channel(channelType = channelType, channelId = channelId)
+                    .loadOlderMessages(messageLimit = messageLimit)
+            }
+            is Result.Failure -> cidValidationResult
         }
     }
 }
@@ -243,14 +240,13 @@ public fun ChatClient.loadNewerMessages(
     messageLimit: Int,
 ): Call<Channel> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult(channelCid)
-
-        if (cidValidationResult.isSuccess) {
-            val (channelType, channelId) = channelCid.cidToTypeAndId()
-            logic.channel(channelType = channelType, channelId = channelId)
-                .loadNewerMessages(messageId = baseMessageId, limit = messageLimit)
-        } else {
-            cidValidationResult.error().toResultError()
+        when (val cidValidationResult = validateCidWithResult(channelCid)) {
+            is Result.Success -> {
+                val (channelType, channelId) = channelCid.cidToTypeAndId()
+                logic.channel(channelType = channelType, channelId = channelId)
+                    .loadNewerMessages(messageId = baseMessageId, limit = messageLimit)
+            }
+            is Result.Failure -> cidValidationResult
         }
     }
 }
@@ -265,21 +261,20 @@ public fun ChatClient.loadNewerMessages(
  */
 public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult(message.cid)
+        when (val cidValidationResult = validateCidWithResult(message.cid)) {
+            is Result.Success -> {
+                try {
+                    require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
+                    logic.channelFromMessage(message)?.deleteMessage(message)
+                    logic.threadFromMessage(message)?.removeLocalMessage(message)
+                    repositoryFacade.deleteChannelMessage(message)
 
-        if (cidValidationResult.isSuccess) {
-            try {
-                require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-                logic.channelFromMessage(message)?.deleteMessage(message)
-                logic.threadFromMessage(message)?.removeLocalMessage(message)
-                repositoryFacade.deleteChannelMessage(message)
-
-                Result.success(true)
-            } catch (exception: Exception) {
-                Result.error(exception)
+                    Result.Success(true)
+                } catch (exception: Exception) {
+                    Result.Failure(ChatError(cause = exception))
+                }
             }
-        } else {
-            cidValidationResult.error().toResultError()
+            is Result.Failure -> cidValidationResult
         }
     }
 }
@@ -308,26 +303,29 @@ private suspend fun ChatClient.loadMessageByIdInternal(
 ): Result<Message> {
     val cidValidationResult = validateCidWithResult(cid)
 
-    if (!cidValidationResult.isSuccess) {
-        return cidValidationResult.error().toResultError()
+    if (cidValidationResult is Result.Failure) {
+        return cidValidationResult
     }
 
     val (channelType, channelId) = cid.cidToTypeAndId()
     val result = logic.channel(channelType = channelType, channelId = channelId)
         .loadMessagesAroundId(messageId)
 
-    return if (result.isSuccess) {
-        val message = result.data().messages.firstOrNull { message ->
-            message.id == messageId
-        }
+    return when (result) {
+        is Result.Success -> {
+            val message = result.value.messages.firstOrNull { message ->
+                message.id == messageId
+            }
 
-        if (message != null) {
-            result.map { message }
-        } else {
-            Result.error(ChatError("The message could not be found."))
+            if (message != null) {
+                result.map { message }
+            } else {
+                Result.Failure(ChatError("The message could not be found."))
+            }
         }
-    } else {
-        Result(ChatError("Error while fetching messages from backend. Messages around id: $messageId"))
+        is Result.Failure -> Result.Failure(
+            ChatError("Error while fetching messages from backend. Messages around id: $messageId")
+        )
     }
 }
 
@@ -348,13 +346,13 @@ public fun ChatClient.loadNewestMessages(
     userPresence: Boolean = true,
 ): Call<Channel> {
     return CoroutineCall(state.scope) {
-        val cidValidationResult = validateCidWithResult(cid)
-        if (!cidValidationResult.isSuccess) {
-            cidValidationResult.error().toResultError()
-        } else {
-            val (channelType, channelId) = cid.cidToTypeAndId()
-            logic.channel(channelType = channelType, channelId = channelId)
-                .watch(messageLimit, userPresence)
+        when (val cidValidationResult = validateCidWithResult(cid)) {
+            is Result.Success -> {
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                logic.channel(channelType = channelType, channelId = channelId)
+                    .watch(messageLimit, userPresence)
+            }
+            is Result.Failure -> Result.Failure(cidValidationResult.value)
         }
     }
 }

@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.offline.utils.internal
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCid
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
-import io.getstream.chat.android.client.utils.toResult
 import org.amshove.kluent.invoking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
@@ -59,10 +59,10 @@ internal class ValidationKtTest {
         @JvmStatic
         fun argumentsValidCidResult() =
             validCids().map {
-                Arguments.of(it, it.toResult())
+                Arguments.of(it, Result.Success(it))
             } +
                 invalidCids().map {
-                    Arguments.of(it.first, Result.error<String>(it.second))
+                    Arguments.of(it.first, Result.Failure(ChatError(cause = it.second)))
                 }
 
         @JvmStatic

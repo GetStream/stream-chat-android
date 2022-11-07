@@ -17,119 +17,93 @@
 package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
- *  A class which encapsulates a successful outcome with a value of type [T] or a failure with [ChatError].
+ *  A class which encapsulates a successful outcome with a value of type [A] or a failure with [ChatError].
  */
-public class Result<T : Any> private constructor(
-    private val data: T?,
-    private val error: ChatError?,
-) {
-
-    @Suppress("DEPRECATION")
-    public constructor(data: T) : this(data, null)
-
-    @Suppress("DEPRECATION")
-    public constructor(error: ChatError) : this(null, error)
+public sealed class Result<out A : Any> {
 
     /**
-     * Returns true if a request of payload response has been successful.
+     * Represents successful result.
+     *
+     * @param value The [A] data associated with the result.
      */
-    public val isSuccess: Boolean
-        get() = data != null
+    public data class Success<out A : Any>(val value: A) : Result<A>()
 
     /**
-     * Returns true if a request of payload response has been failed.
+     * Represents failed result.
+     *
+     * @param value The [ChatError] associated with the result.
      */
-    public val isError: Boolean
-        get() = error != null
+    public data class Failure(val value: ChatError) : Result<Nothing>()
 
     /**
-     * Returns the successful data payload.
+     * Returns a transformed [Result] of applying the given [f] function if the [Result]
+     * contains a successful data payload.
+     * Returns an original [Result] if the [Result] contains an error payload.
+     *
+     * @param f A lambda for mapping [Result] of [A] to [Result] of [C].
+     *
+     * @return A transformed instance of the [Result] or the original instance of the [Result].
      */
-    public fun data(): T {
-        return checkNotNull(data) { "Result is not successful. Check result.isSuccess before reading the data." }
-    }
+    @JvmSynthetic
+    public inline fun <C : Any> map(f: (A) -> C): Result<C> = flatMap { Success(f(it)) }
 
     /**
-     * Returns the [ChatError] error payload.
+     * Returns a transformed [Result] of applying the given suspending [f] function if the [Result]
+     * contains a successful data payload.
+     * Returns an original [Result] if the [Result] contains an error payload.
+     *
+     * @param f A suspending lambda for mapping [Result] of [A] to [Result] of [C].
+     *
+     * @return A transformed instance of the [Result] or the original instance of the [Result].
      */
-    public fun error(): ChatError {
-        return checkNotNull(error) {
-            "Result is successful, not an error. Check result.isSuccess before reading the error."
-        }
-    }
+    @JvmSynthetic
+    public suspend inline fun <C : Any> mapSuspend(crossinline f: suspend (A) -> C): Result<C> =
+        flatMap { Success(f(it)) }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+    /**
+     * Returns a [Result] of [Unit] from any type of a [Result].
+     *
+     * @return [Result] of [Unit].
+     */
+    public fun toUnitResult(): Result<Unit> = map {}
+}
 
-        other as Result<*>
-
-        if (data != other.data) return false
-        if (error != other.error) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = data?.hashCode() ?: 0
-        result = 31 * result + (error?.hashCode() ?: 0)
-        return result
-    }
-
-    override fun toString(): String {
-        return "Result(data=$data, error=$error)"
-    }
-
-    public companion object {
-
-        /**
-         * Creates a [Result] object with [data] payload.
-         *
-         * @param data successful data payload.
-         *
-         * @return [Result] of [T] that contains successful data payload.
-         */
-        @JvmStatic
-        public fun <T : Any> success(data: T): Result<T> {
-            return Result(data)
-        }
-
-        /**
-         * Creates a [Result] object with error payload.
-         *
-         * @param t Unexpected [Exception] or [Throwable].
-         *
-         * @return [Result] of [T] that contains [ChatError] error payload.
-         */
-        @JvmStatic
-        public fun <T : Any> error(t: Throwable): Result<T> {
-            return Result(null, ChatError(t.message, t))
-        }
-
-        /**
-         * Creates a [Result] object with error payload.
-         *
-         * @param error [ChatError] error payload.
-         *
-         * @return [Result] of [T] that contains [ChatError] error payload.
-         */
-        @JvmStatic
-        public fun <T : Any> error(error: ChatError): Result<T> {
-            return Result(null, error)
-        }
+/**
+ * Returns a transformed [Result] from results of the [f] if the [Result] contains a successful data payload.
+ * Returns an original [Result] if the [Result] contains an error payload.
+ *
+ * @param f A lambda that returns [Result] of [C].
+ *
+ * @return A transformed instance of the [Result] or the original instance of the [Result].
+ */
+@JvmSynthetic
+public inline fun <A : Any, C : Any> Result<A>.flatMap(f: (A) -> Result<C>): Result<C> {
+    return when (this) {
+        is Result.Success -> f(this.value)
+        is Result.Failure -> this
     }
 }
 
 /**
- * Returns a [Result] of [Unit] from any type of a [Result].
+ * Returns a transformed [Result] from results of the suspending [f] if the [Result] contains a successful data
+ * payload.
+ * Returns an original [Result] if the [Result] contains an error payload.
  *
- * @return [Result] of [Unit].
+ * @param f A suspending lambda that returns [Result] of [C].
+ *
+ * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
-@InternalStreamChatApi
-public fun Result<*>.toUnitResult(): Result<Unit> = map {}
+@JvmSynthetic
+public suspend inline fun <A : Any, C : Any> Result<A>.flatMapSuspend(
+    crossinline f: suspend (A) -> Result<C>,
+): Result<C> {
+    return when (this) {
+        is Result.Success -> f(this.value)
+        is Result.Failure -> this
+    }
+}
 
 /**
  * Runs the [successSideEffect] lambda function if the [Result] contains a successful data payload.
@@ -139,13 +113,15 @@ public fun Result<*>.toUnitResult(): Result<Unit> = map {}
  * @return The original instance of the [Result].
  */
 @JvmSynthetic
-public inline fun <T : Any> Result<T>.onSuccess(
-    crossinline successSideEffect: (T) -> Unit,
-): Result<T> = apply {
-    if (isSuccess) {
-        successSideEffect(data())
+public inline fun <A : Any> Result<A>.onSuccess(
+    crossinline successSideEffect: (A) -> Unit,
+): Result<A> =
+    also {
+        when (it) {
+            is Result.Success -> successSideEffect(it.value)
+            is Result.Failure -> Unit
+        }
     }
-}
 
 /**
  * Runs the suspending [successSideEffect] lambda function if the [Result] contains a successful data payload.
@@ -155,83 +131,15 @@ public inline fun <T : Any> Result<T>.onSuccess(
  * @return The original instance of the [Result].
  */
 @JvmSynthetic
-public suspend inline fun <T : Any> Result<T>.onSuccessSuspend(
-    crossinline successSideEffect: suspend (T) -> Unit,
-): Result<T> = apply {
-    if (isSuccess) {
-        successSideEffect(data())
+public suspend inline fun <A : Any> Result<A>.onSuccessSuspend(
+    crossinline successSideEffect: suspend (A) -> Unit,
+): Result<A> =
+    also {
+        when (it) {
+            is Result.Success -> successSideEffect(it.value)
+            is Result.Failure -> Unit
+        }
     }
-}
-
-/**
- * Returns a transformed [Result] of applying the given [mapper] function if the [Result]
- * contains a successful data payload.
- * Returns an original [Result] if the [Result] contains an error payload.
- *
- * @param mapper A lambda for mapping [Result] of [T] to [Result] of [K].
- *
- * @return A transformed instance of the [Result] or the original instance of the [Result].
- */
-@JvmSynthetic
-public fun <T : Any, K : Any> Result<T>.map(mapper: (T) -> K): Result<K> {
-    return if (isSuccess) {
-        Result(mapper(data()))
-    } else {
-        Result(error())
-    }
-}
-
-/**
- * Returns a transformed [Result] of applying the given suspending [mapper] function if the [Result]
- * contains a successful data payload.
- * Returns an original [Result] if the [Result] contains an error payload.
- *
- * @param mapper A suspending lambda for mapping [Result] of [T] to [Result] of [K].
- *
- * @return A transformed instance of the [Result] or the original instance of the [Result].
- */
-@JvmSynthetic
-public suspend fun <T : Any, K : Any> Result<T>.mapSuspend(mapper: suspend (T) -> K): Result<K> {
-    return if (isSuccess) {
-        Result(mapper(data()))
-    } else {
-        Result(error())
-    }
-}
-
-/**
- * Recovers the error payload by applying the given [errorMapper] function if the [Result]
- * contains an error payload.
- *
- * @param errorMapper A lambda that receives [ChatError] and transforms it as a payload [T].
- *
- * @return A transformed instance of the [Result] or the original instance of the [Result].
- */
-@JvmSynthetic
-public fun <T : Any> Result<T>.recover(errorMapper: (ChatError) -> T): Result<T> {
-    return if (isSuccess) {
-        this
-    } else {
-        Result(errorMapper(error()))
-    }
-}
-
-/**
- * Recovers the error payload by applying the given suspending [errorMapper] function if the [Result]
- * contains an error payload.
- *
- * @param errorMapper A suspending lambda that receives [ChatError] and transforms it as a payload [T].
- *
- * @return A transformed instance of the [Result] or the original instance of the [Result].
- */
-@JvmSynthetic
-public suspend fun <T : Any> Result<T>.recoverSuspend(errorMapper: suspend (ChatError) -> T): Result<T> {
-    return if (isSuccess) {
-        this
-    } else {
-        Result(errorMapper(error()))
-    }
-}
 
 /**
  * Runs the [errorSideEffect] lambda function if the [Result] contains an error payload.
@@ -241,13 +149,15 @@ public suspend fun <T : Any> Result<T>.recoverSuspend(errorMapper: suspend (Chat
  * @return The original instance of the [Result].
  */
 @JvmSynthetic
-public inline fun <T : Any> Result<T>.onError(
+public inline fun <A : Any> Result<A>.onError(
     crossinline errorSideEffect: (ChatError) -> Unit,
-): Result<T> = apply {
-    if (isError) {
-        errorSideEffect(error())
+): Result<A> =
+    also {
+        when (it) {
+            is Result.Success -> Unit
+            is Result.Failure -> errorSideEffect(it.value)
+        }
     }
-}
 
 /**
  * Runs the suspending [errorSideEffect] lambda function if the [Result] contains an error payload.
@@ -257,59 +167,46 @@ public inline fun <T : Any> Result<T>.onError(
  * @return The original instance of the [Result].
  */
 @JvmSynthetic
-public suspend inline fun <T : Any> Result<T>.onErrorSuspend(
+public suspend inline fun <A : Any> Result<A>.onErrorSuspend(
     crossinline errorSideEffect: suspend (ChatError) -> Unit,
-): Result<T> = apply {
-    if (isError) {
-        errorSideEffect(error())
+): Result<A> =
+    also {
+        when (it) {
+            is Result.Success -> Unit
+            is Result.Failure -> errorSideEffect(it.value)
+        }
     }
-}
 
 /**
- * Returns a transformed [Result] from results of the [func] if the [Result] contains a successful data payload.
- * Returns an original [Result] if the [Result] contains an error payload.
+ * Recovers the error payload by applying the given [errorMapper] function if the [Result]
+ * contains an error payload.
  *
- * @param func A lambda that returns [Result] of [R].
+ * @param errorMapper A lambda that receives [ChatError] and transforms it as a payload [A].
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
 @JvmSynthetic
-public fun <T : Any, R : Any> Result<T>.flatMap(func: (T) -> Result<R>): Result<R> {
-    return if (isSuccess) {
-        func(data())
-    } else {
-        Result.error(error())
+public fun <A : Any> Result<A>.recover(errorMapper: (ChatError) -> A): Result.Success<A> {
+    return when (this) {
+        is Result.Success -> this
+        is Result.Failure -> Result.Success(errorMapper(value))
     }
 }
 
 /**
- * Returns a transformed [Result] from results of the suspending [func] if the [Result] contains a successful data
- * payload.
- * Returns an original [Result] if the [Result] contains an error payload.
+ * Recovers the error payload by applying the given suspending [errorMapper] function if the [Result]
+ * contains an error payload.
  *
- * @param func A suspending lambda that returns [Result] of [R].
+ * @param errorMapper A suspending lambda that receives [ChatError] and transforms it as a payload [A].
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
 @JvmSynthetic
-public suspend fun <T : Any, R : Any> Result<T>.flatMapSuspend(func: suspend (T) -> Result<R>): Result<R> {
-    return if (isSuccess) {
-        func(data())
-    } else {
-        Result.error(error())
+public suspend inline fun <A : Any> Result<A>.recoverSuspend(
+    crossinline errorMapper: suspend (ChatError) -> A,
+): Result.Success<A> {
+    return when (this) {
+        is Result.Success -> this
+        is Result.Failure -> Result.Success(errorMapper(value))
     }
 }
-
-/**
- * Returns a [Result] that contains an instance of [T] as a data payload.
- *
- * @return A [Result] the contains an instance of [T] as a data payload.
- */
-public fun <T : Any> T.toResult(): Result<T> = Result.success(this)
-
-/**
- * Returns a [Result] of type [T] that contains an they same error as payload.
- *
- * @return A [Result] of type [T] that contains an they same error as payload.
- */
-public fun <T : Any> ChatError.toResultError(): Result<T> = Result.error(this)

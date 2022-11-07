@@ -74,7 +74,7 @@ internal class CallPostponeHelper(
                 call().await()
             } catch (e: Throwable) {
                 logger.e { "[postponeCall] failed: $e" }
-                Result.error(
+                Result.Failure(
                     ChatError(
                         message = "Failed to perform call. Waiting for WS connection was too long."
                     )

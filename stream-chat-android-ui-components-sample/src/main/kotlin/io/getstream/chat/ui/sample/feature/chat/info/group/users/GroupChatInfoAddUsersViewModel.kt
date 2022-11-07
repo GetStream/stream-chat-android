@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import kotlinx.coroutines.flow.Flow
@@ -84,11 +85,9 @@ class GroupChatInfoAddUsersViewModel(
     private fun addMember(user: User) {
         viewModelScope.launch {
             val message = Message(text = "${user.name} was added to this channel")
-            val response = channelClient.addMembers(listOf(user.id), message).await()
-            if (response.isSuccess) {
-                _userAddedState.value = true
-            } else {
-                _errorEvents.postValue(Event(ErrorEvent.AddMemberError))
+            when (channelClient.addMembers(listOf(user.id), message).await()) {
+                is Result.Success -> _userAddedState.value = true
+                is Result.Failure -> _errorEvents.postValue(Event(ErrorEvent.AddMemberError))
             }
         }
     }
@@ -141,14 +140,13 @@ class GroupChatInfoAddUsersViewModel(
             )
         ).await()
 
-        if (result.isSuccess) {
-            _state.value = currentState.copy(
-                results = currentState.results + result.data(),
+        when (result) {
+            is Result.Success -> _state.value = currentState.copy(
+                results = currentState.results + result.value,
                 isLoading = false,
-                canLoadMore = result.data().size == QUERY_LIMIT
+                canLoadMore = result.value.size == QUERY_LIMIT
             )
-        } else {
-            _state.value = currentState.copy(
+            is Result.Failure -> _state.value = currentState.copy(
                 isLoading = false,
                 canLoadMore = true,
             )

@@ -221,26 +221,27 @@ internal class SyncManager(
             chatClient.getSyncHistory(cids, lastSyncAt).await()
         }
 
-        if (result.isSuccess) {
-            val sortedEvents = result.data().sortedBy { it.createdAt }
-            logger.d { "[performSync] succeed. events: ${sortedEvents.size}" }
-            val latestEvent = sortedEvents.lastOrNull()
-            val latestEventDate = latestEvent?.createdAt ?: Date()
-            val rawLatestEventDate = latestEvent?.rawCreatedAt
-            updateLastSyncedDate(latestEventDate, rawLatestEventDate)
-            sortedEvents.forEach {
-                if (it is MarkAllReadEvent) {
-                    updateAllReadStateForDate(it.user.id, it.createdAt)
+        when (result) {
+            is Result.Success -> {
+                val sortedEvents = result.value.sortedBy { it.createdAt }
+                logger.d { "[performSync] succeed. events: ${sortedEvents.size}" }
+                val latestEvent = sortedEvents.lastOrNull()
+                val latestEventDate = latestEvent?.createdAt ?: Date()
+                val rawLatestEventDate = latestEvent?.rawCreatedAt
+                updateLastSyncedDate(latestEventDate, rawLatestEventDate)
+                sortedEvents.forEach {
+                    if (it is MarkAllReadEvent) {
+                        updateAllReadStateForDate(it.user.id, it.createdAt)
+                    }
+                }
+                if (sortedEvents.isNotEmpty() && rawLastSyncAt != null && rawLastSyncAt != rawLatestEventDate) {
+                    events.emit(sortedEvents)
+                    logger.v { "[performSync] events emission completed" }
+                } else {
+                    logger.v { "[performSync] no events to emit" }
                 }
             }
-            if (sortedEvents.isNotEmpty() && rawLastSyncAt != null && rawLastSyncAt != rawLatestEventDate) {
-                events.emit(sortedEvents)
-                logger.v { "[performSync] events emission completed" }
-            } else {
-                logger.v { "[performSync] no events to emit" }
-            }
-        } else {
-            logger.e { "[performSync] failed(${result.error().stringify()})" }
+            is Result.Failure -> logger.e { "[performSync] failed(${result.value.stringify()})" }
         }
     }
 
@@ -309,17 +310,20 @@ internal class SyncManager(
     private suspend fun restoreActiveChannels() {
         val recoverAll = !isFirstConnect.compareAndSet(true, false)
         logger.d { "[restoreActiveChannels] recoverAll: $recoverAll" }
-        val result = updateActiveQueryChannels(recoverAll)
-        if (result.isError) {
-            logger.e { "[restoreActiveChannels] failed: ${result.error()}" }
-            return
+        when (val result = updateActiveQueryChannels(recoverAll)) {
+            is Result.Success -> {
+                val updatedCids = result.value
+                logger.v { "[restoreActiveChannels] updatedCids.size: ${updatedCids.size}" }
+                updateActiveChannels(
+                    recoverAll,
+                    updatedCids
+                )
+            }
+            is Result.Failure -> {
+                logger.e { "[restoreActiveChannels] failed: ${result.value}" }
+                return
+            }
         }
-        val updatedCids = result.data()
-        logger.v { "[restoreActiveChannels] updatedCids.size: ${updatedCids.size}" }
-        updateActiveChannels(
-            recoverAll,
-            updatedCids
-        )
     }
 
     private suspend fun updateActiveQueryChannels(recoverAll: Boolean): Result<Set<String>> {
@@ -332,7 +336,7 @@ internal class SyncManager(
             .toList()
         if (queryLogicsToRestore.isEmpty()) {
             logger.v { "[updateActiveQueryChannels] queryLogicsToRestore.size: ${queryLogicsToRestore.size}" }
-            return Result.success(emptySet())
+            return Result.Success(emptySet())
         }
         logger.v { "[updateActiveQueryChannels] queryLogicsToRestore.size: ${queryLogicsToRestore.size}" }
 
@@ -354,8 +358,8 @@ internal class SyncManager(
                 }
         }
         return when (val chatError = failed.get()) {
-            null -> Result.success(updatedCids)
-            else -> Result.error(chatError)
+            null -> Result.Success(updatedCids)
+            else -> Result.Failure(chatError)
         }
     }
 
@@ -420,7 +424,7 @@ internal class SyncManager(
                 channel.members.map(UserEntity::getUserId),
                 channel.extraData
             ).await()
-            logger.v { "[retryChannels] result($cid).isSuccess: ${result.isSuccess}" }
+            logger.v { "[retryChannels] result($cid).isSuccess: ${result is Result.Success}" }
         }
     }
 
@@ -445,7 +449,7 @@ internal class SyncManager(
                 logger.v { "[retryReactions] sending reaction($id) for messageId: ${reaction.messageId}" }
                 chatClient.sendReaction(reaction, reaction.enforceUnique)
             }.await()
-            logger.v { "[retryReactions] result($id).isSuccess: ${result.isSuccess}" }
+            logger.v { "[retryReactions] result($id).isSuccess: ${result is Result.Success}" }
         }
     }
 
@@ -468,15 +472,18 @@ internal class SyncManager(
                 else -> {
                     logger.v { "[retryMgsWithSyncedAttachments] sending message($id)" }
                     channelClient.sendMessage(message).await().also { result ->
-                        if (result.isSuccess) {
-                            repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
-                        } else if (result.isError && result.error().isPermanent()) {
-                            repos.markMessageAsFailed(message)
+                        when (result) {
+                            is Result.Success -> repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
+                            is Result.Failure -> {
+                                if (result.value.isPermanent()) {
+                                    repos.markMessageAsFailed(message)
+                                }
+                            }
                         }
                     }
                 }
             }
-            logger.v { "[retryMgsWithSyncedAttachments] result($id).isSuccess: ${result.isSuccess}" }
+            logger.v { "[retryMgsWithSyncedAttachments] result($id).isSuccess: ${result is Result.Success}" }
         }
     }
 

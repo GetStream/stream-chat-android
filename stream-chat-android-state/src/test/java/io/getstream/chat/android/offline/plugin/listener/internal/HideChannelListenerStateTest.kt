@@ -54,7 +54,7 @@ internal class HideChannelListenerStateTest {
     @Test
     fun `after the request is made and it fails, the channel should be set to NOT hidden`() = runTest {
         hideChannelListenerState.onHideChannelResult(
-            Result.error(ChatError()),
+            Result.Failure(ChatError()),
             randomString(),
             randomString(),
             randomBoolean()
@@ -66,7 +66,7 @@ internal class HideChannelListenerStateTest {
     @Test
     fun `after the request successful and clear history is true, history should be clean`() = runTest {
         hideChannelListenerState.onHideChannelResult(
-            Result.success(Unit),
+            Result.Success(Unit),
             randomString(),
             randomString(),
             clearHistory = true

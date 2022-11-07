@@ -63,7 +63,7 @@ internal class TypingEventListenerState(
             EventType.TYPING_STOP -> {
                 onTypingStopPrecondition(channelState)
             }
-            else -> Result.success(Unit)
+            else -> Result.Success(Unit)
         }
     }
 
@@ -78,15 +78,15 @@ internal class TypingEventListenerState(
      */
     private fun onTypingStopPrecondition(channelState: ChannelMutableState): Result<Unit> {
         return if (!channelState.channelConfig.value.typingEventsEnabled)
-            Result.error(ChatError("Typing events are not enabled"))
+            Result.Failure(ChatError("Typing events are not enabled"))
         else if (channelState.lastStartTypingEvent == null) {
-            Result.error(
+            Result.Failure(
                 ChatError(
                     "lastStartTypingEvent is null. " +
                         "Make sure to send Event.TYPING_START before sending Event.TYPING_STOP"
                 )
             )
-        } else Result.success(Unit)
+        } else Result.Success(Unit)
     }
 
     /**
@@ -100,17 +100,17 @@ internal class TypingEventListenerState(
      */
     private fun onTypingStartPrecondition(channelState: ChannelMutableState, eventTime: Date): Result<Unit> {
         return if (!channelState.channelConfig.value.typingEventsEnabled)
-            Result.error(ChatError("Typing events are not enabled"))
+            Result.Failure(ChatError("Typing events are not enabled"))
         else if (channelState.lastStartTypingEvent != null &&
             eventTime.time - channelState.lastStartTypingEvent!!.time < TYPING_DELAY
         ) {
-            Result.error(
+            Result.Failure(
                 ChatError(
                     "Last typing event was sent at ${channelState.lastStartTypingEvent}. " +
                         "There must be a delay of $TYPING_DELAY_SECS seconds before sending new event"
                 )
             )
-        } else Result.success(Unit)
+        } else Result.Success(Unit)
     }
 
     /**
@@ -160,7 +160,7 @@ internal class TypingEventListenerState(
         extraData: Map<Any, Any>,
         eventTime: Date,
     ) {
-        if (result.isSuccess) {
+        if (result is Result.Success) {
             val channelState = state.mutableChannel(channelType, channelId)
 
             when (eventType) {

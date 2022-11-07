@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.offline.plugin.configuration.Config;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 
@@ -58,7 +59,7 @@ public class GettingStarted {
 
         ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
                 .enqueue((result) -> {
-                    if (result.isSuccess()) {
+                    if (result instanceof Result.Success) {
                         // Handle success
                     } else {
                         // Handle error

@@ -87,11 +87,12 @@ class UserLoginViewModel : ViewModel() {
     }
 
     private fun handleUserConnection(result: Result<ConnectionData>) {
-        if (result.isSuccess) {
-            logger.d { "User set successfully" }
-        } else {
-            _events.postValue(Event(UiEvent.Error(result.error().message)))
-            logger.d { "Failed to set user ${result.error()}" }
+        when (result) {
+            is Result.Success -> logger.d { "User set successfully" }
+            is Result.Failure -> {
+                _events.postValue(Event(UiEvent.Error(result.value.message)))
+                logger.d { "Failed to set user ${result.value}" }
+            }
         }
     }
 

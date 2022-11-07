@@ -161,7 +161,7 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
 
         whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
-            Result.success(listOf(mockedChatEvent))
+            Result.Success(listOf(mockedChatEvent))
         )
         val connectingEvent = ConnectedEvent(
             type = "type",

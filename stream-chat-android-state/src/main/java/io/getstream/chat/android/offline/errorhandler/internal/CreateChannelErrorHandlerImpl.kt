@@ -65,15 +65,15 @@ internal class CreateChannelErrorHandlerImpl(
     ): ReturnOnErrorCall<Channel> {
         return originalCall.onErrorReturn(scope) { originalError ->
             if (clientState.isOnline) {
-                Result.error(originalError)
+                Result.Failure(originalError)
             } else {
                 val generatedCid =
                     "$channelType:${generateChannelIdIfNeeded(channelId = channelId, memberIds = memberIds)}"
                 val cachedChannel = channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()
                 if (cachedChannel == null) {
-                    Result.error(ChatError(message = "Channel wasn't cached properly."))
+                    Result.Failure(ChatError(message = "Channel wasn't cached properly."))
                 } else {
-                    Result.success(cachedChannel)
+                    Result.Success(cachedChannel)
                 }
             }
         }

@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
-import io.getstream.chat.android.client.utils.toUnitResult
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import java.util.Date
 
@@ -73,16 +72,17 @@ internal class HideChannelListenerState(private val logic: LogicRegistry) : Hide
         clearHistory: Boolean,
     ) {
         val channelStateLogic = logic.channel(channelType, channelId).stateLogic()
-        if (result.isSuccess) {
-            if (clearHistory) {
-                val now = Date()
-                channelStateLogic.run {
-                    hideMessagesBefore(now)
-                    removeMessagesBefore(now)
+        when (result) {
+            is Result.Success -> {
+                if (clearHistory) {
+                    val now = Date()
+                    channelStateLogic.run {
+                        hideMessagesBefore(now)
+                        removeMessagesBefore(now)
+                    }
                 }
             }
-        } else {
-            channelStateLogic.toggleHidden(false)
+            is Result.Failure -> channelStateLogic.toggleHidden(false)
         }
     }
 }

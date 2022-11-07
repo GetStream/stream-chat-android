@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -45,6 +46,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -119,8 +121,8 @@ internal class ConnectUserTest {
 
         val result = client.connectUser(user, jwt).await()
 
-        result.isError `should be equal to` true
-        result.error().message `should be equal to`
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message `should be equal to`
             "The user_id provided on the JWT token doesn't match with the current user you try to connect"
     }
 
@@ -136,7 +138,7 @@ internal class ConnectUserTest {
         socket.sendEvent(event)
         val result = deferred.await()
 
-        result.isSuccess `should be equal to` true
+        result.shouldBeInstanceOf(Result.Success::class)
         clientState.initializationState.value `should be equal to` InitializationState.COMPLETE
     }
 
@@ -154,8 +156,8 @@ internal class ConnectUserTest {
 
         val result = client.connectUser(user, jwt).await()
 
-        result.isSuccess `should be equal to` true
-        result.data() `should be equal to` ConnectionData(user, connectionId)
+        result.shouldBeInstanceOf(Result.Success::class)
+        (result as Result.Success).value `should be equal to` ConnectionData(user, connectionId)
     }
 
     @Test
@@ -170,8 +172,8 @@ internal class ConnectUserTest {
         val result = deferred.await()
 
         socket.verifyUserToConnect(user)
-        result.isSuccess `should be equal to` true
-        result.data() `should be equal to` ConnectionData(user, connectionId)
+        result.shouldBeInstanceOf(Result.Success::class)
+        (result as Result.Success).value `should be equal to` ConnectionData(user, connectionId)
     }
 
     @Test
@@ -188,8 +190,8 @@ internal class ConnectUserTest {
         socket.sendEvent(event)
         val result = deferred.await()
 
-        result.isError `should be equal to` true
-        result.error().message `should be equal to` messageError
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message `should be equal to` messageError
     }
 
     @Test
@@ -198,16 +200,16 @@ internal class ConnectUserTest {
 
         val result = client.connectUser(user, jwt).await()
 
-        result.isError `should be equal to` true
-        result.error().message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
     }
 
     @Test
     fun `When connection take more time than expected an error should be propagated`() = runTest {
         val result = client.connectUser(user, jwt, 1).await()
 
-        result.isError `should be equal to` true
-        result.error().message `should be equal to` "Connection wasn't established in 1ms"
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message `should be equal to` "Connection wasn't established in 1ms"
     }
 
     @Test
@@ -217,8 +219,8 @@ internal class ConnectUserTest {
 
             val result = client.connectUser(user, jwt).await()
 
-            result.isError `should be equal to` true
-            result.error().message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
+            result.shouldBeInstanceOf(Result.Failure::class)
+            (result as Result.Failure).value.message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
         }
 
     @Test
@@ -234,8 +236,8 @@ internal class ConnectUserTest {
         val result = deferred.await()
 
         socket.verifyUserToConnect(user)
-        result.isSuccess `should be equal to` true
-        result.data() `should be equal to` ConnectionData(user, connectionId)
+        result.shouldBeInstanceOf(Result.Success::class)
+        (result as Result.Success).value `should be equal to` ConnectionData(user, connectionId)
     }
 
     @Test
@@ -251,8 +253,8 @@ internal class ConnectUserTest {
         socket.sendEvent(event)
         val result = deferred.await()
 
-        result.isError `should be equal to` true
-        result.error().message `should be equal to` messageError
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message `should be equal to` messageError
     }
 
     @Test
@@ -267,8 +269,8 @@ internal class ConnectUserTest {
         val result = deferred.await()
 
         socket.verifyUserToConnect(anonUser)
-        result.isSuccess `should be equal to` true
-        result.data() `should be equal to` ConnectionData(anonUser, connectionId)
+        result.shouldBeInstanceOf(Result.Success::class)
+        (result as Result.Success).value `should be equal to` ConnectionData(anonUser, connectionId)
         userStateService.state.userOrError() `should be equal to` anonUser
     }
 
@@ -284,8 +286,8 @@ internal class ConnectUserTest {
         socket.sendEvent(event)
         val result = deferred.await()
 
-        result.isError `should be equal to` true
-        result.error().message `should be equal to` messageError
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message `should be equal to` messageError
     }
 
     private fun prepareAliveConnection(user: User, connectionId: String) {

@@ -142,7 +142,7 @@ internal class UploadAttachmentsIntegrationTests {
             whenever(uploader!!.uploadAttachment(any(), any(), any(), any()))
                 .doAnswer { invocation ->
                     val attachment = invocation.arguments[2] as Attachment
-                    Result(attachment.copy(uploadState = Attachment.UploadState.Success))
+                    Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success))
                 }
 
             val attachments = randomAttachmentsWithFile().map {
@@ -164,8 +164,8 @@ internal class UploadAttachmentsIntegrationTests {
 
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
-            val imageResult = Result<UploadedImage>(ChatError())
-            val fileResult = Result<UploadedFile>(ChatError())
+            val imageResult = Result.Failure(ChatError())
+            val fileResult = Result.Failure(ChatError())
 
             whenever(
                 chatClient.sendFile(
@@ -188,8 +188,8 @@ internal class UploadAttachmentsIntegrationTests {
 
     private fun mockFileUploadsSuccess(files: List<File>) {
         for (file in files) {
-            val imageResult = Result(UploadedImage(file = "file"))
-            val fileResult = Result(UploadedFile(file = "file", thumbUrl = "thumbUrl"))
+            val imageResult = Result.Success(UploadedImage(file = "file"))
+            val fileResult = Result.Success(UploadedFile(file = "file", thumbUrl = "thumbUrl"))
 
             whenever(
                 chatClient.sendFile(

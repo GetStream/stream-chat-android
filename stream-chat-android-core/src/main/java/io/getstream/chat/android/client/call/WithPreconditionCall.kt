@@ -44,7 +44,7 @@ internal class WithPreconditionCall<T : Any>(
             val result = precondition()
             result
                 .onSuccess { originalCall.enqueue { callScope.launch { notifyResult(it, callback) } } }
-                .onErrorSuspend { notifyResult(Result.error(it), callback) }
+                .onErrorSuspend { notifyResult(Result.Failure(it), callback) }
         }
     }
 

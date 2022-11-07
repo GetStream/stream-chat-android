@@ -102,9 +102,9 @@ internal class DeleteReactionListenerDatabase(
      */
     override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> {
         return if (currentUser != null) {
-            Result.success(Unit)
+            Result.Success(Unit)
         } else {
-            Result.error(ChatError(message = "Current user is null!"))
+            Result.Failure(ChatError(message = "Current user is null!"))
         }
     }
 }

@@ -26,8 +26,8 @@ import io.getstream.chat.android.client.utils.Result
  */
 public interface QueryChannelListener {
     /**
-     * Run precondition for the request. If it returns [Result.isSuccess] then the request is run otherwise it returns
-     * [Result.error] and no request is made.
+     * Run precondition for the request. If it returns [Result.Success] then the request is run otherwise it returns
+     * [Result.Failure] and no request is made.
      */
     public suspend fun onQueryChannelPrecondition(
         channelType: String,
