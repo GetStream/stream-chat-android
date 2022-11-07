@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 
@@ -31,10 +32,13 @@ class DokkaRoot {
             user = user,
             token = token, // or client.devToken(userId); if auth is disabled for your app
         ).enqueue { result ->
-            if (result.isSuccess) {
-                // Handle success
-            } else {
-                // Handler error
+            when (result) {
+                is Result.Success -> {
+                    // Handle success
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
     }

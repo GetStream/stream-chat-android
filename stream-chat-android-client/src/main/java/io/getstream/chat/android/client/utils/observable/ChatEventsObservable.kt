@@ -64,10 +64,10 @@ internal class ChatEventsObservable(
         scope.launch {
             when (event) {
                 is ConnectedEvent -> {
-                    waitConnection.emit(Result.success(ConnectionData(event.me, event.connectionId)))
+                    waitConnection.emit(Result.Success(ConnectionData(event.me, event.connectionId)))
                 }
                 is ErrorEvent -> {
-                    waitConnection.emit(Result.error(event.error))
+                    waitConnection.emit(Result.Failure(event.error))
                 }
                 else -> Unit // Ignore other events
             }

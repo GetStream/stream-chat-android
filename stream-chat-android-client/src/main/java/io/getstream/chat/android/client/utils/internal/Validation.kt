@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.utils.internal
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.regex.Pattern
@@ -48,8 +49,8 @@ public fun validateCid(cid: String): String = cid.apply {
 @InternalStreamChatApi
 public fun validateCidWithResult(cid: String): Result<String> {
     return try {
-        Result.success(validateCid(cid))
+        Result.Success(validateCid(cid))
     } catch (exception: IllegalArgumentException) {
-        Result.error(exception)
+        Result.Failure(ChatError(cause = exception))
     }
 }

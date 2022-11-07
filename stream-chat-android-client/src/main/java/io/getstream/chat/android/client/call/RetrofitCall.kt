@@ -63,7 +63,7 @@ internal class RetrofitCall<T : Any>(
             callback.onResult(result)
         }
 
-    private fun Throwable.toFailedResult(): Result<T> = Result(this.toFailedError())
+    private fun Throwable.toFailedResult(): Result<T> = Result.Failure(this.toFailedError())
 
     private fun Throwable.toFailedError(): ChatError = when (this) {
         is ChatRequestError -> ChatNetworkError.create(streamCode, message.toString(), statusCode, cause)
@@ -83,7 +83,7 @@ internal class RetrofitCall<T : Any>(
     private suspend fun Response<T>.getResult(): Result<T> = withContext(callScope.coroutineContext) {
         if (isSuccessful) {
             try {
-                Result(body()!!)
+                Result.Success(body()!!)
             } catch (t: Throwable) {
                 t.toFailedResult()
             }
@@ -91,9 +91,9 @@ internal class RetrofitCall<T : Any>(
             val errorBody = errorBody()
 
             if (errorBody != null) {
-                Result(parser.toError(errorBody))
+                Result.Failure(parser.toError(errorBody))
             } else {
-                Result(parser.toError(raw()))
+                Result.Failure(parser.toError(raw()))
             }
         }
     }

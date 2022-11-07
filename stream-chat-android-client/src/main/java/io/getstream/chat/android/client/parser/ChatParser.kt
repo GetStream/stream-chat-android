@@ -39,9 +39,9 @@ internal interface ChatParser {
     @Suppress("TooGenericExceptionCaught")
     fun <T : Any> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
         return try {
-            Result(fromJson(raw, clazz))
+            Result.Success(fromJson(raw, clazz))
         } catch (expected: Throwable) {
-            Result(ChatError("fromJsonOrError error parsing of $clazz into $raw", expected))
+            Result.Failure(ChatError("fromJsonOrError error parsing of $clazz into $raw", expected))
         }
     }
 

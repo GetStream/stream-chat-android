@@ -45,9 +45,9 @@ internal class ThreadQueryListenerState(
         return if (loadingMoreMessage) {
             val errorMsg = "already loading messages for this thread, ignoring the load requests."
             logger.i { errorMsg }
-            Result(ChatError(errorMsg))
+            Result.Failure(ChatError(errorMsg))
         } else {
-            Result.success(Unit)
+            Result.Success(Unit)
         }
     }
 
@@ -75,9 +75,9 @@ internal class ThreadQueryListenerState(
         return if (loadingMoreMessage) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."
             logger.i { errorMsg }
-            Result(ChatError(errorMsg))
+            Result.Failure(ChatError(errorMsg))
         } else {
-            Result.success(Unit)
+            Result.Success(Unit)
         }
     }
 
@@ -98,8 +98,8 @@ internal class ThreadQueryListenerState(
     }
 
     private fun onResult(threadLogic: ThreadLogic?, result: Result<List<Message>>, limit: Int) {
-        if (result.isSuccess) {
-            val newMessages = result.data()
+        if (result is Result.Success) {
+            val newMessages = result.value
             threadLogic?.run {
                 upsertMessages(newMessages)
                 setEndOfOlderMessages(newMessages.size < limit)

@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
@@ -64,10 +65,13 @@ class AndroidIntroduction {
             user = user,
             token = token, // or client.devToken(userId); if auth is disabled for your app
         ).enqueue { result ->
-            if (result.isSuccess) {
-                // Handle success
-            } else {
-                // Handler error
+            when (result) {
+                is Result.Success -> {
+                    // Handle success
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
     }
@@ -84,11 +88,14 @@ class AndroidIntroduction {
 
         // Creating a channel with the low level client
         channelClient.create(memberIds = emptyList(), extraData = extraData).enqueue { result ->
-            if (result.isSuccess) {
-                val channel: Channel = result.data()
-                // Use channel by calling methods on channelClient
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val channel: Channel = result.value
+                    // Use channel by calling methods on channelClient
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
 
@@ -118,10 +125,13 @@ class AndroidIntroduction {
         )
 
         channelClient.sendMessage(message).enqueue { result ->
-            if (result.isSuccess) {
-                val message: Message = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val message: Message = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
     }
@@ -144,10 +154,13 @@ class AndroidIntroduction {
         ).withWatch().withState()
 
         client.queryChannels(request).enqueue { result ->
-            if (result.isSuccess) {
-                val channels: List<Channel> = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val channels: List<Channel> = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
     }

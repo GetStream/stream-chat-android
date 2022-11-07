@@ -54,15 +54,18 @@ internal class DeleteMessageListenerState(
 
             if (isModerationFailed) {
                 deleteMessage(message)
-                Result.error(
-                    MessageModerationDeletedException(
-                        "Message with failed moderation has been deleted locally: $messageId"
+                Result.Failure(
+                    ChatError(
+                        cause =
+                        MessageModerationDeletedException(
+                            "Message with failed moderation has been deleted locally: $messageId"
+                        )
                     )
                 )
             } else {
-                Result.success(Unit)
+                Result.Success(Unit)
             }
-        } ?: Result.error(ChatError(message = "No message found with id: $messageId"))
+        } ?: Result.Failure(ChatError(message = "No message found with id: $messageId"))
     }
 
     /**
@@ -99,21 +102,25 @@ internal class DeleteMessageListenerState(
      * @param result the result of the API call.
      */
     override suspend fun onMessageDeleteResult(originalMessageId: String, result: Result<Message>) {
-        if (result.isSuccess) {
-            val deletedMessage = result.data()
-            deletedMessage.syncStatus = SyncStatus.COMPLETED
-            updateMessage(deletedMessage)
-        } else {
-            logic.channelFromMessageId(originalMessageId)
-                ?.getMessage(originalMessageId)
-                ?.let { originalMessage ->
-                    val failureMessage = originalMessage.copy(
-                        syncStatus = SyncStatus.SYNC_NEEDED,
-                        updatedLocallyAt = Date(),
-                    )
-
-                    updateMessage(failureMessage)
+        when (result) {
+            is Result.Success -> {
+                val deletedMessage = result.value.apply {
+                    syncStatus = SyncStatus.COMPLETED
                 }
+                updateMessage(deletedMessage)
+            }
+            is Result.Failure -> {
+                logic.channelFromMessageId(originalMessageId)
+                    ?.getMessage(originalMessageId)
+                    ?.let { originalMessage ->
+                        val failureMessage = originalMessage.copy(
+                            syncStatus = SyncStatus.SYNC_NEEDED,
+                            updatedLocallyAt = Date(),
+                        )
+
+                        updateMessage(failureMessage)
+                    }
+            }
         }
     }
 

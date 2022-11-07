@@ -59,10 +59,9 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
 
         if (logic.getMessageById(message.id)?.syncStatus == SyncStatus.COMPLETED) return
 
-        if (result.isSuccess) {
-            handleSendMessageSuccess(cid, logic, result.data())
-        } else {
-            handleSendMessageFail(logic, message, result.error())
+        when (result) {
+            is Result.Success -> handleSendMessageSuccess(cid, logic, result.value)
+            is Result.Failure -> handleSendMessageFail(logic, message, result.value)
         }
     }
 
@@ -136,8 +135,8 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
         result: Result<Message>,
         message: Message,
     ) {
-        if (result.isSuccess) {
-            logic.channelFromMessage(message)?.setLastSentMessageDate(result.data().createdAt)
+        if (result is Result.Success) {
+            logic.channelFromMessage(message)?.setLastSentMessageDate(result.value.createdAt)
         }
     }
 }

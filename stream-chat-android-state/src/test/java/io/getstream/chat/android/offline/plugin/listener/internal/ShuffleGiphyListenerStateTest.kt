@@ -45,14 +45,14 @@ internal class ShuffleGiphyListenerStateTest {
     fun `when shuffling giphys and request succeeds, it should be upserted`() = runTest {
         val testMessage = randomMessage()
 
-        shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.success(testMessage))
+        shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.Success(testMessage))
 
         verify(channelLogic).upsertMessage(testMessage.copy(syncStatus = SyncStatus.COMPLETED))
     }
 
     @Test
     fun `when shuffling giphys and request fails, it should NOT be upserted`() = runTest {
-        shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.error(ChatError()))
+        shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.Failure(ChatError()))
 
         verify(channelLogic, never()).upsertMessage(any())
     }

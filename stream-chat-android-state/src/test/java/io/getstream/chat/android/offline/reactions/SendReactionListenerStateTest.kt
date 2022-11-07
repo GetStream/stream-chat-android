@@ -114,7 +114,7 @@ internal class SendReactionListenerStateTest {
                 testReaction,
                 false,
                 currentUser,
-                Result.success(testReaction)
+                Result.Success(testReaction)
             )
 
             verify(channelLogic).upsertMessage(

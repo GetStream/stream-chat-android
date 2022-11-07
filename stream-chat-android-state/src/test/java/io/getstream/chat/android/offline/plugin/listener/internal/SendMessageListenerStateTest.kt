@@ -53,7 +53,7 @@ internal class SendMessageListenerStateTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
 
         sendMessageListener.onMessageSendResult(
-            result = Result.success(testMessage),
+            result = Result.Success(testMessage),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,
@@ -76,7 +76,7 @@ internal class SendMessageListenerStateTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
 
         sendMessageListener.onMessageSendResult(
-            result = Result.error(ChatError()),
+            result = Result.Failure(ChatError()),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,
@@ -101,7 +101,7 @@ internal class SendMessageListenerStateTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
 
         sendMessageListener.onMessageSendResult(
-            result = Result.success(testMessage),
+            result = Result.Success(testMessage),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,

@@ -47,8 +47,8 @@ internal class QueryMembersListenerDatabase(
         sort: QuerySorter<Member>,
         members: List<Member>,
     ) {
-        if (result.isSuccess) {
-            val resultMembers = result.data()
+        if (result is Result.Success) {
+            val resultMembers = result.value
 
             userRepository.insertUsers(resultMembers.map(Member::user))
             channelRepository.updateMembersForChannel(Pair(channelType, channelId).toCid(), resultMembers)

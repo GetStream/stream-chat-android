@@ -25,10 +25,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  */
 @InternalStreamChatApi
 public inline fun <T : Any> Result<T>.stringify(toString: (data: T) -> String): String {
-    return when {
-        isSuccess -> toString(data())
-        isError -> error().stringify()
-        else -> "Result(Empty)"
+    return when (this) {
+        is Result.Success -> toString(value)
+        is Result.Failure -> value.stringify()
     }
 }
 

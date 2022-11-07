@@ -26,7 +26,7 @@ import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be`
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
@@ -59,7 +59,7 @@ internal class ThreadQueryListenerStateTest {
 
         val result = threadQueryListenerState.onGetRepliesPrecondition(message.id, randomInt())
 
-        result.isError `should be` true
+        result shouldBeInstanceOf Result.Failure::class
     }
 
     @Test
@@ -68,7 +68,7 @@ internal class ThreadQueryListenerStateTest {
 
         val result = threadQueryListenerState.onGetRepliesPrecondition(message.id, randomInt())
 
-        result.isSuccess `should be` true
+        result shouldBeInstanceOf Result.Success::class
     }
 
     @Test
@@ -77,7 +77,7 @@ internal class ThreadQueryListenerStateTest {
 
         val result = threadQueryListenerState.onGetRepliesMorePrecondition(message.id, randomString(), randomInt())
 
-        result.isError `should be` true
+        result shouldBeInstanceOf Result.Failure::class
     }
 
     @Test
@@ -86,7 +86,7 @@ internal class ThreadQueryListenerStateTest {
 
         val result = threadQueryListenerState.onGetRepliesMorePrecondition(message.id, randomString(), randomInt())
 
-        result.isSuccess `should be` true
+        result shouldBeInstanceOf Result.Success::class
     }
 
     @Test
@@ -116,7 +116,7 @@ internal class ThreadQueryListenerStateTest {
 
     @Test
     fun `given response it successful, the state should be updated in the SDK`() = runTest {
-        threadQueryListenerState.onGetRepliesResult(Result.success(messageList), message.id, 30)
+        threadQueryListenerState.onGetRepliesResult(Result.Success(messageList), message.id, 30)
 
         verify(threadLogic).run {
             setLoading(false)
@@ -127,7 +127,7 @@ internal class ThreadQueryListenerStateTest {
 
     @Test
     fun `given response it failure, the state should NOT be updated in the SDK`() = runTest {
-        threadQueryListenerState.onGetRepliesResult(Result.error(ChatError()), message.id, 30)
+        threadQueryListenerState.onGetRepliesResult(Result.Failure(ChatError()), message.id, 30)
 
         verify(threadLogic).setLoading(false)
 

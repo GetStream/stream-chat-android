@@ -81,7 +81,7 @@ internal class StreamWebSocketTest {
     fun `When messages are received by websocket, they should be added to eventFlow`() = runTest {
         val eventsMap = List(positiveRandomInt(50)) { mock<ChatEvent>() }.associateBy { randomString() }
         eventsMap.forEach { textEvent, chatEvent ->
-            whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java)) doReturn Result.success(chatEvent)
+            whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java)) doReturn Result.Success(chatEvent)
         }
         val listener = streamWebSocket.listen()
         val listResult = mutableListOf<StreamWebSocketEvent>()
@@ -101,10 +101,10 @@ internal class StreamWebSocketTest {
         val code = randomInt()
         val message = randomString()
         val statusCode = randomInt()
-        val errorResult = Result.error<ChatEvent>(mock<Throwable>())
+        val errorResult = Result.Failure(ChatError(cause = mock()))
         whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java)) doReturn errorResult
         whenever(parser.fromJsonOrError(textEvent, SocketErrorMessage::class.java))
-            .doReturn(Result.success(SocketErrorMessage(ErrorResponse(code, message, statusCode))))
+            .doReturn(Result.Success(SocketErrorMessage(ErrorResponse(code, message, statusCode))))
         val listener = streamWebSocket.listen()
         val listResult = mutableListOf<StreamWebSocketEvent>()
         val job = launch { listener.collect { listResult.add(it) } }
@@ -122,8 +122,8 @@ internal class StreamWebSocketTest {
         val textEvent = randomString()
         val cause = mock<Throwable>()
         whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java))
-            .doReturn(Result.error(ChatError(cause = cause)))
-        val errorResult = Result.error<SocketErrorMessage>(mock<Throwable>())
+            .doReturn(Result.Failure(ChatError(cause = cause)))
+        val errorResult = Result.Failure(ChatError(cause = mock()))
         whenever(parser.fromJsonOrError(textEvent, SocketErrorMessage::class.java)) doReturn errorResult
         val listener = streamWebSocket.listen()
         val listResult = mutableListOf<StreamWebSocketEvent>()

@@ -20,10 +20,13 @@ class CoreConcepts {
     fun runningCallsAsynchronously(channelClient: ChannelClient, message: Message, viewModelScope: CoroutineScope) {
         // Safe to call from the main thread
         channelClient.sendMessage(message).enqueue { result: Result<Message> ->
-            if (result.isSuccess) {
-                val sentMessage = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val sentMessage = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
 
@@ -34,13 +37,16 @@ class CoreConcepts {
     }
 
     fun errorHandling(result: Result<Channel>) {
-        result.isSuccess
-        result.isError
+        result is Result.Success
+        result is Result.Failure
 
-        if (result.isSuccess) {
-            // Use result.data()
-        } else {
-            // Handle result.error()
+        when (result) {
+            is Result.Success -> {
+                // Handle success
+            }
+            is Result.Failure -> {
+                // Handler error
+            }
         }
     }
 }

@@ -32,8 +32,8 @@ import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldBeNull
-import org.amshove.kluent.shouldBeTrue
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Before
 import org.junit.Ignore
@@ -69,12 +69,12 @@ internal class AttachmentUploaderTests {
         val attachment = randomAttachments(size = 1).first()
 
         val sut = Fixture()
-            .givenMockedFileUploads(channelType, channelId, Result(error))
+            .givenMockedFileUploads(channelType, channelId, Result.Failure(error))
             .get()
 
-        val result = sut.uploadAttachment(channelType, channelId, attachment)
+        val result = sut.uploadAttachment(channelType, channelId, attachment) as Result.Success
 
-        with(result.data()) {
+        with(result.value) {
             name shouldBeEqualTo attachment.upload!!.name
             fileSize.shouldNotBeNull()
             type.shouldNotBeNull()
@@ -92,12 +92,12 @@ internal class AttachmentUploaderTests {
         val url = "url"
 
         val sut = Fixture()
-            .givenMockedFileUploads(channelType, channelId, Result(UploadedFile(file = url)))
+            .givenMockedFileUploads(channelType, channelId, Result.Success(UploadedFile(file = url)))
             .get()
 
-        val result = sut.uploadAttachment(channelType, channelId, attachment)
+        val result = sut.uploadAttachment(channelType, channelId, attachment) as Result.Success
 
-        with(result.data()) {
+        with(result.value) {
             name shouldBeEqualTo attachment.upload!!.name
             url shouldBeEqualTo url
             fileSize.shouldNotBeNull()
@@ -118,12 +118,12 @@ internal class AttachmentUploaderTests {
             val thumbUrl = "thumbUrl"
 
             val sut = Fixture()
-                .givenMockedFileUploads(channelType, channelId, Result(UploadedFile(file = url, thumbUrl = thumbUrl)))
+                .givenMockedFileUploads(channelType, channelId, Result.Success(UploadedFile(file = url, thumbUrl = thumbUrl)))
                 .get()
 
-            val result = sut.uploadAttachment(channelType, channelId, attachment)
+            val result = sut.uploadAttachment(channelType, channelId, attachment) as Result.Success
 
-            with(result.data()) {
+            with(result.value) {
                 name shouldBeEqualTo attachment.upload!!.name
                 url shouldBeEqualTo url
                 thumbUrl shouldBeEqualTo thumbUrl
@@ -156,8 +156,8 @@ internal class AttachmentUploaderTests {
                 uploadState = Attachment.UploadState.Success
             )
             val result = sut.uploadAttachment(channelType, channelId, attachment)
-            result.isSuccess.shouldBeTrue()
-            result.data() shouldBeEqualTo expectedAttachment
+            result.shouldBeInstanceOf(Result.Success::class)
+            (result as Result.Success).value shouldBeEqualTo expectedAttachment
         }
     }
 
@@ -187,8 +187,8 @@ internal class AttachmentUploaderTests {
                 attachment = attachment,
             )
 
-            result.isSuccess.shouldBeTrue()
-            result.data() shouldBeEqualTo expectedAttachment
+            result.shouldBeInstanceOf(Result.Success::class)
+            (result as Result.Success).value shouldBeEqualTo expectedAttachment
         }
     }
 
@@ -227,8 +227,8 @@ internal class AttachmentUploaderTests {
 
         fun givenMockedFileUploads(channelType: String, channelId: String, files: List<File>) = apply {
             for (file in files) {
-                val imageResult = Result(UploadedImage(file.absolutePath))
-                val fileResult = Result(UploadedFile(file = file.absolutePath))
+                val imageResult = Result.Success(UploadedImage(file.absolutePath))
+                val fileResult = Result.Success(UploadedFile(file = file.absolutePath))
 
                 whenever(
                     clientMock.sendFile(
