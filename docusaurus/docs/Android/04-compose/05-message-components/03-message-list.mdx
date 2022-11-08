@@ -1,6 +1,6 @@
 # MessageList
 
-The `MessageList` component is a crucial part when building a chat experience. We support two versions of the `MessageList` component:
+The `MessageList` component is a crucial part of building a chat experience. We support two versions of the `MessageList` component:
 
 * **Bound**: This version binds itself to the `MessageListViewModel` and loads all the required data. It also connects single and long item tap, pagination, and bottom reached events to the `ViewModel`.
 * **Stateless**: This is a stateless version of the list which doesn't know about the `ViewModel` and depends on pure state from external sources to render its UI.
@@ -175,7 +175,7 @@ Once video thumbnails are disabled, messages containing video attachments will b
 
 //TODO - Add screenshots
 
-If you want to read more about how to customize the way these attachments are displayed, head over to the relevant section seen [here](#customizing-the-way-image-and-video-attachments-are-previewed)
+If you want to read more about how to customize the way these attachments are displayed, head over to the relevant section seen [here](../07-guides/02-customizing-image-and-video-previews.mdx)
 
 ##  Customization
 
@@ -214,8 +214,6 @@ fun MessageList(
 * `helperContent`: Composable that represents helper content for the message list. By default handles the scrolling behavior and shows a floating button that can be used to scroll to the bottom.
 * `loadingMoreContent`: Composable that represents the loading more content, when we're loading the next page.
 * `itemContent`: Composable that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageListItemState` inside the lambda when building your custom UI.
-
-### Customizing Message Items
 
 Here's an example of customizing the `Message` items in the list:
 
@@ -284,28 +282,4 @@ As per our description, the `Avatar` and the user name `Text` are shown in a `Ro
 Using this approach, you can completely customize the items to your needs and you can use click, touch and combined modifiers to customize the touch event behavior.
 
 And you can customize the `emptyContent` and the `loadingContent` to your needs, if you need custom UI there.
-
-### Customizing the Way Image and Video Attachments are Previewed
-
-If we take a look at the function signature of `MediaAttachmentFactory`, we see the following
-
-```kotlin
-public fun MediaAttachmentFactory(
-    maximumNumberOfPreviewedItems: Int = 4,
-    itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
-        if (attachmentType == AttachmentType.VIDEO) {
-            DefaultItemOverlayContent()
-        }
-    },
-    previewItemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
-        if (attachmentType == AttachmentType.VIDEO) {
-            DefaultPreviewItemOverlayContent()
-        }
-    },
-)
-```
-
-* `maximumNumberOfPreviewedItems`: Controls the maximum amount of tiles that can be displayed when previewing attachments inside the message list. In case this value is smaller than the number of attachments contained in the message, a count informing us how many more are left will be displayed.
-* `itemOverlayContent`: Overlays a UI item over the attachment preview inside the message list. By default this is used to display a play button icon over video attachments, signaling their type to the user.
-* `previewItemOverlayContent`: Serves the same function as `itemOverlayContent`, only used inside `MessageComposer` when selecting attachments.
 
