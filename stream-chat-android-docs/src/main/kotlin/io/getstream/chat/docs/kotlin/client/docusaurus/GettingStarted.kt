@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.plugin.configuration.Config
+import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
@@ -36,9 +36,7 @@ class GettingStarted {
 
     fun addingTheOfflinePlugin(apiKey: String, context: Context) {
         val offlinePluginFactory = StreamOfflinePluginFactory(
-            config = Config(
-                // Enables background sync which is performed to sync user actions done while offline.
-                backgroundSyncEnabled = true,
+            offlinePluginConfig = OfflinePluginConfig(
                 // Enables the ability to receive information about user activity such as last active date and if they are online right now.
                 userPresence = true,
                 // Enables using the database as an internal caching mechanism.

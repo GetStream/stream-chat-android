@@ -10,8 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.android.offline.plugin.configuration.Config;
+import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 
 /**
@@ -38,16 +37,12 @@ public class GettingStarted {
     }
 
     public void addingTheOfflinePlugin(String apiKey, Context context) {
-        // Enables background sync which is performed to sync user actions done while offline.
-        boolean backgroundSyncEnabled = true;
         // Enables the ability to receive information about user activity such as last active date and if they are online right now.
         boolean userPresence = true;
         // Enables using the database as an internal caching mechanism.
         boolean persistenceEnabled = true;
-        // An enumeration of various network types used as a constraint inside upload attachments worker.
-        UploadAttachmentsNetworkType uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING;
 
-        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(new Config(backgroundSyncEnabled, userPresence, persistenceEnabled), context);
+        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(new OfflinePluginConfig(userPresence, persistenceEnabled), context);
         new ChatClient.Builder("apiKey", context).withPlugins(offlinePluginFactory).build();
     }
 

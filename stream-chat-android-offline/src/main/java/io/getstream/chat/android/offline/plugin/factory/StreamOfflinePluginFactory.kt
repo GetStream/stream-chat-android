@@ -32,7 +32,7 @@ import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.offline.plugin.configuration.Config
+import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
@@ -58,11 +58,11 @@ import kotlinx.coroutines.launch
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
  *
- * @param config [Config] Configuration of persistence of the SDK.
+ * @param offlinePluginConfig [OfflinePluginConfig] Configuration of persistence of the SDK.
  * @param appContext [Context]
  */
 public class StreamOfflinePluginFactory(
-    private val config: Config,
+    private val offlinePluginConfig: OfflinePluginConfig,
     private val appContext: Context,
 ) : PluginFactory, RepositoryFactory.Provider {
 
@@ -80,7 +80,7 @@ public class StreamOfflinePluginFactory(
         logger.i { "[createRepositoryFactory] user.id: '${user.id}'" }
         val scope = ensureScope(user)
         return DatabaseRepositoryFactory(
-            database = createDatabase(scope, appContext, user, config.persistenceEnabled),
+            database = createDatabase(scope, appContext, user, offlinePluginConfig.persistenceEnabled),
             currentUser = user,
         )
     }

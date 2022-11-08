@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
-import io.getstream.chat.android.offline.plugin.configuration.Config
+import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
@@ -66,7 +66,7 @@ class ChatInitializer(private val context: Context) {
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
         val offlinePlugin = StreamOfflinePluginFactory(
-            Config(
+            OfflinePluginConfig(
                 userPresence = true,
                 persistenceEnabled = true,
             ),

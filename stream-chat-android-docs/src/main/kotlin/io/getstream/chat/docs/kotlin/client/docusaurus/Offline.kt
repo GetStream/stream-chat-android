@@ -14,7 +14,7 @@ import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.extensions.state
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.configuration.Config
+import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
@@ -37,8 +37,7 @@ class Offline {
      */
     fun configureOfflinePlugin(context: Context) {
         val offlinePluginFactory = StreamOfflinePluginFactory(
-            config = Config(
-                backgroundSyncEnabled = true,
+            offlinePluginConfig = OfflinePluginConfig(
                 userPresence = true,
                 persistenceEnabled = true,
             ),

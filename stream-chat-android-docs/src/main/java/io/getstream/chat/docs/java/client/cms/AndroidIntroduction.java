@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
-import io.getstream.chat.android.offline.plugin.configuration.Config;
+import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig;
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
@@ -41,7 +41,7 @@ public class AndroidIntroduction {
         String apiKey = "{{ api_key }}";
         String token = "{{ chat_user_token }}";
         // Step 1 - Set up the OfflinePlugin for offline storage
-        Config config = new Config(true, true, true);
+        OfflinePluginConfig config = new OfflinePluginConfig(true, true);
         StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(config, applicationContext);
 
         StreamStatePluginFactory streamStatePluginFactory = new StreamStatePluginFactory(

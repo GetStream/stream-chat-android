@@ -19,13 +19,10 @@ package io.getstream.chat.android.offline.plugin.configuration
 /**
  * Provides a configuration for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  *
- * @param backgroundSyncEnabled Whether the SDK should perform background sync if some queries fail.
  * @param userPresence Whether the SDK should receive user presence changes.
  * @param persistenceEnabled Whether the data should be stored in the DB.
- * @param uploadAttachmentsNetworkType An enumeration of various network types used as a constraint inside upload attachments worker.
  */
-public data class Config @JvmOverloads constructor(
-    public val backgroundSyncEnabled: Boolean = true,
+public data class OfflinePluginConfig @JvmOverloads constructor(
     public val userPresence: Boolean = true,
     public val persistenceEnabled: Boolean = true,
 )
