@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.common.message.list
 
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isSystem
-import io.getstream.chat.android.ui.common.extensions.isServerMessage
 import io.getstream.chat.android.ui.common.state.message.list.MessagePosition
 
 /**
@@ -70,7 +70,7 @@ public fun interface MessagePositionHandler {
                     if (previousMessage != null && nextMessage != null && previousUser == user && nextUser == user) {
                         add(MessagePosition.MIDDLE)
                     }
-                    if (nextMessage == null || nextUser != user || nextMessage.isServerMessage()) {
+                    if (nextMessage == null || nextUser != user || nextMessage.isSystem() || nextMessage.isError()) {
                         add(MessagePosition.BOTTOM)
                     }
                     if (isEmpty()) add(MessagePosition.NONE)

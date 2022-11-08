@@ -77,9 +77,6 @@ public abstract interface class io/getstream/chat/android/ui/common/disposable/D
 	public abstract fun isDisposed ()Z
 }
 
-public final class io/getstream/chat/android/ui/common/extensions/MessageKt {
-}
-
 public abstract interface class io/getstream/chat/android/ui/common/images/ImageHeadersProvider {
 	public abstract fun getImageRequestHeaders ()Ljava/util/Map;
 }
