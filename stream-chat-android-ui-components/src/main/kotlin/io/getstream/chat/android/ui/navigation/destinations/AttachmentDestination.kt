@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.navigation.destinations
+package io.getstream.chat.android.ui.navigation.destinations
 
 import android.content.Context
 import android.content.Intent
@@ -33,7 +33,6 @@ import io.getstream.chat.android.ui.common.view.activity.AttachmentDocumentActiv
 import io.getstream.chat.android.ui.feature.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentMediaActivity
 import io.getstream.chat.android.ui.images.load
-import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 import io.getstream.chat.android.uiutils.model.MimeType
 import io.getstream.logging.StreamLog
 

@@ -20,7 +20,6 @@ import android.content.Context
 import io.getstream.chat.android.ui.common.ChannelNameFormatter
 import io.getstream.chat.android.ui.common.images.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.StreamImageLoader
-import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
@@ -29,6 +28,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+import io.getstream.chat.android.ui.navigation.ChatNavigator
 import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.lazyVar

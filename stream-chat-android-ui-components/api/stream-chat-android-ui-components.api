@@ -17,7 +17,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getMessagePreviewFormatter ()Lio/getstream/chat/android/ui/MessagePreviewFormatter;
 	public static final fun getMessageTextTransformer ()Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;
 	public static final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
-	public static final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
+	public static final fun getNavigator ()Lio/getstream/chat/android/ui/navigation/ChatNavigator;
 	public static final fun getQuotedAttachmentFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;
 	public static final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public static final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
@@ -32,7 +32,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setMessagePreviewFormatter (Lio/getstream/chat/android/ui/MessagePreviewFormatter;)V
 	public static final fun setMessageTextTransformer (Lio/getstream/chat/android/ui/transformer/ChatMessageTextTransformer;)V
 	public static final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
-	public static final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
+	public static final fun setNavigator (Lio/getstream/chat/android/ui/navigation/ChatNavigator;)V
 	public static final fun setQuotedAttachmentFactoryManager (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;)V
 	public static final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public static final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
@@ -168,29 +168,6 @@ public final class io/getstream/chat/android/ui/common/Debouncer {
 	public final fun shutdown ()V
 	public final fun submit (Lkotlin/jvm/functions/Function0;)V
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
-}
-
-public final class io/getstream/chat/android/ui/common/navigation/ChatNavigator {
-	public static final field Companion Lio/getstream/chat/android/ui/common/navigation/ChatNavigator$Companion;
-	public static final field EMPTY_HANDLER Lio/getstream/chat/android/ui/navigation/ChatNavigationHandler;
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/ui/navigation/ChatNavigationHandler;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/ui/navigation/ChatNavigationHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun navigate (Lio/getstream/chat/android/ui/navigation/destinations/ChatDestination;)V
-}
-
-public final class io/getstream/chat/android/ui/common/navigation/ChatNavigator$Companion {
-}
-
-public class io/getstream/chat/android/ui/common/navigation/destinations/AttachmentDestination : io/getstream/chat/android/ui/navigation/destinations/ChatDestination {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)V
-	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
-	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
-	public fun navigate ()V
-	public final fun setAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun showAttachment (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
-	protected fun showImageViewer (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/style/ChatFonts {
@@ -2779,8 +2756,27 @@ public abstract interface class io/getstream/chat/android/ui/navigation/ChatNavi
 	public abstract fun navigate (Lio/getstream/chat/android/ui/navigation/destinations/ChatDestination;)Z
 }
 
-public abstract interface class io/getstream/chat/android/ui/navigation/ChatNavigator {
-	public abstract fun navigate (Lio/getstream/chat/android/ui/navigation/destinations/ChatDestination;)V
+public final class io/getstream/chat/android/ui/navigation/ChatNavigator {
+	public static final field Companion Lio/getstream/chat/android/ui/navigation/ChatNavigator$Companion;
+	public static final field EMPTY_HANDLER Lio/getstream/chat/android/ui/navigation/ChatNavigationHandler;
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ui/navigation/ChatNavigationHandler;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/navigation/ChatNavigationHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun navigate (Lio/getstream/chat/android/ui/navigation/destinations/ChatDestination;)V
+}
+
+public final class io/getstream/chat/android/ui/navigation/ChatNavigator$Companion {
+}
+
+public class io/getstream/chat/android/ui/navigation/destinations/AttachmentDestination : io/getstream/chat/android/ui/navigation/destinations/ChatDestination {
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;Landroid/content/Context;)V
+	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
+	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public fun navigate ()V
+	public final fun setAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
+	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun showAttachment (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
+	protected fun showImageViewer (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Attachment;)V
 }
 
 public abstract class io/getstream/chat/android/ui/navigation/destinations/ChatDestination {

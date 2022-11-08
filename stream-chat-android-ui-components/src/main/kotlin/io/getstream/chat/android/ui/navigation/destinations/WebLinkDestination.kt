@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.navigation.destinations
+package io.getstream.chat.android.ui.navigation.destinations
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -23,7 +23,6 @@ import android.net.Uri
 import android.widget.Toast
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 
 @InternalStreamChatApi

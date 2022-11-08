@@ -20,7 +20,7 @@ import java.util.Map;
 import io.getstream.chat.android.markdown.MarkdownTextTransformer;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.SupportedReactions;
-import io.getstream.chat.android.ui.common.navigation.ChatNavigator;
+import io.getstream.chat.android.ui.navigation.ChatNavigator;
 import io.getstream.chat.android.ui.common.style.ChatFonts;
 import io.getstream.chat.android.ui.common.style.TextStyle;
 import io.getstream.chat.android.ui.common.utils.DateFormatter;

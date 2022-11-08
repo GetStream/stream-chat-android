@@ -18,6 +18,20 @@ package io.getstream.chat.android.ui.navigation
 
 import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 
-public fun interface ChatNavigator {
-    public fun navigate(destination: ChatDestination)
+public class ChatNavigator(private val handler: ChatNavigationHandler = EMPTY_HANDLER) {
+    public fun navigate(destination: ChatDestination) {
+        val handled = handler.navigate(destination)
+        if (!handled) {
+            performDefaultNavigation(destination)
+        }
+    }
+
+    private fun performDefaultNavigation(destination: ChatDestination) {
+        destination.navigate()
+    }
+
+    public companion object {
+        @JvmField
+        public val EMPTY_HANDLER: ChatNavigationHandler = ChatNavigationHandler { false }
+    }
 }

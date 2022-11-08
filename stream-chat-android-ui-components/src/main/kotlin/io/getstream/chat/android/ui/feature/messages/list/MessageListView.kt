@@ -51,8 +51,6 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.message.list.GiphyAction
 import io.getstream.chat.android.ui.common.message.list.MessageListController
 import io.getstream.chat.android.ui.common.model.ModeratedMessageOption
-import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
-import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
 import io.getstream.chat.android.ui.common.state.Copy
 import io.getstream.chat.android.ui.common.state.CustomAction
 import io.getstream.chat.android.ui.common.state.Delete
@@ -123,6 +121,8 @@ import io.getstream.chat.android.ui.feature.messages.list.internal.MessageListSc
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItem
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionsDialogFragment
+import io.getstream.chat.android.ui.navigation.destinations.AttachmentDestination
+import io.getstream.chat.android.ui.navigation.destinations.WebLinkDestination
 import io.getstream.chat.android.ui.utils.ListenerDelegate
 import io.getstream.chat.android.ui.utils.StartStopBuffer
 import io.getstream.chat.android.ui.utils.extensions.activity
