@@ -44,5 +44,5 @@ public interface ClientMutableState : ClientState {
     /**
      * Clears the state of [ClientMutableState].
      */
-    public override fun clearState()
+    public fun clearState()
 }
