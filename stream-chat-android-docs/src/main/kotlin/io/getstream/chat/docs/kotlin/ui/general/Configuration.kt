@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.MessagePreviewFormatter
 import io.getstream.chat.android.ui.MimeTypeIconProvider
 import io.getstream.chat.android.ui.SupportedReactions
-import io.getstream.chat.android.ui.adapter.MessageListItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.ChannelNameFormatter
 import io.getstream.chat.android.ui.common.images.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator

@@ -34,9 +34,9 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.observeAll
 import io.getstream.chat.android.ui.MockChatClientBuilder
-import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.message.list.MessageListController
 import io.getstream.chat.android.ui.common.state.message.list.MessagePosition
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

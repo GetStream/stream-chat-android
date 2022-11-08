@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.in
 import android.content.res.ColorStateList
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.message.list.CancelGiphy
 import io.getstream.chat.android.ui.common.message.list.SendGiphy
@@ -30,6 +29,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.giphyInfo
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.feature.messages.list.GiphyViewHolderStyle
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder

@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter
 import android.view.View
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle

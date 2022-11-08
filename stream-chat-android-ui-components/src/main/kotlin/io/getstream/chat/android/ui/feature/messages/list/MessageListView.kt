@@ -48,7 +48,6 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.copyToClipboard
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -119,6 +118,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.Thread
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ThreadStartHandler
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.UserClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.UserReactionClickListener
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemAdapter

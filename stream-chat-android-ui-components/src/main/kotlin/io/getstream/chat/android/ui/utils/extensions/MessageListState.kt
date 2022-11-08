@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.utils.extensions
 
-import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.state.message.list.MessageListState
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.view.messages.MessageListItemWrapper
 
 /**

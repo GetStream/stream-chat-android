@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal
 
 import io.getstream.chat.android.core.internal.exhaustive
-import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.DateDividerViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.FileAttachmentsViewHolder

@@ -17,7 +17,7 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
 import android.text.format.DateUtils
-import io.getstream.chat.android.ui.adapter.MessageListItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import java.util.Date
 
 class DateDividerComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {

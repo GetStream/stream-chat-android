@@ -21,7 +21,6 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.internal.animateHighlight
 
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(

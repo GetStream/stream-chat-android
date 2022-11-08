@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.adapter
+package io.getstream.chat.android.ui.feature.messages.list.adapter
 
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.adapter.MessageListItem.DateSeparatorItem
-import io.getstream.chat.android.ui.adapter.MessageListItem.LoadingMoreIndicatorItem
-import io.getstream.chat.android.ui.adapter.MessageListItem.MessageItem
-import io.getstream.chat.android.ui.adapter.MessageListItem.ThreadSeparatorItem
-import io.getstream.chat.android.ui.adapter.MessageListItem.TypingItem
 import io.getstream.chat.android.ui.common.state.message.list.MessagePosition
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.DateSeparatorItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.LoadingMoreIndicatorItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.MessageItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.ThreadSeparatorItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.TypingItem
 import java.util.Date
 
 /**

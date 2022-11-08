@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.view.messages
 
-import io.getstream.chat.android.ui.adapter.MessageListItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 
 /**
  * MessageListItemWrapper wraps a list of [MessageListItem] with a few extra fields.

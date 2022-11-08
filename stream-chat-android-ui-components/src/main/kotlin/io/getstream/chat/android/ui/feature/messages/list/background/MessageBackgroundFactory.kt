@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.background
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import io.getstream.chat.android.ui.adapter.MessageListItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 
 /**
  * Drawer of background of message items.

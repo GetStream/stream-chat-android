@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal
 
-import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 
 internal interface Decorator {
 

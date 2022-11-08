@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.feature.messages.list.internal
 
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
-import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 
 internal object HiddenMessageListItemPredicate : MessageListView.MessageListItemPredicate {
 
