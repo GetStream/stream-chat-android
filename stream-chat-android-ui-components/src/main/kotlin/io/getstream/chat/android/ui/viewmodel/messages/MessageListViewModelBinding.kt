@@ -16,14 +16,13 @@
 
 @file:JvmName("MessageListViewModelBinding")
 
-package io.getstream.chat.android.ui.messages.list.viewmodel
+package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.feature.gallery.toAttachment
-import io.getstream.chat.android.ui.messages.list.MessageListView
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.utils.PermissionChecker
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.BottomEndRegionReached
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.DownloadAttachment

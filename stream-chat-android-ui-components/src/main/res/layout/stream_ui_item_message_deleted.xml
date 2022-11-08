@@ -24,7 +24,7 @@
     android:paddingEnd="@dimen/stream_ui_spacing_small"
     >
 
-    <io.getstream.chat.android.ui.messages.list.adapter.view.internal.GapView
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
 
     </LinearLayout>
 
-    <io.getstream.chat.android.ui.messages.list.adapter.view.internal.FootnoteView
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.FootnoteView
         android:id="@+id/footnote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

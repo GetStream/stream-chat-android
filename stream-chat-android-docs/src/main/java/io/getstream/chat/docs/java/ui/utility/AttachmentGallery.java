@@ -6,7 +6,7 @@ import java.util.Collections;
 
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination;
-import io.getstream.chat.android.ui.messages.list.MessageListView;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 
 /**
  * [Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/utility-components/attachment-gallery/)

@@ -24,7 +24,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.messages.list.viewmodel.bindView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory

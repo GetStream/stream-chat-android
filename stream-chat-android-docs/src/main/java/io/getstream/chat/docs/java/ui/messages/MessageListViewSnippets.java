@@ -21,13 +21,13 @@ import io.getstream.chat.android.ui.TransformStyle;
 import io.getstream.chat.android.ui.adapter.MessageListItem;
 import io.getstream.chat.android.ui.common.state.message.list.MessagePosition;
 import io.getstream.chat.android.ui.common.utils.DateFormatter;
-import io.getstream.chat.android.ui.messages.list.MessageListView;
-import io.getstream.chat.android.ui.messages.list.adapter.BaseMessageItemViewHolder;
-import io.getstream.chat.android.ui.messages.list.adapter.MessageListItemPayloadDiff;
-import io.getstream.chat.android.ui.messages.list.adapter.MessageListItemViewHolderFactory;
-import io.getstream.chat.android.ui.messages.list.viewmodel.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.docs.databinding.TodayMessageListItemBinding;
 
 /**

@@ -24,22 +24,21 @@ import io.getstream.chat.android.ui.feature.gallery.options.AttachmentGalleryOpt
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
+import io.getstream.chat.android.ui.feature.messages.list.FileAttachmentViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.GiphyViewHolderStyle
+import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
+import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
+import io.getstream.chat.android.ui.feature.messages.list.ScrollButtonViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.adapter.view.MediaAttachmentViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.reactions.edit.EditReactionsViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.reactions.user.SingleReactionViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListViewStyle
 import io.getstream.chat.android.ui.feature.search.SearchInputViewStyle
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListViewStyle
-import io.getstream.chat.android.ui.messages.list.DefaultQuotedAttachmentViewStyle
-import io.getstream.chat.android.ui.messages.list.FileAttachmentViewStyle
-import io.getstream.chat.android.ui.messages.list.GiphyViewHolderStyle
-import io.getstream.chat.android.ui.messages.list.MessageListItemStyle
-import io.getstream.chat.android.ui.messages.list.MessageListViewStyle
-import io.getstream.chat.android.ui.messages.list.MessageReplyStyle
-import io.getstream.chat.android.ui.messages.list.ScrollButtonViewStyle
-import io.getstream.chat.android.ui.messages.list.UnsupportedAttachmentViewStyle
-import io.getstream.chat.android.ui.messages.list.adapter.view.MediaAttachmentViewStyle
-import io.getstream.chat.android.ui.messages.list.header.MessageListHeaderViewStyle
-import io.getstream.chat.android.ui.messages.list.reactions.edit.EditReactionsViewStyle
-import io.getstream.chat.android.ui.messages.list.reactions.user.SingleReactionViewStyle
-import io.getstream.chat.android.ui.messages.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.widgets.avatar.AvatarStyle
 import io.getstream.chat.android.ui.widgets.typing.TypingIndicatorViewStyle
 
@@ -106,7 +105,7 @@ public object TransformStyle {
     public var pinnedMessageListViewStyleTransformer: StyleTransformer<PinnedMessageListViewStyle> = noopTransformer()
 
     @JvmStatic
-    public var defaultQuotedAttachmentViewStyleTransformer: StyleTransformer<DefaultQuotedAttachmentViewStyle> =
+    public var defaultQuotedAttachmentViewStyleTransformer: StyleTransformer<io.getstream.chat.android.ui.feature.messages.list.DefaultQuotedAttachmentViewStyle> =
         noopTransformer()
 
     @JvmStatic

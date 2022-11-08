@@ -4,8 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
-import io.getstream.chat.android.ui.messages.list.MessageListView;
-import io.getstream.chat.android.ui.messages.list.viewmodel.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 

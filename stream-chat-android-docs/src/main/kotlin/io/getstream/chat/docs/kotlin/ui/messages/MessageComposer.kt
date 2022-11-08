@@ -30,7 +30,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMes
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerTrailingContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
-import io.getstream.chat.android.ui.messages.list.MessageListView
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.bindView

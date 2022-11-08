@@ -38,7 +38,6 @@ import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.Edit
 import io.getstream.chat.android.ui.common.state.MessageMode
 import io.getstream.chat.android.ui.common.state.Reply
-import io.getstream.chat.android.ui.messages.list.viewmodel.bindView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
