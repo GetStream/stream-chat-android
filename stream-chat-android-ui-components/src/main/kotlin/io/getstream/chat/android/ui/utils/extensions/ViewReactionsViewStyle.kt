@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.utils.extensions
 
-import io.getstream.chat.android.ui.message.list.reactions.user.SingleReactionViewStyle
-import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.messages.list.reactions.user.SingleReactionViewStyle
+import io.getstream.chat.android.ui.messages.list.reactions.view.ViewReactionsViewStyle
 
 /**
  * Converts [ViewReactionsViewStyle] to [SingleReactionViewStyle].

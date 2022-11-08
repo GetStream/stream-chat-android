@@ -20,8 +20,8 @@ import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.common.coil.StreamCoil
+import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
 import io.getstream.chat.android.uitests.util.FakeImageLoader
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Before

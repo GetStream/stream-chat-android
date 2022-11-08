@@ -25,7 +25,7 @@ import io.getstream.chat.android.ui.adapter.MessageListItem.MessageItem
 import io.getstream.chat.android.ui.adapter.MessageListItem.ThreadSeparatorItem
 import io.getstream.chat.android.ui.adapter.MessageListItem.TypingItem
 import io.getstream.chat.android.ui.common.state.message.list.MessagePosition
-import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.ui.messages.list.MessageListView
 import java.util.Date
 
 /**

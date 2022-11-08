@@ -4,9 +4,9 @@ package io.getstream.chat.docs.kotlin.ui.channels
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
-import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
-import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.channels.bindView
 
 /**
  * [Channel List Header](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/)

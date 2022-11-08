@@ -21,9 +21,9 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.getLastMessage
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 
 internal fun Channel.diff(other: Channel): ChannelListPayloadDiff {
     val usersChanged = getUsersExcludingCurrent() != other.getUsersExcludingCurrent()

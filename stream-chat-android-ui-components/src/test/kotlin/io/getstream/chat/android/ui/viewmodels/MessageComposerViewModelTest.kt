@@ -37,7 +37,7 @@ import io.getstream.chat.android.ui.common.state.MessageMode
 import io.getstream.chat.android.ui.common.state.Reply
 import io.getstream.chat.android.ui.common.state.ThreadReply
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
-import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest

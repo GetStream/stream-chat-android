@@ -23,7 +23,7 @@
     android:background="@color/stream_ui_white_snow"
     >
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         style="@style/StreamUiChannelListAvatarStyle"
         android:layout_marginStart="@dimen/spacing_small"

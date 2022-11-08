@@ -30,8 +30,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.message.composer.MessageComposerView
-import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+import io.getstream.chat.android.ui.messages.list.MessageListView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.AddChannelEmptyMessageListViewBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelViewBinding

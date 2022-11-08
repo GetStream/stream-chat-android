@@ -53,7 +53,7 @@ import kotlinx.coroutines.flow.onSubscription
 import io.getstream.chat.android.livedata.utils.Event as EventWrapper
 
 /**
- * View model class for [io.getstream.chat.android.ui.message.list.MessageListView].
+ * View model class for [io.getstream.chat.android.ui.messages.list.MessageListView].
  * Responsible for updating the list of messages.
  * Can be bound to the view using [MessageListViewModel.bindView] function.
  *

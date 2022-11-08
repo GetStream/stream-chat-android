@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui
 
 import io.getstream.chat.android.client.models.AttachmentType
-import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.file.internal.FileAttachmentAdapter
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.file.internal.FileAttachmentAdapter
 import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
