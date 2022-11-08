@@ -53,7 +53,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.int
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.SystemMessageViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 
 /**
  * A factory class designed to create ViewHolders for the RecyclerView

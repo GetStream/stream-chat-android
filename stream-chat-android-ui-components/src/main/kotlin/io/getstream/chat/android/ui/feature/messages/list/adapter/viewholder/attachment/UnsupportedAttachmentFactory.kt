@@ -27,10 +27,10 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiUnsupportedAttachmentViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 

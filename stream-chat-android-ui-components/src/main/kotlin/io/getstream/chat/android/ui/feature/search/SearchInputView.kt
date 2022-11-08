@@ -26,8 +26,8 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
-import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
+import io.getstream.chat.android.ui.utils.Debouncer
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.ui.utils.extensions.setTextSizePx

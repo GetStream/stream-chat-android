@@ -23,8 +23,8 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.utils.Utils
+import io.getstream.chat.android.ui.utils.Debouncer
 import io.getstream.chat.ui.sample.databinding.AddChannelHeaderViewBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelMemberItemBinding
 

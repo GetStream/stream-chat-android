@@ -20,9 +20,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiAttachmentGalleryOptionsViewBinding
 import io.getstream.chat.android.ui.feature.gallery.options.AttachmentGalleryOptionsViewStyle
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.setStartDrawable
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater

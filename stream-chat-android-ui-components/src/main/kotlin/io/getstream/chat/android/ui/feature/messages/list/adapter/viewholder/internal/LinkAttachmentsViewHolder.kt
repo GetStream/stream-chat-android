@@ -20,7 +20,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
-import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.databinding.StreamUiItemLinkAttachmentBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
@@ -28,7 +27,8 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod
+import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.uiutils.extension.hasLink
 

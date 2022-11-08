@@ -22,9 +22,9 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.view.setMargins
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiScrollButtonViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.ScrollButtonViewStyle
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 

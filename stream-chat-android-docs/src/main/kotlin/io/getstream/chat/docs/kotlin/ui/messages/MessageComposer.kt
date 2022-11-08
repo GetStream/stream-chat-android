@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.google.android.material.datepicker.MaterialDatePicker
-import io.getstream.chat.android.ui.StyleTransformer
-import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.helper.StyleTransformer
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.Edit
 import io.getstream.chat.android.ui.common.state.MessageMode

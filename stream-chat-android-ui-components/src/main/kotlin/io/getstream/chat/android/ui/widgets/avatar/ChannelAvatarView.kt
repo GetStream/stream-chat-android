@@ -31,8 +31,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.images.load
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.ui.widgets.avatar.internal.AvatarPlaceholderDrawable
 
 /**

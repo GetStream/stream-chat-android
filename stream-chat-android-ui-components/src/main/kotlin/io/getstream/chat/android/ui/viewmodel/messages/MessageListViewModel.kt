@@ -41,8 +41,8 @@ import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.state.MessageMode
 import io.getstream.chat.android.ui.common.state.message.list.MessageFocused
+import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
-import io.getstream.chat.android.ui.view.messages.MessageListItemWrapper
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.flow.StateFlow

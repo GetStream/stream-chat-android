@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.ui.feature.messages.preview
 
-import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListView
 import io.getstream.chat.android.ui.feature.messages.preview.internal.MessagePreviewView
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListView
+import io.getstream.chat.android.ui.font.TextStyle
 
 /**
  * Style for [MessagePreviewView] used by [MentionListView] and [SearchResultListView].

@@ -25,12 +25,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSearchResultListViewBinding
 import io.getstream.chat.android.ui.feature.search.internal.SearchResultListAdapter
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
-import io.getstream.chat.android.ui.view.EndlessScrollListener
+import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 
 /**
  * View used to display messages that contain specific text.

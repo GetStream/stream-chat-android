@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common
+package io.getstream.chat.android.ui.initializer
 
 import android.content.Context
 import androidx.startup.Initializer

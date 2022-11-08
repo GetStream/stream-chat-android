@@ -30,10 +30,10 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.ChannelAction
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 import io.getstream.chat.android.ui.feature.channels.actions.ChannelActionsDialogViewStyle
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.getMembersStatusText
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.setStartDrawable

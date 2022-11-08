@@ -17,12 +17,12 @@
 package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemErrorMessageBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class ErrorMessageViewHolder(

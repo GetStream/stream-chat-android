@@ -31,7 +31,7 @@ import io.getstream.chat.android.ui.feature.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.feature.gallery.overview.internal.MediaAttachmentAdapter
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
-import io.getstream.chat.android.ui.view.EndlessScrollListener
+import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale

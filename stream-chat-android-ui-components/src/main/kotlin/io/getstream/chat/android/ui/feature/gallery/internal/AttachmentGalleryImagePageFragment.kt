@@ -23,7 +23,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryImageBinding
-import io.getstream.chat.android.ui.images.load
+import io.getstream.chat.android.ui.utils.load
 
 internal class AttachmentGalleryImagePageFragment : Fragment() {
 

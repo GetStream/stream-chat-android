@@ -31,8 +31,8 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBindi
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.feature.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.feature.gallery.options.AttachmentGalleryOptionsViewStyle
-import io.getstream.chat.android.ui.images.load
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.utils.load
 
 internal class MediaAttachmentAdapter(
     private val style: MediaAttachmentGridViewStyle,

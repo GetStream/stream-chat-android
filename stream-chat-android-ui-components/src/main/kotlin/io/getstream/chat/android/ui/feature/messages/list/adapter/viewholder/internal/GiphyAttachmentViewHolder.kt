@@ -31,7 +31,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.Decor
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GiphyMediaAttachmentView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.hasText
 import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater

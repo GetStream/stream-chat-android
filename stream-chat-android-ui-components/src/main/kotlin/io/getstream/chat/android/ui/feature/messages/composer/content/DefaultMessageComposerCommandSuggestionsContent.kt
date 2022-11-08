@@ -24,17 +24,17 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.ui.common.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.internal.SimpleListAdapter
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.applyTint
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.setStartDrawable
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.widgets.internal.SimpleListAdapter
 
 /**
  * Represents the default command suggestion list popup shown above [MessageComposerView].

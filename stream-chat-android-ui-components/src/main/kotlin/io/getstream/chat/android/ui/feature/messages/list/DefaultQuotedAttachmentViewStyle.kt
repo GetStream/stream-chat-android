@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.list
 import android.content.Context
 import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 
 /**

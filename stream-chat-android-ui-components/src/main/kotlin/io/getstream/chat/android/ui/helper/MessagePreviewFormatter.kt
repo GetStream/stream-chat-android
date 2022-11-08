@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui
+package io.getstream.chat.android.ui.helper
 
 import android.content.Context
 import android.text.SpannableString

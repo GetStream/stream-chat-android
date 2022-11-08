@@ -29,7 +29,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.view.EndlessScrollListener
+import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupAddUsersDialogFragmentBinding

@@ -24,7 +24,6 @@ import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
@@ -33,7 +32,8 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.Decor
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod
+import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 

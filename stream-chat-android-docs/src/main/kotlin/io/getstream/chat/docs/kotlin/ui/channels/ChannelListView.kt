@@ -12,15 +12,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.ui.StyleTransformer
-import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.helper.StyleTransformer
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
-import io.getstream.chat.android.ui.common.style.TextStyle
+import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.viewmodel.channels.bindView
 import io.getstream.chat.docs.R
 

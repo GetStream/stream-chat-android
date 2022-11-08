@@ -30,7 +30,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiPinnedMessageListViewBin
 import io.getstream.chat.android.ui.feature.pinned.list.internal.PinnedMessageListAdapter
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
-import io.getstream.chat.android.ui.view.EndlessScrollListener
+import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 
 public class PinnedMessageListView : ViewFlipper {
 

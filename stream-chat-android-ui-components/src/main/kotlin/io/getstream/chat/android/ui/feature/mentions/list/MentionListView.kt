@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiMentionListViewBinding
 import io.getstream.chat.android.ui.feature.mentions.list.internal.MentionListAdapter
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
-import io.getstream.chat.android.ui.view.EndlessScrollListener
+import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 
 public class MentionListView : ViewFlipper {
 

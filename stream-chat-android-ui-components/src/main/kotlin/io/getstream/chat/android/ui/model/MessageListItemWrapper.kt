@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.style
+package io.getstream.chat.android.ui.model
 
-public class ChatStyle {
-    public var defaultTextStyle: TextStyle? = null
-    public fun hasDefaultFont(): Boolean = defaultTextStyle?.hasFont() == true
-}
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
+
+/**
+ * MessageListItemWrapper wraps a list of [MessageListItem] with a few extra fields.
+ */
+public data class MessageListItemWrapper(
+    val items: List<MessageListItem> = listOf(),
+    val hasNewMessages: Boolean = false,
+    val isTyping: Boolean = false,
+    val isThread: Boolean = false,
+    val areNewestMessagesLoaded: Boolean = true,
+)

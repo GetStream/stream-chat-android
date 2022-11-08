@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.style
+package io.getstream.chat.android.ui.font
 
 import android.graphics.Typeface
 import android.widget.TextView

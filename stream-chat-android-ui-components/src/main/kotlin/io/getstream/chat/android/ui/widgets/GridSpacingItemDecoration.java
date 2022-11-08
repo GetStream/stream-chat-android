@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.utils;
+package io.getstream.chat.android.ui.widgets;
 
 
 import android.graphics.Rect;

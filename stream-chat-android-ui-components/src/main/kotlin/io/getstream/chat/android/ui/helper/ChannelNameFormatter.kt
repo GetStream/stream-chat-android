@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common
+package io.getstream.chat.android.ui.helper
 
 import android.content.Context
 import androidx.annotation.StringRes

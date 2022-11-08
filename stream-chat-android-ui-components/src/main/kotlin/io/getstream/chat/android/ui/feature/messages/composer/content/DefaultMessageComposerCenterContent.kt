@@ -31,13 +31,13 @@ import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.Reply
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 

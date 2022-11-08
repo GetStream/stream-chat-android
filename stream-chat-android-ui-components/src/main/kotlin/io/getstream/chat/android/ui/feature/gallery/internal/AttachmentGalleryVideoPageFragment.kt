@@ -32,8 +32,8 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryViewMediaStyle
 import io.getstream.chat.android.ui.feature.gallery.options.AttachmentGalleryOptionsViewStyle
-import io.getstream.chat.android.ui.images.load
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.load
 
 internal class AttachmentGalleryVideoPageFragment : Fragment() {
 

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui
+package io.getstream.chat.android.ui.helper
 
 import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.file.internal.FileAttachmentAdapter
 import io.getstream.chat.android.uiutils.model.MimeType
 

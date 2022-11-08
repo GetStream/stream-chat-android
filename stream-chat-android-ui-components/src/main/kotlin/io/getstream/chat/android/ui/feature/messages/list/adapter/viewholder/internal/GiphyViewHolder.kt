@@ -22,7 +22,6 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.common.message.list.CancelGiphy
 import io.getstream.chat.android.ui.common.message.list.SendGiphy
 import io.getstream.chat.android.ui.common.message.list.ShuffleGiphy
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.giphyInfo
@@ -33,8 +32,9 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
-import io.getstream.chat.android.ui.images.load
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.utils.load
 
 internal class GiphyViewHolder(
     parent: ViewGroup,

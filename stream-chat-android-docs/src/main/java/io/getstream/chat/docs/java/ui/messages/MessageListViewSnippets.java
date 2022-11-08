@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import io.getstream.chat.android.ui.TransformStyle;
+import io.getstream.chat.android.ui.helper.TransformStyle;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem;
 import io.getstream.chat.android.ui.common.state.message.list.MessagePosition;
 import io.getstream.chat.android.ui.common.utils.DateFormatter;

@@ -25,11 +25,11 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.Edit
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultTrailingContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater

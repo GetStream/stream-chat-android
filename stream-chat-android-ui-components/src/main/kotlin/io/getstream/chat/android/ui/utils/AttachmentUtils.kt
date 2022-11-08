@@ -28,9 +28,9 @@ import io.getstream.chat.android.ui.common.disposable.Disposable
 import io.getstream.chat.android.ui.common.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
-import io.getstream.chat.android.ui.images.load
-import io.getstream.chat.android.ui.images.loadVideoThumbnail
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.ui.utils.load
+import io.getstream.chat.android.ui.utils.loadVideoThumbnail
 
 private val FILE_THUMB_TRANSFORMATION = RoundedCorners(3.dpToPxPrecise())
 

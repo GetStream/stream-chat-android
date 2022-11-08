@@ -23,11 +23,11 @@ import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.CurrentUserProvider
 import io.getstream.chat.android.ui.common.coil.StreamCoil
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItemViewType
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
+import io.getstream.chat.android.ui.helper.CurrentUserProvider
 import io.getstream.chat.android.uitests.util.FakeImageLoader
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Before

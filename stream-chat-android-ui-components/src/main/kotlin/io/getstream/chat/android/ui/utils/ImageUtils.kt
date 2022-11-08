@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.images
+package io.getstream.chat.android.ui.utils
 
 import android.graphics.drawable.Drawable
 import android.net.Uri

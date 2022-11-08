@@ -21,9 +21,9 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.TransformStyle
-import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.feature.channels.actions.internal.ChannelActionsDialogFragment
+import io.getstream.chat.android.ui.font.TextStyle
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat

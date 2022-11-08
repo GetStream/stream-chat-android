@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.view
+package io.getstream.chat.android.ui.widgets
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Scroll listener which checks the layout manager of the MessageListView, listens for scrolling gestures
- * and triggers pagination when reaching the end top of the list.
+ * Regular scroll listener which checks the layout manager of a recycler view and based on if the layout is reversed or
+ * not, it listens for scrolling gestures and triggers pagination when reaching the end top or end bottom of the list.
  *
  * @param loadMoreThreshold The number of items or positions ahead of the end of the list where we can trigger the
  * pagination.
- * @param loadMoreAtTopListener The handler which is called when pagination should be triggered in the top direction.
- * @param loadMoreAtBottomListener The handler which is called when pagination should be triggered in the
- * bottom direction.
+ * @param loadMoreListener The handler which is called when pagination should be triggered.
  */
-public class EndlessMessageListScrollListener(
+public class EndlessScrollListener(
     private val loadMoreThreshold: Int,
-    private inline val loadMoreAtTopListener: () -> Unit,
-    private inline val loadMoreAtBottomListener: () -> Unit,
+    private inline val loadMoreListener: () -> Unit,
 ) : RecyclerView.OnScrollListener() {
 
     init {
@@ -44,16 +41,10 @@ public class EndlessMessageListScrollListener(
      */
     private var paginationEnabled: Boolean = false
 
-    private var shouldFetchBottomMessages: Boolean = false
-
     /**
      * Helper flag which marks  if we should wait for the scroll state reset.
      */
     private var scrollStateReset: Boolean = true
-
-    public fun fetchAtBottom(shouldFetch: Boolean) {
-        this.shouldFetchBottomMessages = shouldFetch
-    }
 
     /**
      * Whenever we scroll, if the pagination is enabled, we check the scroll direction and validity.
@@ -68,23 +59,54 @@ public class EndlessMessageListScrollListener(
             throw IllegalStateException("EndlessScrollListener supports only LinearLayoutManager")
         }
 
-        handleScroll(dy, layoutManager, recyclerView)
+        /**
+         * If the layout is reversed, we should check that the scroll is going up, otherwise it should be going down.
+         */
+        if (layoutManager.reverseLayout) {
+            checkScrollUp(dy, layoutManager, recyclerView)
+        } else {
+            checkScrollDown(dy, layoutManager, recyclerView)
+        }
     }
 
     /**
-     * Checks if the scroll is going up or down and if the threshold number of items has been shown. If
-     * [EndlessMessageListScrollListener] is configured to fetch bottom messages, it handles it when scrolling down.
+     * Checks if the scroll is going up and if the threshold number of items has been shown. If the scroll is downwards,
+     * then it stops the check.
      */
-    private fun handleScroll(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
-        if (!paginationEnabled) return
+    private fun checkScrollUp(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+        if (dy >= 0) {
+            // Scrolling downwards
+            return
+        }
 
-        when {
-            dy >= 0 && shouldFetchBottomMessages -> {
-                handleScrollDown(layoutManager, recyclerView)
-            }
+        handleScrollUp(layoutManager, recyclerView)
+    }
 
-            dy < 0 -> {
-                handleScrollUp(layoutManager, recyclerView)
+    /**
+     * Checks if the scroll is going down and if the threshold number of items has been shown. If the scroll is upwards,
+     * then it stops the check.
+     */
+    private fun checkScrollDown(dy: Int, layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+        if (dy <= 0) {
+            // Scrolling upwards
+            return
+        }
+
+        handleScrollDown(layoutManager, recyclerView)
+    }
+
+    /**
+     * Handles a valid scroll up. If the threshold has been met and the scroll state has been reset previously, we
+     * trigger pagination.
+     */
+    private fun handleScrollUp(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
+        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+        if (scrollStateReset && firstVisiblePosition <= loadMoreThreshold) {
+            scrollStateReset = false
+            recyclerView.post {
+                if (paginationEnabled) {
+                    loadMoreListener()
+                }
             }
         }
     }
@@ -94,25 +116,15 @@ public class EndlessMessageListScrollListener(
      * trigger pagination.
      */
     private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
-        val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
-        val total = recyclerView.adapter?.itemCount ?: 0
-
-        if (scrollStateReset && lastVisiblePosition > total - loadMoreThreshold) {
+        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+        val itemCount = layoutManager.itemCount
+        if (scrollStateReset && (itemCount - loadMoreThreshold) <= lastVisibleItemPosition) {
             scrollStateReset = false
-            recyclerView.post(loadMoreAtBottomListener)
-        }
-    }
-
-    /**
-     * Handles a valid scroll up. If the threshold has been met and the scroll state has been reset previously, we
-     * trigger pagination.
-     */
-    private fun handleScrollUp(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
-        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-
-        if (scrollStateReset && firstVisiblePosition <= loadMoreThreshold) {
-            scrollStateReset = false
-            recyclerView.post(loadMoreAtTopListener)
+            recyclerView.post {
+                if (paginationEnabled) {
+                    loadMoreListener()
+                }
+            }
         }
     }
 

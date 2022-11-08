@@ -19,7 +19,7 @@ package io.getstream.chat.android.markdown
 import android.content.Context
 import android.widget.TextView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.Linkify
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin

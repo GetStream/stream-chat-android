@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.reactions.internal
 
-import io.getstream.chat.android.ui.SupportedReactions
+import io.getstream.chat.android.ui.helper.SupportedReactions
 
 internal data class ReactionItem(
     val type: String,

@@ -27,15 +27,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.model.AttachmentMetaData
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.AttachmentFilter
 import io.getstream.chat.android.ui.common.utils.StorageHelper
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener
-import io.getstream.chat.android.ui.utils.GridSpacingItemDecoration
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.widgets.GridSpacingItemDecoration
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -52,7 +52,8 @@ internal class MediaAttachmentFragment : Fragment() {
     private val attachmentFilter: AttachmentFilter = AttachmentFilter()
 
     private val gridLayoutManager = GridLayoutManager(context, SPAN_COUNT, RecyclerView.VERTICAL, false)
-    private val gridSpacingItemDecoration = GridSpacingItemDecoration(SPAN_COUNT, SPACING, false)
+    private val gridSpacingItemDecoration =
+        GridSpacingItemDecoration(SPAN_COUNT, SPACING, false)
 
     /**
      * Style for the attachment picker dialog.

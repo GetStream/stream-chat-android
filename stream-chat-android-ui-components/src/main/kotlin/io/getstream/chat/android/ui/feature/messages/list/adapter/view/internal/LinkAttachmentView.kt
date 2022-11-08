@@ -24,15 +24,15 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.images.StreamImageLoader.ImageTransformation.RoundedCorners
-import io.getstream.chat.android.ui.common.style.TextStyle
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
-import io.getstream.chat.android.ui.images.load
+import io.getstream.chat.android.ui.font.TextStyle
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.utils.load
 
 internal class LinkAttachmentView : FrameLayout {
     private val binding = StreamUiLinkAttachmentsViewBinding.inflate(streamThemeInflater, this, true)

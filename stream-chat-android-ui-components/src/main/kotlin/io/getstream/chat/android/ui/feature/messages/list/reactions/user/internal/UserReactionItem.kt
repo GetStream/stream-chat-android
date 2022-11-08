@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.reactions.user.intern
 
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.SupportedReactions
+import io.getstream.chat.android.ui.helper.SupportedReactions
 
 internal data class UserReactionItem(
     val user: User,

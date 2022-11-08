@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.internal
+package io.getstream.chat.android.ui.feature.messages.list.internal
 
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
-import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod.Companion.set
 import io.getstream.chat.android.ui.common.utils.Utils
+import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod.Companion.set
 import io.getstream.chat.android.ui.utils.shouldConsumeLongTap
 
 /**

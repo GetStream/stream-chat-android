@@ -16,7 +16,7 @@ import java.util.Collections;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.ui.TransformStyle;
+import io.getstream.chat.android.ui.helper.TransformStyle;
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView;
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem;
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder;

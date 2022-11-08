@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.ui.common.extensions.internal.cast
-import io.getstream.chat.android.ui.common.internal.SnapToTopDataObserver
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
@@ -37,6 +36,7 @@ import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.int
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.widgets.internal.ScrollPauseLinearLayoutManager
 import io.getstream.chat.android.ui.widgets.internal.SimpleVerticalListDivider
+import io.getstream.chat.android.ui.widgets.internal.SnapToTopDataObserver
 
 internal class SimpleChannelListView @JvmOverloads constructor(
     context: Context,

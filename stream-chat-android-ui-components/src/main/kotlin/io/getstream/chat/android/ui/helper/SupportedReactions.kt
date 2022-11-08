@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui
+package io.getstream.chat.android.ui.helper
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.lolDrawable
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.loveDrawable
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.thumbsDownDrawable
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.thumbsUpDrawable
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionDrawables.wutDrawable
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOL
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_DOWN
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_UP
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
+import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionDrawables.lolDrawable
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionDrawables.loveDrawable
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionDrawables.thumbsDownDrawable
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionDrawables.thumbsUpDrawable
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionDrawables.wutDrawable
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOL
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOVE
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.THUMBS_DOWN
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.THUMBS_UP
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 /**

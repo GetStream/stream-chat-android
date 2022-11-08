@@ -32,11 +32,11 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.giphyInfo
 import io.getstream.chat.android.ui.databinding.StreamUiGiphyMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.GiphyMediaAttachmentViewStyle
-import io.getstream.chat.android.ui.images.loadAndResize
 import io.getstream.chat.android.ui.utils.extensions.constrainViewToParentBySide
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.updateConstraints
+import io.getstream.chat.android.ui.utils.loadAndResize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

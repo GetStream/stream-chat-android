@@ -30,7 +30,6 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.isNotNull
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemBackgroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
@@ -39,6 +38,7 @@ import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.SwipeViewHolder
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage

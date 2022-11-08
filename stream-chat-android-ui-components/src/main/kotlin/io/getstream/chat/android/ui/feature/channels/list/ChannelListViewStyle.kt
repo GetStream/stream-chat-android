@@ -24,9 +24,9 @@ import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
 import androidx.appcompat.content.res.AppCompatResources
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.TransformStyle
-import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal.ChannelViewHolder
+import io.getstream.chat.android.ui.font.TextStyle
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDimension

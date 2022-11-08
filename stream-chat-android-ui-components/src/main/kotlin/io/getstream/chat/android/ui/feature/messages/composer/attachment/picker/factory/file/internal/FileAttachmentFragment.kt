@@ -29,12 +29,12 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.SelectFilesContract
 import io.getstream.chat.android.ui.common.model.AttachmentMetaData
-import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.AttachmentFilter
 import io.getstream.chat.android.ui.common.utils.StorageHelper
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.launch

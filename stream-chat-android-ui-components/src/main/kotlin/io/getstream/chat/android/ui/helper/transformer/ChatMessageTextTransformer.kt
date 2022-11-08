@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.transformer
+package io.getstream.chat.android.ui.helper.transformer
 
 import android.widget.TextView
 import io.getstream.chat.android.ui.ChatUI
