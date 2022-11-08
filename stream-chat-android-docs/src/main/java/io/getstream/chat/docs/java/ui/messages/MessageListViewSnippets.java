@@ -12,23 +12,22 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.adapter.MessageListItem;
-import com.getstream.sdk.chat.utils.DateFormatter;
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import io.getstream.chat.android.common.state.message.list.MessagePosition;
 import io.getstream.chat.android.ui.TransformStyle;
+import io.getstream.chat.android.ui.adapter.MessageListItem;
+import io.getstream.chat.android.ui.common.state.message.list.MessagePosition;
+import io.getstream.chat.android.ui.common.utils.DateFormatter;
 import io.getstream.chat.android.ui.message.list.MessageListView;
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder;
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff;
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory;
 import io.getstream.chat.android.ui.message.list.viewmodel.MessageListViewModelBinding;
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.docs.databinding.TodayMessageListItemBinding;
 
 /**

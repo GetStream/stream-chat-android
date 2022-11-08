@@ -23,10 +23,10 @@ import android.view.ViewGroup
 import android.widget.CheckedTextView
 import android.widget.FrameLayout
 import androidx.core.view.descendants
-import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
 import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.AttachmentsPickerTabFactory

@@ -27,14 +27,13 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.common.model.DeleteMessage
-import io.getstream.chat.android.common.model.EditMessage
-import io.getstream.chat.android.common.model.SendAnyway
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
+import io.getstream.chat.android.ui.common.model.DeleteMessage
+import io.getstream.chat.android.ui.common.model.EditMessage
+import io.getstream.chat.android.ui.common.model.SendAnyway
+import io.getstream.chat.android.ui.common.state.Edit
+import io.getstream.chat.android.ui.common.state.MessageMode
+import io.getstream.chat.android.ui.common.state.Reply
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
@@ -45,6 +44,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 
 /**
  * Self-contained chat screen which internally contains the following components:

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.message.list.adapter.internal
 
-import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.attachment.isGiphy
@@ -26,6 +25,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.CUSTOM_ATTACHMENTS
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewType.ERROR_MESSAGE

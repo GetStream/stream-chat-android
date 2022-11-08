@@ -19,22 +19,22 @@
 package io.getstream.chat.android.ui.message.list.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
-import com.getstream.sdk.chat.utils.PermissionChecker
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.BottomEndRegionReached
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DownloadAttachment
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.FlagMessage
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.GiphyActionSelected
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.MessageReaction
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.gallery.toAttachment
 import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.ui.utils.PermissionChecker
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.BottomEndRegionReached
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.DownloadAttachment
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.FlagMessage
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.GiphyActionSelected
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.MessageReaction
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.RetryMessage
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 
 /**
  * Binds [MessageListView] with [MessageListViewModel], updating the view's state

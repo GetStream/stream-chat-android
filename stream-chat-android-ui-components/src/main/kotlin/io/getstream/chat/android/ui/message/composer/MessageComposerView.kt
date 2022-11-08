@@ -26,14 +26,14 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
-import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogFragment
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle

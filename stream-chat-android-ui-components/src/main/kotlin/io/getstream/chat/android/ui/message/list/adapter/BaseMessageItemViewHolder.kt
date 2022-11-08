@@ -21,7 +21,7 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.internal.animateHighlight
 
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
@@ -77,10 +77,10 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     /**
      * Called when this view holder and its' view were detached from window.
      */
-    public open fun onDetachedFromWindow() { }
+    public open fun onDetachedFromWindow() {}
 
     /**
      * Called when this view holder and its' view were attached to window.
      */
-    public open fun onAttachedToWindow() { }
+    public open fun onAttachedToWindow() {}
 }

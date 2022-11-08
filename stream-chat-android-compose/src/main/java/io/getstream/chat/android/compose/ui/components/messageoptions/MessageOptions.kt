@@ -35,20 +35,20 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.message.isGiphy
-import io.getstream.chat.android.common.state.Copy
-import io.getstream.chat.android.common.state.Delete
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.Flag
-import io.getstream.chat.android.common.state.Pin
-import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.Resend
-import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.ui.common.state.Copy
+import io.getstream.chat.android.ui.common.state.Delete
+import io.getstream.chat.android.ui.common.state.Edit
+import io.getstream.chat.android.ui.common.state.Flag
+import io.getstream.chat.android.ui.common.state.Pin
+import io.getstream.chat.android.ui.common.state.Reply
+import io.getstream.chat.android.ui.common.state.Resend
+import io.getstream.chat.android.ui.common.state.ThreadReply
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**

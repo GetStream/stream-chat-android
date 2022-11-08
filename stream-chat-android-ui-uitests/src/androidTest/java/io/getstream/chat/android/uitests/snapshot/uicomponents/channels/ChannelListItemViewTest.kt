@@ -19,7 +19,6 @@ package io.getstream.chat.android.uitests.snapshot.uicomponents.channels
 import android.content.Context
 import android.widget.FrameLayout
 import androidx.test.platform.app.InstrumentationRegistry
-import com.getstream.sdk.chat.coil.StreamCoil
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -28,6 +27,7 @@ import io.getstream.chat.android.ui.CurrentUserProvider
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItemViewType
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
+import io.getstream.chat.android.ui.common.coil.StreamCoil
 import io.getstream.chat.android.uitests.util.FakeImageLoader
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Before

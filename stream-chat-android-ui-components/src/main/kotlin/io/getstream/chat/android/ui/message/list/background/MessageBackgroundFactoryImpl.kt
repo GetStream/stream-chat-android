@@ -20,14 +20,14 @@ import android.content.Context
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.isBottomPosition
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**

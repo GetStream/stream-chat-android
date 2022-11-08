@@ -19,11 +19,11 @@ package io.getstream.chat.android.ui.message.composer.attachment.picker.factory.
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
+import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 import io.getstream.chat.android.ui.common.style.setTextStyle
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentFileBinding
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 

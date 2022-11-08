@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
-import com.getstream.sdk.chat.images.load
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.RelativeCornerSize
@@ -29,6 +28,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.ui.avatar.internal.AvatarPlaceholderDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.images.load
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 /**

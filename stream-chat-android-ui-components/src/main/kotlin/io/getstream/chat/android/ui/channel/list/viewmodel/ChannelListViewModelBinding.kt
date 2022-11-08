@@ -21,11 +21,11 @@ package io.getstream.chat.android.ui.channel.list.viewmodel
 import android.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.distinctUntilChanged
-import com.getstream.sdk.chat.utils.extensions.combineWith
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
+import io.getstream.chat.android.ui.utils.extensions.combineWith
 
 /**
  * Binds [ChannelListView] with [ChannelListViewModel], updating the view's state based on

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.message.composer.attachment.picker.factory
 
-import com.getstream.sdk.chat.model.AttachmentMetaData
+import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 
 /**
  * Listener invoked when attachments are selected in the attachment tab.

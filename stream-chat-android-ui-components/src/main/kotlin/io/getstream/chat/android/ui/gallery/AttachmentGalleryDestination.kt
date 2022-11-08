@@ -23,8 +23,8 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
-import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import io.getstream.chat.android.ui.gallery.internal.AttachmentGalleryRepository
+import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 
 public class AttachmentGalleryDestination(
     context: Context,

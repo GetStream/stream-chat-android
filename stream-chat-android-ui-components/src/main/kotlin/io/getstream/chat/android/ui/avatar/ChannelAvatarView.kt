@@ -23,7 +23,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.getstream.sdk.chat.images.load
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.RelativeCornerSize
@@ -34,6 +33,7 @@ import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.avatar.internal.AvatarPlaceholderDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.images.load
 
 /**
  * Represents the [Channel] avatar that's shown when browsing channels or when you open the Messages screen.

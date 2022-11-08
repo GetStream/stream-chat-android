@@ -20,9 +20,6 @@ import android.content.Context
 import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
-import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.navigation.destinations.ChatDestination
-import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.AttachmentType
@@ -32,8 +29,11 @@ import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.common.R
+import io.getstream.chat.android.ui.common.view.activity.AttachmentDocumentActivity
 import io.getstream.chat.android.ui.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.gallery.AttachmentMediaActivity
+import io.getstream.chat.android.ui.images.load
+import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 import io.getstream.chat.android.uiutils.model.MimeType
 import io.getstream.logging.StreamLog
 

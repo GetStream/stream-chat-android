@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.channel.actions.internal
 
 import android.graphics.drawable.Drawable
-import io.getstream.chat.android.common.state.ChannelAction
+import io.getstream.chat.android.ui.common.state.ChannelAction
 
 /**
  * UI representation of a Channel option, when the user selects a channel in the list.

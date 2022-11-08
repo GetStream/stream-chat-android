@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.message.list
 
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.isBottomPosition
+import io.getstream.chat.android.ui.adapter.MessageListItem
+import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
 
 internal class DefaultShowAvatarPredicate : MessageListView.ShowAvatarPredicate {
     override fun shouldShow(messageItem: MessageListItem.MessageItem): Boolean {

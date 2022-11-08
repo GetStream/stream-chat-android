@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.viewmodels
 
-import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.models.Attachment
@@ -28,15 +27,16 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.common.composer.MessageComposerController
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.ui.common.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.state.Edit
+import io.getstream.chat.android.ui.common.state.MessageMode
+import io.getstream.chat.android.ui.common.state.Reply
+import io.getstream.chat.android.ui.common.state.ThreadReply
+import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

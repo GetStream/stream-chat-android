@@ -20,8 +20,8 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
-import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod.Companion.set
+import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.utils.shouldConsumeLongTap
 
 /**

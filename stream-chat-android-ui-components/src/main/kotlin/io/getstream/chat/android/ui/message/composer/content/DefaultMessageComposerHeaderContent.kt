@@ -20,11 +20,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.Reply
+import io.getstream.chat.android.ui.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.state.Edit
+import io.getstream.chat.android.ui.common.state.Reply
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultHeaderContentBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView

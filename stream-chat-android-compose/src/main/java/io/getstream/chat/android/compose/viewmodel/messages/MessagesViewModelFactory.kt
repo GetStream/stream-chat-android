@@ -20,20 +20,20 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.getstream.sdk.chat.utils.AttachmentConstants
-import com.getstream.sdk.chat.utils.AttachmentFilter
-import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.common.composer.MessageComposerController
-import io.getstream.chat.android.common.message.list.DateSeparatorHandler
-import io.getstream.chat.android.common.message.list.MessageListController
-import io.getstream.chat.android.common.message.list.MessagePositionHandler
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.MessageFooterVisibility
-import io.getstream.chat.android.common.util.ClipboardHandler
-import io.getstream.chat.android.common.util.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.ui.common.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.message.list.DateSeparatorHandler
+import io.getstream.chat.android.ui.common.message.list.MessageListController
+import io.getstream.chat.android.ui.common.message.list.MessagePositionHandler
+import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.MessageFooterVisibility
+import io.getstream.chat.android.ui.common.util.ClipboardHandler
+import io.getstream.chat.android.ui.common.util.ClipboardHandlerImpl
+import io.getstream.chat.android.ui.common.utils.AttachmentConstants
+import io.getstream.chat.android.ui.common.utils.AttachmentFilter
+import io.getstream.chat.android.ui.common.utils.StorageHelper
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.

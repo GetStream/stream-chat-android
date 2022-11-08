@@ -28,12 +28,10 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
-import com.getstream.sdk.chat.utils.DateFormatter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
-import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
 import io.getstream.chat.android.compose.handlers.PermissionHandler
 import io.getstream.chat.android.compose.handlers.StreamPermissionHandlers
@@ -48,6 +46,8 @@ import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
+import io.getstream.chat.android.ui.common.MessageOptionsUserReactionAlignment
+import io.getstream.chat.android.ui.common.utils.DateFormatter
 
 /**
  * Local providers for various properties we connect to our components, for styling.

@@ -27,8 +27,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getEnum
 import io.getstream.chat.android.ui.common.extensions.internal.use
-import io.getstream.chat.android.ui.utils.GiphyInfoType
-import io.getstream.chat.android.ui.utils.GiphySizingMode
+import io.getstream.chat.android.ui.common.utils.GiphyInfoType
+import io.getstream.chat.android.ui.common.utils.GiphySizingMode
 
 /**
  * Sets the style for [io.getstream.chat.android.ui.message.list.adapter.view.internal.GiphyMediaAttachmentView]

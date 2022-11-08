@@ -24,8 +24,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.utils.extensions.isMine
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
@@ -38,10 +36,12 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.common.utils.extensions.isMine
 import io.getstream.chat.android.ui.databinding.StreamUiMessageReplyViewBinding
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceModelFactory
 import io.getstream.chat.android.ui.utils.ellipsizeText
+import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
 internal class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =

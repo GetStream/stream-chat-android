@@ -16,14 +16,14 @@
 
 package io.getstream.chat.android.ui.utils.extensions
 
-import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItemState
-import io.getstream.chat.android.common.model.messsagelist.MessageItemState
-import io.getstream.chat.android.common.model.messsagelist.SystemMessageItemState
-import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorItemState
-import io.getstream.chat.android.common.model.messsagelist.TypingItemState
+import io.getstream.chat.android.ui.adapter.MessageListItem
+import io.getstream.chat.android.ui.common.model.messsagelist.DateSeparatorItemState
+import io.getstream.chat.android.ui.common.model.messsagelist.MessageItemState
+import io.getstream.chat.android.ui.common.model.messsagelist.SystemMessageItemState
+import io.getstream.chat.android.ui.common.model.messsagelist.ThreadDateSeparatorItemState
+import io.getstream.chat.android.ui.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.ui.message.list.MessageListView
-import io.getstream.chat.android.common.model.messsagelist.MessageListItemState as MessageListItemCommon
+import io.getstream.chat.android.ui.common.model.messsagelist.MessageListItemState as MessageListItemCommon
 
 /**
  * Converts [MessageListItemCommon] to [MessageListItem] to be shown inside [MessageListView].

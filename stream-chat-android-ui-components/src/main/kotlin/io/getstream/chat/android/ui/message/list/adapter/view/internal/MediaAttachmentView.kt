@@ -21,10 +21,6 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
@@ -36,8 +32,12 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
+import io.getstream.chat.android.ui.images.load
 import io.getstream.chat.android.ui.message.list.adapter.view.MediaAttachmentViewStyle
+import io.getstream.chat.android.ui.utils.extensions.constrainViewToParentBySide
+import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
 /**
  * View used to display image and video attachments.

@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.ui.util
 
-import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
+import io.getstream.chat.android.ui.common.model.messsagelist.MessageItemState
 
 /**
  *  An interface that allows to return the desired horizontal alignment for a particular [MessageItemState].

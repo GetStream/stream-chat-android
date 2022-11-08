@@ -24,8 +24,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.UserAvatarView
@@ -35,6 +33,8 @@ import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
+import io.getstream.chat.android.ui.utils.extensions.constrainViewToParentBySide
+import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
 internal class FootnoteView : ConstraintLayout {
 

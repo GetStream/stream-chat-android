@@ -24,18 +24,18 @@ import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.common.state.ChannelAction
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.state.ChannelAction
 import io.getstream.chat.android.ui.common.style.setTextStyle
+import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 import io.getstream.chat.android.ui.utils.extensions.getMembersStatusText
 

@@ -19,22 +19,22 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 import android.content.res.ColorStateList
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.common.message.list.CancelGiphy
-import io.getstream.chat.android.common.message.list.SendGiphy
-import io.getstream.chat.android.common.message.list.ShuffleGiphy
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.message.list.CancelGiphy
+import io.getstream.chat.android.ui.common.message.list.SendGiphy
+import io.getstream.chat.android.ui.common.message.list.ShuffleGiphy
 import io.getstream.chat.android.ui.common.style.setTextStyle
+import io.getstream.chat.android.ui.common.utils.GiphyInfoType
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.giphyInfo
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
+import io.getstream.chat.android.ui.images.load
 import io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.message.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator
-import io.getstream.chat.android.ui.utils.GiphyInfoType
-import io.getstream.chat.android.ui.utils.giphyInfo
 
 internal class GiphyViewHolder(
     parent: ViewGroup,

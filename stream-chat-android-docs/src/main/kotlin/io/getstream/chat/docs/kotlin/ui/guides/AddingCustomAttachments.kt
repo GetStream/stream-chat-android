@@ -14,10 +14,9 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.Edit
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle

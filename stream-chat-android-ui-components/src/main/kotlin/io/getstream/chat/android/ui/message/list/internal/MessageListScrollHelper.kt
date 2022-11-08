@@ -20,9 +20,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.safeCast
@@ -210,7 +210,7 @@ internal class MessageListScrollHelper(
     private fun shouldScrollToBottom(
         isInitialList: Boolean,
         areNewestMessagesLoaded: Boolean,
-        hasNewMessages: Boolean
+        hasNewMessages: Boolean,
     ): Boolean {
         return hasNewMessages &&
             areNewestMessagesLoaded &&

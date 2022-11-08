@@ -17,10 +17,10 @@
 package io.getstream.chat.android.uitests.snapshot.compose.messages
 
 import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.common.composer.MessageComposerState
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import org.junit.Test
 

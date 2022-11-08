@@ -18,10 +18,10 @@ package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
 import android.net.Uri
-import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.AttachmentFilter
-import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.common.model.AttachmentMetaData
+import io.getstream.chat.android.ui.common.utils.AttachmentFilter
+import io.getstream.chat.android.ui.common.utils.StorageHelper
 
 /**
  * Wrapper around the [StorageHelper] class, with some extra functionality that makes it easier to

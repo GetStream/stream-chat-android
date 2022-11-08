@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.message.composer.content
 
-import io.getstream.chat.android.common.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.composer.MessageComposerState
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 

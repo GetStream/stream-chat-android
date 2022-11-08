@@ -19,13 +19,13 @@ package io.getstream.chat.android.ui.message.list.adapter.view.internal
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.images.StreamImageLoader
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.images.load
 import io.getstream.chat.android.ui.message.list.DefaultQuotedAttachmentViewStyle
 
 /**

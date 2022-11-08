@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.message.composer.attachment.picker
 
-import com.getstream.sdk.chat.model.AttachmentMetaData
+import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 
 public fun interface AttachmentSelectionListener {
     /**

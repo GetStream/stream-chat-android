@@ -30,17 +30,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.utils.ListenerDelegate
-import com.getstream.sdk.chat.utils.StartStopBuffer
-import com.getstream.sdk.chat.utils.extensions.activity
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
-import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
-import com.getstream.sdk.chat.utils.extensions.isModerationFailed
-import com.getstream.sdk.chat.utils.extensions.showToast
-import com.getstream.sdk.chat.view.EndlessMessageListScrollListener
-import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
@@ -54,25 +43,12 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isThreadReply
-import io.getstream.chat.android.common.message.list.GiphyAction
-import io.getstream.chat.android.common.message.list.MessageListController
-import io.getstream.chat.android.common.model.ModeratedMessageOption
-import io.getstream.chat.android.common.state.Copy
-import io.getstream.chat.android.common.state.CustomAction
-import io.getstream.chat.android.common.state.Delete
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.Pin
-import io.getstream.chat.android.common.state.React
-import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.Resend
-import io.getstream.chat.android.common.state.ThreadReply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.extensions.internal.copyToClipboard
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -81,9 +57,27 @@ import io.getstream.chat.android.ui.common.extensions.internal.isCurrentUser
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
+import io.getstream.chat.android.ui.common.message.list.GiphyAction
+import io.getstream.chat.android.ui.common.message.list.MessageListController
+import io.getstream.chat.android.ui.common.model.ModeratedMessageOption
 import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.common.navigation.destinations.WebLinkDestination
+import io.getstream.chat.android.ui.common.state.Copy
+import io.getstream.chat.android.ui.common.state.CustomAction
+import io.getstream.chat.android.ui.common.state.Delete
+import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.Edit
+import io.getstream.chat.android.ui.common.state.MessageAction
+import io.getstream.chat.android.ui.common.state.Pin
+import io.getstream.chat.android.ui.common.state.React
+import io.getstream.chat.android.ui.common.state.Reply
+import io.getstream.chat.android.ui.common.state.Resend
+import io.getstream.chat.android.ui.common.state.ThreadReply
 import io.getstream.chat.android.ui.common.style.setTextStyle
+import io.getstream.chat.android.ui.common.utils.DateFormatter
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
+import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
@@ -99,6 +93,7 @@ import io.getstream.chat.android.ui.message.list.MessageListView.ConfirmFlagMess
 import io.getstream.chat.android.ui.message.list.MessageListView.CustomActionHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EndRegionReachedHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.EnterThreadListener
+import io.getstream.chat.android.ui.message.list.MessageListView.ErrorEventHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.FlagMessageResultHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendHandler
 import io.getstream.chat.android.ui.message.list.MessageListView.GiphySendListener
@@ -136,11 +131,17 @@ import io.getstream.chat.android.ui.message.list.internal.MessageListScrollHelpe
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItem
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionsDialogFragment
+import io.getstream.chat.android.ui.utils.ListenerDelegate
+import io.getstream.chat.android.ui.utils.StartStopBuffer
+import io.getstream.chat.android.ui.utils.extensions.activity
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
+import io.getstream.chat.android.ui.utils.extensions.showToast
+import io.getstream.chat.android.ui.view.EndlessMessageListScrollListener
+import io.getstream.chat.android.ui.view.messages.MessageListItemWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import io.getstream.chat.android.common.state.Flag as FlagAction
+import io.getstream.chat.android.ui.common.state.Flag as FlagAction
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]

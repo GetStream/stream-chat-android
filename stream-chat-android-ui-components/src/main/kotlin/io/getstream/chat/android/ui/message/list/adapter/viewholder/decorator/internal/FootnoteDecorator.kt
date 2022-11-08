@@ -21,21 +21,18 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.DateFormatter
-import com.getstream.sdk.chat.utils.extensions.isBottomPosition
-import com.getstream.sdk.chat.utils.extensions.isNotBottomPosition
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isEphemeral
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.common.extensions.getUpdatedAtOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
+import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.style.setTextStyle
+import io.getstream.chat.android.ui.common.utils.DateFormatter
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
@@ -47,6 +44,9 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Lin
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
+import io.getstream.chat.android.ui.utils.extensions.isNotBottomPosition
+import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,

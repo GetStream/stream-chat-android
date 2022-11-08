@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.ui.utils.extensions
 
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import io.getstream.chat.android.common.state.message.list.MessageListState
+import io.getstream.chat.android.ui.adapter.MessageListItem
+import io.getstream.chat.android.ui.common.state.message.list.MessageListState
+import io.getstream.chat.android.ui.view.messages.MessageListItemWrapper
 
 /**
  * Converts the common [MessageListState] to ui-components [MessageListItemWrapper].

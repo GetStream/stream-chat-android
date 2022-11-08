@@ -24,14 +24,14 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.Utils
-import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentGridViewBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.gallery.overview.internal.MediaAttachmentAdapter
+import io.getstream.chat.android.ui.view.EndlessScrollListener
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale

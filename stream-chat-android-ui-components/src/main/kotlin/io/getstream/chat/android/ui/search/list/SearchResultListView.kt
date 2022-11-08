@@ -23,7 +23,6 @@ import android.widget.ViewFlipper
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
@@ -31,6 +30,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiSearchResultListViewBinding
 import io.getstream.chat.android.ui.search.internal.SearchResultListAdapter
+import io.getstream.chat.android.ui.view.EndlessScrollListener
 
 /**
  * View used to display messages that contain specific text.

@@ -23,8 +23,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.hasReactions
 import io.getstream.chat.android.ui.common.extensions.hasSingleReaction
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
@@ -38,6 +37,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Med
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
 internal class ReactionsDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
 

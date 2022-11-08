@@ -23,14 +23,14 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.getstream.sdk.chat.CaptureMediaContract
-import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.PermissionChecker
+import io.getstream.chat.android.ui.common.CaptureMediaContract
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentCameraBinding
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.AttachmentsPickerTabListener
+import io.getstream.chat.android.ui.utils.PermissionChecker
 import java.io.File
 
 /**

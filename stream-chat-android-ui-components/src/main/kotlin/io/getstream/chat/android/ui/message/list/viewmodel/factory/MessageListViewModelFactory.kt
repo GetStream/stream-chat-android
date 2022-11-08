@@ -18,18 +18,18 @@ package io.getstream.chat.android.ui.message.list.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.getstream.sdk.chat.utils.AttachmentConstants
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.common.composer.MessageComposerController
-import io.getstream.chat.android.common.message.list.DateSeparatorHandler
-import io.getstream.chat.android.common.message.list.MessageListController
-import io.getstream.chat.android.common.message.list.MessagePositionHandler
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.MessageFooterVisibility
+import io.getstream.chat.android.ui.common.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.message.list.DateSeparatorHandler
+import io.getstream.chat.android.ui.common.message.list.MessageListController
+import io.getstream.chat.android.ui.common.message.list.MessagePositionHandler
+import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.MessageFooterVisibility
+import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
 import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 
 /**
  * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageComposerViewModel.

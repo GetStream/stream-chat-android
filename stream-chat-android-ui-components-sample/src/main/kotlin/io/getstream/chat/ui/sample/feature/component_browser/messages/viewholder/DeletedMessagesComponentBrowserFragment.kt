@@ -16,9 +16,9 @@
 
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.state.message.list.MessagePosition
+import io.getstream.chat.android.ui.adapter.MessageListItem
+import io.getstream.chat.android.ui.common.state.message.list.MessagePosition
 import java.util.Date
 
 class DeletedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {

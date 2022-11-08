@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.ui.viewmodels
 
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.models.Channel
@@ -30,8 +27,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.common.message.list.MessageListController
-import io.getstream.chat.android.common.state.message.list.MessagePosition
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
@@ -39,6 +34,11 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.observeAll
 import io.getstream.chat.android.ui.MockChatClientBuilder
+import io.getstream.chat.android.ui.adapter.MessageListItem
+import io.getstream.chat.android.ui.common.message.list.MessageListController
+import io.getstream.chat.android.ui.common.state.message.list.MessagePosition
+import io.getstream.chat.android.ui.view.messages.MessageListItemWrapper
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -346,7 +346,6 @@ internal class MessageListViewModelTest {
 
         /**
          * An approximation of the private grouping logic inside
-         * [com.getstream.sdk.chat.viewmodel.messages.MessageListItemLiveData.groupMessages].
          *
          * Works in simple situations where all the messages are from the
          * same user but should not be used without modification in situations

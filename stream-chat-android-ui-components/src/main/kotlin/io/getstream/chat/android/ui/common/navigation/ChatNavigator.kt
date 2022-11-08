@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.common.navigation
 
-import com.getstream.sdk.chat.navigation.ChatNavigationHandler
-import com.getstream.sdk.chat.navigation.destinations.ChatDestination
+import io.getstream.chat.android.ui.navigation.ChatNavigationHandler
+import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 
 public class ChatNavigator(private val handler: ChatNavigationHandler = EMPTY_HANDLER) {
     public fun navigate(destination: ChatDestination) {

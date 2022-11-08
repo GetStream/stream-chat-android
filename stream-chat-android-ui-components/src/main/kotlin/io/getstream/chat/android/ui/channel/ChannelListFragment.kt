@@ -27,7 +27,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
@@ -40,6 +39,7 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
 import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
+import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelListBinding
 import io.getstream.chat.android.ui.message.MessageListActivity
 import io.getstream.chat.android.ui.search.SearchInputView

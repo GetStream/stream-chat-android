@@ -18,19 +18,19 @@ package io.getstream.chat.android.ui.common.internal
 
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
-import com.getstream.sdk.chat.StreamFileUtil
-import com.getstream.sdk.chat.disposable.Disposable
-import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
-import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.images.loadVideoThumbnail
-import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.extensions.getDisplayableName
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.StreamFileUtil
+import io.getstream.chat.android.ui.common.disposable.Disposable
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
+import io.getstream.chat.android.ui.common.images.StreamImageLoader.ImageTransformation.RoundedCorners
+import io.getstream.chat.android.ui.common.model.AttachmentMetaData
+import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
+import io.getstream.chat.android.ui.images.load
+import io.getstream.chat.android.ui.images.loadVideoThumbnail
 
 private val FILE_THUMB_TRANSFORMATION = RoundedCorners(3.dpToPxPrecise())
 

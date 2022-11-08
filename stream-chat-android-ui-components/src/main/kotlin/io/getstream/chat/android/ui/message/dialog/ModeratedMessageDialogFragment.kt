@@ -21,11 +21,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.model.DeleteMessage
-import io.getstream.chat.android.common.model.EditMessage
-import io.getstream.chat.android.common.model.ModeratedMessageOption
-import io.getstream.chat.android.common.model.SendAnyway
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
+import io.getstream.chat.android.ui.common.model.DeleteMessage
+import io.getstream.chat.android.ui.common.model.EditMessage
+import io.getstream.chat.android.ui.common.model.ModeratedMessageOption
+import io.getstream.chat.android.ui.common.model.SendAnyway
 import io.getstream.chat.android.ui.databinding.StreamUiDialogModeratedMessageBinding
 
 /**

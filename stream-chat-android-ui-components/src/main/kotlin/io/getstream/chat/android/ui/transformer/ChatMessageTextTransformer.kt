@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.transformer
 
 import android.widget.TextView
-import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.adapter.MessageListItem
 
 /**
  * Transforms a [MessageListItem.MessageItem] to format or style the [TextView].

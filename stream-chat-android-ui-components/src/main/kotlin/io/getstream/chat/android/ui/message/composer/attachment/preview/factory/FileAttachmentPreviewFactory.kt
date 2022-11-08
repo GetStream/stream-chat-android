@@ -17,10 +17,10 @@
 package io.getstream.chat.android.ui.message.composer.attachment.preview.factory
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
 import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.uiutils.extension.isAnyFileType

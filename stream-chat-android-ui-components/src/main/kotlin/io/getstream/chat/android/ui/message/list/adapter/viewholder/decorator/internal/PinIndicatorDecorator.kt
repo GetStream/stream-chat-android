@@ -20,9 +20,8 @@ import android.graphics.Color
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.getPinnedText
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawableWithSize
 import io.getstream.chat.android.ui.common.style.setTextStyle
@@ -35,6 +34,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.Lin
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
 /**
  * Decorator responsible for highlighting pinned messages in the message list. Apart from that,

@@ -26,12 +26,12 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
-import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
+import io.getstream.chat.android.ui.utils.extensions.focusAndShowKeyboard
 
 public class SearchInputView : FrameLayout {
 

@@ -22,17 +22,17 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
+import io.getstream.chat.android.ui.images.load
 
 internal class MediaAttachmentAdapter(
     private val style: MediaAttachmentGridViewStyle,

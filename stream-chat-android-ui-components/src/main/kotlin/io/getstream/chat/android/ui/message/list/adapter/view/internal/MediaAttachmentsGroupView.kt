@@ -24,11 +24,6 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
-import com.getstream.sdk.chat.utils.extensions.horizontalChainInParent
-import com.getstream.sdk.chat.utils.extensions.isBottomPosition
-import com.getstream.sdk.chat.utils.extensions.verticalChainInParent
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.CornerSize
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -37,6 +32,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.displayMetrics
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
@@ -44,6 +40,10 @@ import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getOrDefault
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.message.list.background.ShapeAppearanceModelFactory
+import io.getstream.chat.android.ui.utils.extensions.constrainViewToParentBySide
+import io.getstream.chat.android.ui.utils.extensions.horizontalChainInParent
+import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
+import io.getstream.chat.android.ui.utils.extensions.verticalChainInParent
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 internal class MediaAttachmentsGroupView : ConstraintLayout {

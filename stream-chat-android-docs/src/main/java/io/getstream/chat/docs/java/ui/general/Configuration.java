@@ -10,9 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
-import com.getstream.sdk.chat.utils.DateFormatter;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,6 +23,8 @@ import io.getstream.chat.android.ui.SupportedReactions;
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator;
 import io.getstream.chat.android.ui.common.style.ChatFonts;
 import io.getstream.chat.android.ui.common.style.TextStyle;
+import io.getstream.chat.android.ui.common.utils.DateFormatter;
+import io.getstream.chat.android.ui.navigation.ChatNavigationHandler;
 import io.getstream.chat.docs.R;
 
 /**

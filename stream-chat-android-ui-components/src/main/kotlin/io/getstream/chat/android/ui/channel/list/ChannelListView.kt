@@ -28,12 +28,8 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.extensions.showToast
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.state.DeleteConversation
-import io.getstream.chat.android.common.state.LeaveGroup
-import io.getstream.chat.android.common.state.ViewInfo
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.actions.internal.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.channel.list.ChannelListView.ChannelClickListener
@@ -52,6 +48,10 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getFragmentManager
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.state.DeleteConversation
+import io.getstream.chat.android.ui.common.state.LeaveGroup
+import io.getstream.chat.android.ui.common.state.ViewInfo
+import io.getstream.chat.android.ui.utils.extensions.showToast
 
 public class ChannelListView : FrameLayout {
 

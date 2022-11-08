@@ -21,9 +21,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 
 @InternalStreamChatApi

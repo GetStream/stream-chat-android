@@ -21,17 +21,17 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.images.StreamImageLoader.ImageTransformation.RoundedCorners
-import com.getstream.sdk.chat.images.load
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.images.StreamImageLoader.ImageTransformation.RoundedCorners
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.common.style.setTextStyle
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiLinkAttachmentsViewBinding
+import io.getstream.chat.android.ui.images.load
 import io.getstream.chat.android.ui.message.list.MessageListItemStyle
 
 internal class LinkAttachmentView : FrameLayout {

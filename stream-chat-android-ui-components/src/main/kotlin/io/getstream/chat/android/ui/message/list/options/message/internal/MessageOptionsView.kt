@@ -20,17 +20,17 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
-import com.getstream.sdk.chat.utils.extensions.inflater
-import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.state.MessageAction
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBinding
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.MessageListViewStyle
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItem
+import io.getstream.chat.android.ui.utils.extensions.inflater
 
 /**
  * Displays all available message actions a user can execute on a message.

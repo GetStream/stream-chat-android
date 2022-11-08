@@ -28,13 +28,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.ui.common.state.MessageAction
+import io.getstream.chat.android.ui.common.state.React
 
 /**
  * The default maximum number of reactions shown in the picker.

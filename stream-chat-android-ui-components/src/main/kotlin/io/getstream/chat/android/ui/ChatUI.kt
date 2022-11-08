@@ -17,14 +17,14 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
-import com.getstream.sdk.chat.images.ImageHeadersProvider
-import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.utils.DateFormatter
 import io.getstream.chat.android.ui.common.ChannelNameFormatter
+import io.getstream.chat.android.ui.common.images.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.images.StreamImageLoader
 import io.getstream.chat.android.ui.common.navigation.ChatNavigator
 import io.getstream.chat.android.ui.common.style.ChatFonts
 import io.getstream.chat.android.ui.common.style.ChatFontsImpl
 import io.getstream.chat.android.ui.common.style.ChatStyle
+import io.getstream.chat.android.ui.common.utils.DateFormatter
 import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory

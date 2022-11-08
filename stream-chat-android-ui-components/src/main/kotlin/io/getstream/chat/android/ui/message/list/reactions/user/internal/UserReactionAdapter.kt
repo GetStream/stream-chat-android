@@ -24,14 +24,14 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.extensions.updateConstraints
-import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
-import io.getstream.chat.android.common.isStartAlignment
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.isStartAlignment
 import io.getstream.chat.android.ui.databinding.StreamUiItemUserReactionBinding
+import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
 internal class UserReactionAdapter(
     private val userReactionClickListener: UserReactionClickListener,

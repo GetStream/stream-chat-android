@@ -12,15 +12,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.ui.StyleTransformer
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.common.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.Edit
+import io.getstream.chat.android.ui.common.state.MessageMode
+import io.getstream.chat.android.ui.common.state.Reply
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
 import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCenterContent
@@ -35,6 +33,7 @@ import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerVi
 import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.MessageListView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding
 

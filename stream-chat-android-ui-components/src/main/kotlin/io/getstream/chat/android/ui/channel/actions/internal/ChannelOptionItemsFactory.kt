@@ -19,13 +19,13 @@ package io.getstream.chat.android.ui.channel.actions.internal
 import android.content.Context
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.common.state.Cancel
-import io.getstream.chat.android.common.state.DeleteConversation
-import io.getstream.chat.android.common.state.LeaveGroup
-import io.getstream.chat.android.common.state.ViewInfo
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
+import io.getstream.chat.android.ui.common.state.Cancel
+import io.getstream.chat.android.ui.common.state.DeleteConversation
+import io.getstream.chat.android.ui.common.state.LeaveGroup
+import io.getstream.chat.android.ui.common.state.ViewInfo
 
 /**
  * An interface that allows the creation of channel option items.
@@ -44,7 +44,6 @@ internal interface ChannelOptionItemsFactory {
         selectedChannel: Channel,
         ownCapabilities: Set<String>,
         style: ChannelActionsDialogViewStyle,
-
     ): List<ChannelOptionItem>
 
     companion object {

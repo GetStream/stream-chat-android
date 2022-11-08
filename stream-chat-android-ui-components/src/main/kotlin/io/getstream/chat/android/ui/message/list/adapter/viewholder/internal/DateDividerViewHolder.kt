@@ -18,9 +18,9 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.internal
 
 import android.text.format.DateUtils
 import android.view.ViewGroup
-import com.getstream.sdk.chat.adapter.MessageListItem
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle

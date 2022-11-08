@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.message.list.adapter.internal
 
 import android.view.View
 import androidx.annotation.CallSuper
-import com.getstream.sdk.chat.adapter.MessageListItem
+import io.getstream.chat.android.ui.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.internal.Decorator

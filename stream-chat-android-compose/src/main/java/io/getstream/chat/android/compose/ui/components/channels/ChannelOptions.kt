@@ -34,18 +34,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.common.state.Cancel
-import io.getstream.chat.android.common.state.ChannelAction
-import io.getstream.chat.android.common.state.DeleteConversation
-import io.getstream.chat.android.common.state.LeaveGroup
-import io.getstream.chat.android.common.state.MuteChannel
-import io.getstream.chat.android.common.state.UnmuteChannel
-import io.getstream.chat.android.common.state.ViewInfo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.ui.common.state.Cancel
+import io.getstream.chat.android.ui.common.state.ChannelAction
+import io.getstream.chat.android.ui.common.state.DeleteConversation
+import io.getstream.chat.android.ui.common.state.LeaveGroup
+import io.getstream.chat.android.ui.common.state.MuteChannel
+import io.getstream.chat.android.ui.common.state.UnmuteChannel
+import io.getstream.chat.android.ui.common.state.ViewInfo
 
 /**
  * This is the default bottom drawer UI that shows up when the user long taps on a channel item.

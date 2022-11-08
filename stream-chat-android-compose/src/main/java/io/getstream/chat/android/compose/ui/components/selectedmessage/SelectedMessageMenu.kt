@@ -30,8 +30,6 @@ import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
@@ -41,6 +39,8 @@ import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionO
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.ui.common.state.MessageAction
+import io.getstream.chat.android.ui.common.state.React
 
 /**
  * Represents the options user can take after selecting a message.

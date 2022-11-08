@@ -26,7 +26,6 @@ import android.widget.MediaController
 import android.widget.Toast
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
-import com.getstream.sdk.chat.images.load
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -34,6 +33,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.createStreamTheme
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
 import io.getstream.chat.android.ui.gallery.AttachmentGalleryViewMediaStyle
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
+import io.getstream.chat.android.ui.images.load
 
 internal class AttachmentGalleryVideoPageFragment : Fragment() {
 

@@ -19,11 +19,11 @@ package io.getstream.chat.android.ui.message.composer.internal
 import android.content.Context
 import android.view.View
 import android.widget.Toast
-import com.getstream.sdk.chat.utils.MediaStringUtil
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.state.ValidationError
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 /**
  * A helper class that can be used to display a validation error for the

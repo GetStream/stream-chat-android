@@ -49,20 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.model.DeleteMessage
-import io.getstream.chat.android.common.model.EditMessage
-import io.getstream.chat.android.common.model.SendAnyway
-import io.getstream.chat.android.common.state.Delete
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.Flag
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.Resend
-import io.getstream.chat.android.common.state.message.list.SelectedMessageFailedModerationState
-import io.getstream.chat.android.common.state.message.list.SelectedMessageOptionsState
-import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.common.state.message.list.SelectedMessageReactionsState
-import io.getstream.chat.android.common.state.message.list.SelectedMessageState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
@@ -82,6 +68,20 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.ui.common.model.DeleteMessage
+import io.getstream.chat.android.ui.common.model.EditMessage
+import io.getstream.chat.android.ui.common.model.SendAnyway
+import io.getstream.chat.android.ui.common.state.Delete
+import io.getstream.chat.android.ui.common.state.Edit
+import io.getstream.chat.android.ui.common.state.Flag
+import io.getstream.chat.android.ui.common.state.MessageMode
+import io.getstream.chat.android.ui.common.state.Reply
+import io.getstream.chat.android.ui.common.state.Resend
+import io.getstream.chat.android.ui.common.state.message.list.SelectedMessageFailedModerationState
+import io.getstream.chat.android.ui.common.state.message.list.SelectedMessageOptionsState
+import io.getstream.chat.android.ui.common.state.message.list.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.ui.common.state.message.list.SelectedMessageReactionsState
+import io.getstream.chat.android.ui.common.state.message.list.SelectedMessageState
 
 /**
  * Default root Messages screen component, that provides the necessary ViewModels and

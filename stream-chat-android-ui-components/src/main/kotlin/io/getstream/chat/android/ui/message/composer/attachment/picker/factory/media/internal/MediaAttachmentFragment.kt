@@ -25,17 +25,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.AttachmentFilter
-import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
-import com.getstream.sdk.chat.utils.PermissionChecker
-import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
+import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 import io.getstream.chat.android.ui.common.style.setTextStyle
+import io.getstream.chat.android.ui.common.utils.AttachmentFilter
+import io.getstream.chat.android.ui.common.utils.StorageHelper
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
 import io.getstream.chat.android.ui.message.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.message.composer.attachment.picker.factory.AttachmentsPickerTabListener
+import io.getstream.chat.android.ui.utils.GridSpacingItemDecoration
+import io.getstream.chat.android.ui.utils.PermissionChecker
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
