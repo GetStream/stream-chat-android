@@ -27,6 +27,7 @@
 - Removed `Channel::cid` from constructor. It's now an immutable property calculated based on `type` and `id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
 
 ### ❌ Removed
+- ClientMutableState is now an internal interface, intead of a public interface. [#4374](https://github.com/GetStream/stream-chat-android/pull/4374)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
