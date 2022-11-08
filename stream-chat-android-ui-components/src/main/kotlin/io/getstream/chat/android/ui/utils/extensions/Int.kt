@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.extensions
+package io.getstream.chat.android.ui.utils.extensions
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.uiutils.extension.getPreviewMessage
+import android.content.res.Resources
+import android.util.DisplayMetrics
+import kotlin.math.roundToInt
 
 /**
- * Returns channel's last regular or system message if exists.
- * Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
- *
- * @return Last message from the channel or null if it doesn't exist.
+ * Transforms DP value integer to pixels, based on the screen density.
  */
-public fun Channel.getLastMessage(): Message? = getPreviewMessage(ChatUI.currentUserProvider.getCurrentUser())
+internal fun Int.dpToPx(): Int = dpToPxPrecise().roundToInt()
+
+/**
+ * Uses the display metrics to transform the value of DP to pixels.
+ */
+internal fun Int.dpToPxPrecise(): Float = (this * displayMetrics().density)
+
+/**
+ * Fetches the current system display metrics based on [Resources].
+ */
+internal fun displayMetrics(): DisplayMetrics = Resources.getSystem().displayMetrics

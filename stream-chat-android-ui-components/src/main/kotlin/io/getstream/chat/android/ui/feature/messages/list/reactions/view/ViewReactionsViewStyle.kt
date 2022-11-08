@@ -25,12 +25,12 @@ import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.MessageOptionsUserReactionAlignment
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
-import io.getstream.chat.android.ui.common.extensions.internal.getDimensionOrNull
-import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
+import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
+import io.getstream.chat.android.ui.utils.extensions.use
 
 /**
  * Style for [ViewReactionsView].
@@ -109,14 +109,19 @@ public data class ViewReactionsViewStyle(
         class Builder(private val array: TypedArray, private val context: Context) {
             @ColorInt
             private var bubbleColorTheirs: Int = context.getColorCompat(DEFAULT_BUBBLE_COLOR_THEIRS)
+
             @ColorInt
             private var bubbleColorMine: Int = context.getColorCompat(DEFAULT_BUBBLE_COLOR_MINE)
+
             @ColorInt
             private var bubbleBorderColorMine: Int = context.getColorCompat(DEFAULT_BUBBLE_BORDER_COLOR_MINE)
+
             @ColorInt
             private var bubbleBorderColorTheirs: Int? = null
+
             @Px
             private var bubbleBorderWidthMine: Float = DEFAULT_BUBBLE_BORDER_WIDTH_MINE
+
             @Px
             private var bubbleBorderWidthTheirs: Float? = null
             private var messageOptionsUserReactionOrientation: Int =

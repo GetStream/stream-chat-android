@@ -24,14 +24,14 @@ import android.widget.FrameLayout
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.bold
-import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.getAttachmentsText
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
 import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
+import io.getstream.chat.android.ui.utils.extensions.bold
+import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.getAttachmentsText
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class MessagePreviewView : FrameLayout {
 

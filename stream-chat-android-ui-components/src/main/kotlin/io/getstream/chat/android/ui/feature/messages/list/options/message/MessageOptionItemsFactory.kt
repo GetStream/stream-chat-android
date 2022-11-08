@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.state.Copy
 import io.getstream.chat.android.ui.common.state.Delete
 import io.getstream.chat.android.ui.common.state.Edit
@@ -34,6 +33,7 @@ import io.getstream.chat.android.ui.common.state.Reply
 import io.getstream.chat.android.ui.common.state.Resend
 import io.getstream.chat.android.ui.common.state.ThreadReply
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**

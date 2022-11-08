@@ -25,10 +25,6 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrNull
-import io.getstream.chat.android.ui.common.extensions.getUpdatedAtOrNull
-import io.getstream.chat.android.ui.common.extensions.internal.setStartDrawable
-import io.getstream.chat.android.ui.common.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.DateFormatter
@@ -44,8 +40,12 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.int
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
+import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isNotBottomPosition
+import io.getstream.chat.android.ui.utils.extensions.setStartDrawable
 import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
 internal class FootnoteDecorator(

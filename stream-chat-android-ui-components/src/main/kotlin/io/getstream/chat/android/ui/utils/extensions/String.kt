@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.extensions.internal
+package io.getstream.chat.android.ui.utils.extensions
 
 import android.graphics.Typeface.BOLD
 import android.graphics.Typeface.ITALIC

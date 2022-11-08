@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.extensions.internal
+package io.getstream.chat.android.ui.utils.extensions
 
 import androidx.fragment.app.Fragment
 

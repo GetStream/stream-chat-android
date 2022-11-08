@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_DOWN
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_UP
 import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 /**
  * Class allowing to define set of supported reactions.

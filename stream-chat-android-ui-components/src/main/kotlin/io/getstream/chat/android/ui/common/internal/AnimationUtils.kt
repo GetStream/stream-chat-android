@@ -22,7 +22,7 @@ import android.view.View
 import androidx.core.animation.doOnEnd
 import androidx.core.graphics.ColorUtils
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 
 private const val HIGHLIGHT_ANIM_DURATION = 3000L
 

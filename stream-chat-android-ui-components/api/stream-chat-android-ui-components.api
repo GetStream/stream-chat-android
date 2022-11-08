@@ -170,28 +170,6 @@ public final class io/getstream/chat/android/ui/common/Debouncer {
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
 }
 
-public final class io/getstream/chat/android/ui/common/extensions/ChannelKt {
-	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/models/Message;
-}
-
-public final class io/getstream/chat/android/ui/common/extensions/MessageKt {
-	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
-	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
-	public static final fun getSupportedLatestReactions (Lio/getstream/chat/android/client/models/Message;)Ljava/util/List;
-	public static final fun getSupportedReactionCounts (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Map;
-	public static final fun getUpdatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
-	public static final fun hasNoAttachments (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun hasReactions (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun hasSingleReaction (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun hasText (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isFailed (Lio/getstream/chat/android/client/models/Message;)Z
-	public static final fun isGiphyNotEphemeral (Lio/getstream/chat/android/client/models/Message;)Z
-}
-
-public final class io/getstream/chat/android/ui/common/extensions/UserKt {
-	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/ui/common/navigation/ChatNavigator {
 	public static final field Companion Lio/getstream/chat/android/ui/common/navigation/ChatNavigator$Companion;
 	public static final field EMPTY_HANDLER Lio/getstream/chat/android/ui/navigation/ChatNavigationHandler;
@@ -2839,6 +2817,7 @@ public final class io/getstream/chat/android/ui/utils/StartStopBuffer {
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/ChannelKt {
+	public static final fun getLastMessage (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/client/models/Message;
 	public static final fun getMembersStatusText (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;)Ljava/lang/String;
 	public static synthetic fun getMembersStatusText$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Ljava/lang/String;
 }
@@ -2846,10 +2825,24 @@ public final class io/getstream/chat/android/ui/utils/extensions/ChannelKt {
 public final class io/getstream/chat/android/ui/utils/extensions/ConstraintLayoutKt {
 }
 
-public final class io/getstream/chat/android/ui/utils/extensions/EditTextExtensionsKt {
+public final class io/getstream/chat/android/ui/utils/extensions/EditTextKt {
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/MessageItemKt {
+}
+
+public final class io/getstream/chat/android/ui/utils/extensions/MessageKt {
+	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
+	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
+	public static final fun getSupportedLatestReactions (Lio/getstream/chat/android/client/models/Message;)Ljava/util/List;
+	public static final fun getSupportedReactionCounts (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Map;
+	public static final fun getUpdatedAtOrNull (Lio/getstream/chat/android/client/models/Message;)Ljava/util/Date;
+	public static final fun hasNoAttachments (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun hasReactions (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun hasSingleReaction (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun hasText (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isFailed (Lio/getstream/chat/android/client/models/Message;)Z
+	public static final fun isGiphyNotEphemeral (Lio/getstream/chat/android/client/models/Message;)Z
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/MessageListItemKt {
@@ -2858,6 +2851,10 @@ public final class io/getstream/chat/android/ui/utils/extensions/MessageListItem
 
 public final class io/getstream/chat/android/ui/utils/extensions/MessageListStateKt {
 	public static final fun toMessageListItemWrapper (Lio/getstream/chat/android/ui/common/state/message/list/MessageListState;)Lio/getstream/chat/android/ui/view/messages/MessageListItemWrapper;
+}
+
+public final class io/getstream/chat/android/ui/utils/extensions/UserKt {
+	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/ViewGroupKt {

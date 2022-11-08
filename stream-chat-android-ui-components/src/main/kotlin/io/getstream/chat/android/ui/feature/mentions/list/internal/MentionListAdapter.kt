@@ -22,14 +22,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.extensions.internal.asMention
 import io.getstream.chat.android.ui.common.extensions.internal.context
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListView.MentionSelectedListener
 import io.getstream.chat.android.ui.feature.mentions.list.internal.MentionListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.feature.messages.preview.internal.MessagePreviewView
+import io.getstream.chat.android.ui.utils.extensions.asMention
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class MentionListAdapter : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 

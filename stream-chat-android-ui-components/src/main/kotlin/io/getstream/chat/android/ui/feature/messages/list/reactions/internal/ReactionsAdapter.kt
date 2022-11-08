@@ -21,9 +21,9 @@ import androidx.annotation.Px
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
 import io.getstream.chat.android.ui.feature.messages.list.reactions.ReactionClickListener
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class ReactionsAdapter(
     @Px private val itemSize: Int,

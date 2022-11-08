@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.in
 
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiItemThreadDividerBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
@@ -26,6 +25,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class ThreadSeparatorViewHolder(
     parent: ViewGroup,

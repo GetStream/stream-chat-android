@@ -25,14 +25,14 @@ import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.common.MessageOptionsUserReactionAlignment
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
-import io.getstream.chat.android.ui.common.extensions.internal.getDimensionOrNull
-import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
+import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.toSingleReactionViewStyle
+import io.getstream.chat.android.ui.utils.extensions.use
 
 /**
  * Style for [SingleReactionView].

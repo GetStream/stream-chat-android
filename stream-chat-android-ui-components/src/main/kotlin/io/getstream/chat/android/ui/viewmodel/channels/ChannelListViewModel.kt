@@ -43,9 +43,9 @@ import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.ui.common.extensions.internal.EXTRA_DATA_MUTED
-import io.getstream.chat.android.ui.common.extensions.internal.addFlow
-import io.getstream.chat.android.ui.common.extensions.internal.isMuted
+import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
+import io.getstream.chat.android.ui.utils.extensions.addFlow
+import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger

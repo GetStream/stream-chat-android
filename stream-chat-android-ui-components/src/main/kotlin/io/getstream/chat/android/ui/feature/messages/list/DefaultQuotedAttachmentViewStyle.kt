@@ -20,7 +20,7 @@ import android.content.Context
 import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getDimension
 
 /**
  * Style to be applied to [DefaultQuotedAttachmentView].

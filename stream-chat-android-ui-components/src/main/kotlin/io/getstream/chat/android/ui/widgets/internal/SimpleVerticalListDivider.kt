@@ -24,7 +24,7 @@ import android.view.View
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import kotlin.math.roundToInt
 
 internal class SimpleVerticalListDivider(context: Context) : RecyclerView.ItemDecoration() {

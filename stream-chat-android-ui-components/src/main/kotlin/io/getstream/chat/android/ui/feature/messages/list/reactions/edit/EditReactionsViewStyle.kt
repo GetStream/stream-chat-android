@@ -24,9 +24,9 @@ import androidx.annotation.Px
 import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
-import io.getstream.chat.android.ui.common.extensions.internal.use
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.use
 
 /**
  * Style for [EditReactionsView].
@@ -62,7 +62,7 @@ public data class EditReactionsViewStyle(
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
     public val reactionsColumn: Int,
-    @Px public val verticalPadding: Int
+    @Px public val verticalPadding: Int,
 ) {
 
     internal data class Builder(private val array: TypedArray, private val context: Context) {

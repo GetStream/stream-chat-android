@@ -28,14 +28,8 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.ui.common.extensions.getLastMessage
 import io.getstream.chat.android.ui.common.extensions.internal.context
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
-import io.getstream.chat.android.ui.common.extensions.internal.isMessageRead
-import io.getstream.chat.android.ui.common.extensions.internal.isMuted
 import io.getstream.chat.android.ui.common.extensions.internal.isNotNull
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemBackgroundViewBinding
@@ -45,7 +39,13 @@ import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.SwipeViewHolder
+import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getLastMessage
+import io.getstream.chat.android.ui.utils.extensions.isMessageRead
+import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlin.math.absoluteValue
 
 @Suppress("LongParameterList")

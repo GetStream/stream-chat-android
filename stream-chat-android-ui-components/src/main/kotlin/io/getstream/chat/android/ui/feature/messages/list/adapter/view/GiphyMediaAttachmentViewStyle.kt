@@ -23,12 +23,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
-import io.getstream.chat.android.ui.common.extensions.internal.getEnum
-import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
+import io.getstream.chat.android.ui.utils.extensions.getEnum
+import io.getstream.chat.android.ui.utils.extensions.use
 
 /**
  * Sets the style for [io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GiphyMediaAttachmentView]

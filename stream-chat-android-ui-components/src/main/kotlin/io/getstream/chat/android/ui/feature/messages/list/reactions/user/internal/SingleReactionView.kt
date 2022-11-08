@@ -20,13 +20,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageReactionBinding
 import io.getstream.chat.android.ui.feature.messages.list.reactions.user.SingleReactionViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.MessageOptionsUserReactionOrientation
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.getUserReactionOrientation
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.isOrientedTowardsStart
+import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class SingleReactionView : FrameLayout {
     private val binding = StreamUiItemMessageReactionBinding.inflate(streamThemeInflater, this, true)

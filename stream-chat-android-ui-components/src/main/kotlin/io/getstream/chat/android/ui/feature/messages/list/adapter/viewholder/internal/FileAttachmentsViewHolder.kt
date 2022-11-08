@@ -21,8 +21,6 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentsBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
@@ -34,6 +32,8 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
  * ViewHolder that displays message items containing file attachments.

@@ -23,3 +23,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 @InternalStreamChatApi
 public inline val ViewGroup.inflater: LayoutInflater
     get() = LayoutInflater.from(context)
+
+internal val ViewGroup.streamThemeInflater: LayoutInflater
+    get() = LayoutInflater.from(context.createStreamThemeWrapper())

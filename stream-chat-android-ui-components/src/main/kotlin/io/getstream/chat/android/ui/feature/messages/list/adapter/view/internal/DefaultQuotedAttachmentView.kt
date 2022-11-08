@@ -21,12 +21,12 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.AttachmentType
-import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
 import io.getstream.chat.android.ui.common.images.StreamImageLoader
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.feature.messages.list.DefaultQuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.images.load
+import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 
 /**
  * View tasked to show the attachments supported by default.

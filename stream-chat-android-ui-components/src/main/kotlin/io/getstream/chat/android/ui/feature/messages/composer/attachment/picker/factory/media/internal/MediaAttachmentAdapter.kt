@@ -23,7 +23,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
@@ -32,6 +31,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.
 import io.getstream.chat.android.ui.images.load
 import io.getstream.chat.android.ui.images.loadVideoThumbnail
 import io.getstream.chat.android.ui.utils.extensions.applyTint
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class MediaAttachmentAdapter(
     private val style: AttachmentsPickerDialogStyle,

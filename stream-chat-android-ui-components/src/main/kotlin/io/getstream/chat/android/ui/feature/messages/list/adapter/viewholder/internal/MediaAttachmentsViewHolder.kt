@@ -24,8 +24,6 @@ import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
@@ -36,6 +34,8 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
  * ViewHolder used for displaying messages that contain image and/or video attachments.

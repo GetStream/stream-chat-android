@@ -20,7 +20,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 
 /**
  * A [FrameLayout] that consumes all touch screen motion events.

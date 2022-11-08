@@ -25,13 +25,13 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.extensions.hasSingleReaction
-import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.supportedReactionCounts
 import io.getstream.chat.android.ui.feature.messages.list.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.reactions.internal.ReactionItem
 import io.getstream.chat.android.ui.feature.messages.list.reactions.internal.ReactionsAdapter
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.hasSingleReaction
+import io.getstream.chat.android.ui.utils.extensions.supportedReactionCounts
 
 @InternalStreamChatApi
 public class ViewReactionsView : RecyclerView {

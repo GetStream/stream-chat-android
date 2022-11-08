@@ -38,10 +38,6 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.StreamFileUtil
-import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.images.StreamImageLoader
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import io.getstream.chat.android.ui.feature.gallery.internal.AttachmentGalleryPagerAdapter
@@ -51,6 +47,10 @@ import io.getstream.chat.android.ui.feature.gallery.options.internal.AttachmentG
 import io.getstream.chat.android.ui.feature.gallery.overview.internal.MediaAttachmentDialogFragment
 import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.constrainViewToParentBySide
+import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.utils.extensions.use
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

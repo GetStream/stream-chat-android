@@ -27,7 +27,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.common.model.DeleteMessage
 import io.getstream.chat.android.ui.common.model.EditMessage
 import io.getstream.chat.android.ui.common.model.SendAnyway
@@ -38,6 +37,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentMessageListBindi
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView
+import io.getstream.chat.android.ui.utils.extensions.findListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel

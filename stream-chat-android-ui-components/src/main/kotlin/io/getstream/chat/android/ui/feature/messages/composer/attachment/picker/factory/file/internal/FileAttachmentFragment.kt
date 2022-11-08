@@ -28,7 +28,6 @@ import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.SelectFilesContract
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.model.AttachmentMetaData
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.common.utils.AttachmentFilter
@@ -37,6 +36,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBi
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener
 import io.getstream.chat.android.ui.utils.PermissionChecker
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 

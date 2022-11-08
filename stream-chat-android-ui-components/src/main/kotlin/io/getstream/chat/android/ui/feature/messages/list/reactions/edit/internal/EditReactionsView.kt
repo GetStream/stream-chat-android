@@ -25,12 +25,12 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.feature.messages.list.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.reactions.internal.ReactionItem
 import io.getstream.chat.android.ui.feature.messages.list.reactions.internal.ReactionsAdapter
+import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import kotlin.math.ceil
 
 private const val TAIL_BUBBLE_SPACE_DP = 16

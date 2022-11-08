@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal
 
-import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.FileAttachmentsViewHolder
@@ -27,6 +26,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.int
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
+import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 
 internal class BackgroundDecorator(
     private val messageBackgroundFactory: MessageBackgroundFactory,

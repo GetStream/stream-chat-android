@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.model.DeleteMessage
 import io.getstream.chat.android.ui.common.model.EditMessage
 import io.getstream.chat.android.ui.common.model.SendAnyway
@@ -38,6 +37,7 @@ import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.Edit
 import io.getstream.chat.android.ui.common.state.MessageMode
 import io.getstream.chat.android.ui.common.state.Reply
+import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel

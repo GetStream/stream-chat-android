@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.extensions.internal
+package io.getstream.chat.android.ui.utils.extensions
 
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.widget.TextView
 import androidx.annotation.DimenRes
 import androidx.annotation.Px
-import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 internal fun TextView.setTextSizePx(@Px size: Float) {
     setTextSize(TypedValue.COMPLEX_UNIT_PX, size)

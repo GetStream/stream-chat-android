@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.state.MessageAction
 import io.getstream.chat.android.ui.common.state.message.list.MessagePosition
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
@@ -51,6 +50,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.dec
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.feature.messages.list.options.message.internal.MessageOptionsDecoratorProvider
+import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 import io.getstream.chat.android.ui.widgets.FullScreenDialogFragment
 

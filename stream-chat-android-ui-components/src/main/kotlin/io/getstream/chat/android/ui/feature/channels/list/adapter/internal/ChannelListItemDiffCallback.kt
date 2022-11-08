@@ -18,9 +18,9 @@ package io.getstream.chat.android.ui.feature.channels.list.adapter.internal
 
 import androidx.recyclerview.widget.DiffUtil
 import io.getstream.chat.android.ui.common.extensions.internal.cast
-import io.getstream.chat.android.ui.common.extensions.internal.diff
 import io.getstream.chat.android.ui.common.extensions.internal.safeCast
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
+import io.getstream.chat.android.ui.utils.extensions.diff
 
 internal object ChannelListItemDiffCallback : DiffUtil.ItemCallback<ChannelListItem>() {
     override fun areItemsTheSame(oldItem: ChannelListItem, newItem: ChannelListItem): Boolean {
