@@ -404,8 +404,8 @@ internal constructor(
                     "The user_id provided on the JWT token doesn't match with the current user you try to connect"
                 }
                 Result.Failure(
-                    ChatError(
-                        "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                    ChatError.GenericError(
+                        "The user_id provided on the JWT token doesn't match with the current user you try to connect",
                     )
                 )
             }
@@ -431,8 +431,8 @@ internal constructor(
                     userState.user.id != user.id -> {
                         logger.e { "[setUser] Trying to set different user without disconnect previous one." }
                         Result.Failure(
-                            ChatError(
-                                "User cannot be set until the previous one is disconnected."
+                            ChatError.GenericError(
+                                "User cannot be set until the previous one is disconnected.",
                             )
                         )
                     }
@@ -444,8 +444,8 @@ internal constructor(
                                         "connection."
                                 }
                                 Result.Failure(
-                                    ChatError(
-                                        "Failed to connect user. Please check you haven't connected a user already."
+                                    ChatError.GenericError(
+                                        "Failed to connect user. Please check you haven't connected a user already.",
                                     )
                                 )
                             }
@@ -454,7 +454,11 @@ internal constructor(
             }
             else -> {
                 logger.e { "[setUser] Failed to connect user. Please check you don't have connected user already." }
-                Result.Failure(ChatError("Failed to connect user. Please check you don't have connected user already."))
+                Result.Failure(
+                    ChatError.GenericError(
+                        "Failed to connect user. Please check you don't have connected user already.",
+                    )
+                )
             }
         }.onErrorSuspend {
             disconnectSuspend(flushPersistence = true)
@@ -688,7 +692,9 @@ internal constructor(
     private suspend fun waitFirstConnection(timeoutMilliseconds: Long?): Result<ConnectionData> =
         timeoutMilliseconds?.let {
             withTimeoutOrNull(timeoutMilliseconds) { waitConnection.first() }
-                ?: Result.Failure(ChatError("Connection wasn't established in ${timeoutMilliseconds}ms"))
+                ?: Result.Failure(
+                    ChatError.GenericError("Connection wasn't established in ${timeoutMilliseconds}ms"),
+                )
         } ?: waitConnection.first()
 
     @CheckResult
@@ -1262,7 +1268,7 @@ internal constructor(
         sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
-            return ErrorCall(userScope, ChatError("Cannot specify offset with sort or next parameters"))
+            return ErrorCall(userScope, ChatError.GenericError("Cannot specify offset with sort or next parameters"))
         }
         return api.searchMessages(
             channelFilter = channelFilter,
@@ -1937,8 +1943,8 @@ internal constructor(
         } else {
             ErrorCall(
                 userScope,
-                ChatError(
-                    "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration."
+                ChatError.GenericError(
+                    "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration.",
                 )
             )
         }
@@ -2050,7 +2056,7 @@ internal constructor(
             val errorMessage = "The client-side partial update allows you to update only the current user. " +
                 "Make sure the user is set before updating it."
             logger.e { errorMessage }
-            return ErrorCall(userScope, ChatError(errorMessage))
+            return ErrorCall(userScope, ChatError.GenericError(errorMessage))
         }
 
         return api.partialUpdateUser(
@@ -2502,8 +2508,8 @@ internal constructor(
     ): Call<List<ChatEvent>> {
         val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(
             userScope,
-            ChatError(
-                "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}"
+            ChatError.GenericError(
+                "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}",
             )
         )
 
@@ -2521,10 +2527,10 @@ internal constructor(
     private fun checkSyncHistoryPreconditions(channelsIds: List<String>, lastSyncAt: Date): Result<Unit> {
         return when {
             channelsIds.isEmpty() -> {
-                Result.Failure(ChatError("channelsIds must contain at least 1 id."))
+                Result.Failure(ChatError.GenericError("channelsIds must contain at least 1 id."))
             }
             lastSyncAt.isLaterThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
-                Result.Failure(ChatError("lastSyncAt cannot by later than 30 days."))
+                Result.Failure(ChatError.GenericError("lastSyncAt cannot by later than 30 days."))
             }
             else -> {
                 Result.Success(Unit)

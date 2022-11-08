@@ -44,7 +44,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
     @Test
     fun `Given offline plugin with failing precondition Should not make API call and return error result`() = runTest {
         val plugin = mock<QueryChannelListenerPlugin> {
-            onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.Failure(ChatError())
+            onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.Failure(ChatError.GenericError(message = ""))
         }
         var isNetworkApiCalled = false
         val sut = Fixture().givenPlugin(plugin).givenChannelResponse { isNetworkApiCalled = true; mock() }.get()

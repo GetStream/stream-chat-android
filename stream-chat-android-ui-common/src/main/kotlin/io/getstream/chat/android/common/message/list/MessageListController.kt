@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.models.Attachment
@@ -738,7 +739,10 @@ public class MessageListController(
                 when (result) {
                     is Result.Success -> scrollToBottom()
                     is Result.Failure -> {
-                        logger.e { "Could not load newest messages. Cause: ${result.value.cause?.message}" }
+                        logger.e {
+                            "Could not load newest messages. Message: ${result.value.message}. " +
+                                "Cause: ${result.value.extractCause()}"
+                        }
                     }
                 }
             }
@@ -846,7 +850,7 @@ public class MessageListController(
                 val error = result.value
                 logger.e {
                     "Could not load the message with id: $messageId inside channel: $cid. " +
-                        "Error: ${error.cause?.message}. Message: ${error.message}"
+                        "Error: ${error.extractCause()}. Message: ${error.message}"
                 }
             }
         }
@@ -1059,7 +1063,7 @@ public class MessageListController(
                 onError = { chatError ->
                     logger.e {
                         "Could not delete message: ${chatError.message}, Hard: $hard. " +
-                            "Cause: ${chatError.cause?.message}. If you're using OfflinePlugin, the message " +
+                            "Cause: ${chatError.extractCause()}. If you're using OfflinePlugin, the message " +
                             "should be deleted in the database and it will be deleted in the backend when " +
                             "the SDK sync its information."
                     }
@@ -1093,7 +1097,7 @@ public class MessageListController(
                     onError = { chatError ->
                         logger.e {
                             "Could not mark cid: $channelId as read. Error message: ${chatError.message}. " +
-                                "Cause message: ${chatError.cause?.message}"
+                                "Cause: ${chatError.extractCause()}"
                         }
                     }
                 )
@@ -1112,7 +1116,7 @@ public class MessageListController(
             onResult(response)
             if (response is Result.Failure) {
                 val error = response.value
-                onActionResult(error, "Unable to flag message: ${error.message}") {
+                onActionResult(error) {
                     ErrorEvent.FlagMessageError(it)
                 }
             }
@@ -1139,7 +1143,7 @@ public class MessageListController(
      */
     public fun pinMessage(message: Message) {
         chatClient.pinMessage(message).enqueue(onError = { error ->
-            onActionResult(error, "Could not pin the message: ${error.message}") {
+            onActionResult(error) {
                 ErrorEvent.PinMessageError(it)
             }
         })
@@ -1152,7 +1156,7 @@ public class MessageListController(
      */
     public fun unpinMessage(message: Message) {
         chatClient.unpinMessage(message).enqueue(onError = { error ->
-            onActionResult(error, "Could not unpin message: ${error.message}") {
+            onActionResult(error) {
                 ErrorEvent.UnpinMessageError(it)
             }
         })
@@ -1169,7 +1173,7 @@ public class MessageListController(
             .enqueue(onError = { chatError ->
                 logger.e {
                     "(Retry) Could not send message: ${chatError.message}. " +
-                        "Cause: ${chatError.cause?.message}"
+                        "Cause: ${chatError.extractCause()}"
                 }
             })
     }
@@ -1196,7 +1200,7 @@ public class MessageListController(
      */
     public fun muteUser(user: User) {
         chatClient.muteUser(user.id).enqueue(onError = { error ->
-            onActionResult(error, "Could not mute the user: ${error.message}") {
+            onActionResult(error) {
                 ErrorEvent.MuteUserError(it)
             }
         })
@@ -1209,7 +1213,7 @@ public class MessageListController(
      */
     public fun unmuteUser(user: User) {
         chatClient.unmuteUser(user.id).enqueue(onError = { error ->
-            onActionResult(error, "Could not unmute the user: ${error.message}") {
+            onActionResult(error) {
                 ErrorEvent.UnmuteUserError(it)
             }
         })
@@ -1232,7 +1236,7 @@ public class MessageListController(
                 onError = { chatError ->
                     logger.e {
                         "Could not delete reaction for message with id: ${reaction.messageId} " +
-                            "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                            "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
                     }
                 }
             )
@@ -1245,7 +1249,7 @@ public class MessageListController(
                 onError = { chatError ->
                     logger.e {
                         "Could not send reaction for message with id: ${reaction.messageId} " +
-                            "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                            "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
                     }
                 }
             )
@@ -1293,7 +1297,7 @@ public class MessageListController(
     public fun muteUser(userId: String, timeout: Int? = null) {
         chatClient.muteUser(userId, timeout)
             .enqueue(onError = { chatError ->
-                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to mute the user"
+                val errorMessage = chatError.message
                 logger.e { errorMessage }
             })
     }
@@ -1306,7 +1310,7 @@ public class MessageListController(
     public fun unmuteUser(userId: String) {
         chatClient.unmuteUser(userId)
             .enqueue(onError = { chatError ->
-                val errorMessage = chatError.message ?: chatError.cause?.message ?: "Unable to unmute the user"
+                val errorMessage = chatError.message
                 logger.e { errorMessage }
             })
     }
@@ -1325,7 +1329,7 @@ public class MessageListController(
         timeout: Int? = null,
     ) {
         chatClient.channel(cid).banUser(userId, reason, timeout).enqueue(onError = { error ->
-            onActionResult(error, "Unable to ban the user: ${error.message}") {
+            onActionResult(error) {
                 ErrorEvent.BlockUserError(it)
             }
         })
@@ -1338,7 +1342,7 @@ public class MessageListController(
      */
     public fun unbanUser(userId: String) {
         chatClient.channel(cid).unbanUser(userId).enqueue(onError = { error ->
-            onActionResult(error, "Unable to unban the user: ${error.message}") {
+            onActionResult(error) {
                 ErrorEvent.BlockUserError(it)
             }
         })
@@ -1358,7 +1362,7 @@ public class MessageListController(
         timeout: Int? = null,
     ) {
         chatClient.channel(cid).shadowBanUser(userId, reason, timeout).enqueue(onError = { error ->
-            onActionResult(error, "Unable to shadow ban the user: ${error.message}") {
+            onActionResult(error) {
                 ErrorEvent.BlockUserError(it)
             }
         })
@@ -1372,7 +1376,7 @@ public class MessageListController(
      */
     public fun removeShadowBanFromUser(userId: String) {
         chatClient.channel(cid).removeShadowBan(userId).enqueue(onError = { error ->
-            onActionResult(error, "Unable to remove the shadow ban for user: ${error.message}") {
+            onActionResult(error) {
                 ErrorEvent.BlockUserError(it)
             }
         })
@@ -1392,7 +1396,7 @@ public class MessageListController(
         }.exhaustive.enqueue(onError = { chatError ->
             logger.e {
                 "Could not ${action::class.java.simpleName} giphy for message id: ${message.id}. " +
-                    "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                    "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
             }
         })
     }
@@ -1424,7 +1428,7 @@ public class MessageListController(
                         onError = { chatError ->
                             logger.e {
                                 "Could not edit message to remove its attachments: ${chatError.message}. " +
-                                    "Cause: ${chatError.cause?.message}"
+                                    "Cause: ${chatError.extractCause()}"
                             }
                         }
                     )
@@ -1496,15 +1500,13 @@ public class MessageListController(
      * Quality of life function that notifies the result of an action and logs any error in case the action has failed.
      *
      * @param error The [ChatError] thrown if the action fails.
-     * @param defaultError The default error to be shown on the screen if we can't get the error from the result.
      * @param onError Handler to wrap [ChatError] into [ErrorEvent] depending on action.
      */
     private fun onActionResult(
         error: ChatError,
-        defaultError: String,
         onError: (ChatError) -> ErrorEvent,
     ) {
-        val errorMessage = error.message ?: error.cause?.message ?: defaultError
+        val errorMessage = error.message
         logger.e { errorMessage }
         _errorEvents.value = onError(error)
     }

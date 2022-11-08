@@ -121,10 +121,10 @@ internal class SendReactionListenerDatabase(
     override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
-                Result.Failure(ChatError(message = "Current user is null!"))
+                Result.Failure(ChatError.GenericError(message = "Current user is null!"))
             }
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.Failure(ChatError(message = "Reaction::messageId and Reaction::type cannot be empty!"))
+                Result.Failure(ChatError.GenericError("Reaction::messageId and Reaction::type cannot be empty!"))
             }
             else -> {
                 Result.Success(Unit)

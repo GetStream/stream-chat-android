@@ -65,7 +65,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
         verifyNoMoreInteractions(userStateService)
         verifyNoInteractions(tokenManager)
         verifyNoInteractions(pluginFactory)
-        result `should be equal to` Result.Failure(ChatError("Failed to connect user. Please check you haven't connected a user already."))
+        result `should be equal to` Result.Failure(ChatError.GenericError("Failed to connect user. Please check you haven't connected a user already."))
     }
 
     @Test

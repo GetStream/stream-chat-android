@@ -209,7 +209,12 @@ internal class WhenUploadAttachmentsTests {
                             any(),
                             any()
                         )
-                    ) doReturn Result.Failure(ChatError(cause = IllegalArgumentException("Error:-)")))
+                    ) doReturn Result.Failure(
+                        ChatError.ThrowableError(
+                            message = "",
+                            cause = IllegalArgumentException("Error:-)"),
+                        ),
+                    )
                 }
             val repository = mock<MessageRepository>()
             val message = randomMessage(

@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -272,10 +271,10 @@ internal class ChatClientTest {
         /* Given */
         whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
             Result.Failure(
-                ChatNetworkError.create(
+                ChatError.NetworkError(
                     statusCode = 400,
                     streamCode = 4,
-                    description = "channel_cids must contain at least 1 item"
+                    message = "channel_cids must contain at least 1 item",
                 )
             )
         )
@@ -284,7 +283,7 @@ internal class ChatClientTest {
         val result = client.getSyncHistory(emptyList(), Date()).await()
 
         /* Then */
-        result shouldBeEqualTo Result.Failure(ChatError("channelsIds must contain at least 1 id."))
+        result shouldBeEqualTo Result.Failure(ChatError.GenericError("channelsIds must contain at least 1 id."))
     }
 
     @Test

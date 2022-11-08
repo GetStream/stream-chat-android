@@ -22,7 +22,6 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
@@ -31,7 +30,6 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.TokenManager
-import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.Job
@@ -140,16 +138,15 @@ internal open class ChatSocket constructor(
         private set
 
     open fun onSocketError(error: ChatError) {
-        logger.e { "[onSocketError] error: ${error.stringify()}" }
+        logger.e { "[onSocketError] error: $error" }
         if (state !is State.DisconnectedPermanently) {
-            logger.e { error.stringify() }
             callListeners { it.onError(error) }
-            (error as? ChatNetworkError)?.let(::onChatNetworkError)
+            (error as? ChatError.NetworkError)?.let(::onChatNetworkError)
         }
     }
 
-    private fun onChatNetworkError(error: ChatNetworkError) {
-        logger.e { "[onChatNetworkError] error: ${error.stringify()}" }
+    private fun onChatNetworkError(error: ChatError.NetworkError) {
+        logger.e { "[onChatNetworkError] error: $error" }
         if (ChatErrorCode.isAuthenticationError(error.streamCode)) {
             tokenManager.expireToken()
         }
@@ -278,10 +275,9 @@ internal open class ChatSocket constructor(
                 }
             }
             else -> State.DisconnectedTemporarily(
-                ChatNetworkError.create(
-                    description = "Network is not available",
+                ChatError.NetworkError(
+                    message = "Network is not available",
                     streamCode = ChatErrorCode.SOCKET_FAILURE.code,
-                    statusCode = -1
                 )
             )
         }
@@ -324,8 +320,8 @@ internal open class ChatSocket constructor(
             override fun toString(): String = "NetworkDisconnected"
         }
 
-        data class DisconnectedTemporarily(val error: ChatNetworkError?) : State()
-        data class DisconnectedPermanently(val error: ChatNetworkError?) : State()
+        data class DisconnectedTemporarily(val error: ChatError.NetworkError?) : State()
+        data class DisconnectedPermanently(val error: ChatError.NetworkError?) : State()
         object DisconnectedByRequest : State() {
             override fun toString(): String = "DisconnectedByRequest"
         }

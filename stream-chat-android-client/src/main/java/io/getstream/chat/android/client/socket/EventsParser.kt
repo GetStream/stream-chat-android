@@ -18,12 +18,10 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.stringify
 import io.getstream.logging.StreamLog
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -59,7 +57,7 @@ internal class EventsParser(
             }
         } catch (t: Throwable) {
             logger.e(t) { "[onMessage] failed: $t" }
-            onSocketError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
+            onSocketError(ChatError.NetworkError.fromChatErrorCode(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
         }
     }
 
@@ -73,20 +71,30 @@ internal class EventsParser(
             closedByClient = true
         } else {
             // Treat as failure and reconnect, socket shouldn't be closed by server
-            onFailure(ChatNetworkError.create(ChatErrorCode.SOCKET_CLOSED))
+            onFailure(ChatError.NetworkError.fromChatErrorCode(ChatErrorCode.SOCKET_CLOSED))
         }
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         logger.e(t) { "[onFailure] throwable: $t" }
         // Called when socket is disconnected by client also (client.disconnect())
-        onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, t))
+        onSocketError(
+            ChatError.NetworkError.fromChatErrorCode(
+                chatErrorCode = ChatErrorCode.SOCKET_FAILURE,
+                cause = t,
+            ),
+        )
     }
 
-    private fun onFailure(chatError: ChatError) {
-        logger.e { "[onFailure] chatError: ${chatError.stringify()}" }
+    private fun onFailure(chatError: ChatError.NetworkError) {
+        logger.e { "[onFailure] chatError: $chatError" }
         // Called when socket is disconnected by client also (client.disconnect())
-        onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.cause))
+        onSocketError(
+            ChatError.NetworkError.fromChatErrorCode(
+                chatErrorCode = ChatErrorCode.SOCKET_FAILURE,
+                cause = chatError.cause,
+            ),
+        )
     }
 
     internal fun closeByClient() {
@@ -103,25 +111,45 @@ internal class EventsParser(
                         connectionEventReceived = true
                         onConnectionResolved(event)
                     } else {
-                        onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))
+                        onSocketError(
+                            ChatError.NetworkError.fromChatErrorCode(
+                                chatErrorCode = ChatErrorCode.CANT_PARSE_CONNECTION_EVENT,
+                            ),
+                        )
                     }
                 } else {
                     onEvent(event)
                 }
             }
             is Result.Failure -> {
-                onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.value.cause))
+                val cause = when (val error = eventResult.value) {
+                    is ChatError.GenericError -> null
+                    is ChatError.ThrowableError -> error.cause
+                    is ChatError.NetworkError -> error.cause
+                }
+                onSocketError(
+                    ChatError.NetworkError.fromChatErrorCode(
+                        chatErrorCode = ChatErrorCode.CANT_PARSE_EVENT,
+                        cause = cause,
+                    ),
+                )
             }
         }
     }
 
     private fun handleErrorEvent(error: ErrorResponse) {
         logger.e { "[handleErrorEvent] error: $error" }
-        onSocketError(ChatNetworkError.create(error.code, error.message, error.statusCode))
+        onSocketError(
+            ChatError.NetworkError(
+                message = error.message,
+                streamCode = error.code,
+                statusCode = error.statusCode,
+            ),
+        )
     }
 
     private fun onSocketError(error: ChatError) {
-        logger.e { "[onSocketError] closedByClient: $closedByClient, error: ${error.stringify()}" }
+        logger.e { "[onSocketError] closedByClient: $closedByClient, error: $error" }
         if (!closedByClient) {
             chatSocket.onSocketError(error)
         }

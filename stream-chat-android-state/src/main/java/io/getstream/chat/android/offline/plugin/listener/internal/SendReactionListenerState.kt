@@ -17,10 +17,10 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
@@ -121,10 +121,14 @@ internal class SendReactionListenerState(
     override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
-                Result.Failure(ChatError(message = "Current user is null!"))
+                Result.Failure(ChatError.GenericError(message = "Current user is null!"))
             }
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.Failure(ChatError(message = "Reaction::messageId and Reaction::type cannot be empty!"))
+                Result.Failure(
+                    ChatError.GenericError(
+                        message = "Reaction::messageId and Reaction::type cannot be empty!",
+                    ),
+                )
             }
             else -> {
                 Result.Success(Unit)

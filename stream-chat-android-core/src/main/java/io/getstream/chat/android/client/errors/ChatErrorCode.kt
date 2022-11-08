@@ -35,6 +35,12 @@ private const val TOKEN_SIGNATURE_INCORRECT_ERROR_CODE = 43
 private const val API_KEY_NOT_FOUND_ERROR_CODE = 2
 private const val MESSAGE_MODERATION_FAILED_ERROR_CODE = 73
 
+/**
+ * Enumerable that associates code returned by the Stream backend with description.
+ *
+ * @param code The code returned by the backend.
+ * @param description Error's description.
+ */
 public enum class ChatErrorCode(public val code: Int, public val description: String) {
 
     // client error codes
@@ -71,6 +77,13 @@ public enum class ChatErrorCode(public val code: Int, public val description: St
             TOKEN_SIGNATURE_INCORRECT_ERROR_CODE,
         )
 
+        /**
+         * Checks if the error represented by the code is an authentication error.
+         *
+         * @see authenticationErrors
+         *
+         * @param code The code returned by the Stream backend.
+         */
         public fun isAuthenticationError(code: Int): Boolean = authenticationErrors.contains(code)
     }
 }

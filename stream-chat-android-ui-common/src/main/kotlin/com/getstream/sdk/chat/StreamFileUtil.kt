@@ -82,10 +82,10 @@ public object StreamFileUtil {
             Result.Success(file)
         } catch (e: Exception) {
             Result.Failure(
-                ChatError(
+                ChatError.ThrowableError(
                     message = "Could not get or create the Stream cache directory",
                     cause = e,
-                )
+                ),
             )
         }
     }
@@ -112,10 +112,10 @@ public object StreamFileUtil {
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Failure(
-                ChatError(
+                ChatError.ThrowableError(
                     message = "Could clear the Stream cache directory",
                     cause = e,
-                )
+                ),
             )
         }
     }
@@ -157,20 +157,16 @@ public object StreamFileUtil {
                     if (isFileCached) {
                         Result.Success(getUriForFile(context, file))
                     } else {
-                        Result.Failure(
-                            ChatError(
-                                message = "No such file in cache.",
-                            )
-                        )
+                        Result.Failure(ChatError.GenericError(message = "No such file in cache."))
                     }
                 }
             }
         } catch (e: Exception) {
             Result.Failure(
-                ChatError(
+                ChatError.ThrowableError(
                     message = "Cannot determine if the file has been cached.",
-                    cause = e
-                )
+                    cause = e,
+                ),
             )
         }
     }
@@ -211,7 +207,7 @@ public object StreamFileUtil {
                         Result.Success(getUriForFile(context, file))
                     } else {
                         val fileUrl = attachment.assetUrl ?: attachment.url ?: return Result.Failure(
-                            ChatError(message = "File URL cannot be null.")
+                            ChatError.GenericError(message = "File URL cannot be null.")
                         )
 
                         when (val response = ChatClient.instance().downloadFile(fileUrl).await()) {
@@ -232,11 +228,14 @@ public object StreamFileUtil {
             }
         }
 
-        return runCatching.getOrNull() ?: Result.Failure(
-            ChatError(
-                message = "Could not write to file.",
-                cause = (runCatching.exceptionOrNull()),
-            )
+        return runCatching.getOrNull() ?: createFailureResultFromException(runCatching.exceptionOrNull())
+    }
+
+    private fun createFailureResultFromException(throwable: Throwable?): Result.Failure {
+        return Result.Failure(
+            throwable?.let { exception ->
+                ChatError.ThrowableError(message = "Could not write to file.", cause = exception)
+            } ?: ChatError.GenericError(message = "Could not write to file.")
         )
     }
 

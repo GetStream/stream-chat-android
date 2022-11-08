@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -278,7 +279,7 @@ public class ChannelListViewModel(
                 onError = { chatError ->
                     logger.e {
                         "Could not leave channel with id: ${channel.id}. " +
-                            "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                            "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
                     }
                     _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(chatError)))
                 }
@@ -296,7 +297,7 @@ public class ChannelListViewModel(
             onError = { chatError ->
                 logger.e {
                     "Could not delete channel with id: ${channel.id}. " +
-                        "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                        "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
                 }
                 _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(chatError)))
             }
@@ -316,7 +317,7 @@ public class ChannelListViewModel(
             onError = { chatError ->
                 logger.e {
                     "Could not hide channel with id: ${channel.id}. " +
-                        "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                        "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
                 }
                 _errorEvents.postValue(Event(ErrorEvent.HideChannelError(chatError)))
             }
@@ -331,7 +332,7 @@ public class ChannelListViewModel(
             onError = { chatError ->
                 logger.e {
                     "Could not mark all messages as read. " +
-                        "Error: ${chatError.message}. Cause: ${chatError.cause?.message}"
+                        "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
                 }
             }
         )
@@ -351,7 +352,7 @@ public class ChannelListViewModel(
                         onError = { chatError ->
                             logger.e {
                                 "Could not load more channels. Error: ${chatError.message}. " +
-                                    "Cause: ${chatError.cause?.message}"
+                                    "Cause: ${chatError.extractCause()}"
                             }
                         }
                     )

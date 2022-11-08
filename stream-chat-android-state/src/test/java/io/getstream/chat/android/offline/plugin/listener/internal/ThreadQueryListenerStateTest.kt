@@ -127,7 +127,7 @@ internal class ThreadQueryListenerStateTest {
 
     @Test
     fun `given response it failure, the state should NOT be updated in the SDK`() = runTest {
-        threadQueryListenerState.onGetRepliesResult(Result.Failure(ChatError()), message.id, 30)
+        threadQueryListenerState.onGetRepliesResult(Result.Failure(ChatError.GenericError("")), message.id, 30)
 
         verify(threadLogic).setLoading(false)
 

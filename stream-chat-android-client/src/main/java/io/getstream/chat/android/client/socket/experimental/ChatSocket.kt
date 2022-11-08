@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
@@ -35,7 +34,6 @@ import io.getstream.chat.android.client.socket.experimental.ChatSocketStateServi
 import io.getstream.chat.android.client.socket.experimental.ws.StreamWebSocket
 import io.getstream.chat.android.client.socket.experimental.ws.StreamWebSocketEvent
 import io.getstream.chat.android.client.token.TokenManager
-import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.Job
@@ -197,14 +195,14 @@ internal class ChatSocket private constructor(
     }
 
     private fun handleError(error: ChatError) {
-        logger.e { "[handleError] error: ${error.stringify()}" }
+        logger.e { "[handleError] error: $error" }
         when (error) {
-            is ChatNetworkError -> onChatNetworkError(error)
+            is ChatError.NetworkError -> onChatNetworkError(error)
             else -> callListeners { it.onError(error) }
         }
     }
 
-    private fun onChatNetworkError(error: ChatNetworkError) {
+    private fun onChatNetworkError(error: ChatError.NetworkError) {
         if (ChatErrorCode.isAuthenticationError(error.streamCode)) {
             tokenManager.expireToken()
         }
@@ -216,7 +214,7 @@ internal class ChatSocket private constructor(
             ChatErrorCode.VALIDATION_ERROR.code,
             -> {
                 logger.d {
-                    "One unrecoverable error happened. Error: ${error.stringify()}. Error code: ${error.streamCode}"
+                    "One unrecoverable error happened. Error: $error. Error code: ${error.streamCode}"
                 }
                 chatSocketStateService.onUnrecoverableError(error)
             }

@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.Mother.randomUser
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.scope.UserTestScope
@@ -93,10 +93,10 @@ internal class ChatSocketTest {
         chatSocket.connectUser(randomUser(), isAnonymous = false)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.DisconnectedTemporarily(
-            ChatNetworkError.create(
-                description = "Network is not available",
+            ChatError.NetworkError(
+                message = "Network is not available",
                 streamCode = ChatErrorCode.SOCKET_FAILURE.code,
-                statusCode = -1
+                statusCode = -1,
             )
         )
     }
@@ -129,10 +129,10 @@ internal class ChatSocketTest {
         chatSocket.connectUser(randomUser(), isAnonymous = true)
 
         chatSocket.state shouldBeEqualTo ChatSocket.State.DisconnectedTemporarily(
-            ChatNetworkError.create(
-                description = "Network is not available",
+            ChatError.NetworkError(
+                message = "Network is not available",
                 streamCode = ChatErrorCode.SOCKET_FAILURE.code,
-                statusCode = -1
+                statusCode = -1,
             )
         )
     }
@@ -151,9 +151,8 @@ internal class ChatSocketTest {
         val user = randomUser()
         whenever(networkStateProvider.isConnected()) doReturn true
 
-        val networkError = ChatNetworkError.create(
-            cause = null,
-            code = ChatErrorCode.NO_ERROR_BODY,
+        val networkError = ChatError.NetworkError.fromChatErrorCode(
+            chatErrorCode = ChatErrorCode.NO_ERROR_BODY,
             statusCode = 500,
         )
 
