@@ -18,6 +18,9 @@ package io.getstream.chat.android.state.plugin.internal
 
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
 
+/**
+ * This class holds the configuration of [StatePlugin] to be used by the whole state module.
+ */
 internal object ConfigSingleton {
 
     internal var statePluginConfig: StatePluginConfig? = null
