@@ -157,9 +157,13 @@ MessageList(
 
 You can also provide your own instance of `LazyListState` based on your custom logic where you define the starting scroll position of the state, the offset and how it behaves based on user events. For example, when deep linking.
 
-## Previewing Image and Video Attachments
+## Previewing Attachments
 
-Image and video attachments are treated differently compared to file attachments and are previewed as thumbnails which can be displayed as a single tile or multiple ones depending on how many attachments are contained within the specific message. By default, these are rendered by `MediaAttachmentFactory`.
+Out of the box previews are provided for the following attachment types: uploading, link, Giphy, image, video and file.
+
+### Image and Video
+
+Image and video attachments are previewed as thumbnails which can be displayed as a single tile or multiple ones depending on how many attachments are contained within the specific message. By default, these are rendered by `MediaAttachmentFactory`.
 
 :::note
 Attachment factories are used for previewing attachments. You can use those we provide out of the box, add to them, or replace them with your own. You can read more about them [here](../03-general-customization/01-chat-theme.mdx#streamattachmentfactories).
