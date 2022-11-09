@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.utils.typing
+package io.getstream.chat.android.ui.common.utils.typing.internal
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren

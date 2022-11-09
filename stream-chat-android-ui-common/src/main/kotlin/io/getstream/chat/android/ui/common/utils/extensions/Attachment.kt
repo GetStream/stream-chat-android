@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.common.utils.extensions
 
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.ui.common.helper.StorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.utils.StringUtils
 
 public fun Attachment.getDisplayableName(): String? {

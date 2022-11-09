@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.contract
+package io.getstream.chat.android.ui.common.contract.internal
 
 import android.app.Activity
 import android.content.ClipData

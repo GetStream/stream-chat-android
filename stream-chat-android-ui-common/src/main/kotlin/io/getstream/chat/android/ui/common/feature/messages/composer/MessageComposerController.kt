@@ -38,8 +38,8 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
-import io.getstream.chat.android.ui.common.utils.typing.DefaultTypingUpdatesBuffer
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
+import io.getstream.chat.android.ui.common.utils.typing.internal.DefaultTypingUpdatesBuffer
 import io.getstream.chat.android.uiutils.extension.containsLinks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi

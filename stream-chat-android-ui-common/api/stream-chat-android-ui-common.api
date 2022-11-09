@@ -236,7 +236,7 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/Image
 	public abstract fun getImageRequestHeaders ()Ljava/util/Map;
 }
 
-public final class io/getstream/chat/android/ui/common/helper/StorageHelper$Companion {
+public final class io/getstream/chat/android/ui/common/helper/internal/StorageHelper$Companion {
 }
 
 public final class io/getstream/chat/android/ui/common/images/StreamImageLoaderFactory : coil/ImageLoaderFactory {

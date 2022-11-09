@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.helper
+package io.getstream.chat.android.ui.common.helper.internal
 
 import android.content.ContentUris
 import android.content.Context
