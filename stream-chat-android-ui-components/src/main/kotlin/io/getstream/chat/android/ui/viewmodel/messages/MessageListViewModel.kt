@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
@@ -248,7 +249,7 @@ public class MessageListViewModel(
                     onError = { chatError ->
                         logger.e {
                             "Could not reply message: ${chatError.message}. " +
-                                "Cause: ${chatError.cause?.message}"
+                                "Cause: ${chatError.extractCause()}"
                         }
                     }
                 )
@@ -258,7 +259,7 @@ public class MessageListViewModel(
                     onError = { chatError ->
                         logger.e {
                             "Attachment download error: ${chatError.message}. " +
-                                "Cause: ${chatError.cause?.message}"
+                                "Cause: ${chatError.extractCause()}"
                         }
                     }
                 )
@@ -278,7 +279,7 @@ public class MessageListViewModel(
                         is Result.Failure -> {
                             val error = result.value
                             logger.e {
-                                "Could not load message to reply: ${error.message}. Cause: ${error.cause?.message}"
+                                "Could not load message to reply: ${error.message}. Cause: ${error.extractCause()}"
                             }
                         }
                     }

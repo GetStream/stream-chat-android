@@ -48,18 +48,23 @@ public class UploadAttachmentsWorker(
 
         return try {
             message?.let { sendAttachments(it) } ?: Result.Failure(
-                ChatError("The message with id $messageId could not be found.")
+                ChatError.GenericError("The message with id $messageId could not be found.")
             )
         } catch (e: Exception) {
             message?.let { updateMessages(it) }
-            Result.Failure(ChatError(cause = e))
+            Result.Failure(
+                ChatError.ThrowableError(
+                    message = "Could not upload attachments for message $messageId",
+                    cause = e,
+                ),
+            )
         }
     }
 
     private suspend fun sendAttachments(message: Message): Result<Unit> {
         if (chatClient.getCurrentUser() == null) {
             if (!chatClient.containsStoredCredentials()) {
-                return Result.Failure(ChatError("Could not set user"))
+                return Result.Failure(ChatError.GenericError("Could not set user"))
             }
 
             chatClient.setUserWithoutConnectingIfNeeded()
@@ -79,7 +84,7 @@ public class UploadAttachmentsWorker(
             if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
                 Result.Success(Unit)
             } else {
-                Result.Failure(ChatError())
+                Result.Failure(ChatError.GenericError(message = "Could not upload attachments."))
             }
         }
     }
@@ -107,7 +112,9 @@ public class UploadAttachmentsWorker(
         } catch (e: Exception) {
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
-                    it.uploadState = Attachment.UploadState.Failed(ChatError(e.message, e))
+                    it.uploadState = Attachment.UploadState.Failed(
+                        ChatError.ThrowableError(message = "Could not upload attachments.", cause = e),
+                    )
                 }
                 it
             }.toMutableList()

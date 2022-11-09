@@ -111,7 +111,7 @@ internal class DeleteReactionListenerState(
         return if (currentUser != null) {
             Result.Success(Unit)
         } else {
-            Result.Failure(ChatError(message = "Current user is null!"))
+            Result.Failure(ChatError.GenericError(message = "Current user is null!"))
         }
     }
 }

@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.errors.ChatRequestError
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
@@ -66,8 +65,16 @@ internal class RetrofitCall<T : Any>(
     private fun Throwable.toFailedResult(): Result<T> = Result.Failure(this.toFailedError())
 
     private fun Throwable.toFailedError(): ChatError = when (this) {
-        is ChatRequestError -> ChatNetworkError.create(streamCode, message.toString(), statusCode, cause)
-        else -> ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, this)
+        is ChatRequestError -> ChatError.NetworkError(
+            streamCode = streamCode,
+            message = message.toString(),
+            statusCode = statusCode,
+            cause = cause,
+        )
+        else -> ChatError.NetworkError.fromChatErrorCode(
+            chatErrorCode = ChatErrorCode.NETWORK_FAILED,
+            cause = this,
+        )
     }
 
     @Suppress("TooGenericExceptionCaught")

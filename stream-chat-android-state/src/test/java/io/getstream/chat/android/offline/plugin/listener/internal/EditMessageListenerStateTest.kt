@@ -184,7 +184,7 @@ internal class EditMessageListenerStateTest {
 
         val testMessage = randomMessage()
 
-        editMessageListenerState.onMessageEditResult(testMessage, Result.Failure(ChatError()))
+        editMessageListenerState.onMessageEditResult(testMessage, Result.Failure(ChatError.GenericError("")))
 
         verify(channelStateLogic).upsertMessage(
             argThat { message ->

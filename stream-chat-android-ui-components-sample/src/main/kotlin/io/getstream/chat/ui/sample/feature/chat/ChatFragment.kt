@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
@@ -248,7 +248,7 @@ class ChatFragment : Fragment() {
     private fun Result<Flag>.isAlreadyExistsError(): Boolean {
         return when (this) {
             is Result.Success -> false
-            is Result.Failure -> (value as ChatNetworkError).streamCode == 4
+            is Result.Failure -> (value as ChatError.NetworkError).streamCode == 4
         }
     }
 }

@@ -76,7 +76,7 @@ internal class SendMessageListenerStateTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
 
         sendMessageListener.onMessageSendResult(
-            result = Result.Failure(ChatError()),
+            result = Result.Failure(ChatError.GenericError("")),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,

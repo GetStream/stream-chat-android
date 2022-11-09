@@ -18,10 +18,9 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
@@ -86,7 +85,7 @@ internal class SendMessageListenerDatabase(
         error: ChatError,
     ) {
         val isPermanentError = error.isPermanent()
-        val isMessageModerationFailed = error is ChatNetworkError &&
+        val isMessageModerationFailed = error is ChatError.NetworkError &&
             error.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
 
         StreamLog.w(TAG) {
