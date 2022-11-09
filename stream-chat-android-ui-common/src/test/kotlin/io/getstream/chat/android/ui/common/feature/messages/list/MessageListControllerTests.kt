@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.message.list
+package io.getstream.chat.android.ui.common.feature.messages.list
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -33,8 +33,6 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.createDate
 import io.getstream.chat.android.ui.common.createMessage
 import io.getstream.chat.android.ui.common.createMessageList
-import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
-import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState

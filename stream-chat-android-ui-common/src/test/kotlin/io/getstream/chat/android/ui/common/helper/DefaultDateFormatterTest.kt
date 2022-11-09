@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.utils
+package io.getstream.chat.android.ui.common.helper
 
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
-import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.common.helper.DefaultDateFormatter
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith

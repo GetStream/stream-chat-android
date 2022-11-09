@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.extensions
+package io.getstream.chat.android.ui.utils
 
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.createMember
