@@ -23,7 +23,7 @@
     android:paddingHorizontal="@dimen/spacing_small"
     >
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         style="@style/StreamUiChannelListAvatarStyle"
         app:layout_constraintBottom_toBottomOf="parent"

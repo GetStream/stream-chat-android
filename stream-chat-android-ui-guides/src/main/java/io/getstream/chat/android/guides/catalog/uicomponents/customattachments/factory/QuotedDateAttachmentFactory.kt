@@ -24,7 +24,7 @@ import android.widget.FrameLayout
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.guides.databinding.ViewQuotedDateAttachmentBinding
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactory
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactory
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
