@@ -2064,6 +2064,12 @@ public final class io/getstream/chat/android/ui/message/composer/attachment/prev
 	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/preview/AttachmentPreviewViewHolder;
 }
 
+public final class io/getstream/chat/android/ui/message/composer/attachment/preview/factory/VideoAttachmentPreviewFactory : io/getstream/chat/android/ui/message/composer/attachment/preview/factory/AttachmentPreviewFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/preview/AttachmentPreviewViewHolder;
+}
+
 public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerCenterContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V

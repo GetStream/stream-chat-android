@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.FallbackAttachmentPreviewFactory
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.FileAttachmentPreviewFactory
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
+import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.VideoAttachmentPreviewFactory
 
 /**
  * A manager for registered attachment preview factories.
@@ -34,6 +35,7 @@ import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.
 public class AttachmentPreviewFactoryManager(
     attachmentPreviewFactories: List<AttachmentPreviewFactory> = listOf(
         ImageAttachmentPreviewFactory(),
+        VideoAttachmentPreviewFactory(),
         FileAttachmentPreviewFactory(),
     ),
     private val fallbackAttachmentPreviewFactory: FallbackAttachmentPreviewFactory = FallbackAttachmentPreviewFactory(),
