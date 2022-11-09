@@ -69,10 +69,4 @@ public interface ClientState {
      * if internet is available in the device.
      */
     public val isNetworkAvailable: Boolean
-
-    /**
-     * Clears the state of [ClientState].
-     */
-    @Deprecated("This function will be moved into the ClientMutableState.")
-    public fun clearState()
 }
