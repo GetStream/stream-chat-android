@@ -64,12 +64,17 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param messageInputVideoAttachmentIconDrawable Overlays a drawable above video attachments.
  * By default, used to display a play button.
  * @param messageInputVideoAttachmentIconDrawableTint Sets the tint of the drawable overlaid above video attachments.
- * @param messageInputVideoAttachmentIconBackgroundColor Sets the background color of the icon overlaid above video attachments.
+ * @param messageInputVideoAttachmentIconBackgroundColor Sets the background color of the icon overlaid above video
+ * attachments.
  * @param messageInputVideoAttachmentIconElevation Sets the elevation of the icon overlaid above video attachments.
- * @param messageInputVideoAttachmentIconDrawablePaddingTop Sets the top padding between the video attachment drawable and its parent card.
- * @param messageInputVideoAttachmentIconDrawablePaddingBottom Sets the bottom padding between the video attachment drawable and its parent card.
- * @param messageInputVideoAttachmentIconDrawablePaddingStart Sets the start padding between the video attachment drawable and its parent card.
- * @param messageInputVideoAttachmentIconDrawablePaddingEnd Sets the end padding between the video attachment drawable and its parent card.
+ * @param messageInputVideoAttachmentIconDrawablePaddingTop Sets the top padding between the video attachment drawable
+ * and its parent card.
+ * @param messageInputVideoAttachmentIconDrawablePaddingBottom Sets the bottom padding between the video attachment
+ * drawable and its parent card.
+ * @param messageInputVideoAttachmentIconDrawablePaddingStart Sets the start padding between the video attachment
+ * drawable and its parent card.
+ * @param messageInputVideoAttachmentIconDrawablePaddingEnd Sets the end padding between the video attachment drawable
+ * and its parent card.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
