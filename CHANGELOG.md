@@ -128,6 +128,16 @@
 - Added a guide that demonstrates how use events to close the chat screen when the current user has been removed from the channel. [#4078](https://github.com/GetStream/stream-chat-android/issues/4078)
 - Added loading more indicator to `MessageListView`. [#4309](https://github.com/GetStream/stream-chat-android/pull/4309)
 - Added the `streamUiMessageListLoadingMoreView` attribute to customize the layout of loading more indicator in `MessageListView`. [#4309](https://github.com/GetStream/stream-chat-android/pull/4309)
+- Added the ability to preview video attachments as thumbnails inside `MessageComposerView` using the newly created `VideoAttachmentPreviewFactory`.  [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
+- Added new attributes used by `MessageComposerView` that customize the way video attachments are rendered [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawable`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawableTint`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconElevation`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd`
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
