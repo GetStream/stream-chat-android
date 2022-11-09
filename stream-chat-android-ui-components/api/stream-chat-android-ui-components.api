@@ -2865,7 +2865,7 @@ public final class io/getstream/chat/android/ui/utils/extensions/MessageKt {
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/MessageListItemKt {
-	public static final fun toUiMessageListItem (Lio/getstream/chat/android/ui/common/model/messsagelist/MessageListItemState;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;
+	public static final fun toUiMessageListItem (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListItemState;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/MessageListStateKt {

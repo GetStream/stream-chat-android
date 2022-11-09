@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.state.messages.list
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.common.model.messsagelist.MessageListItemState
 
 /**
  * Holds the state of the messages list screen.

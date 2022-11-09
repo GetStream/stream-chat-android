@@ -35,12 +35,12 @@ import io.getstream.chat.android.ui.common.createMessage
 import io.getstream.chat.android.ui.common.createMessageList
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
-import io.getstream.chat.android.ui.common.model.messsagelist.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.model.messsagelist.MessageItemState
-import io.getstream.chat.android.ui.common.model.messsagelist.TypingItemState
+import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest

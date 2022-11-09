@@ -52,12 +52,6 @@ import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
-import io.getstream.chat.android.ui.common.model.messsagelist.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.model.messsagelist.MessageItemState
-import io.getstream.chat.android.ui.common.model.messsagelist.MessageListItemState
-import io.getstream.chat.android.ui.common.model.messsagelist.SystemMessageItemState
-import io.getstream.chat.android.ui.common.model.messsagelist.ThreadDateSeparatorItemState
-import io.getstream.chat.android.ui.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -68,11 +62,14 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
+import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocusRemoved
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.MyOwn
@@ -85,6 +82,9 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageRe
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageState
 import io.getstream.chat.android.ui.common.state.messages.list.SendGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
+import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter

@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.model.messsagelist
+package io.getstream.chat.android.ui.common.state.messages.list
 
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
-import io.getstream.chat.android.ui.common.state.messages.list.MessageFocusState
-import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import java.util.Date
 
 /**
