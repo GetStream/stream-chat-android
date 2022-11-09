@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
 import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
@@ -61,13 +60,7 @@ object ChatHelper {
             }
         )
 
-        val offlinePlugin = StreamOfflinePluginFactory(
-            OfflinePluginConfig(
-                userPresence = true,
-                persistenceEnabled = true,
-            ),
-            context
-        )
+        val offlinePlugin = StreamOfflinePluginFactory(context)
 
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(

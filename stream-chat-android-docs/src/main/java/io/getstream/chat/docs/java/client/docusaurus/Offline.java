@@ -13,9 +13,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState;
 import io.getstream.chat.android.client.extensions.FlowExtensions;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
-import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState;
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState;
@@ -36,7 +34,7 @@ public class Offline {
         boolean persistenceEnabled = true;
         // An enumeration of various network types used as a constraint inside upload attachments worker.
 
-        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(new OfflinePluginConfig(userPresence, persistenceEnabled), context);
+        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(context);
         new ChatClient.Builder("apiKey", context).withPlugins(offlinePluginFactory).build();
     }
 

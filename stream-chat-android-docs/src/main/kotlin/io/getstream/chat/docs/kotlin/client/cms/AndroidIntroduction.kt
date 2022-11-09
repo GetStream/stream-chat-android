@@ -10,11 +10,10 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig
+import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
@@ -31,10 +30,6 @@ class AndroidIntroduction {
         val token = "{{ chat_user_token }}"
         // Step 1 - Set up the OfflinePlugin for offline storage
         val offlinePluginFactory = StreamOfflinePluginFactory(
-            offlinePluginConfig = OfflinePluginConfig(
-                userPresence = true,
-                persistenceEnabled = true,
-            ),
             appContext = applicationContext,
         )
 

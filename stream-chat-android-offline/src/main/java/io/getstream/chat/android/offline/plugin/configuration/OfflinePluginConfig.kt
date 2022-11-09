@@ -20,9 +20,7 @@ package io.getstream.chat.android.offline.plugin.configuration
  * Provides a configuration for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  *
  * @param userPresence Whether the SDK should receive user presence changes.
- * @param persistenceEnabled Whether the data should be stored in the DB.
  */
 public data class OfflinePluginConfig @JvmOverloads constructor(
     public val userPresence: Boolean = true,
-    public val persistenceEnabled: Boolean = true,
 )

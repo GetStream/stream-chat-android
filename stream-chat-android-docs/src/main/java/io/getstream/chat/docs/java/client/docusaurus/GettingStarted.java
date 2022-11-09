@@ -8,9 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 
 /**
@@ -42,7 +40,7 @@ public class GettingStarted {
         // Enables using the database as an internal caching mechanism.
         boolean persistenceEnabled = true;
 
-        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(new OfflinePluginConfig(userPresence, persistenceEnabled), context);
+        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(context);
         new ChatClient.Builder("apiKey", context).withPlugins(offlinePluginFactory).build();
     }
 

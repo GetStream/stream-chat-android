@@ -5,10 +5,9 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.plugin.configuration.OfflinePluginConfig
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
@@ -35,16 +34,7 @@ class GettingStarted {
     }
 
     fun addingTheOfflinePlugin(apiKey: String, context: Context) {
-        val offlinePluginFactory = StreamOfflinePluginFactory(
-            offlinePluginConfig = OfflinePluginConfig(
-                // Enables the ability to receive information about user activity such as last active date and if they are online right now.
-                userPresence = true,
-                // Enables using the database as an internal caching mechanism.
-                persistenceEnabled = true,
-                // An enumeration of various network types used as a constraint inside upload attachments worker.
-            ),
-            appContext = context,
-        )
+        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = context)
 
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
