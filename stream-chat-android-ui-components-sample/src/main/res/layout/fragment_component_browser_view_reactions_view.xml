@@ -50,42 +50,42 @@
             android:padding="16dp"
             >
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
                 android:id="@+id/viewReactionsView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
                 android:id="@+id/viewReactionsView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
                 android:id="@+id/viewReactionsView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
                 android:id="@+id/viewReactionsView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
                 android:id="@+id/viewReactionsView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
                 android:id="@+id/viewReactionsView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

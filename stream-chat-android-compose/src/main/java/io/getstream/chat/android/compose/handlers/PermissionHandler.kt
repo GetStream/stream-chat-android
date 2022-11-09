@@ -22,8 +22,6 @@ import android.os.Build
 import android.os.Environment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.getstream.sdk.chat.utils.extensions.onPermissionRequested
-import com.getstream.sdk.chat.utils.extensions.wasPermissionRequested
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -31,6 +29,8 @@ import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.ui.common.utils.extensions.onPermissionRequested
+import io.getstream.chat.android.ui.common.utils.extensions.wasPermissionRequested
 import io.getstream.chat.android.uiutils.extension.openSystemSettings
 
 /**

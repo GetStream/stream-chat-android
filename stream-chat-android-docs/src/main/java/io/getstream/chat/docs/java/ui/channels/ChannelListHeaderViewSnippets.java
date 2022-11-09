@@ -3,9 +3,9 @@ package io.getstream.chat.docs.java.ui.channels;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView;
-import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel;
-import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
+import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModelBinding;
 
 /**
  * [Channel List Header](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/)
