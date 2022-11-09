@@ -29,7 +29,7 @@
             tools:node="merge"
             >
             <meta-data
-                android:name="io.getstream.chat.android.ui.common.ChatUIInitializer"
+                android:name="io.getstream.chat.android.ui.initializer.ChatUIInitializer"
                 android:value="androidx.startup"
                 />
         </provider>
