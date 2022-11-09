@@ -30,9 +30,12 @@ import coil.load
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.ui.common.coil.StreamCoil.streamImageLoader
 import io.getstream.chat.android.ui.common.disposable.CoilDisposable
 import io.getstream.chat.android.ui.common.disposable.Disposable
+import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.images.coil.RoundedCornersTransformation
+import io.getstream.chat.android.ui.common.images.coil.StreamCoil.streamImageLoader
 import kotlinx.coroutines.withContext
 import okhttp3.Headers.Companion.toHeaders
 

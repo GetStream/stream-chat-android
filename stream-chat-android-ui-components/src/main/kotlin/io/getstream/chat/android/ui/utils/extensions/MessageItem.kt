@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.utils.extensions
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.common.state.message.list.MessagePosition
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 
 @InternalStreamChatApi

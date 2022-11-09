@@ -37,8 +37,8 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.StreamFileUtil
 import io.getstream.chat.android.ui.common.images.StreamImageLoader
+import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import io.getstream.chat.android.ui.feature.gallery.internal.AttachmentGalleryPagerAdapter
 import io.getstream.chat.android.ui.feature.gallery.internal.AttachmentGalleryViewModel

@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.UserCredentialsRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.common.utils.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DateFormatter
 
 class ChatApp : Application() {
 

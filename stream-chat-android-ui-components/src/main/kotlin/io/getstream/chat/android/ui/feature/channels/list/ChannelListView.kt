@@ -31,9 +31,9 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.state.DeleteConversation
-import io.getstream.chat.android.ui.common.state.LeaveGroup
-import io.getstream.chat.android.ui.common.state.ViewInfo
+import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
+import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
+import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 import io.getstream.chat.android.ui.feature.channels.actions.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.feature.channels.actions.internal.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView.ChannelClickListener

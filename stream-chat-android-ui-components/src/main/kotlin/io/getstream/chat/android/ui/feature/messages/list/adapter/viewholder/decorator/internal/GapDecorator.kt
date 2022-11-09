@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal
 
-import io.getstream.chat.android.ui.common.state.message.list.MessagePosition
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GapView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.CustomAttachmentsViewHolder

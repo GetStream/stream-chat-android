@@ -19,13 +19,13 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
-import io.getstream.chat.android.ui.common.model.AttachmentMetaData
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentFileBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 
 internal class FileAttachmentAdapter(
     private val style: AttachmentsPickerDialogStyle,

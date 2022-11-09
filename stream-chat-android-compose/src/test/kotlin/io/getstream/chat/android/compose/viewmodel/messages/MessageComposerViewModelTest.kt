@@ -31,11 +31,11 @@ import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.ui.common.composer.MessageComposerController
-import io.getstream.chat.android.ui.common.state.Edit
-import io.getstream.chat.android.ui.common.state.MessageMode
-import io.getstream.chat.android.ui.common.state.Reply
-import io.getstream.chat.android.ui.common.state.ThreadReply
+import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

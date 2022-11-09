@@ -46,8 +46,8 @@ import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
-import io.getstream.chat.android.ui.common.MessageOptionsUserReactionAlignment
-import io.getstream.chat.android.ui.common.utils.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
 
 /**
  * Local providers for various properties we connect to our components, for styling.

@@ -4,9 +4,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.ui.common.state.Edit;
-import io.getstream.chat.android.ui.common.state.MessageMode;
-import io.getstream.chat.android.ui.common.state.Reply;
+import io.getstream.chat.android.ui.common.state.messages.Edit;
+import io.getstream.chat.android.ui.common.state.messages.MessageMode;
+import io.getstream.chat.android.ui.common.state.messages.Reply;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView;

@@ -20,12 +20,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.ui.common.composer.MessageComposerController
-import io.getstream.chat.android.ui.common.message.list.DateSeparatorHandler
-import io.getstream.chat.android.ui.common.message.list.MessageListController
-import io.getstream.chat.android.ui.common.message.list.MessagePositionHandler
-import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.ui.common.state.MessageFooterVisibility
+import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
+import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 
 /**

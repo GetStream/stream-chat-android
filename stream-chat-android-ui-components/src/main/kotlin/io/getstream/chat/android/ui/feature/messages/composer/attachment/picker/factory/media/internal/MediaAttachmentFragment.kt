@@ -26,9 +26,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.ui.common.model.AttachmentMetaData
-import io.getstream.chat.android.ui.common.utils.AttachmentFilter
-import io.getstream.chat.android.ui.common.utils.StorageHelper
+import io.getstream.chat.android.ui.common.helper.AttachmentFilter
+import io.getstream.chat.android.ui.common.helper.StorageHelper
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.internal
+package io.getstream.chat.android.ui.utils
 
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
@@ -23,14 +23,12 @@ import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.StreamFileUtil
 import io.getstream.chat.android.ui.common.disposable.Disposable
 import io.getstream.chat.android.ui.common.images.StreamImageLoader.ImageTransformation.RoundedCorners
-import io.getstream.chat.android.ui.common.model.AttachmentMetaData
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
-import io.getstream.chat.android.ui.utils.load
-import io.getstream.chat.android.ui.utils.loadVideoThumbnail
 
 private val FILE_THUMB_TRANSFORMATION = RoundedCorners(3.dpToPxPrecise())
 

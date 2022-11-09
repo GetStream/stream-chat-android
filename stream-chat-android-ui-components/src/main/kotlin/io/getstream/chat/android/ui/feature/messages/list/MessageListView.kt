@@ -48,21 +48,21 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.message.list.GiphyAction
-import io.getstream.chat.android.ui.common.message.list.MessageListController
-import io.getstream.chat.android.ui.common.model.ModeratedMessageOption
-import io.getstream.chat.android.ui.common.state.Copy
-import io.getstream.chat.android.ui.common.state.CustomAction
-import io.getstream.chat.android.ui.common.state.Delete
-import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.ui.common.state.Edit
-import io.getstream.chat.android.ui.common.state.MessageAction
-import io.getstream.chat.android.ui.common.state.Pin
-import io.getstream.chat.android.ui.common.state.React
-import io.getstream.chat.android.ui.common.state.Reply
-import io.getstream.chat.android.ui.common.state.Resend
-import io.getstream.chat.android.ui.common.state.ThreadReply
-import io.getstream.chat.android.ui.common.utils.DateFormatter
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
+import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.state.messages.Copy
+import io.getstream.chat.android.ui.common.state.messages.CustomAction
+import io.getstream.chat.android.ui.common.state.messages.Delete
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.Pin
+import io.getstream.chat.android.ui.common.state.messages.React
+import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.Resend
+import io.getstream.chat.android.ui.common.state.messages.ThreadReply
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
@@ -140,7 +140,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import io.getstream.chat.android.ui.common.state.Flag as FlagAction
+import io.getstream.chat.android.ui.common.state.messages.Flag as FlagAction
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]

@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.internal
 
-import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.ui.common.utils.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.AvatarDecorator

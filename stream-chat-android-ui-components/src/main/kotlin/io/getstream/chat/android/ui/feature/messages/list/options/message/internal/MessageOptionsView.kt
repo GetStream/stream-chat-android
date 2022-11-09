@@ -21,7 +21,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.state.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.databinding.StreamUiMessageOptionsViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle

@@ -39,9 +39,9 @@ import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.ui.common.model.AttachmentMetaData
-import io.getstream.chat.android.ui.common.utils.AttachmentFilter
-import io.getstream.chat.android.ui.common.utils.StorageHelper
+import io.getstream.chat.android.ui.common.helper.AttachmentFilter
+import io.getstream.chat.android.ui.common.helper.StorageHelper
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.

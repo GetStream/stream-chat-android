@@ -33,8 +33,8 @@ import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
-import io.getstream.chat.android.ui.common.state.MessageAction
-import io.getstream.chat.android.ui.common.state.React
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.React
 
 /**
  * The default maximum number of reactions shown in the picker.

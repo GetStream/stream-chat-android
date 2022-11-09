@@ -44,10 +44,10 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.messages.MessagesScrollingOption
 import io.getstream.chat.android.ui.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.ui.common.model.messsagelist.MessageListItemState
-import io.getstream.chat.android.ui.common.state.message.list.MessageFocused
-import io.getstream.chat.android.ui.common.state.message.list.MessageListState
-import io.getstream.chat.android.ui.common.state.message.list.MyOwn
-import io.getstream.chat.android.ui.common.state.message.list.NewMessageState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+import io.getstream.chat.android.ui.common.state.messages.list.MyOwn
+import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 

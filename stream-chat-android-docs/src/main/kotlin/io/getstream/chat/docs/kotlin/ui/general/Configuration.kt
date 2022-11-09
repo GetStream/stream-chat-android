@@ -14,11 +14,11 @@ import io.getstream.chat.android.ui.helper.MimeTypeIconProvider
 import io.getstream.chat.android.ui.helper.SupportedReactions
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.helper.ChannelNameFormatter
-import io.getstream.chat.android.ui.common.images.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.navigation.ChatNavigator
 import io.getstream.chat.android.ui.font.ChatFonts
 import io.getstream.chat.android.ui.font.TextStyle
-import io.getstream.chat.android.ui.common.utils.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.navigation.ChatNavigationHandler
 import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer

@@ -22,7 +22,7 @@ import android.widget.Toast
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.state.ValidationError
+import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 /**

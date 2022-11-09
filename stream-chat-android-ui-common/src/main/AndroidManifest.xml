@@ -42,7 +42,7 @@
 
     <application>
         <activity
-            android:name=".view.activity.AttachmentDocumentActivity"
+            android:name=".feature.documents.AttachmentDocumentActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             />

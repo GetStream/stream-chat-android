@@ -40,8 +40,8 @@ import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.queryChannelsAsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.ui.common.state.Cancel
-import io.getstream.chat.android.ui.common.state.ChannelAction
+import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
+import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.Flow

@@ -31,7 +31,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTextContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.message.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 
 /**
  * Represents the default message content within the bubble that can show different UI based on the message state.

@@ -46,10 +46,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.message.list.CancelGiphy
-import io.getstream.chat.android.ui.common.message.list.GiphyAction
-import io.getstream.chat.android.ui.common.message.list.SendGiphy
-import io.getstream.chat.android.ui.common.message.list.ShuffleGiphy
+import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.SendGiphy
+import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
 
 /**
  * Represents the content of an ephemeral giphy message.

@@ -15,10 +15,10 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.ui.helper.StyleTransformer
 import io.getstream.chat.android.ui.helper.TransformStyle
-import io.getstream.chat.android.ui.common.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.state.Edit
-import io.getstream.chat.android.ui.common.state.MessageMode
-import io.getstream.chat.android.ui.common.state.Reply
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCenterContent

@@ -66,12 +66,12 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.ui.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.ui.common.state.MessageMode
-import io.getstream.chat.android.ui.common.state.Reply
-import io.getstream.chat.android.ui.common.state.message.list.SelectedMessageOptionsState
-import io.getstream.chat.android.ui.common.state.message.list.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.ui.common.state.message.list.SelectedMessageReactionsState
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOptionsState
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
 
 class MessagesActivity : BaseConnectedActivity() {
 

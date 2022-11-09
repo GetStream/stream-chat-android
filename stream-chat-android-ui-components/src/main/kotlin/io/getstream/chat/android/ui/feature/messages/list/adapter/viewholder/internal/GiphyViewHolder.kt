@@ -19,9 +19,9 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.in
 import android.content.res.ColorStateList
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import io.getstream.chat.android.ui.common.message.list.CancelGiphy
-import io.getstream.chat.android.ui.common.message.list.SendGiphy
-import io.getstream.chat.android.ui.common.message.list.ShuffleGiphy
+import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
+import io.getstream.chat.android.ui.common.state.messages.list.SendGiphy
+import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.giphyInfo

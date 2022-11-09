@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.list.options.message
 
 import android.graphics.drawable.Drawable
-import io.getstream.chat.android.ui.common.state.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 
 /**
  * UI representation of a Message option, when the user selects a message in the list.

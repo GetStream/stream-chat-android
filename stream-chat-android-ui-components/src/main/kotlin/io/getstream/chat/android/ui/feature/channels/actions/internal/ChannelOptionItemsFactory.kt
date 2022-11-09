@@ -20,10 +20,10 @@ import android.content.Context
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.state.Cancel
-import io.getstream.chat.android.ui.common.state.DeleteConversation
-import io.getstream.chat.android.ui.common.state.LeaveGroup
-import io.getstream.chat.android.ui.common.state.ViewInfo
+import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
+import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
+import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
+import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 import io.getstream.chat.android.ui.feature.channels.actions.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.common.utils
 
-import io.getstream.chat.android.ui.common.utils.StorageHelper.Companion.FILE_NAME_PREFIX
+import io.getstream.chat.android.ui.common.helper.StorageHelper.Companion.FILE_NAME_PREFIX
 
 internal object StringUtils {
 

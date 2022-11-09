@@ -18,7 +18,8 @@ package io.getstream.chat.android.ui.common.utils
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.FileUploadConfig
-import io.getstream.chat.android.ui.common.model.AttachmentMetaData
+import io.getstream.chat.android.ui.common.helper.AttachmentFilter
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments

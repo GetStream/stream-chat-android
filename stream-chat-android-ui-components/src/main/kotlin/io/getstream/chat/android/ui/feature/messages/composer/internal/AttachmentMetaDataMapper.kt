@@ -18,8 +18,8 @@ package io.getstream.chat.android.ui.feature.messages.composer.internal
 
 import android.content.Context
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.ui.common.model.AttachmentMetaData
-import io.getstream.chat.android.ui.common.utils.StorageHelper
+import io.getstream.chat.android.ui.common.helper.StorageHelper
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 internal fun AttachmentMetaData.toAttachment(context: Context): Attachment {
     val fileFromUri = StorageHelper().getCachedFileFromUri(context, this)

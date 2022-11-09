@@ -25,6 +25,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.Px
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.disposable.Disposable
+import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 
 @InternalStreamChatApi
 public sealed interface StreamImageLoader {

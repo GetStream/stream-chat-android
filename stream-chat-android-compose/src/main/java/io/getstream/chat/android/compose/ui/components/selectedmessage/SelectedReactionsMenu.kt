@@ -41,8 +41,8 @@ import io.getstream.chat.android.compose.ui.components.userreactions.UserReactio
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.util.extensions.toSet
-import io.getstream.chat.android.ui.common.state.MessageAction
-import io.getstream.chat.android.ui.common.state.React
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.React
 
 /**
  * Represents the list of user reactions.

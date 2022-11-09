@@ -31,10 +31,10 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.guides.databinding.ActivityMessagesBinding
 import io.getstream.chat.android.guides.databinding.CustomMessageComposerLeadingContentBinding
-import io.getstream.chat.android.ui.common.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.state.Edit
-import io.getstream.chat.android.ui.common.state.MessageMode
-import io.getstream.chat.android.ui.common.state.Reply
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent

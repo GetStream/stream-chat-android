@@ -41,14 +41,14 @@ import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.toSet
-import io.getstream.chat.android.ui.common.state.Copy
-import io.getstream.chat.android.ui.common.state.Delete
-import io.getstream.chat.android.ui.common.state.Edit
-import io.getstream.chat.android.ui.common.state.Flag
-import io.getstream.chat.android.ui.common.state.Pin
-import io.getstream.chat.android.ui.common.state.Reply
-import io.getstream.chat.android.ui.common.state.Resend
-import io.getstream.chat.android.ui.common.state.ThreadReply
+import io.getstream.chat.android.ui.common.state.messages.Copy
+import io.getstream.chat.android.ui.common.state.messages.Delete
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.Flag
+import io.getstream.chat.android.ui.common.state.messages.Pin
+import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.Resend
+import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**

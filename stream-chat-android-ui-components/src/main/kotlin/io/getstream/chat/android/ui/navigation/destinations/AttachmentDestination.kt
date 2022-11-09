@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.ui.common.R
-import io.getstream.chat.android.ui.common.view.activity.AttachmentDocumentActivity
+import io.getstream.chat.android.ui.common.feature.documents.AttachmentDocumentActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentMediaActivity
 import io.getstream.chat.android.ui.utils.load

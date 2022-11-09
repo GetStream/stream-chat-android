@@ -53,11 +53,11 @@ import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
-import io.getstream.chat.android.ui.common.state.DeleteConversation
-import io.getstream.chat.android.ui.common.state.LeaveGroup
-import io.getstream.chat.android.ui.common.state.MuteChannel
-import io.getstream.chat.android.ui.common.state.UnmuteChannel
-import io.getstream.chat.android.ui.common.state.ViewInfo
+import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
+import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
+import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 
 /**
  * Default root Channel screen component, that provides the necessary ViewModel.

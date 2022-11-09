@@ -35,13 +35,13 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.message.list.GiphyAction
 import io.getstream.chat.android.ui.common.model.messsagelist.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.ui.common.model.messsagelist.MessageListItemState
 import io.getstream.chat.android.ui.common.model.messsagelist.SystemMessageItemState
 import io.getstream.chat.android.ui.common.model.messsagelist.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.model.messsagelist.TypingItemState
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 
 /**
  * Represents the message item container that allows us to customize each type of item in the MessageList.

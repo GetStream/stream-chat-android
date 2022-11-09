@@ -23,7 +23,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.MessageOptionsUserReactionAlignment
+import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPx

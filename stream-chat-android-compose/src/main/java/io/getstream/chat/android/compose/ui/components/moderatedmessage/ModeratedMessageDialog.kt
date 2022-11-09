@@ -35,8 +35,8 @@ import androidx.compose.ui.window.Dialog
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.model.ModeratedMessageOption
-import io.getstream.chat.android.ui.common.model.defaultMessageModerationOptions
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
+import io.getstream.chat.android.ui.common.state.messages.list.defaultMessageModerationOptions
 
 /**
  * Dialog that is shown when user clicks or long taps on a moderated message. Gives the user the ability to either

@@ -25,7 +25,7 @@ import android.widget.FrameLayout
 import androidx.core.view.descendants
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.model.AttachmentMetaData
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabFactory

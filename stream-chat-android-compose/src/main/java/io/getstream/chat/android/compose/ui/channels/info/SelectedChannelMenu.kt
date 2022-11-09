@@ -45,7 +45,7 @@ import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChan
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.isOneToOne
-import io.getstream.chat.android.ui.common.state.ChannelAction
+import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 
 /**
  * Shows special UI when an item is selected.

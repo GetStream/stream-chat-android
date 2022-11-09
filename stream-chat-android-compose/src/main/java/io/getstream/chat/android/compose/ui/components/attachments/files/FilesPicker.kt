@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.SelectFilesContract
+import io.getstream.chat.android.ui.common.contract.SelectFilesContract
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 /**

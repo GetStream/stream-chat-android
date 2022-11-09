@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.common.utils.extensions
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.common.state.MessageFooterVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 
 /**
  * Decides if we need to show the message footer (timestamp) below the message.
