@@ -23,12 +23,11 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiImageAttachmentPreviewBinding
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
-import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
-import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
 
 /**
  * The default [AttachmentPreviewFactory] for image attachments.

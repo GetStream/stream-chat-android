@@ -18,9 +18,8 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
-import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
-import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
 
 /**
  * A factory responsible for creating attachment preview ViewHolders.

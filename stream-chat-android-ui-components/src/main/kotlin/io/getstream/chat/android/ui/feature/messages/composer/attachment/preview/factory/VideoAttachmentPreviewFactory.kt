@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.message.composer.attachment.preview.factory
+package io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.images.load
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.getDimension
-import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
-import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiVideoAttachmentPreviewBinding
-import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
-import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.utils.extensions.applyTint
+import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.utils.load
+import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 
 /**
  * The default [AttachmentPreviewFactory] for video attachments.
