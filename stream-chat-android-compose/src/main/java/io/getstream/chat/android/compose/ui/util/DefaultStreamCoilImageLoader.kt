@@ -19,7 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import android.content.Context
 import coil.ImageLoader
 import coil.ImageLoaderFactory
-import io.getstream.chat.android.ui.common.images.coil.StreamImageLoaderFactory
+import io.getstream.chat.android.ui.common.images.StreamImageLoaderFactory
 
 /**
  * A factory that creates new Coil [ImageLoader] instances.

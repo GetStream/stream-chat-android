@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.images.coil
+package io.getstream.chat.android.ui.common.images.internal
 
 import android.graphics.Bitmap
 import android.graphics.BitmapShader

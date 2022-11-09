@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.images
+package io.getstream.chat.android.ui.common.images.internal
 
 import android.content.Context
 import android.graphics.Bitmap

@@ -22,8 +22,8 @@ import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.disposable.Disposable
-import io.getstream.chat.android.ui.common.images.StreamImageLoader
-import io.getstream.chat.android.ui.common.images.StreamImageLoader.ImageTransformation
+import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
+import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader.ImageTransformation
 
 @InternalStreamChatApi
 public fun ImageView.load(

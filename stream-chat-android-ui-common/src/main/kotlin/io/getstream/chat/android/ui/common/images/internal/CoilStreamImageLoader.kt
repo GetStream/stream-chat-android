@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.images
+package io.getstream.chat.android.ui.common.images.internal
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -34,8 +34,7 @@ import io.getstream.chat.android.ui.common.disposable.CoilDisposable
 import io.getstream.chat.android.ui.common.disposable.Disposable
 import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
-import io.getstream.chat.android.ui.common.images.coil.RoundedCornersTransformation
-import io.getstream.chat.android.ui.common.images.coil.StreamCoil.streamImageLoader
+import io.getstream.chat.android.ui.common.images.internal.StreamCoil.streamImageLoader
 import kotlinx.coroutines.withContext
 import okhttp3.Headers.Companion.toHeaders
 

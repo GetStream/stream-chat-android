@@ -21,7 +21,7 @@ import androidx.core.graphics.drawable.IconCompat
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.UserIconBuilder
 import io.getstream.chat.android.core.internal.StreamHandsOff
-import io.getstream.chat.android.ui.common.images.StreamImageLoader
+import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 
 /**
  * Produces an [IconCompat] using Coil, which downloads and caches the user image.

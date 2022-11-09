@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.images.coil
+package io.getstream.chat.android.ui.common.images.internal
 
 import android.content.Context
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.common.images.StreamImageLoaderFactory
 
 @InternalStreamChatApi
 public object StreamCoil {
