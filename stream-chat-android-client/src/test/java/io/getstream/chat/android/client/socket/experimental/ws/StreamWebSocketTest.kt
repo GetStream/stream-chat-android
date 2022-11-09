@@ -22,6 +22,8 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
+import io.getstream.chat.android.client.socket.StreamWebSocket
+import io.getstream.chat.android.client.socket.StreamWebSocketEvent
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean

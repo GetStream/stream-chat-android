@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.socket.experimental.ws
+package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.recover
 import kotlinx.coroutines.flow.Flow
