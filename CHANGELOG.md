@@ -28,6 +28,7 @@
 
 ### ❌ Removed
 - ClientMutableState is now an internal interface, intead of a public interface. [#4374](https://github.com/GetStream/stream-chat-android/pull/4374)
+- Remove ClientState.clearState() [#4372](https://github.com/GetStream/stream-chat-android/pull/4372)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
