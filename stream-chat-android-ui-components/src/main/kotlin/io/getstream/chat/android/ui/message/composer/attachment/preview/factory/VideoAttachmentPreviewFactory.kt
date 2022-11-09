@@ -28,6 +28,7 @@ import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiVideoAttachmentPreviewBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
+import io.getstream.chat.android.ui.utils.extensions.applyTint
 
 /**
  * The default [AttachmentPreviewFactory] for video attachments.
@@ -62,7 +63,7 @@ public class VideoAttachmentPreviewFactory : AttachmentPreviewFactory {
     ): AttachmentPreviewViewHolder {
         return StreamUiVideoAttachmentPreviewBinding
             .inflate(parentView.context.streamThemeInflater, parentView, false)
-            .let { VideoAttachmentPreviewViewHolder(it, attachmentRemovalListener) }
+            .let { VideoAttachmentPreviewViewHolder(it, attachmentRemovalListener, style) }
     }
 
     /**
@@ -74,6 +75,7 @@ public class VideoAttachmentPreviewFactory : AttachmentPreviewFactory {
     private class VideoAttachmentPreviewViewHolder(
         private val binding: StreamUiVideoAttachmentPreviewBinding,
         attachmentRemovalListener: (Attachment) -> Unit,
+        private val style: MessageComposerViewStyle?,
     ) : AttachmentPreviewViewHolder(binding.root) {
 
         private lateinit var attachment: Attachment
@@ -85,6 +87,38 @@ public class VideoAttachmentPreviewFactory : AttachmentPreviewFactory {
                 .setAllCornerSizes(cornerRadius)
                 .build()
             binding.removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
+            setupIconImageView()
+            setupIconCard()
+        }
+
+        private fun setupIconImageView() {
+            if (style != null) {
+                with(binding.playIconImageView) {
+                    val iconDrawable =
+                        style.messageInputVideoAttachmentIconDrawable.applyTint(
+                            style.messageInputVideoAttachmentIconDrawableTint
+                        )
+
+                    load(iconDrawable)
+                    setPaddingRelative(
+                        style.messageInputVideoAttachmentIconDrawablePaddingStart,
+                        style.messageInputVideoAttachmentIconDrawablePaddingTop,
+                        style.messageInputVideoAttachmentIconDrawablePaddingEnd,
+                        style.messageInputVideoAttachmentIconDrawablePaddingBottom
+                    )
+                }
+            }
+        }
+
+        private fun setupIconCard() {
+            if (style != null) {
+                with(binding.playIconCardView) {
+                    style.messageInputVideoAttachmentIconBackgroundColor?.also { backgroundColor ->
+                        setCardBackgroundColor(backgroundColor)
+                    }
+                    elevation = style.messageInputVideoAttachmentIconElevation
+                }
+            }
         }
 
         override fun bind(attachment: Attachment) {
