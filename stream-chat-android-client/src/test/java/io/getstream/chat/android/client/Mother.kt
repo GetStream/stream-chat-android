@@ -128,10 +128,6 @@ internal object Mother {
             override val isInitialized: Boolean = true
 
             override val isNetworkAvailable: Boolean = true
-
-            override fun clearState() {
-                // Nothing to do
-            }
         }
     }
 
