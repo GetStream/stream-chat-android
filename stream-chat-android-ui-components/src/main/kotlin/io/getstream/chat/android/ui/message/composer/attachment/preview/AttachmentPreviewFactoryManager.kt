@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.message.composer.attachment.preview
 import android.view.ViewGroup
 import androidx.collection.SparseArrayCompat
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.AttachmentPreviewFactory
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.FallbackAttachmentPreviewFactory
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.FileAttachmentPreviewFactory
@@ -53,15 +54,23 @@ public class AttachmentPreviewFactoryManager(
      *
      * @param parentView The parent container.
      * @param attachmentRemovalListener Click listener for the remove attachment button.
+     * @param style Used to style the various factories. If null, the respective factory will retain
+     * the default appearance.
+     *
      * @return An instance of attachment preview ViewHolder.
      */
     public fun onCreateViewHolder(
         parentView: ViewGroup,
         viewType: Int,
         attachmentRemovalListener: (Attachment) -> Unit,
+        style: MessageComposerViewStyle? = null,
     ): AttachmentPreviewViewHolder {
         return viewTypeToFactoryMapping.get(viewType, fallbackAttachmentPreviewFactory)
-            .onCreateViewHolder(parentView, attachmentRemovalListener)
+            .onCreateViewHolder(
+                parentView = parentView,
+                attachmentRemovalListener = attachmentRemovalListener,
+                style = style
+            )
     }
 
     /**

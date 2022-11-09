@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.common.internal.loadAttachmentThumb
 import io.getstream.chat.android.ui.databinding.StreamUiVideoAttachmentPreviewBinding
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
 
 /**
@@ -49,11 +50,15 @@ public class VideoAttachmentPreviewFactory : AttachmentPreviewFactory {
      *
      * @param parentView The parent container.
      * @param attachmentRemovalListener Click listener for the remove attachment button.
+     * @param style Used to style the factory. If null, the factory will retain
+     * the default appearance.
+     *
      * @return An instance of attachment preview ViewHolder.
      */
     override fun onCreateViewHolder(
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
+        style: MessageComposerViewStyle?,
     ): AttachmentPreviewViewHolder {
         return StreamUiVideoAttachmentPreviewBinding
             .inflate(parentView.context.streamThemeInflater, parentView, false)

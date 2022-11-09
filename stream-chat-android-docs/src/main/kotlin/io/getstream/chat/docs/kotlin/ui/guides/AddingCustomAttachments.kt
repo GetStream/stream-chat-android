@@ -16,7 +16,6 @@ import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.message.composer.MessageComposerContext
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
@@ -158,6 +157,7 @@ class AddingCustomAttachmentsSnippet : Fragment() {
         override fun onCreateViewHolder(
             parentView: ViewGroup,
             attachmentRemovalListener: (Attachment) -> Unit,
+            style: MessageComposerViewStyle?,
         ): AttachmentPreviewViewHolder {
             return ItemDateAttachmentPreviewBinding
                 .inflate(LayoutInflater.from(parentView.context), parentView, false)

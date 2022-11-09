@@ -21,6 +21,7 @@ import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.guides.databinding.ItemDateAttachmentPreviewBinding
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.AttachmentPreviewFactory
 
@@ -36,6 +37,7 @@ class DateAttachmentPreviewFactory : AttachmentPreviewFactory {
     override fun onCreateViewHolder(
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
+        style: MessageComposerViewStyle?,
     ): AttachmentPreviewViewHolder {
         return ItemDateAttachmentPreviewBinding
             .inflate(LayoutInflater.from(parentView.context), parentView, false)

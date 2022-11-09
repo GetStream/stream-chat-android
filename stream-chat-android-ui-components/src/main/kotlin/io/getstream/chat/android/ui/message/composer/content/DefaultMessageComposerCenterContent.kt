@@ -69,7 +69,10 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      * Adapter used to render attachments previews list.
      */
     private val attachmentsAdapter: AttachmentPreviewAdapter by lazy {
-        AttachmentPreviewAdapter(ChatUI.attachmentPreviewFactoryManager) { attachment ->
+        AttachmentPreviewAdapter(
+            factoryManager = ChatUI.attachmentPreviewFactoryManager,
+            style = style
+        ) { attachment ->
             attachmentRemovalListener(attachment)
         }
     }
@@ -95,7 +98,6 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         binding.messageEditText.doAfterTextChanged { editable: Editable? ->
             textInputChangeListener(editable?.toString() ?: "")
         }
-        binding.attachmentsRecyclerView.adapter = attachmentsAdapter
     }
 
     /**
@@ -106,6 +108,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
 
+        binding.attachmentsRecyclerView.adapter = attachmentsAdapter
         binding.messageInputContainer.background = style.messageInputBackgroundDrawable
         binding.messageEditText.setTextStyle(style.messageInputTextStyle)
         binding.messageEditText.isVerticalScrollBarEnabled = style.messageInputScrollbarEnabled
@@ -197,6 +200,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
  */
 private class AttachmentPreviewAdapter(
     private val factoryManager: AttachmentPreviewFactoryManager,
+    private val style: MessageComposerViewStyle,
     private val attachmentRemovalListener: (Attachment) -> Unit,
 ) : RecyclerView.Adapter<AttachmentPreviewViewHolder>() {
 
@@ -224,7 +228,12 @@ private class AttachmentPreviewAdapter(
      * @return An instance of attachment preview ViewHolder.
      */
     override fun onCreateViewHolder(parentView: ViewGroup, viewType: Int): AttachmentPreviewViewHolder {
-        return factoryManager.onCreateViewHolder(parentView, viewType, attachmentRemovalListener)
+        return factoryManager.onCreateViewHolder(
+            parentView = parentView,
+            viewType = viewType,
+            attachmentRemovalListener = attachmentRemovalListener,
+            style = style
+        )
     }
 
     /**
