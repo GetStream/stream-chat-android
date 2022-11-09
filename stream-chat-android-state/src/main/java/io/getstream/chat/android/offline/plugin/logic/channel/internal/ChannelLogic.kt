@@ -132,7 +132,9 @@ internal class ChannelLogic(
         if (mutableState.loading.value) {
             logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
             return Result.Failure(
-                ChatError("Another request to watch this channel is in progress. Ignoring this request.")
+                ChatError.GenericError(
+                    "Another request to watch this channel is in progress. Ignoring this request.",
+                ),
             )
         }
         return runChannelQuery(

@@ -52,7 +52,7 @@ internal class ShuffleGiphyListenerStateTest {
 
     @Test
     fun `when shuffling giphys and request fails, it should NOT be upserted`() = runTest {
-        shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.Failure(ChatError()))
+        shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.Failure(ChatError.GenericError("")))
 
         verify(channelLogic, never()).upsertMessage(any())
     }

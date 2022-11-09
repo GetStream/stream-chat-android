@@ -46,7 +46,8 @@ public class MockRetrofitCall<T : Any>(
         logger.d { "[cancel] no args" }
         job.get()?.cancel()
         job.set(null)
-        pendingCallback.get()?.onResult(Result.Failure(ChatError(cause = AsyncTestCallCanceledException())))
+        pendingCallback.get()
+            ?.onResult(Result.Failure(ChatError.ThrowableError(message = "", cause = AsyncTestCallCanceledException())))
         pendingCallback.set(null)
     }
 
@@ -54,7 +55,7 @@ public class MockRetrofitCall<T : Any>(
         logger.d { "[enqueue] no args" }
         if (executed.get()) {
             logger.w { "[enqueue] rejected (already executed)" }
-            callback.onResult(Result.Failure(ChatError(message = "Already executed.")))
+            callback.onResult(Result.Failure(ChatError.GenericError(message = "Already executed.")))
             return
         }
         pendingCallback.set(callback)

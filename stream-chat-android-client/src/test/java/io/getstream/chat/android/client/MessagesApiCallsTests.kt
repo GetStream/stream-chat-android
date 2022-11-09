@@ -197,7 +197,7 @@ internal class MessagesApiCallsTests {
     fun sendMessageError() = runTest {
         val messageText = "message-a"
         val message = Message(text = messageText)
-        val requestResult = Result.Failure(ChatError())
+        val requestResult = Result.Failure(ChatError.GenericError(message = ""))
 
         whenever(
             mock.api.sendMessage(

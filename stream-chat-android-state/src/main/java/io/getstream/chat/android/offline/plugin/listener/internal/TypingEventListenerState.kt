@@ -36,7 +36,7 @@ internal class TypingEventListenerState(
 ) : TypingEventListener {
 
     /**
-     * Method called before original api request is invoked. If this methods returns [Result.error],
+     * Method called before original api request is invoked. If this methods returns [Result.Failure],
      * API request is not invoked.
      *
      * @param eventType Type of the event that can be one of the [EventType.TYPING_START] or
@@ -78,13 +78,13 @@ internal class TypingEventListenerState(
      */
     private fun onTypingStopPrecondition(channelState: ChannelMutableState): Result<Unit> {
         return if (!channelState.channelConfig.value.typingEventsEnabled)
-            Result.Failure(ChatError("Typing events are not enabled"))
+            Result.Failure(ChatError.GenericError("Typing events are not enabled"))
         else if (channelState.lastStartTypingEvent == null) {
             Result.Failure(
-                ChatError(
+                ChatError.GenericError(
                     "lastStartTypingEvent is null. " +
-                        "Make sure to send Event.TYPING_START before sending Event.TYPING_STOP"
-                )
+                        "Make sure to send Event.TYPING_START before sending Event.TYPING_STOP",
+                ),
             )
         } else Result.Success(Unit)
     }
@@ -100,15 +100,15 @@ internal class TypingEventListenerState(
      */
     private fun onTypingStartPrecondition(channelState: ChannelMutableState, eventTime: Date): Result<Unit> {
         return if (!channelState.channelConfig.value.typingEventsEnabled)
-            Result.Failure(ChatError("Typing events are not enabled"))
+            Result.Failure(ChatError.GenericError("Typing events are not enabled"))
         else if (channelState.lastStartTypingEvent != null &&
             eventTime.time - channelState.lastStartTypingEvent!!.time < TYPING_DELAY
         ) {
             Result.Failure(
-                ChatError(
+                ChatError.GenericError(
                     "Last typing event was sent at ${channelState.lastStartTypingEvent}. " +
-                        "There must be a delay of $TYPING_DELAY_SECS seconds before sending new event"
-                )
+                        "There must be a delay of $TYPING_DELAY_SECS seconds before sending new event",
+                ),
             )
         } else Result.Success(Unit)
     }

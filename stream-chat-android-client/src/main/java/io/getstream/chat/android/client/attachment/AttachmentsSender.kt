@@ -103,7 +103,7 @@ internal class AttachmentsSender(
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)
             Result.Failure(
-                ChatError(
+                ChatError.GenericError(
                     "Chat is offline, not sending message with id ${message.id} and text ${message.text}",
                 )
             )
@@ -151,7 +151,9 @@ internal class AttachmentsSender(
         return if (allAttachmentsUploaded) {
             Result.Success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
         } else {
-            Result.Failure(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
+            Result.Failure(
+                ChatError.GenericError("Could not upload attachments, not sending message with id ${newMessage.id}"),
+            )
         }.also {
             uploadIds.remove(newMessage.id)
         }

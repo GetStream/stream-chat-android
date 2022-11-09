@@ -19,11 +19,11 @@ package io.getstream.chat.android.compose.ui.components.messages
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.getstream.sdk.chat.utils.extensions.isMine
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.attachments.content.QuotedMessageAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
  * Represents the default quoted message content that shows an attachment preview, if available, and the message text.

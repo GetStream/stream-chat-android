@@ -129,7 +129,7 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(ChatError()))
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(ChatError.GenericError("")))
 
         verify(channelLogic).upsertMessage(
             argThat { message ->

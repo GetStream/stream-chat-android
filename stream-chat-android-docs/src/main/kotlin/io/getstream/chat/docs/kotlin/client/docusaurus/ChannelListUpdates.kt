@@ -14,7 +14,7 @@ import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHand
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
 /**

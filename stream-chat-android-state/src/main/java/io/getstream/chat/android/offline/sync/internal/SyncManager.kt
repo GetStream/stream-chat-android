@@ -20,6 +20,7 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
@@ -29,7 +30,6 @@ import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onError
 import io.getstream.chat.android.client.utils.onSuccessSuspend
-import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -241,7 +240,7 @@ internal class SyncManager(
                     logger.v { "[performSync] no events to emit" }
                 }
             }
-            is Result.Failure -> logger.e { "[performSync] failed(${result.value.stringify()})" }
+            is Result.Failure -> logger.e { "[performSync] failed(${result.value})" }
         }
     }
 
@@ -346,7 +345,7 @@ internal class SyncManager(
             logger.v { "[updateActiveQueryChannels] queryLogic.filter: ${queryLogic.filter()}" }
             queryLogic.queryFirstPage()
                 .onError {
-                    logger.e { "[updateActiveQueryChannels] request failed: ${it.stringify()}" }
+                    logger.e { "[updateActiveQueryChannels] request failed: $it" }
                     failed.set(it)
                 }
                 .onSuccessSuspend { foundChannels ->
@@ -388,7 +387,7 @@ internal class SyncManager(
         chatClient.queryChannelsInternal(request)
             .await()
             .onError {
-                logger.e { "[updateActiveChannels] request failed: ${it.stringify()}" }
+                logger.e { "[updateActiveChannels] request failed: $it" }
             }
             .onSuccessSuspend { foundChannels ->
                 logger.v { "[updateActiveChannels] request completed; foundChannels.size: ${foundChannels.size}" }

@@ -36,7 +36,7 @@ import java.util.Date
 internal class DeleteMessageListenerState(
     private val logic: LogicRegistry,
     private val clientState: ClientState,
-    private val globalState: GlobalState
+    private val globalState: GlobalState,
 ) : DeleteMessageListener {
 
     /**
@@ -55,17 +55,17 @@ internal class DeleteMessageListenerState(
             if (isModerationFailed) {
                 deleteMessage(message)
                 Result.Failure(
-                    ChatError(
-                        cause =
-                        MessageModerationDeletedException(
-                            "Message with failed moderation has been deleted locally: $messageId"
-                        )
+                    ChatError.ThrowableError(
+                        message = "Message with failed moderation has been deleted locally: $messageId",
+                        cause = MessageModerationDeletedException(
+                            "Message with failed moderation has been deleted locally: $messageId",
+                        ),
                     )
                 )
             } else {
                 Result.Success(Unit)
             }
-        } ?: Result.Failure(ChatError(message = "No message found with id: $messageId"))
+        } ?: Result.Failure(ChatError.GenericError(message = "No message found with id: $messageId"))
     }
 
     /**

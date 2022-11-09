@@ -20,10 +20,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.guides.databinding.ItemDateAttachmentPreviewBinding
-import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory
 import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
-import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewViewHolder
-import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.AttachmentPreviewFactory
 
 /**
  * A custom [AttachmentPreviewFactory] that adds support for date attachments in [MessageComposerView].

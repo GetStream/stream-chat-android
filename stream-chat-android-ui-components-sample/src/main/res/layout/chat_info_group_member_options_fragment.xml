@@ -52,7 +52,7 @@
         tools:text="Last seen a year ago"
         />
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         android:layout_width="64dp"
         android:layout_height="64dp"
