@@ -137,6 +137,7 @@ import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.utils.extensions.showToast
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.use
+import io.getstream.chat.android.uiutils.extension.hasLink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -473,8 +474,11 @@ public class MessageListView : ConstraintLayout {
                     message.attachments.all { it.isImage() || it.isVideo() } -> {
                         val filteredAttachments = message.attachments
                             .filter {
-                                it.isImage() && !it.imagePreviewUrl.isNullOrEmpty() ||
-                                    it.isVideo() && !it.assetUrl.isNullOrEmpty()
+                                (
+                                    it.isImage() && !it.imagePreviewUrl.isNullOrEmpty() ||
+                                        it.isVideo() && !it.assetUrl.isNullOrEmpty()
+                                    ) &&
+                                    !it.hasLink()
                             }
                         val attachmentGalleryItems = filteredAttachments.map {
                             AttachmentGalleryItem(
