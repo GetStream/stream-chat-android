@@ -23,12 +23,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
-import io.getstream.chat.android.ui.message.composer.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely

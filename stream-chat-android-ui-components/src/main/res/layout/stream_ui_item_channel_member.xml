@@ -23,7 +23,7 @@
     android:orientation="vertical"
     >
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         style="?attr/streamUiChannelActionsDialogAvatarStyle"
         />

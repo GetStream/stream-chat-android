@@ -70,7 +70,7 @@ internal class DeleteReactionErrorHandlerImpl(
                 if (cachedMessage != null) {
                     Result.Success(cachedMessage)
                 } else {
-                    Result.Failure(ChatError(message = "Local message was not found."))
+                    Result.Failure(ChatError.GenericError(message = "Local message was not found."))
                 }
             }
         }

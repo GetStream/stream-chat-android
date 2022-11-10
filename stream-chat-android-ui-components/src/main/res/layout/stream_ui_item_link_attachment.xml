@@ -23,7 +23,7 @@
     android:paddingEnd="@dimen/stream_ui_spacing_small"
     >
 
-    <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
         >
 
-        <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
+        <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.MessageReplyView
             android:id="@+id/replyView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
             android:visibility="gone"
             />
 
-        <io.getstream.chat.android.ui.message.list.adapter.view.internal.LinkAttachmentView
+        <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.LinkAttachmentView
             android:id="@+id/linkAttachmentView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
 
     </LinearLayout>
 
-    <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+    <io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
         android:id="@+id/reactionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
         app:layout_constraintTop_toTopOf="@id/reactionsSpace"
         />
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         style="?attr/streamUiMessageListItemAvatarStyle"
         android:layout_marginTop="8dp"
@@ -139,7 +139,7 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-    <io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.FootnoteView
         android:id="@+id/footnote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -173,7 +173,7 @@
         tools:visibility="visible"
         />
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarMineView"
         style="?attr/streamUiMessageListItemAvatarStyle"
         android:layout_marginStart="8dp"

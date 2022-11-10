@@ -164,8 +164,8 @@ internal class UploadAttachmentsIntegrationTests {
 
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
-            val imageResult = Result.Failure(ChatError())
-            val fileResult = Result.Failure(ChatError())
+            val imageResult = Result.Failure(ChatError.GenericError(""))
+            val fileResult = Result.Failure(ChatError.GenericError(""))
 
             whenever(
                 chatClient.sendFile(

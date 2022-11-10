@@ -20,12 +20,12 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
-import io.getstream.chat.android.client.extensions.isPermanent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelData
 import io.getstream.chat.android.client.models.ChannelUserRead

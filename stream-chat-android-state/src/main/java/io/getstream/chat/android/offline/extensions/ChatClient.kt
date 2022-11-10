@@ -217,7 +217,7 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
             )
             Result.Success(Unit)
         } catch (exception: Exception) {
-            Result.Failure(ChatError(cause = exception))
+            Result.Failure(ChatError.ThrowableError(message = "Could not download the attachment", cause = exception))
         }
     }
 }
@@ -280,7 +280,12 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
 
                     Result.Success(true)
                 } catch (exception: Exception) {
-                    Result.Failure(ChatError(cause = exception))
+                    Result.Failure(
+                        ChatError.ThrowableError(
+                            message = "Could not cancel ephemeral message",
+                            cause = exception,
+                        ),
+                    )
                 }
             }
             is Result.Failure -> cidValidationResult
@@ -329,11 +334,11 @@ private suspend fun ChatClient.loadMessageByIdInternal(
             if (message != null) {
                 result.map { message }
             } else {
-                Result.Failure(ChatError("The message could not be found."))
+                Result.Failure(ChatError.GenericError("The message could not be found."))
             }
         }
         is Result.Failure -> Result.Failure(
-            ChatError("Error while fetching messages from backend. Messages around id: $messageId")
+            ChatError.GenericError("Error while fetching messages from backend. Messages around id: $messageId")
         )
     }
 }

@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Attachment.UploadState.Idle
 import io.getstream.chat.android.client.models.Attachment.UploadState.InProgress
@@ -44,6 +43,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.uiutils.extension.isUploading
 
 /**

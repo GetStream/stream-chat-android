@@ -910,6 +910,6 @@ constructor(
     }
 
     private fun <T : Any> noConnectionIdError(): ErrorCall<T> {
-        return ErrorCall(coroutineScope, ChatError("setUser is either not called or not finished"))
+        return ErrorCall(coroutineScope, ChatError.GenericError("setUser is either not called or not finished"))
     }
 }

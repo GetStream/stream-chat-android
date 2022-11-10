@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.copyWithMessage
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.async
@@ -47,36 +48,28 @@ internal class ZipCall<A : Any, B : Any>(
                     when {
                         canceled.get() -> null
                         resultB is Result.Success -> resultA.combine(resultB)
-                        else -> getErrorB(resultB)
+                        resultB is Result.Failure -> getErrorB(resultB)
+                        else -> null
                     }?.let(callback::onResult)
                 }
-                else -> callback.onResult(getErrorA<A, B>(resultA).also { callB.cancel() })
+                resultA is Result.Failure -> callback.onResult(getErrorA<A, B>(resultA).also { callB.cancel() })
             }
         }
     }
 
-    private fun <A : Any, B : Any> getErrorA(resultA: Result<A>): Result<Pair<A, B>> {
-        val cause = when (resultA) {
-            is Result.Failure -> resultA.value.cause
-            is Result.Success -> null
-        }
-
-        return Result.Failure(ChatError("Error executing callA", cause))
+    private fun <A : Any, B : Any> getErrorA(resultA: Result.Failure): Result<Pair<A, B>> {
+        return Result.Failure(resultA.value.copyWithMessage(message = "Error executing callA"))
     }
 
-    private fun <A : Any, B : Any> getErrorB(resultB: Result<B>): Result<Pair<A, B>> {
-        val cause = when (resultB) {
-            is Result.Failure -> resultB.value.cause
-            is Result.Success -> null
-        }
-        return Result.Failure(ChatError("Error executing callB", cause))
+    private fun <A : Any, B : Any> getErrorB(resultB: Result.Failure): Result<Pair<A, B>> {
+        return Result.Failure(resultB.value.copyWithMessage(message = "Error executing callB"))
     }
 
     private fun <A : Any, B : Any> Result<A>.combine(result: Result<B>): Result<Pair<A, B>> {
         return if (this is Result.Success && result is Result.Success) {
             Result.Success(Pair(this.value, result.value))
         } else {
-            Result.Failure(ChatError("Cannot combine results because one of them failed."))
+            Result.Failure(ChatError.GenericError("Cannot combine results because one of them failed."))
         }
     }
 

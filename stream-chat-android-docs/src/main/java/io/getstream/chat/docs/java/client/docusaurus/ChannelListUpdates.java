@@ -18,8 +18,8 @@ import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult;
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory;
 import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState;
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel;
-import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory;
 import kotlinx.coroutines.flow.StateFlow;
 
 /**

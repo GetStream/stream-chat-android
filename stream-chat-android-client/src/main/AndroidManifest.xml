@@ -28,8 +28,8 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.getstream.sdk.chat.READ" />
-                <action android:name="com.getstream.sdk.chat.REPLY" />
+                <action android:name="io.getstream.chat.android.READ" />
+                <action android:name="io.getstream.chat.android.REPLY" />
             </intent-filter>
         </receiver>
     </application>

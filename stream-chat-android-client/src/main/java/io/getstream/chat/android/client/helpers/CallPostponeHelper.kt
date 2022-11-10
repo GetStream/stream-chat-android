@@ -75,9 +75,9 @@ internal class CallPostponeHelper(
             } catch (e: Throwable) {
                 logger.e { "[postponeCall] failed: $e" }
                 Result.Failure(
-                    ChatError(
-                        message = "Failed to perform call. Waiting for WS connection was too long."
-                    )
+                    ChatError.GenericError(
+                        message = "Failed to perform call. Waiting for WS connection was too long.",
+                    ),
                 )
             }
         }

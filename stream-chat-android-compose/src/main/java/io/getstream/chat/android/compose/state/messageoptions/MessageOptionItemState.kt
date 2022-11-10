@@ -19,7 +19,7 @@ package io.getstream.chat.android.compose.state.messageoptions
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import io.getstream.chat.android.common.state.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 
 /**
  * UI representation of a Message option, when the user selects a message in the list.

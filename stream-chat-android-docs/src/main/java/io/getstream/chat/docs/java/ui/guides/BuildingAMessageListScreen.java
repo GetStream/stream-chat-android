@@ -3,22 +3,20 @@ package io.getstream.chat.docs.java.ui.guides;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
-
 import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.common.state.Edit;
-import io.getstream.chat.android.common.state.MessageMode;
-import io.getstream.chat.android.common.state.Reply;
-import io.getstream.chat.android.ui.message.composer.MessageComposerView;
-import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel;
-import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelBinding;
-
-import io.getstream.chat.android.ui.message.list.MessageListView;
-import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView;
-import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel;
-import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModelBinding;
-import io.getstream.chat.android.ui.message.list.viewmodel.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory;
+import io.getstream.chat.android.ui.common.state.messages.Edit;
+import io.getstream.chat.android.ui.common.state.messages.MessageMode;
+import io.getstream.chat.android.ui.common.state.messages.Reply;
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 
 /**
  * [Building A Message List Screen](https://getstream.io/chat/docs/sdk/android/ui/guides/building-message-list-screen/)

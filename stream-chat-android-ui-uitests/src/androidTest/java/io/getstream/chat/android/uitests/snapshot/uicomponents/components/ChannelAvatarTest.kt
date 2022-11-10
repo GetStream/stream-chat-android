@@ -19,7 +19,7 @@ package io.getstream.chat.android.uitests.snapshot.uicomponents.components
 import android.view.LayoutInflater
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.avatar.ChannelAvatarView
+import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
 import io.getstream.chat.android.uitests.R
 import io.getstream.chat.android.uitests.snapshot.uicomponents.UiComponentsScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData

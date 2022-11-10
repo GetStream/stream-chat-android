@@ -45,7 +45,7 @@ internal class ThreadQueryListenerState(
         return if (loadingMoreMessage) {
             val errorMsg = "already loading messages for this thread, ignoring the load requests."
             logger.i { errorMsg }
-            Result.Failure(ChatError(errorMsg))
+            Result.Failure(ChatError.GenericError(errorMsg))
         } else {
             Result.Success(Unit)
         }
@@ -75,7 +75,7 @@ internal class ThreadQueryListenerState(
         return if (loadingMoreMessage) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."
             logger.i { errorMsg }
-            Result.Failure(ChatError(errorMsg))
+            Result.Failure(ChatError.GenericError(errorMsg))
         } else {
             Result.Success(Unit)
         }

@@ -71,7 +71,7 @@ internal class CreateChannelErrorHandlerImpl(
                     "$channelType:${generateChannelIdIfNeeded(channelId = channelId, memberIds = memberIds)}"
                 val cachedChannel = channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()
                 if (cachedChannel == null) {
-                    Result.Failure(ChatError(message = "Channel wasn't cached properly."))
+                    Result.Failure(ChatError.GenericError(message = "Channel wasn't cached properly."))
                 } else {
                     Result.Success(cachedChannel)
                 }

@@ -54,7 +54,7 @@ internal class HideChannelListenerStateTest {
     @Test
     fun `after the request is made and it fails, the channel should be set to NOT hidden`() = runTest {
         hideChannelListenerState.onHideChannelResult(
-            Result.Failure(ChatError()),
+            Result.Failure(ChatError.GenericError("")),
             randomString(),
             randomString(),
             randomBoolean()
