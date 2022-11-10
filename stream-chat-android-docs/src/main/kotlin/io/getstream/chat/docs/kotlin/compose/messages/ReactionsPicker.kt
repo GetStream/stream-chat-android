@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
@@ -19,12 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/reactions-picker/#usage)
@@ -41,7 +40,6 @@ private object ReactionsPickerUsageSnippet {
 
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -94,7 +92,6 @@ private object ReactionsPickerHandlingActionsSnippet {
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
         val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -147,7 +144,6 @@ private object ReactionsPickerCustomizationSnippet {
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
         val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 

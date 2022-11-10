@@ -6,19 +6,18 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.offline.extensions.getRepliesAsState
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.extensions.queryChannelsAsState
-import io.getstream.chat.android.offline.extensions.state
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.configuration.Config
+import io.getstream.chat.android.state.extensions.getRepliesAsState
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.queryChannelsAsState
+import io.getstream.chat.android.state.extensions.state
+import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
-import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
-import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -36,17 +35,12 @@ class Offline {
      * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/#configuration">Configuration</a>
      */
     fun configureOfflinePlugin(context: Context) {
-        val offlinePluginFactory = StreamOfflinePluginFactory(
-            config = Config(
-                backgroundSyncEnabled = true,
-                userPresence = true,
-                persistenceEnabled = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-            ),
-            appContext = context,
-        )
+        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = context)
 
-        ChatClient.Builder(apiKey, context).withPlugins(offlinePluginFactory).build()
+        ChatClient.Builder(apiKey, context)
+            .withPlugins(offlinePluginFactory)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
+            .build()
     }
 
     /**

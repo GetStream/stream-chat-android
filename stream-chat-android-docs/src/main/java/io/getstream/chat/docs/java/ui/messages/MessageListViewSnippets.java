@@ -12,22 +12,22 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.adapter.MessageListItem;
-import com.getstream.sdk.chat.utils.DateFormatter;
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import io.getstream.chat.android.ui.TransformStyle;
-import io.getstream.chat.android.ui.message.list.MessageListView;
-import io.getstream.chat.android.ui.message.list.adapter.BaseMessageItemViewHolder;
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemPayloadDiff;
-import io.getstream.chat.android.ui.message.list.adapter.MessageListItemViewHolderFactory;
-import io.getstream.chat.android.ui.message.list.viewmodel.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory;
+import io.getstream.chat.android.ui.helper.TransformStyle;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem;
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition;
+import io.getstream.chat.android.ui.common.helper.DateFormatter;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.docs.databinding.TodayMessageListItemBinding;
 
 /**
@@ -46,8 +46,7 @@ public class MessageListViewSnippets extends Fragment {
         MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
 
         // Bind view and viewModel
-        boolean enforceUniqueReactions = true;
-        MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner(), enforceUniqueReactions);
+        MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
     }
 
     public void handlingActions() {
@@ -72,7 +71,7 @@ public class MessageListViewSnippets extends Fragment {
         messageListView.setMessageUnpinHandler((message) -> {
             // Handle when message is going to be unpinned
         });
-        messageListView.setGiphySendHandler((message, giphyAction) -> {
+        messageListView.setGiphySendHandler((giphyAction) -> {
             // Handle when some giphyAction is going to be performed
         });
         messageListView.setMessageRetryHandler((message) -> {
@@ -237,6 +236,6 @@ public class MessageListViewSnippets extends Fragment {
     }
 
     public void avatarPredicate() {
-        messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs());
+        messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessagePosition.BOTTOM) && messageItem.isTheirs());
     }
 }

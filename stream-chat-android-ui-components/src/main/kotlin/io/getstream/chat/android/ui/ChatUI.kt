@@ -17,20 +17,25 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
-import com.getstream.sdk.chat.images.ImageHeadersProvider
-import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.utils.DateFormatter
-import io.getstream.chat.android.ui.common.ChannelNameFormatter
-import io.getstream.chat.android.ui.common.navigation.ChatNavigator
-import io.getstream.chat.android.ui.common.style.ChatFonts
-import io.getstream.chat.android.ui.common.style.ChatFontsImpl
-import io.getstream.chat.android.ui.common.style.ChatStyle
-import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
-import io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+import io.getstream.chat.android.ui.font.ChatFonts
+import io.getstream.chat.android.ui.font.ChatFontsImpl
+import io.getstream.chat.android.ui.font.ChatStyle
+import io.getstream.chat.android.ui.helper.ChannelNameFormatter
+import io.getstream.chat.android.ui.helper.CurrentUserProvider
+import io.getstream.chat.android.ui.helper.MessagePreviewFormatter
+import io.getstream.chat.android.ui.helper.MimeTypeIconProvider
+import io.getstream.chat.android.ui.helper.MimeTypeIconProviderImpl
+import io.getstream.chat.android.ui.helper.SupportedReactions
+import io.getstream.chat.android.ui.helper.transformer.AutoLinkableTextTransformer
+import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.navigation.ChatNavigator
 import io.getstream.chat.android.ui.utils.lazyVar
 
 /**

@@ -366,7 +366,7 @@ constructor(
                 userId = userId,
                 url = url
             )
-            Result(Unit)
+            Result.Success(Unit)
         }
     }
 
@@ -378,7 +378,7 @@ constructor(
                 userId = userId,
                 url = url
             )
-            Result(Unit)
+            Result.Success(Unit)
         }
     }
 
@@ -910,6 +910,6 @@ constructor(
     }
 
     private fun <T : Any> noConnectionIdError(): ErrorCall<T> {
-        return ErrorCall(coroutineScope, ChatError("setUser is either not called or not finished"))
+        return ErrorCall(coroutineScope, ChatError.GenericError("setUser is either not called or not finished"))
     }
 }

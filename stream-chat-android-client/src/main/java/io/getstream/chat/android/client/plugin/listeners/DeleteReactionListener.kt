@@ -60,11 +60,11 @@ public interface DeleteReactionListener {
 
     /**
      * Runs precondition check for [ChatClient.deleteReaction].
-     * The request will be run if the method returns [Result.success] and won't be made if it returns [Result.error].
+     * The request will be run if the method returns [Result.Success] and won't be made if it returns [Result.Failure].
      *
      * @param currentUser The currently logged in user.
      *
-     * @return [Result.success] if the precondition is fulfilled, [Result.error] otherwise.
+     * @return [Result.Success] if the precondition is fulfilled, [Result.Failure] otherwise.
      */
     public fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit>
 }

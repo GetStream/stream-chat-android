@@ -61,12 +61,12 @@ public interface SendReactionListener {
 
     /**
      * Runs precondition check for [ChatClient.sendReaction].
-     * The request will be run if the method returns [Result.success] and won't be made if it returns [Result.error].
+     * The request will be run if the method returns [Result.Success] and won't be made if it returns [Result.Failure].
      *
      * @param currentUser The currently logged in user.
      * @param reaction The [Reaction] to send.
      *
-     * @return [Result.success] if the precondition is fulfilled, [Result.error] otherwise.
+     * @return [Result.Success] if the precondition is fulfilled, [Result.Failure] otherwise.
      */
     public fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit>
 }

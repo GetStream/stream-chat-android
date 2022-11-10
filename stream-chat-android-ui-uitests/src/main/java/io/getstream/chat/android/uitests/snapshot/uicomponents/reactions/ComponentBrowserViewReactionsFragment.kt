@@ -23,10 +23,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOL
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.THUMBS_UP
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOL
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOVE
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.THUMBS_UP
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.android.uitests.databinding.FragmentComponentBrowserViewReactionsViewBinding
 import io.getstream.chat.android.uitests.snapshot.utils.randomMessage
 

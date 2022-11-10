@@ -19,21 +19,21 @@ public class CoreConcepts {
         // Safe to call from the main thread
         channelClient.sendMessage(message).enqueue((result) -> {
             if (result.isSuccess()) {
-                Message sentMessage = result.data();
+                Message sentMessage = ((Result.Success<Message>) result).getValue();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
     }
 
     public void errorHandling(Result<Channel> result) {
-        result.isSuccess();
-        result.isError();
+        Boolean isSuccess = result.isSuccess();
+        Boolean isFailure = result.isFailure();
 
         if (result.isSuccess()) {
-            // Use result.data()
+            // Handle success
         } else {
-            // Handle result.error()
+            // Handle error
         }
     }
 }

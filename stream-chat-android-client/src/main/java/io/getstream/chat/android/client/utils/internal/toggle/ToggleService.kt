@@ -39,9 +39,6 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
 
     public companion object {
         private const val PREFS_NAME = "toggle_storage"
-        public const val TOGGLE_KEY_MESSAGE_COMPOSER: String = "Message composer"
-
-        public const val TOGGLE_KEY_SOCKET_REFACTOR: String = "SOCKET_REFACTORED_KEY"
 
         private var instance: ToggleService? = null
 
@@ -71,11 +68,6 @@ public class ToggleService private constructor(private val sharedPreferences: Sh
         @InternalStreamChatApi
         public fun isEnabled(featureKey: String): Boolean {
             return instance?.isEnabled(featureKey) ?: false
-        }
-
-        // TODO Remove this method once ChatSocket implementation is moved out of experimental.
-        internal fun isSocketExperimental(): Boolean {
-            return instance?.isEnabled(TOGGLE_KEY_SOCKET_REFACTOR) ?: false
         }
     }
 }

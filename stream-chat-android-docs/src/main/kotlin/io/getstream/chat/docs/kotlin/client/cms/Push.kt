@@ -4,8 +4,9 @@ import android.content.Context
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate
 
 class Push(val context: Context, val client: ChatClient) {
@@ -14,25 +15,6 @@ class Push(val context: Context, val client: ChatClient) {
      * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin">Android & Firebase</a>
      */
     inner class AndroidAndFirebase {
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/push_android/?language=kotlin#registering-a-device-at-stream-backend">Registering a device at Stream Backend</a>
-         */
-        fun registeringDevice() {
-            client.addDevice(
-                Device(
-                    token = "push-provider-token",
-                    pushProvider = PushProvider.FIREBASE,
-                    providerName = "optional-provider-name",
-                )
-            ).enqueue { result ->
-                if (result.isSuccess) {
-                    // Device was successfully registered
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
 
         /**
          * @see <a href="https://getstream.io/chat/docs/android/push_android/?language=kotlin#handling-notifications-from-multiple-providers">Handling notifications from multiple providers</a>
@@ -67,50 +49,15 @@ class Push(val context: Context, val client: ChatClient) {
      */
     inner class Device_ {
 
-        /**
-         * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#register-a-device">Register a Device</a>
-         */
-        fun registerADevice() {
-            client.addDevice(
-                Device(
-                    token = "push-provider-token",
-                    pushProvider = PushProvider.FIREBASE,
-                    providerName = "optional-provider-name",
-                )
-            ).enqueue { result ->
-                if (result.isSuccess) {
-                    // Device was successfully registered
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
-
-        /**
-         * @see <a href="https://getstream.io/chat/docs/push_devices/?language=kotlin#unregister-a-device">Unregister a Device</a>
-         */
-        fun unregisterADevice() {
-            client.deleteDevice(
-                Device(
-                    token = "push-provider-token",
-                    pushProvider = PushProvider.FIREBASE,
-                    providerName = "optional-provider-name",
-                )
-            ).enqueue { result ->
-                if (result.isSuccess) {
-                    // Device was successfully unregistered
-                } else {
-                    // Handle result.error()
-                }
-            }
-        }
-
         fun listDevices() {
             client.getDevices().enqueue { result ->
-                if (result.isSuccess) {
-                    val devices: List<Device> = result.data()
-                } else {
-                    // Handle result.error()
+                when (result) {
+                    is Result.Success -> {
+                        val devices: List<Device> = result.value
+                    }
+                    is Result.Failure -> {
+                        // Handler error
+                    }
                 }
             }
         }

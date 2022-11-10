@@ -45,10 +45,10 @@ internal class ReturnOnErrorCallTest {
 
     private val resultValue = Mother.randomString()
     private val errorResultValue = Mother.randomString()
-    private val validResult: Result<String> = Result.success(resultValue)
-    private val error: ChatError = ChatError(randomString())
-    private val errorResult: Result<String> = Result.error(error)
-    private val onErrorResult: Result<String> = Result.success(errorResultValue)
+    private val validResult: Result<String> = Result.Success(resultValue)
+    private val error: ChatError = ChatError.GenericError(message = randomString())
+    private val errorResult: Result<String> = Result.Failure(error)
+    private val onErrorResult: Result<String> = Result.Success(errorResultValue)
     private val spyOnError = SpyOnError(onErrorResult)
 
     @Test
@@ -174,7 +174,7 @@ internal class ReturnOnErrorCallTest {
         val result = deferedResult.await()
 
         result `should be equal to` onErrorResult
-        spyOnError `should be invoked with` Call.callCanceledError<String>().error()
+        spyOnError `should be invoked with` (Call.callCanceledError<String>() as Result.Failure).value
         blockedCall.isStarted() `should be equal to` true
         blockedCall.isCompleted() `should be equal to` false
         blockedCall.isCanceled() `should be equal to` true

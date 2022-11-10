@@ -18,15 +18,15 @@ package io.getstream.chat.ui.sample.feature.chat.info.shared.files
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.ui.sample.databinding.ChatInfoSharedFileDateDividerBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoSharedFileItemBinding
 import io.getstream.chat.ui.sample.feature.chat.info.shared.SharedAttachment
 import java.text.DateFormat
 
 abstract class BaseViewHolder<T : SharedAttachment>(
-    itemView: View
+    itemView: View,
 ) : RecyclerView.ViewHolder(itemView) {
 
     /**
@@ -40,7 +40,7 @@ abstract class BaseViewHolder<T : SharedAttachment>(
 
 class ChatInfoSharedFileViewHolder(
     private val binding: ChatInfoSharedFileItemBinding,
-    attachmentClickListener: ChatInfoSharedFilesAdapter.AttachmentClickListener?
+    attachmentClickListener: ChatInfoSharedFilesAdapter.AttachmentClickListener?,
 ) : BaseViewHolder<SharedAttachment.AttachmentItem>(binding.root) {
 
     private lateinit var attachmentItem: SharedAttachment.AttachmentItem
@@ -61,7 +61,7 @@ class ChatInfoSharedFileViewHolder(
 
 class ChatInfoSharedFileDateDividerViewHolder(
     private val binding: ChatInfoSharedFileDateDividerBinding,
-    private val dateFormat: DateFormat
+    private val dateFormat: DateFormat,
 ) : BaseViewHolder<SharedAttachment.DateDivider>(binding.root) {
 
     override fun bind(item: SharedAttachment.DateDivider) {

@@ -11,39 +11,31 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 
-import java.util.List;
-
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.common.composer.MessageComposerState;
-import io.getstream.chat.android.common.state.Edit;
-import io.getstream.chat.android.common.state.MessageAction;
-import io.getstream.chat.android.common.state.MessageMode;
-import io.getstream.chat.android.common.state.Reply;
-import io.getstream.chat.android.ui.StyleTransformer;
-import io.getstream.chat.android.ui.TransformStyle;
-import io.getstream.chat.android.ui.message.composer.MessageComposerContext;
-import io.getstream.chat.android.ui.message.composer.MessageComposerView;
-import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCenterContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCommandSuggestionsContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerFooterContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerHeaderContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerLeadingContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerMentionSuggestionsContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerTrailingContent;
-import io.getstream.chat.android.ui.message.composer.content.MessageComposerContent;
-import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel;
-import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelBinding;
-import io.getstream.chat.android.ui.message.list.MessageListView;
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory;
+import io.getstream.chat.android.ui.helper.TransformStyle;
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState;
+import io.getstream.chat.android.ui.common.state.messages.Edit;
+import io.getstream.chat.android.ui.common.state.messages.MessageMode;
+import io.getstream.chat.android.ui.common.state.messages.Reply;
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext;
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCenterContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCommandSuggestionsContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerFooterContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerHeaderContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerLeadingContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerMentionSuggestionsContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerTrailingContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
@@ -89,9 +81,9 @@ public class MessageComposer extends Fragment {
 
             // Integrate MessageComposerView with MessageListView
             messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
-                if (mode instanceof MessageListViewModel.Mode.Thread) {
-                    messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageListViewModel.Mode.Thread) mode).getParentMessage(), null));
-                } else if (mode instanceof MessageListViewModel.Mode.Normal) {
+                if (mode instanceof MessageMode.MessageThread) {
+                    messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageMode.MessageThread) mode).getParentMessage(), null));
+                } else if (mode instanceof MessageMode.Normal) {
                     messageComposerViewModel.leaveThread();
                 }
             });

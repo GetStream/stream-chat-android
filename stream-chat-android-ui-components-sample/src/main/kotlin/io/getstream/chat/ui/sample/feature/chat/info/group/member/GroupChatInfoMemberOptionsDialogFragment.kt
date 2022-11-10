@@ -27,8 +27,8 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.common.extensions.getLastSeenText
+import io.getstream.chat.android.state.utils.EventObserver
+import io.getstream.chat.android.ui.utils.extensions.getLastSeenText
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.showToast

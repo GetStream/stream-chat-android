@@ -35,7 +35,7 @@ internal class QueryChannelListenerDatabase(private val repos: RepositoryFacade)
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
         /*

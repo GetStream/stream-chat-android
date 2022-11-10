@@ -48,15 +48,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
-import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
@@ -72,6 +66,12 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOptionsState
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
 
 class MessagesActivity : BaseConnectedActivity() {
 
@@ -135,7 +135,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     onMediaGalleryPreviewResult = { result ->
                         when (result?.resultType) {
                             MediaGalleryPreviewResultType.QUOTE -> {
-                                val message = listViewModel.getMessageWithId(result.messageId)
+                                val message = listViewModel.getMessageById(result.messageId)
 
                                 if (message != null) {
                                     composerViewModel.performMessageAction(Reply(message))

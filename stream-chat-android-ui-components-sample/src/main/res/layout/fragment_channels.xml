@@ -21,7 +21,7 @@
     android:background="@color/stream_ui_white_snow"
     >
 
-    <io.getstream.chat.android.ui.search.SearchInputView
+    <io.getstream.chat.android.ui.feature.search.SearchInputView
         android:id="@+id/searchInputView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <io.getstream.chat.android.ui.channel.list.ChannelListView
+    <io.getstream.chat.android.ui.feature.channels.list.ChannelListView
         android:id="@+id/channelsView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -44,7 +44,7 @@
         app:streamUiLoadingView="@layout/channels_loading_view"
         />
 
-    <io.getstream.chat.android.ui.search.list.SearchResultListView
+    <io.getstream.chat.android.ui.feature.search.list.SearchResultListView
         android:id="@+id/searchResultListView"
         android:layout_width="0dp"
         android:layout_height="0dp"

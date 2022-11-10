@@ -8,7 +8,9 @@ import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.utils.Result;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/sending-custom-attachments/">Sending Attachments</a>
@@ -22,11 +24,11 @@ public class Attachments {
         message.setText("Look at this attachment!");
         message.setAttachments(Collections.singletonList(attachment));
 
-        ChatClient.instance().sendMessage("messaging", "general", message).enqueue(result -> {
+        ChatClient.instance().sendMessage("messaging", "general", message, false).enqueue(result -> {
                     if (result.isSuccess()) {
-                        // Use result.data()
+                        // Handle success
                     } else {
-                        // Handle result.error()
+                        // Handle error
                     }
                 }
         );

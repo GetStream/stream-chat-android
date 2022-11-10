@@ -17,9 +17,9 @@
 package io.getstream.chat.android.guides
 
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
 
 /**
  * Reset [ChatUI] fields to the default values so that customizations showcased in one

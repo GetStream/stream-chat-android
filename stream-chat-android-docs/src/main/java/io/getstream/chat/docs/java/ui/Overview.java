@@ -4,11 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
-
-import io.getstream.chat.android.ui.message.list.MessageListView;
-import io.getstream.chat.android.ui.message.list.viewmodel.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 
 /**
  * [Overview](https://getstream.io/chat/docs/sdk/android/ui/overview/)
@@ -23,7 +22,6 @@ public class Overview extends AppCompatActivity {
         ViewModelProvider provider = new ViewModelProvider(this, factory);
         MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class); // 2
 
-        boolean enforceUniqueReactions = true;
-        MessageListViewModelBinding.bind(messageListViewModel, messageListView, viewLifecycleOwner, enforceUniqueReactions); // 3
+        MessageListViewModelBinding.bind(messageListViewModel, messageListView, viewLifecycleOwner); // 3
     }
 }

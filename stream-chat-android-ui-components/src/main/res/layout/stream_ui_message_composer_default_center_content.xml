@@ -25,7 +25,7 @@
         android:background="@drawable/stream_ui_shape_edit_text_round"
         >
 
-        <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
+        <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.MessageReplyView
             android:id="@+id/messageReplyView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
             android:scrollbars="vertical"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColorHint="@color/stream_ui_text_color_hint"
-            android:textCursorDrawable="@drawable/stream_ui_message_input_cursor"
+            android:textCursorDrawable="@drawable/stream_ui_message_composer_cursor"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

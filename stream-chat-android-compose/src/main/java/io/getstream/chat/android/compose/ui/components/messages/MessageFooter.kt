@@ -27,10 +27,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.DateFormatType
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
  * Default message footer, which contains either [MessageThreadFooter] or the default footer, which
@@ -59,7 +59,7 @@ public fun MessageFooter(
         )
     }
 
-    if (messageItem.shouldShowFooter) {
+    if (messageItem.showMessageFooter) {
         Row(
             modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
             verticalAlignment = Alignment.CenterVertically

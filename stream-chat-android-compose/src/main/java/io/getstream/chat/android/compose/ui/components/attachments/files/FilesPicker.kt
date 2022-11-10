@@ -44,11 +44,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.SelectFilesContract
-import com.getstream.sdk.chat.utils.MediaStringUtil
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.contract.internal.SelectFilesContract
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 /**
  * Shows the UI for files the user can pick for message attachments. Exposes the logic of selecting

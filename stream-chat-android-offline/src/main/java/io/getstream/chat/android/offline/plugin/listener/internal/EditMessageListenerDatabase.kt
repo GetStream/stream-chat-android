@@ -59,11 +59,9 @@ internal class EditMessageListenerDatabase(
      * @param result the result of the API call.
      */
     override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) {
-        val parsedMessage = if (result.isSuccess) {
-            val message = result.data()
-            message.copy(syncStatus = SyncStatus.COMPLETED)
-        } else {
-            originalMessage.updateFailedMessage(result.error())
+        val parsedMessage = when (result) {
+            is Result.Success -> result.value.copy(syncStatus = SyncStatus.COMPLETED)
+            is Result.Failure -> originalMessage.updateFailedMessage(result.value)
         }
 
         saveMessage(parsedMessage)

@@ -19,7 +19,7 @@ package io.getstream.chat.android.client
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
-import io.getstream.chat.android.client.clientstate.SocketStateService
+import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -74,12 +73,12 @@ internal class MockClientBuilder(
         connectionId
     )
 
-    private lateinit var socket: FakeSocket
     private lateinit var fileUploader: FileUploader
 
     lateinit var api: MoshiChatApi
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var client: ChatClient
+    lateinit var attachmentSender: AttachmentsSender
 
     fun build(): ChatClient {
         val config = ChatClientConfig(
@@ -98,27 +97,21 @@ internal class MockClientBuilder(
         val tokenUtil: TokenUtils = mock()
         val clientState: ClientState = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
-        Mockito.`when`(clientState.user) doReturn userStateFlow
-        socket = FakeSocket()
         fileUploader = mock()
         notificationsManager = mock()
 
         api = mock()
+        attachmentSender = mock()
 
-        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutineExtension.scope)
         val userScope = UserTestScope(clientScope)
-        val callPostponeHelper = CallPostponeHelper(userScope) {
-            socketStateService.awaitConnection()
-        }
+        val callPostponeHelper = CallPostponeHelper(userScope) { }
         client = ChatClient(
             config,
             api,
-            socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            socketStateService = socketStateService,
             callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
@@ -127,16 +120,18 @@ internal class MockClientBuilder(
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            socketExperimental = mock(),
+            chatSocket = mock(),
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
         )
 
+        client.attachmentsSender = attachmentSender
+
         client.connectUser(user, token).enqueue()
 
-        socket.sendEvent(connectedEvent)
+        // socket.sendEvent(connectedEvent)
 
         return client.apply {
             plugins = mutableListOf()

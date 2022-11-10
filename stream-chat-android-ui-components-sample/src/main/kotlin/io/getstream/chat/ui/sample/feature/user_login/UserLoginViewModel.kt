@@ -22,7 +22,8 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
@@ -76,7 +77,7 @@ class UserLoginViewModel : ViewModel() {
                     _events.postValue(Event(UiEvent.RedirectToChannels))
                 }.enqueue(::handleUserConnection)
             } else {
-                if (getCurrentUser() == null) {
+                if (globalState.user.value == null) {
                     connectUser(chatUser, user.token).enqueue(::handleUserConnection)
                 }
 
@@ -86,11 +87,12 @@ class UserLoginViewModel : ViewModel() {
     }
 
     private fun handleUserConnection(result: Result<ConnectionData>) {
-        if (result.isSuccess) {
-            logger.d { "User set successfully" }
-        } else {
-            _events.postValue(Event(UiEvent.Error(result.error().message)))
-            logger.d { "Failed to set user ${result.error()}" }
+        when (result) {
+            is Result.Success -> logger.d { "User set successfully" }
+            is Result.Failure -> {
+                _events.postValue(Event(UiEvent.Error(result.value.message)))
+                logger.d { "Failed to set user ${result.value}" }
+            }
         }
     }
 

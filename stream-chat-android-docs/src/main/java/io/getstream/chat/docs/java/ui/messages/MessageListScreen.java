@@ -7,11 +7,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import io.getstream.chat.android.ui.message.MessageListActivity;
-import io.getstream.chat.android.ui.message.MessageListFragment;
-import io.getstream.chat.android.ui.message.input.MessageInputView;
-import io.getstream.chat.android.ui.message.list.MessageListView;
-import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView;
+import io.getstream.chat.android.ui.feature.messages.MessageListActivity;
+import io.getstream.chat.android.ui.feature.messages.MessageListFragment;
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView;
 import io.getstream.chat.docs.R;
 import kotlin.Unit;
 
@@ -70,9 +70,9 @@ public class MessageListScreen {
         }
 
         @Override
-        protected void setupMessageInput(@NonNull MessageInputView messageInputView) {
-            super.setupMessageInput(messageInputView);
-            // Customize message input view
+        protected void setupMessageComposer(@NonNull MessageComposerView messageComposerView) {
+            super.setupMessageComposer(messageComposerView);
+            // Customize message composer view
         }
     }
 

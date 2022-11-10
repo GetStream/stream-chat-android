@@ -141,9 +141,6 @@
     <dimen name="stream_ui_scroll_button_unread_badge_padding_horizontal">5dp</dimen>
     <dimen name="stream_ui_scroll_button_unread_badge_text_size">11sp</dimen>
 
-    <!--MessageInputFieldView-->
-    <dimen name="stream_ui_message_input_command_icon_size">16dp</dimen>
-    <dimen name="stream_ui_message_input_button_size">32dp</dimen>
     <dimen name="stream_ui_attachment_button_size">32dp</dimen>
     <dimen name="stream_ui_command_button_size">32dp</dimen>
 
@@ -154,9 +151,6 @@
     <dimen name="stream_ui_channel_item_title">15sp</dimen>
     <dimen name="stream_ui_channel_item_message">13sp</dimen>
     <dimen name="stream_ui_channel_item_message_date">13sp</dimen>
-
-    <dimen name="stream_ui_message_input_padding_end">16dp</dimen>
-    <dimen name="stream_ui_message_input_padding_start">16dp</dimen>
 
     <!-- Message ViewHolders -->
     <dimen name="stream_ui_message_viewholder_avatar_missing_margin">40dp</dimen>

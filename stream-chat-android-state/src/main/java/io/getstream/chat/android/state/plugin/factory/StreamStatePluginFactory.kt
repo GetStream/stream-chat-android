@@ -19,22 +19,21 @@ package io.getstream.chat.android.state.plugin.factory
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogicFactory
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.offline.event.handler.internal.EventHandler
-import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
-import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptor
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.offline.sync.internal.SyncManager
-import io.getstream.chat.android.offline.sync.messages.internal.OfflineSyncFirebaseMessagingHandler
-import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.event.handler.internal.EventHandler
+import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig
+import io.getstream.chat.android.state.plugin.internal.ConfigSingleton
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.sync.internal.OfflineSyncFirebaseMessagingHandler
+import io.getstream.chat.android.state.sync.internal.SyncManager
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -53,6 +52,10 @@ public class StreamStatePluginFactory(
     private val appContext: Context,
 ) : PluginFactory {
     private val logger = StreamLog.getLogger("Chat:StatePluginFactory")
+
+    init {
+        ConfigSingleton.statePluginConfig = config
+    }
 
     /**
      * Creates a [Plugin]
@@ -84,10 +87,11 @@ public class StreamStatePluginFactory(
         val clientState = chatClient.clientState
         val globalState = GlobalMutableState.get(chatClient.clientState).apply {
             clearState()
+            setUser(user)
         }
 
         val stateRegistry = StateRegistry.create(
-            scope.coroutineContext.job, scope, clientState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
+            scope.coroutineContext.job, scope, globalState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )
         val logic = LogicRegistry.create(
             stateRegistry = stateRegistry,
@@ -99,18 +103,7 @@ public class StreamStatePluginFactory(
             coroutineScope = scope,
         )
 
-        val sendMessageInterceptor = SendMessageInterceptor(
-            context = appContext,
-            logic = logic,
-            clientState = clientState,
-            channelRepository = repositoryFacade,
-            messageRepository = repositoryFacade,
-            attachmentRepository = repositoryFacade,
-            scope = scope,
-            networkType = config.uploadAttachmentsNetworkType,
-            user = user,
-            prepareMessageLogic = PrepareMessageLogicFactory().create()
-        )
+        chatClient.logicRegistry = logic
 
         val syncManager = SyncManager(
             currentUserId = user.id,
@@ -142,13 +135,13 @@ public class StreamStatePluginFactory(
         }
 
         return StatePlugin(
-            sendMessageInterceptor = sendMessageInterceptor,
             logic = logic,
             repositoryFacade = repositoryFacade,
             clientState = clientState,
             stateRegistry = stateRegistry,
             syncManager = syncManager,
             eventHandler = eventHandler,
+            globalState = globalState
         )
     }
 

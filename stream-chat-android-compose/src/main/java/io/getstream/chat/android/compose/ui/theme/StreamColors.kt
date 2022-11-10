@@ -59,6 +59,10 @@ import io.getstream.chat.android.compose.R
  * given it contains more than can be displayed in the message list media attachment preview.
  * @param showMoreCountText The color of the text displaying how many more media attachments the message contains,
  * given it contains more than can be displayed in the message list media attachment preview.
+ * @param ownMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by the current user.
+ * @param otherMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by other users.
+ * @param ownMessageQuotedText Changes the text color of the quoted message contained in a reply sent by the current user. [textHighEmphasis] by default.
+ * @param otherMessageQuotedText Changes the text color of the quoted message contained in a reply sent by other users. [textHighEmphasis] by default.
  */
 @Immutable
 public data class StreamColors(
@@ -90,6 +94,10 @@ public data class StreamColors(
     public val videoBackgroundMediaGalleryPicker: Color,
     public val showMoreOverlay: Color,
     public val showMoreCountText: Color,
+    public val ownMessageQuotedBackground: Color = otherMessagesBackground,
+    public val otherMessageQuotedBackground: Color = ownMessagesBackground,
+    public val ownMessageQuotedText: Color = textHighEmphasis,
+    public val otherMessageQuotedText: Color = textHighEmphasis,
 ) {
 
     public companion object {

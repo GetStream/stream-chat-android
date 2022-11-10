@@ -1,36 +1,19 @@
-public final class io/getstream/chat/android/livedata/BuildConfig {
+public final class io/getstream/chat/android/offline/BuildConfig {
 	public static final field BUILD_TYPE Ljava/lang/String;
 	public static final field DEBUG Z
 	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/offline/plugin/configuration/Config {
-	public fun <init> ()V
-	public fun <init> (Z)V
-	public fun <init> (ZZ)V
-	public fun <init> (ZZZ)V
-	public fun <init> (ZZZLio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;)V
-	public synthetic fun <init> (ZZZLio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Z
-	public final fun component2 ()Z
-	public final fun component3 ()Z
-	public final fun component4 ()Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
-	public final fun copy (ZZZLio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/offline/plugin/configuration/Config;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/plugin/configuration/Config;ZZZLio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;ILjava/lang/Object;)Lio/getstream/chat/android/offline/plugin/configuration/Config;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBackgroundSyncEnabled ()Z
-	public final fun getPersistenceEnabled ()Z
-	public final fun getUploadAttachmentsNetworkType ()Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
-	public final fun getUserPresence ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflinePluginFactory : io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider, io/getstream/chat/android/client/plugin/factory/PluginFactory {
-	public fun <init> (Lio/getstream/chat/android/offline/plugin/configuration/Config;Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;)V
 	public fun createRepositoryFactory (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
 	public fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/plugin/Plugin;
+}
+
+public final class io/getstream/chat/android/offline/repository/database/converter/internal/QuerySortParser {
+	public fun <init> ()V
+	public final fun fromSpecifications (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 }
 
 public final class io/getstream/chat/android/offline/repository/database/internal/ChatDatabase_Impl {
