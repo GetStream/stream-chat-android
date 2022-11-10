@@ -75,6 +75,13 @@ public val ChatClient.globalState: GlobalState
     get() = GlobalMutableState.get(clientState)
 
 /**
+ * [StatePluginConfig] instance used to configure [io.getstream.chat.android.state.plugin.internal.StatePlugin]
+ * or null if the config doesn't exist.
+ */
+public val ChatClient.stateConfig: StatePluginConfig?
+    get() = ConfigSingleton.statePluginConfig
+
+/**
  * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.
  * The [QueryChannelsState] cannot be created before connecting the user therefore, the method returns a StateFlow
  * that emits a null when the user has not been connected yet and the new value every time the user changes.
@@ -121,9 +128,6 @@ public fun ChatClient.watchChannelAsState(
         requestsAsState(coroutineScope).watchChannel(cid, messageLimit, stateConfig?.userPresence == true)
     }
 }
-
-public val ChatClient.stateConfig: StatePluginConfig?
-    get() = ConfigSingleton.statePluginConfig
 
 /**
  * Same class of ChatClient.getReplies, but provides the result as [ThreadState]
