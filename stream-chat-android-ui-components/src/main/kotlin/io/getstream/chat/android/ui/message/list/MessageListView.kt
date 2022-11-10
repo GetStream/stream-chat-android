@@ -145,6 +145,7 @@ import io.getstream.chat.android.ui.message.list.options.message.MessageOptionIt
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.message.list.options.message.MessageOptionsDialogFragment
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
+import io.getstream.chat.android.uiutils.extension.hasLink
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -486,7 +487,10 @@ public class MessageListView : ConstraintLayout {
                 val destination = when {
                     message.attachments.all(Attachment::isImage) -> {
                         val filteredAttachments = message.attachments
-                            .filter { it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() }
+                            .filter {
+                                it.type == ModelType.attach_image && !it.imagePreviewUrl.isNullOrEmpty() &&
+                                    !it.hasLink()
+                            }
                         val attachmentGalleryItems = filteredAttachments.map {
                             AttachmentGalleryItem(
                                 attachment = it,
