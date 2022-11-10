@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.ConnectionData;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
+import io.getstream.chat.android.state.extensions.ChatClientExtensions;
 
 public class UnreadCounts {
     private ChatClient client;
