@@ -511,7 +511,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         MediaGalleryPreviewOptionItem(
                             mediaGalleryPreviewOption = option,
                             pagerState = pagerState,
-                            attachments = attachments)
+                            attachments = attachments
+                        )
 
                         if (index != options.lastIndex) {
                             Spacer(
