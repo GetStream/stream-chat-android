@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.common.utils.extensions
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalState
 
 public fun Channel.isDirectMessaging(): Boolean {
     return members.size == 2 && includesCurrentUser()

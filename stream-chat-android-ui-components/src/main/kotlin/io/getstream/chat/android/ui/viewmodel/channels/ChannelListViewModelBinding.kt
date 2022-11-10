@@ -21,7 +21,7 @@ package io.getstream.chat.android.ui.viewmodel.channels
 import android.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.distinctUntilChanged
-import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem

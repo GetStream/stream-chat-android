@@ -28,7 +28,7 @@ import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.subscribeFor
-import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView

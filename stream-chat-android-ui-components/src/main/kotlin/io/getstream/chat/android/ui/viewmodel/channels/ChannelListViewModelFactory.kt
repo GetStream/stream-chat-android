@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 
 /**
  * Creates a channels view model factory.
