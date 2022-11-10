@@ -19,6 +19,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Removing unnecessary configuration fields for `OfflinePluginConfig`. [#4376](https://github.com/GetStream/stream-chat-android/pull/4376)
 
 ### ✅ Added
 - Added `isFilteringMessages` check on `QueryChannelRequest` request. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
