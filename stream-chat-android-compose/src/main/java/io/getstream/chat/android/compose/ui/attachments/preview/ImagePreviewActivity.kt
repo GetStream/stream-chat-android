@@ -31,7 +31,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -116,6 +115,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
+import io.getstream.chat.android.uiutils.extension.hasLink
 import kotlinx.coroutines.launch
 import java.util.Date
 import kotlin.math.abs
@@ -184,8 +184,14 @@ public class ImagePreviewActivity : AppCompatActivity() {
         message: Message,
         initialAttachmentPosition: Int,
     ) {
+        // Filters out any link attachments. Pass this value along to all children
+        // Composables that read message attachments to prevent inconsistent state.
+        val filteredAttachments: List<Attachment> = message.attachments.filter { attachment ->
+            !attachment.hasLink()
+        }
+
         val startingPosition =
-            if (initialAttachmentPosition !in message.attachments.indices) 0 else initialAttachmentPosition
+            if (initialAttachmentPosition !in filteredAttachments.indices) 0 else initialAttachmentPosition
 
         val pagerState = rememberPagerState(initialPage = startingPosition)
 
@@ -199,10 +205,10 @@ public class ImagePreviewActivity : AppCompatActivity() {
                             .fillMaxSize()
                             .padding(contentPadding)
                     ) {
-                        ImagePreviewContent(pagerState, message.attachments)
+                        ImagePreviewContent(pagerState, filteredAttachments)
                     }
                 },
-                bottomBar = { ImagePreviewBottomBar(message.attachments, pagerState) }
+                bottomBar = { ImagePreviewBottomBar(filteredAttachments, pagerState) }
             )
 
             AnimatedVisibility(
@@ -213,6 +219,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 ImagePreviewOptions(
                     options = defaultImageOptions(message = message),
                     pagerState = pagerState,
+                    attachments = filteredAttachments,
                     modifier = Modifier.animateEnterExit(
                         enter = slideInVertically(),
                         exit = slideOutVertically()
@@ -227,6 +234,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
             ) {
                 ImageGallery(
                     pagerState = pagerState,
+                    attachments = filteredAttachments,
                     modifier = Modifier.animateEnterExit(
                         enter = slideInVertically(initialOffsetY = { height -> height / 2 }),
                         exit = slideOutVertically(targetOffsetY = { height -> height / 2 })
@@ -328,12 +336,14 @@ public class ImagePreviewActivity : AppCompatActivity() {
      *
      * @param options The options available for the image.
      * @param pagerState The state of the pager, used to fetch the current image.
+     * @param attachments The list of attachments for which we display options.
      * @param modifier Modifier for styling.
      */
     @Composable
     private fun ImagePreviewOptions(
         options: List<ImagePreviewOption>,
         pagerState: PagerState,
+        attachments: List<Attachment>,
         modifier: Modifier,
     ) {
         Box(
@@ -358,7 +368,11 @@ public class ImagePreviewActivity : AppCompatActivity() {
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     options.forEachIndexed { index, option ->
-                        ImagePreviewOptionItem(option, pagerState)
+                        ImagePreviewOptionItem(
+                            imagePreviewOption = option,
+                            pagerState = pagerState,
+                            attachments = attachments
+                        )
 
                         if (index != options.lastIndex) {
                             Spacer(
@@ -379,11 +393,13 @@ public class ImagePreviewActivity : AppCompatActivity() {
      *
      * @param imagePreviewOption The option information to show.
      * @param pagerState The state of the pager, used to handle selected actions.
+     * @param attachments The list of attachments for which we display options.
      */
     @Composable
     private fun ImagePreviewOptionItem(
         imagePreviewOption: ImagePreviewOption,
         pagerState: PagerState,
+        attachments: List<Attachment>,
     ) {
         val downloadPermissionHandler = ChatTheme.permissionHandlerProvider
             .first { it.canHandle(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
@@ -397,7 +413,12 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     indication = rememberRipple(),
                     onClick = {
                         imagePreviewViewModel.toggleImageOptions(isShowingOptions = false)
-                        handleImageAction(imagePreviewOption.action, pagerState.currentPage, downloadPermissionHandler)
+                        handleImageAction(
+                            imagePreviewAction = imagePreviewOption.action,
+                            currentPage = pagerState.currentPage,
+                            permissionHandler = downloadPermissionHandler,
+                            attachments = attachments
+                        )
                     }
                 )
                 .padding(8.dp),
@@ -429,11 +450,13 @@ public class ImagePreviewActivity : AppCompatActivity() {
      *
      * @param imagePreviewAction The action the user selected.
      * @param currentPage The index of the current image.
+     * @param attachments The list of attachments for which actions need to be handled.
      */
     private fun handleImageAction(
         imagePreviewAction: ImagePreviewAction,
         currentPage: Int,
         permissionHandler: PermissionHandler,
+        attachments: List<Attachment>,
     ) {
         val message = imagePreviewAction.message
 
@@ -449,11 +472,11 @@ public class ImagePreviewActivity : AppCompatActivity() {
             is Reply -> {
                 handleResult(ImagePreviewResult(messageId = message.id, resultType = ImagePreviewResultType.QUOTE))
             }
-            is Delete -> imagePreviewViewModel.deleteCurrentImage(message.attachments[currentPage])
+            is Delete -> imagePreviewViewModel.deleteCurrentImage(attachments[currentPage])
             is SaveImage -> {
                 permissionHandler
                     .onHandleRequest(
-                        mapOf(DownloadPermissionHandler.PayloadAttachment to message.attachments[currentPage])
+                        mapOf(DownloadPermissionHandler.PayloadAttachment to attachments[currentPage])
                     )
             }
         }
@@ -775,12 +798,13 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * Represents the image gallery where the user can browse all images and quickly jump to them.
      *
      * @param pagerState The state of the pager, used to navigate to specific images.
+     * @param attachments The list of attachments to be displayed.
      * @param modifier Modifier for styling.
      */
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun ImageGallery(
         pagerState: PagerState,
+        attachments: List<Attachment>,
         modifier: Modifier = Modifier,
     ) {
         val message = imagePreviewViewModel.message
@@ -816,7 +840,7 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(ColumnCount),
                         content = {
-                            itemsIndexed(message.attachments) { index, attachment ->
+                            itemsIndexed(attachments) { index, attachment ->
                                 ImageGalleryItem(index, attachment, message.user, pagerState)
                             }
                         }
