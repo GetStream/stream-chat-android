@@ -28,12 +28,6 @@ public class Offline {
     private String apiKey = "api-key";
 
     public void configureOfflinePlugin(Context context) {
-        // Enables the ability to receive information about user activity such as last active date and if they are online right now.
-        boolean userPresence = true;
-        // Enables using the database as an internal caching mechanism.
-        boolean persistenceEnabled = true;
-        // An enumeration of various network types used as a constraint inside upload attachments worker.
-
         StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(context);
         new ChatClient.Builder("apiKey", context).withPlugins(offlinePluginFactory).build();
     }

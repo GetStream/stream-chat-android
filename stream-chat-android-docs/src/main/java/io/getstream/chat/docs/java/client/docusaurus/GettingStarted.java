@@ -35,11 +35,6 @@ public class GettingStarted {
     }
 
     public void addingTheOfflinePlugin(String apiKey, Context context) {
-        // Enables the ability to receive information about user activity such as last active date and if they are online right now.
-        boolean userPresence = true;
-        // Enables using the database as an internal caching mechanism.
-        boolean persistenceEnabled = true;
-
         StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(context);
         new ChatClient.Builder("apiKey", context).withPlugins(offlinePluginFactory).build();
     }

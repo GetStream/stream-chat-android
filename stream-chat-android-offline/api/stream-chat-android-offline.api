@@ -5,19 +5,6 @@ public final class io/getstream/chat/android/livedata/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/offline/plugin/configuration/OfflinePluginConfig {
-	public fun <init> ()V
-	public fun <init> (Z)V
-	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Z
-	public final fun copy (Z)Lio/getstream/chat/android/offline/plugin/configuration/OfflinePluginConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/plugin/configuration/OfflinePluginConfig;ZILjava/lang/Object;)Lio/getstream/chat/android/offline/plugin/configuration/OfflinePluginConfig;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getUserPresence ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflinePluginFactory : io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider, io/getstream/chat/android/client/plugin/factory/PluginFactory {
 	public fun <init> (Landroid/content/Context;)V
 	public fun createRepositoryFactory (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
