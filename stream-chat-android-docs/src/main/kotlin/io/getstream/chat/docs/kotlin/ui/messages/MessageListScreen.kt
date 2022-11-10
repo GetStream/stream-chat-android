@@ -15,32 +15,42 @@ import io.getstream.chat.docs.R
  */
 class MessageListScreen {
 
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-screen/#usage)
+     */
     fun usage() {
-        class MyMessageListActivity : AppCompatActivity() {
+
+        fun startActivity(context: Context) {
+            context.startActivity(MessageListActivity.createIntent(context, cid = "messaging:123"))
+        }
+
+        class MyMessageListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container) {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                setContentView(R.layout.stream_ui_fragment_container)
-
                 if (savedInstanceState == null) {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, MessageListFragment.newInstance(cid = "channelType:channelId"))
+                        .replace(R.id.container, MessageListFragment.newInstance(cid = "messaging:123"))
                         .commit()
                 }
             }
         }
     }
 
-    fun startActivity(context: Context) {
-        context.startActivity(MessageListActivity.createIntent(context, cid = "channelType:channelId"))
-    }
-
+    /**
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-screen/#handling-actions)
+     */
     fun handlingActions() {
-        class MainActivity : AppCompatActivity(), MessageListFragment.BackPressListener {
+
+        class MyMessageListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container), MessageListFragment.BackPressListener {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                // Add MessageListFragment to the layout
+                if (savedInstanceState == null) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, MessageListFragment.newInstance(cid = "messaging:123"))
+                        .commit()
+                }
             }
 
             override fun onBackPress() {
@@ -49,12 +59,18 @@ class MessageListScreen {
         }
     }
 
+    /**
+     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-screen/#customization)
+     */
     fun customization() {
+
         class CustomMessageListFragment : MessageListFragment() {
 
             override fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
                 super.setupMessageListHeader(messageListHeaderView)
-                // Customize message list header view. For example, set a custom back button click listener:
+                // Customize message list header view
+
+                // For example, set a custom listener for the back button
                 messageListHeaderView.setBackButtonClickListener {
                     // Handle back press
                 }
