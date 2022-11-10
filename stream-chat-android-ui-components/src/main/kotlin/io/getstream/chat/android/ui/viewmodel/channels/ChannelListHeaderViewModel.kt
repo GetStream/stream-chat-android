@@ -23,8 +23,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
 
 /**
