@@ -638,22 +638,43 @@ public class MessageListViewModel(
                 ).enqueue { result ->
                     if (result.isSuccess) {
                         val message = result.data()
+
                         message.attachments.removeAll { attachment ->
-                            if (attachmentToBeDeleted.assetUrl != null) {
-                                attachment.assetUrl == attachmentToBeDeleted.assetUrl
-                            } else {
-                                attachment.imageUrl == attachmentToBeDeleted.imageUrl
+                            val imageUrl = attachmentToBeDeleted.imageUrl
+                            val assetUrl = attachmentToBeDeleted.assetUrl
+
+                            when {
+                                assetUrl != null -> {
+                                    attachment.assetUrl?.substringBefore("?") ==
+                                        assetUrl.substringBefore("?")
+                                }
+                                imageUrl != null -> {
+                                    attachment.imageUrl?.substringBefore("?") ==
+                                        imageUrl.substringBefore("?")
+                                }
+                                else -> false
                             }
                         }
 
-                        chatClient.updateMessage(message).enqueue(
-                            onError = { chatError ->
-                                logger.e {
-                                    "Could not edit message to remove its attachments: ${chatError.message}. " +
-                                        "Cause: ${chatError.cause?.message}"
+                        if (message.text.isBlank() && message.attachments.isEmpty()) {
+                            chatClient.deleteMessage(messageId = event.messageId).enqueue(
+                                onError = { chatError ->
+                                    logger.e {
+                                        "Could not remove the attachment and delete the remaining blank message" +
+                                            ": ${chatError.message}. Cause: ${chatError.cause?.message}"
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        } else {
+                            chatClient.updateMessage(message).enqueue(
+                                onError = { chatError ->
+                                    logger.e {
+                                        "Could not edit message to remove its attachments: ${chatError.message}. " +
+                                            "Cause: ${chatError.cause?.message}"
+                                    }
+                                }
+                            )
+                        }
                     } else {
                         logger.e { "Could not load message: ${result.error()}" }
                     }
