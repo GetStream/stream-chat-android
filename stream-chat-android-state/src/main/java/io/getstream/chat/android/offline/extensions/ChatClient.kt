@@ -45,6 +45,8 @@ import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.offline.plugin.state.global.GlobalState
 import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.plugin.internal.ConfigSingleton
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -71,6 +73,13 @@ public val ChatClient.state: StateRegistry
  */
 public val ChatClient.globalState: GlobalState
     get() = GlobalMutableState.get(clientState)
+
+/**
+ * [StatePluginConfig] instance used to configure [io.getstream.chat.android.state.plugin.internal.StatePlugin]
+ * or null if the config doesn't exist.
+ */
+public val ChatClient.stateConfig: StatePluginConfig?
+    get() = ConfigSingleton.statePluginConfig
 
 /**
  * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.
@@ -116,7 +125,7 @@ public fun ChatClient.watchChannelAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<ChannelState?> {
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).watchChannel(cid, messageLimit)
+        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, stateConfig?.userPresence == true)
     }
 }
 
