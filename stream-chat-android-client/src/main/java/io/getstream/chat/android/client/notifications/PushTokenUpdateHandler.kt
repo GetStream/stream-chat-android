@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.logging.StreamLog
 
 internal class PushTokenUpdateHandler(context: Context) {
@@ -59,12 +60,12 @@ internal class PushTokenUpdateHandler(context: Context) {
         val userPushToken = device.toUserPushToken()
         if (device.isValid() && this.userPushToken != userPushToken) {
             removeStoredDevice()
-            val result = ChatClient.instance().addDevice(device).await()
-            if (result.isSuccess) {
-                this.userPushToken = userPushToken
-                logger.i { "Device registered with token ${device.token} (${device.pushProvider.key})" }
-            } else {
-                logger.e { "Error registering device ${result.error().message}" }
+            when (val result = ChatClient.instance().addDevice(device).await()) {
+                is Result.Success -> {
+                    this.userPushToken = userPushToken
+                    logger.i { "Device registered with token ${device.token} (${device.pushProvider.key})" }
+                }
+                is Result.Failure -> logger.e { "Error registering device ${result.value.message}" }
             }
         }
     }
@@ -73,7 +74,7 @@ internal class PushTokenUpdateHandler(context: Context) {
         userPushToken.toDevice()
             .takeIf { it.isValid() }
             ?.let {
-                if (ChatClient.instance().deleteDevice(it).await().isSuccess) {
+                if (ChatClient.instance().deleteDevice(it).await() is Result.Success) {
                     userPushToken = UserPushToken("", "", "", null)
                 }
             }

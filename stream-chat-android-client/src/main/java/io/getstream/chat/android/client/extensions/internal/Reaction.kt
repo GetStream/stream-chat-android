@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.isPermanent
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
@@ -67,10 +67,9 @@ public fun mergeReactions(
  */
 @InternalStreamChatApi
 public fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
-    return if (result.isSuccess) {
-        copy(syncStatus = SyncStatus.COMPLETED)
-    } else {
-        updateFailedReactionSyncStatus(result.error())
+    return when (result) {
+        is Result.Success -> copy(syncStatus = SyncStatus.COMPLETED)
+        is Result.Failure -> updateFailedReactionSyncStatus(result.value)
     }
 }
 

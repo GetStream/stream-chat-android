@@ -980,12 +980,12 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$Error : io/getstream/chat/android/client/clientstate/DisconnectCause {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatNetworkError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatNetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;Lio/getstream/chat/android/client/errors/ChatNetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError$NetworkError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;Lio/getstream/chat/android/client/errors/ChatError$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
+	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -996,12 +996,12 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError : io/getstream/chat/android/client/clientstate/DisconnectCause {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatNetworkError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatNetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;Lio/getstream/chat/android/client/errors/ChatNetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError$NetworkError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;Lio/getstream/chat/android/client/errors/ChatError$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
+	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1033,54 +1033,6 @@ public final class io/getstream/chat/android/client/errorhandler/QueryMembersErr
 
 public final class io/getstream/chat/android/client/errorhandler/SendReactionErrorHandler$DefaultImpls {
 	public static fun compareTo (Lio/getstream/chat/android/client/errorhandler/SendReactionErrorHandler;Lio/getstream/chat/android/client/errorhandler/ErrorHandler;)I
-}
-
-public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/lang/Enum {
-	public static final field API_KEY_NOT_FOUND Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field AUTHENTICATION_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field CANT_PARSE_CONNECTION_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field CANT_PARSE_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field Companion Lio/getstream/chat/android/client/errors/ChatErrorCode$Companion;
-	public static final field INVALID_TOKEN Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field MESSAGE_MODERATION_FAILED Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field NETWORK_FAILED Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field NO_ERROR_BODY Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field PARSER_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field SOCKET_CLOSED Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field SOCKET_FAILURE Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field TOKEN_DATE_INCORRECT Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field TOKEN_EXPIRED Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field TOKEN_NOT_VALID Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field TOKEN_SIGNATURE_INCORRECT Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field UNABLE_TO_PARSE_SOCKET_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field UNDEFINED_TOKEN Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static final field VALIDATION_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public final fun getCode ()I
-	public final fun getDescription ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/errors/ChatErrorCode;
-	public static fun values ()[Lio/getstream/chat/android/client/errors/ChatErrorCode;
-}
-
-public final class io/getstream/chat/android/client/errors/ChatErrorCode$Companion {
-	public final fun isAuthenticationError (I)Z
-}
-
-public final class io/getstream/chat/android/client/errors/ChatNetworkError : io/getstream/chat/android/client/errors/ChatError {
-	public static final field Companion Lio/getstream/chat/android/client/errors/ChatNetworkError$Companion;
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getDescription ()Ljava/lang/String;
-	public final fun getStatusCode ()I
-	public final fun getStreamCode ()I
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/errors/ChatNetworkError$Companion {
-	public final fun create (ILjava/lang/String;ILjava/lang/Throwable;)Lio/getstream/chat/android/client/errors/ChatNetworkError;
-	public final fun create (Lio/getstream/chat/android/client/errors/ChatErrorCode;Ljava/lang/Throwable;I)Lio/getstream/chat/android/client/errors/ChatNetworkError;
-	public static synthetic fun create$default (Lio/getstream/chat/android/client/errors/ChatNetworkError$Companion;ILjava/lang/String;ILjava/lang/Throwable;ILjava/lang/Object;)Lio/getstream/chat/android/client/errors/ChatNetworkError;
-	public static synthetic fun create$default (Lio/getstream/chat/android/client/errors/ChatNetworkError$Companion;Lio/getstream/chat/android/client/errors/ChatErrorCode;Ljava/lang/Throwable;IILjava/lang/Object;)Lio/getstream/chat/android/client/errors/ChatNetworkError;
 }
 
 public final class io/getstream/chat/android/client/errors/cause/MessageModerationDeletedException : io/getstream/chat/android/client/errors/cause/StreamSdkException {
@@ -2251,9 +2203,6 @@ public final class io/getstream/chat/android/client/extensions/ChannelExtensionK
 	public static final fun countUnreadMentionsForUser (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)I
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/client/models/Channel;)Z
 	public static final fun isMutedFor (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Z
-}
-
-public final class io/getstream/chat/android/client/extensions/ChatErrorKt {
 }
 
 public final class io/getstream/chat/android/client/extensions/FlowExtensions {
@@ -4053,10 +4002,8 @@ public final class io/getstream/chat/android/client/query/pagination/AnyChannelP
 }
 
 public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
-	public abstract fun clearState ()V
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitializationState ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun isConnecting ()Z
 	public abstract fun isInitialized ()Z
 	public abstract fun isNetworkAvailable ()Z

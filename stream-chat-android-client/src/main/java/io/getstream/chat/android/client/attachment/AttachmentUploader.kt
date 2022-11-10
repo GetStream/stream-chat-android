@@ -103,24 +103,27 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         val result = client.sendImage(channelType, channelId, file, progressCallback)
             .await()
 
-        return if (result.isSuccess) {
-            val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
-                file = file,
-                mimeType = mimeType,
-                attachmentType = attachmentType,
-                url = result.data().file
-            )
+        return when (result) {
+            is Result.Success -> {
+                val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
+                    file = file,
+                    mimeType = mimeType,
+                    attachmentType = attachmentType,
+                    url = result.value.file
+                )
 
-            onSuccessfulUpload(
-                augmentedAttachment = augmentedAttachment,
-                progressCallback = progressCallback
-            )
-        } else {
-            onFailedUpload(
-                attachment = attachment,
-                result = result,
-                progressCallback = progressCallback
-            )
+                onSuccessfulUpload(
+                    augmentedAttachment = augmentedAttachment,
+                    progressCallback = progressCallback
+                )
+            }
+            is Result.Failure -> {
+                onFailedUpload(
+                    attachment = attachment,
+                    result = result,
+                    progressCallback = progressCallback
+                )
+            }
         }
     }
 
@@ -152,25 +155,28 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         val result = client.sendFile(channelType, channelId, file, progressCallback)
             .await()
 
-        return if (result.isSuccess) {
-            val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
-                file = file,
-                mimeType = mimeType,
-                attachmentType = attachmentType,
-                url = result.data().file,
-                thumbUrl = result.data().thumbUrl
-            )
+        return when (result) {
+            is Result.Success -> {
+                val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
+                    file = file,
+                    mimeType = mimeType,
+                    attachmentType = attachmentType,
+                    url = result.value.file,
+                    thumbUrl = result.value.thumbUrl
+                )
 
-            onSuccessfulUpload(
-                augmentedAttachment = augmentedAttachment,
-                progressCallback = progressCallback
-            )
-        } else {
-            onFailedUpload(
-                attachment = attachment,
-                result = result,
-                progressCallback = progressCallback
-            )
+                onSuccessfulUpload(
+                    augmentedAttachment = augmentedAttachment,
+                    progressCallback = progressCallback
+                )
+            }
+            is Result.Failure -> {
+                onFailedUpload(
+                    attachment = attachment,
+                    result = result,
+                    progressCallback = progressCallback
+                )
+            }
         }
     }
 
@@ -192,7 +198,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
     ): Result<Attachment> {
         augmentedAttachment.uploadState = Attachment.UploadState.Success
         progressCallback?.onSuccess(augmentedAttachment.url)
-        return Result(augmentedAttachment)
+        return Result.Success(augmentedAttachment)
     }
 
     /**
@@ -206,14 +212,14 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      *
      * @return Returns a [Result] containing a [io.getstream.chat.android.client.errors.ChatError]
      * */
-    private fun <T : Any> onFailedUpload(
+    private fun onFailedUpload(
         attachment: Attachment,
-        result: Result<T>,
+        result: Result.Failure,
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
-        attachment.uploadState = Attachment.UploadState.Failed(result.error())
-        progressCallback?.onError(result.error())
-        return Result(result.error())
+        attachment.uploadState = Attachment.UploadState.Failed(result.value)
+        progressCallback?.onError(result.value)
+        return Result.Failure(result.value)
     }
 
     /**

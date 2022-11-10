@@ -36,8 +36,8 @@ import org.mockito.kotlin.spy
 internal class MapCallTest {
 
     private val resultValue = positiveRandomInt()
-    private val validResult: Result<Int> = Result.success(resultValue)
-    private val expectedResult: Result<String> = Result.success("$resultValue")
+    private val validResult: Result<Int> = Result.Success(resultValue)
+    private val expectedResult: Result<String> = Result.Success("$resultValue")
     private val mapper: SpyMapper<Int, String> = SpyMapper { "$it" }
 
     @Test

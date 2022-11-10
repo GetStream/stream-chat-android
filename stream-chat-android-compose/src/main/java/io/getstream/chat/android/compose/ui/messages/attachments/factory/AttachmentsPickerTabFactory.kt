@@ -17,9 +17,9 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import androidx.compose.runtime.Composable
-import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
  * Holds the information required to add support for a [AttachmentsPickerMode] mode

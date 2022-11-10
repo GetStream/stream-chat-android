@@ -137,7 +137,7 @@ internal class DeleteReactionListenerDatabaseTest {
                 messageId = testMessage.id,
                 reactionType = testReaction.type,
                 currentUser = testUser,
-                Result.success(testMessage)
+                Result.Success(testMessage)
             )
 
             verify(reactionRepository).insertReaction(
@@ -171,7 +171,7 @@ internal class DeleteReactionListenerDatabaseTest {
                 messageId = testMessage.id,
                 reactionType = testReaction.type,
                 currentUser = testUser,
-                Result.error(ChatError())
+                Result.Failure(ChatError.GenericError(""))
             )
 
             verify(reactionRepository).insertReaction(

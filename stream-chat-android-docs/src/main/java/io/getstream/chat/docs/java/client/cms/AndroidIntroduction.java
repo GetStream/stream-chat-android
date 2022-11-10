@@ -16,18 +16,18 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
+import io.getstream.chat.android.client.channel.state.ChannelState;
 import io.getstream.chat.android.client.extensions.FlowExtensions;
 import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType;
-import io.getstream.chat.android.offline.plugin.configuration.Config;
+import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
-import io.getstream.chat.android.client.channel.state.ChannelState;
-import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig;
+import io.getstream.chat.android.state.extensions.ChatClientExtensions;
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig;
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
 import kotlinx.coroutines.flow.StateFlow;
 
@@ -40,8 +40,7 @@ public class AndroidIntroduction {
         String apiKey = "{{ api_key }}";
         String token = "{{ chat_user_token }}";
         // Step 1 - Set up the OfflinePlugin for offline storage
-        Config config = new Config(true, true, true);
-        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(config, applicationContext);
+        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(applicationContext);
 
         StreamStatePluginFactory streamStatePluginFactory = new StreamStatePluginFactory(
                 new StatePluginConfig(true, true),
@@ -84,10 +83,10 @@ public class AndroidIntroduction {
         // Creating a channel with the low level client
         channelClient.create(memberIds, extraData).enqueue((result) -> {
             if (result.isSuccess()) {
-                Channel channel = result.data();
+                Channel channel = ((Result.Success<Channel>) result).getValue();
                 // Use channel by calling methods on channelClient
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 
@@ -122,9 +121,9 @@ public class AndroidIntroduction {
 
         channelClient.sendMessage(message).enqueue((result) -> {
             if (result.isSuccess()) {
-                Message sentMessage = result.data();
+                Message sentMessage = ((Result.Success<Message>) result).getValue();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
     }
@@ -144,9 +143,9 @@ public class AndroidIntroduction {
 
         client.queryChannels(request).enqueue((result) -> {
             if (result.isSuccess()) {
-                List<Channel> channels = result.data();
+                List<Channel> channels = ((Result.Success<List<Channel>>) result).getValue();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
     }

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.models.App
 import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.FileUploadConfig
+import io.getstream.chat.android.client.utils.Result
 
 /**
  * Maintains application settings fetched from the backend.
@@ -36,9 +37,9 @@ internal class AppSettingManager(private val chatApi: ChatApi) {
      */
     fun loadAppSettings() {
         if (appSettings == null) {
-            chatApi.appSettings().enqueue {
-                if (it.isSuccess) {
-                    this.appSettings = it.data()
+            chatApi.appSettings().enqueue { result ->
+                if (result is Result.Success) {
+                    this.appSettings = result.value
                 }
             }
         }

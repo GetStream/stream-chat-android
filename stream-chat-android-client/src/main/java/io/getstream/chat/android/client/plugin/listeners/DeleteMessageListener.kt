@@ -27,11 +27,11 @@ public interface DeleteMessageListener {
 
     /**
      * Runs precondition check for [ChatClient.deleteMessage].
-     * The request will be run if the method returns [Result.success] and won't be made if it returns [Result.error].
+     * The request will be run if the method returns [Result.Success] and won't be made if it returns [Result.Failure].
      *
      * @param messageId The message id to be deleted.
      *
-     * @return [Result.success] if the precondition is fulfilled, [Result.error] otherwise.
+     * @return [Result.Success] if the precondition is fulfilled, [Result.Failure] otherwise.
      */
     public suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit>
 

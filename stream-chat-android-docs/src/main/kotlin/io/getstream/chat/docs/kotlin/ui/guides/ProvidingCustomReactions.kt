@@ -5,7 +5,7 @@ package io.getstream.chat.docs.kotlin.ui.guides
 import android.content.Context
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.SupportedReactions
+import io.getstream.chat.android.ui.helper.SupportedReactions
 import io.getstream.chat.docs.R
 
 /**

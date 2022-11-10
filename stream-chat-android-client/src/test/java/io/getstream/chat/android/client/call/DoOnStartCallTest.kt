@@ -41,7 +41,7 @@ internal class DoOnStartCallTest {
     }
 
     private val resultValue = Mother.randomString()
-    private val validResult: Result<String> = Result.success(resultValue)
+    private val validResult: Result<String> = Result.Success(resultValue)
     private val sideEffect = SpySideEffect()
 
     @Test
