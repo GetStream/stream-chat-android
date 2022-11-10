@@ -1418,7 +1418,7 @@ public class MessageListController(
         ).enqueue { result ->
             when (result) {
                 is Result.Success -> {
-                    val message = result.data()
+                    val message = result.value
 
                     message.attachments.removeAll { attachment ->
                         val imageUrl = attachmentToBeDeleted.imageUrl
@@ -1442,7 +1442,7 @@ public class MessageListController(
                             onError = { chatError ->
                                 logger.e {
                                     "Could not remove the attachment and delete the remaining blank message" +
-                                        ": ${chatError.message}. Cause: ${chatError.cause?.message}"
+                                        ": ${chatError.message}. Cause: ${chatError.extractCause()}"
                                 }
                             }
                         )
@@ -1451,14 +1451,13 @@ public class MessageListController(
                             onError = { chatError ->
                                 logger.e {
                                     "Could not edit message to remove its attachments: ${chatError.message}. " +
-                                        "Cause: ${chatError.cause?.message}"
+                                        "Cause: ${chatError.extractCause()}"
                                 }
                             }
                         )
                     }
                 }
                 is Result.Failure -> logger.e { "Could not load message: ${result.value}" }
-
             }
         }
     }
