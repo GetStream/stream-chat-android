@@ -7,7 +7,7 @@ import io.getstream.chat.android.ui.feature.messages.MessageListActivity
 import io.getstream.chat.android.ui.feature.messages.MessageListFragment
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
-import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
 import io.getstream.chat.docs.R
 
 /**
