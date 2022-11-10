@@ -20,7 +20,6 @@
   <string name="stream_ui_attachment_gallery_delete">"Hapus"</string>
   <string name="stream_ui_attachment_gallery_overview_title">"Foto"</string>
   <string name="stream_ui_attachment_gallery_reply">"Balas"</string>
-  <string name="stream_ui_attachment_gallery_save_image">"Simpan Gambar"</string>
   <string name="stream_ui_attachment_gallery_share">"Bagikan Gambar"</string>
   <string name="stream_ui_attachment_gallery_show_in_chat">"Tampilkan di chat"</string>
 </resources>

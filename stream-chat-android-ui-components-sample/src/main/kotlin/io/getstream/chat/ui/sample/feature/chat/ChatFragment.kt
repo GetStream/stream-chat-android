@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply

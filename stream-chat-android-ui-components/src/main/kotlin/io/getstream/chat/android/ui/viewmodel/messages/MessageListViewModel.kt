@@ -32,7 +32,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.extensions.setMessageForReply
+import io.getstream.chat.android.state.extensions.setMessageForReply
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
@@ -51,7 +51,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onSubscription
-import io.getstream.chat.android.livedata.utils.Event as EventWrapper
+import io.getstream.chat.android.state.utils.Event as EventWrapper
 
 /**
  * View model class for [io.getstream.chat.android.ui.feature.messages.list.MessageListView].
