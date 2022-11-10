@@ -35,11 +35,11 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
-import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.extensions.queryChannelsAsState
-import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
-import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.queryChannelsAsState
+import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter

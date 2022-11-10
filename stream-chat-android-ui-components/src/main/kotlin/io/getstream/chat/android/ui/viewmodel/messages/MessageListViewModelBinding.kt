@@ -19,7 +19,7 @@
 package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.feature.gallery.toAttachment
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.utils.PermissionChecker

@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalState
 import java.util.Date
 
 /**
