@@ -23,7 +23,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -44,11 +44,11 @@ internal fun View.setBorderlessRipple(@ColorInt color: Int?) {
  * Ensures the context being accessed in a View can be cast to Activity.
  */
 @InternalStreamChatApi
-public val View.activity: AppCompatActivity?
+public val View.activity: FragmentActivity?
     get() {
         var context = context
         while (context is ContextWrapper) {
-            if (context is AppCompatActivity) {
+            if (context is FragmentActivity) {
                 return context
             }
             context = context.baseContext
