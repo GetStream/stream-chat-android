@@ -3,20 +3,20 @@ import TabItem from '@theme/TabItem';
 
 # Message List
 
-`MessageListView` is one of our core UI components, which displays a list of messages for a channel. It contains the following list of possible items:
+`MessageListView` is one of our core UI components, which displays a list of messages for the given channel. It contains the following list of possible items:
 
 - Plain text message
-- Text and attachments (media or file) message
-- Deleted message (only for current user)
-- Error message (e.g. autoblocked message with inappropriate content)
-- System message (e.g. some user joined a channel)
+- Text message with attachments (media or file)
+- Deleted message (depending on the set `DeletedMessageVisibility` value)
+- Error message (e.g. inappropriate messages blocked by moderation)
+- System message (e.g. when a user joins the channel)
 - Giphy preview
 - Date separator
 - Loading more indicator
 - Thread separator (for thread mode only)
 - Typing indicator
 
-You're able to customize the appearance of this component using custom attributes as well as method calls at runtime. `MessageListView` also contains the set of overridable action/option handlers and event listeners. By default, this component has the following look:
+You're able to customize the appearance of this component using custom attributes as well as method calls at runtime. `MessageListView` also contains a set of overridable action/option handlers and event listeners. By default, this component has the following appearance:
 
 | Light Mode | Dark Mode |
 | --- | --- |
