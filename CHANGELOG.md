@@ -56,7 +56,8 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed an edge case in which deleting an attachment using the attachment gallery would not delete it given the message was freshly uploaded.  [4349](https://github.com/GetStream/stream-chat-android/pull/4349)
+- Fixed an edge case in which deleting an attachment using the attachment gallery would not delete it given the message was freshly uploaded.  [#4349](https://github.com/GetStream/stream-chat-android/pull/4349)
+- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
 
 ### ⬆️ Improved
 
@@ -70,6 +71,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
 
 ### ✅ Added
 
