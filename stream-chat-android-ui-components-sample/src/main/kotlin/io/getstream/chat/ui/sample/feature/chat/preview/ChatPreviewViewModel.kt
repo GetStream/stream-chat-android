@@ -23,9 +23,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch

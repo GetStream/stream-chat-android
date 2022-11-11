@@ -4,7 +4,7 @@ package io.getstream.chat.docs.kotlin.ui.messages
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView

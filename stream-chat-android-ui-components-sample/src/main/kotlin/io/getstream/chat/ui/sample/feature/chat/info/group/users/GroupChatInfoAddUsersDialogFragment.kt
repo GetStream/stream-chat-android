@@ -28,7 +28,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.showToast
