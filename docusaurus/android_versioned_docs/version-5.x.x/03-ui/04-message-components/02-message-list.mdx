@@ -83,21 +83,29 @@ MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwn
 
 ## Handling Actions
 
-`MessageListView` comes with a set of actions available out-of-the-box by long pressing a message:
+`MessageListView` contains a set of actions which are activated by long pressing a message:
 
 * Adding reactions
-* Replies
-* Thread replies
+* Replying
+* Replying in a thread
 * Copying the message
-* Editing the message (if you are an owner)
-* Deleting the message (if you are an owner)
-* Flagging the message (if it doesn't belong to you)
+* Editing the message
+* Deleting the message
+* Flagging the message
+
+:::note
+Certain actions are subject to how user permissions are setup. You can find them inside the [Stream Dashboard](https://dashboard.getstream.io).<br/>
+Learn more about permissions [here](https://getstream.io/chat/docs/other-rest/chat_permission_policies/).
+:::
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![Message_options_in light mode](../../assets/message_options_light.png)|![Message options in dark mode](../../assets/message_options_dark.png)|
 
-Default action handlers are set up when binding the ViewModel with the View. You can customize the default behavior by overriding each of the following handlers:
+Default action handlers are set up when binding the ViewModel to the View.<br/>
+You can customize the default behavior by overriding each of the following handlers:
+
+//TODO - Edit this section after discussing with the team which ones we should list here
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -189,7 +197,7 @@ messageListView.setMessageEditHandler((message) -> {
 </Tabs>
 
 :::note
-Handlers must be set before passing any data to `MessageListView`. If you don't use the default binding that `bindView` provides, please make sure you're setting up all handlers.
+Handlers must be set before passing any data to `MessageListView`. If you don't use the default binding provided by `bindView`, please make sure to set up all the handlers yourself.
 :::
 
 ### Listeners
