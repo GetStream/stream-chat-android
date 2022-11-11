@@ -24,12 +24,16 @@ You're able to customize the appearance of this component using custom attribute
 
 ## Usage
 
-If you want to use all default features and default design of this component then getting started with it is easy:
+If you want to keep the default design and behavior of this component then getting started with it is very simple:
 
-1. Add the component to your xml layout hierarchy.
-2. Bind it with a `MessageListViewModel`.
+1. Add the component to your XML layout hierarchy.
+2. Bind it to a `MessageListViewModel`.
 
-Adding `MessageListView` to your layout is easy as inserting following lines to your layout hierarchy (example for `ConstraintLayout`):
+Adding `MessageListView` to your layout is as easy as inserting the following lines to your layout hierarchy:
+
+:::note
+The following example was created inside a `ConstraintLayout`.
+:::
 
 ```xml
 <io.getstream.chat.android.ui.message.list.MessageListView
@@ -43,7 +47,8 @@ Adding `MessageListView` to your layout is easy as inserting following lines to 
         />
 ``` 
 
-The UI components library includes a ViewModel for `MessageListView` and the `bindView` extension function makes it easy to use a default setup:
+The UI components library includes a `ViewModel` for `MessageListView`.
+Binding it to the `View` is easily accomplished using an extension function called `bindView`:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
