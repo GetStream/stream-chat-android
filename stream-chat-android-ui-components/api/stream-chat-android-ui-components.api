@@ -770,7 +770,7 @@ public class io/getstream/chat/android/ui/feature/messages/MessageListFragment :
 	protected final fun setBackPressListener (Lio/getstream/chat/android/ui/feature/messages/MessageListFragment$BackPressListener;)V
 	protected fun setupMessageComposer (Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerView;)V
 	protected fun setupMessageList (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView;)V
-	protected fun setupMessageListHeader (Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderView;)V
+	protected fun setupMessageListHeader (Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderView;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/MessageListFragment$BackPressListener {
@@ -1201,6 +1201,72 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/conten
 public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/content/MessageComposerContent {
 	public abstract fun attachContext (Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerContext;)V
 	public abstract fun renderState (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;)V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/header/MessageListHeaderView : android/widget/FrameLayout {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getOnlineStateSubtitle ()Ljava/lang/String;
+	public final fun hideAvatar ()V
+	public final fun hideBackButtonBadge ()V
+	public final fun hideSubtitle ()V
+	public final fun hideTitle ()V
+	public final fun setAvatar (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun setAvatarClickListener (Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setBackButtonClickListener (Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setNormalMode ()V
+	public final fun setOnlineStateSubtitle (Ljava/lang/String;)V
+	public final fun setRetryClickListener (Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setSubtitleClickListener (Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun setThreadMode ()V
+	public final fun setThreadSubtitle (Ljava/lang/String;)V
+	public final fun setTitle (Ljava/lang/String;)V
+	public final fun setTitleClickListener (Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderView$OnClickListener;)V
+	public final fun showBackButtonBadge (Ljava/lang/String;)V
+	public final fun showOfflineStateLabel ()V
+	public final fun showOnlineStateSubtitle ()V
+	public final fun showSearchingForNetworkLabel ()V
+	public final fun showTypingStateLabel (Ljava/util/List;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/header/MessageListHeaderView$OnClickListener {
+	public abstract fun onClick ()V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/header/MessageListHeaderViewStyle {
+	public fun <init> (ILio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;)V
+	public final fun component1 ()I
+	public final fun component10 ()I
+	public final fun component11 ()Z
+	public final fun component12 ()Landroid/content/res/ColorStateList;
+	public final fun component13 ()Landroid/graphics/drawable/Drawable;
+	public final fun component2 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component3 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component4 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component5 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component6 ()Z
+	public final fun component7 ()Landroid/graphics/drawable/Drawable;
+	public final fun component8 ()Z
+	public final fun component9 ()Z
+	public final fun copy (ILio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderViewStyle;ILio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackButtonBadgeBackgroundColor ()I
+	public final fun getBackButtonIcon ()Landroid/graphics/drawable/Drawable;
+	public final fun getBackground ()I
+	public final fun getOfflineTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getOnlineTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getSearchingForNetworkProgressBarTint ()Landroid/content/res/ColorStateList;
+	public final fun getSearchingForNetworkTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getSeparatorBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getShowBackButton ()Z
+	public final fun getShowBackButtonBadge ()Z
+	public final fun getShowSearchingForNetworkProgressBar ()Z
+	public final fun getShowUserAvatar ()Z
+	public final fun getTitleTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/DefaultQuotedAttachmentViewStyle {
@@ -2140,72 +2206,6 @@ public class io/getstream/chat/android/ui/feature/messages/list/background/Messa
 public final class io/getstream/chat/android/ui/feature/messages/list/background/MessageBackgroundFactoryImpl$Companion {
 }
 
-public final class io/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderView : android/widget/FrameLayout {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun getOnlineStateSubtitle ()Ljava/lang/String;
-	public final fun hideAvatar ()V
-	public final fun hideBackButtonBadge ()V
-	public final fun hideSubtitle ()V
-	public final fun hideTitle ()V
-	public final fun setAvatar (Lio/getstream/chat/android/client/models/Channel;)V
-	public final fun setAvatarClickListener (Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderView$OnClickListener;)V
-	public final fun setBackButtonClickListener (Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderView$OnClickListener;)V
-	public final fun setNormalMode ()V
-	public final fun setOnlineStateSubtitle (Ljava/lang/String;)V
-	public final fun setRetryClickListener (Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderView$OnClickListener;)V
-	public final fun setSubtitleClickListener (Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderView$OnClickListener;)V
-	public final fun setThreadMode ()V
-	public final fun setThreadSubtitle (Ljava/lang/String;)V
-	public final fun setTitle (Ljava/lang/String;)V
-	public final fun setTitleClickListener (Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderView$OnClickListener;)V
-	public final fun showBackButtonBadge (Ljava/lang/String;)V
-	public final fun showOfflineStateLabel ()V
-	public final fun showOnlineStateSubtitle ()V
-	public final fun showSearchingForNetworkLabel ()V
-	public final fun showTypingStateLabel (Ljava/util/List;)V
-}
-
-public abstract interface class io/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderView$OnClickListener {
-	public abstract fun onClick ()V
-}
-
-public final class io/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderViewStyle {
-	public fun <init> (ILio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;)V
-	public final fun component1 ()I
-	public final fun component10 ()I
-	public final fun component11 ()Z
-	public final fun component12 ()Landroid/content/res/ColorStateList;
-	public final fun component13 ()Landroid/graphics/drawable/Drawable;
-	public final fun component2 ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun component3 ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun component4 ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun component5 ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun component6 ()Z
-	public final fun component7 ()Landroid/graphics/drawable/Drawable;
-	public final fun component8 ()Z
-	public final fun component9 ()Z
-	public final fun copy (ILio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderViewStyle;ILio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ZLandroid/graphics/drawable/Drawable;ZZIZLandroid/content/res/ColorStateList;Landroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderViewStyle;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBackButtonBadgeBackgroundColor ()I
-	public final fun getBackButtonIcon ()Landroid/graphics/drawable/Drawable;
-	public final fun getBackground ()I
-	public final fun getOfflineTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun getOnlineTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun getSearchingForNetworkProgressBarTint ()Landroid/content/res/ColorStateList;
-	public final fun getSearchingForNetworkTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun getSeparatorBackgroundDrawable ()Landroid/graphics/drawable/Drawable;
-	public final fun getShowBackButton ()Z
-	public final fun getShowBackButtonBadge ()Z
-	public final fun getShowSearchingForNetworkProgressBar ()Z
-	public final fun getShowUserAvatar ()Z
-	public final fun getTitleTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public class io/getstream/chat/android/ui/feature/messages/list/options/message/DefaultMessageOptionItemsFactory : io/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactory {
 	public fun <init> (Landroid/content/Context;)V
 	public fun createMessageOptionItems (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;ZLjava/util/Set;Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;)Ljava/util/List;
@@ -3104,7 +3104,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListHe
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListHeaderViewModelBinding {
-	public static final fun bind (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListHeaderViewModel;Lio/getstream/chat/android/ui/feature/messages/list/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
+	public static final fun bind (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListHeaderViewModel;Lio/getstream/chat/android/ui/feature/messages/header/MessageListHeaderView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {

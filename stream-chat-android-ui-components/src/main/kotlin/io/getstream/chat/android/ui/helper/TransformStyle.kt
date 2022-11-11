@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.feature.gallery.options.AttachmentGalleryOpt
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
+import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.DefaultQuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.GiphyViewHolderStyle
@@ -33,7 +34,6 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.feature.messages.list.ScrollButtonViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.MediaAttachmentViewStyle
-import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.reactions.user.SingleReactionViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewReactionsViewStyle
