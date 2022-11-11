@@ -49,11 +49,7 @@ class MessageListScreen {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                if (savedInstanceState == null) {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, MessageListFragment.newInstance(cid = "messaging:123"))
-                        .commit()
-                }
+                // Add MessageListFragment to the layout
             }
 
             override fun onBackPress() {

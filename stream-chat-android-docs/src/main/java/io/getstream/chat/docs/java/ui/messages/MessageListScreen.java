@@ -65,11 +65,7 @@ public class MessageListScreen {
             @Override
             protected void onCreate(@Nullable Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
-                if (savedInstanceState == null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, MessageListFragment.newInstance("messaging:123"))
-                            .commit();
-                }
+                // Add MessageListFragment to the layout
             }
 
             @Override

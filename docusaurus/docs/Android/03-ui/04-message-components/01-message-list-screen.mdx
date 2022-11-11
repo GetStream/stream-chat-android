@@ -114,11 +114,7 @@ class MyMessageListActivity : AppCompatActivity(R.layout.fragment_container), Me
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MessageListFragment.newInstance(cid = "messaging:123"))
-                .commit()
-        }
+        // Add MessageListFragment to the layout
     }
 
     override fun onBackPress() {
@@ -140,11 +136,7 @@ public final class MyMessageListActivity extends AppCompatActivity implements Me
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, MessageListFragment.newInstance("messaging:123"))
-                .commit();
-        }
+        // Add MessageListFragment to the layout
     }
 
     @Override
