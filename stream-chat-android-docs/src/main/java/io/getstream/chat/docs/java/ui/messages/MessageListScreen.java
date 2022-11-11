@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.getstream.chat.android.ui.feature.messages.MessageListActivity;
 import io.getstream.chat.android.ui.feature.messages.MessageListFragment;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.docs.R;
 import kotlin.Unit;
 
@@ -39,8 +39,12 @@ public class MessageListScreen {
             protected void onCreate(@Nullable Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 if (savedInstanceState == null) {
+                    MessageListFragment fragment = MessageListFragment.newInstance("messaging:123", builder -> {
+                        builder.showHeader(true);
+                        return Unit.INSTANCE;
+                    });
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, MessageListFragment.newInstance("messaging:123"))
+                            .replace(R.id.container, fragment)
                             .commit();
                 }
             }
@@ -61,11 +65,7 @@ public class MessageListScreen {
             @Override
             protected void onCreate(@Nullable Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
-                if (savedInstanceState == null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, MessageListFragment.newInstance("messaging:123"))
-                            .commit();
-                }
+                // Add MessageListFragment to the layout
             }
 
             @Override
@@ -119,6 +119,10 @@ public class MessageListScreen {
                     return Unit.INSTANCE;
                 });
             }
+        }
+
+        public void startActivity(Context context) {
+            context.startActivity(MessageListActivity.createIntent(context, "messaging:123", null, CustomMessageListActivity.class));
         }
     }
 }
