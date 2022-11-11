@@ -24,13 +24,14 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.ui.widgets.typing.TypingIndicatorView
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 /**
- * ViewModel used by [io.getstream.chat.android.ui.typing.TypingIndicatorView].
+ * ViewModel used by [TypingIndicatorView].
  * It is responsible for updating the state of users who are currently typing.
  *
  * @param cid The full channel id, i.e. "messaging:123".
