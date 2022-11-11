@@ -39,7 +39,7 @@ public class MessageListScreen {
             protected void onCreate(@Nullable Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 if (savedInstanceState == null) {
-                    MessageListFragment fragment  = MessageListFragment.newInstance("messaging:123", builder -> {
+                    MessageListFragment fragment = MessageListFragment.newInstance("messaging:123", builder -> {
                         builder.showHeader(true);
                         return Unit.INSTANCE;
                     });
@@ -119,6 +119,10 @@ public class MessageListScreen {
                     return Unit.INSTANCE;
                 });
             }
+        }
+
+        public void startActivity(Context context) {
+            context.startActivity(MessageListActivity.createIntent(context, "messaging:123", null, CustomMessageListActivity.class));
         }
     }
 }

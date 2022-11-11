@@ -97,5 +97,15 @@ class MessageListScreen {
                 }
             }
         }
+
+        fun startActivity(context: Context) {
+            context.startActivity(
+                MessageListActivity.createIntent(
+                    context = context,
+                    cid = "messaging:123",
+                    activityClass = CustomMessageListActivity::class.java
+                )
+            )
+        }
     }
 }

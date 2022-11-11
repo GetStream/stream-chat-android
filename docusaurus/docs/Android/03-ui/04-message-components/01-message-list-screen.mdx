@@ -251,6 +251,30 @@ public final class CustomMessageListActivity extends MessageListActivity {
 </TabItem>
 </Tabs>
 
+Then you need to add `CustomMessageListActivity` to your `AndroidManifest.xml`, create an Intent for it using the `MessageListActivity.createIntent()` method, and finally start the Activity:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+context.startActivity(
+    MessageListActivity.createIntent(
+        context = context,
+        cid = "messaging:123",
+        activityClass = CustomMessageListActivity::class.java
+    )
+)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+context.startActivity(MessageListActivity.createIntent(context, "messaging:123", null, CustomMessageListActivity.class));
+```
+</TabItem>
+</Tabs>
+
 :::note
 Fragments and Activities representing self-contained screens can be styled using the options described in the [theming](../02-general-customization/01-theming.mdx) guide.
 :::

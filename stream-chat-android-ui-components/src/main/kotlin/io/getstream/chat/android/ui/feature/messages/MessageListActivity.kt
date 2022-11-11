@@ -63,10 +63,23 @@ public open class MessageListActivity : AppCompatActivity() {
         private const val EXTRA_CID: String = "extra_cid"
         private const val EXTRA_MESSAGE_ID: String = "extra_message_id"
 
+        /**
+         * Creates an Intent to start the [MessageListActivity] or its subclass.
+         *
+         * @param context The context that will be used in the intent.
+         * @param cid The full channel id, i.e. "messaging:123".
+         * @param messageId The ID of the selected message.
+         * @param activityClass The Activity class that will be used in the intent.
+         */
         @JvmStatic
         @JvmOverloads
-        public fun createIntent(context: Context, cid: String, messageId: String? = null): Intent {
-            return Intent(context, MessageListActivity::class.java).apply {
+        public fun createIntent(
+            context: Context,
+            cid: String,
+            messageId: String? = null,
+            activityClass: Class<out MessageListActivity> = MessageListActivity::class.java
+        ): Intent {
+            return Intent(context, activityClass).apply {
                 putExtra(EXTRA_CID, cid)
                 putExtra(EXTRA_MESSAGE_ID, messageId)
             }

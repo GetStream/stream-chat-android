@@ -736,6 +736,7 @@ public class io/getstream/chat/android/ui/feature/messages/MessageListActivity :
 	public fun <init> ()V
 	public static final fun createIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 	public static final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
+	public static final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;)Landroid/content/Intent;
 	protected fun createMessageListFragment (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/messages/MessageListFragment;
 	protected fun onCreate (Landroid/os/Bundle;)V
 }
@@ -743,7 +744,8 @@ public class io/getstream/chat/android/ui/feature/messages/MessageListActivity :
 public final class io/getstream/chat/android/ui/feature/messages/MessageListActivity$Companion {
 	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
-	public static synthetic fun createIntent$default (Lio/getstream/chat/android/ui/feature/messages/MessageListActivity$Companion;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Landroid/content/Intent;
+	public final fun createIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;)Landroid/content/Intent;
+	public static synthetic fun createIntent$default (Lio/getstream/chat/android/ui/feature/messages/MessageListActivity$Companion;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;ILjava/lang/Object;)Landroid/content/Intent;
 }
 
 public class io/getstream/chat/android/ui/feature/messages/MessageListFragment : androidx/fragment/app/Fragment {
