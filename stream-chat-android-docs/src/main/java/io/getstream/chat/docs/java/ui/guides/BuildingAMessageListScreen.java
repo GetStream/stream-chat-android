@@ -9,7 +9,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode;
 import io.getstream.chat.android.ui.common.state.messages.Reply;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
-import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView;
+import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.header
+package io.getstream.chat.android.ui.feature.messages.header
 
 import android.content.Context
 import android.content.res.ColorStateList
