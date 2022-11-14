@@ -19,7 +19,7 @@ public class CoreConcepts {
         // Safe to call from the main thread
         channelClient.sendMessage(message).enqueue((result) -> {
             if (result.isSuccess()) {
-                Message sentMessage = ((Result.Success<Message>) result).getValue();
+                Message sentMessage = result.getOrNull();
             } else {
                 // Handle error
             }

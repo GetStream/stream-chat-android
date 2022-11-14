@@ -111,10 +111,14 @@ public final class io/getstream/chat/android/client/errors/ChatErrorKt {
 }
 
 public abstract class io/getstream/chat/android/client/utils/Result {
+	public final fun chatErrorOrNull ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun getOrNull ()Ljava/lang/Object;
 	public final fun isFailure ()Z
 	public final fun isSuccess ()Z
-	public final synthetic fun map (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
+	public final fun map (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public final synthetic fun mapSuspend (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun onError (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
+	public final fun onSuccess (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public final fun toUnitResult ()Lio/getstream/chat/android/client/utils/Result;
 }
 
@@ -141,11 +145,9 @@ public final class io/getstream/chat/android/client/utils/Result$Success : io/ge
 }
 
 public final class io/getstream/chat/android/client/utils/ResultKt {
-	public static final synthetic fun flatMap (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
+	public static final fun flatMap (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public static final synthetic fun flatMapSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final synthetic fun onError (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public static final synthetic fun onErrorSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final synthetic fun onSuccess (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public static final synthetic fun onSuccessSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final synthetic fun recover (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result$Success;
 	public static final synthetic fun recoverSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

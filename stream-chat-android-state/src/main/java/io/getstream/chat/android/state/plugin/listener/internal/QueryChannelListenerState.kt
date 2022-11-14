@@ -20,8 +20,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.onError
-import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 
 /**
@@ -49,6 +47,7 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
         channelId: String,
         request: QueryChannelRequest,
     ) {
+        kotlin.Result
         logic.channel(channelType, channelId).updateStateFromDatabase(request)
     }
 
