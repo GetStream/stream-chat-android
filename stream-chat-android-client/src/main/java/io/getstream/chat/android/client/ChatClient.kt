@@ -2011,9 +2011,7 @@ internal constructor(
      * @return [Call] with a list of [User].
      */
     @CheckResult
-    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        return api.queryUsers(query)
-    }
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
 
     /**
      * Adds members to a given channel.
