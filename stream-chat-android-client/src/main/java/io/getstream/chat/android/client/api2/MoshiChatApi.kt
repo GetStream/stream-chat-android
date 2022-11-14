@@ -169,6 +169,10 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         this._connectionId.value = connectionId
     }
 
+    override fun releseConnection() {
+        this._connectionId.value = ""
+    }
+
     override fun appSettings(): Call<AppSettings> {
         return configApi.getAppSettings().map(AppSettingsResponse::toDomain)
     }

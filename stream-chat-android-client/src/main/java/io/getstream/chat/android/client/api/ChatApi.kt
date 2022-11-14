@@ -399,4 +399,6 @@ internal interface ChatApi {
     fun downloadFile(fileUrl: String): Call<ResponseBody>
 
     fun warmUp()
+
+    fun releseConnection()
 }

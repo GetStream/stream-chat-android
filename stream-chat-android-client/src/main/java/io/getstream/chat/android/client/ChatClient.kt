@@ -336,6 +336,7 @@ internal constructor(
                 }
 
                 is DisconnectedEvent -> {
+                    api.releseConnection()
                     when (event.disconnectCause) {
                         DisconnectCause.ConnectionReleased,
                         DisconnectCause.NetworkNotAvailable,
