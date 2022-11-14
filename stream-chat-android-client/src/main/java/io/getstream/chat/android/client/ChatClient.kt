@@ -1693,17 +1693,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> {
-        val isConnectionRequired = request.watch || request.presence
-        logger.d {
-            "[queryChannelInternal] cid: $channelType:$channelId, request: $request, " +
-                "isConnectionRequired: $isConnectionRequired"
-        }
-
-        return api.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryChannel(channelType, channelId, request)
-        }
-    }
+    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
 
     /**
      * Gets the channel from the server based on [channelType], [channelId] and parameters from [QueryChannelRequest].

@@ -826,20 +826,29 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
             data = query.data,
         )
 
-        return if (channelId.isEmpty()) {
-            channelApi.queryChannel(
-                channelType = channelType,
-                connectionId = connectionId,
-                request = request,
-            )
+        val lazyQueryChannelCall = {
+            if (channelId.isEmpty()) {
+                channelApi.queryChannel(
+                    channelType = channelType,
+                    connectionId = connectionId,
+                    request = request,
+                )
+            } else {
+                channelApi.queryChannel(
+                    channelType = channelType,
+                    channelId = channelId,
+                    connectionId = connectionId,
+                    request = request,
+                )
+            }.map(::flattenChannel)
+        }
+
+        val isConnectionRequired = query.watch || query.presence
+        return if (connectionId.isBlank() && isConnectionRequired) {
+            postponeCall(lazyQueryChannelCall)
         } else {
-            channelApi.queryChannel(
-                channelType = channelType,
-                channelId = channelId,
-                connectionId = connectionId,
-                request = request,
-            )
-        }.map(::flattenChannel)
+            lazyQueryChannelCall()
+        }
     }
 
     override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
