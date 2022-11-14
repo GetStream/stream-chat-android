@@ -942,11 +942,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         generalApi.warmUp().enqueue()
     }
 
-    override fun <T : Any> postponeCallIfNeeded(shouldPostpone: Boolean, call: () -> Call<T>): Call<T> {
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone, call)
-    }
-
-    override fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
+    private fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
         return callPostponeHelper.postponeCall(call)
     }
 }

@@ -99,16 +99,6 @@ internal class WhenQueryChannel : BaseChatClientTest() {
     private inner class Fixture {
 
         init {
-            whenever(api.postponeCall(any<() -> Call<Any>>())) doAnswer { invocation ->
-                val arg = invocation.arguments[0] as (() -> Call<Any>)
-                arg.invoke()
-            }
-
-            whenever(api.postponeCallIfNeeded(anyBoolean(), any<() -> Call<Any>>())) doAnswer { invocation ->
-                val arg = invocation.arguments[1] as (() -> Call<Any>)
-                arg.invoke()
-            }
-
             whenever(socketStateService.state) doReturn SocketState.Connected(connectionId = "connectionId")
             whenever(api.queryChannel(any(), any(), any())) doReturn mock<Channel>().asCall()
         }

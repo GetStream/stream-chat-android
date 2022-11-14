@@ -399,8 +399,4 @@ internal interface ChatApi {
     fun downloadFile(fileUrl: String): Call<ResponseBody>
 
     fun warmUp()
-
-    fun <T : Any> postponeCallIfNeeded(shouldPostpone: Boolean, call: () -> Call<T>): Call<T>
-
-    fun <T : Any> postponeCall(call: () -> Call<T>): Call<T>
 }
