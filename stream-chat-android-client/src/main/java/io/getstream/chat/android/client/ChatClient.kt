@@ -1801,9 +1801,8 @@ internal constructor(
      * @return Executable async [Call] responsible for stop watching the channel.
      */
     @CheckResult
-    public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
-        return api.stopWatching(channelType, channelId)
-    }
+    public fun stopWatching(channelType: String, channelId: String): Call<Unit> =
+        api.stopWatching(channelType, channelId)
 
     /**
      * Updates all of the channel data. Any data that is present on the channel and not included in a full update
