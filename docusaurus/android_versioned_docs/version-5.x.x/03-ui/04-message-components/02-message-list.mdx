@@ -36,15 +36,15 @@ The following example was created inside a `ConstraintLayout`.
 :::
 
 ```xml
-<io.getstream.chat.android.ui.message.list.MessageListView
-        android:id="@+id/message_list_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+<io.getstream.chat.android.ui.feature.messages.list.MessageListView
+    android:id="@+id/message_list_view"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    />
 ``` 
 
 The UI components library includes a `ViewModel` for `MessageListView`.<br/>
@@ -264,13 +264,13 @@ Other available listeners for `MessageListView` can be found [here](https://gets
 
 ## Customization
 
-You can change the appearance of this component to fit your app's design requirements. There are two ways to change the style: using XML attributes and runtime changes.
+You can change the appearance of this component to fit your app's design requirements. These changes can be done either at compile-time through the use of XML attributes, or at runtime by using style transformations.
 
 ### Using XML Attributes
 
-`MessageListView` provides a large set of xml attributes available for customization. The full list of them is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
+`MessageListView` provides a large set of xml attributes available for customization. The complete list is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
 
-Let's consider an example when we want to change the style of messages sent by the current user.
+Let's consider an example in which we want to change the style of messages sent by the current user.
 
 | Light Mode | Dark Mode |
 | --- | --- |
@@ -279,7 +279,7 @@ Let's consider an example when we want to change the style of messages sent by t
 In order to do that, we need to add additional attributes to `MessageListView`:
 
 ```xml {11-14}
-<io.getstream.chat.android.ui.message.list.MessageListView
+<io.getstream.chat.android.ui.feature.messages.list.MessageListView
     android:id="@+id/messageListView"
     android:layout_width="0dp"
     android:layout_height="0dp"
