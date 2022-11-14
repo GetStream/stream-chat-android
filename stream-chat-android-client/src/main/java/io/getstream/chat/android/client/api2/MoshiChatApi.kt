@@ -788,10 +788,6 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     }
 
     override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
-        if (connectionId.isEmpty()) {
-            logger.w { "[queryChannels] rejected (no connectionId)" }
-            return noConnectionIdError()
-        }
         val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
             filter_conditions = query.filter.toMap(),
             offset = query.offset,
@@ -804,10 +800,19 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
             presence = query.presence,
         )
 
-        return channelApi.queryChannels(
-            connectionId = connectionId,
-            request = request,
-        ).map { response -> response.channels.map(this::flattenChannel) }
+        val lazyQueryChannelsCall = {
+            channelApi.queryChannels(
+                connectionId = connectionId,
+                request = request,
+            ).map { response -> response.channels.map(this::flattenChannel) }
+        }
+
+        val isConnectionRequired = query.watch || query.presence
+        return if (connectionId.isBlank() && isConnectionRequired) {
+            postponeCall(lazyQueryChannelsCall)
+        } else {
+            lazyQueryChannelsCall()
+        }
     }
 
     override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {

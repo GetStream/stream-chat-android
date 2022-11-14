@@ -1680,11 +1680,7 @@ internal constructor(
      */
     @CheckResult
     @InternalStreamChatApi
-    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        val isConnectionRequired = request.watch || request.presence
-        logger.d { "[queryChannelsInternal] request: $request, isConnectionRequired: $isConnectionRequired" }
-        return api.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) { api.queryChannels(request) }
-    }
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> = api.queryChannels(request)
 
     /**
      * Runs [queryChannel] without applying side effects.
