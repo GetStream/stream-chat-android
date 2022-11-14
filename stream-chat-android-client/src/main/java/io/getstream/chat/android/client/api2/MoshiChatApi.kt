@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -83,7 +82,6 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
@@ -942,10 +940,6 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
 
     override fun warmUp() {
         generalApi.warmUp().enqueue()
-    }
-
-    private fun <T : Any> noConnectionIdError(): ErrorCall<T> {
-        return ErrorCall(coroutineScope, ChatError("setUser is either not called or not finished"))
     }
 
     override fun <T : Any> postponeCallIfNeeded(shouldPostpone: Boolean, call: () -> Call<T>): Call<T> {
