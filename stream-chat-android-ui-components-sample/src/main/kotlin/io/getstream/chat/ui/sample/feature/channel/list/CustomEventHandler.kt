@@ -26,10 +26,10 @@ import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
-import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
-import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
+import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.ui.sample.common.isDraft
 import kotlinx.coroutines.flow.StateFlow
 

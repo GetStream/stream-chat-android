@@ -29,11 +29,11 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import io.getstream.chat.android.livedata.utils.Event as EventWrapper
+import io.getstream.chat.android.state.utils.Event as EventWrapper
 
 class AddChannelViewModel : ViewModel() {
 

@@ -3,6 +3,134 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-client
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-offline
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-state
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-xiaomi
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# November 11th, 2022 - 6.0.0-beta1
+
+I hope you're interested in our latest major release - v6.0.0-beta1! We're currently in the process of preparing migration guides and updating all of our
+documentation, but in the meantime, you can look into what we plan to release in v6 of Android Chat.
+
+If you want to learn more about these changes and our decisions, check out our [Android Chat v6 Blog Post](https://getstream.io/blog/announcement-android-sdk-6-beta/).
+
+## Common changes for all artifacts
+### 🐞 Fixed
+
+### ⬆️ Improved
 - Updated Kotlin version to `1.7.20`. (#4247)[https://github.com/GetStream/stream-chat-android/pull/4247]
 
 ### ✅ Added
@@ -142,6 +270,7 @@
 - 🚨 Breaking change: `MessageListViewModel.Event.MessageReaction` no longer takes `enforceUnique` as a parameter, instead it is handled as part of `enforceUniqueReaction` inside `MessageListViewModelFactory` and `MessageListController`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: `ui-common` module `GiphyAction`s are now used instead of removed `GiphyAction` enum inside `ui-components` module. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: `MessageListItem` now uses `MessagePosition` from `ui-common`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Replaced the Dexter library for checking runtime permissions with the PermissionX library. [#4338](https://github.com/GetStream/stream-chat-android/pull/4338)
 
 ### ❌ Removed
 - Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)

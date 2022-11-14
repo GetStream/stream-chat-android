@@ -28,10 +28,10 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.offline.extensions.downloadAttachment
+import io.getstream.chat.android.state.extensions.downloadAttachment
 import io.getstream.chat.android.ui.common.utils.extensions.onPermissionRequested
 import io.getstream.chat.android.ui.common.utils.extensions.wasPermissionRequested
-import io.getstream.chat.android.uiutils.extension.openSystemSettings
+import io.getstream.chat.android.uiutils.util.openSystemSettings
 
 /**
  * Interface for implementing custom permission handlers.

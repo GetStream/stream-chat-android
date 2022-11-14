@@ -13,11 +13,11 @@ import io.getstream.chat.android.client.channel.state.ChannelState;
 import io.getstream.chat.android.client.extensions.FlowExtensions;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.offline.extensions.ChatClientExtensions;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
-import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState;
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState;
-import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState;
+import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState;
+import io.getstream.chat.android.state.plugin.state.global.GlobalState;
+import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState;
+import io.getstream.chat.android.state.extensions.ChatClientExtensions;
 import kotlinx.coroutines.flow.StateFlow;
 
 /**

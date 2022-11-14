@@ -3,7 +3,7 @@ package io.getstream.chat.docs.java.ui.messages;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView;
+import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;

@@ -42,16 +42,16 @@ import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
-import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
-import io.getstream.chat.android.offline.extensions.getRepliesAsState
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.extensions.loadMessageById
-import io.getstream.chat.android.offline.extensions.loadNewerMessages
-import io.getstream.chat.android.offline.extensions.loadNewestMessages
-import io.getstream.chat.android.offline.extensions.loadOlderMessages
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.extensions.cancelEphemeralMessage
+import io.getstream.chat.android.state.extensions.getRepliesAsState
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.loadMessageById
+import io.getstream.chat.android.state.extensions.loadNewerMessages
+import io.getstream.chat.android.state.extensions.loadNewestMessages
+import io.getstream.chat.android.state.extensions.loadOlderMessages
+import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
@@ -1419,23 +1419,43 @@ public class MessageListController(
             when (result) {
                 is Result.Success -> {
                     val message = result.value
+
                     message.attachments.removeAll { attachment ->
-                        if (attachmentToBeDeleted.assetUrl != null) {
-                            attachment.assetUrl == attachmentToBeDeleted.assetUrl
-                        } else {
-                            val isSame = attachment.imageUrl == attachmentToBeDeleted.imageUrl
-                            isSame
+                        val imageUrl = attachmentToBeDeleted.imageUrl
+                        val assetUrl = attachmentToBeDeleted.assetUrl
+
+                        when {
+                            assetUrl != null -> {
+                                attachment.assetUrl?.substringBefore("?") ==
+                                    assetUrl.substringBefore("?")
+                            }
+                            imageUrl != null -> {
+                                attachment.imageUrl?.substringBefore("?") ==
+                                    imageUrl.substringBefore("?")
+                            }
+                            else -> false
                         }
                     }
 
-                    chatClient.updateMessage(message).enqueue(
-                        onError = { chatError ->
-                            logger.e {
-                                "Could not edit message to remove its attachments: ${chatError.message}. " +
-                                    "Cause: ${chatError.extractCause()}"
+                    if (message.text.isBlank() && message.attachments.isEmpty()) {
+                        chatClient.deleteMessage(messageId = messageId).enqueue(
+                            onError = { chatError ->
+                                logger.e {
+                                    "Could not remove the attachment and delete the remaining blank message" +
+                                        ": ${chatError.message}. Cause: ${chatError.extractCause()}"
+                                }
                             }
-                        }
-                    )
+                        )
+                    } else {
+                        chatClient.updateMessage(message).enqueue(
+                            onError = { chatError ->
+                                logger.e {
+                                    "Could not edit message to remove its attachments: ${chatError.message}. " +
+                                        "Cause: ${chatError.extractCause()}"
+                                }
+                            }
+                        )
+                    }
                 }
                 is Result.Failure -> logger.e { "Could not load message: ${result.value}" }
             }
