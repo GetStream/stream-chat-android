@@ -474,7 +474,7 @@ The predicate has to return `true` for the items that you _do_ want to display i
 2. Write your own logic for creating ViewHolders. 
 3. Create a new factory instance and set it on `MessageListView`.
 
-Let's consider an example when we want to create custom ViewHolders for messages that came from other users less than 24 hours ago. The result should look like this:
+Let's consider an example in which we want to create a custom ViewHolder for messages sent by other users less than 24 hours ago. The result should look like this:
 
 ![](../../assets/message_list_custom_vh_factory.png)
 
@@ -568,7 +568,7 @@ class TodayViewHolder extends BaseMessageItemViewHolder<MessageListItem.MessageI
 </TabItem>
 </Tabs>
 
-3. Add a new `CustomMessageViewHolderFactory` class that checks each message, and uses the custom ViewHolder when necessary:
+3. Add a new `CustomMessageViewHolderFactory` class that evaluates each message, and uses the custom ViewHolder when necessary:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -655,7 +655,7 @@ class CustomMessageViewHolderFactory extends MessageListItemViewHolderFactory {
 </TabItem>
 </Tabs>
 
-4. Finally, set an instance of the custom factory on `MessageListView`
+4. Finally, set an instance of the custom factory on `MessageListView`:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -673,7 +673,7 @@ messageListView.setMessageViewHolderFactory(new CustomMessageViewHolderFactory()
 </TabItem>
 </Tabs>
 
-Additionally, you can also use `ChatUI.markdown` for Markdown support. If you do that, don't use `android:autoLink` attribute because it'll break the markdown [Linkify](https://noties.io/Markwon/docs/v4/linkify/) implementation. This property is deprecated and `ChatUI.messageTextTransformer` should be used instead. See [docs](../02-general-customization/02-chatui.mdx) for more information.
+If you want to support Markdown, just set `ChatUI.messageTextTransformer` to `MarkdownTextTransformer`.
 
 ## Custom Empty State
 
