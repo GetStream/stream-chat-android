@@ -35,7 +35,7 @@ public class BuildingAChannelListScreen extends Fragment {
 
         ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()
                 .filter(filter)
-                .sort(QuerySortByField.descByName("lastUpdated"))
+                .sort(QuerySortByField.descByName("last_updated"))
                 .limit(30)
                 .build();
 
