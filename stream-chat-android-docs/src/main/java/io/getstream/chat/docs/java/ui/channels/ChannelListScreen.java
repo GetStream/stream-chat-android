@@ -165,5 +165,9 @@ public class ChannelListScreen {
                 });
             }
         }
+
+        public void startActivity(Context context) {
+            context.startActivity(ChannelListActivity.createIntent(context, CustomChannelListActivity.class));
+        }
     }
 }

@@ -135,5 +135,14 @@ class ChannelListScreen {
                 }
             }
         }
+
+        fun startActivity(context: Context) {
+            context.startActivity(
+                ChannelListActivity.createIntent(
+                    context = context,
+                    activityClass = CustomChannelListActivity::class.java
+                )
+            )
+        }
     }
 }

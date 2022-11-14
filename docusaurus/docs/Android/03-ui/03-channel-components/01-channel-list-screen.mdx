@@ -43,7 +43,7 @@ This single line of code will produce a fully working solution, as shown in the 
 
 ![The Channel List Screen Component](../../assets/channel_list_screen.png)
 
-Alternatively, you can achieve the same result by adding `ChannelListFragment` from the SDK to your Activity:
+Alternatively, you can achieve the same result by adding `ChannelListFragment` from the SDK to your Fragment or Activity:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -112,11 +112,7 @@ class MyChannelListActivity : AppCompatActivity(R.layout.fragment_container),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, ChannelListFragment.newInstance())
-                .commit()
-        }
+        // Add ChannelListFragment to the layout
     }
 
     override fun onUserAvatarClick() {
@@ -154,11 +150,7 @@ public final class MyChannelListActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, ChannelListFragment.newInstance())
-                    .commit();
-        }
+        // Add ChannelListFragment to the layout
     }
 
     @Override
@@ -325,6 +317,29 @@ public final class CustomChannelListActivity extends ChannelListActivity {
         });
     }
 }
+```
+</TabItem>
+</Tabs>
+
+Then you need to add `CustomChannelListActivity` to your `AndroidManifest.xml`, create an Intent for it using the `ChannelListActivity.createIntent()` method, and finally start the Activity:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+context.startActivity(
+    ChannelListActivity.createIntent(
+        context = context,
+        activityClass = CustomChannelListActivity::class.java
+    )
+)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+context.startActivity(ChannelListActivity.createIntent(context, CustomChannelListActivity.class));
 ```
 </TabItem>
 </Tabs>
