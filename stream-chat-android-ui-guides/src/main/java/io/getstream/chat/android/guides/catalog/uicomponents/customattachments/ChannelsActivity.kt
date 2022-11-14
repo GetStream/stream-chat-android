@@ -63,7 +63,7 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
 
     override fun onDestroy() {
         super.onDestroy()
-        ChatUI.cleanup()
+        ChatUI.cleanup(applicationContext)
     }
 
     /**
