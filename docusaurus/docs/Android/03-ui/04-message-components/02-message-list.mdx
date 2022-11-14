@@ -199,34 +199,34 @@ Handlers must be set before passing any data to `MessageListView`. If you're not
 
 ### Listeners
 
-In addition to the required handlers, `MessageListView` also provides some optional listeners. They are also set by default if you use `bindView`.
+In addition to the required handlers, `MessageListView` also provides optional listeners. They are also set by default if you use `bindView`.
 
-You can always override them to get events when something happens:
+You can always override them to get the event when something happens:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 messageListView.setMessageClickListener { message: Message ->
-    // Listen to click on message events
+    // Handle message being clicked
 }
 messageListView.setEnterThreadListener { message: Message ->
-    // Listen to events when enter thread associated with a message
+    // Handle thread being entered
 }
 messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
-    // Listen to events when download click for an attachment happens
+    // Handle clicks on the download attachment button
 }
 messageListView.setUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
-    // Listen to clicks on user reactions on the message options overlay
+    // Handle clicks on a reaction left by a user
 }
 messageListView.setMessageLongClickListener { message ->
-    // Handle long click on message
+    // Handle message being long clicked
 }
 messageListView.setAttachmentClickListener { message, attachment ->
-    // Handle long click on attachment
+    // Handle attachment being clicked
 }
 messageListView.setUserClickListener { user ->
-    // Handle click on user avatar
+    // Handle user avatar being clicked
 }
 ```
 </TabItem>
@@ -235,25 +235,25 @@ messageListView.setUserClickListener { user ->
 
 ```java
 messageListView.setMessageClickListener((message) -> {
-    // Listen to click on message events
+    // Handle message being clicked
 });
 messageListView.setEnterThreadListener((message) -> {
-    // Listen to events when enter thread associated with a message
+    // Handle thread being entered
 });
 messageListView.setAttachmentDownloadClickListener((attachment) -> {
-    // Listen to events when download click for an attachment happens
+    // Handle clicks on the download attachment button
 });
 messageListView.setUserReactionClickListener((message, user, reaction) -> {
-    // Listen to clicks on user reactions on the message options overlay
+    // Handle clicks on a reaction left by a user
 });
 messageListView.setMessageLongClickListener((message) -> {
-    // Handle long click on message
+    // Handle message being long clicked
 });
 messageListView.setAttachmentClickListener((message, attachment) -> {
-    // Handle long click on attachment
+    // Handle attachment being clicked
 });
 messageListView.setUserClickListener((user) -> {
-    // Handle click on user avatar
+    // Handle user avatar being clicked
 });
 ```
 </TabItem>

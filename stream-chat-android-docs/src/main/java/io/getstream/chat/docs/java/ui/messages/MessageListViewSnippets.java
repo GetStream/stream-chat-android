@@ -93,25 +93,25 @@ public class MessageListViewSnippets extends Fragment {
 
     public void listeners() {
         messageListView.setMessageClickListener((message) -> {
-            // Listen to click on message events
+            // Handle message being clicked
         });
         messageListView.setEnterThreadListener((message) -> {
-            // Listen to events when enter thread associated with a message
+            // Handle thread being entered
         });
         messageListView.setAttachmentDownloadClickListener((attachment) -> {
-            // Listen to events when download click for an attachment happens
+            // Handle clicks on the download attachment button
         });
         messageListView.setUserReactionClickListener((message, user, reaction) -> {
-            // Listen to clicks on user reactions on the message options overlay
+            // Handle clicks on a reaction left by a user
         });
         messageListView.setMessageLongClickListener((message) -> {
-            // Handle long click on message
+            // Handle message being long clicked
         });
         messageListView.setAttachmentClickListener((message, attachment) -> {
-            // Handle long click on attachment
+            // Handle attachment being clicked
         });
         messageListView.setUserClickListener((user) -> {
-            // Handle click on user avatar
+            // Handle user avatar being clicked
         });
     }
 
