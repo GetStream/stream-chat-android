@@ -504,8 +504,8 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         ).map(this::flattenChannel)
     }
 
-    override fun stopWatching(channelType: String, channelId: String): Call<Unit> {
-        return channelApi.stopWatching(
+    override fun stopWatching(channelType: String, channelId: String): Call<Unit> = postponeCall {
+        channelApi.stopWatching(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
