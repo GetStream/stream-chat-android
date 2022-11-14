@@ -47,7 +47,6 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
         channelId: String,
         request: QueryChannelRequest,
     ) {
-        kotlin.Result
         logic.channel(channelType, channelId).updateStateFromDatabase(request)
     }
 
