@@ -2070,12 +2070,7 @@ internal constructor(
      * @return [Call] with a list of [User].
      */
     @CheckResult
-    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        val isConnectionRequired = query.presence
-        logger.d { "[queryUsers] isConnectionRequired: $isConnectionRequired, query: $query" }
-
-        return api.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) { api.queryUsers(query) }
-    }
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
 
     /**
      * Adds members to a given channel.

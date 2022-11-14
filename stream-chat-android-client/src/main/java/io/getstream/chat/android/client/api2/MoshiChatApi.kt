@@ -859,10 +859,18 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
             sort = queryUsers.sort,
             presence = queryUsers.presence,
         )
-        return userApi.queryUsers(
-            connectionId,
-            request,
-        ).map { response -> response.users.map(DownstreamUserDto::toDomain) }
+        val lazyQueryUsersCall = {
+            userApi.queryUsers(
+                connectionId,
+                request,
+            ).map { response -> response.users.map(DownstreamUserDto::toDomain) }
+        }
+
+        return if (connectionId.isBlank() && queryUsers.presence) {
+            postponeCall(lazyQueryUsersCall)
+        } else {
+            lazyQueryUsersCall()
+        }
     }
 
     override fun queryMembers(
