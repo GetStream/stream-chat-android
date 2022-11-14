@@ -235,7 +235,10 @@ public class MessageListViewSnippets extends Fragment {
         );
     }
 
+    @SuppressWarnings({"Lambda can be replaced with method reference", "Convert2MethodRef"})
     public void avatarPredicate() {
-        messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessagePosition.BOTTOM) && messageItem.isTheirs());
+        messageListView.setShowAvatarPredicate((messageItem) ->
+                messageItem.isTheirs()
+        );
     }
 }

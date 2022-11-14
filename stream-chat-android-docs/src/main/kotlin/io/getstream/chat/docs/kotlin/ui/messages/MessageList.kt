@@ -255,7 +255,7 @@ class MessageListViewSnippets : Fragment() {
 
     fun avatarPredicate() {
         messageListView.setShowAvatarPredicate { messageItem ->
-            messageItem.positions.contains(MessagePosition.BOTTOM) && messageItem.isTheirs
+            messageItem.isTheirs
         }
     }
 }

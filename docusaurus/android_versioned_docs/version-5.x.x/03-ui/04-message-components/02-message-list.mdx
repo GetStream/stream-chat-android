@@ -721,40 +721,49 @@ messageListView.setEmptyStateView(
 This code will display the following empty state:
 
 ![The custom empty state in action](../../assets/message_lis_custom_empty_state.png)
-## Configure When Avatar Appears
-Is it possible to configure when the avatar for messages appears. You can use `MessageListView.setShowAvatarPredicate` and pass a predicate to define when the avatar is going to be shown. This example implements the default behaviour:
+## Configure When the User Avatar Appears
+By default, user avatars will appear next to messages that are either the last message in a group of messages, or the only one within it.
+
+//TODO - place a screenshot here when the screenshot run commences
+
+You can configure when the user avatar will appear by setting your own predicate using `MessageListView.setShowAvatarPredicate()`.<br/>
+For instance, the following code will make the user avatar appear next to all messages sent by other users, regardless of their position.
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-messageListView.setShowAvatarPredicate(
-    ShowAvatarPredicate { messageItem ->
-        messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
-    }
-)
+messageListView.setShowAvatarPredicate { messageItem ->
+    messageItem.isTheirs
+}
 ```
 </TabItem>
 
 <TabItem value="java" label="Java">
 
 ```java
-messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs());
+messageListView.setShowAvatarPredicate((messageItem) ->
+        messageItem.isTheirs()
+);
 ```
 </TabItem>
 </Tabs>
 
+The result looks like this:
+
+//TODO - place a screenshot here when the screenshot run commences
+
 :::note
-To avoid overlap between the avatar and the messages of the chat, remember to use `streamUiMessageStartMargin` and `streamUiMessageEndMargin` to create space for the avatar of the messages.
+To avoid overlap between the avatar and the message bubble, remember to use `streamUiMessageStartMargin` and `streamUiMessageEndMargin` to create space for the message avatar.
 :::
 
-If you set a predicate that shows avatars for your own messages as well, use this value:
+If you set a predicate that shows avatars for your own messages as well, use the following value:
 
 ```xml
 streamUiMessageEndMargin=">@dimen/stream_ui_message_viewholder_avatar_missing_margin"
 ```
 
-If your predicate doesn't show avatars for your own messages (this is the default behavior), remove the end margin:
+If your predicate doesn't show avatars for your own messages (the default behavior), remove the end margin:
 
 ```xml
 streamUiMessageEndMargin="0dp"
