@@ -45,6 +45,16 @@ public sealed class Result<out A : Any> {
     }
 
     /**
+     * Returns the encapsulated value if this instance represents [Success] [Result.isSuccess]
+     * or throws the [IllegalStateException] exception if it is [Failure] [Result.isFailure].
+     */
+    @Throws(IllegalStateException::class)
+    public fun getOrThrow(): A = when (this) {
+        is Success -> value
+        is Failure -> throw IllegalStateException("The Success::value cannot be accessed as the Result is a Failure.")
+    }
+
+    /**
      * Returns the encapsulated [ChatError] if this instance represents [Failure] [isFailure] or `null`
      * if it is [Success] [isSuccess].
      */

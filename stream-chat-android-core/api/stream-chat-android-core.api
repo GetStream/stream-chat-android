@@ -113,6 +113,7 @@ public final class io/getstream/chat/android/client/errors/ChatErrorKt {
 public abstract class io/getstream/chat/android/client/utils/Result {
 	public final fun chatErrorOrNull ()Lio/getstream/chat/android/client/errors/ChatError;
 	public final fun getOrNull ()Ljava/lang/Object;
+	public final fun getOrThrow ()Ljava/lang/Object;
 	public final fun isFailure ()Z
 	public final fun isSuccess ()Z
 	public final fun map (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
