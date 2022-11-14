@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `Result::getOrNull`, `Result::getOrThrow` and `Result.chatErrorOrNull` to simplify getting `value` for Java users. [#4415](https://github.com/GetStream/stream-chat-android/pull/4415)
 
 ### ⚠️ Changed
 
