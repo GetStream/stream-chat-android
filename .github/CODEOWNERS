@@ -7,10 +7,12 @@ stream-chat-android-docs       @GetStream/android-developers
 
 # Core
 stream-chat-android-client                  @GetStream/android-developers-core
+stream-chat-android-client-test             @GetStream/android-developers-core
 stream-chat-android-core                    @GetStream/android-developers-core
 stream-chat-android-offline                 @GetStream/android-developers-core
 stream-chat-android-pushprovider-firebase   @GetStream/android-developers-core
 stream-chat-android-pushprovider-huawei     @GetStream/android-developers-core
+stream-chat-android-pushprovider-xiaomi     @GetStream/android-developers-core
 stream-chat-android-state                   @GetStream/android-developers-core
 stream-chat-android-test                    @GetStream/android-developers-core
 
@@ -22,10 +24,13 @@ stream-chat-android-compose                 @GetStream/android-developers-ui
 stream-chat-android-compose-sample          @GetStream/android-developers-ui
 stream-chat-android-ui-guides               @GetStream/android-developers-ui
 stream-chat-android-ui-uitests              @GetStream/android-developers-ui
+stream-chat-android-ui-utils                @GetStream/android-developers-ui
 
 # Libraries
+libraries/external                           @GetStream/android-developers-core
 libraries/logging/stream-logger              @GetStream/android-developers-core
 libraries/logging/stream-logger-android      @GetStream/android-developers-core
+libraries/logging/stream-logger-android-init @GetStream/android-developers-core
 libraries/logging/stream-logger-file         @GetStream/android-developers-core
 
 ### Top level files and directories
@@ -50,13 +55,12 @@ settings.gradle             @GetStream/android-developers
 # Docs
 CHANGELOG.md                            @GetStream/android-developers
 DEPRECATIONS.md                         @GetStream/android-developers
+CONTRIBUTING.md                         @GetStream/android-developers
 LICENSE                                 @GetStream/android-developers
 README.md                               @GetStream/android-developers
+DokkaRoot.md                            @GetStream/android-developers
 docs                                    @GetStream/android-developers
 docusaurus                              @GetStream/android-developers
-docusaurus/docs/Android/02-client       @GetStream/android-developers-core
-docusaurus/docs/Android/03-ui           @GetStream/android-developers-ui
-docusaurus/docs/Android/04-compose      @GetStream/android-developers-ui
 dokkasaurus_filter.json                 @leandroBorgesFerreira
 
 # Misc
