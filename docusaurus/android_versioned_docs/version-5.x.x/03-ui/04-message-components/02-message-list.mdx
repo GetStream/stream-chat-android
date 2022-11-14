@@ -419,14 +419,14 @@ messageListView.setEditMessageEnabled(false);
 |![message list options before](../../assets/message_list_options_before.png)|![message list options after](../../assets/message_list_options_after.png)|
 
 ## Messages Start Position
-You can configure the messages to start at the top or the bottom of the view (Default: bottom) by using `streamUiMessagesStart` and `streamUiThreadMessagesStart` attributes.
+You can configure the messages to start at the top or the bottom **(default)** of the view by using `streamUiMessagesStart` and `streamUiThreadMessagesStart` attributes.
 
 | Bottom | Top |
 | --- | --- |
 |![messages at the bottom](../../assets/messages_at_the_top.png)|![messages at the top](../../assets/messages_at_the_bottom.png)|
 
 :::note
-Messages' position doesn't affect the stack. The default is from bottom to top. if you would like to change it, use the method `setCustomLinearLayoutManager` and set a `LinearLayoutManager` with your desired definitions.
+The start position does not affect the orientation. The default is from bottom to top. If you would like to change that, use the method `setCustomLinearLayoutManager` and set a `LinearLayoutManager` with the desired orientation.
 :::
 
 
