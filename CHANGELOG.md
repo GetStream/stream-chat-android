@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `thumbUrl` field to the return type of the `FileUploader::sendImage` method, so that clients are able to return image thumb URL when implementing their custom `FileUploader`. [#4423](https://github.com/GetStream/stream-chat-android/pull/4423)
 
 ### ⚠️ Changed
 
