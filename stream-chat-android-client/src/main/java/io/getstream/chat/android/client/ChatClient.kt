@@ -94,7 +94,6 @@ import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.logger.StreamLogLevelValidator
 import io.getstream.chat.android.client.logger.StreamLoggerHandler
-import io.getstream.chat.android.client.models.ModelFields
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
@@ -2348,7 +2347,8 @@ internal constructor(
         val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
         val currentUser = getCurrentUser()
 
-        val request = QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to memberIds))
+        val request = QueryChannelRequest()
+            .withData(extraData + mapOf(QueryChannelRequest.KEY_MEMBERS to memberIds))
         return queryChannelInternal(
             channelType = channelType,
             channelId = channelId,
