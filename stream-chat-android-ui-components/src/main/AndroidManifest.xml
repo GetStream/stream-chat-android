@@ -29,34 +29,34 @@
             tools:node="merge"
             >
             <meta-data
-                android:name="io.getstream.chat.android.ui.common.ChatUIInitializer"
+                android:name="io.getstream.chat.android.ui.initializer.ChatUIInitializer"
                 android:value="androidx.startup"
                 />
         </provider>
 
         <activity
-            android:name=".gallery.AttachmentGalleryActivity"
+            android:name=".feature.gallery.AttachmentGalleryActivity"
             android:theme="@style/StreamUi.AttachmentGallery"
             android:exported="false"
             />
         <activity
-            android:name=".gallery.AttachmentMediaActivity"
+            android:name=".feature.gallery.AttachmentMediaActivity"
             android:theme="@style/StreamUi.MediaActivity"
             android:exported="false"
             />
         <activity
-            android:name=".gallery.AttachmentActivity"
+            android:name=".feature.gallery.AttachmentActivity"
             android:theme="@style/StreamUi.AttachmentActivity"
             android:exported="false"
             />
 
         <activity
-            android:name=".channel.ChannelListActivity"
+            android:name=".feature.channels.ChannelListActivity"
             android:exported="false"
             />
 
         <activity
-            android:name=".message.MessageListActivity"
+            android:name=".feature.messages.MessageListActivity"
             android:exported="false"
             />
     </application>

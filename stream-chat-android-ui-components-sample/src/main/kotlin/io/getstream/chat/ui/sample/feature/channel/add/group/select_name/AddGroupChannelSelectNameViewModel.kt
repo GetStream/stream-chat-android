@@ -23,11 +23,11 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
-import io.getstream.chat.android.livedata.utils.Event as EventWrapper
+import io.getstream.chat.android.state.utils.Event as EventWrapper
 
 class AddGroupChannelSelectNameViewModel : ViewModel() {
 

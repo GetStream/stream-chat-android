@@ -53,7 +53,7 @@ internal class CallTests {
     @Test
     fun `Should return from onErrorReturn when original call gives error`() = runTest {
         val result = CoroutineCall<List<Int>>(testCoroutines.scope) {
-            Result.Failure(ChatError("Test error"))
+            Result.Failure(ChatError.GenericError(message = "Test error"))
         }.onErrorReturn(testCoroutines.scope) {
             Result.Success(listOf(0, 1))
         }.await()
@@ -65,7 +65,7 @@ internal class CallTests {
         val result = CoroutineCall(testCoroutines.scope) {
             Result.Success(listOf(10, 20, 30))
         }.withPrecondition(testCoroutines.scope) {
-            Result.Failure(ChatError("Error from precondition"))
+            Result.Failure(ChatError.GenericError(message = "Error from precondition"))
         }.onErrorReturn(testCoroutines.scope) {
             Result.Success(listOf(0, 1))
         }.await()
@@ -94,7 +94,7 @@ internal class CallTests {
 
         CoroutineCall(testCoroutines.scope) {
             currentValue++
-            Result.Failure(ChatError())
+            Result.Failure(ChatError.GenericError(message = ""))
         }
             .retry(testCoroutines.scope, retryPolicy)
             .doOnStart(testCoroutines.scope) { currentValue++ }

@@ -73,7 +73,7 @@ internal class SendMessageListenerDatabaseTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
 
         sendMessageListenerDatabase.onMessageSendResult(
-            result = Result.Failure(ChatError()),
+            result = Result.Failure(ChatError.GenericError("")),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,
@@ -95,7 +95,7 @@ internal class SendMessageListenerDatabaseTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
 
         sendMessageListenerDatabase.onMessageSendResult(
-            result = Result.Failure(ChatError()),
+            result = Result.Failure(ChatError.GenericError("")),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,

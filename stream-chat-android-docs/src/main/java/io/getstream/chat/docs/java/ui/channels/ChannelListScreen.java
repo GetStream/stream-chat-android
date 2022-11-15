@@ -11,12 +11,12 @@ import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.ui.channel.ChannelListActivity;
-import io.getstream.chat.android.ui.channel.ChannelListFragment;
-import io.getstream.chat.android.ui.channel.list.ChannelListView;
-import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView;
-import io.getstream.chat.android.ui.search.SearchInputView;
-import io.getstream.chat.android.ui.search.list.SearchResultListView;
+import io.getstream.chat.android.ui.feature.channels.ChannelListActivity;
+import io.getstream.chat.android.ui.feature.channels.ChannelListFragment;
+import io.getstream.chat.android.ui.feature.channels.list.ChannelListView;
+import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView;
+import io.getstream.chat.android.ui.feature.search.SearchInputView;
+import io.getstream.chat.android.ui.feature.search.list.SearchResultListView;
 import io.getstream.chat.docs.R;
 import kotlin.Unit;
 

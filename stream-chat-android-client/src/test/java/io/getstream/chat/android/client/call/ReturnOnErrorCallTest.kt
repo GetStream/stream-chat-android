@@ -46,7 +46,7 @@ internal class ReturnOnErrorCallTest {
     private val resultValue = Mother.randomString()
     private val errorResultValue = Mother.randomString()
     private val validResult: Result<String> = Result.Success(resultValue)
-    private val error: ChatError = ChatError(randomString())
+    private val error: ChatError = ChatError.GenericError(message = randomString())
     private val errorResult: Result<String> = Result.Failure(error)
     private val onErrorResult: Result<String> = Result.Success(errorResultValue)
     private val spyOnError = SpyOnError(onErrorResult)

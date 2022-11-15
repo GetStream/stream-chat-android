@@ -30,9 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.AttachmentFilter
-import com.getstream.sdk.chat.utils.StorageHelper
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import io.getstream.chat.android.compose.R
@@ -42,6 +39,9 @@ import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
+import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.

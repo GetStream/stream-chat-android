@@ -18,7 +18,7 @@ package io.getstream.chat.android.client
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
-import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.mockito.kotlin.mock
 import java.util.Date
 import java.util.UUID
+
 internal object Mother {
     private val fixture: JFixture
         get() = JFixture()
@@ -127,10 +128,6 @@ internal object Mother {
             override val isInitialized: Boolean = true
 
             override val isNetworkAvailable: Boolean = true
-
-            override fun clearState() {
-                // Nothing to do
-            }
         }
     }
 
@@ -152,6 +149,11 @@ internal object Mother {
         streamCode: Int = randomInt(),
         description: String = randomString(),
         statusCode: Int = randomInt(),
-        cause: Throwable? = null
-    ): ChatNetworkError = ChatNetworkError.create(streamCode, description, statusCode, cause)
+        cause: Throwable? = null,
+    ): ChatError.NetworkError = ChatError.NetworkError(
+        message = description,
+        streamCode = streamCode,
+        statusCode = statusCode,
+        cause = cause,
+    )
 }

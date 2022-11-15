@@ -41,12 +41,14 @@ internal class ZipCallTest {
     private val resultValueB = randomString()
     private val validResultB: Result<String> = Result.Success(resultValueB)
     private val expectedResult: Result<Pair<Int, String>> = Result.Success(Pair(resultValueA, resultValueB))
-    private val errorA = ChatError(randomString(), Exception())
-    private val errorB = ChatError(randomString(), Exception())
+    private val errorA = ChatError.ThrowableError(message = randomString(), cause = Exception())
+    private val errorB = ChatError.ThrowableError(message = randomString(), cause = Exception())
     private val errorResultA = Result.Failure(errorA)
     private val errorResultB = Result.Failure(errorB)
-    private val expectedErrorResultA = Result.Failure(ChatError("Error executing callA", errorA.cause))
-    private val expectedErrorResultB = Result.Failure(ChatError("Error executing callB", errorB.cause))
+    private val expectedErrorResultA =
+        Result.Failure(ChatError.ThrowableError(message = "Error executing callA", cause = errorA.cause))
+    private val expectedErrorResultB =
+        Result.Failure(ChatError.ThrowableError(message = "Error executing callB", cause = errorB.cause))
 
     @Test
     fun `Call should be executed and return a valid result`() = runTest {

@@ -51,7 +51,6 @@ import kotlin.reflect.KClass
  * @param createChannelListener [CreateChannelListener]
  * @param activeUser User associated with [OfflinePlugin] instance.
  * @param provideDependency Resolves dependency within [OfflinePlugin].
- * gets separated from [OfflinePlugin].
  */
 @Suppress("LongParameterList")
 internal class OfflinePlugin(

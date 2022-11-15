@@ -3,10 +3,10 @@ package io.getstream.chat.docs.java.ui.utility;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import io.getstream.chat.android.ui.search.SearchInputView;
-import io.getstream.chat.android.ui.search.list.SearchResultListView;
-import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel;
-import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModelBinding;
+import io.getstream.chat.android.ui.feature.search.SearchInputView;
+import io.getstream.chat.android.ui.feature.search.list.SearchResultListView;
+import io.getstream.chat.android.ui.viewmodel.search.SearchViewModel;
+import io.getstream.chat.android.ui.viewmodel.search.SearchViewModelBinding;
 
 /**
  * [Search View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/)

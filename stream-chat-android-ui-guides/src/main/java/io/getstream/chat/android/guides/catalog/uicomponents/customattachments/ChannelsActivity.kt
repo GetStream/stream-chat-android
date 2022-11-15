@@ -25,14 +25,14 @@ import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.f
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.QuotedDateAttachmentFactory
 import io.getstream.chat.android.guides.cleanup
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.channel.ChannelListActivity
-import io.getstream.chat.android.ui.channel.ChannelListFragment
-import io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewFactoryManager
-import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.FileAttachmentPreviewFactory
-import io.getstream.chat.android.ui.message.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
+import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
 
 /**
  * An Activity representing a self-contained channel list screen with custom attachment factories.

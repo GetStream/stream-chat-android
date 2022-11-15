@@ -25,10 +25,10 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel.PaginationState
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.utils.Event
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.PaginationState
 import io.getstream.chat.ui.sample.application.App
 import kotlinx.coroutines.launch
 

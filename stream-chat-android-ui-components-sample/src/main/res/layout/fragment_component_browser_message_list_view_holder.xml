@@ -20,7 +20,7 @@
     android:background="@color/component_browser_background"
     >
 
-    <io.getstream.chat.android.ui.message.list.MessageListView
+    <io.getstream.chat.android.ui.feature.messages.list.MessageListView
         android:id="@+id/messageListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

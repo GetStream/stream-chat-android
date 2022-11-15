@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.isPermanent
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result

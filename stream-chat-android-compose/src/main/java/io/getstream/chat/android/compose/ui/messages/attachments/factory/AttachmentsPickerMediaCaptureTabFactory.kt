@@ -29,8 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.getstream.sdk.chat.CaptureMediaContract
-import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
@@ -39,6 +37,8 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import java.io.File
 
 /**

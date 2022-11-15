@@ -78,7 +78,7 @@ internal class HideChannelListenerDatabaseTest {
 
         val (type, id) = randomCID().cidToTypeAndId()
         hideChannelListenerDatabase.onHideChannelResult(
-            result = Result.Failure(ChatError()),
+            result = Result.Failure(ChatError.GenericError("")),
             channelType = type,
             channelId = id,
             clearHistory = randomBoolean()

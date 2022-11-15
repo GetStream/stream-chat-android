@@ -35,11 +35,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.common.isStartAlignment
 import io.getstream.chat.android.compose.previewdata.PreviewUserReactionData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.state.messages.list.isStartAlignment
 
 /**
  * Represent a reaction item with the user who left it.

@@ -38,28 +38,28 @@ import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineErrorHandlerFactoriesProvider
-import io.getstream.chat.android.offline.event.handler.internal.EventHandler
-import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelsListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.SendAttachmentListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.SendGiphyListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerState
-import io.getstream.chat.android.offline.plugin.listener.internal.TypingEventListenerState
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.offline.sync.internal.SyncHistoryManager
-import io.getstream.chat.android.offline.sync.internal.SyncManager
+import io.getstream.chat.android.state.event.handler.internal.EventHandler
+import io.getstream.chat.android.state.factory.internal.OfflineErrorHandlerFactoriesProvider
+import io.getstream.chat.android.state.plugin.listener.internal.ChannelMarkReadListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.DeleteMessageListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.DeleteReactionListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.EditMessageListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.MarkAllReadListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelsListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.SendAttachmentListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.SendGiphyListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.SendMessageListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.SendReactionListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.ShuffleGiphyListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.ThreadQueryListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.TypingEventListenerState
+import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.sync.internal.SyncHistoryManager
+import io.getstream.chat.android.state.sync.internal.SyncManager
 import kotlin.reflect.KClass
 
 /**
@@ -72,6 +72,7 @@ import kotlin.reflect.KClass
  * @param stateRegistry [StateRegistry]
  * @param syncManager [SyncManager]
  * @param eventHandler [EventHandler]
+ * @param globalState [GlobalState]
  */
 @InternalStreamChatApi
 @Suppress("LongParameterList")

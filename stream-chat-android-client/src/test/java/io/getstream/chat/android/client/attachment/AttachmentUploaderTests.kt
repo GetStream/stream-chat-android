@@ -65,7 +65,7 @@ internal class AttachmentUploaderTests {
     @Test
     @Ignore("Current logic doesn't work so. Need to rewrite test")
     fun `Should return attachment with properly filled data when sending file has failed`(): Unit = runTest {
-        val error = ChatError("")
+        val error = ChatError.GenericError(message = "")
         val attachment = randomAttachments(size = 1).first()
 
         val sut = Fixture()
