@@ -42,7 +42,7 @@ This single line of code will produce a fully working solution, as shown in the 
 
 ![The Message List Screen Component](../../assets/message_list_screen.png)
 
-Alternatively, you can achieve the same result by adding `MessageListFragment` from the SDK to your Activity:
+Alternatively, you can achieve the same result by adding `MessageListFragment` from the SDK to your Fragment or Activity:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -61,8 +61,11 @@ class MyMessageListActivity : AppCompatActivity(R.layout.fragment_container) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
+            val fragment = MessageListFragment.newInstance(cid = "messaging:123") {
+                showHeader(true)
+            }
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MessageListFragment.newInstance(cid = "messaging:123"))
+                .replace(R.id.container, fragment)
                 .commit()
         }
     }
@@ -83,9 +86,13 @@ public final class MyMessageListActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
+            MessageListFragment fragment  = MessageListFragment.newInstance("messaging:123", builder -> {
+                builder.showHeader(true);
+                return Unit.INSTANCE;
+            });
             getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, MessageListFragment.newInstance("messaging:123"))
-                .commit();
+                    .replace(R.id.container, fragment)
+                    .commit();
         }
     }
 }
@@ -107,11 +114,7 @@ class MyMessageListActivity : AppCompatActivity(R.layout.fragment_container), Me
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MessageListFragment.newInstance(cid = "messaging:123"))
-                .commit()
-        }
+        // Add MessageListFragment to the layout
     }
 
     override fun onBackPress() {
@@ -133,11 +136,7 @@ public final class MyMessageListActivity extends AppCompatActivity implements Me
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, MessageListFragment.newInstance("messaging:123"))
-                .commit();
-        }
+        // Add MessageListFragment to the layout
     }
 
     @Override
@@ -149,7 +148,7 @@ public final class MyMessageListActivity extends AppCompatActivity implements Me
 </TabItem>
 </Tabs>
 
-Currently, there is one click listener you can use with the `MessageListFragment`:
+Currently, there's only a single click listener you can use with the `MessageListFragment`:
 
 * `BackPressListener`: Click listener for the navigation button in the header. Finishes Activity by default.
 
@@ -248,6 +247,30 @@ public final class CustomMessageListActivity extends MessageListActivity {
         });
     }
 }
+```
+</TabItem>
+</Tabs>
+
+Then you need to add `CustomMessageListActivity` to your `AndroidManifest.xml`, create an Intent for it using the `MessageListActivity.createIntent()` method, and finally start the Activity:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+context.startActivity(
+    MessageListActivity.createIntent(
+        context = context,
+        cid = "messaging:123",
+        activityClass = CustomMessageListActivity::class.java
+    )
+)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+context.startActivity(MessageListActivity.createIntent(context, "messaging:123", null, CustomMessageListActivity.class));
 ```
 </TabItem>
 </Tabs>

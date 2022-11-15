@@ -5,18 +5,14 @@ import android.content.Context;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.ConnectionData;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.token.TokenProvider;
-import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.docs.TokenService;
 
 public class ClientAndUsers {
@@ -53,8 +49,8 @@ public class ClientAndUsers {
             client.connectUser(user, token).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Logged in
-                    User userRes = ((Result.Success<ConnectionData>) result).getValue().getUser();
-                    String connectionId = ((Result.Success<ConnectionData>) result).getValue().getConnectionId();
+                    User userRes = result.getOrNull().getUser();
+                    String connectionId = result.getOrNull().getConnectionId();
                 } else {
                     // Handle error
                 }
@@ -151,7 +147,7 @@ public class ClientAndUsers {
 
             client.queryUsers(request).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<User> users = ((Result.Success<List<User>>) result).getValue();
+                    List<User> users = result.getOrNull();
                 } else {
                     // Handle error
                 }

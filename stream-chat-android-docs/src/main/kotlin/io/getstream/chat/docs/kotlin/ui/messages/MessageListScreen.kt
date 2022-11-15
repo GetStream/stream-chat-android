@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.ui.feature.messages.MessageListActivity
 import io.getstream.chat.android.ui.feature.messages.MessageListFragment
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.docs.R
 
 /**
@@ -29,8 +29,11 @@ class MessageListScreen {
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
                 if (savedInstanceState == null) {
+                    val fragment = MessageListFragment.newInstance(cid = "messaging:123") {
+                        showHeader(true)
+                    }
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, MessageListFragment.newInstance(cid = "messaging:123"))
+                        .replace(R.id.container, fragment)
                         .commit()
                 }
             }
@@ -46,11 +49,7 @@ class MessageListScreen {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                if (savedInstanceState == null) {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, MessageListFragment.newInstance(cid = "messaging:123"))
-                        .commit()
-                }
+                // Add MessageListFragment to the layout
             }
 
             override fun onBackPress() {
@@ -97,6 +96,16 @@ class MessageListScreen {
                     messageId(messageId)
                 }
             }
+        }
+
+        fun startActivity(context: Context) {
+            context.startActivity(
+                MessageListActivity.createIntent(
+                    context = context,
+                    cid = "messaging:123",
+                    activityClass = CustomMessageListActivity::class.java
+                )
+            )
         }
     }
 }

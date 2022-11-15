@@ -161,7 +161,6 @@ import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onErrorSuspend
-import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
