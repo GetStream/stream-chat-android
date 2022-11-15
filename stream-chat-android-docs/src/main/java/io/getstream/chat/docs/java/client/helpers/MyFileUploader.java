@@ -38,7 +38,7 @@ public class MyFileUploader implements FileUploader {
     @Override
     public Result<UploadedImage> sendImage(@NotNull String channelType, @NotNull String channelId, @NotNull String userId, @NotNull File file, @NotNull ProgressCallback callback) {
         try {
-            return Result.success(new UploadedImage("url"));
+            return Result.success(new UploadedImage("url", null));
         } catch (Exception e) {
             return Result.error(e);
         }
@@ -48,7 +48,7 @@ public class MyFileUploader implements FileUploader {
     @Override
     public Result<UploadedImage> sendImage(@NotNull String channelType, @NotNull String channelId, @NotNull String userId, @NotNull File file) {
         try {
-            return Result.success(new UploadedImage("url"));
+            return Result.success(new UploadedImage("url", null));
         } catch (Exception e) {
             return Result.error(e);
         }

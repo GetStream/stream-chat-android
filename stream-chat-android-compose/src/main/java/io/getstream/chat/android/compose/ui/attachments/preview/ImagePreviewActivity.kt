@@ -521,7 +521,10 @@ public class ImagePreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                val painter = rememberStreamImagePainter(data = attachments[page].imagePreviewUrl)
+                val attachment = attachments[page]
+                val imageUrl = attachment.imageUrl ?: attachment.thumbUrl ?: ""
+
+                val painter = rememberStreamImagePainter(data = imageUrl)
 
                 val density = LocalDensity.current
                 val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })

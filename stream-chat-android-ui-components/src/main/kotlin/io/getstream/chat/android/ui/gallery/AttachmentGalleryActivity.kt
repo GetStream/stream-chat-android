@@ -32,7 +32,6 @@ import com.getstream.sdk.chat.StreamFileUtil
 import com.getstream.sdk.chat.images.StreamImageLoader
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.extensions.constrainViewToParentBySide
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.getstream.sdk.chat.utils.formatTime
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.ChatUI
@@ -139,7 +138,10 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun setupGalleryAdapter() {
         adapter = AttachmentGalleryPagerAdapter(
             fragmentActivity = this,
-            imageList = attachmentGalleryItems.map { it.attachment.imagePreviewUrl!! },
+            imageList = attachmentGalleryItems.map {
+                val attachment = it.attachment
+                attachment.imageUrl ?: attachment.thumbUrl ?: ""
+            },
             imageClickListener = {
                 isFullScreen = !isFullScreen
                 if (isFullScreen) enterFullScreenMode() else exitFullScreenMode()
@@ -169,7 +171,9 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun setupAttachmentActionsButton() {
         binding.attachmentActionsButton.setOnClickListener {
             AttachmentGalleryOptionsDialogFragment.newInstance(
-                showInChatOptionHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) },
+                showInChatOptionHandler = {
+                    setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem))
+                },
                 deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) },
                 replyOptionHandler = { setResultAndFinish(AttachmentOptionResult.Reply(attachmentGalleryResultItem)) },
                 saveImageOptionHandler = handleSaveImage,
