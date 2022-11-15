@@ -19,15 +19,15 @@ package io.getstream.chat.android.client.notifications
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManager
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManagerImpl
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope

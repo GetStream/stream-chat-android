@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 
 internal data class MessageDiffCallback(
     var old: List<Message>,

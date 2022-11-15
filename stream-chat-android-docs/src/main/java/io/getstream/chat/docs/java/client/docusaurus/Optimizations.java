@@ -8,8 +8,7 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.extensions.CallExtensions;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.utils.Result;
+import io.getstream.chat.android.models.Channel;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/optimizations/">Optimizations</a>

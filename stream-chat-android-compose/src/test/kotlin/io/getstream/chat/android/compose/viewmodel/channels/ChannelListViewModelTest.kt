@@ -18,18 +18,18 @@ package io.getstream.chat.android.compose.viewmodel.channels
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.AutocompleteFilterObject
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.OrFilterObject
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState

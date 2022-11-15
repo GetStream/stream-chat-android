@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.state.utils
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomSyncStatus
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.NeutralFilterObject

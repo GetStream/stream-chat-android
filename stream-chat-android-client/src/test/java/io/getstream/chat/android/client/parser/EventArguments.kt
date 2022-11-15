@@ -104,15 +104,15 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 

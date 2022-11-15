@@ -18,11 +18,11 @@ package io.getstream.chat.android.offline.repository
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.offline.randomMessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageDao

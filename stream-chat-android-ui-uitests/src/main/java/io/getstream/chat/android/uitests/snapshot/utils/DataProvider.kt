@@ -20,12 +20,12 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.DrawableRes
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 internal fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int): String {

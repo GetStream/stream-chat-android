@@ -21,13 +21,11 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Message
 
 internal fun Message.toDto(): UpstreamMessageDto =
     UpstreamMessageDto(
-        attachments = attachments.map(Attachment::toDto),
+        attachments = attachments.map(io.getstream.chat.android.models.Attachment::toDto),
         cid = cid,
         command = command,
         html = html,
@@ -43,7 +41,7 @@ internal fun Message.toDto(): UpstreamMessageDto =
         show_in_channel = showInChannel,
         silent = silent,
         text = text,
-        thread_participants = threadParticipants.map(User::toDto),
+        thread_participants = threadParticipants.map(io.getstream.chat.android.models.User::toDto),
         extraData = extraData,
     )
 

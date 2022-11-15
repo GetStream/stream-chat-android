@@ -20,10 +20,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.utils.Event
 import io.getstream.logging.StreamLog

@@ -4,7 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.docs.TokenService

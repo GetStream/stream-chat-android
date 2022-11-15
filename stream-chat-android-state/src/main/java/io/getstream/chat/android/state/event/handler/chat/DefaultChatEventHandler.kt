@@ -25,10 +25,10 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.StateFlow
 

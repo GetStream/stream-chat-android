@@ -22,9 +22,6 @@ import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.models.ConnectionData
-import io.getstream.chat.android.client.models.GuestUser
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
@@ -36,8 +33,11 @@ import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
+import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString

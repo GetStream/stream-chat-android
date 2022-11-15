@@ -54,9 +54,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -67,8 +64,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState

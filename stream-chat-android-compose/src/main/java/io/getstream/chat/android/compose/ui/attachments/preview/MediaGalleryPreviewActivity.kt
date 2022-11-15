@@ -112,9 +112,6 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.attachment.isImage
@@ -147,8 +144,11 @@ import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl

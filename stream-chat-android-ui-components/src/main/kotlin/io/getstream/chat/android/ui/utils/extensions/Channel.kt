@@ -19,9 +19,9 @@ package io.getstream.chat.android.ui.utils.extensions
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R

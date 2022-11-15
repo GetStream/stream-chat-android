@@ -20,10 +20,10 @@ package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import kotlinx.coroutines.launch
 

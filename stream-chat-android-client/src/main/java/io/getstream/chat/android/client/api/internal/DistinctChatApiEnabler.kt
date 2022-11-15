@@ -20,15 +20,15 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.models.BannedUser
-import io.getstream.chat.android.client.models.BannedUsersSort
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.models.BannedUser
+import io.getstream.chat.android.models.BannedUsersSort
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.querysort.QuerySorter
 import java.util.Date
 
 /**

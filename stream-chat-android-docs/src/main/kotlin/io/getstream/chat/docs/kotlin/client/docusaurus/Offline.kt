@@ -5,9 +5,9 @@ package io.getstream.chat.docs.kotlin.client.docusaurus
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.state.extensions.getRepliesAsState

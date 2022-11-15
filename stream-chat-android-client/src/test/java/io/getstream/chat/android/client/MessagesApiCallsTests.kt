@@ -18,16 +18,16 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.SearchMessagesResult
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

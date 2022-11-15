@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.logging.StreamLog
 import java.util.Date
 
@@ -33,8 +33,8 @@ private const val TAG = "Chat:ChannelTools"
  */
 @InternalStreamChatApi
 public fun Channel.users(): List<User> {
-    return members.map(Member::user) +
-        read.map(ChannelUserRead::user) +
+    return members.map(io.getstream.chat.android.models.Member::user) +
+        read.map(io.getstream.chat.android.models.ChannelUserRead::user) +
         createdBy +
         messages.flatMap { it.users() } +
         watchers
@@ -237,7 +237,7 @@ public fun Collection<Channel>.updateUsers(users: Map<String, User>): List<Chann
  * pinnedMessages of channel instance.
  */
 internal fun Channel.updateUsers(users: Map<String, User>): Channel {
-    return if (users().map(User::id).any(users::containsKey)) {
+    return if (users().map(io.getstream.chat.android.models.User::id).any(users::containsKey)) {
         copy(
             messages = messages.updateUsers(users),
             members = members.updateUsers(users).toList(),

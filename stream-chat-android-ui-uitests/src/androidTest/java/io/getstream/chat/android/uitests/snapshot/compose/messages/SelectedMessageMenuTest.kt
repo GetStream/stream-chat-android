@@ -20,13 +20,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test

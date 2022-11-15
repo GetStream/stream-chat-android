@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.state.channel.controller
 
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.test.SynchronizedCoroutineTest
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
@@ -33,6 +30,9 @@ import io.getstream.chat.android.client.test.randomReactionNewEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomTypingStopEvent
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic

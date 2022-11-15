@@ -18,6 +18,11 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CustomObject
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+
 public val Channel.initials: String
     get() = name.initials()
 

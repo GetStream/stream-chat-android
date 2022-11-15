@@ -24,12 +24,12 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage

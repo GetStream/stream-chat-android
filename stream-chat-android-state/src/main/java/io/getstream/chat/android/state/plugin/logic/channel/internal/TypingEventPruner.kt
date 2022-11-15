@@ -17,7 +17,7 @@
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.events.TypingStartEvent
-import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.models.TypingEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

@@ -19,14 +19,8 @@ package io.getstream.chat.android.client.plugin
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
@@ -45,7 +39,13 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySorter
 import java.util.Date
 
 /**

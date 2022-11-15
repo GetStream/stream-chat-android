@@ -21,12 +21,12 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.internal.getMessageType
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import java.util.Date
 import java.util.UUID
 

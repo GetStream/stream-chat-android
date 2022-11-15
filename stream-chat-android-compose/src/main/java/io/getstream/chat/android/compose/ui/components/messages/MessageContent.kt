@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
@@ -31,6 +30,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTextContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 
 /**

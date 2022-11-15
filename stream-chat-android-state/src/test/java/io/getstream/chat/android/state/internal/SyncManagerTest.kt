@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -32,6 +31,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry

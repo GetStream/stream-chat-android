@@ -6,11 +6,11 @@ import androidx.annotation.Nullable;
 import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
 import io.getstream.chat.android.models.FilterObject;
+import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.events.CidEvent;
 import io.getstream.chat.android.client.events.HasChannel;
-import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.models.Channel;
 import io.getstream.chat.android.client.setup.state.ClientState;
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler;
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler;

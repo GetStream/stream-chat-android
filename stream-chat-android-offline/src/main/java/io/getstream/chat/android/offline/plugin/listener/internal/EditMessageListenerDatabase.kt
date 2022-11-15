@@ -19,12 +19,12 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.updateFailedMessage
 import io.getstream.chat.android.client.extensions.updateMessageOnlineState
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 
 /**

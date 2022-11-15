@@ -17,7 +17,7 @@
 package io.getstream.chat.android.state.utils
 
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomFile
 import java.util.UUID

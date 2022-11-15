@@ -18,9 +18,9 @@ package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 

@@ -21,12 +21,12 @@ import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.test.randomAttachment
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
@@ -190,7 +190,7 @@ internal class WhenUploadAttachmentsTests {
                     attachments.run {
                         size == 2 &&
                             any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Failed } &&
-                            any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
+                            any { it.uploadId == "uploadId2" && it.uploadState == io.getstream.chat.android.models.Attachment.UploadState.Success }
                     }
                 },
                 eq(false)
@@ -243,7 +243,7 @@ internal class WhenUploadAttachmentsTests {
                     attachments.run {
                         size == 2 &&
                             any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Failed } &&
-                            any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
+                            any { it.uploadId == "uploadId2" && it.uploadState == io.getstream.chat.android.models.Attachment.UploadState.Success }
                     }
                 },
                 eq(false)
@@ -287,7 +287,7 @@ internal class WhenUploadAttachmentsTests {
                     attachments.run {
                         size == 2 &&
                             any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Success } &&
-                            any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
+                            any { it.uploadId == "uploadId2" && it.uploadState == io.getstream.chat.android.models.Attachment.UploadState.Success }
                     }
                 },
                 eq(false)

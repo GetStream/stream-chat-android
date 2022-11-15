@@ -21,7 +21,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.ui.sample.R

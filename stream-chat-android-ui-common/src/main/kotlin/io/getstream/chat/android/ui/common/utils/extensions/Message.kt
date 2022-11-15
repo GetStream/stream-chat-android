@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.common.utils.extensions
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.extensions.globalState

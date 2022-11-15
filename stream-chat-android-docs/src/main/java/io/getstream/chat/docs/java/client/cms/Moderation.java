@@ -6,15 +6,15 @@ import java.util.List;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
-import io.getstream.chat.android.client.models.BannedUser;
-import io.getstream.chat.android.client.models.BannedUsersSort;
+import io.getstream.chat.android.models.BannedUser;
+import io.getstream.chat.android.models.BannedUsersSort;
 import io.getstream.chat.android.models.Filters;
-import io.getstream.chat.android.client.models.Flag;
-import io.getstream.chat.android.client.models.Mute;
-import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.models.Flag;
+import io.getstream.chat.android.models.Mute;
+import io.getstream.chat.android.models.User;
 
 public class Moderation {
     private ChatClient client;

@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.feature.gallery.internal
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 
 internal class AttachmentGalleryPagerAdapter(

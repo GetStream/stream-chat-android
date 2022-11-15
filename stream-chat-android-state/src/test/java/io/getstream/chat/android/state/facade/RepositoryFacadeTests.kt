@@ -16,19 +16,19 @@
 
 package io.getstream.chat.android.state.facade
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomReaction
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
@@ -170,7 +170,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     @Test
     fun `When insert a list of channels, all participant users of these channels need to be stored`() =
         runTest {
-            val (listOfUser: List<User>, listOfChannels: List<Channel>) =
+            val (listOfUser: List<io.getstream.chat.android.models.User>, listOfChannels: List<Channel>) =
                 (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Channel>())) { acc, _ ->
                     val memberUser = randomUser()
                     val channelUser = randomUser()
@@ -205,7 +205,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     @Test
     fun `When insert a list of messages, all participant users of these messages need to be stored`() =
         runTest {
-            val (listOfUser: List<User>, listOfMessages: List<Message>) =
+            val (listOfUser: List<io.getstream.chat.android.models.User>, listOfMessages: List<Message>) =
                 (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Message>())) { acc, _ ->
                     val messageUser = randomUser()
                     val replyToUser = randomUser()

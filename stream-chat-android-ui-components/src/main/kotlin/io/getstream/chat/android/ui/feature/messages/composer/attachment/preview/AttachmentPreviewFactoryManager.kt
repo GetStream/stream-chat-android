@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 
 import android.view.ViewGroup
 import androidx.collection.SparseArrayCompat
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FallbackAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory

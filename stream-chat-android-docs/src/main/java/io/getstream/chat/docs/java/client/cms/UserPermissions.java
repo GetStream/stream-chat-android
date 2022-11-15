@@ -8,9 +8,9 @@ import java.util.Map;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
-import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.models.Channel;
 import io.getstream.chat.android.models.Filters;
-import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.models.User;
 
 public class UserPermissions {
     private ChatClient client;

@@ -17,7 +17,7 @@
 package io.getstream.chat.android.state.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.extensions.internal.NEVER
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
 

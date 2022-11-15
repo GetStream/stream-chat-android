@@ -22,9 +22,9 @@ import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R

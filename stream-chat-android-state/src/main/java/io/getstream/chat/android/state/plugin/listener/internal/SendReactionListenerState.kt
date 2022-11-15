@@ -21,12 +21,12 @@ import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 
 /**

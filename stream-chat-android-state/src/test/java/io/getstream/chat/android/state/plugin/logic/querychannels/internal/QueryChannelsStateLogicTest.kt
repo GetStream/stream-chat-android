@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState

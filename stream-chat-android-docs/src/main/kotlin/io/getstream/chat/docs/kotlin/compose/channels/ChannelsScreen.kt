@@ -6,8 +6,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory

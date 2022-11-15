@@ -22,9 +22,9 @@ import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.events.NewMessageEvent;
-import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.models.Channel;
 import io.getstream.chat.android.models.Device;
-import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.models.PushMessage;
 import io.getstream.chat.android.models.PushProvider;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;

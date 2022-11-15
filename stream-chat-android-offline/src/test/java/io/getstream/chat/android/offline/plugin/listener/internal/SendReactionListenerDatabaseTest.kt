@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
@@ -27,6 +26,7 @@ import io.getstream.chat.android.client.test.randomReaction
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

@@ -21,11 +21,11 @@ import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnrea
 import io.getstream.chat.android.client.extensions.internal.updateLastMessage
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.message.latestOrNull
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog

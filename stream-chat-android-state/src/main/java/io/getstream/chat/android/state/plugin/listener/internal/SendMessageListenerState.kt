@@ -21,10 +21,10 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.logging.StreamLog

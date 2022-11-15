@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments

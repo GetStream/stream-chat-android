@@ -18,11 +18,10 @@
 
 package io.getstream.chat.android.client.utils.message
 
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.MessageType
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.utils.date.after
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Message
 
 private const val ITEM_COUNT_OF_TWO: Int = 2
 
@@ -60,22 +59,22 @@ public fun Message.isDeleted(): Boolean = deletedAt != null
 /**
  * @return If the message type is regular.
  */
-public fun Message.isRegular(): Boolean = type == MessageType.REGULAR
+public fun Message.isRegular(): Boolean = type == io.getstream.chat.android.models.MessageType.REGULAR
 
 /**
  * @return If the message type is ephemeral.
  */
-public fun Message.isEphemeral(): Boolean = type == MessageType.EPHEMERAL
+public fun Message.isEphemeral(): Boolean = type == io.getstream.chat.android.models.MessageType.EPHEMERAL
 
 /**
  * @return If the message type is system.
  */
-public fun Message.isSystem(): Boolean = type == MessageType.SYSTEM
+public fun Message.isSystem(): Boolean = type == io.getstream.chat.android.models.MessageType.SYSTEM
 
 /**
  * @return If the message type is error.
  */
-public fun Message.isError(): Boolean = type == MessageType.ERROR
+public fun Message.isError(): Boolean = type == io.getstream.chat.android.models.MessageType.ERROR
 
 /**
  * @return If the message is related to a Giphy slash command.

@@ -17,12 +17,11 @@
 package io.getstream.chat.android.state.utils.internal
 
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.CustomObject
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.AutocompleteFilterObject
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ContainsFilterObject
+import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.DistinctFilterObject
 import io.getstream.chat.android.models.EqualsFilterObject
 import io.getstream.chat.android.models.ExistsFilterObject
@@ -32,6 +31,7 @@ import io.getstream.chat.android.models.GreaterThanOrEqualsFilterObject
 import io.getstream.chat.android.models.InFilterObject
 import io.getstream.chat.android.models.LessThanFilterObject
 import io.getstream.chat.android.models.LessThanOrEqualsFilterObject
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.NorFilterObject
 import io.getstream.chat.android.models.NotEqualsFilterObject

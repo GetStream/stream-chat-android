@@ -18,16 +18,16 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import java.util.Date
 
 /**

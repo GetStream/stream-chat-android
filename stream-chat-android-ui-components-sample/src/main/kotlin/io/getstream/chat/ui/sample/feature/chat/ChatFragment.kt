@@ -26,9 +26,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Flag
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode

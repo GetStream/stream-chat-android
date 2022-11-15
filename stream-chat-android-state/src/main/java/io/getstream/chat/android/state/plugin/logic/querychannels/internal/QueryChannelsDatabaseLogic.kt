@@ -17,9 +17,6 @@
 package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.extensions.internal.applyPagination
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -28,7 +25,10 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 
 @Suppress("LongParameterList")
 internal class QueryChannelsDatabaseLogic(

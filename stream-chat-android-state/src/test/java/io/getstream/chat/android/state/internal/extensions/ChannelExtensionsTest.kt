@@ -22,13 +22,13 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.extensions.internal.applyPagination
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.MessageSyncContent
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import okio.buffer

@@ -2,7 +2,7 @@ package io.getstream.chat.docs.kotlin.client.cms
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.client.utils.Result

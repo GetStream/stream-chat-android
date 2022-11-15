@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.common.utils
 
 import androidx.annotation.Px
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 
 /**

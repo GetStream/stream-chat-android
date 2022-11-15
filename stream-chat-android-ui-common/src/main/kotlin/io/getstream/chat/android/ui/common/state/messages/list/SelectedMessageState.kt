@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages.list
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents a state when a message or its reactions were selected.

@@ -3,10 +3,10 @@ package io.getstream.chat.docs.kotlin.ui.channels
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
 import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
 import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView

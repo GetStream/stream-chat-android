@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.message.latestOrNull
 import io.getstream.chat.android.core.utils.date.max
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.MemberEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
@@ -55,7 +55,7 @@ internal fun Channel.toEntity(): ChannelEntity {
         lastMessageId = latestMessageId,
         lastMessageAt = finalLatestMessageAt,
         createdByUserId = createdBy.id,
-        watcherIds = watchers.map(User::id),
+        watcherIds = watchers.map(io.getstream.chat.android.models.User::id),
         watcherCount = watcherCount,
         team = team,
         ownCapabilities = ownCapabilities,

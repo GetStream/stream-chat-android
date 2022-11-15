@@ -17,10 +17,10 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction

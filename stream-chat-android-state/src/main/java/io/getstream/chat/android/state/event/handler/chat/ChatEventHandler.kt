@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 
 /**

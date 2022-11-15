@@ -24,9 +24,9 @@ import android.os.Environment
 import androidx.core.content.FileProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.StreamFileProvider
 import java.io.File
 import java.io.IOException
