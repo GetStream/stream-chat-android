@@ -307,8 +307,6 @@ public final class io/getstream/chat/android/client/api/models/ExistsFilterObjec
 }
 
 public abstract class io/getstream/chat/android/client/api/models/FilterObject {
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
 }
 
 public final class io/getstream/chat/android/client/api/models/GreaterThanFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
