@@ -21,6 +21,7 @@ import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -111,6 +112,13 @@ internal class UploadAttachmentsAndroidWorker(
             StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
                 .d { "[stop] Upload attachments work cancelled" }
             WorkManager.getInstance(context).cancelWorkById(workId)
+        }
+
+        private fun UploadAttachmentsNetworkType.toNetworkType(): NetworkType = when (this) {
+            UploadAttachmentsNetworkType.CONNECTED -> NetworkType.CONNECTED
+            UploadAttachmentsNetworkType.UNMETERED -> NetworkType.UNMETERED
+            UploadAttachmentsNetworkType.NOT_ROAMING -> NetworkType.NOT_ROAMING
+            UploadAttachmentsNetworkType.METERED -> NetworkType.METERED
         }
     }
 }

@@ -3200,7 +3200,6 @@ public final class io/getstream/chat/android/client/models/UploadAttachmentsNetw
 	public static final field METERED Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
 	public static final field NOT_ROAMING Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
 	public static final field UNMETERED Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
-	public final fun toNetworkType ()Landroidx/work/NetworkType;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
 	public static fun values ()[Lio/getstream/chat/android/client/models/UploadAttachmentsNetworkType;
 }

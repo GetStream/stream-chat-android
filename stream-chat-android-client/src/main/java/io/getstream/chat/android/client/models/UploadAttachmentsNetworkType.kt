@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.models
 
-import androidx.work.NetworkType
-
 /**
  * An enumeration of various network types used as a constraint in upload attachments worker.
  */
@@ -41,11 +39,4 @@ public enum class UploadAttachmentsNetworkType {
      * A metered network connection is required.
      */
     METERED;
-
-    public fun toNetworkType(): NetworkType = when (this) {
-        CONNECTED -> NetworkType.CONNECTED
-        UNMETERED -> NetworkType.UNMETERED
-        NOT_ROAMING -> NetworkType.NOT_ROAMING
-        METERED -> NetworkType.METERED
-    }
 }
