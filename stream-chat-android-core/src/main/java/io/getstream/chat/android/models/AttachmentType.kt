@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
-
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+package io.getstream.chat.android.models
 
 /**
- * Represents constants used across all SDKs.
+ * Represents types of attachments.
  */
-@InternalStreamChatApi
-public object Constants {
-
-    /**
-     * Number of bytes in a megabyte.
-     */
-    public const val MB_IN_BYTES: Long = 1024 * 1024
-
-    /**
-     * Maximum request body length in bytes.
-     */
-    internal const val MAX_REQUEST_BODY_LENGTH = 1 * MB_IN_BYTES
+public object AttachmentType {
+    public const val IMAGE: String = "image"
+    public const val IMGUR: String = "imgur"
+    public const val GIPHY: String = "giphy"
+    public const val VIDEO: String = "video"
+    public const val AUDIO: String = "audio"
+    public const val PRODUCT: String = "product"
+    public const val FILE: String = "file"
+    public const val LINK: String = "link"
+    public const val UNKNOWN: String = "unknown"
 }

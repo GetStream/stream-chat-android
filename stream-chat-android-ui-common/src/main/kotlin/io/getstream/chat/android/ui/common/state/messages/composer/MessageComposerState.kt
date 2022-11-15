@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.common.state.messages.composer
 
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 

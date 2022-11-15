@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent;
 import io.getstream.chat.android.client.events.UserStopWatchingEvent;
 import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
 import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.ChannelCapabilities;
+import io.getstream.chat.android.models.ChannelCapabilities;
 import io.getstream.chat.android.client.models.ChannelMute;
 import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.client.models.Member;

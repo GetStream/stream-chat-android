@@ -19,8 +19,8 @@ package io.getstream.chat.android.ui.common.state.messages.composer
 import android.content.Context
 import android.net.Uri
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.Utils
 import java.io.File

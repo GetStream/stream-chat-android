@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.models
 
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 public data class Reaction(

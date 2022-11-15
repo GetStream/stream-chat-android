@@ -18,8 +18,8 @@ package io.getstream.chat.android.compose
 
 import android.content.Context
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.MediaAttachmentPreviewHandler
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest

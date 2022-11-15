@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType;
+import io.getstream.chat.android.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 import io.getstream.chat.android.state.extensions.ChatClientExtensions;

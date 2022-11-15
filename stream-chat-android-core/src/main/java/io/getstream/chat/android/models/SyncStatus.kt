@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.utils
+package io.getstream.chat.android.models
 
 private const val SYNC_NEEDED_STATUS_CODE = -1
 private const val COMPLETED_STATUS_CODE = 1

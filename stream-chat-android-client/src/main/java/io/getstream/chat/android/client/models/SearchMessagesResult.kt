@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.models.SearchWarning
+
 public data class SearchMessagesResult(
     /**
      * Search results

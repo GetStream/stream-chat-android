@@ -20,7 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.models.AttachmentType
 
 /**
  * Shows a preview for an URL in the attachment using the [Intent.ACTION_VIEW] action.

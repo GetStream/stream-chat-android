@@ -17,10 +17,10 @@
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessageType
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 

@@ -23,9 +23,9 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.NeutralFilterObject
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity

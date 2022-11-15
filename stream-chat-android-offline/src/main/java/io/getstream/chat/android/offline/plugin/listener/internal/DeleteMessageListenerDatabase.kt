@@ -20,13 +20,13 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.cause.MessageModerationDeletedException
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.MessageSyncType
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 /**

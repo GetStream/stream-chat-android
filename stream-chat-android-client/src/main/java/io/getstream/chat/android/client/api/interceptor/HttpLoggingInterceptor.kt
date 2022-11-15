@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
-import io.getstream.chat.android.client.models.Constants
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import io.getstream.chat.android.models.Constants
 import io.getstream.logging.SilentStreamLogger
 import io.getstream.logging.StreamLog
 import okhttp3.Headers

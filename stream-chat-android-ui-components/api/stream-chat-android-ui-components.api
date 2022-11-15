@@ -3071,7 +3071,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageCompos
 	public final fun leaveThread ()V
 	public final fun performMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;)V
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun selectCommand (Lio/getstream/chat/android/client/models/Command;)V
+	public final fun selectCommand (Lio/getstream/chat/android/models/Command;)V
 	public final fun selectMention (Lio/getstream/chat/android/client/models/User;)V
 	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAlsoSendToChannel (Z)V

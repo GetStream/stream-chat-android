@@ -22,12 +22,12 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.common.feature.documents.AttachmentDocumentActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentActivity

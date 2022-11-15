@@ -27,8 +27,8 @@ import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding

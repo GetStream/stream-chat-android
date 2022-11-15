@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.persistance.repository.noop
 
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 /**

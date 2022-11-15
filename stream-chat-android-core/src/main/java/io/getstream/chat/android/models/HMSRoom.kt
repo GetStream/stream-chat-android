@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.models
 
 /**
- * Represents possible states of the WebSocket connection.
+ * Represents HMS room information that contains available room in a chat channel.
+ *
+ * @property roomId A new room id.
+ * @property roomId A new room name.
  */
-public enum class ConnectionState {
-    /**
-     * The client is connected to the WebSocket.
-     */
-    CONNECTED,
-
-    /**
-     * The client is trying to connect to the WebSocket.
-     */
-    CONNECTING,
-
-    /**
-     * The client is permanently disconnected from the WebSocket.
-     */
-    OFFLINE
-}
+public data class HMSRoom(
+    val roomId: String,
+    val roomName: String,
+)

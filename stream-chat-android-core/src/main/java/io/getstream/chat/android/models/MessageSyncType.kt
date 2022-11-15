@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
-
-import io.getstream.chat.android.client.utils.SyncStatus
+package io.getstream.chat.android.models
 
 private const val NONE_TYPE = 0
 private const val IN_PROGRESS_AWAIT_ATTACHMENTS_TYPE = 100

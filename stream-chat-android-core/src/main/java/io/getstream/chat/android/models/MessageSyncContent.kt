@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
-
-import io.getstream.chat.android.client.utils.SyncStatus
+package io.getstream.chat.android.models
 
 /**
  * A content of message sync description.

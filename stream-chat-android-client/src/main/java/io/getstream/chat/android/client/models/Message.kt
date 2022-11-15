@@ -17,8 +17,10 @@
 package io.getstream.chat.android.client.models
 
 import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.ChannelInfo
+import io.getstream.chat.android.models.MessageSyncDescription
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 public data class Message(

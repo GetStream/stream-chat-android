@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
-
-import io.getstream.chat.android.models.AgoraChannel
-import io.getstream.chat.android.models.VideoCallToken
+package io.getstream.chat.android.models
 
 /**
  * Represents currently available call information for Agora and HMS video calls.

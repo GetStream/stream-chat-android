@@ -25,9 +25,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.MessagesState
@@ -42,6 +40,8 @@ import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.state.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.state.extensions.getRepliesAsState
 import io.getstream.chat.android.state.extensions.globalState

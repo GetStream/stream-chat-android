@@ -95,7 +95,6 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.SearchMessagesResult
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.VideoCallInfo
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -106,6 +105,7 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
+import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope

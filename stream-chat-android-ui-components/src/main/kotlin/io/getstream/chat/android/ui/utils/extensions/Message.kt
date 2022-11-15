@@ -19,12 +19,12 @@ package io.getstream.chat.android.ui.utils.extensions
 import android.content.Context
 import android.text.SpannableString
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.client.utils.message.isError
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import java.util.Date

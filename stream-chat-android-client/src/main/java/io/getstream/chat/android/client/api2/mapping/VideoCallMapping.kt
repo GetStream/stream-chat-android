@@ -20,9 +20,9 @@ import io.getstream.chat.android.client.api2.model.dto.AgoraDto
 import io.getstream.chat.android.client.api2.model.dto.HMSDto
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
-import io.getstream.chat.android.client.models.HMSRoom
-import io.getstream.chat.android.client.models.VideoCallInfo
 import io.getstream.chat.android.models.AgoraChannel
+import io.getstream.chat.android.models.HMSRoom
+import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 
 internal fun AgoraDto.toDomain(): AgoraChannel {

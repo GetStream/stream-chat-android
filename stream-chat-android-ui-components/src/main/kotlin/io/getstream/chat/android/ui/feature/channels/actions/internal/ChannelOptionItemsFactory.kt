@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.channels.actions.internal
 
 import android.content.Context
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelCapabilities
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation

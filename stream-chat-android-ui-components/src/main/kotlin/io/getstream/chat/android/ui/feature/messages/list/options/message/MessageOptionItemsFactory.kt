@@ -17,12 +17,12 @@
 package io.getstream.chat.android.ui.feature.messages.list.options.message
 
 import android.content.Context
-import io.getstream.chat.android.client.models.AttachmentType
-import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete

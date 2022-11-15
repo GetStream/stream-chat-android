@@ -557,7 +557,7 @@ public final class io/getstream/chat/android/compose/ui/channels/ChannelsScreenK
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/header/ChannelListHeaderKt {
-	public static final fun ChannelListHeader-KUAp_ns (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/ConnectionState;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun ChannelListHeader-KUAp_ns (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/models/ConnectionState;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/header/ComposableSingletons$ChannelListHeaderKt {
@@ -1069,7 +1069,7 @@ public final class io/getstream/chat/android/compose/ui/components/suggestions/S
 }
 
 public final class io/getstream/chat/android/compose/ui/components/suggestions/commands/CommandSuggestionItemKt {
-	public static final fun CommandSuggestionItem (Lio/getstream/chat/android/client/models/Command;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+	public static final fun CommandSuggestionItem (Lio/getstream/chat/android/models/Command;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/suggestions/commands/CommandSuggestionListKt {
@@ -1223,8 +1223,8 @@ public final class io/getstream/chat/android/compose/ui/messages/header/Composab
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/header/MessageListHeaderKt {
-	public static final fun DefaultMessageListHeaderCenterContent (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/client/models/ConnectionState;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageListHeader-TYRQsRI (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lio/getstream/chat/android/client/models/ConnectionState;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun DefaultMessageListHeaderCenterContent (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageListHeader-TYRQsRI (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lio/getstream/chat/android/models/ConnectionState;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageContainerKt {
@@ -1795,7 +1795,7 @@ public final class io/getstream/chat/android/compose/viewmodel/mediapreview/Medi
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Ljava/lang/String;)V
 	public final fun deleteCurrentMediaAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun getConnectionState ()Lio/getstream/chat/android/client/models/ConnectionState;
+	public final fun getConnectionState ()Lio/getstream/chat/android/models/ConnectionState;
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getPromptedAttachment ()Lio/getstream/chat/android/client/models/Attachment;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
@@ -1862,7 +1862,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun leaveThread ()V
 	public final fun performMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;)V
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
-	public final fun selectCommand (Lio/getstream/chat/android/client/models/Command;)V
+	public final fun selectCommand (Lio/getstream/chat/android/models/Command;)V
 	public final fun selectMention (Lio/getstream/chat/android/client/models/User;)V
 	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun setAlsoSendToChannel (Z)V

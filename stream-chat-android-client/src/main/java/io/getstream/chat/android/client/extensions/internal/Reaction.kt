@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.SyncStatus
 
 /** Updates collection of reactions with more recent data of [users]. */
 @InternalStreamChatApi

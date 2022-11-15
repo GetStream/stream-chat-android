@@ -18,11 +18,11 @@ package io.getstream.chat.android.state.event
 
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.utils.TestDataHelper
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState

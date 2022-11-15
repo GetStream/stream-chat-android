@@ -25,8 +25,8 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.databinding.StreamUiUnsupportedAttachmentViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer

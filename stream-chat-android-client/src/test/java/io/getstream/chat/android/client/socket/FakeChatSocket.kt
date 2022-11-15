@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
@@ -28,6 +27,7 @@ import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.test.randomString
 import okhttp3.WebSocketListener
 import org.mockito.kotlin.any

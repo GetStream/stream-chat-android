@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.models
 
 /**
- * The state of initialization process.
+ * Represents possible states of the WebSocket connection.
  */
-public enum class InitializationState {
+public enum class ConnectionState {
+    /**
+     * The client is connected to the WebSocket.
+     */
+    CONNECTED,
 
     /**
-     * Initialization is complete. Be aware that it doesn't mean that the SDK is connected. To track
-     * the connection state, please use [ClientState.connectionState]
+     * The client is trying to connect to the WebSocket.
      */
-    COMPLETE,
+    CONNECTING,
 
     /**
-     * Initialization was requested and should be completed shortly. During this state, the SDK is still
-     * not ready to be used.
+     * The client is permanently disconnected from the WebSocket.
      */
-    RUNNING,
-
-    /**
-     * The initialization of the SDK was not requested. Use ChatClient.connectUser to start the
-     * initialization process.
-     */
-    NOT_INITIALIZED,
+    OFFLINE
 }

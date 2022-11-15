@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.client.models.ChannelInfo
+import io.getstream.chat.android.models.ChannelInfo
 
 internal fun ChannelInfoDto.toDomain(): ChannelInfo =
     ChannelInfo(

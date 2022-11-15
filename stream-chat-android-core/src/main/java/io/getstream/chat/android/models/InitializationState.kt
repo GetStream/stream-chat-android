@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.utils
-
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.models.Constants
+package io.getstream.chat.android.models
 
 /**
- * Various constants regarding default attachment limits.
+ * The state of initialization process.
  */
-@InternalStreamChatApi
-public object AttachmentConstants {
+public enum class InitializationState {
 
     /**
-     * Default max upload size in MB.
+     * Initialization is complete. Be aware that it doesn't mean that the SDK is connected. To track
+     * the connection state, please use [ClientState.connectionState]
      */
-    public const val MAX_UPLOAD_SIZE_IN_MB: Int = 100
+    COMPLETE,
 
     /**
-     * Default max upload size in bytes.
+     * Initialization was requested and should be completed shortly. During this state, the SDK is still
+     * not ready to be used.
      */
-    public const val MAX_UPLOAD_FILE_SIZE: Long = Constants.MB_IN_BYTES * MAX_UPLOAD_SIZE_IN_MB
+    RUNNING,
 
     /**
-     * Default max number of attachments.
+     * The initialization of the SDK was not requested. Use ChatClient.connectUser to start the
+     * initialization process.
      */
-    public const val MAX_ATTACHMENTS_COUNT: Int = 10
+    NOT_INITIALIZED,
 }
