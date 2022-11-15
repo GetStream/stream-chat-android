@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.state
 
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.models.FilterObject
 
 /**
  * The configuration for querying various bits of data. It's generic, so it can be used to query

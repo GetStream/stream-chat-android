@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -107,6 +106,7 @@ import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow

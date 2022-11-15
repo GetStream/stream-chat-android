@@ -20,7 +20,6 @@ import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -80,7 +79,6 @@ import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
@@ -92,6 +90,8 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import java.io.File
 import java.util.Date
 

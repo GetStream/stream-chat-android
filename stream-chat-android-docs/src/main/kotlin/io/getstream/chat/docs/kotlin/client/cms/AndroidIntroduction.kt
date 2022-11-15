@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Co
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.models.User

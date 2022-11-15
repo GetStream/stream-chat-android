@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.state.plugin.state.querychannels.internal
 
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.events.ChatEvent
@@ -24,6 +23,7 @@ import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.api.models.WatchChannelRequest;
@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
 import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Filters;
+import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.client.models.User;
 
 public class UserPresence {

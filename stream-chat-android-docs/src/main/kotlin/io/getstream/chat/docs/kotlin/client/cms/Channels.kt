@@ -3,8 +3,8 @@ package io.getstream.chat.docs.kotlin.client.cms
 import android.os.Handler
 import android.os.Looper
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.Pagination.LESS_THAN
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.extensions.isMutedFor
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User

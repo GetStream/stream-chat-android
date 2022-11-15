@@ -8,8 +8,8 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.state.extensions.getRepliesAsState
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.queryChannelsAsState

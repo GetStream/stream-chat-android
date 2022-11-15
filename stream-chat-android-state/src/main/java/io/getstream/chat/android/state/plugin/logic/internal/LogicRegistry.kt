@@ -17,7 +17,6 @@
 package io.getstream.chat.android.state.plugin.logic.internal
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
@@ -26,6 +25,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic

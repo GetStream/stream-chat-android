@@ -27,10 +27,10 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelListBinding
 import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView

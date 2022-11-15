@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.plugin
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
@@ -46,6 +45,7 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.FilterObject
 import java.util.Date
 
 /**

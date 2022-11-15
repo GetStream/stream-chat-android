@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.state.errorhandler.internal
 
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
@@ -28,6 +27,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 

@@ -3,7 +3,7 @@
 package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult

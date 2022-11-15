@@ -17,13 +17,13 @@
 package io.getstream.chat.android.state.plugin.state
 
 import androidx.annotation.VisibleForTesting
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState

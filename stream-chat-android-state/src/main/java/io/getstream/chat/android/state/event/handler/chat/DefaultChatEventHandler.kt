@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.state.event.handler.chat
 
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
@@ -29,6 +28,7 @@ import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEve
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.StateFlow
 

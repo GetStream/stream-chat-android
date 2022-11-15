@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api.models
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.FilterObject
 
 /**
  * Request body class for querying channels.

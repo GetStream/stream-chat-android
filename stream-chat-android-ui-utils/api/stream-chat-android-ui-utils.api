@@ -23,7 +23,7 @@ public final class io/getstream/chat/android/uiutils/extension/DateKt {
 }
 
 public final class io/getstream/chat/android/uiutils/extension/FiltersKt {
-	public static final fun defaultChannelListFilter (Lio/getstream/chat/android/client/models/Filters;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/api/models/FilterObject;
+	public static final fun defaultChannelListFilter (Lio/getstream/chat/android/models/Filters;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/models/FilterObject;
 }
 
 public final class io/getstream/chat/android/uiutils/extension/StringKt {

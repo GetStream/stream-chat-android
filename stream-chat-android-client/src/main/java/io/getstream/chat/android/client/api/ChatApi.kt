@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api
 
 import androidx.annotation.CheckResult
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -45,6 +44,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.VideoCallInfo
 import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.models.FilterObject
 import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date

@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserEntity
@@ -46,6 +45,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.core.internal.coroutines.Tube
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.logging.StreamLog

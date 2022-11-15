@@ -53,8 +53,8 @@ public final class io/getstream/chat/android/client/test/MotherKt {
 	public static synthetic fun randomNotificationMessageNewEvent$default (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Message;IIILjava/lang/Object;)Lio/getstream/chat/android/client/events/NotificationMessageNewEvent;
 	public static final fun randomNotificationRemovedFromChannelEvent (Ljava/lang/String;Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Member;)Lio/getstream/chat/android/client/events/NotificationRemovedFromChannelEvent;
 	public static synthetic fun randomNotificationRemovedFromChannelEvent$default (Ljava/lang/String;Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/Member;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/NotificationRemovedFromChannelEvent;
-	public static final fun randomQueryChannelsSpec (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/Set;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
-	public static synthetic fun randomQueryChannelsSpec$default (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
+	public static final fun randomQueryChannelsSpec (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/Set;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
+	public static synthetic fun randomQueryChannelsSpec$default (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
 	public static final fun randomReaction (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;Z)Lio/getstream/chat/android/client/models/Reaction;
 	public static synthetic fun randomReaction$default (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/client/utils/SyncStatus;Ljava/util/Map;ZILjava/lang/Object;)Lio/getstream/chat/android/client/models/Reaction;
 	public static final fun randomReactionNewEvent (Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/events/ReactionNewEvent;
@@ -103,8 +103,8 @@ public final class io/getstream/chat/android/client/test/utils/TestDataHelper {
 	public final fun getConnection1 ()Ljava/lang/String;
 	public final fun getDisconnectedEvent ()Lio/getstream/chat/android/client/events/DisconnectedEvent;
 	public final fun getExtraData1 ()Ljava/util/Map;
-	public final fun getFilter1 ()Lio/getstream/chat/android/client/api/models/FilterObject;
-	public final fun getFilter2 ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun getFilter1 ()Lio/getstream/chat/android/models/FilterObject;
+	public final fun getFilter2 ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun getMe1 ()Lio/getstream/chat/android/client/models/User;
 	public final fun getMember1 ()Lio/getstream/chat/android/client/models/Member;
 	public final fun getMember2 ()Lio/getstream/chat/android/client/models/Member;

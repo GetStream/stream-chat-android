@@ -14,26 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
-
-import io.getstream.chat.android.client.api.models.AndFilterObject
-import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
-import io.getstream.chat.android.client.api.models.ContainsFilterObject
-import io.getstream.chat.android.client.api.models.DistinctFilterObject
-import io.getstream.chat.android.client.api.models.EqualsFilterObject
-import io.getstream.chat.android.client.api.models.ExistsFilterObject
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.GreaterThanFilterObject
-import io.getstream.chat.android.client.api.models.GreaterThanOrEqualsFilterObject
-import io.getstream.chat.android.client.api.models.InFilterObject
-import io.getstream.chat.android.client.api.models.LessThanFilterObject
-import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.NorFilterObject
-import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
-import io.getstream.chat.android.client.api.models.NotExistsFilterObject
-import io.getstream.chat.android.client.api.models.NotInFilterObject
-import io.getstream.chat.android.client.api.models.OrFilterObject
+package io.getstream.chat.android.models
 
 /**
  * Stream supports a limited set of filters for querying channels, users and members.

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem

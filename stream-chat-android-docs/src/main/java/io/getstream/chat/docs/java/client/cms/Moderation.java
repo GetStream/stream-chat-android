@@ -4,14 +4,14 @@ import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.models.BannedUser;
 import io.getstream.chat.android.client.models.BannedUsersSort;
-import io.getstream.chat.android.client.models.Filters;
+import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.client.models.Flag;
 import io.getstream.chat.android.client.models.Mute;
 import io.getstream.chat.android.client.models.User;

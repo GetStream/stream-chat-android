@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api.models
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.FilterObject
 
 public data class QueryUsersRequest @JvmOverloads constructor(
     var filter: FilterObject,

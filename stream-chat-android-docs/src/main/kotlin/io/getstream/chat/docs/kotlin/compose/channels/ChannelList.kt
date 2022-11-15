@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme

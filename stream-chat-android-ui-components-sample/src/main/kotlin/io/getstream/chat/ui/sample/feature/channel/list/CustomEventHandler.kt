@@ -17,7 +17,6 @@
 package io.getstream.chat.ui.sample.feature.channel.list
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.CidEvent
@@ -26,6 +25,7 @@ import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory

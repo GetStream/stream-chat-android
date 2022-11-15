@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.offline.repository
 
-import io.getstream.chat.android.client.api.models.ContainsFilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.test.randomQueryChannelsSpec
+import io.getstream.chat.android.models.ContainsFilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.offline.randomQueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsDao

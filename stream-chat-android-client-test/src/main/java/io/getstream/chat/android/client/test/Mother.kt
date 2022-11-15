@@ -18,8 +18,6 @@ package io.getstream.chat.android.client.test
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -58,6 +56,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID

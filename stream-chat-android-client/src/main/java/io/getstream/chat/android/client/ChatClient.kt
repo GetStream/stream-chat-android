@@ -27,7 +27,6 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -106,7 +105,6 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.GuestUser
 import io.getstream.chat.android.client.models.InitializationState
@@ -165,6 +163,8 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.logging.CompositeStreamLogger
 import io.getstream.logging.SilentStreamLogger
 import io.getstream.logging.StreamLog

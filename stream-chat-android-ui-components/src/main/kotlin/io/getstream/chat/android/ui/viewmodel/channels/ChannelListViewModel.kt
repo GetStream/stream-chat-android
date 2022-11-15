@@ -25,7 +25,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
@@ -35,8 +34,9 @@ import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.TypingEvent
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.queryChannelsAsState

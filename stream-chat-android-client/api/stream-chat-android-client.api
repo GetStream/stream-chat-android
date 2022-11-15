@@ -94,20 +94,20 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun pinMessage$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun queryChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryUsers (Lio/getstream/chat/android/client/api/models/QueryUsersRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun reconnectSocket ()V
 	public final fun rejectInvite (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -115,8 +115,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun removeMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun removeShadowBan (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun removeSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
-	public final fun searchMessages (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun searchMessages$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun searchMessages (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun searchMessages$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendAction (Lio/getstream/chat/android/client/api/models/SendActionRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendEvent (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendEvent$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
@@ -238,193 +238,6 @@ public final class io/getstream/chat/android/client/api/ChatClientConfig {
 	public final fun setDistinctApiCalls (Z)V
 	public final fun setHttpUrl (Ljava/lang/String;)V
 	public final fun setWssUrl (Ljava/lang/String;)V
-}
-
-public final class io/getstream/chat/android/client/api/models/AndFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/util/Set;
-	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/AndFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/AndFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/AndFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFilterObjects ()Ljava/util/Set;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/AutocompleteFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/AutocompleteFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/AutocompleteFilterObject;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/AutocompleteFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValue ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/ContainsFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/ContainsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/ContainsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/ContainsFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/DistinctFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/util/Set;
-	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/DistinctFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/DistinctFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/DistinctFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMemberIds ()Ljava/util/Set;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/EqualsFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/EqualsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/EqualsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/EqualsFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/ExistsFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/ExistsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/ExistsFilterObject;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/ExistsFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class io/getstream/chat/android/client/api/models/FilterObject {
-}
-
-public final class io/getstream/chat/android/client/api/models/GreaterThanFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/GreaterThanFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/GreaterThanFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/GreaterThanFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/GreaterThanOrEqualsFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/GreaterThanOrEqualsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/GreaterThanOrEqualsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/GreaterThanOrEqualsFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/InFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/Set;
-	public final fun copy (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/InFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/InFilterObject;Ljava/lang/String;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/InFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValues ()Ljava/util/Set;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/LessThanFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/LessThanFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/LessThanFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/LessThanFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/LessThanOrEqualsFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/LessThanOrEqualsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/LessThanOrEqualsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/LessThanOrEqualsFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/NeutralFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public static final field INSTANCE Lio/getstream/chat/android/client/api/models/NeutralFilterObject;
-}
-
-public final class io/getstream/chat/android/client/api/models/NorFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/util/Set;
-	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/NorFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NorFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NorFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFilterObjects ()Ljava/util/Set;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/NotEqualsFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/NotEqualsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NotEqualsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NotEqualsFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/NotExistsFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/NotExistsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NotExistsFilterObject;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NotExistsFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/NotInFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/Set;
-	public final fun copy (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/NotInFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/NotInFilterObject;Ljava/lang/String;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/NotInFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFieldName ()Ljava/lang/String;
-	public final fun getValues ()Ljava/util/Set;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/api/models/OrFilterObject : io/getstream/chat/android/client/api/models/FilterObject {
-	public final fun component1 ()Ljava/util/Set;
-	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/client/api/models/OrFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/OrFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/OrFilterObject;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFilterObjects ()Ljava/util/Set;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/api/models/Pagination : java/lang/Enum {
@@ -559,18 +372,18 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 }
 
 public final class io/getstream/chat/android/client/api/models/QueryChannelsRequest : io/getstream/chat/android/client/api/models/ChannelRequest {
-	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;II)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public fun <init> (Lio/getstream/chat/android/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;II)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun component2 ()I
 	public final fun component3 ()I
 	public final fun component4 ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 	public final fun component5 ()I
 	public final fun component6 ()I
-	public final fun copy (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;II)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;IIILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
+	public final fun copy (Lio/getstream/chat/android/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;II)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lio/getstream/chat/android/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;IIILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun getFilter ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun getLimit ()I
 	public final fun getMemberLimit ()I
 	public final fun getMessageLimit ()I
@@ -608,48 +421,48 @@ public final class io/getstream/chat/android/client/api/models/QueryChannelsRequ
 }
 
 public final class io/getstream/chat/android/client/api/models/QueryUsersRequest {
-	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;II)V
-	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;)V
-	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;Z)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public fun <init> (Lio/getstream/chat/android/models/FilterObject;II)V
+	public fun <init> (Lio/getstream/chat/android/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;)V
+	public fun <init> (Lio/getstream/chat/android/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun component2 ()I
 	public final fun component3 ()I
 	public final fun component4 ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 	public final fun component5 ()Z
-	public final fun copy (Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;Z)Lio/getstream/chat/android/client/api/models/QueryUsersRequest;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/QueryUsersRequest;Lio/getstream/chat/android/client/api/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;ZILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/QueryUsersRequest;
+	public final fun copy (Lio/getstream/chat/android/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;Z)Lio/getstream/chat/android/client/api/models/QueryUsersRequest;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/QueryUsersRequest;Lio/getstream/chat/android/models/FilterObject;IILio/getstream/chat/android/client/api/models/querysort/QuerySorter;ZILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/QueryUsersRequest;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun getFilter ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun getLimit ()I
 	public final fun getOffset ()I
 	public final fun getPresence ()Z
 	public final fun getQuerySort ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 	public final fun getSort ()Ljava/util/List;
 	public fun hashCode ()I
-	public final fun setFilter (Lio/getstream/chat/android/client/api/models/FilterObject;)V
+	public final fun setFilter (Lio/getstream/chat/android/models/FilterObject;)V
 	public final fun setPresence (Z)V
 	public final fun setQuerySort (Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)V
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/api/models/SearchMessagesRequest {
-	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;)V
-	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)V
-	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;)V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/Integer;
 	public final fun component2 ()Ljava/lang/Integer;
-	public final fun component3 ()Lio/getstream/chat/android/client/api/models/FilterObject;
-	public final fun component4 ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun component3 ()Lio/getstream/chat/android/models/FilterObject;
+	public final fun component4 ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
-	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/chat/android/client/api/models/SearchMessagesRequest;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannelFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun getChannelFilter ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun getLimit ()Ljava/lang/Integer;
-	public final fun getMessageFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun getMessageFilter ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun getNext ()Ljava/lang/String;
 	public final fun getOffset ()Ljava/lang/Integer;
 	public final fun getQuerySort ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
@@ -864,17 +677,17 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun pinMessage (Lio/getstream/chat/android/client/models/Message;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
 	public final fun query (Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryBannedUsers ()Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryBannedUsers (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public final fun queryMembers (IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
-	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun queryMembers (IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun rejectInvite ()Lio/getstream/chat/android/client/call/Call;
 	public final fun removeMembers (Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun removeMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
@@ -2906,31 +2719,6 @@ public final class io/getstream/chat/android/client/models/FileUploadConfig {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/models/Filters {
-	public static final field INSTANCE Lio/getstream/chat/android/client/models/Filters;
-	public static final fun and ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun autocomplete (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun contains (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun distinct (Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun eq (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun exists (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun greaterThan (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun greaterThanEquals (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun in (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun in (Ljava/lang/String;[Ljava/lang/Number;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun in (Ljava/lang/String;[Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun lessThan (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun lessThanEquals (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun ne (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun neutral ()Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun nin (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun nin (Ljava/lang/String;[Ljava/lang/Number;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun nin (Ljava/lang/String;[Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun nor ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun notExists (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/FilterObject;
-	public static final fun or ([Lio/getstream/chat/android/client/api/models/FilterObject;)Lio/getstream/chat/android/client/api/models/FilterObject;
-}
-
 public final class io/getstream/chat/android/client/models/Flag {
 	public fun <init> (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/User;Ljava/lang/String;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/User;
@@ -3707,7 +3495,7 @@ public final class io/getstream/chat/android/client/persistance/repository/Messa
 public abstract interface class io/getstream/chat/android/client/persistance/repository/QueryChannelsRepository {
 	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertQueryChannels (Lio/getstream/chat/android/client/query/QueryChannelsSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun selectBy (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun selectBy (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/ReactionRepository {
@@ -3788,7 +3576,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 	public abstract fun onQueryChannelsPrecondition (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelsRequest (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelsResult (Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onQueryMembersResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryMembersResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onSendReactionPrecondition (Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun onSendReactionRequest (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onSendReactionResult (Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -3832,7 +3620,7 @@ public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
 	public static fun onQueryChannelsPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelsRequest (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelsResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onQueryMembersResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryMembersResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onSendReactionPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
 	public static fun onSendReactionRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onSendReactionResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/models/Reaction;ZLio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -3896,7 +3684,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/QueryMembersListener {
-	public abstract fun onQueryMembersResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryMembersResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/SendAttachmentListener {
@@ -3958,14 +3746,14 @@ public final class io/getstream/chat/android/client/plugins/requests/ApiRequests
 }
 
 public final class io/getstream/chat/android/client/query/QueryChannelsSpec {
-	public fun <init> (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun component2 ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
-	public final fun copy (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/query/QueryChannelsSpec;Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
+	public final fun copy (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/query/QueryChannelsSpec;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/chat/android/client/query/QueryChannelsSpec;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCids ()Ljava/util/Set;
-	public final fun getFilter ()Lio/getstream/chat/android/client/api/models/FilterObject;
+	public final fun getFilter ()Lio/getstream/chat/android/models/FilterObject;
 	public final fun getQuerySort ()Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;
 	public fun hashCode ()I
 	public final fun setCids (Ljava/util/Set;)V

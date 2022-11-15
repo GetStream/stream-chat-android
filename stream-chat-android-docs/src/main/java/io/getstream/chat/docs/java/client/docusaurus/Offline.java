@@ -5,14 +5,14 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.state.ChannelState;
 import io.getstream.chat.android.client.extensions.FlowExtensions;
 import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Filters;
+import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState;
 import io.getstream.chat.android.state.plugin.state.global.GlobalState;

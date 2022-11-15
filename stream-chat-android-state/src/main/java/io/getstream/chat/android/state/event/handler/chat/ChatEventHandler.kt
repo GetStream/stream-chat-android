@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.state.event.handler.chat
 
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
@@ -25,6 +24,7 @@ import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.FilterObject
 
 /**
  * Handler responsible for deciding whether the set of channels should be updated after receiving the particular event.

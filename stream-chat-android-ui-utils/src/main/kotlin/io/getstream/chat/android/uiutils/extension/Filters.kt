@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.uiutils.extension
 
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 
 /**
  * Create the default channel list filter for the given user.

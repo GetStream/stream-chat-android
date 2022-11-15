@@ -19,12 +19,12 @@ package io.getstream.chat.android.client
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
