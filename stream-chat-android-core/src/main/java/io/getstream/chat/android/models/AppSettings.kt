@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.models
 
 /**
  * App settings, as they are configured in the dashboard.

@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 
 import io.getstream.chat.android.client.errors.ChatError;
-import io.getstream.chat.android.client.models.UploadedFile;
-import io.getstream.chat.android.client.models.UploadedImage;
+import io.getstream.chat.android.models.UploadedFile;
+import io.getstream.chat.android.models.UploadedImage;
 import io.getstream.chat.android.client.uploader.FileUploader;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.chat.android.client.utils.Result;

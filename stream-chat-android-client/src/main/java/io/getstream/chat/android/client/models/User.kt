@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.models
 
 import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
+import io.getstream.chat.android.models.Device
 import java.util.Date
 
 /**

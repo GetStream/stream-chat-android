@@ -18,9 +18,9 @@ package io.getstream.chat.android.pushprovider.firebase
 
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.PushMessage
-import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.PushProvider
 
 /**
  * Helper class for delegating Firebase push messages to the Stream Chat SDK.

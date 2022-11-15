@@ -83,8 +83,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.UploadedFile
-import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -92,6 +90,8 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.models.UploadedImage
 import java.io.File
 import java.util.Date
 

@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.models
 
-/**
- * Represents a successfully uploaded file.
- *
- * @param file The URL of the uploaded file.
- * @param thumbUrl The property is auto-generated when uploading videos using
- * Stream CDN and can be used to display video previews.
- */
-public data class UploadedFile(
-    val file: String,
-    val thumbUrl: String? = null,
+public data class PushMessage(
+    val messageId: String,
+    val channelId: String,
+    val channelType: String,
 )

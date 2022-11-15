@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.models
 
-public data class PushMessage(
-    val messageId: String,
-    val channelId: String,
-    val channelType: String,
-)
+/**
+ * Represents Agora channel information that contains available [channel] in a chat channel.
+ *
+ * @property channel A new channel.
+ */
+public data class AgoraChannel(val channel: String)

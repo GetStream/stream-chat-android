@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.models
 
 /**
- * A call token that is used in currently available video call integrations.
+ * Represents a successfully uploaded image.
  *
- * @property token An available call token.
- * @property agoraUid The Uid of Agora.
- * @property agoraAppId The App Id of Agora.
+ * @param file The URL of the uploaded image.
+ * @param thumbUrl The thumb URL generated using custom CDN.
  */
-public data class VideoCallToken(
-    val token: String,
-    val agoraUid: Int?,
-    val agoraAppId: String?,
+public data class UploadedImage(
+    val file: String,
+    val thumbUrl: String? = null,
 )

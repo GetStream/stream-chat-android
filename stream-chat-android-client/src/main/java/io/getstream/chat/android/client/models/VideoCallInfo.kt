@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.client.models
 
+import io.getstream.chat.android.models.AgoraChannel
+import io.getstream.chat.android.models.VideoCallToken
+
 /**
  * Represents currently available call information for Agora and HMS video calls.
  *

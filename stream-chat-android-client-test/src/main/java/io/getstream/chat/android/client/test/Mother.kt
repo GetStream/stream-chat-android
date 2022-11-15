@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -56,6 +55,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.test.positiveRandomInt

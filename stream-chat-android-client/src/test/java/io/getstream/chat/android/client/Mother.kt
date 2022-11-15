@@ -27,15 +27,15 @@ import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.InitializationState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
-import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.SocketFactory
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt

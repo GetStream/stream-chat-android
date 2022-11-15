@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.models
 
 /**
  * Device's information needed to register push notifications.
@@ -33,7 +33,7 @@ public data class Device(
 /**
  * Push notifications provider type.
  */
-public enum class PushProvider(internal val key: String) {
+public enum class PushProvider(public val key: String) {
     /** Firebase push notification provider */
     FIREBASE("firebase"),
     /** Huawei push notification provider */
@@ -43,8 +43,8 @@ public enum class PushProvider(internal val key: String) {
     /** Unknown push notification provider */
     UNKNOWN("unknown");
 
-    internal companion object {
-        internal fun fromKey(key: String): PushProvider =
+    public companion object {
+        public fun fromKey(key: String): PushProvider =
             values().firstOrNull { it.key == key } ?: UNKNOWN
     }
 }
