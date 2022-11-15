@@ -161,7 +161,6 @@ import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onErrorSuspend
-import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
@@ -200,7 +199,6 @@ internal constructor(
     private val api: ChatApi,
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val callPostponeHelper: CallPostponeHelper,
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
@@ -211,7 +209,6 @@ internal constructor(
     private val chatSocket: ChatSocket,
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
-    private val lifecycleObserver: StreamLifecycleObserver,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
@@ -313,6 +310,7 @@ internal constructor(
             }
             is DisconnectedEvent -> {
                 logger.i { "[handleEvent] event: DisconnectedEvent(disconnectCause=${event.disconnectCause})" }
+                api.releseConnection()
                 when (event.disconnectCause) {
                     is DisconnectCause.ConnectionReleased,
                     is DisconnectCause.NetworkNotAvailable,
@@ -1612,16 +1610,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        val userId = getCurrentUser()?.id
-        val scopedUserId = userScope.userId.value
-        val isConnectionRequired = request.watch || request.presence
-        logger.d {
-            "[queryChannelsInternal] userId: $userId, scopedUserId: $scopedUserId, " +
-                "isConnectionRequired: $isConnectionRequired, request: $request"
-        }
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryChannels(request)
-        }
+        return api.queryChannels(request)
     }
 
     /**
@@ -1635,17 +1624,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> {
-        val isConnectionRequired = request.watch || request.presence
-        logger.d {
-            "[queryChannelInternal] cid: $channelType:$channelId, request: $request, " +
-                "isConnectionRequired: $isConnectionRequired"
-        }
-
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryChannel(channelType, channelId, request)
-        }
-    }
+    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
 
     /**
      * Gets the channel from the server based on [channelType], [channelId] and parameters from [QueryChannelRequest].
@@ -1807,7 +1786,7 @@ internal constructor(
      */
     @CheckResult
     public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
-        return callPostponeHelper.postponeCall { api.stopWatching(channelType, channelId) }
+        return api.stopWatching(channelType, channelId)
     }
 
     /**
@@ -2017,12 +1996,7 @@ internal constructor(
      */
     @CheckResult
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        val isConnectionRequired = query.presence
-        logger.d { "[queryUsers] isConnectionRequired: $isConnectionRequired, query: $query" }
-
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryUsers(query)
-        }
+        return api.queryUsers(query)
     }
 
     /**
@@ -2902,7 +2876,6 @@ internal constructor(
                 module.api(),
                 module.notifications(),
                 tokenManager,
-                module.callPostponeHelper,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 clientScope = clientScope,
@@ -2910,7 +2883,6 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
-                lifecycleObserver = module.lifecycleObserver,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
                     ?: pluginFactories
