@@ -109,7 +109,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                     file = file,
                     mimeType = mimeType,
                     attachmentType = attachmentType,
-                    url = result.value.file
+                    url = result.value.file,
+                    thumbUrl = result.value.thumbUrl,
                 )
 
                 onSuccessfulUpload(
@@ -258,13 +259,13 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 }
                 AttachmentType.VIDEO -> {
                     imageUrl = thumbUrl
-                    this.thumbUrl = thumbUrl
                     assetUrl = url
                 }
                 else -> {
                     assetUrl = url
                 }
             }
+            this.thumbUrl = thumbUrl
             if (title.isNullOrBlank()) {
                 title = file.name
             }
