@@ -63,7 +63,9 @@ internal class QueryChannelsLogic(
             fetchChannelsFromCache(pagination, dbLogic)
                 .also { channels ->
                     queryChannelsStateLogic?.setLoading(channels.isEmpty())
-                    addChannels(channels)
+                    if (channels.isNotEmpty()) {
+                        addChannels(channels)
+                    }
                 }
         }
     }

@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
-import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -120,9 +119,7 @@ internal class ChatClientTest {
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutines.scope)
         val userScope = UserTestScope(clientScope)
-        val callPostponeHelper = CallPostponeHelper(userScope) {
-            socketStateService.awaitConnection()
-        }
+
         client = ChatClient(
             config = config,
             api = api,
@@ -130,7 +127,6 @@ internal class ChatClientTest {
             notifications = mock(),
             tokenManager = FakeTokenManager(""),
             socketStateService = socketStateService,
-            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,

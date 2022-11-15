@@ -97,7 +97,6 @@ internal class ConnectUserTest {
             notifications = mock(),
             tokenManager = mock(),
             socketStateService = socketStateService,
-            callPostponeHelper = mock(),
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
