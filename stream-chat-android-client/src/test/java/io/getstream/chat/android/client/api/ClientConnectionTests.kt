@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
@@ -114,9 +113,6 @@ internal class ClientConnectionTests {
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val socketStateService = SocketStateService()
         val userStateService = UserStateService()
-        val callPostponeHelper = CallPostponeHelper(userScope) {
-            socketStateService.awaitConnection()
-        }
         val tokenUtils: TokenUtils = mock()
         whenever(tokenUtils.getUserId(token)) doReturn userId
         socket = mock()
@@ -139,7 +135,6 @@ internal class ClientConnectionTests {
             notificationsManager,
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
-            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
