@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-@file:JvmName("ContentUtils")
+package io.getstream.chat.android.ui.common.utils.extensions
 
-package io.getstream.chat.android.client.models
-
-import io.getstream.chat.android.models.Channel
-
-public fun Channel.getUnreadMessagesCount(forUserId: String = ""): Int {
-    return if (forUserId.isEmpty()) {
-        read.sumOf { it.unreadMessages }
-    } else {
-        read
-            .filter { it.user.id == forUserId }
-            .sumOf { it.unreadMessages }
-    }
+internal fun String.initials(): String {
+    return trim()
+        .split("\\s+".toRegex())
+        .take(2)
+        .joinToString(separator = "") { it.take(1).uppercase() }
 }

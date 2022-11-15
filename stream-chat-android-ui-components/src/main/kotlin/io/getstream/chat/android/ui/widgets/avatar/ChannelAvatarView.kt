@@ -27,10 +27,10 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.RelativeCornerSize
 import com.google.android.material.shape.ShapeAppearanceModel
-import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.ui.widgets.avatar.internal.AvatarPlaceholderDrawable

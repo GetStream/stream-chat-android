@@ -1115,6 +1115,7 @@ public final class io/getstream/chat/android/models/Message : io/getstream/chat/
 	public final fun getLatestReactions ()Ljava/util/List;
 	public final fun getMentionedUsers ()Ljava/util/List;
 	public final fun getMentionedUsersIds ()Ljava/util/List;
+	public final fun getOriginalLanguage ()Ljava/lang/String;
 	public final fun getOwnReactions ()Ljava/util/List;
 	public final fun getParentId ()Ljava/lang/String;
 	public final fun getPinExpires ()Ljava/util/Date;
@@ -1133,6 +1134,7 @@ public final class io/getstream/chat/android/models/Message : io/getstream/chat/
 	public final fun getSyncStatus ()Lio/getstream/chat/android/models/SyncStatus;
 	public final fun getText ()Ljava/lang/String;
 	public final fun getThreadParticipants ()Ljava/util/List;
+	public final fun getTranslation (Ljava/lang/String;)Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUpdatedAt ()Ljava/util/Date;
 	public final fun getUpdatedLocallyAt ()Ljava/util/Date;

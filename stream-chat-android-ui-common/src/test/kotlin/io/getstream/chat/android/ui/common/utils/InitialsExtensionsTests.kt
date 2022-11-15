@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.ui.common.utils
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -27,7 +28,7 @@ internal class InitialsExtensionsTests {
 
     /** [provideNames] */
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.models.InitialsExtensionsTests#provideNames")
+    @MethodSource("io.getstream.chat.android.ui.common.utils.InitialsExtensionsTests#provideNames")
     fun `Should return initials of the user name`(name: String, initials: String) {
         val user = User(name = name)
 
@@ -36,7 +37,7 @@ internal class InitialsExtensionsTests {
 
     /** [provideNames] */
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.models.InitialsExtensionsTests#provideNames")
+    @MethodSource("io.getstream.chat.android.ui.common.utils.InitialsExtensionsTests#provideNames")
     fun `Should return initials of the channel name`(name: String, initials: String) {
         val channel = Channel(name = name)
 

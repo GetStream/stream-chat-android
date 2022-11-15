@@ -889,6 +889,7 @@ public final class io/getstream/chat/android/ui/common/utils/extensions/Attachme
 }
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/ChannelKt {
+	public static final fun getInitials (Lio/getstream/chat/android/models/Channel;)Ljava/lang/String;
 	public static final fun isDirectMessaging (Lio/getstream/chat/android/models/Channel;)Z
 }
 
@@ -904,6 +905,10 @@ public final class io/getstream/chat/android/ui/common/utils/extensions/MessageK
 	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/models/Message;)Ljava/util/Date;
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/models/Message;)Ljava/util/Date;
 	public static final fun isModerationFailed (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/client/ChatClient;)Z
+}
+
+public final class io/getstream/chat/android/ui/common/utils/extensions/UserKt {
+	public static final fun getInitials (Lio/getstream/chat/android/models/User;)Ljava/lang/String;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/utils/typing/TypingUpdatesBuffer {

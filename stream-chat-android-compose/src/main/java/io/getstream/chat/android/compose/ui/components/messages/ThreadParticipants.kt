@@ -26,11 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * Represents a number of participants in the thread.

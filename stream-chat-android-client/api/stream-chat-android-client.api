@@ -1955,10 +1955,6 @@ public final class io/getstream/chat/android/client/logger/ChatLoggerHandler$Def
 }
 
 public final class io/getstream/chat/android/client/models/ContentUtils {
-	public static final fun getInitials (Lio/getstream/chat/android/models/Channel;)Ljava/lang/String;
-	public static final fun getInitials (Lio/getstream/chat/android/models/User;)Ljava/lang/String;
-	public static final fun getOriginalLanguage (Lio/getstream/chat/android/models/Message;)Ljava/lang/String;
-	public static final fun getTranslation (Lio/getstream/chat/android/models/Message;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun getUnreadMessagesCount (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;)I
 	public static synthetic fun getUnreadMessagesCount$default (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;ILjava/lang/Object;)I
 }

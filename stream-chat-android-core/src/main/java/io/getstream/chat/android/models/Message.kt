@@ -230,4 +230,13 @@ public data class Message(
             "pinExpires" -> pinExpires
             else -> extraData[fieldName] as? Comparable<*>
         }
+
+    public fun getTranslation(language: String): String = i18n.get("${language}_text", "")
+
+    public val originalLanguage: String
+        get() = i18n.get("language", "")
+
+    private fun <A, B> Map<A, B>.get(key: A, default: B): B {
+        return get(key) ?: default
+    }
 }

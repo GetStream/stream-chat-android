@@ -112,7 +112,6 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -152,6 +151,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 import io.getstream.chat.android.uiutils.extension.hasLink
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
