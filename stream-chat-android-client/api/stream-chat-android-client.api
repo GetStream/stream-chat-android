@@ -1954,11 +1954,6 @@ public final class io/getstream/chat/android/client/logger/ChatLoggerHandler$Def
 	public static fun logV (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;Ljava/lang/Object;Ljava/lang/String;)V
 }
 
-public final class io/getstream/chat/android/client/models/ContentUtils {
-	public static final fun getUnreadMessagesCount (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;)I
-	public static synthetic fun getUnreadMessagesCount$default (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;ILjava/lang/Object;)I
-}
-
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {
 	public fun <init> ()V
 	public fun <init> (Z)V
