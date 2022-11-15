@@ -97,7 +97,7 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.success(testMessage))
+        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Success(testMessage))
 
         verify(messageRepository).insertMessage(
             argThat { message ->
@@ -118,7 +118,7 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.error(ChatError()))
+        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Failure(ChatError.GenericError("")))
 
         verify(messageRepository).insertMessage(
             argThat { message ->

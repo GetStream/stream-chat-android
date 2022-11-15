@@ -32,10 +32,11 @@ import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.utils.Event
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -92,17 +93,17 @@ class ChatInfoViewModel(
                         sort = QuerySortByField()
                     ).await()
 
-                if (result.isSuccess) {
-                    val member = result.data().firstOrNull()
-                    // Update member, member block status, and channel notifications
-                    _state.value = _state.value!!.copy(
-                        member = member,
-                        isMemberBlocked = member?.shadowBanned ?: false,
-                        loading = false
-                    )
-                } else {
-                    // TODO: Handle error
-                    _state.value = _state.value!!.copy(loading = false)
+                when (result) {
+                    is Result.Success -> {
+                        val member = result.value.firstOrNull()
+                        // Update member, member block status, and channel notifications
+                        _state.value = _state.value!!.copy(
+                            member = member,
+                            isMemberBlocked = member?.shadowBanned ?: false,
+                            loading = false
+                        )
+                    }
+                    is Result.Failure -> _state.value = _state.value!!.copy(loading = false)
                 }
             }
         } else {
@@ -136,7 +137,7 @@ class ChatInfoViewModel(
             } else {
                 channelClient.unmute().await()
             }
-            if (result.isError) {
+            if (result is Result.Failure) {
                 _errorEvents.postValue(Event(ErrorEvent.MuteChannelError))
             }
         }
@@ -157,7 +158,7 @@ class ChatInfoViewModel(
             } else {
                 channelClient.removeShadowBan(currentState.member.getUserId()).await()
             }
-            if (result.isError) {
+            if (result is Result.Failure) {
                 _errorEvents.postValue(Event(ErrorEvent.BlockUserError))
             }
         }
@@ -169,11 +170,9 @@ class ChatInfoViewModel(
     private fun deleteChannel() {
         val cid = requireNotNull(cid)
         viewModelScope.launch {
-            val result = chatClient.channel(cid).delete().await()
-            if (result.isSuccess) {
-                _channelDeletedState.value = true
-            } else {
-                _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError))
+            when (chatClient.channel(cid).delete().await()) {
+                is Result.Success -> _channelDeletedState.value = true
+                is Result.Failure -> _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError))
             }
         }
     }

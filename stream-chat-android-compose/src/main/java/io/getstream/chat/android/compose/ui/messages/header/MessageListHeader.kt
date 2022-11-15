@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
@@ -58,6 +57,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.

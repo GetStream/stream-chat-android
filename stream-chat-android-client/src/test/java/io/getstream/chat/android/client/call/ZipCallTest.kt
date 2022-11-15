@@ -37,16 +37,18 @@ import org.mockito.kotlin.only
 internal class ZipCallTest {
 
     private val resultValueA = positiveRandomInt()
-    private val validResultA: Result<Int> = Result.success(resultValueA)
+    private val validResultA: Result<Int> = Result.Success(resultValueA)
     private val resultValueB = randomString()
-    private val validResultB: Result<String> = Result.success(resultValueB)
-    private val expectedResult: Result<Pair<Int, String>> = Result.success(Pair(resultValueA, resultValueB))
-    private val errorA = ChatError(randomString(), Exception())
-    private val errorB = ChatError(randomString(), Exception())
-    private val errorResultA = Result.error<Int>(errorA)
-    private val errorResultB = Result.error<String>(errorB)
-    private val expectedErrorResultA = Result.error<Pair<Int, String>>(ChatError("Error executing callA", errorA.cause))
-    private val expectedErrorResultB = Result.error<Pair<Int, String>>(ChatError("Error executing callB", errorB.cause))
+    private val validResultB: Result<String> = Result.Success(resultValueB)
+    private val expectedResult: Result<Pair<Int, String>> = Result.Success(Pair(resultValueA, resultValueB))
+    private val errorA = ChatError.ThrowableError(message = randomString(), cause = Exception())
+    private val errorB = ChatError.ThrowableError(message = randomString(), cause = Exception())
+    private val errorResultA = Result.Failure(errorA)
+    private val errorResultB = Result.Failure(errorB)
+    private val expectedErrorResultA =
+        Result.Failure(ChatError.ThrowableError(message = "Error executing callA", cause = errorA.cause))
+    private val expectedErrorResultB =
+        Result.Failure(ChatError.ThrowableError(message = "Error executing callB", cause = errorB.cause))
 
     @Test
     fun `Call should be executed and return a valid result`() = runTest {
@@ -122,7 +124,7 @@ internal class ZipCallTest {
 
     @Test
     fun `Call should be enqueued and return an error result from callA by the callback`() = runTest {
-        val callback: Call.Callback<Pair<Int, String>> = mock()
+        val callback: Call.Callback<Pair<Nothing, String>> = mock()
         val blockedCallA = BlockedCall(errorResultA).apply { unblock() }
         val blockedCallB = BlockedCall(validResultB).apply { unblock() }
         val call = blockedCallA.zipWith(blockedCallB)
@@ -144,7 +146,7 @@ internal class ZipCallTest {
 
     @Test
     fun `Call should be enqueued and return an error result from callB by the callback`() = runTest {
-        val callback: Call.Callback<Pair<Int, String>> = mock()
+        val callback: Call.Callback<Pair<Int, Nothing>> = mock()
         val blockedCallA = BlockedCall(validResultA).apply { unblock() }
         val blockedCallB = BlockedCall(errorResultB).apply { unblock() }
         val call = blockedCallA.zipWith(blockedCallB)

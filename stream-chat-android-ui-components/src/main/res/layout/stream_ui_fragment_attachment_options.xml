@@ -19,7 +19,7 @@
     android:layout_height="match_parent"
     >
 
-    <io.getstream.chat.android.ui.gallery.options.internal.AttachmentGalleryOptionsView
+    <io.getstream.chat.android.ui.feature.gallery.options.internal.AttachmentGalleryOptionsView
         android:id="@+id/attachmentOptionsMenu"
         android:layout_width="182dp"
         android:layout_height="wrap_content"

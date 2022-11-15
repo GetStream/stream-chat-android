@@ -24,7 +24,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.state.extensions.globalState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -63,8 +64,8 @@ public class ImagePreviewViewModel(
      */
     init {
         chatClient.getMessage(messageId).enqueue { result ->
-            if (result.isSuccess) {
-                this.message = result.data()
+            if (result is Result.Success) {
+                this.message = result.value
             }
         }
     }
@@ -109,8 +110,8 @@ public class ImagePreviewViewModel(
             chatClient.updateMessage(message).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
             chatClient.deleteMessage(message.id).enqueue { result ->
-                if (result.isSuccess) {
-                    message = result.data()
+                if (result is Result.Success) {
+                    message = result.value
                 }
             }
         }

@@ -49,7 +49,7 @@ internal class QueryMembersListenerDatabaseTest {
         val (type, id) = cid.cidToTypeAndId()
 
         queryMembersListenerDatabase.onQueryMembersResult(
-            result = Result.success(memberList),
+            result = Result.Success(memberList),
             channelType = type,
             channelId = id,
             offset = randomInt(),
@@ -72,7 +72,7 @@ internal class QueryMembersListenerDatabaseTest {
         val (type, id) = cid.cidToTypeAndId()
 
         queryMembersListenerDatabase.onQueryMembersResult(
-            result = Result.error(ChatError()),
+            result = Result.Failure(ChatError.GenericError("")),
             channelType = type,
             channelId = id,
             offset = randomInt(),

@@ -51,21 +51,21 @@
             android:padding="16dp"
             >
 
-            <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+            <io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
                 android:id="@+id/headerOnlineStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+            <io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
                 android:id="@+id/headerOfflineStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+            <io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
                 android:id="@+id/headerOfflineStatusWithoutProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                 app:streamUiShowOfflineProgressBar="false"
                 />
 
-            <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+            <io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
                 android:id="@+id/headerWithoutUserAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
                 app:streamUiShowUserAvatar="false"
                 />
 
-            <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+            <io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
                 android:id="@+id/headerWithoutAddChannel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
                 app:streamUiShowActionButton="false"
                 />
 
-            <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+            <io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
                 android:id="@+id/headerWithoutUserAvatarAndAddChannel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

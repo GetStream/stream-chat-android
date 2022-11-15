@@ -72,7 +72,7 @@ public object NotificationHandlerFactory {
     }
 
     private fun getDefaultNewMessageIntentFun(
-        context: Context
+        context: Context,
     ): (messageId: String, channelType: String, channelId: String) -> Intent {
         return { _, _, _ -> createDefaultNewMessageIntent(context) }
     }
@@ -94,7 +94,7 @@ public object NotificationHandlerFactory {
     private fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
         val appContext = context.applicationContext
         return runCatching {
-            Class.forName("io.getstream.chat.android.common.notifications.StreamCoilUserIconBuilder")
+            Class.forName("io.getstream.chat.android.ui.common.notifications.StreamCoilUserIconBuilder")
                 .kotlin.primaryConstructor
                 ?.call(appContext) as UserIconBuilder
         }.getOrDefault(DefaultUserIconBuilder(appContext))
@@ -104,7 +104,7 @@ public object NotificationHandlerFactory {
         val appContext = context.applicationContext
         return runCatching {
             Class.forName(
-                "io.getstream.chat.android.common.notifications.permissions.SnackbarNotificationPermissionHandler"
+                "io.getstream.chat.android.ui.common.notifications.permissions.SnackbarNotificationPermissionHandler"
             ).kotlin.primaryConstructor?.call(appContext) as NotificationPermissionHandler
         }.getOrDefault(DefaultNotificationPermissionHandler(appContext))
     }

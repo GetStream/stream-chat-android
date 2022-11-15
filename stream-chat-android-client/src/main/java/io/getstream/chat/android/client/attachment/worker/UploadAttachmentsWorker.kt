@@ -47,19 +47,24 @@ public class UploadAttachmentsWorker(
             ?: messageRepository.selectMessage(messageId)
 
         return try {
-            message?.let { sendAttachments(it) } ?: Result.error(
-                ChatError("The message with id $messageId could not be found.")
+            message?.let { sendAttachments(it) } ?: Result.Failure(
+                ChatError.GenericError("The message with id $messageId could not be found.")
             )
         } catch (e: Exception) {
             message?.let { updateMessages(it) }
-            Result.error(e)
+            Result.Failure(
+                ChatError.ThrowableError(
+                    message = "Could not upload attachments for message $messageId",
+                    cause = e,
+                ),
+            )
         }
     }
 
     private suspend fun sendAttachments(message: Message): Result<Unit> {
         if (chatClient.getCurrentUser() == null) {
             if (!chatClient.containsStoredCredentials()) {
-                return Result.error(ChatError("Could not set user"))
+                return Result.Failure(ChatError.GenericError("Could not set user"))
             }
 
             chatClient.setUserWithoutConnectingIfNeeded()
@@ -71,15 +76,15 @@ public class UploadAttachmentsWorker(
         }
 
         return if (!hasPendingAttachment) {
-            Result.success(Unit)
+            Result.Success(Unit)
         } else {
             val attachments = uploadAttachments(message)
             updateMessages(message)
 
             if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
-                Result.success(Unit)
+                Result.Success(Unit)
             } else {
-                Result.error(ChatError())
+                Result.Failure(ChatError.GenericError(message = "Could not upload attachments."))
             }
         }
     }
@@ -99,7 +104,7 @@ public class UploadAttachmentsWorker(
 
                     attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
                         .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
-                        .data()
+                        .value
                 } else {
                     attachment
                 }
@@ -107,7 +112,9 @@ public class UploadAttachmentsWorker(
         } catch (e: Exception) {
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
-                    it.uploadState = Attachment.UploadState.Failed(ChatError(e.message, e))
+                    it.uploadState = Attachment.UploadState.Failed(
+                        ChatError.ThrowableError(message = "Could not upload attachments.", cause = e),
+                    )
                 }
                 it
             }.toMutableList()

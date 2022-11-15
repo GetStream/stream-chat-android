@@ -57,8 +57,8 @@ internal class ThreadQueryListenerDatabase(
     }
 
     private suspend fun onResult(result: Result<List<Message>>) {
-        if (result.isSuccess) {
-            val messages = result.data()
+        if (result is Result.Success) {
+            val messages = result.value
 
             userRepository.insertUsers(messages.flatMap(Message::users))
             messageRepository.insertMessages(messages)

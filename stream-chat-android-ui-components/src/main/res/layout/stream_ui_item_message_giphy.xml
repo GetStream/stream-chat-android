@@ -21,7 +21,7 @@
     android:layout_height="wrap_content"
     >
 
-    <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -195,7 +195,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.FootnoteView
         android:id="@+id/footnote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

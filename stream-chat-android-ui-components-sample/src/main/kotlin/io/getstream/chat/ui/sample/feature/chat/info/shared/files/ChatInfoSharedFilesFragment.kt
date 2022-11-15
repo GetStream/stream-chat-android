@@ -24,9 +24,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.getstream.sdk.chat.view.EndlessScrollListener
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
+import io.getstream.chat.android.ui.navigation.destinations.AttachmentDestination
+import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedFilesBinding
 import io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModel

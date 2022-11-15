@@ -1,42 +1,3 @@
-public abstract class io/getstream/chat/android/client/Result {
-	public final synthetic fun map (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/Result;
-	public final synthetic fun mapSuspend (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun toUnitResult ()Lio/getstream/chat/android/client/Result;
-}
-
-public final class io/getstream/chat/android/client/Result$Failure : io/getstream/chat/android/client/Result {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/client/Result$Failure;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/Result$Failure;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/client/Result$Failure;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getValue ()Lio/getstream/chat/android/client/errors/ChatError;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/Result$Success : io/getstream/chat/android/client/Result {
-	public fun <init> (Ljava/lang/Object;)V
-	public final fun component1 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/Object;)Lio/getstream/chat/android/client/Result$Success;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/Result$Success;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/client/Result$Success;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/ResultKt {
-	public static final synthetic fun flatMap (Lio/getstream/chat/android/client/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/Result;
-	public static final synthetic fun flatMapSuspend (Lio/getstream/chat/android/client/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final synthetic fun onError (Lio/getstream/chat/android/client/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/Result;
-	public static final synthetic fun onErrorSuspend (Lio/getstream/chat/android/client/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final synthetic fun onSuccess (Lio/getstream/chat/android/client/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/Result;
-	public static final synthetic fun onSuccessSuspend (Lio/getstream/chat/android/client/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final synthetic fun recover (Lio/getstream/chat/android/client/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/Result;
-	public static final synthetic fun recover (Lio/getstream/chat/android/client/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public abstract interface class io/getstream/chat/android/client/call/Call {
 	public static final field Companion Lio/getstream/chat/android/client/call/Call$Companion;
 	public abstract fun await (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -69,53 +30,128 @@ public final class io/getstream/chat/android/client/call/ReturnOnErrorCall : io/
 public final class io/getstream/chat/android/client/call/SharedCalls$Key : kotlin/coroutines/CoroutineContext$Key {
 }
 
-public class io/getstream/chat/android/client/errors/ChatError {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+public abstract class io/getstream/chat/android/client/errors/ChatError {
+	public abstract fun getMessage ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/errors/ChatError$GenericError : io/getstream/chat/android/client/errors/ChatError {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/client/errors/ChatError$GenericError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/errors/ChatError$GenericError;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/errors/ChatError$GenericError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/errors/ChatError$NetworkError : io/getstream/chat/android/client/errors/ChatError {
+	public static final field Companion Lio/getstream/chat/android/client/errors/ChatError$NetworkError$Companion;
+	public fun <init> (Ljava/lang/String;IILjava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;IILjava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/lang/Throwable;
+	public final fun copy (Ljava/lang/String;IILjava/lang/Throwable;)Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/errors/ChatError$NetworkError;Ljava/lang/String;IILjava/lang/Throwable;ILjava/lang/Object;)Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCause ()Ljava/lang/Throwable;
-	public final fun getMessage ()Ljava/lang/String;
+	public fun getMessage ()Ljava/lang/String;
+	public final fun getStatusCode ()I
+	public final fun getStreamCode ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/utils/Result {
-	public static final field Companion Lio/getstream/chat/android/client/utils/Result$Companion;
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
-	public fun <init> (Ljava/lang/Object;)V
-	public synthetic fun <init> (Ljava/lang/Object;Lio/getstream/chat/android/client/errors/ChatError;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun data ()Ljava/lang/Object;
+public final class io/getstream/chat/android/client/errors/ChatError$ThrowableError : io/getstream/chat/android/client/errors/ChatError {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Throwable;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Throwable;)Lio/getstream/chat/android/client/errors/ChatError$ThrowableError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/errors/ChatError$ThrowableError;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)Lio/getstream/chat/android/client/errors/ChatError$ThrowableError;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun error ()Lio/getstream/chat/android/client/errors/ChatError;
-	public static final fun error (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/client/utils/Result;
-	public static final fun error (Ljava/lang/Throwable;)Lio/getstream/chat/android/client/utils/Result;
+	public final fun getCause ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
 	public fun hashCode ()I
-	public final fun isError ()Z
-	public final fun isSuccess ()Z
-	public static final fun success (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/Result;
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/utils/Result$Companion {
-	public final fun error (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/client/utils/Result;
-	public final fun error (Ljava/lang/Throwable;)Lio/getstream/chat/android/client/utils/Result;
-	public final fun success (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/Result;
+public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/lang/Enum {
+	public static final field API_KEY_NOT_FOUND Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field AUTHENTICATION_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field CANT_PARSE_CONNECTION_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field CANT_PARSE_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field Companion Lio/getstream/chat/android/client/errors/ChatErrorCode$Companion;
+	public static final field INVALID_TOKEN Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field MESSAGE_MODERATION_FAILED Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field NETWORK_FAILED Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field NO_ERROR_BODY Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field PARSER_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field SOCKET_CLOSED Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field SOCKET_FAILURE Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field TOKEN_DATE_INCORRECT Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field TOKEN_EXPIRED Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field TOKEN_NOT_VALID Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field TOKEN_SIGNATURE_INCORRECT Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field UNABLE_TO_PARSE_SOCKET_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field UNDEFINED_TOKEN Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static final field VALIDATION_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public final fun getCode ()I
+	public final fun getDescription ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/errors/ChatErrorCode;
+	public static fun values ()[Lio/getstream/chat/android/client/errors/ChatErrorCode;
+}
+
+public final class io/getstream/chat/android/client/errors/ChatErrorCode$Companion {
+	public final fun isAuthenticationError (I)Z
+}
+
+public final class io/getstream/chat/android/client/errors/ChatErrorKt {
+}
+
+public abstract class io/getstream/chat/android/client/utils/Result {
+	public final fun chatErrorOrNull ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun getOrNull ()Ljava/lang/Object;
+	public final fun getOrThrow ()Ljava/lang/Object;
+	public final fun isFailure ()Z
+	public final fun isSuccess ()Z
+	public final fun map (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
+	public final synthetic fun mapSuspend (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun onError (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
+	public final fun onSuccess (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
+	public final fun toUnitResult ()Lio/getstream/chat/android/client/utils/Result;
+}
+
+public final class io/getstream/chat/android/client/utils/Result$Failure : io/getstream/chat/android/client/utils/Result {
+	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/client/utils/Result$Failure;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/utils/Result$Failure;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/client/utils/Result$Failure;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/utils/Result$Success : io/getstream/chat/android/client/utils/Result {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/Result$Success;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/utils/Result$Success;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/client/utils/Result$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/utils/ResultKt {
-	public static final synthetic fun flatMap (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
+	public static final fun flatMap (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public static final synthetic fun flatMapSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final synthetic fun map (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
-	public static final synthetic fun mapSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final synthetic fun onError (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public static final synthetic fun onErrorSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final synthetic fun onSuccess (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
 	public static final synthetic fun onSuccessSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final synthetic fun recover (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result;
+	public static final synthetic fun recover (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/client/utils/Result$Success;
 	public static final synthetic fun recoverSuspend (Lio/getstream/chat/android/client/utils/Result;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun toResult (Ljava/lang/Object;)Lio/getstream/chat/android/client/utils/Result;
-	public static final fun toResultError (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/client/utils/Result;
 }
 
 public abstract interface annotation class io/getstream/chat/android/core/ExperimentalStreamChatApi : java/lang/annotation/Annotation {

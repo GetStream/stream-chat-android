@@ -5,7 +5,6 @@ import android.content.Context;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
@@ -50,10 +49,10 @@ public class ClientAndUsers {
             client.connectUser(user, token).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Logged in
-                    User userRes = result.data().getUser();
-                    String connectionId = result.data().getConnectionId();
+                    User userRes = result.getOrNull().getUser();
+                    String connectionId = result.getOrNull().getConnectionId();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
 
@@ -148,9 +147,9 @@ public class ClientAndUsers {
 
             client.queryUsers(request).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<User> users = result.data();
+                    List<User> users = result.getOrNull();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -201,7 +200,7 @@ public class ClientAndUsers {
                 if (disconnectResult.isSuccess()) {
                     client.connectUser(user, token).enqueue(loginResult -> { /* ... */ });
                 } else {
-                    // Handle result.error()
+                    // Handle result error
                 }
             });
         }

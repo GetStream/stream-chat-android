@@ -117,9 +117,9 @@ public class Events {
             // Send a custom event to all users watching the channel
             channelClient.sendEvent("friendship_request", extraData).enqueue(result -> {
                 if (result.isSuccess()) {
-                    ChatEvent chatEvent = result.data();
+                    ChatEvent channel = result.getOrNull();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }

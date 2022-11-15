@@ -16,21 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
-/*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
- *
- * Licensed under the Stream License;
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -121,9 +106,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
-import com.getstream.sdk.chat.StreamFileUtil
-import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -136,6 +118,7 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -166,6 +149,9 @@ import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
+import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -1060,13 +1046,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                     attachment = attachment
                                 )
 
-                                if (result.isSuccess) {
-                                    shareAttachment(
-                                        mediaUri = result.data(),
-                                        attachmentType = attachment.type
+                                when (result) {
+                                    is Result.Success -> shareAttachment(
+                                        mediaUri = result.value,
+                                        attachmentType = attachment.type,
                                     )
-                                } else {
-                                    mediaGalleryPreviewViewModel.promptedAttachment = attachment
+                                    is Result.Failure -> mediaGalleryPreviewViewModel.promptedAttachment = attachment
                                 }
                             }
                             else -> shareAttachment(attachment)
@@ -1320,13 +1305,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
         mediaGalleryPreviewViewModel.isSharingInProgress = false
 
-        if (result.isSuccess) {
-            shareAttachment(
-                mediaUri = result.data(),
-                attachmentType = attachment.type
+        when (result) {
+            is Result.Success -> shareAttachment(
+                mediaUri = result.value,
+                attachmentType = attachment.type,
             )
-        } else {
-            toastFailedShare()
+            is Result.Failure -> toastFailedShare()
         }
     }
 

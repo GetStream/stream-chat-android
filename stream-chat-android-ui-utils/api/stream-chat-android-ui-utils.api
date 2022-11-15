@@ -18,10 +18,6 @@ public final class io/getstream/chat/android/uiutils/extension/ChannelKt {
 	public static final fun getPreviewMessage (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/models/Message;
 }
 
-public final class io/getstream/chat/android/uiutils/extension/ContextKt {
-	public static final fun openSystemSettings (Landroid/content/Context;)V
-}
-
 public final class io/getstream/chat/android/uiutils/extension/DateKt {
 	public static final fun isInLastMinute (Ljava/util/Date;)Z
 }
@@ -78,5 +74,9 @@ public final class io/getstream/chat/android/uiutils/util/EmojiUtil {
 	public final fun getEmojiCount (Lio/getstream/chat/android/client/models/Message;)I
 	public final fun isEmojiOnly (Lio/getstream/chat/android/client/models/Message;)Z
 	public final fun isSingleEmoji (Lio/getstream/chat/android/client/models/Message;)Z
+}
+
+public final class io/getstream/chat/android/uiutils/util/IntentUtilsKt {
+	public static final fun openSystemSettings (Landroid/content/Context;)V
 }
 

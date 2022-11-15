@@ -24,9 +24,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import io.getstream.chat.android.ui.pinned.list.viewmodel.PinnedMessageListViewModel
-import io.getstream.chat.android.ui.pinned.list.viewmodel.PinnedMessageListViewModelFactory
-import io.getstream.chat.android.ui.pinned.list.viewmodel.bindView
+import io.getstream.chat.android.ui.viewmodel.pinned.PinnedMessageListViewModel
+import io.getstream.chat.android.ui.viewmodel.pinned.PinnedMessageListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.pinned.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely

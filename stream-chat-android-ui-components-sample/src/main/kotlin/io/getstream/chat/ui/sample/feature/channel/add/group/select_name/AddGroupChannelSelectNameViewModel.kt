@@ -22,11 +22,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.state.extensions.globalState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
-import io.getstream.chat.android.livedata.utils.Event as EventWrapper
+import io.getstream.chat.android.state.utils.Event as EventWrapper
 
 class AddGroupChannelSelectNameViewModel : ViewModel() {
 
@@ -53,10 +54,9 @@ class AddGroupChannelSelectNameViewModel : ViewModel() {
                     memberIds = members.map(User::id) + currentUserId,
                     extraData = mapOf(EXTRA_DATA_CHANNEL_NAME to name)
                 ).await()
-            if (result.isSuccess) {
-                _state.value = State.NavigateToChannel(result.data().cid)
-            } else {
-                _errorEvents.postValue(EventWrapper(ErrorEvent.CreateChannelError))
+            when (result) {
+                is Result.Success -> _state.value = State.NavigateToChannel(result.value.cid)
+                is Result.Failure -> _errorEvents.postValue(EventWrapper(ErrorEvent.CreateChannelError))
             }
         }
     }

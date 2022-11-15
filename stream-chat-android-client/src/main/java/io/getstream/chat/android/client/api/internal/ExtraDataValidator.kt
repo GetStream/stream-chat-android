@@ -84,8 +84,8 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 scope,
-                ChatError(
-                    message = obj.composeErrorMessage(reserved)
+                ChatError.GenericError(
+                    message = obj.composeErrorMessage(reserved),
                 )
             )
         }
@@ -97,8 +97,8 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 scope,
-                ChatError(
-                    message = obj.composeErrorMessage(reserved)
+                ChatError.GenericError(
+                    message = obj.composeErrorMessage(reserved),
                 )
             )
         }
@@ -112,8 +112,8 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 scope,
-                ChatError(
-                    message = "'extraData' contains reserved keys: ${reserved.joinToString()}"
+                ChatError.GenericError(
+                    message = "'extraData' contains reserved keys: ${reserved.joinToString()}",
                 )
             )
         }

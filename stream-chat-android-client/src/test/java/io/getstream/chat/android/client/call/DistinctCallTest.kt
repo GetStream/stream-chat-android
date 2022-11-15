@@ -45,7 +45,7 @@ internal class DistinctCallTest {
     }
 
     private val resultValue = Mother.randomString()
-    private val validResult: Result<String> = Result.success(resultValue)
+    private val validResult: Result<String> = Result.Success(resultValue)
 
     @Test
     fun `Call should be executed asynchronous only once and return a valid result`() = runTest {

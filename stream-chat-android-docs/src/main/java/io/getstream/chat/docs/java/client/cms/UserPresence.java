@@ -29,9 +29,9 @@ public class UserPresence {
         user.setInvisible(true);
         client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
             if (result.isSuccess()) {
-                User userRes = result.data().getUser();
+                User userRes = result.getOrNull().getUser();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
     }
@@ -49,9 +49,9 @@ public class UserPresence {
         watchRequest.getData().put("members", Arrays.asList("john", "jack"));
         channelClient.watch(watchRequest).enqueue(result -> {
             if (result.isSuccess()) {
-                Channel channel = result.data();
+                Channel channel = result.getOrNull();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 
@@ -75,9 +75,9 @@ public class UserPresence {
         );
         client.queryChannels(channelsRequest).enqueue(result -> {
             if (result.isSuccess()) {
-                List<Channel> channels = result.data();
+                List<Channel> channels = result.getOrNull();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 
@@ -89,9 +89,9 @@ public class UserPresence {
         usersQuery.setPresence(true);
         client.queryUsers(usersQuery).enqueue(result -> {
             if (result.isSuccess()) {
-                List<User> users = result.data();
+                List<User> users = result.getOrNull();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 

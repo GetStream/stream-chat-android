@@ -27,7 +27,8 @@ import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.state.extensions.globalState
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -109,8 +110,8 @@ public class MediaGalleryPreviewViewModel(
     private suspend fun fetchMessage() {
         val result = chatClient.getMessage(messageId).await()
 
-        if (result.isSuccess) {
-            this.message = result.data()
+        if (result is Result.Success) {
+            this.message = result.value
             hasCompleteMessage = true
         }
     }
@@ -178,8 +179,8 @@ public class MediaGalleryPreviewViewModel(
             chatClient.updateMessage(message).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
             chatClient.deleteMessage(message.id).enqueue { result ->
-                if (result.isSuccess) {
-                    message = result.data()
+                if (result is Result.Success) {
+                    message = result.value
                 }
             }
         }

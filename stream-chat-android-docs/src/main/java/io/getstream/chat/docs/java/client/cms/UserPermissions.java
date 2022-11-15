@@ -26,9 +26,9 @@ public class UserPermissions {
             extraData.put("team", "red");
             client.createChannel("messaging", "red-general", memberIds, extraData).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Channel channel = result.data();
+                    Channel channel = result.getOrNull();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -47,9 +47,9 @@ public class UserPermissions {
             int limit = 1;
             client.queryUsers(new QueryUsersRequest(filter, offset, limit)).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<User> users = result.data();
+                    List<User> users = result.getOrNull();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
