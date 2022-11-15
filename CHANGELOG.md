@@ -12,12 +12,10 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixing postponing api calls to avoid showing empty screen in the wrong moment. [#4344](https://github.com/GetStream/stream-chat-android/pull/4344)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `thumbUrl` field to the return type of the `FileUploader::sendImage` method, so that clients are able to return image thumb URL when implementing their custom `FileUploader`. [#4423](https://github.com/GetStream/stream-chat-android/pull/4423)
 
 ### ⚠️ Changed
 
@@ -58,8 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed an edge case in which deleting an attachment using the attachment gallery would not delete it given the message was freshly uploaded.  [#4349](https://github.com/GetStream/stream-chat-android/pull/4349)
-- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
 
 ### ⬆️ Improved
 
@@ -73,7 +69,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
 
 ### ✅ Added
 
@@ -124,6 +119,23 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# November 15th, 2022 - 5.11.5
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixing postponing api calls to avoid showing empty screen in the wrong moment. [#4344](https://github.com/GetStream/stream-chat-android/pull/4344)
+
+### ✅ Added
+- Added `thumbUrl` field to the return type of the `FileUploader::sendImage` method, so that clients are able to return image thumb URL when implementing their custom `FileUploader`. [#4423](https://github.com/GetStream/stream-chat-android/pull/4423)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed an edge case in which deleting an attachment using the attachment gallery would not delete it given the message was freshly uploaded.  [#4349](https://github.com/GetStream/stream-chat-android/pull/4349)
+- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
 
 # November 3th, 2022 - 5.11.4
 ## stream-chat-android-compose
