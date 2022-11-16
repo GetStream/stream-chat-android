@@ -11,21 +11,28 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFacto
 /**
  * [Message List Header](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/)
  */
-public class MessageListHeaderViewSnippets extends Fragment {
+public class MessageListHeader extends Fragment {
 
     private MessageListHeaderView messageListHeaderView;
 
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#usage)
+     */
     public void usage() {
-        // Get ViewModel
+        // Initialize ViewModel
         ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
-                .cid("channelType:channelId")
+                .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);
         MessageListHeaderViewModel viewModel = provider.get(MessageListHeaderViewModel.class);
-        // Bind it with MessageListHeaderView
+
+        // Bind the View and ViewModel
         MessageListHeaderViewModelBinding.bind(viewModel, messageListHeaderView, getViewLifecycleOwner());
     }
 
+    /**
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#handling-actions)
+     */
     public void handlingActions() {
         messageListHeaderView.setBackButtonClickListener(() -> {
             // Handle back button click

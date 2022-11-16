@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.logging.StreamLog
@@ -54,7 +55,7 @@ import kotlinx.coroutines.flow.onSubscription
 import io.getstream.chat.android.state.utils.Event as EventWrapper
 
 /**
- * View model class for [io.getstream.chat.android.ui.feature.messages.list.MessageListView].
+ * View model class for [MessageListView].
  * Responsible for updating the list of messages.
  * Can be bound to the view using [MessageListViewModel.bindView] function.
  *
