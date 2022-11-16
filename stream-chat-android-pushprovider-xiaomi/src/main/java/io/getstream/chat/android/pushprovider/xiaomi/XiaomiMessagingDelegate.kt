@@ -23,6 +23,7 @@ import com.xiaomi.mipush.sdk.MiPushClient
 import com.xiaomi.mipush.sdk.MiPushCommandMessage
 import com.xiaomi.mipush.sdk.MiPushMessage
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.PayloadValidator
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.PushProvider
@@ -109,9 +110,6 @@ public object XiaomiMessagingDelegate {
         }
 
     private fun MiPushMessage.isValid() =
-        contentMap.let {
-            !it["channel_id"].isNullOrBlank() &&
-                !it["message_id"].isNullOrBlank() &&
-                !it["channel_type"].isNullOrBlank()
-        }
+        PayloadValidator.isFromStreamServer(contentMap) &&
+            PayloadValidator.isValidNewMessage(contentMap)
 }
