@@ -311,6 +311,11 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
+# November 16th, 2022 - 5.11.6
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed the race condition when connecting the user just after receiving a push notification when the application is killed. [#4429](https://github.com/GetStream/stream-chat-android/pull/4429)
+
 # November 15th, 2022 - 5.11.5
 ## stream-chat-android-client
 ### 🐞 Fixed

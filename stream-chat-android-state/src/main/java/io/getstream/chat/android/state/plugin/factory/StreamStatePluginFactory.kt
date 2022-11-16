@@ -77,7 +77,7 @@ public class StreamStatePluginFactory(
     }
 
     @SuppressWarnings("LongMethod")
-    public fun createStatePlugin(
+    private fun createStatePlugin(
         user: User,
         scope: CoroutineScope,
     ): StatePlugin {
