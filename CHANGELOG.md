@@ -174,7 +174,7 @@ If you want to learn more about these changes and our decisions, check out our [
 - Separated `ThreadQueryListener` into state and databased focused classes. [#4208](https://github.com/GetStream/stream-chat-android/pull/4208)
 - Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
 - Renamed `ChannelData::channelId` to `ChannelData::id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
-- Removed `ChannelData::cid` from constructor. It's now an immutable property calculated based on `type` and `id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322) 
+- Removed `ChannelData::cid` from constructor. It's now an immutable property calculated based on `type` and `id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
 - Moved the send attachment logic to the LLC (Low Level Client) module [#4244](https://github.com/GetStream/stream-chat-android/pull/4244)
 
 ### ❌ Removed
@@ -186,7 +186,7 @@ If you want to learn more about these changes and our decisions, check out our [
 
 ### ✅ Added
 - Added `MessageListController` which generalizes message list state and actions, exposing them to each SDK's ViewModel. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
-- Added `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorItemState`, `ThreadSeparatorItemState`, `SystemMessageItemState`, `TypingItemState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState` to keep track of the message list states. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files) 
+- Added `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorItemState`, `ThreadSeparatorItemState`, `SystemMessageItemState`, `TypingItemState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState` to keep track of the message list states. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - Added `ClipboardHandler` that handles copy/pasting. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - Added `DateSeparatorHandler` that handles when date separators should be shown. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - Added `MessagePositionHandler` that determines the message group position inside the list. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
@@ -310,6 +310,23 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: Removed compose `MessageMode` indicating whether the list is in thread mode or normal mode in favor of ui-common `MessageMode`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+
+# November 15th, 2022 - 5.11.5
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixing postponing api calls to avoid showing empty screen in the wrong moment. [#4344](https://github.com/GetStream/stream-chat-android/pull/4344)
+
+### ✅ Added
+- Added `thumbUrl` field to the return type of the `FileUploader::sendImage` method, so that clients are able to return image thumb URL when implementing their custom `FileUploader`. [#4423](https://github.com/GetStream/stream-chat-android/pull/4423)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed an edge case in which deleting an attachment using the attachment gallery would not delete it given the message was freshly uploaded.  [#4349](https://github.com/GetStream/stream-chat-android/pull/4349)
+- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
 
 # November 3th, 2022 - 5.11.4
 ## stream-chat-android-compose

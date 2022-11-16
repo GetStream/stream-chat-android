@@ -16,13 +16,11 @@
 
 package io.getstream.chat.android.client
 
-import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
@@ -92,8 +90,6 @@ internal class MockClientBuilder(
             false
         )
 
-        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutineExtension.dispatcher)
-
         val tokenUtil: TokenUtils = mock()
         val clientState: ClientState = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
@@ -106,13 +102,11 @@ internal class MockClientBuilder(
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutineExtension.scope)
         val userScope = UserTestScope(clientScope)
-        val callPostponeHelper = CallPostponeHelper(userScope) { }
         client = ChatClient(
             config,
             api,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtil,
@@ -121,7 +115,6 @@ internal class MockClientBuilder(
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocket = mock(),
-            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
