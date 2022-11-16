@@ -44,6 +44,7 @@ import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.utils.Event
+import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.utils.extensions.addFlow
 import io.getstream.chat.android.ui.utils.extensions.isMuted
@@ -63,7 +64,7 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 /**
- * ViewModel class for [io.getstream.chat.android.ui.channels.list.ChannelListView].
+ * ViewModel class for [ChannelListView].
  * Responsible for keeping the channels list up to date.
  * Can be bound to the view using [ChannelListViewModel.bindView] function.
  *
