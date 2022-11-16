@@ -845,7 +845,6 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                 )
             }.map(::flattenChannel)
 
-
         val isConnectionRequired = query.watch || query.presence
         return if (connectionId.isBlank() && isConnectionRequired) {
             logger.i { "[queryChannel] postponing because an active connection is required" }
