@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
@@ -73,7 +74,8 @@ internal class ChannelStateLogicTest {
             globalMutableState = globalMutableState,
             searchLogic = SearchLogic(mutableState),
             attachmentUrlValidator = attachmentUrlValidator,
-            coroutineScope = testCoroutines.scope
+            coroutineScope = testCoroutines.scope,
+            countBuffer = StartStopBuffer()
         )
     }
 
