@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.state.plugin.internal
 
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.DependencyResolver
@@ -37,6 +39,7 @@ import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.plugin.listener.internal.ChannelMarkReadListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteMessageListenerState
@@ -99,6 +102,11 @@ public class StatePlugin internal constructor(
     SendMessageListener by SendMessageListenerState(logic),
     TypingEventListener by TypingEventListenerState(stateRegistry),
     SendAttachmentListener by SendAttachmentListenerState(logic) {
+
+    private val errorHandlerFactory: ErrorHandlerFactory =
+        StateErrorHandlerFactory()
+
+    override var errorHandler: ErrorHandler = errorHandlerFactory.create(repositoryFacade)
 
     override fun onUserSet(user: User) {
         syncManager.start()

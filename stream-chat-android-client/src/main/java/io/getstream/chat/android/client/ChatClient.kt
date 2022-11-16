@@ -65,7 +65,6 @@ import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.errorhandler.onCreateChannelError
 import io.getstream.chat.android.client.errorhandler.onMessageError
 import io.getstream.chat.android.client.errorhandler.onQueryMembersError
@@ -206,7 +205,6 @@ internal constructor(
     private val appSettingsManager: AppSettingManager,
     private val chatSocket: ChatSocket,
     private val pluginFactories: List<PluginFactory>,
-    private val errorHandlerFactories: List<ErrorHandlerFactory>,
     public val clientState: ClientState,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
@@ -279,7 +277,8 @@ internal constructor(
     /**
      * Error handlers for API calls.
      */
-    private var errorHandlers: List<ErrorHandler> = emptyList()
+    private val errorHandlers: List<ErrorHandler>
+        get() = plugins.mapNotNull { it.errorHandler }.sorted()
 
     public var logicRegistry: ChannelStateLogicProvider? = null
 
@@ -294,7 +293,7 @@ internal constructor(
         logger.i { "Initialised: ${buildSdkTrackingHeaders()}" }
     }
 
-    private suspend fun handleEvent(event: ChatEvent) {
+    private fun handleEvent(event: ChatEvent) {
         when (event) {
             is ConnectedEvent -> {
                 logger.i { "[handleEvent] event: ConnectedEvent(userId='${event.me.id}')" }
@@ -462,9 +461,6 @@ internal constructor(
             }
         }
         plugins.forEach { it.onUserSet(user) }
-        errorHandlers = errorHandlerFactories.map { factory ->
-            factory.create(repositoryFacade)
-        }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
@@ -2787,16 +2783,6 @@ internal constructor(
         }
 
         /**
-         * Adds plugins factory to be used by the client.
-         * @see [ErrorHandlerFactory]
-         *
-         * @param errorHandlerFactories The factories to be added.
-         */
-        public fun withErrorHandlers(vararg errorHandlerFactories: ErrorHandlerFactory): Builder = apply {
-            this.errorHandlerFactories.addAll(errorHandlerFactories)
-        }
-
-        /**
          * Overrides a default, based on shared preferences implementation for [UserCredentialStorage].
          */
         public fun credentialStorage(credentialStorage: UserCredentialStorage): Builder = apply {
@@ -2908,7 +2894,6 @@ internal constructor(
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
                 pluginFactories = pluginFactories,
-                errorHandlerFactories = errorHandlerFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
                     ?: pluginFactories
                         .filterIsInstance<RepositoryFactory.Provider>()
@@ -2947,7 +2932,6 @@ internal constructor(
          * @see [PluginFactory]
          */
         protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
-        protected val errorHandlerFactories: MutableList<ErrorHandlerFactory> = mutableListOf()
 
         /**
          * Create a [ChatClient] instance based on the current configuration

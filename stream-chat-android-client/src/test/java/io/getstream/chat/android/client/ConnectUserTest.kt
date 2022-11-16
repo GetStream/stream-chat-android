@@ -117,7 +117,6 @@ internal class ConnectUserTest {
             appSettingsManager = mock(),
             chatSocket = fakeChatSocket,
             pluginFactories = emptyList(),
-            errorHandlerFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
         )

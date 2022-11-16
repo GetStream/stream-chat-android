@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
@@ -69,6 +70,8 @@ public interface Plugin :
     MarkAllReadListener,
     ChannelMarkReadListener,
     CreateChannelListener {
+
+    public val errorHandler: ErrorHandler?
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,

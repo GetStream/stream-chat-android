@@ -31,4 +31,8 @@ internal class StateErrorHandler(
     DeleteReactionErrorHandler by deleteReactionErrorHandler,
     CreateChannelErrorHandler by createChannelErrorHandler,
     QueryMembersErrorHandler by queryMembersErrorHandler,
-    SendReactionErrorHandler by sendReactionErrorHandler
+    SendReactionErrorHandler by sendReactionErrorHandler {
+
+    override val priority: Int
+        get() = ErrorHandler.DEFAULT_PRIORITY
+}

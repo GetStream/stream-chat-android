@@ -129,7 +129,6 @@ internal class ChatClientTest {
             appSettingsManager = mock(),
             chatSocket = fakeChatSocket,
             pluginFactories = pluginFactories,
-            errorHandlerFactories = errorHandlerFactories,
             clientState = Mother.mockedClientState(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
         ).apply {
