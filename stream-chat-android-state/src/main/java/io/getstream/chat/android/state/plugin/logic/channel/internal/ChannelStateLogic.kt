@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.TypingEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
@@ -56,8 +57,13 @@ internal class ChannelStateLogic(
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val countBuffer: StartStopBuffer<Message> = StartStopBuffer(bufferLimit = 500),
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
+
+    init {
+        countBuffer.subscribe(this::performUnreadCountIncrement)
+    }
 
     /**
      * Used to prune stale active typing events when the sender
@@ -89,6 +95,10 @@ internal class ChannelStateLogic(
      * @param message [Message].
      */
     fun incrementUnreadCountIfNecessary(message: Message) {
+        countBuffer.enqueueData(message)
+    }
+
+    private fun performUnreadCountIncrement(message: Message) {
         val user = globalMutableState.user.value ?: return
         val currentUserId = user.id
 
