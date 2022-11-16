@@ -1,3 +1,9 @@
+public final class io/getstream/chat/android/client/PayloadValidator {
+	public static final field INSTANCE Lio/getstream/chat/android/client/PayloadValidator;
+	public final fun isFromStreamServer (Ljava/util/Map;)Z
+	public final fun isValidNewMessage (Ljava/util/Map;)Z
+}
+
 public abstract interface class io/getstream/chat/android/client/call/Call {
 	public static final field Companion Lio/getstream/chat/android/client/call/Call$Companion;
 	public abstract fun await (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
