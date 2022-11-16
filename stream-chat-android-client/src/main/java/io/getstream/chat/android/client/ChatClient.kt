@@ -256,7 +256,7 @@ internal constructor(
      * The user's id for which the client is initialized.
      * Used in [initializeClientWithUser] to prevent recreating objects like repository, plugins, etc.
      */
-    private val currentUserId = AtomicReference<String?>(null)
+    private val initializedUserId = AtomicReference<String?>(null)
 
     /**
      * Launches a new coroutine in the [UserScope] without blocking the current thread
@@ -519,10 +519,10 @@ internal constructor(
         val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: -1
         val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
-        if (currentUserId.get() != user.id) {
+        if (initializedUserId.get() != user.id) {
             _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
             plugins = pluginFactories.map { it.get(user) }
-            currentUserId.set(user.id)
+            initializedUserId.set(user.id)
         } else {
             logger.i {
                 "[initializeClientWithUser] initializing client with the same user id." +
@@ -1218,7 +1218,7 @@ internal constructor(
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
         val userId = clientState.user.value?.id
-        currentUserId.set(null)
+        initializedUserId.set(null)
         logger.d { "[disconnectSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
         userScope.coroutineContext.cancelChildren()
 
