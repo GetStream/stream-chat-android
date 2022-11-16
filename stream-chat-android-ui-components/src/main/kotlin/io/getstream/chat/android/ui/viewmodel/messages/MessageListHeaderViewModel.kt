@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -37,6 +38,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 /**
+ * ViewModel class for [MessageListHeaderView].
+ *
  * @param cid The CID of the current channel.
  * @param chatClient An instance of the low level chat client.
  * @param clientState Client state of SDK that contains information such as the current user and connection state.
@@ -48,7 +51,7 @@ public class MessageListHeaderViewModel(
     cid: String,
     chatClient: ChatClient = ChatClient.instance(),
     clientState: ClientState = chatClient.clientState,
-    messageId: String? = null
+    messageId: String? = null,
 ) : ViewModel() {
 
     /**
