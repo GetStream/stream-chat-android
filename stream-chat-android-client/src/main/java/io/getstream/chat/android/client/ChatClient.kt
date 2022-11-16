@@ -185,6 +185,7 @@ import okhttp3.ResponseBody
 import java.io.File
 import java.util.Calendar
 import java.util.Date
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.days
 
@@ -199,7 +200,6 @@ internal constructor(
     private val api: ChatApi,
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val callPostponeHelper: CallPostponeHelper,
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
@@ -210,7 +210,6 @@ internal constructor(
     private val chatSocket: ChatSocket,
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
-    private val lifecycleObserver: StreamLifecycleObserver,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
@@ -220,6 +219,12 @@ internal constructor(
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
+
+    /**
+     * The user's id for which the client is initialized.
+     * Used in [initializeClientWithUser] to prevent recreating objects like repository, plugins, etc.
+     */
+    private val initializedUserId = AtomicReference<String?>(null)
 
     /**
      * Launches a new coroutine in the [UserScope] without blocking the current thread
@@ -312,6 +317,7 @@ internal constructor(
             }
             is DisconnectedEvent -> {
                 logger.i { "[handleEvent] event: DisconnectedEvent(disconnectCause=${event.disconnectCause})" }
+                api.releseConnection()
                 when (event.disconnectCause) {
                     is DisconnectCause.ConnectionReleased,
                     is DisconnectCause.NetworkNotAvailable,
@@ -438,6 +444,7 @@ internal constructor(
         }
     }
 
+    @Synchronized
     private fun initializeClientWithUser(
         user: User,
         tokenProvider: CacheableTokenProvider,
@@ -447,14 +454,23 @@ internal constructor(
         val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: -1
         val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
-        _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
-        plugins = pluginFactories.map { it.get(user) }
+        if (initializedUserId.get() != user.id) {
+            _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
+            plugins = pluginFactories.map { it.get(user) }
+            initializedUserId.set(user.id)
+        } else {
+            logger.i {
+                "[initializeClientWithUser] initializing client with the same user id." +
+                    " Skipping repository and plugins recreation"
+            }
+        }
         plugins.forEach { it.onUserSet(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
         appSettingsManager.loadAppSettings()
         warmUp()
+        logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
     private fun createRepositoryFactory(user: User): RepositoryFactory =
@@ -611,7 +627,7 @@ internal constructor(
      */
     @InternalStreamChatApi
     public fun setUserWithoutConnectingIfNeeded() {
-        if (isUserSet()) {
+        if (isUserSet() || clientState.initializationState.value != InitializationState.NOT_INITIALIZED) {
             return
         }
 
@@ -1119,6 +1135,7 @@ internal constructor(
 
     private suspend fun disconnectUserSuspend(flushPersistence: Boolean) {
         val userId = getCurrentUser()?.id
+        initializedUserId.set(null)
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
         notifications.onLogout(flushPersistence)
@@ -1611,16 +1628,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        val userId = getCurrentUser()?.id
-        val scopedUserId = userScope.userId.value
-        val isConnectionRequired = request.watch || request.presence
-        logger.d {
-            "[queryChannelsInternal] userId: $userId, scopedUserId: $scopedUserId, " +
-                "isConnectionRequired: $isConnectionRequired, request: $request"
-        }
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryChannels(request)
-        }
+        return api.queryChannels(request)
     }
 
     /**
@@ -1634,17 +1642,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> {
-        val isConnectionRequired = request.watch || request.presence
-        logger.d {
-            "[queryChannelInternal] cid: $channelType:$channelId, request: $request, " +
-                "isConnectionRequired: $isConnectionRequired"
-        }
-
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryChannel(channelType, channelId, request)
-        }
-    }
+    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
 
     /**
      * Gets the channel from the server based on [channelType], [channelId] and parameters from [QueryChannelRequest].
@@ -1806,7 +1804,7 @@ internal constructor(
      */
     @CheckResult
     public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
-        return callPostponeHelper.postponeCall { api.stopWatching(channelType, channelId) }
+        return api.stopWatching(channelType, channelId)
     }
 
     /**
@@ -2016,12 +2014,7 @@ internal constructor(
      */
     @CheckResult
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        val isConnectionRequired = query.presence
-        logger.d { "[queryUsers] isConnectionRequired: $isConnectionRequired, query: $query" }
-
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryUsers(query)
-        }
+        return api.queryUsers(query)
     }
 
     /**
@@ -2901,7 +2894,6 @@ internal constructor(
                 module.api(),
                 module.notifications(),
                 tokenManager,
-                module.callPostponeHelper,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 clientScope = clientScope,
@@ -2909,7 +2901,6 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
-                lifecycleObserver = module.lifecycleObserver,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
                     ?: pluginFactories
