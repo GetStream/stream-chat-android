@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.messages
 
-import io.getstream.chat.android.common.model.messsagelist.MessageItemState
 import io.getstream.chat.android.compose.ui.messages.list.MessageItem
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test

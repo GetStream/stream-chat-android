@@ -108,7 +108,6 @@ internal class ConnectUserTest {
             api = chatApi,
             notifications = mock(),
             tokenManager = mock(),
-            callPostponeHelper = mock(),
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
@@ -117,7 +116,6 @@ internal class ConnectUserTest {
             retryPolicy = mock(),
             appSettingsManager = mock(),
             chatSocket = fakeChatSocket,
-            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState

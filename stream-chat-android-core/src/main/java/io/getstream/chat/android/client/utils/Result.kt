@@ -36,6 +36,34 @@ public sealed class Result<out A : Any> {
         inline get() = this is Failure
 
     /**
+     * Returns the encapsulated value if this instance represents [Success] [Result.isSuccess] or `null`
+     * if it is [Failure] [Result.isFailure].
+     */
+    public fun getOrNull(): A? = when (this) {
+        is Success -> value
+        is Failure -> null
+    }
+
+    /**
+     * Returns the encapsulated value if this instance represents [Success] [Result.isSuccess]
+     * or throws the [IllegalStateException] exception if it is [Failure] [Result.isFailure].
+     */
+    @Throws(IllegalStateException::class)
+    public fun getOrThrow(): A = when (this) {
+        is Success -> value
+        is Failure -> throw IllegalStateException("The Success::value cannot be accessed as the Result is a Failure.")
+    }
+
+    /**
+     * Returns the encapsulated [ChatError] if this instance represents [Failure] [isFailure] or `null`
+     * if it is [Success] [isSuccess].
+     */
+    public fun chatErrorOrNull(): ChatError? = when (this) {
+        is Success -> null
+        is Failure -> value
+    }
+
+    /**
      * Represents successful result.
      *
      * @param value The [A] data associated with the result.
@@ -58,7 +86,6 @@ public sealed class Result<out A : Any> {
      *
      * @return A transformed instance of the [Result] or the original instance of the [Result].
      */
-    @JvmSynthetic
     public inline fun <C : Any> map(f: (A) -> C): Result<C> = flatMap { Success(f(it)) }
 
     /**
@@ -80,6 +107,40 @@ public sealed class Result<out A : Any> {
      * @return [Result] of [Unit].
      */
     public fun toUnitResult(): Result<Unit> = map {}
+
+    /**
+     * Runs the [successSideEffect] lambda function if the [Result] contains a successful data payload.
+     *
+     * @param successSideEffect A lambda that receives the successful data payload.
+     *
+     * @return The original instance of the [Result].
+     */
+    public inline fun onSuccess(
+        crossinline successSideEffect: (A) -> Unit,
+    ): Result<A> =
+        also {
+            when (it) {
+                is Success -> successSideEffect(it.value)
+                is Failure -> Unit
+            }
+        }
+
+    /**
+     * Runs the [errorSideEffect] lambda function if the [Result] contains an error payload.
+     *
+     * @param errorSideEffect A lambda that receives the [ChatError] payload.
+     *
+     * @return The original instance of the [Result].
+     */
+    public inline fun onError(
+        crossinline errorSideEffect: (ChatError) -> Unit,
+    ): Result<A> =
+        also {
+            when (it) {
+                is Success -> Unit
+                is Failure -> errorSideEffect(it.value)
+            }
+        }
 }
 
 /**
@@ -90,7 +151,6 @@ public sealed class Result<out A : Any> {
  *
  * @return A transformed instance of the [Result] or the original instance of the [Result].
  */
-@JvmSynthetic
 public inline fun <A : Any, C : Any> Result<A>.flatMap(f: (A) -> Result<C>): Result<C> {
     return when (this) {
         is Result.Success -> f(this.value)
@@ -118,24 +178,6 @@ public suspend inline fun <A : Any, C : Any> Result<A>.flatMapSuspend(
 }
 
 /**
- * Runs the [successSideEffect] lambda function if the [Result] contains a successful data payload.
- *
- * @param successSideEffect A lambda that receives the successful data payload.
- *
- * @return The original instance of the [Result].
- */
-@JvmSynthetic
-public inline fun <A : Any> Result<A>.onSuccess(
-    crossinline successSideEffect: (A) -> Unit,
-): Result<A> =
-    also {
-        when (it) {
-            is Result.Success -> successSideEffect(it.value)
-            is Result.Failure -> Unit
-        }
-    }
-
-/**
  * Runs the suspending [successSideEffect] lambda function if the [Result] contains a successful data payload.
  *
  * @param successSideEffect A suspending lambda that receives the successful data payload.
@@ -150,24 +192,6 @@ public suspend inline fun <A : Any> Result<A>.onSuccessSuspend(
         when (it) {
             is Result.Success -> successSideEffect(it.value)
             is Result.Failure -> Unit
-        }
-    }
-
-/**
- * Runs the [errorSideEffect] lambda function if the [Result] contains an error payload.
- *
- * @param errorSideEffect A lambda that receives the [ChatError] payload.
- *
- * @return The original instance of the [Result].
- */
-@JvmSynthetic
-public inline fun <A : Any> Result<A>.onError(
-    crossinline errorSideEffect: (ChatError) -> Unit,
-): Result<A> =
-    also {
-        when (it) {
-            is Result.Success -> Unit
-            is Result.Failure -> errorSideEffect(it.value)
         }
     }
 
