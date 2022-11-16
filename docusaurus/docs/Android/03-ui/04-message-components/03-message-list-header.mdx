@@ -14,11 +14,10 @@ import TabItem from '@theme/TabItem';
 To use `MessageListHeaderView`, include it in your XML layout as shown below:
 
 ```xml
-<io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
+<io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
     android:id="@+id/messageListHeaderView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    />
+    android:layout_height="wrap_content" />
 ```
 
 We recommend using the `MessageListHeaderViewModel` that gets all needed data from the Stream API and then renders it in the view.
@@ -42,13 +41,14 @@ viewModel.bindView(messageListHeaderView, lifecycleOwner)
 <TabItem value="java" label="Java">
 
 ```java
-// Get ViewModel
+// Initialize ViewModel
 ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
-        .cid("channelType:channelId")
+        .cid("messaging:123")
         .build();
 ViewModelProvider provider = new ViewModelProvider(this, factory);
 MessageListHeaderViewModel viewModel = provider.get(MessageListHeaderViewModel.class);
-// Bind it with MessageListHeaderView
+
+// Bind the View and ViewModel
 MessageListHeaderViewModelBinding.bind(viewModel, messageListHeaderView, getViewLifecycleOwner());
 ```
 </TabItem>
@@ -108,14 +108,13 @@ messageListHeaderView.setSubtitleClickListener(() -> {
 
 The appearance of `MessageListHeaderView` can be conveniently modified using its XML attributes.
 ```xml
-<io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
+<io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
     android:id="@+id/messageListHeaderView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:streamUiMessageListHeaderShowBackButton="false"
     app:streamUiMessageListHeaderTitleTextColor="#FF0000"
-    app:streamUiMessageListHeaderDefaultLabelTextStyle="bold"
-    />
+    app:streamUiMessageListHeaderDefaultLabelTextStyle="bold" />
 ```
 
 The example above hides the back button, makes the title text red and subtitle text bold.

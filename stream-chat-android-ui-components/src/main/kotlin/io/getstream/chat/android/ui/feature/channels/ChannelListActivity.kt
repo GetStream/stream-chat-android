@@ -58,9 +58,19 @@ public open class ChannelListActivity : AppCompatActivity() {
     }
 
     public companion object {
+        /**
+         * Creates an Intent to start the [ChannelListActivity] or its subclass.
+         *
+         * @param context The context that will be used in the intent.
+         * @param activityClass The Activity class that will be used in the intent.
+         */
         @JvmStatic
-        public fun createIntent(context: Context): Intent {
-            return Intent(context, ChannelListActivity::class.java)
+        @JvmOverloads
+        public fun createIntent(
+            context: Context,
+            activityClass: Class<out ChannelListActivity> = ChannelListActivity::class.java,
+        ): Intent {
+            return Intent(context, activityClass)
         }
     }
 }
