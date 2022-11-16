@@ -502,6 +502,7 @@ internal constructor(
         }
     }
 
+    @Synchronized
     private fun initializeClientWithUser(
         user: User,
         tokenProvider: CacheableTokenProvider,
@@ -518,6 +519,7 @@ internal constructor(
         tokenManager.setTokenProvider(tokenProvider)
         appSettingsManager.loadAppSettings()
         warmUp()
+        logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
     private fun createRepositoryFactory(user: User): RepositoryFactory =

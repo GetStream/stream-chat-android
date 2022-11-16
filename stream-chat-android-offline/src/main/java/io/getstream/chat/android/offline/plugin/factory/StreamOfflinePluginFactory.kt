@@ -78,6 +78,7 @@ public class StreamOfflinePluginFactory(
 ) : PluginFactory, RepositoryFactory.Provider {
 
     private val logger = StreamLog.getLogger("Chat:OfflinePluginFactory")
+    @Volatile
     private var cachedOfflinePluginInstance: OfflinePlugin? = null
     private val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
         StreamLog.e("StreamOfflinePlugin", throwable) {

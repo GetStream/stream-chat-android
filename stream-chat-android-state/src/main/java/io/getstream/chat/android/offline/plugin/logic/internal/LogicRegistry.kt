@@ -278,5 +278,12 @@ internal class LogicRegistry internal constructor(
             "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
                 "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
         }
+
+        /**
+         * Clears cached [LogicRegistry] instance.
+         */
+        internal fun clear() {
+            instance = null
+        }
     }
 }

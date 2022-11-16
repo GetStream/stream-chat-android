@@ -77,6 +77,7 @@ public class StreamStatePluginFactory(
     private val appContext: Context,
 ) : PluginFactory {
 
+    @Volatile
     private var cachedStatePluginInstance: StatePlugin? = null
 
     private val logger = StreamLog.getLogger("Chat:StatePluginFactory")
@@ -297,5 +298,7 @@ public class StreamStatePluginFactory(
 
     private fun clearCachedInstance() {
         cachedStatePluginInstance = null
+        StateRegistry.clear()
+        LogicRegistry.clear()
     }
 }

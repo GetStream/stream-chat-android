@@ -120,6 +120,11 @@
 
 ### ❌ Removed
 
+# November 16th, 2022 - 5.11.6
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed the race condition when connecting the user just after receiving a push notification when the application is killed. [#4429](https://github.com/GetStream/stream-chat-android/pull/4429)
+
 # November 15th, 2022 - 5.11.5
 ## stream-chat-android-client
 ### 🐞 Fixed
