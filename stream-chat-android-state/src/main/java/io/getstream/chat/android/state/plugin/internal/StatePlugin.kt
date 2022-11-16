@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.internal
 
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.DependencyResolver
@@ -37,6 +38,7 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.factory.internal.OfflineErrorHandlerFactoriesProvider
@@ -83,10 +85,11 @@ public class StatePlugin internal constructor(
     private val stateRegistry: StateRegistry,
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
-    private val globalState: GlobalState
+    private val globalState: GlobalState,
+    private val countBuffer: StartStopBuffer<Message>
 ) : StateAwarePlugin,
     DependencyResolver,
-    QueryChannelsListener by QueryChannelsListenerState(logic),
+    QueryChannelsListener by QueryChannelsListenerState(logic, countBuffer),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
     ChannelMarkReadListener by ChannelMarkReadListenerState(stateRegistry),

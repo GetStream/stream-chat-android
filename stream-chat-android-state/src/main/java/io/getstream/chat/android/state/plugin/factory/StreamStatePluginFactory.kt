@@ -19,10 +19,12 @@ package io.getstream.chat.android.state.plugin.factory
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
@@ -93,6 +95,9 @@ public class StreamStatePluginFactory(
         val stateRegistry = StateRegistry.create(
             scope.coroutineContext.job, scope, globalState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )
+
+        val countBuffer = StartStopBuffer<Message>()
+
         val logic = LogicRegistry.create(
             stateRegistry = stateRegistry,
             globalState = globalState,
@@ -101,6 +106,7 @@ public class StreamStatePluginFactory(
             client = chatClient,
             clientState = clientState,
             coroutineScope = scope,
+            countBuffer = countBuffer
         )
 
         chatClient.logicRegistry = logic
@@ -141,7 +147,8 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             syncManager = syncManager,
             eventHandler = eventHandler,
-            globalState = globalState
+            globalState = globalState,
+            countBuffer = countBuffer
         )
     }
 
