@@ -55,7 +55,7 @@ public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT) {
     public fun enqueueData(data: T) {
         events.offer(data)
 
-        if (active.get()) {
+        if (active.get() || aboveSafetyThreshold()) {
             propagateData()
         }
     }
