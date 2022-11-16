@@ -17,10 +17,10 @@
 package io.getstream.chat.android.uitests.snapshot.compose.messages
 
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItemState
-import io.getstream.chat.android.common.model.messsagelist.SystemMessageItemState
-import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorItemState
 import io.getstream.chat.android.compose.ui.messages.list.MessageContainer
+import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test

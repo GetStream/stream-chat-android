@@ -27,11 +27,10 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.configuration.Config
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
-import io.getstream.chat.android.state.plugin.configuration.StatePluginConfig
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
 /**
@@ -61,13 +60,7 @@ object ChatHelper {
             }
         )
 
-        val offlinePlugin = StreamOfflinePluginFactory(
-            Config(
-                userPresence = true,
-                persistenceEnabled = true,
-            ),
-            context
-        )
+        val offlinePlugin = StreamOfflinePluginFactory(context)
 
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(

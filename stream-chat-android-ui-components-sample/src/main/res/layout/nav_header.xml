@@ -21,7 +21,7 @@
     android:fitsSystemWindows="true"
     >
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         style="@style/StreamUiUserAvatarStyle"
         android:layout_marginStart="14dp"

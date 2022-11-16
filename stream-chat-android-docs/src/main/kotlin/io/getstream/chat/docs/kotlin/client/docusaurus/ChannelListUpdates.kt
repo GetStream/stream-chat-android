@@ -4,17 +4,17 @@ package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.offline.event.handler.chat.ChatEventHandler
+import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
-import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
+import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
 /**

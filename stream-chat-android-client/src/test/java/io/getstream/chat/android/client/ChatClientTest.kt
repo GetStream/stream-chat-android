@@ -21,11 +21,9 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.UnknownEvent
-import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
@@ -103,7 +101,6 @@ internal class ChatClientTest {
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutines.scope)
         val userScope = UserTestScope(clientScope)
-        val callPostponeHelper = CallPostponeHelper(userScope) { }
         val lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle)
         val tokenManager = FakeTokenManager("")
         val networkStateProvider: NetworkStateProvider = mock()
@@ -121,7 +118,6 @@ internal class ChatClientTest {
             api = api,
             notifications = mock(),
             tokenManager = tokenManager,
-            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
@@ -132,7 +128,6 @@ internal class ChatClientTest {
             chatSocket = fakeChatSocket,
             pluginFactories = pluginFactories,
             clientState = Mother.mockedClientState(),
-            lifecycleObserver = lifecycleObserver,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
         ).apply {
             connectUser(user, token).enqueue()
@@ -263,10 +258,10 @@ internal class ChatClientTest {
         /* Given */
         whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
             Result.Failure(
-                ChatNetworkError.create(
+                ChatError.NetworkError(
                     statusCode = 400,
                     streamCode = 4,
-                    description = "channel_cids must contain at least 1 item"
+                    message = "channel_cids must contain at least 1 item",
                 )
             )
         )
@@ -275,7 +270,7 @@ internal class ChatClientTest {
         val result = client.getSyncHistory(emptyList(), Date()).await()
 
         /* Then */
-        result shouldBeEqualTo Result.Failure(ChatError("channelsIds must contain at least 1 id."))
+        result shouldBeEqualTo Result.Failure(ChatError.GenericError("channelsIds must contain at least 1 id."))
     }
 
     @Test

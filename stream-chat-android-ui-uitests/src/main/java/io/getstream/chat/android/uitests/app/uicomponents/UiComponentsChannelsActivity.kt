@@ -19,8 +19,8 @@ package io.getstream.chat.android.uitests.app.uicomponents
 import android.content.Context
 import android.content.Intent
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.ui.channel.ChannelListActivity
-import io.getstream.chat.android.ui.channel.ChannelListFragment
+import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
+import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
 import io.getstream.chat.android.uitests.app.login.LoginActivity
 
 class UiComponentsChannelsActivity : ChannelListActivity(), ChannelListFragment.HeaderUserAvatarClickListener {

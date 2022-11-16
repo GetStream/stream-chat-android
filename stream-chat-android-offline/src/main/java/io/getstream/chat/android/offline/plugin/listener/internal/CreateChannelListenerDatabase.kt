@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.isPermanent
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
@@ -150,10 +150,10 @@ internal class CreateChannelListenerDatabase(
     ): Result<Unit> {
         return when {
             channelId.isBlank() && memberIds.isEmpty() -> {
-                Result.Failure(ChatError(message = "Either channelId or memberIds cannot be empty!"))
+                Result.Failure(ChatError.GenericError(message = "Either channelId or memberIds cannot be empty!"))
             }
             currentUser == null -> {
-                Result.Failure(ChatError(message = "Current user is null!"))
+                Result.Failure(ChatError.GenericError(message = "Current user is null!"))
             }
             else -> {
                 Result.Success(Unit)

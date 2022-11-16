@@ -140,7 +140,7 @@ internal class SendReactionListenerDatabaseTest {
             testReaction,
             false,
             currentUser,
-            Result.Failure(ChatError())
+            Result.Failure(ChatError.GenericError(""))
         )
 
         verify(reactionsRepository).insertReaction(testReaction.copy(syncStatus = SyncStatus.SYNC_NEEDED))

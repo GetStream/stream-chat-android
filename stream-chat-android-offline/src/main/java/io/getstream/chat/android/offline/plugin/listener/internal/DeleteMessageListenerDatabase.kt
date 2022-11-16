@@ -54,16 +54,17 @@ internal class DeleteMessageListenerDatabase(
             if (isModerationFailed) {
                 messageRepository.deleteChannelMessage(message)
                 Result.Failure(
-                    ChatError(
+                    ChatError.ThrowableError(
+                        message = "Message with failed moderation has been deleted locally: $messageId",
                         cause = MessageModerationDeletedException(
-                            "Message with failed moderation has been deleted locally: $messageId"
-                        )
-                    )
+                            "Message with failed moderation has been deleted locally: $messageId",
+                        ),
+                    ),
                 )
             } else {
                 Result.Success(Unit)
             }
-        } ?: Result.Failure(ChatError(message = "No message found with id: $messageId"))
+        } ?: Result.Failure(ChatError.GenericError(message = "No message found with id: $messageId"))
     }
 
     /**

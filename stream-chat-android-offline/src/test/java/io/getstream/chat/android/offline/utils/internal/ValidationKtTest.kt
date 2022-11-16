@@ -27,7 +27,6 @@ import org.amshove.kluent.`with message`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 
 internal class ValidationKtTest {
@@ -62,7 +61,15 @@ internal class ValidationKtTest {
                 Arguments.of(it, Result.Success(it))
             } +
                 invalidCids().map {
-                    Arguments.of(it.first, Result.Failure(ChatError(cause = it.second)))
+                    Arguments.of(
+                        it.first,
+                        Result.Failure(
+                            ChatError.ThrowableError(
+                                message = "Cid is invalid: ${it.first}",
+                                cause = it.second,
+                            ),
+                        ),
+                    )
                 }
 
         @JvmStatic

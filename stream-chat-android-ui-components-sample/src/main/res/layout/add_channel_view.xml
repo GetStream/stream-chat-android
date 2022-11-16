@@ -133,7 +133,7 @@
         app:layout_constraintTop_toBottomOf="@id/usersTitle"
         />
 
-    <io.getstream.chat.android.ui.message.list.MessageListView
+    <io.getstream.chat.android.ui.feature.messages.list.MessageListView
         android:id="@+id/messageListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -144,7 +144,7 @@
         app:layout_constraintTop_toBottomOf="@id/usersTitle"
         />
 
-    <io.getstream.chat.android.ui.message.composer.MessageComposerView
+    <io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
         android:id="@+id/messageComposerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

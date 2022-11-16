@@ -161,7 +161,6 @@ import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onErrorSuspend
-import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
@@ -186,6 +185,7 @@ import okhttp3.ResponseBody
 import java.io.File
 import java.util.Calendar
 import java.util.Date
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.days
 
@@ -200,7 +200,6 @@ internal constructor(
     private val api: ChatApi,
     @property:InternalStreamChatApi public val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val callPostponeHelper: CallPostponeHelper,
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val tokenUtils: TokenUtils = TokenUtils,
@@ -211,7 +210,6 @@ internal constructor(
     private val chatSocket: ChatSocket,
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
-    private val lifecycleObserver: StreamLifecycleObserver,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Client")
@@ -221,6 +219,12 @@ internal constructor(
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
+
+    /**
+     * The user's id for which the client is initialized.
+     * Used in [initializeClientWithUser] to prevent recreating objects like repository, plugins, etc.
+     */
+    private val initializedUserId = AtomicReference<String?>(null)
 
     /**
      * Launches a new coroutine in the [UserScope] without blocking the current thread
@@ -313,6 +317,7 @@ internal constructor(
             }
             is DisconnectedEvent -> {
                 logger.i { "[handleEvent] event: DisconnectedEvent(disconnectCause=${event.disconnectCause})" }
+                api.releseConnection()
                 when (event.disconnectCause) {
                     is DisconnectCause.ConnectionReleased,
                     is DisconnectCause.NetworkNotAvailable,
@@ -381,8 +386,8 @@ internal constructor(
                     "The user_id provided on the JWT token doesn't match with the current user you try to connect"
                 }
                 Result.Failure(
-                    ChatError(
-                        "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+                    ChatError.GenericError(
+                        "The user_id provided on the JWT token doesn't match with the current user you try to connect",
                     )
                 )
             }
@@ -403,8 +408,8 @@ internal constructor(
                     userState.user.id != user.id -> {
                         logger.e { "[setUser] Trying to set different user without disconnect previous one." }
                         Result.Failure(
-                            ChatError(
-                                "User cannot be set until the previous one is disconnected."
+                            ChatError.GenericError(
+                                "User cannot be set until the previous one is disconnected.",
                             )
                         )
                     }
@@ -416,8 +421,8 @@ internal constructor(
                                         "connection."
                                 }
                                 Result.Failure(
-                                    ChatError(
-                                        "Failed to connect user. Please check you haven't connected a user already."
+                                    ChatError.GenericError(
+                                        "Failed to connect user. Please check you haven't connected a user already.",
                                     )
                                 )
                             }
@@ -426,7 +431,11 @@ internal constructor(
             }
             else -> {
                 logger.e { "[setUser] Failed to connect user. Please check you don't have connected user already." }
-                Result.Failure(ChatError("Failed to connect user. Please check you don't have connected user already."))
+                Result.Failure(
+                    ChatError.GenericError(
+                        "Failed to connect user. Please check you don't have connected user already.",
+                    )
+                )
             }
         }.onErrorSuspend {
             disconnectSuspend(flushPersistence = true)
@@ -435,6 +444,7 @@ internal constructor(
         }
     }
 
+    @Synchronized
     private fun initializeClientWithUser(
         user: User,
         tokenProvider: CacheableTokenProvider,
@@ -444,14 +454,23 @@ internal constructor(
         val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: -1
         val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
-        _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
-        plugins = pluginFactories.map { it.get(user) }
+        if (initializedUserId.get() != user.id) {
+            _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
+            plugins = pluginFactories.map { it.get(user) }
+            initializedUserId.set(user.id)
+        } else {
+            logger.i {
+                "[initializeClientWithUser] initializing client with the same user id." +
+                    " Skipping repository and plugins recreation"
+            }
+        }
         plugins.forEach { it.onUserSet(user) }
         // fire a handler here that the chatDomain and chatUI can use
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
         appSettingsManager.loadAppSettings()
         warmUp()
+        logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
     private fun createRepositoryFactory(user: User): RepositoryFactory =
@@ -608,7 +627,7 @@ internal constructor(
      */
     @InternalStreamChatApi
     public fun setUserWithoutConnectingIfNeeded() {
-        if (isUserSet()) {
+        if (isUserSet() || clientState.initializationState.value != InitializationState.NOT_INITIALIZED) {
             return
         }
 
@@ -660,7 +679,9 @@ internal constructor(
     private suspend fun waitFirstConnection(timeoutMilliseconds: Long?): Result<ConnectionData> =
         timeoutMilliseconds?.let {
             withTimeoutOrNull(timeoutMilliseconds) { waitConnection.first() }
-                ?: Result.Failure(ChatError("Connection wasn't established in ${timeoutMilliseconds}ms"))
+                ?: Result.Failure(
+                    ChatError.GenericError("Connection wasn't established in ${timeoutMilliseconds}ms"),
+                )
         } ?: waitConnection.first()
 
     @CheckResult
@@ -1114,6 +1135,7 @@ internal constructor(
 
     private suspend fun disconnectUserSuspend(flushPersistence: Boolean) {
         val userId = getCurrentUser()?.id
+        initializedUserId.set(null)
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
         notifications.onLogout(flushPersistence)
@@ -1201,7 +1223,7 @@ internal constructor(
         sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
-            return ErrorCall(userScope, ChatError("Cannot specify offset with sort or next parameters"))
+            return ErrorCall(userScope, ChatError.GenericError("Cannot specify offset with sort or next parameters"))
         }
         return api.searchMessages(
             channelFilter = channelFilter,
@@ -1606,16 +1628,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        val userId = getCurrentUser()?.id
-        val scopedUserId = userScope.userId.value
-        val isConnectionRequired = request.watch || request.presence
-        logger.d {
-            "[queryChannelsInternal] userId: $userId, scopedUserId: $scopedUserId, " +
-                "isConnectionRequired: $isConnectionRequired, request: $request"
-        }
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryChannels(request)
-        }
+        return api.queryChannels(request)
     }
 
     /**
@@ -1629,17 +1642,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Call<Channel> {
-        val isConnectionRequired = request.watch || request.presence
-        logger.d {
-            "[queryChannelInternal] cid: $channelType:$channelId, request: $request, " +
-                "isConnectionRequired: $isConnectionRequired"
-        }
-
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryChannel(channelType, channelId, request)
-        }
-    }
+    ): Call<Channel> = api.queryChannel(channelType, channelId, request)
 
     /**
      * Gets the channel from the server based on [channelType], [channelId] and parameters from [QueryChannelRequest].
@@ -1801,7 +1804,7 @@ internal constructor(
      */
     @CheckResult
     public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
-        return callPostponeHelper.postponeCall { api.stopWatching(channelType, channelId) }
+        return api.stopWatching(channelType, channelId)
     }
 
     /**
@@ -1876,8 +1879,8 @@ internal constructor(
         } else {
             ErrorCall(
                 userScope,
-                ChatError(
-                    "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration."
+                ChatError.GenericError(
+                    "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration.",
                 )
             )
         }
@@ -1989,7 +1992,7 @@ internal constructor(
             val errorMessage = "The client-side partial update allows you to update only the current user. " +
                 "Make sure the user is set before updating it."
             logger.e { errorMessage }
-            return ErrorCall(userScope, ChatError(errorMessage))
+            return ErrorCall(userScope, ChatError.GenericError(errorMessage))
         }
 
         return api.partialUpdateUser(
@@ -2011,12 +2014,7 @@ internal constructor(
      */
     @CheckResult
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        val isConnectionRequired = query.presence
-        logger.d { "[queryUsers] isConnectionRequired: $isConnectionRequired, query: $query" }
-
-        return callPostponeHelper.postponeCallIfNeeded(shouldPostpone = isConnectionRequired) {
-            api.queryUsers(query)
-        }
+        return api.queryUsers(query)
     }
 
     /**
@@ -2432,8 +2430,8 @@ internal constructor(
     ): Call<List<ChatEvent>> {
         val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(
             userScope,
-            ChatError(
-                "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}"
+            ChatError.GenericError(
+                "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}",
             )
         )
 
@@ -2451,10 +2449,10 @@ internal constructor(
     private fun checkSyncHistoryPreconditions(channelsIds: List<String>, lastSyncAt: Date): Result<Unit> {
         return when {
             channelsIds.isEmpty() -> {
-                Result.Failure(ChatError("channelsIds must contain at least 1 id."))
+                Result.Failure(ChatError.GenericError("channelsIds must contain at least 1 id."))
             }
             lastSyncAt.isLaterThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
-                Result.Failure(ChatError("lastSyncAt cannot by later than 30 days."))
+                Result.Failure(ChatError.GenericError("lastSyncAt cannot by later than 30 days."))
             }
             else -> {
                 Result.Success(Unit)
@@ -2896,7 +2894,6 @@ internal constructor(
                 module.api(),
                 module.notifications(),
                 tokenManager,
-                module.callPostponeHelper,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 module.userStateService,
                 clientScope = clientScope,
@@ -2904,7 +2901,6 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
-                lifecycleObserver = module.lifecycleObserver,
                 pluginFactories = pluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
                     ?: pluginFactories

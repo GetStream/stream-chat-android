@@ -60,7 +60,7 @@ internal class ShuffleGiphyListenerDatabaseTest {
 
     @Test
     fun `when shuffling giphys and request fails, it should NOT be insert in database`() = runTest {
-        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Failure(ChatError()))
+        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Failure(ChatError.GenericError("")))
 
         verify(messageRepository, never()).insertMessage(any(), any())
     }

@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.socket.experimental.ws
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.socket.ErrorResponse
@@ -103,7 +102,7 @@ internal class StreamWebSocketTest {
         val code = randomInt()
         val message = randomString()
         val statusCode = randomInt()
-        val errorResult = Result.Failure(ChatError(cause = mock()))
+        val errorResult = Result.Failure(ChatError.ThrowableError(message = "", cause = mock()))
         whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java)) doReturn errorResult
         whenever(parser.fromJsonOrError(textEvent, SocketErrorMessage::class.java))
             .doReturn(Result.Success(SocketErrorMessage(ErrorResponse(code, message, statusCode))))
@@ -115,7 +114,15 @@ internal class StreamWebSocketTest {
         webSocketListener.onMessage(webSocket, textEvent)
         runCurrent()
 
-        listResult `should be equal to` listOf(StreamWebSocketEvent.Error(ChatNetworkError.create(code, message, statusCode)))
+        listResult `should be equal to` listOf(
+            StreamWebSocketEvent.Error(
+                ChatError.NetworkError(
+                    message = message,
+                    streamCode = code,
+                    statusCode = statusCode,
+                ),
+            ),
+        )
         job.cancel()
     }
 
@@ -124,8 +131,8 @@ internal class StreamWebSocketTest {
         val textEvent = randomString()
         val cause = mock<Throwable>()
         whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java))
-            .doReturn(Result.Failure(ChatError(cause = cause)))
-        val errorResult = Result.Failure(ChatError(cause = mock()))
+            .doReturn(Result.Failure(ChatError.ThrowableError(message = "", cause = cause)))
+        val errorResult = Result.Failure(ChatError.ThrowableError(message = "", cause = mock()))
         whenever(parser.fromJsonOrError(textEvent, SocketErrorMessage::class.java)) doReturn errorResult
         val listener = streamWebSocket.listen()
         val listResult = mutableListOf<StreamWebSocketEvent>()
@@ -135,7 +142,14 @@ internal class StreamWebSocketTest {
         webSocketListener.onMessage(webSocket, textEvent)
         runCurrent()
 
-        listResult `should be equal to` listOf(StreamWebSocketEvent.Error(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, cause)))
+        listResult `should be equal to` listOf(
+            StreamWebSocketEvent.Error(
+                ChatError.NetworkError.fromChatErrorCode(
+                    chatErrorCode = ChatErrorCode.CANT_PARSE_EVENT,
+                    cause = cause,
+                ),
+            ),
+        )
         job.cancel()
     }
 
@@ -163,7 +177,13 @@ internal class StreamWebSocketTest {
         webSocketListener.onClosed(webSocket, closeSocketCode + randomInt(), closeSocketReason)
         runCurrent()
 
-        listResult `should be equal to` listOf(StreamWebSocketEvent.Error(ChatNetworkError.create(ChatErrorCode.SOCKET_CLOSED)))
+        listResult `should be equal to` listOf(
+            StreamWebSocketEvent.Error(
+                ChatError.NetworkError.fromChatErrorCode(
+                    chatErrorCode = ChatErrorCode.SOCKET_CLOSED,
+                ),
+            ),
+        )
         job.cancel()
     }
 }

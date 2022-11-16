@@ -2,7 +2,7 @@ package io.getstream.chat.docs.java.ui.general;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import io.getstream.chat.android.ui.TransformStyle;
+import io.getstream.chat.android.ui.helper.TransformStyle;
 
 /**
  * [Theming](https://getstream.io/chat/docs/sdk/android/ui/general-customization/theming/)

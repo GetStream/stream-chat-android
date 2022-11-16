@@ -49,9 +49,9 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
-import io.getstream.chat.android.ui.utils.GiphyInfoType
-import io.getstream.chat.android.ui.utils.GiphySizingMode
-import io.getstream.chat.android.ui.utils.giphyInfo
+import io.getstream.chat.android.ui.common.utils.GiphyInfoType
+import io.getstream.chat.android.ui.common.utils.GiphySizingMode
+import io.getstream.chat.android.ui.common.utils.giphyInfo
 
 /**
  * Builds a Giphy attachment message.
