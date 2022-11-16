@@ -164,7 +164,16 @@ new ChatClient.Builder(apiKey, context)
 
 #### Adding Offline Support
 
-A great chat solution should be capable of handling the device losing network connection. `OfflinePlugin` adds a layer of persistence which enables storing data and user interactions while the device is offline. With the help of this plugin users will be able to access previously cached information such as channels and messages and have the ability to do other actions such as send messages and reactions while offline.
+A great chat solution should be capable of caching data and handling network connection loss.<br/>
+`OfflinePlugin` implements such capabilities and provides the following benefits:
+
+* Decreases initial load times, especially when the network connection is poor.
+* Enables the user to see cached channels and messages while offline.
+* Enables the user to perform actions such as sending messages and reactions while offline.
+
+:::note
+`OfflinePlugin` works best when used together with `StatePlugin`.
+:::
 
 You can add it in the following manner:
 
