@@ -18,6 +18,7 @@ package io.getstream.chat.android.pushprovider.huawei
 
 import com.huawei.hms.push.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.PayloadValidator
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.PushProvider
@@ -83,6 +84,5 @@ private fun RemoteMessage.toPushMessage() =
     )
 
 private fun RemoteMessage.isValid() =
-    !dataOfMap["channel_id"].isNullOrBlank() &&
-        !dataOfMap["message_id"].isNullOrBlank() &&
-        !dataOfMap["channel_type"].isNullOrBlank()
+    PayloadValidator.isFromStreamServer(dataOfMap) &&
+        PayloadValidator.isValidNewMessage(dataOfMap)
