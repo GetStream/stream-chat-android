@@ -202,6 +202,7 @@ import okhttp3.ResponseBody
 import java.io.File
 import java.util.Calendar
 import java.util.Date
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.days
 import io.getstream.chat.android.client.socket.experimental.ChatSocket as ChatSocketExperimental
@@ -250,6 +251,12 @@ internal constructor(
             socket.releaseConnection()
         }
     }
+
+    /**
+     * The user's id for which the client is initialized.
+     * Used in [initializeClientWithUser] to prevent recreating objects like repository, plugins, etc.
+     */
+    private val initializedUserId = AtomicReference<String?>(null)
 
     /**
      * Launches a new coroutine in the [UserScope] without blocking the current thread
@@ -502,6 +509,7 @@ internal constructor(
         }
     }
 
+    @Synchronized
     private fun initializeClientWithUser(
         user: User,
         tokenProvider: CacheableTokenProvider,
@@ -511,13 +519,21 @@ internal constructor(
         val clientJobCount = clientScope.coroutineContext[Job]?.children?.count() ?: -1
         val userJobCount = userScope.coroutineContext[Job]?.children?.count() ?: -1
         logger.v { "[initializeClientWithUser] clientJobCount: $clientJobCount, userJobCount: $userJobCount" }
-        _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
-        plugins = pluginFactories.map { it.get(user) }
-        // fire a handler here that the chatDomain and chatUI can use
+        if (initializedUserId.get() != user.id) {
+            _repositoryFacade = createRepositoryFacade(userScope, createRepositoryFactory(user))
+            plugins = pluginFactories.map { it.get(user) }
+            initializedUserId.set(user.id)
+        } else {
+            logger.i {
+                "[initializeClientWithUser] initializing client with the same user id." +
+                    " Skipping repository and plugins recreation"
+            }
+        }
         config.isAnonymous = isAnonymous
         tokenManager.setTokenProvider(tokenProvider)
         appSettingsManager.loadAppSettings()
         warmUp()
+        logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
     private fun createRepositoryFactory(user: User): RepositoryFactory =
@@ -672,7 +688,7 @@ internal constructor(
      */
     @InternalStreamChatApi
     public fun setUserWithoutConnectingIfNeeded() {
-        if (isUserSet()) {
+        if (isUserSet() || clientState.initializationState.value != InitializationState.NOT_INITIALIZED) {
             return
         }
 
@@ -1202,6 +1218,7 @@ internal constructor(
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
         val userId = clientState.user.value?.id
+        initializedUserId.set(null)
         logger.d { "[disconnectSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
         userScope.coroutineContext.cancelChildren()
 

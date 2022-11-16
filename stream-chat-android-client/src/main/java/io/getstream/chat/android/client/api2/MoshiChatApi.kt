@@ -811,6 +811,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
 
         val isConnectionRequired = query.watch || query.presence
         return if (connectionId.isBlank() && isConnectionRequired) {
+            logger.i { "[queryChannels] postponing because an active connection is required" }
             postponeCall(lazyQueryChannelsCall)
         } else {
             lazyQueryChannelsCall()
@@ -847,6 +848,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
 
         val isConnectionRequired = query.watch || query.presence
         return if (connectionId.isBlank() && isConnectionRequired) {
+            logger.i { "[queryChannel] postponing because an active connection is required" }
             postponeCall(lazyQueryChannelCall)
         } else {
             lazyQueryChannelCall()
