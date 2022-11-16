@@ -14,7 +14,6 @@ import io.getstream.chat.docs.R
 private object ProvidingCustomReactionsSnippet {
 
     fun providingCustomReactions(context: Context) {
-
         val reactions = mapOf(
             "thumbs_up" to SupportedReactions.ReactionDrawable(
                 inactiveDrawable = ContextCompat.getDrawable(context, R.drawable.ic_thumb_up)!!,
@@ -33,6 +32,7 @@ private object ProvidingCustomReactionsSnippet {
                 activeDrawable = ContextCompat.getDrawable(context, R.drawable.ic_mood_bad_selected)!!
             ),
         )
+
         ChatUI.supportedReactions = SupportedReactions(context, reactions)
     }
 }
