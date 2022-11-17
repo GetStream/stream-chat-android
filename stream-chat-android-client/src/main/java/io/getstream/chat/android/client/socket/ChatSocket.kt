@@ -49,7 +49,7 @@ internal open class ChatSocket(
     private val networkStateProvider: NetworkStateProvider,
 ) {
     private var streamWebSocket: StreamWebSocket? = null
-    private val logger = StreamLog.getLogger("Chat:Experimental-Socket")
+    private val logger = StreamLog.getLogger("Chat:Socket")
     private var connectionConf: SocketFactory.ConnectionConf? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val chatSocketStateService = ChatSocketStateService()
@@ -168,6 +168,7 @@ internal open class ChatSocket(
     }
 
     private fun handleEvent(chatEvent: ChatEvent) {
+        StreamLog.v("Chat:Events") { "[handleEvent] Received $chatEvent" }
         when (chatEvent) {
             is ConnectedEvent -> chatSocketStateService.onConnectionEstablished(chatEvent)
             is HealthEvent -> healthMonitor.ack()
