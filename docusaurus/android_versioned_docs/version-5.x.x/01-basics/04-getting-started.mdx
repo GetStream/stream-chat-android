@@ -6,14 +6,14 @@ import TabItem from '@theme/TabItem';
 Let's see how you can get started with the Android Chat SDK after adding the required [dependencies](./03-dependencies.mdx). This page shows you how to initialize the SDK in your app.
 
 :::note
-If you're looking for a complete, step-by-step guide that includes setting up an Android project from scratch, try the [Android In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/) instead.
+If you're looking for a complete, step-by-step guide that includes setting up an Android project from scratch, try our [Android In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/) or the [Jetpack Compose Android In-App Messaging Tutorial](https://getstream.io/chat/compose/tutorial/) in case you want to use our Compose powered Chat SDK.
 :::
 
-### Creating a ChatClient
+### Setting up the ChatClient
 
 Your first step is initializing the `ChatClient`, which is the main entry point for all operations in the library. `ChatClient` is a singleton: you'll create it once and re-use it across your application.
 
-A best practice is to initialize `ChatClient` in the `Application` class:
+The best practice is to initialize `ChatClient` in the `Application` class:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -45,10 +45,10 @@ class App extends Application {
 The _Builder_ for `ChatClient` exposes configuration options for features such as [Logging](./06-logging.mdx).
 
 :::note
-To generate an API key, you can sign up for a [free 30-day trial](https://getstream.io/chat/trial/). You can then access your api key in the [Dashboard](https://getstream.io/dashboard).
+To generate an API key, you can sign up for a [free 30-day trial](https://getstream.io/chat/trial/). You can then access your API key in the [Dashboard](https://getstream.io/dashboard).
 :::
 
-If you create the `ChatClient` instance following the pattern in the previous example, you will be able to access that instance from any part of your application using the `instance()` method:
+If you create the `ChatClient` instance following the pattern shown in the previous example, you will be able to access that instance from any part of your application using the `instance()` method:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -79,7 +79,7 @@ class MainActivity extends AppCompatActivity {
 
 ### Adding the Offline Plugin
 
-If you want to have offline support or **use the UI Components package**, you'll need to initialize the `OfflinePlugin` class and add it to the `ChatClient.Builder`. You can skip this initialization step if you're only using the low-level client.
+If you want to have offline support or **use our UI Components**, you'll need to initialize the `OfflinePlugin` class and add it to the `ChatClient.Builder`. You can skip this step if you're only using the low-level client.
 
 The initialization should be done using `StreamOfflinePluginFactory`:
 
@@ -89,7 +89,7 @@ The initialization should be done using `StreamOfflinePluginFactory`:
 ```kotlin
 val offlinePluginFactory = StreamOfflinePluginFactory(
     config = Config(
-        // Enables the background sync which is performed to sync user actions done without the Internet connection.
+        // Enables background sync which syncs user actions performed while offline.
         backgroundSyncEnabled = true,
         // Enables the ability to receive information about user activity such as last active date and if they are online right now.
         userPresence = true,
@@ -108,7 +108,7 @@ ChatClient.Builder(apiKey, context).withPlugin(offlinePluginFactory).build()
 <TabItem value="java" label="Java">
 
 ```java
-// Enables background sync which is performed to sync user actions done while offline.
+// Enables background sync which syncs user actions performed while offline.
 boolean backgroundSyncEnabled = true;
 // Enables the ability to receive information about user activity such as last active date and if they are online right now.
 boolean userPresence = true;
@@ -125,11 +125,11 @@ new ChatClient.Builder("apiKey", context).withPlugin(offlinePluginFactory).build
 </TabItem>
 </Tabs>
 
-For more about working with `OfflinePlugin`, see [Offline Support](../02-client/06-guides/06-offline-support.mdx)
+For more information on working with `OfflinePlugin`, see [Offline Support](../02-client/06-guides/06-offline-support.mdx)
 
 ### Connecting a User
 
-The next step is connecting the user. This requires a valid Stream Chat token. As you must use your `API_SECRET` to create this token, it is unsafe to generate this token outside of a secure server.
+The next step is to connect the user. This requires a valid Stream Chat token. As you must use your `API_SECRET` to create this token, it is unsafe to generate this token outside of a secure server.
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -141,14 +141,21 @@ val user = User(
     image = "https://bit.ly/321RmWb",
 )
 
-ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
-    .enqueue { result ->
-        if (result.isSuccess) {
-            // Handle success
-        } else {
-            // Handle error
+// Connect the user only if they aren't already connected
+if (ChatClient.instance().getCurrentUser() == null) {
+
+    ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
+        .enqueue { result ->
+            when (result) {
+                is Result.Success -> {
+                    // Handle success
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
+            }
         }
-    }
+}
 ```
 </TabItem>
 
@@ -160,30 +167,37 @@ user.setId("bender");
 user.setName("Bender");
 user.setImage("https://bit.ly/321RmWb");
 
-ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
-        .enqueue((result) -> {
-            if (result.isSuccess()) {
-                // Handle success
-            } else {
-                // Handle error
-            }
-        });
+// Connect the user only if they aren't already connected
+if (ChatClient.instance().getCurrentUser() == null) {
 
+    ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
+            .enqueue((result) -> {
+                if (result.isSuccess()) {
+                    // Handle success
+                } else {
+                    // Handle error
+                }
+            });
+}
 ```
 </TabItem>
 </Tabs>
 
 :::note
-To learn about how to create a token and different user types, see [Tokens & Authentication](https://getstream.io/chat/docs/android/tokens_and_authentication/?language=kotlin).
+To learn more about how to create a token and different user types, see [Tokens & Authentication](https://getstream.io/chat/docs/android/tokens_and_authentication/?language=kotlin).
 :::
 
-If the `connectUser` call was successful, you are now ready to use the SDK! 🎉
+If the `connectUser()` call was successful, you are now ready to use the SDK! 🎉
 
 :::warning
 You shouldn't call `connectUser` if the user is already set! You can use `ChatClient.instance().getCurrentUser()` to verify if the user is already connected.
 :::
 
 The methods of the `ChatClient` class allow you to create channels, send messages, add reactions, and perform many more low-level operations. You can also use the SDK's pre-built UI Components that will perform data fetching and sending for you, as described below.
+
+:::note
+For more information on handling complex scenarios, check out our [Handling User Connection](../02-client/06-guides/04-handling-user-connection.mdx) guide.
+:::
 
 ### Adding UI Components
 
