@@ -26,14 +26,6 @@ module.exports = {
                 },
                 {
                     type: 'doc',
-                    id: 'client/guides/sending-custom-attachments',
-                },
-                {
-                    type: 'doc',
-                    id: 'client/guides/channel-list-updates',
-                },
-                {
-                    type: 'doc',
                     id: 'client/guides/handling-user-connection',
                 },
                 {
@@ -42,7 +34,15 @@ module.exports = {
                 },
                 {
                     type: 'doc',
-                    id: 'client/guides/chatdomain-migration',
+                    id: 'client/guides/channel-list-updates',
+                },
+                {
+                    type: 'doc',
+                    id: 'client/guides/listening-for-events',
+                },
+                {
+                    type: 'doc',
+                    id: 'client/guides/sending-custom-attachments',
                 },
                 {
                     type: 'doc',
@@ -57,10 +57,6 @@ module.exports = {
                             dirName: '02-client/06-guides/10-video-integrations'
                         }
                     ]
-                },
-                {
-                    type: 'doc',
-                    id: 'client/guides/listening-for-events',
                 },
             ]
             // items: [
