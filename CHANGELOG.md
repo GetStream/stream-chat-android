@@ -43,6 +43,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `StateAwarePlugin` interface.[4435](https://github.com/GetStream/stream-chat-android/pull/4435)
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
