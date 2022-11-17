@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
@@ -104,7 +103,6 @@ internal open class BaseChatClientTest {
             api = api,
             notifications = mock(),
             tokenManager = tokenManager,
-            callPostponeHelper = CallPostponeHelper(userScope) { },
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
@@ -113,7 +111,6 @@ internal open class BaseChatClientTest {
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocket = fakeChatSocket,
-            lifecycleObserver = lifecycleObserver,
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState

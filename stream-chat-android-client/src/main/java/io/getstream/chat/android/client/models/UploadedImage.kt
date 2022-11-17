@@ -20,7 +20,9 @@ package io.getstream.chat.android.client.models
  * Represents a successfully uploaded image.
  *
  * @param file The URL of the uploaded image.
+ * @param thumbUrl The thumb URL generated using custom CDN.
  */
 public data class UploadedImage(
     val file: String,
+    val thumbUrl: String? = null,
 )
