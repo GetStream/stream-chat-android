@@ -58,7 +58,6 @@ internal class QueryChannelsLogic(
         }
 
         val hasOffset = pagination.channelOffset > 0
-        loadingPerPage(true, hasOffset)
 
         queryChannelsDatabaseLogic.let { dbLogic ->
             fetchChannelsFromCache(pagination, dbLogic)
