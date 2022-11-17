@@ -22,7 +22,7 @@
     android:background="@color/stream_ui_white_snow"
     >
 
-    <io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
+    <io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
         android:id="@+id/headerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
             app:iconTint="@color/stream_ui_accent_blue"
             android:layout_gravity="end|center_vertical"
             />
-    </io.getstream.chat.android.ui.message.list.header.MessageListHeaderView>
+    </io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/optionsRecyclerView"

@@ -22,6 +22,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.regex.Pattern
 
 private val cidPattern = Pattern.compile("^([a-zA-z0-9]|!|-)+:([a-zA-z0-9]|!|-)+$")
+
 /**
  * Validates a cid. Verifies it's not empty and in the format messaging:123.
  *
@@ -51,6 +52,6 @@ public fun validateCidWithResult(cid: String): Result<String> {
     return try {
         Result.Success(validateCid(cid))
     } catch (exception: IllegalArgumentException) {
-        Result.Failure(ChatError(cause = exception))
+        Result.Failure(ChatError.ThrowableError(message = "Cid is invalid: $cid", cause = exception))
     }
 }

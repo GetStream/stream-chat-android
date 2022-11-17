@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -167,7 +167,7 @@ internal class CreateChannelTests {
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }
-            val result = Result.Failure(ChatNetworkError.create(0, "", 500, null))
+            val result = Result.Failure(ChatError.NetworkError(message = "", streamCode = 0, statusCode = 500))
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOnlineState()
@@ -201,7 +201,7 @@ internal class CreateChannelTests {
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }
-            val result = Result.Failure(ChatNetworkError.create(60, "", 403, null))
+            val result = Result.Failure(ChatError.NetworkError(message = "", streamCode = 60, statusCode = 403))
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOnlineState()

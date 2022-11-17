@@ -23,7 +23,7 @@
     android:background="@drawable/stream_ui_foreground_channel_list"
     >
 
-    <io.getstream.chat.android.ui.avatar.ChannelAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
         android:id="@+id/channelAvatarView"
         style="?attr/streamUiChannelListItemAvatarStyle"
         android:layout_marginStart="8dp"

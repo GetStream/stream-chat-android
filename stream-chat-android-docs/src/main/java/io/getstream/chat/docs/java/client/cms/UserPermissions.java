@@ -8,11 +8,9 @@ import java.util.Map;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
-import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.Result;
 
 public class UserPermissions {
     private ChatClient client;
@@ -28,7 +26,7 @@ public class UserPermissions {
             extraData.put("team", "red");
             client.createChannel("messaging", "red-general", memberIds, extraData).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Channel channel = ((Result.Success<Channel>) result).getValue();
+                    Channel channel = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -49,7 +47,7 @@ public class UserPermissions {
             int limit = 1;
             client.queryUsers(new QueryUsersRequest(filter, offset, limit)).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<User> users = ((Result.Success<List<User>>) result).getValue();
+                    List<User> users = result.getOrNull();
                 } else {
                     // Handle error
                 }

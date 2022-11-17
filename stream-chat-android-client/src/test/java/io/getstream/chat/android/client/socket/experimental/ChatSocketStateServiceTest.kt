@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.socket.experimental
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.ChatSocketStateService.State
@@ -120,7 +120,7 @@ internal class ChatSocketStateServiceTest {
     @MethodSource("onUnrecoverableErrorArgs")
     fun `When an unrecoverable error arrives, should move to the proper state`(
         initialState: State,
-        error: ChatNetworkError,
+        error: ChatError.NetworkError,
         resultState: State,
     ) {
         val sut = ChatSocketStateService(initialState)
@@ -137,7 +137,7 @@ internal class ChatSocketStateServiceTest {
     @MethodSource("onNetworkErrorArgs")
     fun `When an error arrives, should move to the proper state`(
         initialState: State,
-        error: ChatNetworkError,
+        error: ChatError.NetworkError,
         resultState: State,
     ) {
         val sut = ChatSocketStateService(initialState)

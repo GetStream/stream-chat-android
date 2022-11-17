@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
@@ -46,7 +46,10 @@ internal class StreamWebSocket(
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             eventFlow.tryEmit(
                 StreamWebSocketEvent.Error(
-                    ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, t)
+                    ChatError.NetworkError.fromChatErrorCode(
+                        chatErrorCode = ChatErrorCode.SOCKET_FAILURE,
+                        cause = t,
+                    ),
                 )
             )
         }
@@ -54,7 +57,13 @@ internal class StreamWebSocket(
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             if (code != CLOSE_SOCKET_CODE) {
                 // Treat as failure and reconnect, socket shouldn't be closed by server
-                eventFlow.tryEmit(StreamWebSocketEvent.Error(ChatNetworkError.create(ChatErrorCode.SOCKET_CLOSED)))
+                eventFlow.tryEmit(
+                    StreamWebSocketEvent.Error(
+                        ChatError.NetworkError.fromChatErrorCode(
+                            chatErrorCode = ChatErrorCode.SOCKET_CLOSED,
+                        ),
+                    ),
+                )
             }
         }
     }
@@ -78,12 +87,15 @@ internal class StreamWebSocket(
                     }
                 StreamWebSocketEvent.Error(
                     errorResponse?.let {
-                        ChatNetworkError.create(
-                            it.code,
-                            it.message,
-                            it.statusCode
+                        ChatError.NetworkError(
+                            message = it.message,
+                            statusCode = it.statusCode,
+                            streamCode = it.code,
                         )
-                    } ?: ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, parseChatError.cause)
+                    } ?: ChatError.NetworkError.fromChatErrorCode(
+                        chatErrorCode = ChatErrorCode.CANT_PARSE_EVENT,
+                        cause = parseChatError.extractCause(),
+                    ),
                 )
             }.value
 }
