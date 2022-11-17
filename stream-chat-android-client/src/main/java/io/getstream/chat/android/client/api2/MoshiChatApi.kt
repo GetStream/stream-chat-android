@@ -506,14 +506,15 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         ).map(this::flattenChannel)
     }
 
-    override fun stopWatching(channelType: String, channelId: String): Call<Unit> = postponeCall {
+    override fun stopWatching(channelType: String, channelId: String): Call<Unit> =
         channelApi.stopWatching(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
             body = emptyMap(),
-        ).toUnitCall()
-    }
+        )
+            .postpone()
+            .toUnitCall()
 
     override fun getPinnedMessages(
         channelType: String,
@@ -802,19 +803,18 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
             presence = query.presence,
         )
 
-        val lazyQueryChannelsCall = {
+        val queryChannelsCall =
             channelApi.queryChannels(
                 connectionId = connectionId,
                 request = request,
             ).map { response -> response.channels.map(this::flattenChannel) }
-        }
 
         val isConnectionRequired = query.watch || query.presence
         return if (connectionId.isBlank() && isConnectionRequired) {
             logger.i { "[queryChannels] postponing because an active connection is required" }
-            postponeCall(lazyQueryChannelsCall)
+            queryChannelsCall.postpone()
         } else {
-            lazyQueryChannelsCall()
+            queryChannelsCall
         }
     }
 
@@ -829,7 +829,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
             data = query.data,
         )
 
-        val lazyQueryChannelCall = {
+        val queryChannelCall =
             if (channelId.isEmpty()) {
                 channelApi.queryChannel(
                     channelType = channelType,
@@ -844,14 +844,13 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                     request = request,
                 )
             }.map(::flattenChannel)
-        }
 
         val isConnectionRequired = query.watch || query.presence
         return if (connectionId.isBlank() && isConnectionRequired) {
             logger.i { "[queryChannel] postponing because an active connection is required" }
-            postponeCall(lazyQueryChannelCall)
+            queryChannelCall.postpone()
         } else {
-            lazyQueryChannelCall()
+            queryChannelCall
         }
     }
 
@@ -863,17 +862,16 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
             sort = queryUsers.sort,
             presence = queryUsers.presence,
         )
-        val lazyQueryUsersCall = {
+        val queryUsersCall =
             userApi.queryUsers(
                 connectionId,
                 request,
             ).map { response -> response.users.map(DownstreamUserDto::toDomain) }
-        }
 
         return if (connectionId.isBlank() && queryUsers.presence) {
-            postponeCall(lazyQueryUsersCall)
+            queryUsersCall.postpone()
         } else {
-            lazyQueryUsersCall()
+            queryUsersCall
         }
     }
 
@@ -948,7 +946,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         generalApi.warmUp().enqueue()
     }
 
-    private fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
-        return callPostponeHelper.postponeCall(call)
+    private fun <T : Any> Call<T>.postpone(): Call<T> {
+        return callPostponeHelper.postponeCall { this }
     }
 }
