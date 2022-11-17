@@ -86,16 +86,20 @@ class GettingStarted {
             image = "https://bit.ly/321RmWb",
         )
 
-        ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
-            .enqueue { result ->
-                when (result) {
-                    is Result.Success -> {
-                        // Handle success
-                    }
-                    is Result.Failure -> {
-                        // Handler error
+        // Connect the user only if they aren't already connected
+        if (ChatClient.instance().getCurrentUser() == null) {
+
+            ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
+                .enqueue { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            // Handle success
+                        }
+                        is Result.Failure -> {
+                            // Handler error
+                        }
                     }
                 }
-            }
+        }
     }
 }
