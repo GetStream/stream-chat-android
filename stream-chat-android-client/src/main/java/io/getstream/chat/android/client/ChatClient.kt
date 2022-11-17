@@ -1627,7 +1627,9 @@ internal constructor(
      */
     @CheckResult
     @InternalStreamChatApi
-    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> = api.queryChannels(request)
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
+        return api.queryChannels(request)
+    }
 
     /**
      * Runs [queryChannel] without applying side effects.
@@ -1801,8 +1803,9 @@ internal constructor(
      * @return Executable async [Call] responsible for stop watching the channel.
      */
     @CheckResult
-    public fun stopWatching(channelType: String, channelId: String): Call<Unit> =
-        api.stopWatching(channelType, channelId)
+    public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
+        return api.stopWatching(channelType, channelId)
+    }
 
     /**
      * Updates all of the channel data. Any data that is present on the channel and not included in a full update
@@ -2010,7 +2013,9 @@ internal constructor(
      * @return [Call] with a list of [User].
      */
     @CheckResult
-    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
+        return api.queryUsers(query)
+    }
 
     /**
      * Adds members to a given channel.
@@ -2883,7 +2888,6 @@ internal constructor(
                 )
 
             val appSettingsManager = AppSettingManager(module.api())
-            val clientState = ClientStateImpl(module.networkStateProvider)
 
             return ChatClient(
                 config,
