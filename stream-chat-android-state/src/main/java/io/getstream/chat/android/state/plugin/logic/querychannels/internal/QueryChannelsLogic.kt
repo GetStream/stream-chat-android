@@ -71,7 +71,7 @@ internal class QueryChannelsLogic(
         }
     }
 
-    internal fun loadingPerPage(isLoading: Boolean, hasOffset: Boolean) {
+    private fun loadingPerPage(isLoading: Boolean, hasOffset: Boolean) {
         if (hasOffset) {
             queryChannelsStateLogic.setLoadingMore(isLoading)
         } else {
