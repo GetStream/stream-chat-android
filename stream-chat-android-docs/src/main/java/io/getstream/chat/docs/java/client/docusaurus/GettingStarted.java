@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig;
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/basics/getting-started/#getting-started">Getting Started</a>
@@ -34,9 +36,57 @@ public class GettingStarted {
         }
     }
 
+    public void addingAPlugin(String apiKey, Context context) {
+        new ChatClient.Builder(apiKey, context)
+                .withPlugins(
+                        //Add the desired plugin factories here
+                )
+                .build();
+    }
+
+    public void addingTheStatePlugin(String apiKey, Context context) {
+        // Enable background sync which syncs user actions performed while offline
+        boolean backgroundSyncEnabled = true;
+        // Enable tracking online states for users
+        boolean userPresence = true;
+
+        // Create a state plugin factory
+        StreamStatePluginFactory statePluginFactory = new StreamStatePluginFactory(
+                new StatePluginConfig(
+                        backgroundSyncEnabled,
+                        userPresence
+                ),
+                context.getApplicationContext()
+        );
+
+        new ChatClient.Builder(apiKey, context)
+                // Add the state plugin to the chat client
+                .withPlugins(statePluginFactory)
+                .build();
+    }
+
     public void addingTheOfflinePlugin(String apiKey, Context context) {
+        // Create an offline plugin factory
         StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(context);
-        new ChatClient.Builder("apiKey", context).withPlugins(offlinePluginFactory).build();
+
+        // Enable background sync which syncs user actions performed while offline
+        boolean backgroundSyncEnabled = true;
+        // Enable tracking online states for users
+        boolean userPresence = true;
+
+        // Create a state plugin factory
+        StreamStatePluginFactory statePluginFactory = new StreamStatePluginFactory(
+                new StatePluginConfig(
+                        backgroundSyncEnabled,
+                        userPresence
+                ),
+                context.getApplicationContext()
+        );
+
+        new ChatClient.Builder(apiKey, context)
+                // Add both the state and offline plugin factories to the chat client
+                .withPlugins(offlinePluginFactory, statePluginFactory)
+                .build();
     }
 
     public void connectingAUser() {
@@ -45,13 +95,17 @@ public class GettingStarted {
         user.setName("Bender");
         user.setImage("https://bit.ly/321RmWb");
 
-        ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
-                .enqueue((result) -> {
-                    if (result.isSuccess()) {
-                        // Handle success
-                    } else {
-                        // Handle error
-                    }
-                });
+        // Connect the user only if they aren't already connected
+        if (ChatClient.instance().getCurrentUser() == null) {
+
+            ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
+                    .enqueue((result) -> {
+                        if (result.isSuccess()) {
+                            // Handle success
+                        } else {
+                            // Handle error
+                        }
+                    });
+        }
     }
 }
