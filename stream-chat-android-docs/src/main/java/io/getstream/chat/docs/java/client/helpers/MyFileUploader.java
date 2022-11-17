@@ -39,7 +39,7 @@ public class MyFileUploader implements FileUploader {
     @Override
     public Result<UploadedImage> sendImage(@NotNull String channelType, @NotNull String channelId, @NotNull String userId, @NotNull File file, @NotNull ProgressCallback callback) {
         try {
-            return new Result.Success<>(new UploadedImage("url"));
+            return new Result.Success<>(new UploadedImage("url", null));
         } catch (Exception e) {
             return new Result.Failure(new ChatError.ThrowableError("Could not send image.", e));
         }
@@ -49,7 +49,7 @@ public class MyFileUploader implements FileUploader {
     @Override
     public Result<UploadedImage> sendImage(@NotNull String channelType, @NotNull String channelId, @NotNull String userId, @NotNull File file) {
         try {
-            return new Result.Success<>(new UploadedImage("url"));
+            return new Result.Success<>(new UploadedImage("url", null));
         } catch (Exception e) {
             return new Result.Failure(new ChatError.ThrowableError("Could not send image.", e));
         }

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -83,9 +82,9 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.call.toUnitCall
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.models.AppSettings
 import io.getstream.chat.android.client.models.BannedUser
 import io.getstream.chat.android.client.models.BannedUsersSort
@@ -104,20 +103,21 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.VideoCallInfo
 import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.parser.toMap
+import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 
 @Suppress("TooManyFunctions", "LargeClass")
-internal class MoshiChatApi
-@Suppress("LongParameterList")
-constructor(
+internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     private val fileUploader: FileUploader,
     private val userApi: UserApi,
     private val guestApi: GuestApi,
@@ -130,9 +130,19 @@ constructor(
     private val callApi: VideoCallApi,
     private val fileDownloadApi: FileDownloadApi,
     private val coroutineScope: CoroutineScope,
+    private val userScope: UserScope,
 ) : ChatApi {
 
     private val logger = StreamLog.getLogger("Chat:MoshiChatApi")
+
+    private val callPostponeHelper: CallPostponeHelper by lazy {
+        CallPostponeHelper(
+            awaitConnection = {
+                _connectionId.first { id -> id.isNotEmpty() }
+            },
+            userScope = userScope,
+        )
+    }
 
     @Volatile
     private var userId: String = ""
@@ -143,19 +153,24 @@ constructor(
             return field
         }
 
-    @Volatile
-    private var connectionId: String = ""
+    private val _connectionId: MutableStateFlow<String> = MutableStateFlow("")
+
+    private val connectionId: String
         get() {
-            if (field == "") {
+            if (_connectionId.value == "") {
                 logger.e { "connectionId accessed before being set. Did you forget to call ChatClient.connectUser()?" }
             }
-            return field
+            return _connectionId.value
         }
 
     override fun setConnection(userId: String, connectionId: String) {
         logger.d { "[setConnection] userId: '$userId', connectionId: '$connectionId'" }
         this.userId = userId
-        this.connectionId = connectionId
+        this._connectionId.value = connectionId
+    }
+
+    override fun releseConnection() {
+        this._connectionId.value = ""
     }
 
     override fun appSettings(): Call<AppSettings> {
@@ -491,14 +506,15 @@ constructor(
         ).map(this::flattenChannel)
     }
 
-    override fun stopWatching(channelType: String, channelId: String): Call<Unit> {
-        return channelApi.stopWatching(
+    override fun stopWatching(channelType: String, channelId: String): Call<Unit> =
+        channelApi.stopWatching(
             channelType = channelType,
             channelId = channelId,
             connectionId = connectionId,
             body = emptyMap(),
-        ).toUnitCall()
-    }
+        )
+            .postpone()
+            .toUnitCall()
 
     override fun getPinnedMessages(
         channelType: String,
@@ -775,10 +791,6 @@ constructor(
     }
 
     override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
-        if (connectionId.isEmpty()) {
-            logger.w { "[queryChannels] rejected (no connectionId)" }
-            return noConnectionIdError()
-        }
         val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
             filter_conditions = query.filter.toMap(),
             offset = query.offset,
@@ -791,10 +803,19 @@ constructor(
             presence = query.presence,
         )
 
-        return channelApi.queryChannels(
-            connectionId = connectionId,
-            request = request,
-        ).map { response -> response.channels.map(this::flattenChannel) }
+        val queryChannelsCall =
+            channelApi.queryChannels(
+                connectionId = connectionId,
+                request = request,
+            ).map { response -> response.channels.map(this::flattenChannel) }
+
+        val isConnectionRequired = query.watch || query.presence
+        return if (connectionId.isBlank() && isConnectionRequired) {
+            logger.i { "[queryChannels] postponing because an active connection is required" }
+            queryChannelsCall.postpone()
+        } else {
+            queryChannelsCall
+        }
     }
 
     override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {
@@ -808,20 +829,29 @@ constructor(
             data = query.data,
         )
 
-        return if (channelId.isEmpty()) {
-            channelApi.queryChannel(
-                channelType = channelType,
-                connectionId = connectionId,
-                request = request,
-            )
+        val queryChannelCall =
+            if (channelId.isEmpty()) {
+                channelApi.queryChannel(
+                    channelType = channelType,
+                    connectionId = connectionId,
+                    request = request,
+                )
+            } else {
+                channelApi.queryChannel(
+                    channelType = channelType,
+                    channelId = channelId,
+                    connectionId = connectionId,
+                    request = request,
+                )
+            }.map(::flattenChannel)
+
+        val isConnectionRequired = query.watch || query.presence
+        return if (connectionId.isBlank() && isConnectionRequired) {
+            logger.i { "[queryChannel] postponing because an active connection is required" }
+            queryChannelCall.postpone()
         } else {
-            channelApi.queryChannel(
-                channelType = channelType,
-                channelId = channelId,
-                connectionId = connectionId,
-                request = request,
-            )
-        }.map(::flattenChannel)
+            queryChannelCall
+        }
     }
 
     override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
@@ -832,10 +862,17 @@ constructor(
             sort = queryUsers.sort,
             presence = queryUsers.presence,
         )
-        return userApi.queryUsers(
-            connectionId,
-            request,
-        ).map { response -> response.users.map(DownstreamUserDto::toDomain) }
+        val queryUsersCall =
+            userApi.queryUsers(
+                connectionId,
+                request,
+            ).map { response -> response.users.map(DownstreamUserDto::toDomain) }
+
+        return if (connectionId.isBlank() && queryUsers.presence) {
+            queryUsersCall.postpone()
+        } else {
+            queryUsersCall
+        }
     }
 
     override fun queryMembers(
@@ -909,7 +946,7 @@ constructor(
         generalApi.warmUp().enqueue()
     }
 
-    private fun <T : Any> noConnectionIdError(): ErrorCall<T> {
-        return ErrorCall(coroutineScope, ChatError.GenericError("setUser is either not called or not finished"))
+    private fun <T : Any> Call<T>.postpone(): Call<T> {
+        return callPostponeHelper.postponeCall { this }
     }
 }
