@@ -360,13 +360,13 @@ internal class ChannelLogic(
         channelStateLogic.hideMessagesBefore(date)
     }
 
-    private fun upsertEventMessage(message: Message) {
+    private fun upsertEventMessage(message: Message, count: Boolean) {
         // make sure we don't lose ownReactions
         getMessage(message.id)?.let {
             message.ownReactions = it.ownReactions
         }
 
-        channelStateLogic.upsertMessage(message)
+        channelStateLogic.upsertMessage(message, count)
     }
 
     /**
@@ -441,14 +441,16 @@ internal class ChannelLogic(
         StreamLog.d("Channel-Logic") { "[handleEvent] cid: $cid, event: $event" }
         when (event) {
             is NewMessageEvent -> {
-                upsertEventMessage(event.message)
+                upsertEventMessage(event.message, false)
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 channelStateLogic.toggleHidden(false)
             }
             is MessageUpdatedEvent -> {
                 event.message.apply {
                     replyTo = mutableState.messageList.value.firstOrNull { it.id == replyMessageId }
-                }.let(::upsertEventMessage)
+                }.let { message ->
+                    upsertEventMessage(message, false)
+                }
 
                 channelStateLogic.toggleHidden(false)
             }
@@ -456,25 +458,25 @@ internal class ChannelLogic(
                 if (event.hardDelete) {
                     deleteMessage(event.message)
                 } else {
-                    upsertEventMessage(event.message)
+                    upsertEventMessage(event.message, count = false)
                 }
                 channelStateLogic.toggleHidden(false)
             }
             is NotificationMessageNewEvent -> {
                 if (!mutableState.insideSearch.value) {
-                    upsertEventMessage(event.message)
+                    upsertEventMessage(event.message, false)
                 }
                 channelStateLogic.incrementUnreadCountIfNecessary(event.message)
                 channelStateLogic.toggleHidden(false)
             }
             is ReactionNewEvent -> {
-                upsertEventMessage(event.message)
+                upsertEventMessage(event.message, false)
             }
             is ReactionUpdateEvent -> {
-                upsertEventMessage(event.message)
+                upsertEventMessage(event.message, false)
             }
             is ReactionDeletedEvent -> {
-                upsertEventMessage(event.message)
+                upsertEventMessage(event.message, false)
             }
             is MemberRemovedEvent -> {
                 channelStateLogic.deleteMember(event.member)

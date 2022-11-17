@@ -110,6 +110,8 @@ public interface ChannelState {
     /** The date of the last message sent by the current user. */
     public val lastSentMessageDate: StateFlow<Date?>
 
+    public val countedMessages: Set<String>
+
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel
 

@@ -95,10 +95,12 @@ internal class ChannelStateLogic(
      * @param message [Message].
      */
     fun incrementUnreadCountIfNecessary(message: Message) {
+        StreamLog.d(TAG) { "enqueuing data" }
         countBuffer.enqueueData(message)
     }
 
     private fun performUnreadCountIncrement(message: Message) {
+        StreamLog.d(TAG) { "performUnreadCountIncrement executing" }
         val user = globalMutableState.user.value ?: return
         val currentUserId = user.id
 
@@ -110,8 +112,8 @@ internal class ChannelStateLogic(
             val unreadCount: Int = readState.unreadMessages
             val lastMessageSeenDate = readState.lastMessageSeenDate
 
-            val isMessageAlreadyInState = mutableState.visibleMessages.value.containsKey(message.id)
-            val shouldIncrementUnreadCount = !isMessageAlreadyInState &&
+            val isMessageAlreadyCounted = mutableState.countedMessages.contains(message.id)
+            val shouldIncrementUnreadCount = !isMessageAlreadyCounted &&
                 message.shouldIncrementUnreadCount(
                     currentUserId = currentUserId,
                     lastMessageAtDate = lastMessageSeenDate,
@@ -126,6 +128,11 @@ internal class ChannelStateLogic(
                         "New unread count: ${unreadCount + 1}"
                 }
                 mutableState.increaseReadWith(message)
+                mutableState._countedMessages.add(message.id)
+            } else {
+                StreamLog.d(TAG) {
+                    "Not incrementing count. isMessageAlreadyCounted: $isMessageAlreadyCounted"
+                }
             }
         }
     }
@@ -198,7 +205,7 @@ internal class ChannelStateLogic(
      *
      * @param message The message to be added or updated.
      */
-    override fun upsertMessage(message: Message) {
+    override fun upsertMessage(message: Message, count: Boolean) {
         if (mutableState.visibleMessages.value.containsKey(message.id) || !mutableState.insideSearch.value) {
             upsertMessages(listOf(message))
         } else {
@@ -213,17 +220,29 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean): Unit =
+    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, count: Boolean) {
         when (shouldRefreshMessages) {
-            true -> mutableState.setMessages(messages)
+            true -> {
+                mutableState.setMessages(messages)
+
+                mutableState._countedMessages.clear()
+                if (count) {
+                    mutableState._countedMessages.addAll(messages.map { it.id })
+                }
+            }
             false -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)
                 val updatedMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
                     .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
+
                 mutableState.upsertMessages(updatedMessages)
+
+                if (count) {
+                    mutableState._countedMessages.addAll(messages.map { it.id })
+                }
             }
         }
-
+    }
     /**
      * Sets the date of the last message sent by the current user.
      *

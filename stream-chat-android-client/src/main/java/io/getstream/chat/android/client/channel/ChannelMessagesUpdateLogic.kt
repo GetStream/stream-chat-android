@@ -23,9 +23,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 @InternalStreamChatApi
 public interface ChannelMessagesUpdateLogic {
 
-    public fun upsertMessage(message: Message)
+    public fun upsertMessage(message: Message, count: Boolean = true)
 
-    public fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false)
+    public fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false, count: Boolean = true)
 
     public fun listenForChannelState(): ChannelState
 

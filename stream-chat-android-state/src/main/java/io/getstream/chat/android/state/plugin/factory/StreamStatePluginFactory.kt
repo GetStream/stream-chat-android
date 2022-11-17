@@ -96,7 +96,9 @@ public class StreamStatePluginFactory(
             scope.coroutineContext.job, scope, globalState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )
 
-        val countBuffer = StartStopBuffer<Message>()
+        val countBuffer = StartStopBuffer<Message>().apply {
+            active()
+        }
 
         val logic = LogicRegistry.create(
             stateRegistry = stateRegistry,

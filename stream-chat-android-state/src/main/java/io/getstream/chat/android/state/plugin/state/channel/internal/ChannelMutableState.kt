@@ -77,6 +77,7 @@ internal class ChannelMutableState(
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _loadingNewerMessages = MutableStateFlow(false)
     private val _lastSentMessageDate = MutableStateFlow<Date?>(null)
+    internal val _countedMessages: MutableSet<String> = mutableSetOf()
 
     /** Channel config data. */
     private val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
@@ -201,6 +202,7 @@ internal class ChannelMutableState(
     override val insideSearch: StateFlow<Boolean> = _insideSearch
 
     override val lastSentMessageDate: StateFlow<Date?> = _lastSentMessageDate
+    override val countedMessages: Set<String> = _countedMessages
 
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.

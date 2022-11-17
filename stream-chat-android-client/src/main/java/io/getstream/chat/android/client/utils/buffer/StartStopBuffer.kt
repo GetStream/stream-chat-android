@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.utils.buffer
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
 private const val NO_LIMIT = -1
+private const val TAG = "StartStopBuffer"
 
 public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT) {
 
@@ -53,10 +55,14 @@ public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT) {
     }
 
     public fun enqueueData(data: T) {
+        StreamLog.d(TAG) { "enqueuing data..." }
         events.offer(data)
 
         if (active.get() || aboveSafetyThreshold()) {
+            StreamLog.d(TAG) { "propagating data" }
             propagateData()
+        } else {
+            StreamLog.d(TAG) { "NOT propagating data. active: ${active.get()}" }
         }
     }
 
