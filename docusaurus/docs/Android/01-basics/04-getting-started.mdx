@@ -109,7 +109,7 @@ new ChatClient.Builder(apiKey, context)
 
 #### Adding State
 
-Our UI Components rely on reading state in order to render the UI. Information such as the currently active user, list of muted users, online status, etc. is saved as state inside various state holders (e.g. `GlobalState`, and others). State is managed by `StatePlugin` and adding it to `ChatClient` is mandatory if you want to use our UI Components.
+Our UI Components rely on reading the state in order to render the UI. Information such as the currently active user, list of muted users, online status, etc. is saved as state inside various state holders (e.g. `GlobalState`, and others). The state is managed by `StatePlugin` and adding it to `ChatClient` **is mandatory if you want to use our UI Components**.
 
 Let's see how we can add the plugin:
 
