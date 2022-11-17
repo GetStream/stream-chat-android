@@ -122,7 +122,7 @@ MessageList(
     onLastVisibleMessageChanged = { message -> },
     onScrollToBottom = { },
     onGiphyActionClick = { giphyAction -> },
-    onQuotedMessageClick = { message -> }
+    onQuotedMessageClick = { message -> },
     onMediaGalleryPreviewResult = { mediaGalleryPreviewResult -> },
     onMessagesPageEndReached = { messageId -> },
     onScrollToBottomClicked = { }
@@ -164,7 +164,7 @@ MessageList(
 
 `rememberMessageListState()` keeps a separate instance of `MessagesLazyListState` based on the `parentMessageId`. This helps you keep the scroll state of the main list intact when you enter and leave threads.
 
-You can also provide your own instance of `MessagesLazyListState` based on your custom logic where you define the starting scroll position of the state, the offset and how it behaves based on user events. For example, when deep linking or calculating offset when scrolling to message.
+You can also provide your own instance of `MessagesLazyListState` based on your custom logic where you define the starting scroll position of the state, the offset when scrolling to selected message and how it behaves based on user events. For example, when deep linking or calculating offset when scrolling to message.
 
 ##  Customization
 
