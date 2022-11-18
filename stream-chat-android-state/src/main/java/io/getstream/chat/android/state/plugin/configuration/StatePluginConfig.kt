@@ -29,6 +29,6 @@ import io.getstream.chat.android.offline.model.message.attachments.UploadAttachm
 public data class StatePluginConfig @JvmOverloads constructor(
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
-    public val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+    public val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED,
     public val useSequentialEventHandler: Boolean = true,
 )

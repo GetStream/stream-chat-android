@@ -125,6 +125,9 @@
 ### ⬆️ Improved
 - Improved logs for sending message with attachments. [#4448](https://github.com/GetStream/stream-chat-android/pull/4448)
 
+### ⚠️ Changed
+- Changed default worker's constraints from `NetworkType.NOT_ROAMING` to `NetworkType.CONNECTED`. [#4448](https://github.com/GetStream/stream-chat-android/pull/4448)
+
 # November 16th, 2022 - 5.11.6
 ## stream-chat-android-client
 ### 🐞 Fixed

@@ -88,6 +88,9 @@ internal class UploadAttachmentsAndroidWorker(
                 )
                 .build()
 
+            StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
+                .d { "[start] Enqueueing attachments upload work for $messageId" }
+
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
                 ExistingWorkPolicy.KEEP,
@@ -103,6 +106,8 @@ internal class UploadAttachmentsAndroidWorker(
          * @param workId UUID of the enqueued work.
          */
         internal fun stop(context: Context, workId: UUID) {
+            StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
+                .d { "[stop] Upload attachments work cancelled" }
             WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }
