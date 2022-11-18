@@ -58,8 +58,8 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
  * @property backgroundColor Background color of MessageInputView.
  * @property editTextBackgroundDrawable Background color of message input box inside MessageInputView.
  * @property customCursorDrawable Custom cursor of message input box inside MessageInputView.
- * @property attachmentMaxFileSize The max attachment size. Be aware that currently the back end of Stream allow 20MB as
- * the max size, use this only if you use your own backend.
+ * @property attachmentMaxFileSize The max attachment size. Limited to 100 MB by Stream's CDN. Use your own CDN if you
+ * need to upload larger files.
  * @property dividerBackground The background of the divider in the top of MessageInputView.
  * @property attachmentSelectionDialogStyle Style for attachment selection dialog.
  * @property commandInputCancelIcon Icon for cancel button. Default value is [R.drawable.stream_ui_ic_clear].

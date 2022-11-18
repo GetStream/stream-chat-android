@@ -414,7 +414,7 @@ public class ChannelClient internal constructor(
      * Uploads a file for the given channel. Progress can be accessed via [callback].
      *
      * The Stream CDN imposes the following restrictions on file uploads:
-     * - The maximum file size is 20 MB
+     * - The maximum file size is 100 MB
      *
      * @param file The file that needs to be uploaded.
      * @param callback The callback to track progress.
@@ -435,7 +435,7 @@ public class ChannelClient internal constructor(
      * Uploads an image for the given channel. Progress can be accessed via [callback].
      *
      * The Stream CDN imposes the following restrictions on image uploads:
-     * - The maximum image size is 20 MB
+     * - The maximum image size is 100 MB
      * - Supported MIME types are listed in [StreamCdnImageMimeTypes.SUPPORTED_IMAGE_MIME_TYPES]
      *
      * @param file The image file that needs to be uploaded.

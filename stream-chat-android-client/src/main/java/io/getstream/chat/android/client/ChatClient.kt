@@ -821,7 +821,7 @@ internal constructor(
      * Uploads a file for the given channel. Progress can be accessed via [callback].
      *
      * The Stream CDN imposes the following restrictions on file uploads:
-     * - The maximum file size is 20 MB
+     * - The maximum file size is 100 MB
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
@@ -849,7 +849,7 @@ internal constructor(
      * Uploads an image for the given channel. Progress can be accessed via [callback].
      *
      * The Stream CDN imposes the following restrictions on image uploads:
-     * - The maximum image size is 20 MB
+     * - The maximum image size is 100 MB
      * - Supported MIME types are listed in [StreamCdnImageMimeTypes.SUPPORTED_IMAGE_MIME_TYPES]
      *
      * @param channelType The channel type. ie messaging.
@@ -2793,7 +2793,7 @@ internal constructor(
          * to upload files and images.
          *
          * The default implementation uses Stream's own CDN to store these files,
-         * which has a 20 MB upload size limit.
+         * which has a 100 MB upload size limit.
          *
          * For more info, see
          * [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
