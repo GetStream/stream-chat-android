@@ -84,7 +84,7 @@ public class StatePlugin internal constructor(
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
     private val globalState: GlobalState
-) : StateAwarePlugin,
+) : Plugin,
     DependencyResolver,
     QueryChannelsListener by QueryChannelsListenerState(logic),
     QueryChannelListener by QueryChannelListenerState(logic),

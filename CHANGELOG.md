@@ -13,6 +13,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixing postponing api calls to avoid showing empty screen in the wrong moment. [#4344](https://github.com/GetStream/stream-chat-android/pull/4344)
 
 ### ⬆️ Improved
 
@@ -43,6 +44,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `StateAwarePlugin` interface.[4435](https://github.com/GetStream/stream-chat-android/pull/4435)
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
