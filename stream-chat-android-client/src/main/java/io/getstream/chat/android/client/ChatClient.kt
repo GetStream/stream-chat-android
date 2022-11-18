@@ -689,6 +689,10 @@ internal constructor(
     @InternalStreamChatApi
     public fun setUserWithoutConnectingIfNeeded() {
         if (isUserSet() || clientState.initializationState.value != InitializationState.NOT_INITIALIZED) {
+            logger.d {
+                "[setUserWithoutConnectingIfNeeded] User is already set." +
+                    " Initialization state: ${clientState.initializationState.value}"
+            }
             return
         }
 

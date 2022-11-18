@@ -18,15 +18,19 @@ package io.getstream.chat.android.offline.message.attachments.internal
 
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.logging.StreamLog
 import java.io.File
 
 internal class AttachmentUploader(
     private val client: ChatClient = ChatClient.instance(),
 ) {
+
+    private val logger = StreamLog.getLogger("Chat:AttachmentUploader")
 
     /**
      * Uploads the given attachment.
@@ -52,6 +56,7 @@ internal class AttachmentUploader(
         val attachmentType = mimeType.toAttachmentType()
 
         return if (attachmentType == AttachmentType.IMAGE) {
+            logger.d { "[uploadAttachment] Uploading ${attachment.uploadId} as image" }
             uploadImage(
                 channelType = channelType,
                 channelId = channelId,
@@ -62,6 +67,7 @@ internal class AttachmentUploader(
                 attachmentType = attachmentType
             )
         } else {
+            logger.d { "[uploadAttachment] Uploading ${attachment.uploadId} as file" }
             uploadFile(
                 channelType = channelType,
                 channelId = channelId,
@@ -188,6 +194,7 @@ internal class AttachmentUploader(
         augmentedAttachment: Attachment,
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
+        logger.d { "[onSuccessfulUpload] Attachment ${augmentedAttachment.uploadId} uploaded successfully" }
         augmentedAttachment.uploadState = Attachment.UploadState.Success
         progressCallback?.onSuccess(augmentedAttachment.url)
         return Result(augmentedAttachment)
@@ -209,6 +216,7 @@ internal class AttachmentUploader(
         result: Result<T>,
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
+        logger.i { "[onFailedUpload] Attachment ${attachment.uploadId} upload failed: ${result.error()}" }
         attachment.uploadState = Attachment.UploadState.Failed(result.error())
         progressCallback?.onError(result.error())
         return Result(result.error())

@@ -27,6 +27,7 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.logging.StreamLog
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -39,6 +40,7 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
+        val logger = StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
 
@@ -51,7 +53,13 @@ internal class UploadAttachmentsAndroidWorker(
         ).uploadAttachmentsForMessage(
             messageId
         ).let { result ->
-            if (result.isSuccess) Result.success() else Result.failure()
+            if (result.isSuccess) {
+                logger.d { "[doWork] Attachments uploaded successfully" }
+                Result.success()
+            } else {
+                logger.i { "[doWork] Error while uploading attachments: ${result.error()}" }
+                Result.failure()
+            }
         }
     }
 
