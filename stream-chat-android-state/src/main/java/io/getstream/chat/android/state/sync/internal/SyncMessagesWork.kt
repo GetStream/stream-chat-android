@@ -68,7 +68,7 @@ internal class SyncMessagesWork(
 
         fun start(context: Context, cid: String) {
             val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+                .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
             val syncMessagesWork = OneTimeWorkRequestBuilder<SyncMessagesWork>()
