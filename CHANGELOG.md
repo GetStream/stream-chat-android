@@ -1819,7 +1819,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - 🚨 Breaking change: `RetryPolicy` in `ChatDomain` is now immutable and can only be set with Builder before creating an instance of it.
-- 🚨 Breaking change: `ChannelEventsHandler` is renamed to `ChatEventHandler`, it's function is renamed from `onChannelEvent` to `handleChatEvent`, EventHandlingResult is sealed class now. To get more details read [our docs](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/#chateventhandler)
+- 🚨 Breaking change: `ChannelEventsHandler` is renamed to `ChatEventHandler`, it's function is renamed from `onChannelEvent` to `handleChatEvent`, EventHandlingResult is sealed class now. To get more details read [our docs](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#chateventhandler)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
