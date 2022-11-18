@@ -89,6 +89,7 @@ import io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
  * @property optionsOverlayEditReactionsMargin Defines the margin between the selected message and the edit reactions bubble on the options overlay.
  * @property optionsOverlayUserReactionsMargin Defines the margin between the selected message and the user reaction list on the options overlay.
  * @property optionsOverlayMessageOptionsMargin Defines the margin between the selected message and the message option list on the options overlay.
+ * @property showReactionsForUnsentMessages If we need to show the edit reactions bubble for unsent messages on the options overlay.
  */
 public data class MessageListViewStyle
 @Deprecated(
@@ -146,6 +147,7 @@ constructor(
     public val optionsOverlayEditReactionsMargin: Int,
     public val optionsOverlayUserReactionsMargin: Int,
     public val optionsOverlayMessageOptionsMargin: Int,
+    public val showReactionsForUnsentMessages: Boolean,
 ) {
 
     /**
@@ -237,6 +239,7 @@ constructor(
         optionsOverlayEditReactionsMargin: Int,
         optionsOverlayUserReactionsMargin: Int,
         optionsOverlayMessageOptionsMargin: Int,
+        showReactionsForUnsentMessages: Boolean,
     ) : this(
         scrollButtonViewStyle = scrollButtonViewStyle,
         scrollButtonBehaviour = scrollButtonBehaviour,
@@ -285,7 +288,8 @@ constructor(
         disableScrollWhenShowingDialog = disableScrollWhenShowingDialog,
         optionsOverlayEditReactionsMargin = optionsOverlayEditReactionsMargin,
         optionsOverlayUserReactionsMargin = optionsOverlayUserReactionsMargin,
-        optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin
+        optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin,
+        showReactionsForUnsentMessages = showReactionsForUnsentMessages,
     )
 
     public companion object {
@@ -604,6 +608,11 @@ constructor(
                         DEFAULT_MESSAGE_OPTIONS_MARGIN
                     )
 
+                val showReactionsForUnsentMessages = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiShowReactionsForUnsentMessages,
+                    false
+                )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
@@ -653,6 +662,7 @@ constructor(
                     optionsOverlayEditReactionsMargin = optionsOverlayEditReactionsMargin,
                     optionsOverlayUserReactionsMargin = optionsOverlayUserReactionsMargin,
                     optionsOverlayMessageOptionsMargin = optionsOverlayMessageOptionsMargin,
+                    showReactionsForUnsentMessages = showReactionsForUnsentMessages,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }
