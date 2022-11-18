@@ -690,7 +690,7 @@ internal constructor(
     public fun setUserWithoutConnectingIfNeeded() {
         if (isUserSet() || clientState.initializationState.value != InitializationState.NOT_INITIALIZED) {
             logger.d {
-                "[setUserWithoutConnectingIfNeeded] User is already set." +
+                "[setUserWithoutConnectingIfNeeded] User is already set: ${isUserSet()}" +
                     " Initialization state: ${clientState.initializationState.value}"
             }
             return
