@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.message.attachments.internal
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -58,7 +59,7 @@ internal class UploadAttachmentsAndroidWorker(
                 Result.success()
             } else {
                 logger.i { "[doWork] Error while uploading attachments: ${result.error()}" }
-                Result.failure()
+                Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to result)).build())
             }
         }
     }
@@ -67,6 +68,7 @@ internal class UploadAttachmentsAndroidWorker(
         private const val DATA_MESSAGE_ID = "message_id"
         private const val DATA_CHANNEL_TYPE = "channel_type"
         private const val DATA_CHANNEL_ID = "channel_id"
+        private const val ERROR_KEY = "error"
 
         internal fun start(
             context: Context,
