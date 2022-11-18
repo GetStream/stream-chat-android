@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.message.attachments.internal.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
@@ -54,11 +55,12 @@ internal class SendMessageInterceptorImpl(
     private val scope: CoroutineScope,
     private val networkType: UploadAttachmentsNetworkType,
     private val prepareMessageLogic: PrepareMessageLogic,
-    private val user: User
+    private val user: User,
 ) : SendMessageInterceptor {
 
     private var jobsMap: Map<String, Job> = emptyMap()
     private val uploadIds = mutableMapOf<String, UUID>()
+    private val logger = StreamLog.getLogger("Chat:SendMessageInterceptor")
 
     override suspend fun interceptMessage(
         channelType: String,
@@ -88,11 +90,17 @@ internal class SendMessageInterceptorImpl(
 
         return if (!isRetrying) {
             if (preparedMessage.hasPendingAttachments()) {
+                logger.d {
+                    "[interceptMessage] Message ${preparedMessage.id}" +
+                        " has ${preparedMessage.attachments.size} pending attachments."
+                }
                 uploadAttachments(preparedMessage, channelType, channelId)
             } else {
+                logger.d { "[interceptMessage] Message ${preparedMessage.id} without attachments" }
                 Result.success(preparedMessage)
             }
         } else {
+            logger.d { "[interceptMessage] Retrying Message ${preparedMessage.id}" }
             retryMessage(preparedMessage, channelType, channelId)
         }
     }
@@ -121,6 +129,7 @@ internal class SendMessageInterceptorImpl(
             waitForAttachmentsToBeSent(message, channelType, channelId)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)
+            logger.d { "[uploadAttachments] Chat is offline, not sending message with id ${message.id}" }
             Result(ChatError("Chat is offline, not sending message with id ${message.id} and text ${message.text}"))
         }
     }
@@ -163,8 +172,10 @@ internal class SendMessageInterceptorImpl(
         enqueueAttachmentUpload(newMessage, channelType, channelId)
         jobsMap[newMessage.id]?.join()
         return if (allAttachmentsUploaded) {
+            logger.d { "[waitForAttachmentsToBeSent] All attachments for message ${newMessage.id} uploaded" }
             Result.success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
         } else {
+            logger.i { "[waitForAttachmentsToBeSent] Could not upload attachments for message ${newMessage.id}" }
             Result.error(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
         }.also {
             uploadIds.remove(newMessage.id)
