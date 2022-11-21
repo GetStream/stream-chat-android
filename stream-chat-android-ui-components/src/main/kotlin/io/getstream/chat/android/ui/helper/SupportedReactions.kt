@@ -126,10 +126,11 @@ public class SupportedReactions(
             context: Context,
             @DrawableRes drawableResId: Int,
         ): ReactionDrawable {
-            val drawable = context.getDrawableCompat(drawableResId)!!
             return ReactionDrawable(
-                inactiveDrawable = drawable.applyTint(context.getColorCompat(R.color.stream_ui_grey)),
-                activeDrawable = drawable.applyTint(context.getColorCompat(R.color.stream_ui_accent_blue))
+                inactiveDrawable = context.getDrawableCompat(drawableResId)!!
+                    .applyTint(context.getColorCompat(R.color.stream_ui_grey)),
+                activeDrawable = context.getDrawableCompat(drawableResId)!!
+                    .applyTint(context.getColorCompat(R.color.stream_ui_accent_blue))
             )
         }
     }
