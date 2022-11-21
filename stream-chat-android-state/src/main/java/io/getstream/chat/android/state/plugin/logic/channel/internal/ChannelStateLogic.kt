@@ -410,6 +410,7 @@ internal class ChannelStateLogic(
      *
      * @return Whether we need to upsert the messages or not.
      */
+    @Suppress("LongParameterList")
     private fun shouldUpsertMessages(
         isNotificationUpdate: Boolean,
         isInsideSearch: Boolean,
