@@ -31,6 +31,6 @@ public data class Config @JvmOverloads constructor(
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
     public val persistenceEnabled: Boolean = true,
-    public val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+    public val uploadAttachmentsNetworkType: UploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED,
     public val useSequentialEventHandler: Boolean = true,
 )
