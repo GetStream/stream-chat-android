@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -102,7 +103,7 @@ public class MessageComposerViewModel(
      * is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
-     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     * For a full list @see [ChannelCapabilities].
      */
     public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
 

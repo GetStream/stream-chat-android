@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.state.global
 
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
@@ -61,7 +62,7 @@ public interface GlobalState {
 
     /**
      * Map of typing users in all active channel.
-     * Use [io.getstream.chat.android.client.models.Channel.cid] to access events for a particular channel.
+     * Use [Channel.cid] to access events for a particular channel.
      *
      * @see [TypingEvent]
      */

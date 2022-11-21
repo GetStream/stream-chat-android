@@ -113,7 +113,7 @@ internal fun DefaultMessageOptionItem(
  * @param currentUser Current user, used to expose different states for messages.
  * @param isInThread If the message is in a thread or not, to block off some options.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  */
 @Composable
 public fun defaultMessageOptionsState(

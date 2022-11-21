@@ -1002,7 +1002,7 @@ internal constructor(
     /**
      * Subscribes to the specific [eventTypes] of the client.
      *
-     * @see [io.getstream.chat.android.client.models.EventType] for type constants
+     * @see [EventType] for type constants
      */
     public fun subscribeFor(
         vararg eventTypes: String,

@@ -124,7 +124,7 @@ public class MessageComposerController(
      * is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
-     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     * For a full list @see [ChannelCapabilities].
      */
     public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
         .map { it.ownCapabilities }

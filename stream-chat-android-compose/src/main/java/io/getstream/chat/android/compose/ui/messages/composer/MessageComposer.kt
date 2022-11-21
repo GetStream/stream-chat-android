@@ -445,7 +445,7 @@ internal fun DefaultCommandPopupContent(
  * @param onAttachmentsClick Handler when the user selects attachments.
  * @param onCommandsClick Handler when the user selects commands.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  */
 @Composable
 internal fun DefaultComposerIntegrations(
@@ -528,7 +528,7 @@ internal fun DefaultComposerIntegrations(
  * Default input field label that the user can override in [MessageComposer].
  *
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  */
 @Composable
 internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
@@ -581,7 +581,7 @@ private fun RowScope.DefaultComposerInputContent(
  * @param validationErrors List of errors for message validation.
  * @param onSendMessage Handler when the user wants to send a message.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  */
 @Composable
 internal fun DefaultMessageComposerTrailingContent(

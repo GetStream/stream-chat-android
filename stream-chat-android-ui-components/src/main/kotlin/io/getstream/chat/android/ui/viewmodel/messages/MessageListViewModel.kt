@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
@@ -86,7 +87,7 @@ public class MessageListViewModel(
      * Holds information about the abilities the current user is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
-     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     * For a full list @see [ChannelCapabilities].
      */
     public val ownCapabilities: LiveData<Set<String>> = messageListController.ownCapabilities.asLiveData()
 

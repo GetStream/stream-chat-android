@@ -112,7 +112,7 @@ public data class ChannelData(
         reads: List<ChannelUserRead>,
         watchers: List<User>,
         watcherCount: Int,
-        insideSearch: Boolean
+        insideSearch: Boolean,
     ): Channel {
         val messagesList = if (insideSearch) cachedLatestMessages else messages
         return Channel(
@@ -145,7 +145,7 @@ public data class ChannelData(
     /**
      * Checks if the user has specific capabilities.
      *
-     * You can find a list of capabilities in [io.getstream.chat.android.client.models.ChannelCapabilities].
+     * You can find a list of capabilities in [ChannelCapabilities].
      *
      * @param channelCapability The specific ability we are checking against.
      */
