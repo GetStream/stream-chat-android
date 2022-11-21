@@ -1,7 +1,6 @@
-// ktlint-disable filename
-
 package io.getstream.chat.docs.kotlin.ui.channels
 
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,23 +10,26 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.ui.helper.StyleTransformer
-import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
-import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
+import io.getstream.chat.android.ui.helper.StyleTransformer
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
-import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.viewmodel.channels.bindView
 import io.getstream.chat.docs.R
+import io.getstream.chat.docs.databinding.CustomChannelListItemBinding
 
 /**
  * [Channel List](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/)
  */
-private class ChannelListViewSnippets : Fragment() {
+private class ChannelList : Fragment() {
 
     private lateinit var channelListView: ChannelListView
 
@@ -42,7 +44,7 @@ private class ChannelListViewSnippets : Fragment() {
                     Filters.eq("type", "messaging"),
                     Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
                 ),
-                sort = ChannelListViewModel.DEFAULT_SORT,
+                sort = QuerySortByField.descByName("last_updated"),
                 limit = 30,
             )
         }
@@ -68,18 +70,15 @@ private class ChannelListViewSnippets : Fragment() {
     /**
      * [Customization](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#customization)
      */
-    fun customization() {
+    fun customization(context: Context) {
         TransformStyle.channelListStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
                 optionsEnabled = false,
                 foregroundLayoutColor = Color.LTGRAY,
-                indicatorReadIcon = ContextCompat.getDrawable(requireContext(), R.drawable.stream_ui_ic_clock)!!,
-                channelTitleText = TextStyle(
-                    color = Color.WHITE,
-                    size = resources.getDimensionPixelSize(R.dimen.stream_ui_text_large),
-                ),
-                lastMessageText = TextStyle(
-                    size = resources.getDimensionPixelSize(R.dimen.stream_ui_text_small),
+                indicatorReadIcon = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_flag)!!,
+                channelTitleText = defaultStyle.channelTitleText.copy(
+                    color = Color.BLUE,
+                    size = context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_large),
                 ),
                 unreadMessageCounterBackgroundColor = Color.BLUE,
             )
@@ -89,36 +88,58 @@ private class ChannelListViewSnippets : Fragment() {
     /**
      * [Creating a Custom ViewHolder Factory](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#creating-a-custom-viewholder-factory)
      */
-    fun customViewHolderFactory() {
+    class CustomViewHolderFactory {
+
         class CustomChannelListItemViewHolderFactory : ChannelListItemViewHolderFactory() {
-            override fun getItemViewType(item: ChannelListItem): Int {
-                // Override together with createViewHolder() to introduce different view holder types
-                return super.getItemViewType(item)
-            }
-
-            override fun createViewHolder(parentView: ViewGroup, viewType: Int): BaseChannelListItemViewHolder {
-                // Override to create custom create view holder logic
-                return super.createViewHolder(parentView, viewType)
-            }
-
             override fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
-                // Create custom channel view holder
-                return super.createChannelViewHolder(parentView)
-            }
-
-            override fun createLoadingMoreViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
-                // Create custom loading more view holder
-                return super.createLoadingMoreViewHolder(parentView)
+                return CustomChannelViewHolder(parentView, listenerContainer.channelClickListener)
             }
         }
 
-        // Create custom view holder factory
-        val customFactory = CustomChannelListItemViewHolderFactory()
+        class CustomChannelViewHolder(
+            parent: ViewGroup,
+            private val channelClickListener: ChannelListView.ChannelClickListener,
+            private val binding: CustomChannelListItemBinding = CustomChannelListItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ),
+        ) : BaseChannelListItemViewHolder(binding.root) {
 
-        // Set custom view holder factory
-        channelListView.setViewHolderFactory(customFactory)
+            private lateinit var channel: Channel
+
+            init {
+                binding.root.setOnClickListener { channelClickListener.onClick(channel) }
+            }
+
+            override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
+                this.channel = channel
+
+                binding.channelAvatarView.setChannel(channel)
+                binding.channelNameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
+                    channel = channel,
+                    currentUser = ChatClient.instance().getCurrentUser()
+                )
+                binding.membersCountTextView.text = itemView.context.resources.getQuantityString(
+                    R.plurals.members_count,
+                    channel.members.size,
+                    channel.members.size
+                )
+            }
+        }
+
+        fun settingCustomViewHolderFactory(channelListView: ChannelListView) {
+            // Create custom view holder factory
+            val customFactory = CustomChannelListItemViewHolderFactory()
+
+            // Set custom view holder factory
+            channelListView.setViewHolderFactory(customFactory)
+        }
     }
 
+    /**
+     * [Creating a Custom Loading View](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#creating-a-custom-loading-view)
+     */
     fun customizingLoadingView() {
         // Inflate loading view
         val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, channelListView)
