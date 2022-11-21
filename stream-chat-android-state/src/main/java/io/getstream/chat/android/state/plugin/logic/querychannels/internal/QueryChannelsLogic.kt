@@ -65,7 +65,6 @@ internal class QueryChannelsLogic(
                 .also { channels ->
                     if (channels.isNotEmpty()) {
                         addChannels(channels)
-
                         loadingPerPage(false, hasOffset)
                     }
                 }
@@ -142,6 +141,7 @@ internal class QueryChannelsLogic(
         }
 
         loadingPerPage(false, request.offset > 0)
+        logger.d { "loadingPerPage: false. success: $result.isSuccess" }
     }
 
     /**

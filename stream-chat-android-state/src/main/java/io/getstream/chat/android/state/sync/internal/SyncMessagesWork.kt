@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.internal.validateCid
 import io.getstream.chat.android.state.extensions.internal.logic
-import io.getstream.chat.android.state.plugin.internal.StateAwarePlugin
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.logging.StreamLog
 
 @Suppress("TooGenericExceptionCaught")
@@ -49,7 +49,7 @@ internal class SyncMessagesWork(
 
             client.logic.channel(type, id) // Adds this channel to logic - Now it is an active channel
 
-            val syncManager = client.resolveDependency<StateAwarePlugin, SyncHistoryManager>() ?: error(
+            val syncManager = client.resolveDependency<StatePlugin, SyncHistoryManager>() ?: error(
                 "No SyncHistoryManager found in StatePlugin."
             )
             syncManager.sync()
@@ -68,7 +68,7 @@ internal class SyncMessagesWork(
 
         fun start(context: Context, cid: String) {
             val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+                .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
             val syncMessagesWork = OneTimeWorkRequestBuilder<SyncMessagesWork>()

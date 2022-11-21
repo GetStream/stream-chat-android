@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
@@ -49,6 +50,7 @@ internal class AttachmentsSender(
 
     private var jobsMap: Map<String, Job> = emptyMap()
     private val uploadIds = mutableMapOf<String, UUID>()
+    private val logger = StreamLog.getLogger("Chat:AttachmentsSender")
 
     internal suspend fun sendAttachments(
         message: Message,
@@ -59,11 +61,17 @@ internal class AttachmentsSender(
     ): Result<Message> {
         return if (!isRetrying) {
             if (message.hasPendingAttachments()) {
+                logger.d {
+                    "[sendAttachments] Message ${message.id}" +
+                        " has ${message.attachments.size} pending attachments"
+                }
                 uploadAttachments(message, channelType, channelId, repositoryFacade)
             } else {
+                logger.d { "[sendAttachments] Message ${message.id} without attachments" }
                 Result.Success(message)
             }
         } else {
+            logger.d { "[sendAttachments] Retrying Message ${message.id}" }
             retryMessage(message, channelType, channelId, repositoryFacade)
         }
     }
@@ -102,6 +110,7 @@ internal class AttachmentsSender(
             waitForAttachmentsToBeSent(message, channelType, channelId, repositoryFacade)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)
+            logger.d { "[uploadAttachments] Chat is offline, not sending message with id ${message.id}" }
             Result.Failure(
                 ChatError.GenericError(
                     "Chat is offline, not sending message with id ${message.id} and text ${message.text}",
@@ -149,8 +158,10 @@ internal class AttachmentsSender(
         enqueueAttachmentUpload(newMessage, channelType, channelId)
         jobsMap[newMessage.id]?.join()
         return if (allAttachmentsUploaded) {
+            logger.d { "[waitForAttachmentsToBeSent] All attachments for message ${newMessage.id} uploaded" }
             Result.Success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
         } else {
+            logger.i { "[waitForAttachmentsToBeSent] Could not upload attachments for message ${newMessage.id}" }
             Result.Failure(
                 ChatError.GenericError("Could not upload attachments, not sending message with id ${newMessage.id}"),
             )

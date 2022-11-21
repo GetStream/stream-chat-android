@@ -11,19 +11,25 @@ import io.getstream.chat.android.ui.viewmodel.pinned.PinnedMessageListViewModelF
 /**
  * [Pinned Message List View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/pinned-message-list-view/)
  */
-class PinnedMessageListViewSnippets extends Fragment {
+class PinnedMessageList extends Fragment {
 
     private PinnedMessageListView pinnedMessageListView;
 
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/utility-components/pinned-message-list-view/#usage)
+     */
     public void usage() {
         ViewModelProvider.Factory factory = new PinnedMessageListViewModelFactory.Builder()
-                .cid("channelType:channelId")
+                .cid("messaging:123")
                 .build();
         PinnedMessageListViewModel viewModel = new ViewModelProvider(this, factory).get(PinnedMessageListViewModel.class);
 
         PinnedMessageListViewModelBinding.bind(viewModel, pinnedMessageListView, getViewLifecycleOwner());
     }
 
+    /**
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/utility-components/pinned-message-list-view/#handling-actions)
+     */
     public void handlingActions() {
         pinnedMessageListView.setPinnedMessageSelectedListener(message -> {
             // Handle a mention item being clicked

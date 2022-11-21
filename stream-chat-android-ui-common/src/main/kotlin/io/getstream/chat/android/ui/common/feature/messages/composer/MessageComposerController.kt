@@ -74,7 +74,7 @@ import java.util.regex.Pattern
  * @param channelId The ID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
+ * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 100 MB for Stream CDN.
  * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
  * queries executed on screen initialization.
  */
