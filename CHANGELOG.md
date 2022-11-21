@@ -115,6 +115,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Upgrade MiPUsh artifact to version 5.1.1 [Changelog](https://admin.xmpush.xiaomi.com/en/mipush/downpage/android). [#4479](https://github.com/GetStream/stream-chat-android/pull/4479)
 
 ### ✅ Added
 
