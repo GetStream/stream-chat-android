@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
-import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.models.Member
 
 internal fun DownstreamMemberDto.toDomain(): Member =
     Member(

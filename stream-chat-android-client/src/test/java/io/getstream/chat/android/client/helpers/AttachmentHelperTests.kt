@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.TimeProvider
+import io.getstream.chat.android.models.Attachment
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

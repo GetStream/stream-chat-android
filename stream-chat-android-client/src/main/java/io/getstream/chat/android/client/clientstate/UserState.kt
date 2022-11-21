@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.android.client.models.User as UserModel
+import io.getstream.chat.android.models.User as UserModel
 
 internal sealed class UserState {
     object NotSet : UserState() { override fun toString(): String = "NotSet" }

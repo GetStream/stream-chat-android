@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.state.imagepreview
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents the actions the user can take with images in the Image Preview feature.

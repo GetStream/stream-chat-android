@@ -24,7 +24,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.extensions.internal.cast
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListViewStyle

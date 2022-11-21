@@ -29,10 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.compose.R
@@ -41,6 +37,10 @@ import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -113,7 +113,7 @@ internal fun DefaultMessageOptionItem(
  * @param currentUser Current user, used to expose different states for messages.
  * @param isInThread If the message is in a thread or not, to block off some options.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  */
 @Composable
 public fun defaultMessageOptionsState(

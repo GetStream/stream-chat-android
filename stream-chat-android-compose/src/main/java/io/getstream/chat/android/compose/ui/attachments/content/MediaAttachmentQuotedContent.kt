@@ -33,13 +33,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isImgur
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**

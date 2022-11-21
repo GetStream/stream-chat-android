@@ -21,9 +21,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isEphemeral
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility

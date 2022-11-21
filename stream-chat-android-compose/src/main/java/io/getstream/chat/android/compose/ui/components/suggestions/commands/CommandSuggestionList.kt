@@ -32,10 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Command
 
 /**
  * Represents the command suggestion list popup.

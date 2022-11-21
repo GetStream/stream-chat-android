@@ -31,10 +31,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState

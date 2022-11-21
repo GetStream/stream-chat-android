@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.previewdata
 
-import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.models.Member
 
 /**
  * Provides sample members that will be used to render previews.

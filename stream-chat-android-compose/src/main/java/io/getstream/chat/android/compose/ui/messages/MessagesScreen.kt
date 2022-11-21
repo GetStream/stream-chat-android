@@ -47,8 +47,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
@@ -68,6 +66,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag

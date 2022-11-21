@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.notifications.handler
 
 import android.content.Context
-import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.models.Device
 
 /**
  * Generator responsible for providing information needed to register the push notifications provider

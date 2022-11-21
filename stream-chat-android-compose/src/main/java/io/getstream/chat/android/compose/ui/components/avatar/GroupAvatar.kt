@@ -30,9 +30,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.extensions.internal.getAvatarPositionOffset
+import io.getstream.chat.android.models.User
 
 /**
  * Default max number of avatars shown in the grid.

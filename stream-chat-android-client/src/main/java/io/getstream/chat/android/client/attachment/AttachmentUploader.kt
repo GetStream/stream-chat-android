@@ -19,11 +19,11 @@ package io.getstream.chat.android.client.attachment
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
 import io.getstream.logging.StreamLog
 import java.io.File
 

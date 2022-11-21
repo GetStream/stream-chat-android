@@ -22,8 +22,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.messages.list.reactions.ReactionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.reactions.edit.EditReactionsViewStyle

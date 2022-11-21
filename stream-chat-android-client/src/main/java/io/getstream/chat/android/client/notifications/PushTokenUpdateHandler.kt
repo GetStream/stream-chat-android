@@ -21,9 +21,9 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getNonNullString
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.PushProvider
 import io.getstream.logging.StreamLog
 
 internal class PushTokenUpdateHandler(context: Context) {

@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.persistance.repository.noop
 
-import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
+import io.getstream.chat.android.models.ChannelConfig
 
 /**
  * No-Op ChannelConfigRepository.

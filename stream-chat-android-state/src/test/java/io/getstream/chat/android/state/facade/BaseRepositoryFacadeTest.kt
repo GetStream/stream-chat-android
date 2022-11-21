@@ -17,8 +17,6 @@
 package io.getstream.chat.android.state.facade
 
 import androidx.annotation.CallSuper
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
@@ -29,6 +27,8 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.BeforeEach

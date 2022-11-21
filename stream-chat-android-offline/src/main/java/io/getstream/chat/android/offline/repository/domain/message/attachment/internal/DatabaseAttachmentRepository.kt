@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.repository.domain.message.attachment.internal
 
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
+import io.getstream.chat.android.models.Attachment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map

@@ -21,13 +21,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**

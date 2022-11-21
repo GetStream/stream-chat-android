@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.getstream.chat.android.client.models.ChannelCapabilities;
+import io.getstream.chat.android.models.ChannelCapabilities;
 import io.getstream.chat.android.ui.common.state.messages.MessageMode;
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;

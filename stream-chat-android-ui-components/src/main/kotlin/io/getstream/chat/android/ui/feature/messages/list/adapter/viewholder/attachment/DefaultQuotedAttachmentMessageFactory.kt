@@ -18,11 +18,11 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.at
 
 import android.view.View
 import android.view.ViewGroup
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.DefaultQuotedAttachmentView
 
 /**

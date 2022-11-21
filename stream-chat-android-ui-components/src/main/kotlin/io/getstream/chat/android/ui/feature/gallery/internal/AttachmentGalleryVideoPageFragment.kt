@@ -26,7 +26,7 @@ import android.widget.MediaController
 import android.widget.Toast
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryVideoBinding
