@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic
+import io.getstream.chat.android.state.plugin.logic.channel.internal.UnreadCountLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
@@ -103,7 +104,8 @@ internal class LogicRegistry internal constructor(
                 mutableState = mutableState,
                 globalMutableState = globalState,
                 searchLogic = SearchLogic(mutableState),
-                coroutineScope = coroutineScope
+                coroutineScope = coroutineScope,
+                unreadCountLogic = UnreadCountLogic(mutableState, globalState)
             )
 
             ChannelLogic(

@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
-import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -37,6 +36,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.logging.StreamLog
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
@@ -56,6 +56,7 @@ internal class ChannelStateLogic(
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val unreadCountLogic: UnreadCountLogic,
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
 
@@ -89,35 +90,7 @@ internal class ChannelStateLogic(
      * @param message [Message].
      */
     fun incrementUnreadCountIfNecessary(message: Message) {
-        val user = globalMutableState.user.value ?: return
-        val currentUserId = user.id
-
-        /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
-         * same time, one increment can be lost.
-         */
-        synchronized(this) {
-            val readState = mutableState.read.value?.copy() ?: ChannelUserRead(user)
-            val unreadCount: Int = readState.unreadMessages
-            val lastMessageSeenDate = readState.lastMessageSeenDate
-
-            val isMessageAlreadyInState = mutableState.visibleMessages.value.containsKey(message.id)
-            val shouldIncrementUnreadCount = !isMessageAlreadyInState &&
-                message.shouldIncrementUnreadCount(
-                    currentUserId = currentUserId,
-                    lastMessageAtDate = lastMessageSeenDate,
-                    isChannelMuted = globalMutableState.isChannelMutedForCurrentUser(mutableState.cid)
-                )
-
-            if (shouldIncrementUnreadCount) {
-                StreamLog.d(TAG) {
-                    "It is necessary to increment the unread count for channel: " +
-                        "${mutableState.channelData.value.id}. The last seen message was " +
-                        "at: $lastMessageSeenDate. " +
-                        "New unread count: ${unreadCount + 1}"
-                }
-                mutableState.increaseReadWith(message)
-            }
-        }
+        unreadCountLogic.incrementUnreadCountIfNecessary(message)
     }
 
     /**
