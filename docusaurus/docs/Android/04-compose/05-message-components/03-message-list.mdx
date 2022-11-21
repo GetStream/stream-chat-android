@@ -164,8 +164,7 @@ MessageList(
 
 `rememberMessageListState()` keeps a separate instance of `MessagesLazyListState` based on the `parentMessageId`. This helps you keep the scroll state of the main list intact when you enter and leave threads.
 
-You can also provide your own instance of `MessagesLazyListState` based on your custom logic where you define the starting scroll position of the state, the offset when scrolling to selected message and how it behaves based on user events. For example, when deep linking or calculating offset when scrolling to message.
-
+You can also provide your own instance of `MessagesLazyListState` where you define the starting scroll position of the state and how the focused message offset is calculated. For example, clicking on the original message contained within the reply will automatically scroll to the message and put it in focus. You can define where on the screen the focused message appears by passing in your own `MessageOffsetHandler`.
 ##  Customization
 
 We allow for a few ways of customizing the `MessageList` component, as per the signature:
