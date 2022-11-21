@@ -23,7 +23,7 @@ import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.StateFlow
 
 internal class ChatSocketStateService(initialState: State = State.Disconnected.Stopped) {
-    private val logger = StreamLog.getLogger("Chat:SocketState-Exp")
+    private val logger = StreamLog.getLogger("Chat:SocketState")
 
     suspend fun observer(onNewState: (State) -> Unit) {
         stateMachine.stateFlow.collect(onNewState)
