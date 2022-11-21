@@ -9,15 +9,21 @@ import io.getstream.chat.android.ui.viewmodel.mentions.bindView
 /**
  * [Mention List View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/)
  */
-class MentionListView : Fragment() {
+class MentionList : Fragment() {
 
     private lateinit var mentionListView: MentionListView
 
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/#usage)
+     */
     fun usage() {
         val viewModel: MentionListViewModel by viewModels()
         viewModel.bindView(mentionListView, viewLifecycleOwner)
     }
 
+    /**
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/#handling-actions)
+     */
     fun handlingActions() {
         mentionListView.setMentionSelectedListener { message ->
             // Handle a mention item being clicked
