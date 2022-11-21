@@ -53,7 +53,7 @@ Inside `MessageComposerView` you will find the following function:
 public fun renderState(state: MessageComposerState)
 ```
 
-The file containing `MessageComposerView` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/composer/MessageComposerView.kt).
+The file containing `MessageComposerView` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/composer/MessageComposerView.kt).
 
 Let's take a look at `MessageComposerState`:
 
@@ -64,7 +64,7 @@ public data class MessageComposerState(
 )
 ```
 
-The file containing `MessageComposerState` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/common/composer/MessageComposerState.kt).
+The file containing `MessageComposerState` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState.kt).
 
 `MessageComposerView` regulates the following capabilities:
 
@@ -100,7 +100,7 @@ correctly using own capabilities.
 
 ### Other capabilities
 
-There are channel capabilities which are not implemented in the SDK because we do not offer the corresponding components
+There are channel capabilities that are not implemented in the SDK because we do not offer the corresponding components
 or the functionality.
 You can implement these yourself after creating the correct components.
 
