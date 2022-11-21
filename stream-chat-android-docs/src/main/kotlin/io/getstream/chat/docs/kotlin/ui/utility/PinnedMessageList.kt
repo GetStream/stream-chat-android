@@ -10,17 +10,23 @@ import io.getstream.chat.android.ui.viewmodel.pinned.bindView
 /**
  * [Pinned Message List View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/pinned-message-list-view/)
  */
-class PinnedMessageListViewSnippets : Fragment() {
+class PinnedMessageList : Fragment() {
 
     private lateinit var pinnedMessageListView: PinnedMessageListView
 
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/utility-components/pinned-message-list-view/#usage)
+     */
     fun usage() {
         val viewModel: PinnedMessageListViewModel by viewModels {
-            PinnedMessageListViewModelFactory(cid = "channelType:channelId")
+            PinnedMessageListViewModelFactory(cid = "messaging:123")
         }
         viewModel.bindView(pinnedMessageListView, viewLifecycleOwner)
     }
 
+    /**
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/utility-components/pinned-message-list-view/#handling-actions)
+     */
     fun handlingActions() {
         pinnedMessageListView.setPinnedMessageSelectedListener { message ->
             // Handle a pinned message item being clicked
