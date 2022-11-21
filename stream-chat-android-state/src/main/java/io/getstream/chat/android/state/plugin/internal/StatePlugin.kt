@@ -37,7 +37,9 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
@@ -84,10 +86,11 @@ public class StatePlugin internal constructor(
     private val stateRegistry: StateRegistry,
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
-    private val globalState: GlobalState
+    private val globalState: GlobalState,
+    private val countBuffer: StartStopBuffer<Message>
 ) : Plugin,
     DependencyResolver,
-    QueryChannelsListener by QueryChannelsListenerState(logic),
+    QueryChannelsListener by QueryChannelsListenerState(logic, countBuffer),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
     ChannelMarkReadListener by ChannelMarkReadListenerState(stateRegistry),

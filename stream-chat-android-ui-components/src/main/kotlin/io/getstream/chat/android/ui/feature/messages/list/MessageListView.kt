@@ -125,7 +125,7 @@ import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.android.ui.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.navigation.destinations.WebLinkDestination
 import io.getstream.chat.android.ui.utils.ListenerDelegate
-import io.getstream.chat.android.ui.utils.StartStopBuffer
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.ui.utils.extensions.activity
 import io.getstream.chat.android.ui.utils.extensions.copyToClipboard
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper

@@ -26,6 +26,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic
@@ -58,6 +59,7 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
+    private val countBuffer: StartStopBuffer<Message>
 ) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
@@ -105,7 +107,7 @@ internal class LogicRegistry internal constructor(
                 globalMutableState = globalState,
                 searchLogic = SearchLogic(mutableState),
                 coroutineScope = coroutineScope,
-                unreadCountLogic = UnreadCountLogic(mutableState, globalState)
+                unreadCountLogic = UnreadCountLogic(mutableState, globalState, countBuffer)
             )
 
             ChannelLogic(
@@ -248,6 +250,7 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
             coroutineScope: CoroutineScope,
+            countBuffer: StartStopBuffer<Message>
         ): LogicRegistry {
             if (instance != null) {
                 logger.e {
@@ -262,7 +265,8 @@ internal class LogicRegistry internal constructor(
                 userPresence = userPresence,
                 repos = repos,
                 client = client,
-                coroutineScope = coroutineScope
+                coroutineScope = coroutineScope,
+                countBuffer = countBuffer
             )
                 .also { logicRegistry ->
                     instance = logicRegistry
