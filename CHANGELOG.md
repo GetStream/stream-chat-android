@@ -60,6 +60,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `streamUiShowReactionsForUnsentMessages` attribute to `MessageListView` that allows to show/hide the edit reactions bubble for unsent messages on the options overlay. [#4449](https://github.com/GetStream/stream-chat-android/pull/4449)
 
 ### ⚠️ Changed
 

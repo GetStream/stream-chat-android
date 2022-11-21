@@ -517,5 +517,8 @@
         <attr name="streamUiOptionsOverlayUserReactionsMargin" format="dimension|reference" />
         <!-- The margin between the selected message and the message option list on the options overlay. -->
         <attr name="streamUiOptionsOverlayMessageOptionsMargin" format="dimension|reference" />
+
+        <!-- Show the edit reactions bubble for unsent messages on the options overlay. -->
+        <attr name="streamUiShowReactionsForUnsentMessages" format="boolean" />
     </declare-styleable>
 </resources>
