@@ -161,7 +161,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         verify(messages).insertMessage(eq(message), eq(cache))
         verify(users).insertUsers(
-            org.mockito.kotlin.check { listUser ->
+            check { listUser ->
                 listUser `should contain same` expectedListOfUser
             }
         )
@@ -170,7 +170,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     @Test
     fun `When insert a list of channels, all participant users of these channels need to be stored`() =
         runTest {
-            val (listOfUser: List<io.getstream.chat.android.models.User>, listOfChannels: List<Channel>) =
+            val (listOfUser: List<User>, listOfChannels: List<Channel>) =
                 (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Channel>())) { acc, _ ->
                     val memberUser = randomUser()
                     val channelUser = randomUser()
@@ -196,7 +196,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
             verify(channels).insertChannels(eq(listOfChannels))
             verify(users).insertUsers(
-                org.mockito.kotlin.check { listUser ->
+                check { listUser ->
                     listUser `should contain same` listOfUser
                 }
             )
@@ -205,7 +205,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     @Test
     fun `When insert a list of messages, all participant users of these messages need to be stored`() =
         runTest {
-            val (listOfUser: List<io.getstream.chat.android.models.User>, listOfMessages: List<Message>) =
+            val (listOfUser: List<User>, listOfMessages: List<Message>) =
                 (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Message>())) { acc, _ ->
                     val messageUser = randomUser()
                     val replyToUser = randomUser()
@@ -233,7 +233,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
             verify(messages).insertMessages(eq(listOfMessages), eq(cache))
             verify(users).insertUsers(
-                org.mockito.kotlin.check { listUser ->
+                check { listUser ->
                     listUser `should contain same` listOfUser
                 }
             )

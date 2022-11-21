@@ -190,7 +190,7 @@ internal class WhenUploadAttachmentsTests {
                     attachments.run {
                         size == 2 &&
                             any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Failed } &&
-                            any { it.uploadId == "uploadId2" && it.uploadState == io.getstream.chat.android.models.Attachment.UploadState.Success }
+                            any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
                     }
                 },
                 eq(false)
@@ -243,7 +243,7 @@ internal class WhenUploadAttachmentsTests {
                     attachments.run {
                         size == 2 &&
                             any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Failed } &&
-                            any { it.uploadId == "uploadId2" && it.uploadState == io.getstream.chat.android.models.Attachment.UploadState.Success }
+                            any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
                     }
                 },
                 eq(false)
@@ -287,7 +287,7 @@ internal class WhenUploadAttachmentsTests {
                     attachments.run {
                         size == 2 &&
                             any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Success } &&
-                            any { it.uploadId == "uploadId2" && it.uploadState == io.getstream.chat.android.models.Attachment.UploadState.Success }
+                            any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
                     }
                 },
                 eq(false)

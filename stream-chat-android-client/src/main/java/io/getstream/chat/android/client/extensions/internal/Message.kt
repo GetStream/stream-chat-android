@@ -34,7 +34,7 @@ public fun Collection<Message>.updateUsers(users: Map<String, User>): List<Messa
  */
 @InternalStreamChatApi
 public fun Message.updateUsers(users: Map<String, User>): Message =
-    if (users().map(io.getstream.chat.android.models.User::id).any(users::containsKey)) {
+    if (users().map(User::id).any(users::containsKey)) {
         copy(
             user = if (users.containsKey(user.id)) {
                 users[user.id] ?: user

@@ -55,7 +55,7 @@ internal fun Channel.toEntity(): ChannelEntity {
         lastMessageId = latestMessageId,
         lastMessageAt = finalLatestMessageAt,
         createdByUserId = createdBy.id,
-        watcherIds = watchers.map(io.getstream.chat.android.models.User::id),
+        watcherIds = watchers.map(User::id),
         watcherCount = watcherCount,
         team = team,
         ownCapabilities = ownCapabilities,

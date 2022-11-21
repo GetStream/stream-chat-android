@@ -66,7 +66,7 @@ internal class CreateChannelTests {
                 argThat {
                     this.type == channelType &&
                         this.id == channelId &&
-                        this.members.map(io.getstream.chat.android.models.Member::getUserId).containsAll(members.map(io.getstream.chat.android.models.Member::getUserId)) &&
+                        this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.SYNC_NEEDED
                 }
@@ -101,7 +101,7 @@ internal class CreateChannelTests {
                 argThat {
                     this.type == channelType &&
                         this.id == channelId &&
-                        this.members.map(io.getstream.chat.android.models.Member::getUserId).containsAll(members.map(io.getstream.chat.android.models.Member::getUserId)) &&
+                        this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.IN_PROGRESS
                 }

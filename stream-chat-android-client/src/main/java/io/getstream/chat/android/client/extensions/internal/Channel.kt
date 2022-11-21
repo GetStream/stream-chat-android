@@ -33,8 +33,8 @@ private const val TAG = "Chat:ChannelTools"
  */
 @InternalStreamChatApi
 public fun Channel.users(): List<User> {
-    return members.map(io.getstream.chat.android.models.Member::user) +
-        read.map(io.getstream.chat.android.models.ChannelUserRead::user) +
+    return members.map(Member::user) +
+        read.map(ChannelUserRead::user) +
         createdBy +
         messages.flatMap { it.users() } +
         watchers
@@ -237,7 +237,7 @@ public fun Collection<Channel>.updateUsers(users: Map<String, User>): List<Chann
  * pinnedMessages of channel instance.
  */
 internal fun Channel.updateUsers(users: Map<String, User>): Channel {
-    return if (users().map(io.getstream.chat.android.models.User::id).any(users::containsKey)) {
+    return if (users().map(User::id).any(users::containsKey)) {
         copy(
             messages = messages.updateUsers(users),
             members = members.updateUsers(users).toList(),
