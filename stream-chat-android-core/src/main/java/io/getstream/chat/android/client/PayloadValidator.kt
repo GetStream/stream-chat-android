@@ -18,7 +18,9 @@ package io.getstream.chat.android.client
 
 public object PayloadValidator {
 
+    private const val KEY_SENDER_V1 = "sender_server"
     private const val KEY_SENDER = "sender"
+    private const val KEY_VERSION = "version"
     private const val KEY_TYPE = "type"
     private const val KEY_CHANNEL_ID = "channel_id"
     private const val KEY_MESSAGE_ID = "message_id"
@@ -26,10 +28,33 @@ public object PayloadValidator {
 
     private const val VALUE_STREAM_SENDER = "stream.chat"
     private const val VALUE_NEW_MESSAGE_TYPE = "message.new"
+    private const val VALUE_V1 = "v1"
+    private const val VALUE_V2 = "v2"
 
-    public fun isFromStreamServer(payload: Map<String, Any?>): Boolean = payload[KEY_SENDER] == VALUE_STREAM_SENDER
+    public fun isFromStreamServer(payload: Map<String, Any?>): Boolean = when (payload[KEY_VERSION]) {
+        VALUE_V1 -> isFromStreamServerV1(payload)
+        VALUE_V2 -> isFromStreamServerV2(payload)
+        else -> false
+    }
 
-    public fun isValidNewMessage(payload: Map<String, Any?>): Boolean =
+    private fun isFromStreamServerV1(payload: Map<String, Any?>): Boolean =
+        payload[KEY_SENDER_V1] == VALUE_STREAM_SENDER
+
+    private fun isFromStreamServerV2(payload: Map<String, Any?>): Boolean =
+        payload[KEY_SENDER] == VALUE_STREAM_SENDER
+
+    public fun isValidNewMessage(payload: Map<String, Any?>): Boolean = when (payload[KEY_VERSION]) {
+        VALUE_V1 -> isValidNewMessageV1(payload)
+        VALUE_V2 -> isValidNewMessageV2(payload)
+        else -> false
+    }
+
+    private fun isValidNewMessageV1(payload: Map<String, Any?>): Boolean =
+        !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
+            !(payload[KEY_MESSAGE_ID] as? String).isNullOrBlank() &&
+            !(payload[KEY_CHANNEL_TYPE] as? String).isNullOrBlank()
+
+    private fun isValidNewMessageV2(payload: Map<String, Any?>): Boolean =
         payload[KEY_TYPE] == VALUE_NEW_MESSAGE_TYPE &&
             !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
             !(payload[KEY_MESSAGE_ID] as? String).isNullOrBlank() &&
