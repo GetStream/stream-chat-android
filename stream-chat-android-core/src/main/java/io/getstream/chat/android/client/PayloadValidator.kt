@@ -31,29 +31,59 @@ public object PayloadValidator {
     private const val VALUE_V1 = "v1"
     private const val VALUE_V2 = "v2"
 
+    /**
+     * Verify the payload comes from Stream Server.
+     *
+     * @return true if the payload comes from Stream Server.
+     */
     public fun isFromStreamServer(payload: Map<String, Any?>): Boolean = when (payload[KEY_VERSION]) {
         VALUE_V1 -> isFromStreamServerV1(payload)
         VALUE_V2 -> isFromStreamServerV2(payload)
         else -> false
     }
 
+    /**
+     * Verify the payload comes from Stream Server using v1 fields.
+     *
+     * @return true if the payload comes from Stream Server.
+     */
     private fun isFromStreamServerV1(payload: Map<String, Any?>): Boolean =
         payload[KEY_SENDER_V1] == VALUE_STREAM_SENDER
 
+    /**
+     * Verify the payload comes from Stream Server using v2 fields.
+     *
+     * @return true if the payload comes from Stream Server.
+     */
     private fun isFromStreamServerV2(payload: Map<String, Any?>): Boolean =
         payload[KEY_SENDER] == VALUE_STREAM_SENDER
 
+    /**
+     * Verify the payload contains needed field for a new message.
+     *
+     * @return true if the payload contains all needed fields for a new message.
+     */
     public fun isValidNewMessage(payload: Map<String, Any?>): Boolean = when (payload[KEY_VERSION]) {
         VALUE_V1 -> isValidNewMessageV1(payload)
         VALUE_V2 -> isValidNewMessageV2(payload)
         else -> false
     }
 
+    /**
+     * Verify the payload contains needed field for a new message using v1 fields.
+     *
+     * @return true if the payload contains all needed fields for a new message.
+     */
     private fun isValidNewMessageV1(payload: Map<String, Any?>): Boolean =
         !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
             !(payload[KEY_MESSAGE_ID] as? String).isNullOrBlank() &&
             !(payload[KEY_CHANNEL_TYPE] as? String).isNullOrBlank()
 
+    /**
+     * Verify the payload contains needed field for a new message using v2 fields.
+     *
+     * @return true if the payload contains all needed fields for a new message.
+     */
     private fun isValidNewMessageV2(payload: Map<String, Any?>): Boolean =
         payload[KEY_TYPE] == VALUE_NEW_MESSAGE_TYPE &&
             !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
