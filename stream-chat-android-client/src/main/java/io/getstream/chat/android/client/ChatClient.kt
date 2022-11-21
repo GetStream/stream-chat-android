@@ -628,6 +628,10 @@ internal constructor(
     @InternalStreamChatApi
     public fun setUserWithoutConnectingIfNeeded() {
         if (isUserSet() || clientState.initializationState.value != InitializationState.NOT_INITIALIZED) {
+            logger.d {
+                "[setUserWithoutConnectingIfNeeded] User is already set: ${isUserSet()}" +
+                    " Initialization state: ${clientState.initializationState.value}"
+            }
             return
         }
 
@@ -761,7 +765,7 @@ internal constructor(
      * Uploads a file for the given channel. Progress can be accessed via [callback].
      *
      * The Stream CDN imposes the following restrictions on file uploads:
-     * - The maximum file size is 20 MB
+     * - The maximum file size is 100 MB
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
@@ -789,7 +793,7 @@ internal constructor(
      * Uploads an image for the given channel. Progress can be accessed via [callback].
      *
      * The Stream CDN imposes the following restrictions on image uploads:
-     * - The maximum image size is 20 MB
+     * - The maximum image size is 100 MB
      * - Supported MIME types are listed in [StreamCdnImageMimeTypes.SUPPORTED_IMAGE_MIME_TYPES]
      *
      * @param channelType The channel type. ie messaging.
@@ -2650,7 +2654,7 @@ internal constructor(
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
-        private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING
+        private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
 
         /**
          * Sets the log level to be used by the client.
@@ -2709,7 +2713,7 @@ internal constructor(
          * to upload files and images.
          *
          * The default implementation uses Stream's own CDN to store these files,
-         * which has a 20 MB upload size limit.
+         * which has a 100 MB upload size limit.
          *
          * For more info, see
          * [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
@@ -2824,6 +2828,9 @@ internal constructor(
             this.distinctApiCalls = false
         }
 
+        /**
+         * An enumeration of various network types used as a constraint inside upload attachments worker.
+         */
         public fun uploadAttachmentsNetworkType(type: UploadAttachmentsNetworkType): Builder = apply {
             this.uploadAttachmentsNetworkType = type
         }

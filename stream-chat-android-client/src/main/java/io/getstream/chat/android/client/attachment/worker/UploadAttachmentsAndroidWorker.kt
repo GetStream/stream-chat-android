@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.attachment.worker
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -26,6 +27,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
+import io.getstream.logging.StreamLog
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -38,6 +40,7 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
+        val logger = StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
 
@@ -51,8 +54,14 @@ internal class UploadAttachmentsAndroidWorker(
             messageId
         ).let { result ->
             when (result) {
-                is io.getstream.chat.android.client.utils.Result.Success -> Result.success()
-                is io.getstream.chat.android.client.utils.Result.Failure -> Result.failure()
+                is io.getstream.chat.android.client.utils.Result.Success -> {
+                    logger.d { "[doWork] Attachments uploaded successfully" }
+                    Result.success()
+                }
+                is io.getstream.chat.android.client.utils.Result.Failure -> {
+                    logger.i { "[doWork] Error while uploading attachments: ${result.value}" }
+                    Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to result)).build())
+                }
             }
         }
     }
@@ -61,6 +70,7 @@ internal class UploadAttachmentsAndroidWorker(
         private const val DATA_MESSAGE_ID = "message_id"
         private const val DATA_CHANNEL_TYPE = "channel_type"
         private const val DATA_CHANNEL_ID = "channel_id"
+        private const val ERROR_KEY = "error"
 
         fun start(
             context: Context,
@@ -80,6 +90,9 @@ internal class UploadAttachmentsAndroidWorker(
                 )
                 .build()
 
+            StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
+                .d { "[start] Enqueueing attachments upload work for $messageId" }
+
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
                 ExistingWorkPolicy.KEEP,
@@ -95,6 +108,8 @@ internal class UploadAttachmentsAndroidWorker(
          * @param workId UUID of the enqueued work.
          */
         fun stop(context: Context, workId: UUID) {
+            StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
+                .d { "[stop] Upload attachments work cancelled" }
             WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }

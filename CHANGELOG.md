@@ -43,6 +43,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `StateAwarePlugin` interface.[4435](https://github.com/GetStream/stream-chat-android/pull/4435)
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -310,6 +311,14 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: Removed compose `MessageMode` indicating whether the list is in thread mode or normal mode in favor of ui-common `MessageMode`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+
+# November 18th, 2022 - 5.11.7
+## stream-chat-android-client
+### ⬆️ Improved
+- Improved logs for sending message with attachments. [#4448](https://github.com/GetStream/stream-chat-android/pull/4448)
+
+### ⚠️ Changed
+- Changed default worker's constraints from `NetworkType.NOT_ROAMING` to `NetworkType.CONNECTED`. [#4448](https://github.com/GetStream/stream-chat-android/pull/4448)
 
 # November 16th, 2022 - 5.11.6
 ## stream-chat-android-client
