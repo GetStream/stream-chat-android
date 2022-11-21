@@ -10,15 +10,21 @@ import io.getstream.chat.android.ui.viewmodel.mentions.MentionListViewModelBindi
 /**
  * [Mention List View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/)
  */
-public class MentionListViewSnippets extends Fragment {
+public class MentionList extends Fragment {
 
     private MentionListView mentionListView;
 
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/#usage)
+     */
     public void usage() {
         MentionListViewModel viewModel = new ViewModelProvider(this).get(MentionListViewModel.class);
         MentionListViewModelBinding.bind(viewModel, mentionListView, getViewLifecycleOwner());
     }
 
+    /**
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/#handling-actions)
+     */
     public void handlingActions() {
         mentionListView.setMentionSelectedListener(message -> {
             // Handle a mention item being clicked

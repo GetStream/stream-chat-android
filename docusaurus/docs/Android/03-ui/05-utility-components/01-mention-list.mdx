@@ -1,7 +1,7 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Mention List View
+# Mention List
 
 `MentionListView` is a UI Component that shows previews of messages that contain mentions of the current user.
 
@@ -14,24 +14,10 @@ import TabItem from '@theme/TabItem';
 You can add this View via XML:
 
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<io.getstream.chat.android.ui.feature.mentions.list.MentionListView
+    android:id="@+id/mentionsListView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-
-    <io.getstream.chat.android.ui.mention.list.MentionListView
-        android:id="@+id/mentionsListView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:layout_height="match_parent" />
 ```
 
 We recommend using this view with its [ViewModel](../01-overview.mdx#viewmodels), which supplies it with data from the Stream API.
@@ -86,4 +72,4 @@ mentionListView.setMentionSelectedListener(message -> {
 </TabItem>
 </Tabs>
 
-The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.mention.list/-mention-list-view/).
+The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.mentions.list/-mention-list-view/).
