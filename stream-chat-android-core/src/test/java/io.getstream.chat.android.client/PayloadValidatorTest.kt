@@ -46,25 +46,152 @@ internal class PayloadValidatorTest {
     companion object {
 
         @JvmStatic
-        fun isFromStreamServerArguments() = listOf(
+        fun isFromStreamServerArguments() =
+            isFromStreamServerV1Arguments() +
+                isFromStreamServerV2Arguments() +
+                isFromStreamServerUnknownVersionArguments()
+
+        private fun isFromStreamServerV1Arguments() = listOf(
+            Arguments.of(mapOf("version" to "v1"), false),
+            Arguments.of(mapOf("version" to "v1", "sender_server" to ""), false),
+            Arguments.of(mapOf("version" to "v1", "sender_server" to null), false),
+            Arguments.of(mapOf("version" to "v1", "sender_server" to randomString()), false),
+            Arguments.of(mapOf("version" to "v1", "sender_server" to randomInt()), false),
+            Arguments.of(mapOf("version" to "v1", "sender_server" to randomLong()), false),
+            Arguments.of(mapOf("version" to "v1", "sender_server" to "stream.chat"), true),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "sender_server" to "stream.chat",
+                    randomString() to randomString()
+                ),
+                true
+            ),
+        )
+
+        private fun isFromStreamServerV2Arguments() = listOf(
+            Arguments.of(mapOf("version" to "v2"), false),
+            Arguments.of(mapOf("version" to "v2", "sender" to ""), false),
+            Arguments.of(mapOf("version" to "v2", "sender" to null), false),
+            Arguments.of(mapOf("version" to "v2", "sender" to randomString()), false),
+            Arguments.of(mapOf("version" to "v2", "sender" to randomInt()), false),
+            Arguments.of(mapOf("version" to "v2", "sender" to randomLong()), false),
+            Arguments.of(mapOf("version" to "v2", "sender" to "stream.chat"), true),
+            Arguments.of(mapOf("version" to "v2", "sender" to "stream.chat", randomString() to randomString()), true),
+        )
+
+        private fun isFromStreamServerUnknownVersionArguments() = listOf(
             Arguments.of(emptyMap<String, Any?>(), false),
+            Arguments.of(mapOf("version" to ""), false),
+            Arguments.of(mapOf("version" to randomString()), false),
             Arguments.of(mapOf("sender" to ""), false),
+            Arguments.of(mapOf("version" to randomString(), "sender" to ""), false),
             Arguments.of(mapOf("sender" to null), false),
+            Arguments.of(mapOf("version" to randomString(), "sender" to null), false),
             Arguments.of(mapOf("sender" to randomString()), false),
+            Arguments.of(mapOf("version" to randomString(), "sender" to randomString()), false),
             Arguments.of(mapOf("sender" to randomInt()), false),
+            Arguments.of(mapOf("version" to randomString(), "sender" to randomInt()), false),
             Arguments.of(mapOf("sender" to randomLong()), false),
-            Arguments.of(mapOf("sender" to "stream.chat"), true),
-            Arguments.of(mapOf("sender" to "stream.chat", randomString() to randomString()), true),
+            Arguments.of(mapOf("version" to randomString(), "sender" to randomLong()), false),
+            Arguments.of(mapOf("sender" to "stream.chat"), false),
+            Arguments.of(mapOf("version" to randomString(), "sender" to "stream.chat"), false),
+            Arguments.of(mapOf("sender" to "stream.chat", randomString() to randomString()), false),
+            Arguments.of(
+                mapOf(
+                    "version" to randomString(),
+                    "sender" to "stream.chat",
+                    randomString() to randomString()
+                ),
+                false
+            ),
         )
 
         @JvmStatic
+        fun isValidNewMessageArguments() =
+            isValidNewMessageV1Arguments() +
+                isValidNewMessageV2Arguments()
+
         @Suppress("LongMethod")
-        fun isValidNewMessageArguments() = listOf(
+        private fun isValidNewMessageV1Arguments() = listOf(
             Arguments.of(emptyMap<String, Any?>(), false),
-            Arguments.of(mapOf("type" to ""), false),
-            Arguments.of(mapOf("type" to "message.new"), false),
+            Arguments.of(mapOf("version" to "v1"), false),
             Arguments.of(
                 mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                ),
+                false
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                ),
+                false
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                ),
+                false
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                ),
+                false
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                true
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to null,
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to null,
+                    "channel_type" to randomString(),
+                ),
+                false
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to null,
+                ),
+                false
+            ),
+        )
+
+        @Suppress("LongMethod")
+        private fun isValidNewMessageV2Arguments() = listOf(
+            Arguments.of(emptyMap<String, Any?>(), false),
+            Arguments.of(mapOf("version" to "v2", "type" to ""), false),
+            Arguments.of(mapOf("version" to "v2", "type" to "message.new"), false),
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
                     "type" to "",
                     "channel_id" to randomString(),
                 ),
@@ -72,6 +199,7 @@ internal class PayloadValidatorTest {
             ),
             Arguments.of(
                 mapOf(
+                    "version" to "v2",
                     "type" to "message.new",
                     "channel_id" to randomString(),
                 ),
@@ -79,6 +207,7 @@ internal class PayloadValidatorTest {
             ),
             Arguments.of(
                 mapOf(
+                    "version" to "v2",
                     "type" to "",
                     "channel_id" to randomString(),
                     "message_id" to randomString(),
@@ -87,6 +216,7 @@ internal class PayloadValidatorTest {
             ),
             Arguments.of(
                 mapOf(
+                    "version" to "v2",
                     "type" to "message.new",
                     "channel_id" to randomString(),
                     "message_id" to randomString(),
@@ -95,6 +225,7 @@ internal class PayloadValidatorTest {
             ),
             Arguments.of(
                 mapOf(
+                    "version" to "v2",
                     "type" to "",
                     "channel_id" to randomString(),
                     "message_id" to randomString(),
@@ -104,6 +235,7 @@ internal class PayloadValidatorTest {
             ),
             Arguments.of(
                 mapOf(
+                    "version" to "v2",
                     "type" to "message.new",
                     "channel_id" to randomString(),
                     "message_id" to randomString(),
@@ -113,6 +245,7 @@ internal class PayloadValidatorTest {
             ),
             Arguments.of(
                 mapOf(
+                    "version" to "v2",
                     "type" to "message.new",
                     "channel_id" to null,
                     "message_id" to randomString(),
@@ -122,6 +255,7 @@ internal class PayloadValidatorTest {
             ),
             Arguments.of(
                 mapOf(
+                    "version" to "v2",
                     "type" to "message.new",
                     "channel_id" to randomString(),
                     "message_id" to null,
@@ -131,6 +265,7 @@ internal class PayloadValidatorTest {
             ),
             Arguments.of(
                 mapOf(
+                    "version" to "v2",
                     "type" to "message.new",
                     "channel_id" to randomString(),
                     "message_id" to randomString(),
