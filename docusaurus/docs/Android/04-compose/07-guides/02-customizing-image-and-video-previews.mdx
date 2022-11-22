@@ -51,7 +51,7 @@ public fun MediaAttachmentFactory(
     )
 ```
 
-* `maximumNumberOfPreviewedItems`: Controls the maximum amount of tiles that can be displayed when previewing attachments inside the message list. In case this value is smaller than the number of attachments contained in the message, a count informing us how many more are left is displayed.
+* `maximumNumberOfPreviewedItems`: Controls the maximum number of tiles that can be displayed when previewing attachments inside the message list. In case there are more attachments inside the message than are able to be previewed, the remaining attachment count is displayed.
 * `itemOverlayContent`: Overlays a UI item over the attachment preview inside the message list. By default this is used to display a play button icon over video attachments, signaling their type to the user.
 * `previewItemOverlayContent`: Serves the same function as `itemOverlayContent`, but used inside `MessageComposer` when selecting attachments instead.
 
