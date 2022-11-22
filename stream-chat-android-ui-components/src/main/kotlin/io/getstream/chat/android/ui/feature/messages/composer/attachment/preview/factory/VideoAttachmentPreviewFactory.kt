@@ -18,8 +18,8 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 
 import android.view.ViewGroup
 import com.google.android.material.shape.ShapeAppearanceModel
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiVideoAttachmentPreviewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
