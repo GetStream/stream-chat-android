@@ -50,7 +50,7 @@ object Versions {
     internal const val KFIXTURE = "0.2.0"
     internal const val KLUENT = "1.72"
     internal const val KOTLIN = "1.7.20"
-    internal const val KOTLIN_BINARY_VALIDATOR = "0.11.1"
+    internal const val KOTLIN_BINARY_VALIDATOR = "0.12.1"
     internal const val KSP = "1.7.20-1.0.7"
     internal const val LEAK_CANARY = "2.4"
     internal const val MATERIAL_COMPONENTS = "1.6.1"
