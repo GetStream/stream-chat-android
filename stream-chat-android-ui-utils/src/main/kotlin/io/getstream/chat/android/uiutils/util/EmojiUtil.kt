@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.uiutils.util
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 
 /**
  * Util used for detecting emojis inside messages.

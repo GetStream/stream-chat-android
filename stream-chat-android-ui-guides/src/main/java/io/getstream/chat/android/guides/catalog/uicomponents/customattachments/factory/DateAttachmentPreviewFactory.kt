@@ -18,8 +18,8 @@ package io.getstream.chat.android.guides.catalog.uicomponents.customattachments.
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.guides.databinding.ItemDateAttachmentPreviewBinding
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory

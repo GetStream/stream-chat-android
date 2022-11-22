@@ -19,7 +19,7 @@
 package io.getstream.chat.android.ui.viewmodel.channels
 
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
 
 /**

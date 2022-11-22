@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.state.querychannels
 
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 
 public sealed class ChannelsStateData {
     /** No query is currently running.

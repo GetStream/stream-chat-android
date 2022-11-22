@@ -25,7 +25,7 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater

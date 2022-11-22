@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.state.channels.list
 
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 
 /**
  * Represents each channel item we show in the list of channels.

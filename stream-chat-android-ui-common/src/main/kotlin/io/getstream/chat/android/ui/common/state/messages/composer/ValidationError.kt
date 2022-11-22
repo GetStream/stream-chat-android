@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages.composer
 
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 
 /**
  * Represents a validation error for the user input.

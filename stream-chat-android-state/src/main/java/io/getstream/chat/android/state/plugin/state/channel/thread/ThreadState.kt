@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.state.channel.thread
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 import kotlinx.coroutines.flow.StateFlow
 
 /** State container with reactive data of a thread.*/

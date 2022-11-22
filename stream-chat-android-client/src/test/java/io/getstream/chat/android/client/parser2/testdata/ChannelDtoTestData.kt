@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
-import io.getstream.chat.android.client.models.ChannelCapabilities
+import io.getstream.chat.android.models.ChannelCapabilities
 import org.intellij.lang.annotations.Language
 import java.util.Date
 

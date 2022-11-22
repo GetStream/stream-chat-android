@@ -18,10 +18,10 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.Mother.randomUser
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.randomString
 import okhttp3.OkHttpClient
 import okhttp3.WebSocketListener

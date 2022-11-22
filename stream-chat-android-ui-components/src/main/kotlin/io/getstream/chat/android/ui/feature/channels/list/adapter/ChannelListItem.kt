@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.channels.list.adapter
 
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 
 public sealed class ChannelListItem {
     public data class ChannelItem(val channel: Channel) : ChannelListItem()

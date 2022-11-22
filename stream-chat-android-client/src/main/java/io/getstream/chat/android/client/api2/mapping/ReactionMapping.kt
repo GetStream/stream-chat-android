@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.models.Reaction
 
 internal fun Reaction.toDto(): UpstreamReactionDto =
     UpstreamReactionDto(

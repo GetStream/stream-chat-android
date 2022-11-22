@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.channels.actions
 
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 
 /**
  * Represents the list of actions users can take with selected channels.

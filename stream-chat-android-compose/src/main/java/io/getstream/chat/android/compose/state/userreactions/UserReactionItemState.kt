@@ -17,7 +17,7 @@
 package io.getstream.chat.android.compose.state.userreactions
 
 import androidx.compose.ui.graphics.painter.Painter
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 /**
  * UI representation of user reaction.

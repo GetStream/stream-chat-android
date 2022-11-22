@@ -18,8 +18,8 @@ package io.getstream.chat.android.ui.common.helper.internal
 
 import androidx.core.content.MimeTypeFilter
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**

@@ -20,10 +20,10 @@ import android.content.Context
 import com.huawei.hms.aaid.HmsInstanceId
 import com.huawei.hms.api.ConnectionResult.SUCCESS
 import com.huawei.hms.api.HuaweiApiAvailability
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.PushProvider
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
