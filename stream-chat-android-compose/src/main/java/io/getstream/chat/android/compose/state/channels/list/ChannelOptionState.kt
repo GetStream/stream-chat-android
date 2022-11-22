@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.state.channels.list
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import io.getstream.chat.android.common.state.ChannelAction
+import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 
 /**
  * UI representation of a Channel option, when the user selects a channel in the list.

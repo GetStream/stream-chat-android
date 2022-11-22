@@ -40,22 +40,6 @@ internal class CallPostponeHelper(
     private val logger = StreamLog.getLogger("Chat:CallPostponeHelper")
 
     /**
-     * Postpones or immediately executes the call based on [shouldPostpone] parameter.
-     *
-     * @param shouldPostpone Whether the call should be postponed
-     * @param call A call to be run when the socket connection is established.
-     *
-     * @return Executable async [Call] responsible for querying channels
-     */
-    internal fun <T : Any> postponeCallIfNeeded(shouldPostpone: Boolean, call: () -> Call<T>): Call<T> {
-        return if (shouldPostpone) {
-            postponeCall(call)
-        } else {
-            call()
-        }
-    }
-
-    /**
      * Postpones call.
      *
      * @param call A call to be run when the socket connection is established.
@@ -75,9 +59,9 @@ internal class CallPostponeHelper(
             } catch (e: Throwable) {
                 logger.e { "[postponeCall] failed: $e" }
                 Result.Failure(
-                    ChatError(
-                        message = "Failed to perform call. Waiting for WS connection was too long."
-                    )
+                    ChatError.GenericError(
+                        message = "Failed to perform call. Waiting for WS connection was too long.",
+                    ),
                 )
             }
         }

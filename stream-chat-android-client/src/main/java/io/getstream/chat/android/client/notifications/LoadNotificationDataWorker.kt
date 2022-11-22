@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.zipWith
-import io.getstream.chat.android.client.utils.stringify
 import io.getstream.logging.StreamLog
 
 internal class LoadNotificationDataWorker(
@@ -68,7 +67,7 @@ internal class LoadNotificationDataWorker(
                     Result.success()
                 }
                 is io.getstream.chat.android.client.utils.Result.Failure -> {
-                    logger.e { "Error while loading notification data: ${result.value.stringify()}" }
+                    logger.e { "Error while loading notification data: ${result.value}" }
                     Result.failure()
                 }
             }

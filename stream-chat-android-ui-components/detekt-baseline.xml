@@ -91,8 +91,8 @@
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$*</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)</ID>
     <ID>MaxLineLength:FootnoteDecorator.kt$FootnoteDecorator$SyncStatus.IN_PROGRESS</ID>
-    <ID>MaxLineLength:GapView.kt$GapView$constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)</ID>
     <ID>MaxLineLength:GiphyAttachmentViewHolder.kt$GiphyAttachmentViewHolder$*</ID>
+    <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle$*</ID>
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentPlaceHolderIcon)</ID>
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentProgressIcon)</ID>
     <ID>MaxLineLength:GiphyViewHolderStyle.kt$GiphyViewHolderStyle$*</ID>
@@ -124,8 +124,6 @@
     <ID>MaxLineLength:MessageListViewModelFactory.kt$MessageListViewModelFactory$?:</ID>
     <ID>MaxLineLength:MessageListViewStyle.kt$MessageListViewStyle$*</ID>
     <ID>MaxLineLength:MessageReplyStyle.kt$MessageReplyStyle$*</ID>
-    <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$setStrokeTint(style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper))</ID>
-    <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$val tintColor = style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)</ID>
     <ID>MaxLineLength:ReactionsDecorator.kt$ReactionsDecorator$expectedReactionsAndOffsetWidth > rootConstraintLayout.measuredWidth -> expectedReactionsAndOffsetWidth - rootWidth</ID>
     <ID>MaxLineLength:ScrollButtonViewStyle.kt$ScrollButtonViewStyle$*</ID>
     <ID>MaxLineLength:SearchResultListViewStyle.kt$SearchResultListViewStyle$*</ID>

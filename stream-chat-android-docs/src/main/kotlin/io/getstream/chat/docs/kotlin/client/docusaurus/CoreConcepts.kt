@@ -1,8 +1,8 @@
 package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

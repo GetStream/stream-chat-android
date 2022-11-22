@@ -24,12 +24,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.utils.Event
 import kotlinx.coroutines.launch
 
 class GroupChatInfoMemberOptionsViewModel(

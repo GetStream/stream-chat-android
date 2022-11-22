@@ -2,8 +2,7 @@ package io.getstream.chat.docs.kotlin.client.cms
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.client.utils.Result
 
 class UserPermissions(val client: ChatClient) {

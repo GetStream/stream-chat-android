@@ -20,14 +20,14 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import java.util.Date
 
 /**
@@ -121,10 +121,10 @@ internal class SendReactionListenerDatabase(
     override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
-                Result.Failure(ChatError(message = "Current user is null!"))
+                Result.Failure(ChatError.GenericError(message = "Current user is null!"))
             }
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.Failure(ChatError(message = "Reaction::messageId and Reaction::type cannot be empty!"))
+                Result.Failure(ChatError.GenericError("Reaction::messageId and Reaction::type cannot be empty!"))
             }
             else -> {
                 Result.Success(Unit)

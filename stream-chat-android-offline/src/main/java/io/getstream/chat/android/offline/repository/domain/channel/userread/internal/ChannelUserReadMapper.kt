@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.userread.internal
 
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.User
 
 internal fun ChannelUserRead.toEntity(): ChannelUserReadEntity =
     ChannelUserReadEntity(getUserId(), lastRead, unreadMessages, lastMessageSeenDate)

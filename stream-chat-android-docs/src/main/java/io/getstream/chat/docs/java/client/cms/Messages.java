@@ -5,28 +5,24 @@ import android.content.Context;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.errors.ChatError;
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.Reaction;
-import io.getstream.chat.android.client.models.SearchMessagesResult;
-import io.getstream.chat.android.client.models.UploadedImage;
-import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.models.Attachment;
+import io.getstream.chat.android.models.Filters;
+import io.getstream.chat.android.models.Message;
+import io.getstream.chat.android.models.Reaction;
+import io.getstream.chat.android.models.User;
 import io.getstream.chat.android.client.utils.ProgressCallback;
-import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.docs.java.client.helpers.MyFileUploader;
 
 public class Messages {
@@ -46,7 +42,7 @@ public class Messages {
 
             channelClient.sendMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Message sentMessage = ((Result.Success<Message>) result).getValue();
+                    Message sentMessage = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -65,7 +61,7 @@ public class Messages {
             Message message = new Message();
             message.setText("@Josh I told them I was pesca-pescatarian. Which is one who eats solely fish who eat other fish.");
             message.getAttachments().add(attachment);
-            message.setMentionedUsersIds(Arrays.asList("josh-id"));
+            message.setMentionedUsersIds(Collections.singletonList("josh-id"));
             message.getExtraData().put("anotherCustomField", 234);
 
             // Send the message to the channel
@@ -78,7 +74,7 @@ public class Messages {
         public void getAMessage() {
             channelClient.getMessage("message-id").enqueue(result -> {
                 if (result.isSuccess()) {
-                    Message message = ((Result.Success<Message>) result).getValue();
+                    Message message = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -95,7 +91,7 @@ public class Messages {
             // Send the message to the channel
             channelClient.updateMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Message updatedMessage = ((Result.Success<Message>) result).getValue();
+                    Message updatedMessage = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -109,7 +105,7 @@ public class Messages {
             // Send the message to the channel
             channelClient.updateMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Message updatedMessage = ((Result.Success<Message>) result).getValue();
+                    Message updatedMessage = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -122,7 +118,7 @@ public class Messages {
         public void deleteAMessage() {
             channelClient.deleteMessage("message-id", false).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Message deletedMessage = ((Result.Success<Message>) result).getValue();
+                    Message deletedMessage = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -157,7 +153,7 @@ public class Messages {
                 if (result.isSuccess()) {
                     // Successful upload, you can now attach this image
                     // to a message that you then send to a channel
-                    String imageUrl = ((Result.Success<UploadedImage>) result).getValue().getFile();
+                    String imageUrl = result.getOrNull().getFile();
 
                     Attachment attachment = new Attachment();
                     attachment.setType("image");
@@ -229,7 +225,7 @@ public class Messages {
             boolean enforceUnique = false; // Don't remove other existing reactions
             channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Reaction sentReaction = ((Result.Success<Reaction>) result).getValue();
+                    Reaction sentReaction = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -239,7 +235,7 @@ public class Messages {
             enforceUnique = true;
             channelClient.sendReaction(reaction, enforceUnique).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Reaction sentReaction = ((Result.Success<Reaction>) result).getValue();
+                    Reaction sentReaction = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -253,7 +249,7 @@ public class Messages {
             String reactionType = "like";
             channelClient.deleteReaction("message-id", reactionType).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Message message = ((Result.Success<Message>) result).getValue();
+                    Message message = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -269,7 +265,7 @@ public class Messages {
             int limit = 10;
             channelClient.getReactions("message-id", offset, limit).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<Reaction> reactions = ((Result.Success<List<Reaction>>) result).getValue();
+                    List<Reaction> reactions = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -312,7 +308,7 @@ public class Messages {
             // Send the message to the channel
             channelClient.sendMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Message sentMessage = ((Result.Success<Message>) result).getValue();
+                    Message sentMessage = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -327,7 +323,7 @@ public class Messages {
             // Retrieve the first 20 messages inside the thread
             client.getReplies(parentMessage.getId(), limit).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<Message> replies = ((Result.Success<List<Message>>) result).getValue();
+                    List<Message> replies = result.getOrNull();
                 } else {
                     // Handle error
                 }
@@ -372,7 +368,7 @@ public class Messages {
             int offset = 0;
             int limit = 10;
 
-            FilterObject channelFilter = Filters.in("members", Arrays.asList("john"));
+            FilterObject channelFilter = Filters.in("members", Collections.singletonList("john"));
             FilterObject messageFilter = Filters.autocomplete("text", "supercalifragilisticexpialidocious");
 
             client.searchMessages(
@@ -384,7 +380,7 @@ public class Messages {
                     null
             ).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<Message> messages = ((Result.Success<SearchMessagesResult>) result).getValue().getMessages();
+                    List<Message> messages = result.getOrNull().getMessages();
                 } else {
                     // Handle error
                 }
@@ -425,7 +421,7 @@ public class Messages {
         public void retrievePinnedMessages() {
             channelClient.query(new QueryChannelRequest()).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<Message> pinnedMessages = ((Result.Success<Channel>) result).getValue().getPinnedMessages();
+                    List<Message> pinnedMessages = result.getOrNull().getPinnedMessages();
                 } else {
                     // Handle error
                 }
@@ -437,7 +433,7 @@ public class Messages {
             channelClient.getPinnedMessages(10, QuerySortByField.descByName("pinnedAt"), new PinnedMessagesPagination.BeforeDate(new Date(), false))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
-                            List<Message> pinnedMessages = ((Result.Success<List<Message>>) result).getValue();
+                            List<Message> pinnedMessages = result.getOrNull();
                         } else {
                             // Handle error
                         }
@@ -449,7 +445,7 @@ public class Messages {
             channelClient.getPinnedMessages(10, QuerySortByField.descByName("pinnedAt"), new PinnedMessagesPagination.BeforeDate(nextDate, false))
                     .enqueue(result -> {
                         if (result.isSuccess()) {
-                            List<Message> pinnedMessages = ((Result.Success<List<Message>>) result).getValue();
+                            List<Message> pinnedMessages = result.getOrNull();
                         } else {
                             // Handle error
                         }
@@ -471,10 +467,10 @@ public class Messages {
 
             channelClient.sendMessage(message).enqueue(result -> {
                 if (result.isSuccess()) {
-                    String messageId = ((Result.Success<Message>) result).getValue().getId();
+                    String messageId = result.getOrNull().getId();
                     client.translate(messageId, "fr").enqueue(translationResult -> {
                         if (result.isSuccess()) {
-                            Message translatedMessage = ((Result.Success<Message>) result).getValue();
+                            Message translatedMessage = result.getOrNull();
                             String translation = translatedMessage.getI18n().get("fr_text");
                         }
                          else {

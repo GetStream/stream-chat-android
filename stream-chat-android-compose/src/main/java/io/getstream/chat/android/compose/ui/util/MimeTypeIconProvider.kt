@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.ui.util
 
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.uiutils.model.MimeType
 
 /**

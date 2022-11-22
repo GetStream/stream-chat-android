@@ -27,12 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
@@ -43,6 +37,12 @@ import io.getstream.chat.android.compose.ui.components.userreactions.UserReactio
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.React
 
 /**
  * Represents the list of user reactions.
@@ -50,7 +50,7 @@ import io.getstream.chat.android.compose.util.extensions.toSet
  * @param message The selected message.
  * @param currentUser The currently logged in user.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  * @param onMessageAction Handler that propagates click events on each item.
  * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more reactions button.
  * @param modifier Modifier for styling.

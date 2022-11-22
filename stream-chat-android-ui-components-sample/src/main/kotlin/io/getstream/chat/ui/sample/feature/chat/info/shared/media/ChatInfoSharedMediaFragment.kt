@@ -27,10 +27,10 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.offline.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
+import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedMediaBinding

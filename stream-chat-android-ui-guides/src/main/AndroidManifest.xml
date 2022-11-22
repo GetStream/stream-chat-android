@@ -78,6 +78,11 @@
             android:windowSoftInputMode="adjustResize"
             />
 
+        <activity
+            android:name=".catalog.uicomponents.customreactions.ChannelsActivity"
+            android:exported="false"
+            />
+
     </application>
 
 </manifest>

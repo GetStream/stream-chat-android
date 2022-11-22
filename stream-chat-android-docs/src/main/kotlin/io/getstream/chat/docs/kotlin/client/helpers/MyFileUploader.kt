@@ -1,8 +1,8 @@
 package io.getstream.chat.docs.kotlin.client.helpers
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.UploadedFile
-import io.getstream.chat.android.client.models.UploadedImage
+import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
@@ -19,7 +19,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
         } catch (e: Exception) {
-            Result.Failure(ChatError(cause = e))
+            Result.Failure(ChatError.ThrowableError(message = "Could not send file.", cause = e))
         }
     }
 
@@ -32,7 +32,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
         } catch (e: Exception) {
-            Result.Failure(ChatError(cause = e))
+            Result.Failure(ChatError.ThrowableError(message = "Could not send file.", cause = e))
         }
     }
 
@@ -46,7 +46,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(UploadedImage(file = "url"))
         } catch (e: Exception) {
-            Result.Failure(ChatError(cause = e))
+            Result.Failure(ChatError.ThrowableError(message = "Could not send image.", cause = e))
         }
     }
 
@@ -59,7 +59,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(UploadedImage(file = "url"))
         } catch (e: Exception) {
-            Result.Failure(ChatError(cause = e))
+            Result.Failure(ChatError.ThrowableError(message = "Could not send image.", cause = e))
         }
     }
 
@@ -72,7 +72,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Failure(ChatError(cause = e))
+            Result.Failure(ChatError.ThrowableError(message = "Could not delete file.", cause = e))
         }
     }
 
@@ -85,7 +85,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Failure(ChatError(cause = e))
+            Result.Failure(ChatError.ThrowableError(message = "Could not delete image.", cause = e))
         }
     }
 }

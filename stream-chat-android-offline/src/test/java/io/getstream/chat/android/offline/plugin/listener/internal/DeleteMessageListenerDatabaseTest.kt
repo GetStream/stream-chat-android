@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -118,7 +118,7 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Failure(ChatError()))
+        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Failure(ChatError.GenericError("")))
 
         verify(messageRepository).insertMessage(
             argThat { message ->

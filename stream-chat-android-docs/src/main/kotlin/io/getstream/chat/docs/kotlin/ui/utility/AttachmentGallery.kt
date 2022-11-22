@@ -4,8 +4,8 @@ package io.getstream.chat.docs.kotlin.ui.utility
 
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
-import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 
 /**
  * [Attachment Gallery](https://getstream.io/chat/docs/sdk/android/ui/utility-components/attachment-gallery/)

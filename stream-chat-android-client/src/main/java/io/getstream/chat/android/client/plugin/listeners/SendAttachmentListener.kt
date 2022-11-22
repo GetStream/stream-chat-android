@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 
 /**
  * Listener that updates the SDK accordingly with the request to send attachments to the backend.

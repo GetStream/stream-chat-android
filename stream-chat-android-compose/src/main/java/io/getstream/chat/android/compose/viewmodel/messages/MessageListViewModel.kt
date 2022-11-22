@@ -19,22 +19,22 @@ package io.getstream.chat.android.compose.viewmodel.messages
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.message.list.DateSeparatorHandler
-import io.getstream.chat.android.common.message.list.GiphyAction
-import io.getstream.chat.android.common.message.list.MessageListController
-import io.getstream.chat.android.common.message.list.MessagePositionHandler
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.MessageFooterVisibility
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.message.list.MessageListState
-import io.getstream.chat.android.common.state.message.list.NewMessageState
 import io.getstream.chat.android.compose.util.extensions.asState
-import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
+import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -46,7 +46,7 @@ import kotlinx.coroutines.flow.map
  */
 @Suppress("TooManyFunctions", "LargeClass", "TooManyFunctions")
 public class MessageListViewModel(
-    private val messageListController: MessageListController
+    private val messageListController: MessageListController,
 ) : ViewModel() {
 
     /**

@@ -17,34 +17,34 @@
 package io.getstream.chat.android.client.api
 
 import androidx.annotation.CheckResult
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.AppSettings
-import io.getstream.chat.android.client.models.BannedUser
-import io.getstream.chat.android.client.models.BannedUsersSort
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.Flag
-import io.getstream.chat.android.client.models.GuestUser
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Mute
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.SearchMessagesResult
-import io.getstream.chat.android.client.models.UploadedFile
-import io.getstream.chat.android.client.models.UploadedImage
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.VideoCallInfo
-import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.BannedUser
+import io.getstream.chat.android.models.BannedUsersSort
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.GuestUser
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.models.UploadedImage
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.VideoCallInfo
+import io.getstream.chat.android.models.VideoCallToken
+import io.getstream.chat.android.models.querysort.QuerySorter
 import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
@@ -399,4 +399,6 @@ internal interface ChatApi {
     fun downloadFile(fileUrl: String): Call<ResponseBody>
 
     fun warmUp()
+
+    fun releseConnection()
 }

@@ -4,10 +4,10 @@ package io.getstream.chat.docs.kotlin.ui.utility
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import io.getstream.chat.android.ui.search.SearchInputView
-import io.getstream.chat.android.ui.search.list.SearchResultListView
-import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
-import io.getstream.chat.android.ui.search.list.viewmodel.bindView
+import io.getstream.chat.android.ui.feature.search.SearchInputView
+import io.getstream.chat.android.ui.feature.search.list.SearchResultListView
+import io.getstream.chat.android.ui.viewmodel.search.SearchViewModel
+import io.getstream.chat.android.ui.viewmodel.search.bindView
 
 /**
  * [Search View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/)
@@ -21,14 +21,12 @@ private class SearchView : Fragment() {
      * [Usage](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/#usage)
      */
     fun usage() {
-        // Get ViewModel
+        // Instantiate the ViewModel
         val viewModel: SearchViewModel by viewModels()
         // Bind it with SearchResultListView
         viewModel.bindView(searchResultListView, viewLifecycleOwner)
         // Notify ViewModel when search is triggered
-        searchInputView.setSearchStartedListener {
-            viewModel.setQuery(it)
-        }
+        searchInputView.setSearchStartedListener(viewModel::setQuery)
     }
 
     /**
@@ -41,8 +39,8 @@ private class SearchView : Fragment() {
         searchInputView.setDebouncedInputChangedListener {
             // Search query changed and has been stable for a short while
         }
-        searchInputView.setSearchStartedListener {
-            // Search is triggered
+        searchResultListView.setSearchResultSelectedListener { message ->
+            // Handle search result click
         }
     }
 

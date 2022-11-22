@@ -4,19 +4,17 @@ import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
-import io.getstream.chat.android.client.models.BannedUser;
-import io.getstream.chat.android.client.models.BannedUsersSort;
-import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.client.models.Flag;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.Mute;
-import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.Result;
+import io.getstream.chat.android.models.BannedUser;
+import io.getstream.chat.android.models.BannedUsersSort;
+import io.getstream.chat.android.models.Filters;
+import io.getstream.chat.android.models.Flag;
+import io.getstream.chat.android.models.Mute;
+import io.getstream.chat.android.models.User;
 
 public class Moderation {
     private ChatClient client;
@@ -33,7 +31,7 @@ public class Moderation {
                 client.flagMessage("message-id").enqueue(result -> {
                     if (result.isSuccess()) {
                         // Message was flagged
-                        Flag flag = ((Result.Success<Flag>) result).getValue();
+                        Flag flag = result.getOrNull();
                     } else {
                         // Handle error
                     }
@@ -42,7 +40,7 @@ public class Moderation {
                 client.flagUser("user-id").enqueue(result -> {
                     if (result.isSuccess()) {
                         // User was flagged
-                        Flag flag = ((Result.Success<Flag>) result).getValue();
+                        Flag flag = result.getOrNull();
                     } else {
                         // Handle error
                     }
@@ -59,7 +57,7 @@ public class Moderation {
                 client.muteUser("user-id").enqueue(result -> {
                     if (result.isSuccess()) {
                         // User was muted
-                        Mute mute = ((Result.Success<Mute>) result).getValue();
+                        Mute mute = result.getOrNull();
                     } else {
                         // Handle error
                     }
@@ -112,7 +110,7 @@ public class Moderation {
                 QueryUsersRequest request = new QueryUsersRequest(filter, 0, 10);
                 client.queryUsers(request).enqueue(result -> {
                     if (result.isSuccess()) {
-                        List<User> users = ((Result.Success<List<User>>) result).getValue();
+                        List<User> users = result.getOrNull();
                     } else {
                         // Handle error
                     }
@@ -122,7 +120,7 @@ public class Moderation {
                 FilterObject channelFilter = Filters.eq("channel_cid", "ChannelType:ChannelId");
                 client.queryBannedUsers(channelFilter).enqueue(result -> {
                     if (result.isSuccess()) {
-                        List<BannedUser> bannedUsers = ((Result.Success<List<BannedUser>>) result).getValue();
+                        List<BannedUser> bannedUsers = result.getOrNull();
                     } else {
                         // Handle error
                     }
@@ -135,7 +133,7 @@ public class Moderation {
                 QuerySorter<BannedUsersSort> sort = QuerySortByField.descByName("createdAt");
                 client.queryBannedUsers(filter, sort).enqueue(result -> {
                     if (result.isSuccess()) {
-                        List<BannedUser> bannedUsers = ((Result.Success<List<BannedUser>>) result).getValue();
+                        List<BannedUser> bannedUsers = result.getOrNull();
                     } else {
                         // Handle error
                     }
@@ -144,7 +142,7 @@ public class Moderation {
                 // Get the page of bans which where created before or equal date for the same channel
                 client.queryBannedUsers(filter, sort, null, null, null, null, null, new Date()).enqueue(result -> {
                     if (result.isSuccess()) {
-                        List<BannedUser> bannedUsers = ((Result.Success<List<BannedUser>>) result).getValue();
+                        List<BannedUser> bannedUsers = result.getOrNull();
                     } else {
                         // Handle error
                     }

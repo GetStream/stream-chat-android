@@ -20,20 +20,20 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.getstream.sdk.chat.utils.AttachmentConstants
-import com.getstream.sdk.chat.utils.AttachmentFilter
-import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.common.composer.MessageComposerController
-import io.getstream.chat.android.common.message.list.DateSeparatorHandler
-import io.getstream.chat.android.common.message.list.MessageListController
-import io.getstream.chat.android.common.message.list.MessagePositionHandler
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.MessageFooterVisibility
-import io.getstream.chat.android.common.util.ClipboardHandler
-import io.getstream.chat.android.common.util.ClipboardHandlerImpl
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
+import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
+import io.getstream.chat.android.ui.common.helper.ClipboardHandler
+import io.getstream.chat.android.ui.common.helper.ClipboardHandlerImpl
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
+import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
+import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
@@ -47,7 +47,7 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
+ * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 100 MB for Stream CDN.
  * @param showSystemMessages If we should show system message items in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.

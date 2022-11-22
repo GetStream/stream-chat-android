@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
-import io.getstream.chat.android.client.models.BannedUser
+import io.getstream.chat.android.models.BannedUser
 
 internal fun BannedUserResponse.toDomain(): BannedUser {
     return BannedUser(

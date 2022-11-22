@@ -31,17 +31,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.message.list.GiphyAction
-import io.getstream.chat.android.common.model.messsagelist.DateSeparatorItemState
-import io.getstream.chat.android.common.model.messsagelist.MessageItemState
-import io.getstream.chat.android.common.model.messsagelist.MessageListItemState
-import io.getstream.chat.android.common.model.messsagelist.SystemMessageItemState
-import io.getstream.chat.android.common.model.messsagelist.ThreadDateSeparatorItemState
-import io.getstream.chat.android.common.model.messsagelist.TypingItemState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
+import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 
 /**
  * Represents the message item container that allows us to customize each type of item in the MessageList.
@@ -88,7 +88,7 @@ public fun MessageContainer(
             onQuotedMessageClick = onQuotedMessageClick,
         )
     },
-    typingIndicatorContent: @Composable (TypingItemState) -> Unit = { }
+    typingIndicatorContent: @Composable (TypingItemState) -> Unit = { },
 ) {
     when (messageListItemState) {
         is DateSeparatorItemState -> dateSeparatorContent(messageListItemState)

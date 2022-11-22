@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -60,7 +60,7 @@ internal class ShuffleGiphyListenerDatabaseTest {
 
     @Test
     fun `when shuffling giphys and request fails, it should NOT be insert in database`() = runTest {
-        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Failure(ChatError()))
+        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Failure(ChatError.GenericError("")))
 
         verify(messageRepository, never()).insertMessage(any(), any())
     }

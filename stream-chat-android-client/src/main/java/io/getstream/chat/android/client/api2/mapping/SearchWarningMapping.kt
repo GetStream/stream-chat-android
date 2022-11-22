@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
-import io.getstream.chat.android.client.models.SearchWarning
+import io.getstream.chat.android.models.SearchWarning
 
 internal fun SearchWarningDto.toDomain(): SearchWarning {
     return SearchWarning(

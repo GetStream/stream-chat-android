@@ -17,11 +17,11 @@
 package io.getstream.chat.android.compose.viewmodel.imagepreview
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

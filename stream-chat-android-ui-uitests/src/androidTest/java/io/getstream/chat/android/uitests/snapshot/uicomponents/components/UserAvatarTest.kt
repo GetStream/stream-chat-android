@@ -17,11 +17,11 @@
 package io.getstream.chat.android.uitests.snapshot.uicomponents.components
 
 import android.view.LayoutInflater
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.StyleTransformer
-import io.getstream.chat.android.ui.TransformStyle
-import io.getstream.chat.android.ui.avatar.OnlineIndicatorPosition
-import io.getstream.chat.android.ui.avatar.UserAvatarView
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.helper.StyleTransformer
+import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.widgets.avatar.OnlineIndicatorPosition
+import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
 import io.getstream.chat.android.uitests.R
 import io.getstream.chat.android.uitests.snapshot.uicomponents.UiComponentsScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData

@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.scope
 
-import io.getstream.chat.android.client.models.UserId
 import io.getstream.chat.android.client.scope.user.UserIdentifier
 import io.getstream.chat.android.client.scope.user.UserJob
+import io.getstream.chat.android.models.UserId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.job

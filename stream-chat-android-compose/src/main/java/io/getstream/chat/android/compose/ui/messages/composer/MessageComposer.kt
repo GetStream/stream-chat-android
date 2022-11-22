@@ -54,16 +54,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import com.getstream.sdk.chat.utils.MediaStringUtil
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.ValidationError
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -74,6 +64,16 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -445,7 +445,7 @@ internal fun DefaultCommandPopupContent(
  * @param onAttachmentsClick Handler when the user selects attachments.
  * @param onCommandsClick Handler when the user selects commands.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  */
 @Composable
 internal fun DefaultComposerIntegrations(
@@ -528,7 +528,7 @@ internal fun DefaultComposerIntegrations(
  * Default input field label that the user can override in [MessageComposer].
  *
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  */
 @Composable
 internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
@@ -581,7 +581,7 @@ private fun RowScope.DefaultComposerInputContent(
  * @param validationErrors List of errors for message validation.
  * @param onSendMessage Handler when the user wants to send a message.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  */
 @Composable
 internal fun DefaultMessageComposerTrailingContent(

@@ -14,16 +14,16 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.Collections;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
-import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.ui.TransformStyle;
-import io.getstream.chat.android.ui.channel.list.ChannelListView;
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem;
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder;
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory;
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel;
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModelBinding;
-import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
+import io.getstream.chat.android.models.FilterObject;
+import io.getstream.chat.android.models.Filters;
+import io.getstream.chat.android.ui.helper.TransformStyle;
+import io.getstream.chat.android.ui.feature.channels.list.ChannelListView;
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem;
+import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder;
+import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelBinding;
 import io.getstream.chat.docs.R;
 
 /**

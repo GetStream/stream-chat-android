@@ -17,8 +17,8 @@
 package io.getstream.chat.android.compose.ui.attachments.preview.handler
 
 import android.content.Context
-import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.feature.documents.AttachmentDocumentActivity
 import io.getstream.chat.android.uiutils.model.MimeType
 
 /**

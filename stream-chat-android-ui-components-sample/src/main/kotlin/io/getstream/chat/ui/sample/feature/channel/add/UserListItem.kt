@@ -16,7 +16,7 @@
 
 package io.getstream.chat.ui.sample.feature.channel.add
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 sealed class UserListItem {
     val id: String

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.Filters
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.Test

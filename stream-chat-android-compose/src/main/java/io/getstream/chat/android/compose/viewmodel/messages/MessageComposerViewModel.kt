@@ -17,18 +17,19 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.composer.MessageComposerController
-import io.getstream.chat.android.common.composer.MessageComposerState
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.ValidationError
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
+import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -102,7 +103,7 @@ public class MessageComposerViewModel(
      * is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
-     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     * For a full list @see [ChannelCapabilities].
      */
     public val ownCapabilities: StateFlow<Set<String>> = messageComposerController.ownCapabilities
 
