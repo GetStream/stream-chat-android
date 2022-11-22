@@ -58,7 +58,7 @@ object Versions {
     internal const val MATERIAL_COMPONENTS = "1.6.1"
     internal const val MARKWON = "4.6.2"
     internal const val MOCKITO_KOTLIN = "4.0.0"
-    internal const val MOCKITO = "4.8.0"
+    internal const val MOCKITO = "4.9.0"
     internal const val MOSHI = "1.14.0"
     internal const val NAVIGATION = "2.5.2"
     internal const val OK2CURL = "0.8.0"
