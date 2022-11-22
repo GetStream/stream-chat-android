@@ -20,8 +20,8 @@ import android.content.Context
 import android.widget.FrameLayout
 import androidx.test.platform.app.InstrumentationRegistry
 import com.karumi.shot.ScreenshotTest
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.images.internal.StreamCoil
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItemViewType

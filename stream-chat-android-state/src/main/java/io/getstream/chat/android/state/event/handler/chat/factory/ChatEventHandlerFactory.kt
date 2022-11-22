@@ -17,8 +17,8 @@
 package io.getstream.chat.android.state.event.handler.chat.factory
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.state.extensions.globalState

@@ -47,7 +47,7 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
+ * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 100 MB for Stream CDN.
  * @param showSystemMessages If we should show system message items in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.

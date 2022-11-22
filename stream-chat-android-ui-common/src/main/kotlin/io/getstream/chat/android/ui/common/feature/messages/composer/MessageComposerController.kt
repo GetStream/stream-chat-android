@@ -20,14 +20,14 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -74,7 +74,7 @@ import java.util.regex.Pattern
  * @param channelId The ID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
+ * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 100 MB for Stream CDN.
  * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
  * queries executed on screen initialization.
  */
@@ -124,7 +124,7 @@ public class MessageComposerController(
      * is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
-     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     * For a full list @see [ChannelCapabilities].
      */
     public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
         .map { it.ownCapabilities }

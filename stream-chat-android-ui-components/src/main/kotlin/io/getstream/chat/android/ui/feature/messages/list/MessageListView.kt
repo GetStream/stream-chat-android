@@ -32,12 +32,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Flag
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
@@ -45,6 +39,12 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.downloadAttachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R

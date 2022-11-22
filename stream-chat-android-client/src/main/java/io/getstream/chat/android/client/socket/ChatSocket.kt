@@ -24,12 +24,12 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.User
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
@@ -49,7 +49,7 @@ internal open class ChatSocket(
     private val networkStateProvider: NetworkStateProvider,
 ) {
     private var streamWebSocket: StreamWebSocket? = null
-    private val logger = StreamLog.getLogger("Chat:Experimental-Socket")
+    private val logger = StreamLog.getLogger("Chat:Socket")
     private var connectionConf: SocketFactory.ConnectionConf? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val chatSocketStateService = ChatSocketStateService()
@@ -168,6 +168,7 @@ internal open class ChatSocket(
     }
 
     private fun handleEvent(chatEvent: ChatEvent) {
+        StreamLog.v("Chat:Events") { "[handleEvent] Received $chatEvent" }
         when (chatEvent) {
             is ConnectedEvent -> chatSocketStateService.onConnectionEstablished(chatEvent)
             is HealthEvent -> healthMonitor.ack()

@@ -24,12 +24,11 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.models.ConnectionData
-import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.ConnectionData
+import io.getstream.chat.android.models.EventType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
@@ -40,9 +39,6 @@ internal class ChatEventsObservable(
     private val scope: CoroutineScope,
     private val chatSocket: ChatSocket,
 ) {
-
-    private val logger = StreamLog.getLogger("Chat:EventsObservable")
-
     private var subscriptions = setOf<EventSubscription>()
     private var eventsMapper = EventsMapper(this)
 

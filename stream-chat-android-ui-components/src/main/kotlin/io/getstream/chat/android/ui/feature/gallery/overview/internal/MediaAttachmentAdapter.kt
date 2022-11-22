@@ -22,9 +22,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding

@@ -21,7 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryImageBinding
 import io.getstream.chat.android.ui.utils.load
 

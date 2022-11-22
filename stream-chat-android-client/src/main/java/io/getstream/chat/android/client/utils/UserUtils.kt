@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.User
 
 /**
  * Partially merges [that] user data into [this] user data.

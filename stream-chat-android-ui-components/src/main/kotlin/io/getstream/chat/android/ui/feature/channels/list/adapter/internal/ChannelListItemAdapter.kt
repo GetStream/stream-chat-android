@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.channels.list.adapter.internal
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder

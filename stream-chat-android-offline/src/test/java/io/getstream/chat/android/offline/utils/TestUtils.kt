@@ -21,7 +21,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.delay
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowLooper

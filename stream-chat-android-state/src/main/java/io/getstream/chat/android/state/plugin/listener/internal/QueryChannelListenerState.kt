@@ -17,9 +17,9 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 
 /**

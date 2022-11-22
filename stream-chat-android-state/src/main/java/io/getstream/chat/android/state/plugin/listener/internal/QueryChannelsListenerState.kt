@@ -17,10 +17,10 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
@@ -46,17 +46,13 @@ internal class QueryChannelsListenerState(private val logicProvider: LogicRegist
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         logicProvider.queryChannels(request).run {
-            loadingPerPage(true, request.offset > 0)
             setCurrentRequest(request)
             queryOffline(request.toPagination())
         }
     }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        logicProvider.queryChannels(request).run {
-            onQueryChannelsResult(result, request)
-            loadingPerPage(false, request.offset > 0)
-        }
+        logicProvider.queryChannels(request).onQueryChannelsResult(result, request)
     }
 
     private companion object {

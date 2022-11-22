@@ -22,11 +22,11 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.EventsConsumer
 import io.getstream.chat.android.client.utils.TestInitCallback
 import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Before

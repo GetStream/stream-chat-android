@@ -16,19 +16,19 @@
 
 package io.getstream.chat.android.state.facade
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelConfig
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomReaction
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
@@ -161,7 +161,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         verify(messages).insertMessage(eq(message), eq(cache))
         verify(users).insertUsers(
-            org.mockito.kotlin.check { listUser ->
+            check { listUser ->
                 listUser `should contain same` expectedListOfUser
             }
         )
@@ -196,7 +196,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
             verify(channels).insertChannels(eq(listOfChannels))
             verify(users).insertUsers(
-                org.mockito.kotlin.check { listUser ->
+                check { listUser ->
                     listUser `should contain same` listOfUser
                 }
             )
@@ -233,7 +233,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
             verify(messages).insertMessages(eq(listOfMessages), eq(cache))
             verify(users).insertUsers(
-                org.mockito.kotlin.check { listUser ->
+                check { listUser ->
                     listUser `should contain same` listOfUser
                 }
             )

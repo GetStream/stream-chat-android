@@ -26,8 +26,8 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.ChannelCapabilities
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState

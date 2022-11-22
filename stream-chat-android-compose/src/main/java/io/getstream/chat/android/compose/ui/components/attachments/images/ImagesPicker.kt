@@ -52,12 +52,12 @@ import coil.compose.AsyncImage
 import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
 import coil.request.videoFrameMillis
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 private const val DefaultNumberOfPicturesPerRow = 3

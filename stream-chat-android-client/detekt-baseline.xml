@@ -6,6 +6,5 @@
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
-    <ID>UnusedPrivateMember:ChatEventsObservable.kt$ChatEventsObservable$private val logger = StreamLog.getLogger("Chat:EventsObservable")</ID>
   </CurrentIssues>
 </SmellBaseline>

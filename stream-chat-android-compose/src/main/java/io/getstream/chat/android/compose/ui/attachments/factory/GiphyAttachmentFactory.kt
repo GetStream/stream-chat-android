@@ -20,11 +20,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.ContentScale
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
 

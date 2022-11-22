@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.at
 
 import android.content.Context
 import android.view.View
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 
 /**
  * An inner ViewHolder for custom attachments within message ViewHolder.

@@ -20,9 +20,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.ui.attachments.content.QuotedMessageAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**

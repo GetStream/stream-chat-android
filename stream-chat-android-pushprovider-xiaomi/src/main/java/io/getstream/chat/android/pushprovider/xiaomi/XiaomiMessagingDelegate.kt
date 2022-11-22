@@ -23,9 +23,9 @@ import com.xiaomi.mipush.sdk.MiPushClient
 import com.xiaomi.mipush.sdk.MiPushCommandMessage
 import com.xiaomi.mipush.sdk.MiPushMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.PushMessage
-import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.PushProvider
 import kotlin.jvm.Throws
 
 /**

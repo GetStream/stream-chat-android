@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic

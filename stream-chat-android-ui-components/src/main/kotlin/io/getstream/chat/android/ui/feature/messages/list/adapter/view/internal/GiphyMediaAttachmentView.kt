@@ -23,8 +23,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.google.android.material.shape.ShapeAppearanceModel
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.GiphyInfo
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode

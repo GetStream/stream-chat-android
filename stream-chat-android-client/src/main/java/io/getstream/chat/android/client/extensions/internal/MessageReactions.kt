@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
 
 @InternalStreamChatApi
 public fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = false) {

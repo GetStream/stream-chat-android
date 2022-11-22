@@ -22,12 +22,12 @@ import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.UploadedFile
-import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.models.UploadedImage
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Before
