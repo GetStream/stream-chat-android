@@ -475,7 +475,8 @@ The predicate has to return `true` for the items that you _do_ want to display i
 
 Let's consider an example in which we want to create a custom ViewHolder for messages sent by other users less than 24 hours ago. The result should look like this:
 
-![](../../assets/message_list_custom_vh_factory.png)
+| ![](../../assets/message_list_custom_vh_factory.png) |
+| --- |
 
 1. Add a new layout called `today_message_list_item.xml`:
 
@@ -720,11 +721,13 @@ messageListView.setEmptyStateView(
 
 This code will display the following empty state:
 
-![The custom empty state in action](../../assets/message_lis_custom_empty_state.png)
+| ![The custom empty state in action](../../assets/message_lis_custom_empty_state.png) |
+| --- |
 ## Configure When the User Avatar Appears
 By default, user avatars will appear next to messages that are either the last message in a group of messages, or the only one within it.
 
-//TODO - place a screenshot here when the screenshot run commences
+| ![message_list_show_avatar_predicate_default](../../assets/message_list_show_avatar_predicate_default.png) |
+|---|
 
 You can configure when the user avatar will appear by setting your own predicate using `MessageListView.setShowAvatarPredicate()`.<br/>
 For instance, the following code will make the user avatar appear next to all messages sent by other users, regardless of their position.
@@ -751,7 +754,8 @@ messageListView.setShowAvatarPredicate((messageItem) ->
 
 The result looks like this:
 
-//TODO - place a screenshot here when the screenshot run commences
+| ![message_list_show_avatar_predicate_custom](../../assets/message_list_show_avatar_predicate_custom.png) |
+|---|
 
 :::note
 To avoid overlap between the avatar and the message bubble, remember to use `streamUiMessageStartMargin` and `streamUiMessageEndMargin` to create space for the message avatar.
