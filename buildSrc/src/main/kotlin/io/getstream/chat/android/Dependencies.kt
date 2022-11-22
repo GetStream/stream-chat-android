@@ -50,7 +50,7 @@ object Versions {
     internal const val JUNIT5 = "5.9.1"
     internal const val KEYBOARD_VISIBILITY_EVENT = "2.3.0"
     internal const val KFIXTURE = "0.2.0"
-    internal const val KLUENT = "1.68"
+    internal const val KLUENT = "1.72"
     internal const val KOTLIN = "1.7.20"
     internal const val KOTLIN_BINARY_VALIDATOR = "0.11.1"
     internal const val KSP = "1.7.20-1.0.7"
