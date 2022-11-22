@@ -33,7 +33,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
+        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
     }
 
     lintOptions {
