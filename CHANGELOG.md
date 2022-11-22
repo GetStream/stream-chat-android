@@ -23,6 +23,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed `IllegalArgumentException` when uploading attachments fails. [#4487](https://github.com/GetStream/stream-chat-android/pull/4487)
 
 ### ⬆️ Improved
 
