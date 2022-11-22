@@ -59,7 +59,8 @@ internal class UploadAttachmentsAndroidWorker(
                 Result.success()
             } else {
                 logger.i { "[doWork] Error while uploading attachments: ${result.error()}" }
-                Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to result)).build())
+                val message = result.error().message ?: "Error while uploading attachments"
+                Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to message)).build())
             }
         }
     }
