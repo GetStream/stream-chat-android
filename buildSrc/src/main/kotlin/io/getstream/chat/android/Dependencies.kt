@@ -24,7 +24,7 @@ object Versions {
     internal const val ANDROIDX_TEST_JUNIT = "1.1.4"
     internal const val ANDROIDX_VIEW_PAGER_2 = "1.0.0"
     internal const val COIL = "2.2.2"
-    internal const val COMPOSE_ACCOMPANIST = "0.25.1"
+    internal const val COMPOSE_ACCOMPANIST = "0.27.1"
     internal const val CONSTRAINT_LAYOUT = "2.1.4"
     internal const val COROUTINES = "1.6.4"
     internal const val DETEKT_PLUGIN = "1.21.0"
