@@ -3,10 +3,10 @@ package io.getstream.chat.docs.kotlin
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
 import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
@@ -16,7 +16,7 @@ import io.getstream.chat.android.ui.feature.messages.MessageListActivity
 import io.getstream.chat.android.ui.feature.messages.MessageListFragment
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
-import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
 import io.getstream.chat.android.ui.feature.search.SearchInputView
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListView
 import io.getstream.chat.docs.R

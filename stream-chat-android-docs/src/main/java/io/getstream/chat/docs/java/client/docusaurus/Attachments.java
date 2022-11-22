@@ -1,16 +1,13 @@
 package io.getstream.chat.docs.java.client.docusaurus;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.utils.Result;
+import io.getstream.chat.android.models.Attachment;
+import io.getstream.chat.android.models.Message;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/sending-custom-attachments/">Sending Attachments</a>

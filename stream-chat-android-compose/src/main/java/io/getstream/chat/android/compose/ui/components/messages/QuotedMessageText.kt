@@ -24,7 +24,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.compose.R
@@ -32,6 +31,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 import io.getstream.chat.android.uiutils.extension.isAnyFileType
 

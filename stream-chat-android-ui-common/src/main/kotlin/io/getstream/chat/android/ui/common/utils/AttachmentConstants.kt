@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.common.utils
 
-import io.getstream.chat.android.client.models.Constants
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Constants
 
 /**
  * Various constants regarding default attachment limits.

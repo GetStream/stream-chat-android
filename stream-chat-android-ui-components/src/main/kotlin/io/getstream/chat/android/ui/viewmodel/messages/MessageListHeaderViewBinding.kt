@@ -19,9 +19,9 @@
 package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
 import io.getstream.chat.android.ui.utils.extensions.getMembersStatusText
 
 /**

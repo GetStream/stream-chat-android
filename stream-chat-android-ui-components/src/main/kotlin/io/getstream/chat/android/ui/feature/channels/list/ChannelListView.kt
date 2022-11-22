@@ -28,8 +28,8 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup

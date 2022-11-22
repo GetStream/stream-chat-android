@@ -22,8 +22,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOL
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOVE
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.THUMBS_UP

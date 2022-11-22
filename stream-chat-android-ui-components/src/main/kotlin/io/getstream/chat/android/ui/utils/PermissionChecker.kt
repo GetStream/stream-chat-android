@@ -22,16 +22,16 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener
-import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener
-import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsListener
+import com.permissionx.guolindev.PermissionX
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.R
+import io.getstream.chat.android.ui.utils.extensions.activity
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
+import io.getstream.chat.android.uiutils.util.openSystemSettings
 
 private const val SNACKBAR_ELEVATION_IN_DP = 20
 
@@ -219,58 +219,63 @@ public class PermissionChecker {
         onPermissionDenied: () -> Unit,
         onPermissionGranted: () -> Unit,
     ) {
+        val activity = view.activity ?: return
 
-        val permissionsListener = object : BaseMultiplePermissionsListener() {
-
-            override fun onPermissionsChecked(mumultiplePermissionsReport: MultiplePermissionsReport) {
-                if (mumultiplePermissionsReport.areAllPermissionsGranted()) {
-                    onPermissionGranted()
-                } else {
-                    if (mumultiplePermissionsReport.isAnyPermissionPermanentlyDenied) {
-                        snackbarPermissionsListener(view, snackbarMessage).onPermissionsChecked(
-                            mumultiplePermissionsReport
-                        )
-                    } else {
-                        dialogPermissionsListener(
-                            view.context,
-                            dialogTitle,
-                            dialogMessage
-                        ).onPermissionsChecked(mumultiplePermissionsReport)
-                    }
-                    onPermissionDenied()
-                }
+        PermissionX.init(activity)
+            .permissions(permissions)
+            .onExplainRequestReason { _, _ ->
+                showPermissionRationaleDialog(view.context, dialogTitle, dialogMessage)
             }
-        }
-
-        Dexter.withContext(view.context)
-            .withPermissions(permissions)
-            .withListener(permissionsListener)
-            .check()
+            .onForwardToSettings { _, _ ->
+                showPermissionDeniedSnackbar(view, snackbarMessage)
+            }
+            .request { allGranted, _, _ ->
+                if (allGranted) onPermissionGranted() else onPermissionDenied()
+            }
     }
 
-    private fun snackbarPermissionsListener(
-        view: View,
-        snackbarMessage: String,
-    ): SnackbarOnAnyDeniedMultiplePermissionsListener =
-        SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
-            .with(view, snackbarMessage)
-            .withOpenSettingsButton(R.string.stream_ui_message_composer_permissions_setting_button)
-            .withCallback(object : Snackbar.Callback() {
-                override fun onShown(sb: Snackbar?) {
-                    sb?.view?.elevation = SNACKBAR_ELEVATION_IN_DP.dpToPxPrecise()
-                }
-            })
-            .build()
-
-    private fun dialogPermissionsListener(
+    /**
+     * Shows permission rationale dialog.
+     *
+     * @param context The context to show alert dialog.
+     * @param dialogTitle The title of the dialog.
+     * @param dialogMessage The message to display.
+     */
+    private fun showPermissionRationaleDialog(
         context: Context,
         dialogTitle: String,
         dialogMessage: String,
-    ): DialogOnAnyDeniedMultiplePermissionsListener =
-        DialogOnAnyDeniedMultiplePermissionsListener.Builder
-            .withContext(context)
-            .withTitle(dialogTitle)
-            .withMessage(dialogMessage)
-            .withButtonText(android.R.string.ok)
-            .build()
+    ) {
+        AlertDialog.Builder(context)
+            .setTitle(dialogTitle)
+            .setMessage(dialogMessage)
+            .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    /**
+     * Shows a [Snackbar] whenever a permission has been denied.
+     *
+     * @param view The anchor view for the Snackbar.
+     * @param snackbarMessage The message displayed in the Snackbar.
+     */
+    private fun showPermissionDeniedSnackbar(
+        view: View,
+        snackbarMessage: String,
+    ) {
+        Snackbar.make(view, snackbarMessage, Snackbar.LENGTH_LONG).apply {
+            setAction(R.string.stream_ui_message_composer_permissions_setting_button) {
+                context.openSystemSettings()
+            }
+            addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                override fun onShown(sb: Snackbar?) {
+                    super.onShown(sb)
+                    sb?.view?.elevation = SNACKBAR_ELEVATION_IN_DP.dpToPxPrecise()
+                }
+            })
+            show()
+        }
+    }
 }

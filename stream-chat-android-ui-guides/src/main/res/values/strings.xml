@@ -30,4 +30,8 @@
 
     <string name="uicomponents_custom_attachments_guide_title">Custom attachments</string>
     <string name="uicomponents_custom_attachments_guide_description">A guide that demonstrates how to build a date sharing feature using the UI Components SDK.</string>
+
+    <string name="uicomponents_custom_reactions_guide_title">Providing Custom Reactions</string>
+    <string name="uicomponents_custom_reactions_guide_description">A guide that demonstrates how to override the supported set of reactions using the UI Components SDK.</string>
+
 </resources>

@@ -10,11 +10,9 @@ import io.getstream.chat.android.client.events.NewMessageEvent;
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent;
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent;
 import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import io.getstream.chat.android.client.models.ConnectionData;
-import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.Result;
+import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.ChannelUserRead;
+import io.getstream.chat.android.models.User;
 import io.getstream.chat.android.state.extensions.ChatClientExtensions;
 
 public class UnreadCounts {
@@ -30,7 +28,7 @@ public class UnreadCounts {
             user.setId("user-id");
             client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
                 if (result.isSuccess()) {
-                    User userRes = ((Result.Success<ConnectionData>) result).getValue().getUser();
+                    User userRes = result.getOrNull().getUser();
                     int unreadChannels = userRes.getUnreadChannels();
                     int totalUnreadCount = userRes.getTotalUnreadCount();
                 } else {
@@ -91,7 +89,7 @@ public class UnreadCounts {
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // readState is the list of read states for each user on the channel
-                    List<ChannelUserRead> readState = ((Result.Success<Channel>) result).getValue().getRead();
+                    List<ChannelUserRead> readState = result.getOrNull().getRead();
                 } else {
                     // Handle error
                 }
@@ -105,7 +103,7 @@ public class UnreadCounts {
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // Unread count for the current user
-                    Integer unreadCount = ((Result.Success<Channel>) result).getValue().getUnreadCount();
+                    Integer unreadCount = result.getOrNull().getUnreadCount();
                 } else {
                     // Handle error
                 }
@@ -124,7 +122,7 @@ public class UnreadCounts {
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // Unread mentions
-                    Channel channel = ((Result.Success<Channel>) result).getValue();
+                    Channel channel = result.getOrNull();
                     Integer unreadCount = ChannelExtensionKt.countUnreadMentionsForUser(channel, currentUser);
                 } else {
                     // Handle error

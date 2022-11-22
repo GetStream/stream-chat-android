@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.state.querychannels
 
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMember
@@ -28,6 +27,7 @@ import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEve
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.client.test.randomNotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.plugin.state.global.GlobalState

@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 
 internal fun Attachment.toDto(): AttachmentDto =
     AttachmentDto(

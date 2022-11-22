@@ -16,10 +16,11 @@
 
 package io.getstream.chat.android.state.plugin.state.global
 
-import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.Mute
-import io.getstream.chat.android.client.models.TypingEvent
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.TypingEvent
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import kotlinx.coroutines.flow.StateFlow
 
@@ -61,7 +62,7 @@ public interface GlobalState {
 
     /**
      * Map of typing users in all active channel.
-     * Use [io.getstream.chat.android.client.models.Channel.cid] to access events for a particular channel.
+     * Use [Channel.cid] to access events for a particular channel.
      *
      * @see [TypingEvent]
      */

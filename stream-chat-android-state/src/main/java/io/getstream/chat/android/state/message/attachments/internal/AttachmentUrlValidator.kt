@@ -17,8 +17,8 @@
 package io.getstream.chat.android.state.message.attachments.internal
 
 import io.getstream.chat.android.client.helpers.AttachmentHelper
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
 
 internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHelper = AttachmentHelper()) {
 

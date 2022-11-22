@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.channel
 
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Message
 
 @InternalStreamChatApi
 public interface ChannelMessagesUpdateLogic {

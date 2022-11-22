@@ -20,7 +20,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.getstream.chat.android.client.models.ChannelCapabilities
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.messages.Edit

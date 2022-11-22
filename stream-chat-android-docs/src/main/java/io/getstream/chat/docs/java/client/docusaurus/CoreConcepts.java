@@ -1,8 +1,8 @@
 package io.getstream.chat.docs.java.client.docusaurus;
 
 import io.getstream.chat.android.client.channel.ChannelClient;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.client.utils.Result;
 
 /**
@@ -19,7 +19,7 @@ public class CoreConcepts {
         // Safe to call from the main thread
         channelClient.sendMessage(message).enqueue((result) -> {
             if (result.isSuccess()) {
-                Message sentMessage = ((Result.Success<Message>) result).getValue();
+                Message sentMessage = result.getOrNull();
             } else {
                 // Handle error
             }

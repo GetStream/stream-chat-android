@@ -4,8 +4,7 @@ import android.content.Context
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate
 

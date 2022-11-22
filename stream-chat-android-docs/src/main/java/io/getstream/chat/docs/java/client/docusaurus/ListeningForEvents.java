@@ -12,8 +12,8 @@ import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent;
-import io.getstream.chat.android.client.models.Member;
-import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.models.Member;
+import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.client.utils.observable.Disposable;
 
 /**

@@ -23,9 +23,9 @@ import io.getstream.chat.android.client.errorhandler.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import kotlinx.coroutines.CoroutineScope
 
