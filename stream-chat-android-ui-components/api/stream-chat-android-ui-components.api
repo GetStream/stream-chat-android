@@ -1144,13 +1144,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewViewHolder;
 }
 
-public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/ImageAttachmentPreviewFactory : io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory {
-	public fun <init> ()V
-	public fun canHandle (Lio/getstream/chat/android/models/Attachment;)Z
-	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewViewHolder;
-}
-
-public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/VideoAttachmentPreviewFactory : io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory {
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/MediaAttachmentPreviewFactory : io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory {
 	public fun <init> ()V
 	public fun canHandle (Lio/getstream/chat/android/models/Attachment;)Z
 	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewViewHolder;

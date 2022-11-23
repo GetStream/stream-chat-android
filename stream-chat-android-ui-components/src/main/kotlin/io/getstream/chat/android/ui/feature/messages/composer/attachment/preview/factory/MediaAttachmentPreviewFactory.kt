@@ -17,11 +17,14 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory
 
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamUiVideoAttachmentPreviewBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentPreviewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.utils.extensions.applyTint
@@ -31,23 +34,21 @@ import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 
 /**
- * The default [AttachmentPreviewFactory] for video attachments.
+ * The default [AttachmentPreviewFactory] for image and video attachments.
  */
-public class VideoAttachmentPreviewFactory : AttachmentPreviewFactory {
-
+public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
     /**
      * Checks if the factory can create a preview ViewHolder for this attachment.
      *
      * @param attachment The attachment we want to show a preview for.
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
-    override fun canHandle(attachment: Attachment): Boolean {
-        return attachment.type == AttachmentType.VIDEO
+    public override fun canHandle(attachment: Attachment): Boolean {
+        return attachment.isImage() || attachment.isGiphy() || attachment.isVideo()
     }
 
     /**
-     * Creates and instantiates a new instance of [AttachmentPreviewViewHolder]
-     * able to preview videos.
+     * Creates and instantiates a new instance of [MediaAttachmentPreviewFactory].
      *
      * @param parentView The parent container.
      * @param attachmentRemovalListener Click listener for the remove attachment button.
@@ -61,19 +62,25 @@ public class VideoAttachmentPreviewFactory : AttachmentPreviewFactory {
         attachmentRemovalListener: (Attachment) -> Unit,
         style: MessageComposerViewStyle?,
     ): AttachmentPreviewViewHolder {
-        return StreamUiVideoAttachmentPreviewBinding
+        return StreamUiMediaAttachmentPreviewBinding
             .inflate(parentView.context.streamThemeInflater, parentView, false)
-            .let { VideoAttachmentPreviewViewHolder(it, attachmentRemovalListener, style) }
+            .let { binding ->
+                MediaAttachmentPreviewViewHolder(
+                    binding = binding,
+                    attachmentRemovalListener = attachmentRemovalListener,
+                    style = style
+                )
+            }
     }
 
     /**
-     * A ViewHolder for video attachment previews.
+     * A ViewHolder for image and video attachment previews.
      *
      * @param binding Binding generated for the layout.
      * @param attachmentRemovalListener Click listener for the remove attachment button.
      */
-    private class VideoAttachmentPreviewViewHolder(
-        private val binding: StreamUiVideoAttachmentPreviewBinding,
+    private class MediaAttachmentPreviewViewHolder(
+        private val binding: StreamUiMediaAttachmentPreviewBinding,
         attachmentRemovalListener: (Attachment) -> Unit,
         private val style: MessageComposerViewStyle?,
     ) : AttachmentPreviewViewHolder(binding.root) {
@@ -91,6 +98,10 @@ public class VideoAttachmentPreviewFactory : AttachmentPreviewFactory {
             setupIconCard()
         }
 
+        /**
+         * Applies the style to the View displaying the play button
+         * icon.
+         */
         private fun setupIconImageView() {
             if (style != null) {
                 with(binding.playIconImageView) {
@@ -110,6 +121,10 @@ public class VideoAttachmentPreviewFactory : AttachmentPreviewFactory {
             }
         }
 
+        /**
+         * Applies style to the card holding the View displaying the
+         * play button.
+         */
         private fun setupIconCard() {
             if (style != null) {
                 with(binding.playIconCardView) {
@@ -124,6 +139,8 @@ public class VideoAttachmentPreviewFactory : AttachmentPreviewFactory {
         override fun bind(attachment: Attachment) {
             this.attachment = attachment
             val upload = attachment.upload
+
+            binding.playIconCardView.isVisible = attachment.isVideo()
 
             if (upload != null) {
                 binding.thumbImageView.load(upload)
