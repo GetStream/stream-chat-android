@@ -33,7 +33,7 @@ It also contains all the basic model objects you'll interact with when using Str
 ### State
 
 The state library is a plugin that gives you the possibility to reactively observe data through `StateFlows`.
-Moreover, the plugin adds a sync feature, that for example is responsible for resending messages, reactions, etc, when the user performed actions without an Internet connection.
+It adds a sync feature which handles re-sending messages, reactions, and syncing other actions the user had performed while offline.
 
 :::note
 The state plugin doesn't add a persistence layer.<br/> Consider using it together with `Offline Plugin`.
