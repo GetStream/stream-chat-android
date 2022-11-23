@@ -17,9 +17,9 @@
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
