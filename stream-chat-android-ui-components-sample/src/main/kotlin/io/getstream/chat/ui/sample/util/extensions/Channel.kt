@@ -16,6 +16,6 @@
 
 package io.getstream.chat.ui.sample.util.extensions
 
-import io.getstream.chat.android.client.models.ChannelData
+import io.getstream.chat.android.models.ChannelData
 
 public fun ChannelData.isAnonymousChannel(): Boolean = id.startsWith("!members")

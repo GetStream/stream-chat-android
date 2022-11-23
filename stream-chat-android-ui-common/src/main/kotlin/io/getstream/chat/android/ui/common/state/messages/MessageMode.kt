@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 
 /**

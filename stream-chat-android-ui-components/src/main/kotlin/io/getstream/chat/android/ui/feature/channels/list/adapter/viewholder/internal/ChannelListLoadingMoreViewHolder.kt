@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder

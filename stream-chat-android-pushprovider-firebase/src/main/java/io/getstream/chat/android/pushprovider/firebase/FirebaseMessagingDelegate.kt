@@ -18,9 +18,10 @@ package io.getstream.chat.android.pushprovider.firebase
 
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.PushMessage
-import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.client.PayloadValidator
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.PushProvider
 
 /**
  * Helper class for delegating Firebase push messages to the Stream Chat SDK.
@@ -82,6 +83,5 @@ private fun RemoteMessage.toPushMessage() =
     )
 
 private fun RemoteMessage.isValid() =
-    !data["channel_id"].isNullOrBlank() &&
-        !data["message_id"].isNullOrBlank() &&
-        !data["channel_type"].isNullOrBlank()
+    PayloadValidator.isFromStreamServer(data) &&
+        PayloadValidator.isValidNewMessage(data)

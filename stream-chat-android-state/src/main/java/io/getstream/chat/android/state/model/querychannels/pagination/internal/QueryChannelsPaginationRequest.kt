@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.state.model.querychannels.pagination.internal
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.querysort.QuerySorter
 
 internal data class QueryChannelsPaginationRequest(
     val sort: QuerySorter<Channel>,

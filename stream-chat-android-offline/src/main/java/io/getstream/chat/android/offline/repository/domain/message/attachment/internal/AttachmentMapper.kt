@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.repository.domain.message.attachment.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.UploadStateEntity.Companion.UPLOAD_STATE_FAILED
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.UploadStateEntity.Companion.UPLOAD_STATE_IN_PROGRESS
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.UploadStateEntity.Companion.UPLOAD_STATE_SUCCESS

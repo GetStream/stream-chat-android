@@ -28,10 +28,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 
 /**
  * Class responsible for handling chat notifications.

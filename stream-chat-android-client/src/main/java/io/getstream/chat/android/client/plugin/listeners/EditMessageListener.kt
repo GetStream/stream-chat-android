@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Message
 
 /**
  * Listener for editions in messages.

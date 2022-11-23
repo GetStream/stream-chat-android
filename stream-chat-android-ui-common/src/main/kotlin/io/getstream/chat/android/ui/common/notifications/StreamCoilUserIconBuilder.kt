@@ -18,9 +18,9 @@ package io.getstream.chat.android.ui.common.notifications
 
 import android.content.Context
 import androidx.core.graphics.drawable.IconCompat
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.UserIconBuilder
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 
 /**

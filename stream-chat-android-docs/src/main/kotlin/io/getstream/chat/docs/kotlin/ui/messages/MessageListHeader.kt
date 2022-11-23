@@ -1,5 +1,3 @@
-// ktlint-disable filename
-
 package io.getstream.chat.docs.kotlin.ui.messages
 
 import androidx.fragment.app.Fragment
@@ -12,7 +10,7 @@ import io.getstream.chat.android.ui.viewmodel.messages.bindView
 /**
  * [Message List Header](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/)
  */
-private class MessageListHeaderViewSnippets : Fragment() {
+private class MessageListHeader : Fragment() {
 
     private lateinit var messageListHeaderView: MessageListHeaderView
 
@@ -20,10 +18,12 @@ private class MessageListHeaderViewSnippets : Fragment() {
      * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-header/#usage)
      */
     fun usage() {
-        // Get ViewModel
-        val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
-        val viewModel: MessageListHeaderViewModel by viewModels { factory }
-        // Bind it with MessageListHeaderView
+        // Initialize ViewModel
+        val viewModel: MessageListHeaderViewModel by viewModels {
+            MessageListViewModelFactory(cid = "messaging:123")
+        }
+
+        // Bind the View and ViewModel
         viewModel.bindView(messageListHeaderView, viewLifecycleOwner)
     }
 

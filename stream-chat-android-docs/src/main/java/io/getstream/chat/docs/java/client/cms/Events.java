@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.events.ConnectingEvent;
 import io.getstream.chat.android.client.events.DisconnectedEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
-import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.client.utils.observable.Disposable;
 
 public class Events {

@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.helper
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 

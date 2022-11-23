@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.common.state.messages
 
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
 
 /**
  * Represents the list of actions users can take with selected messages.
