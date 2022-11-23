@@ -130,6 +130,8 @@ internal class QueryChannelsLogic(
 
         if (result.isSuccess) {
             updateOnlineChannels(request, result.data())
+        } else {
+            queryChannelsStateLogic?.initializeChannelsIfNeeded()
         }
     }
 
