@@ -73,6 +73,11 @@
             android:exported="false"
             />
 
+        <activity
+            android:name=".catalog.uicomponents.channelsscreen.ChannelsActivity"
+            android:exported="false"
+            />
+
     </application>
 
 </manifest>
