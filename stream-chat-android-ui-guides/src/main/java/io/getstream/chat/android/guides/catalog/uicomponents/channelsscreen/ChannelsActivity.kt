@@ -22,9 +22,9 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.guides.databinding.ActivityBuildingChannelsScreenBinding
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
