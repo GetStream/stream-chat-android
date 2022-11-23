@@ -25,9 +25,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.AttachmentType
 import io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory
 import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ui.CustomPlayButton
+import io.getstream.chat.android.models.AttachmentType
 
 val customMediaAttachmentFactory = MediaAttachmentFactory(
     // Increase the maximum number of previewed items to 5
