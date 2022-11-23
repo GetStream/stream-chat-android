@@ -20,6 +20,7 @@ import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.HealthEvent
@@ -79,6 +80,7 @@ internal class ChatClientTest {
     val user = Mother.randomUser { id = userId }
     val tokenUtils: TokenUtils = mock()
     var pluginFactories: List<PluginFactory> = emptyList()
+    var errorHandlerFactories: List<ErrorHandlerFactory> = emptyList()
     private val streamDateFormatter = StreamDateFormatter()
 
     @BeforeEach
