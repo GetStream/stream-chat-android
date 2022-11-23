@@ -1218,8 +1218,15 @@ internal constructor(
     public fun disconnect(flushPersistence: Boolean): Call<Unit> =
         CoroutineCall(clientScope) {
             logger.d { "[disconnect] flushPersistence: $flushPersistence" }
-            disconnectSuspend(flushPersistence)
-            Result.success(Unit)
+            when (isUserSet()) {
+                true -> {
+                    disconnectSuspend(flushPersistence)
+                    Result.success(Unit)
+                }
+                false -> Result.error(
+                    ChatError("ChatClient can't be disconnected because user wasn't connected previously")
+                )
+            }
         }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
