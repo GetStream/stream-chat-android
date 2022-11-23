@@ -34,4 +34,7 @@
     <string name="uicomponents_custom_reactions_guide_title">Providing Custom Reactions</string>
     <string name="uicomponents_custom_reactions_guide_description">A guide that demonstrates how to override the supported set of reactions using the UI Components SDK.</string>
 
+    <string name="uicomponents_channels_screen_guide_title">Building Channel List Screen</string>
+    <string name="uicomponents_channels_screen_guide_description">A guide that demonstrates how to build a channel list screen using the UI Components SDK.</string>
+
 </resources>
