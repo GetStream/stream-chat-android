@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.state.messages.attachments
 
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents the state of Attachment items, used to render and add handlers required for the attachment to work.

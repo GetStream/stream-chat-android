@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.composer.internal
 
 import android.content.Context
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 

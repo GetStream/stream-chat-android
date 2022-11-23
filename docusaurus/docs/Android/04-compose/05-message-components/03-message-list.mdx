@@ -81,15 +81,18 @@ fun MessageList(
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
-    onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
+    onMessagesPageStartReached: () -> Unit = { viewModel.loadOlderMessages() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
+    onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToMessage(it.id) },
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
-            viewModel.focusMessage(it.messageId)
+            viewModel.scrollToMessage(it.messageId)
         }
     },
+    onMessagesPageEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
+    onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
     ... // Content
 )
 ```
@@ -97,11 +100,14 @@ fun MessageList(
 * `onThreadClick`: Handler used when the user taps on a message with a thread.
 * `onLongItemClick`: Handler used when the user long taps on an item.
 * `onReactionsClick`: Handler used when the user taps on a reaction to a message.
-* `onMessagesStartReached`: Handler used when the user reaches the oldest message, to trigger pagination.
+* `onMessagesPageStartReached`: Handler used when the user reaches the oldest loaded message, to trigger pagination.
 * `onLastVisibleMessageChanged`: Handler used when the user scrolls and the last visible item changes.
 * `onScrollToBottom`: Handler used when the user reaches the newest message. Used to remove the "New message" or "Scroll to bottom" actions from the UI.
 * `onGiphyActionClick`: Handler used when the user clicks on one of the actions in a Giphy message. Giphy images with actions are displayed only directly after using the Giphy slash command.
+* `onQuotedMessageClick`: Handler used when the user clicks on a quoted message. By default will search for the message that has been quoted and will scroll to it.
 * `onMediaGalleryPreviewResult`: Handler used when the user receives a result from the Media Gallery Preview screen, after opening an image or a video attachment.
+* `onMessagesPageEndReached`: Handler used when the user reaches the newest loaded message, to trigger pagination.
+* `onScrollToBottomClicked`: Handler used when the user clicks on the scroll to bottom button.
 
 You can customize the behavior here by providing your own actions, like so:
 
@@ -112,11 +118,14 @@ MessageList(
     onThreadClick = { message -> },
     onLongItemClick = { message -> },
     onReactionsClick = { message -> },
-    onMessagesStartReached = { },
+    onMessagesPageStartReached = { },
     onLastVisibleMessageChanged = { message -> },
     onScrollToBottom = { },
     onGiphyActionClick = { giphyAction -> },
+    onQuotedMessageClick = { message -> },
     onMediaGalleryPreviewResult = { mediaGalleryPreviewResult -> },
+    onMessagesPageEndReached = { messageId -> },
+    onScrollToBottomClicked = { }
      // Content
 )
 ```
@@ -129,18 +138,18 @@ We recommend using the **bound** version for ease of use. Alternatively, you can
 
 ### Controlling the scroll state
 
-The `MessageList` allows you to control the scroll state of the list by providing a `lazyListState` parameter, like so:
+The `MessageList` allows you to control the scroll state of the list by providing a `messagesLazyListState` parameter, like so:
 
 ```kotlin
 @Composable
 fun MessageList(
     ..., // State, UI & Actions
-    lazyListState: LazyListState = rememberMessageListState(parentMessageId),
+    messagesLazyListState: MessagesLazyListState = rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     ... // Content
 )
 ```
 
-* `lazyListState`: The scroll state of the list. While not a handler, you can use it to control the scroll and trigger custom scroll actions.
+* `messagesLazyListState`: The scroll state of the list. While not a handler, you can use it to control the scroll and trigger custom scroll actions.
 
 You can customize this state in the following way:
 
@@ -149,14 +158,13 @@ val myListState = rememberMessageListState(parentMessageId = state.parentMessage
 
 MessageList(
     ..., // the rest of the state, UI & actions
-    lazyListState = myListState,
+    messagesLazyListState = myListState,
 )
 ```
 
-`rememberMessageListState()` keeps a separate instance of `LazyListState` based on the `parentMessageId`. This helps you keep the scroll state of the main list intact when you enter and leave threads.
+`rememberMessageListState()` keeps a separate instance of `MessagesLazyListState` based on the `parentMessageId`. This helps you keep the scroll state of the main list intact when you enter and leave threads.
 
-You can also provide your own instance of `LazyListState` based on your custom logic where you define the starting scroll position of the state, the offset and how it behaves based on user events. For example, when deep linking.
-
+You can also provide your own instance of `MessagesLazyListState` where you define the starting scroll position of the state and how the focused message offset is calculated. For example, clicking on the original message contained within the reply will automatically scroll to the message and put it in focus. You can define where on the screen the focused message appears by passing in your own `MessageOffsetHandler`.
 ##  Customization
 
 We allow for a few ways of customizing the `MessageList` component, as per the signature:
@@ -170,12 +178,16 @@ fun MessageList(
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState)
+        DefaultMessagesHelperContent(
+            messagesState = viewModel.currentMessagesState,
+            messagesLazyListState = messagesLazyListState,
+            scrollToBottom = onScrollToBottomClicked,
+        )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
-            messageListItem = messageListItem,
+            messageListItemState = messageListItem,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,

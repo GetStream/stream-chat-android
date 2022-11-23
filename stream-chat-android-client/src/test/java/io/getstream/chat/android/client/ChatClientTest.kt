@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.UnknownEvent
-import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
@@ -102,7 +101,6 @@ internal class ChatClientTest {
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutines.scope)
         val userScope = UserTestScope(clientScope)
-        val callPostponeHelper = CallPostponeHelper(userScope) { }
         val lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle)
         val tokenManager = FakeTokenManager("")
         val networkStateProvider: NetworkStateProvider = mock()
@@ -120,7 +118,6 @@ internal class ChatClientTest {
             api = api,
             notifications = mock(),
             tokenManager = tokenManager,
-            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
@@ -131,7 +128,6 @@ internal class ChatClientTest {
             chatSocket = fakeChatSocket,
             pluginFactories = pluginFactories,
             clientState = Mother.mockedClientState(),
-            lifecycleObserver = lifecycleObserver,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
         ).apply {
             connectUser(user, token).enqueue()

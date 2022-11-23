@@ -16,8 +16,8 @@
 
 package io.getstream.chat.ui.sample.feature.chat.info.shared
 
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
 import java.util.Date
 
 sealed class SharedAttachment {

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages.list
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents the list of actions users can take with ephemeral giphy messages.

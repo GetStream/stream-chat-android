@@ -13,7 +13,6 @@
     <ID>LongMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun stringToObjectArguments()</ID>
     <ID>LongMethod:PaginationTest.kt$PaginationTest.Companion$@JvmStatic fun createPaginationInput()</ID>
     <ID>MaxLineLength:ChannelEntity.kt$ChannelEntity$*</ID>
-    <ID>MaxLineLength:Config.kt$Config$*</ID>
     <ID>MaxLineLength:FilterObjectConverter.kt$this.size == 2 &amp;&amp; this.containsKey(KEY_DISTINCT) &amp;&amp; this.containsKey(KEY_MEMBERS) -> Filters.distinct((this[KEY_MEMBERS] as List&lt;String>))</ID>
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>
     <ID>MaxLineLength:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$"{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"</ID>

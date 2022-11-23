@@ -23,9 +23,9 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.uitests.R
 import io.getstream.chat.android.uitests.app.login.LoginActivity
 

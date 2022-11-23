@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.common.helper
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.FileUploadConfig
+import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import org.amshove.kluent.`should be equal to`

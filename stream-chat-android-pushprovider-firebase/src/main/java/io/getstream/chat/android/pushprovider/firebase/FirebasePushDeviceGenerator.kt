@@ -20,9 +20,9 @@ import android.content.Context
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.PushProvider
 import io.getstream.logging.StreamLog
 
 /**

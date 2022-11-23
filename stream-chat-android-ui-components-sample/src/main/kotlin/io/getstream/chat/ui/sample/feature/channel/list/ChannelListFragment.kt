@@ -30,7 +30,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel

@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.MessageSyncDescription
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageSyncDescription
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toModel

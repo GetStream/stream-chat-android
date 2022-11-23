@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.list.adapter.internal
 
 import androidx.recyclerview.widget.DiffUtil
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 

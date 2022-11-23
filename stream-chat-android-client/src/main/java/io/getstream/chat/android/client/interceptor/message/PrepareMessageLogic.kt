@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.interceptor.message
 
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 
 public interface PrepareMessageLogic {
 

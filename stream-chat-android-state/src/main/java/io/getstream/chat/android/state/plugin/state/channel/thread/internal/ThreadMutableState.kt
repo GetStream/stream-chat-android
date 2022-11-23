@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.state.channel.thread.internal
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
