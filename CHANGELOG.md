@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Return an error when invoking `ChatClient::disconnect` without a connected user. [#4494](https://github.com/GetStream/stream-chat-android/pull/4494)
 
 ### ✅ Added
 
