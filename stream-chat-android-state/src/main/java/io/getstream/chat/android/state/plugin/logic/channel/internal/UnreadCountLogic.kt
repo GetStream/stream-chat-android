@@ -3,6 +3,7 @@ package io.getstream.chat.android.state.plugin.logic.channel.internal
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
@@ -11,7 +12,12 @@ import io.getstream.logging.StreamLog
 internal class UnreadCountLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
+    private val countBuffer: StartStopBuffer<Message>
 ) {
+
+    init {
+        countBuffer.subscribe(this::performCount)
+    }
 
     /**
      * Increments the unread count of the Channel if necessary.
@@ -19,6 +25,13 @@ internal class UnreadCountLogic(
      * @param message [Message].
      */
     fun incrementUnreadCountIfNecessary(message: Message) {
+        logReadState()
+
+        countBuffer.enqueueData(message)
+        // performCount(message)
+    }
+
+    private fun performCount(message: Message) {
         val user = globalMutableState.user.value ?: return
         val currentUserId = user.id
 
@@ -26,12 +39,15 @@ internal class UnreadCountLogic(
          * same time, one increment can be lost.
          */
         synchronized(this) {
+            logReadState()
+
             val readState = mutableState.read.value?.copy() ?: ChannelUserRead(user)
             val unreadCount: Int = readState.unreadMessages
             val lastMessageSeenDate = readState.lastMessageSeenDate
 
-            val isMessageAlreadyInState = mutableState.visibleMessages.value.containsKey(message.id)
-            val shouldIncrementUnreadCount = !isMessageAlreadyInState &&
+            // val isMessageAlreadyInState = mutableState.visibleMessages.value.containsKey(message.id)
+            val shouldIncrementUnreadCount =
+                // !isMessageAlreadyInState &&
                 message.shouldIncrementUnreadCount(
                     currentUserId = currentUserId,
                     lastMessageAtDate = lastMessageSeenDate,
@@ -47,6 +63,14 @@ internal class UnreadCountLogic(
                 }
                 mutableState.increaseReadWith(message)
             }
+        }
+    }
+
+    private fun logReadState() {
+        StreamLog.d(TAG) {
+            "current read state last read: ${mutableState.read.value?.lastRead} \n" +
+                "current read state unread count: ${mutableState.read.value?.unreadMessages} \n" +
+                "current read state last message seen: ${mutableState.read.value?.lastMessageSeenDate} \n"
         }
     }
 

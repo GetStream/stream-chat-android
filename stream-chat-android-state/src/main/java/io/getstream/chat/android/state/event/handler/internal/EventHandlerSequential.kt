@@ -212,9 +212,11 @@ internal class EventHandlerSequential(
 
         if (event is CidEvent) {
             // skip events that are typically not impacting the query channels overview
-            if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
+            if (event is UserStartWatchingEvent || event is UserStopWatchingEvent || event is NewMessageEvent) {
                 return
             }
+
+            logger.d { "[refreshChannelState] not running" }
             queryChannelsLogic.refreshChannelState(event.cid)
         }
 

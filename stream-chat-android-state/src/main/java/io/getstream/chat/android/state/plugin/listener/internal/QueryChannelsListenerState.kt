@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
@@ -38,13 +39,17 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
  *
  * @param logic [LogicRegistry] provided by the [StreamStatePluginFactory].
  */
-internal class QueryChannelsListenerState(private val logicProvider: LogicRegistry) : QueryChannelsListener {
+internal class QueryChannelsListenerState(
+    private val logicProvider: LogicRegistry,
+    private val countBuffer: StartStopBuffer<Message>
+) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
         return Result.Success(Unit)
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
+        // countBuffer.hold()
         logicProvider.queryChannels(request).run {
             setCurrentRequest(request)
             queryOffline(request.toPagination())
@@ -53,6 +58,7 @@ internal class QueryChannelsListenerState(private val logicProvider: LogicRegist
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logicProvider.queryChannels(request).onQueryChannelsResult(result, request)
+        // countBuffer.active()
     }
 
     private companion object {
