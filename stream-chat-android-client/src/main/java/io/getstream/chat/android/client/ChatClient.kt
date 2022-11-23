@@ -1207,6 +1207,8 @@ internal constructor(
 
     /**
      * Disconnect the current user, stop all observers and clear user data.
+     * This method should only be used whenever the user logout from the main app.
+     * If the user will continue using the Chat in the future, you shouldn't call this method.
      *
      * @param flushPersistence if true will clear user data.
      *
