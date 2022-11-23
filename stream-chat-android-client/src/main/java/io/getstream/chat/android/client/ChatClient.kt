@@ -61,11 +61,7 @@ import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
-import io.getstream.chat.android.client.errorhandler.CreateChannelErrorHandler
-import io.getstream.chat.android.client.errorhandler.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.errorhandler.QueryMembersErrorHandler
-import io.getstream.chat.android.client.errorhandler.SendReactionErrorHandler
 import io.getstream.chat.android.client.errorhandler.onCreateChannelError
 import io.getstream.chat.android.client.errorhandler.onMessageError
 import io.getstream.chat.android.client.errorhandler.onQueryMembersError
@@ -281,7 +277,7 @@ internal constructor(
      * Error handlers for API calls.
      */
     private val errorHandlers: List<ErrorHandler>
-        get() = plugins.flatMap { it.errorHandlers }.sorted()
+        get() = plugins.mapNotNull { it.errorHandler }.sorted()
 
     public var logicRegistry: ChannelStateLogicProvider? = null
 
@@ -296,7 +292,7 @@ internal constructor(
         logger.i { "Initialised: ${buildSdkTrackingHeaders()}" }
     }
 
-    private suspend fun handleEvent(event: ChatEvent) {
+    private fun handleEvent(event: ChatEvent) {
         when (event) {
             is ConnectedEvent -> {
                 logger.i { "[handleEvent] event: ConnectedEvent(userId='${event.me.id}')" }
@@ -738,7 +734,6 @@ internal constructor(
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         logger.d { "[queryMembers] cid: $channelType:$channelId, offset: $offset, limit: $limit" }
-        val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
             .doOnResult(userScope) { result ->
                 plugins.forEach { plugin ->
@@ -880,7 +875,6 @@ internal constructor(
      */
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
-        val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
         val currentUser = getCurrentUser()
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
@@ -909,7 +903,7 @@ internal constructor(
                 }
             }
             .precondition(plugins) { onDeleteReactionPrecondition(currentUser) }
-            .onMessageError(relevantErrorHandlers, cid, messageId)
+            .onMessageError(errorHandlers, cid, messageId)
             .share(userScope) { DeleteReactionIdentifier(messageId, reactionType, cid) }
     }
 
@@ -934,7 +928,6 @@ internal constructor(
     @CheckResult
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
-        val relevantErrorHandlers = errorHandlers.filterIsInstance<SendReactionErrorHandler>()
         val currentUser = getCurrentUser()
 
         return api.sendReaction(reaction, enforceUnique)
@@ -963,7 +956,7 @@ internal constructor(
                     )
                 }
             }
-            .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
+            .onReactionError(errorHandlers, reaction, enforceUnique, currentUser!!)
             .precondition(plugins) { onSendReactionPrecondition(currentUser, reaction) }
             .share(userScope) { SendReactionIdentifier(reaction, enforceUnique, cid) }
     }
@@ -2344,7 +2337,6 @@ internal constructor(
         memberIds: List<String>,
         extraData: Map<String, Any>,
     ): Call<Channel> {
-        val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
         val currentUser = getCurrentUser()
 
         val request = QueryChannelRequest()
@@ -2379,7 +2371,7 @@ internal constructor(
                 }
             }
             .onCreateChannelError(
-                errorHandlers = relevantErrorHandlers,
+                errorHandlers = errorHandlers,
                 channelType = channelType,
                 channelId = channelId,
                 memberIds = memberIds,
