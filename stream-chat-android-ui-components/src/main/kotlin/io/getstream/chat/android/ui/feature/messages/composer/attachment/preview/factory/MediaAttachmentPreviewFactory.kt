@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.shape.ShapeAppearanceModel
-import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
@@ -44,7 +43,7 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
     public override fun canHandle(attachment: Attachment): Boolean {
-        return attachment.isImage() || attachment.isGiphy() || attachment.isVideo()
+        return attachment.isImage() || attachment.isVideo()
     }
 
     /**
@@ -78,6 +77,8 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
      *
      * @param binding Binding generated for the layout.
      * @param attachmentRemovalListener Click listener for the remove attachment button.
+     * @param style Used to style the ViewHolder. If null, the ViewHolder will retain
+     * the default appearance.
      */
     private class MediaAttachmentPreviewViewHolder(
         private val binding: StreamUiMediaAttachmentPreviewBinding,
@@ -110,7 +111,7 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
                             style.messageInputVideoAttachmentIconDrawableTint
                         )
 
-                    load(iconDrawable)
+                    setImageDrawable(iconDrawable)
                     setPaddingRelative(
                         style.messageInputVideoAttachmentIconDrawablePaddingStart,
                         style.messageInputVideoAttachmentIconDrawablePaddingTop,
