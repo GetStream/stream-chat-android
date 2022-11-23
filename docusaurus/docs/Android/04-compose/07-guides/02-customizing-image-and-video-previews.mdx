@@ -137,7 +137,7 @@ val attachmentFactories = listOf(
 )
 ```
 
-Remember, order of precedence matters when creating a list of attachment factories, as the first one whose `canHandle()` function evaluates to true will render the given attachment.
+Order of precedence matters when creating a list of attachment factories, the first one whose `canHandle()` returns true will render the given attachment.
 
 Finally, let's replace the default attachment factories:
 
