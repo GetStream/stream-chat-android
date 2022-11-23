@@ -178,14 +178,13 @@ internal class ChannelStateLogic(
      */
     override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, updateCount: Boolean) {
         when (shouldRefreshMessages) {
-            true ->  {
+            true -> {
                 mutableState.setMessages(messages)
 
                 if (updateCount) {
-                    mutableState._countedMessage.clear()
-                    mutableState._countedMessage.addAll(messages.map { it.id })
+                    mutableState.clearCountedMessages()
+                    mutableState.insertCountedMessages(messages.map { it.id })
                 }
-
             }
             false -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)

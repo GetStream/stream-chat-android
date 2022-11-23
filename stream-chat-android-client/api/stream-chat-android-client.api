@@ -611,7 +611,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClientExtensi
 }
 
 public final class io/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic$DefaultImpls {
-	public static synthetic fun upsertMessages$default (Lio/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic;Ljava/util/List;ZILjava/lang/Object;)V
+	public static synthetic fun upsertMessage$default (Lio/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)V
+	public static synthetic fun upsertMessages$default (Lio/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic;Ljava/util/List;ZZILjava/lang/Object;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/channel/state/ChannelState {
@@ -2496,6 +2497,16 @@ public final class io/getstream/chat/android/client/utils/attachment/AttachmentU
 	public static final fun isImgur (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isLink (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isVideo (Lio/getstream/chat/android/models/Attachment;)Z
+}
+
+public final class io/getstream/chat/android/client/utils/buffer/StartStopBuffer {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;)V
+	public synthetic fun <init> (Lkotlinx/coroutines/flow/StateFlow;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun active ()V
+	public final fun enqueueData (Ljava/lang/Object;)V
+	public final fun hold ()V
+	public final fun subscribe (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class io/getstream/chat/android/client/utils/channel/ChannelUtilsKt {

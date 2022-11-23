@@ -26,7 +26,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic

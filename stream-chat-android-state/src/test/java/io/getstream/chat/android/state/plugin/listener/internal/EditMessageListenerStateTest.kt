@@ -65,7 +65,8 @@ internal class EditMessageListenerStateTest {
         verify(channelStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id
-            }
+            },
+            any()
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->
@@ -96,7 +97,8 @@ internal class EditMessageListenerStateTest {
         verify(channelStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
-            }
+            },
+            any()
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->
@@ -127,7 +129,8 @@ internal class EditMessageListenerStateTest {
         verify(channelStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
+            any()
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->
@@ -158,7 +161,8 @@ internal class EditMessageListenerStateTest {
         verify(channelStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            }
+            },
+            any()
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->
@@ -189,7 +193,8 @@ internal class EditMessageListenerStateTest {
         verify(channelStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
+            any()
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->

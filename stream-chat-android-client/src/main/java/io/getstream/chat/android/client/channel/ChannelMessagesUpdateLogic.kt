@@ -25,7 +25,11 @@ public interface ChannelMessagesUpdateLogic {
 
     public fun upsertMessage(message: Message, updateCount: Boolean = true)
 
-    public fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false, updateCount: Boolean = true)
+    public fun upsertMessages(
+        messages: List<Message>,
+        shouldRefreshMessages: Boolean = false,
+        updateCount: Boolean = true,
+    )
 
     public fun listenForChannelState(): ChannelState
 

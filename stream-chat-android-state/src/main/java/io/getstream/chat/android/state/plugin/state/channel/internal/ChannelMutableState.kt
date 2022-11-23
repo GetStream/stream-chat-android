@@ -58,7 +58,7 @@ internal class ChannelMutableState(
     override val cid: String = "%s:%s".format(channelType, channelId)
 
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
-    internal val _countedMessage: MutableSet<String> = mutableSetOf()
+    private val _countedMessage: MutableSet<String> = mutableSetOf()
     private val _typing = MutableStateFlow(TypingEvent(channelId, emptyList()))
     private val _typingChatEvents = MutableStateFlow<Map<String, TypingStartEvent>>(emptyMap())
     private val _rawReads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
@@ -505,6 +505,14 @@ internal class ChannelMutableState(
      */
     fun updateCachedLatestMessages(messages: Map<String, Message>) {
         cachedLatestMessages.value = messages
+    }
+
+    fun clearCountedMessages() {
+        _countedMessage.clear()
+    }
+
+    fun insertCountedMessages(ids: List<String>) {
+        _countedMessage.addAll(ids)
     }
 
     fun isMessageAlreadyCounted(messageId: String): Boolean = _countedMessage.contains(messageId)

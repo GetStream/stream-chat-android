@@ -41,7 +41,7 @@ public class GlobalMutableState private constructor(
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
     private val _typingChannels = MutableStateFlow(emptyMap<String, TypingEvent>())
-    private val _isQueryingFree = MutableStateFlow(true)
+    private val _isQueryingFree = MutableStateFlow(false)
 
     private val _user = MutableStateFlow<User?>(null)
 
@@ -61,12 +61,13 @@ public class GlobalMutableState private constructor(
 
     override val queryingChannelsFree: StateFlow<Boolean> = _isQueryingFree
 
-        public companion object {
+    public companion object {
 
         @InternalStreamChatApi
         @VisibleForTesting
         @Volatile
         public var instance: GlobalMutableState? = null
+
         /**
          * Gets the singleton of [GlobalMutableState] or creates it in the first call.
          */
