@@ -12,8 +12,9 @@ import io.getstream.logging.StreamLog
 internal class UnreadCountLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
-    private val countBuffer: StartStopBuffer<Message>
 ) {
+
+    private val countBuffer: StartStopBuffer<Message> = StartStopBuffer(globalMutableState.queryingChannelsFree)
 
     init {
         countBuffer.subscribe(this::performCount)
@@ -25,10 +26,7 @@ internal class UnreadCountLogic(
      * @param message [Message].
      */
     fun incrementUnreadCountIfNecessary(message: Message) {
-        logReadState()
-
         countBuffer.enqueueData(message)
-        // performCount(message)
     }
 
     private fun performCount(message: Message) {
@@ -39,8 +37,6 @@ internal class UnreadCountLogic(
          * same time, one increment can be lost.
          */
         synchronized(this) {
-            logReadState()
-
             val readState = mutableState.read.value?.copy() ?: ChannelUserRead(user)
             val unreadCount: Int = readState.unreadMessages
             val lastMessageSeenDate = readState.lastMessageSeenDate
@@ -63,14 +59,6 @@ internal class UnreadCountLogic(
                 }
                 mutableState.increaseReadWith(message)
             }
-        }
-    }
-
-    private fun logReadState() {
-        StreamLog.d(TAG) {
-            "current read state last read: ${mutableState.read.value?.lastRead} \n" +
-                "current read state unread count: ${mutableState.read.value?.unreadMessages} \n" +
-                "current read state last message seen: ${mutableState.read.value?.lastMessageSeenDate} \n"
         }
     }
 

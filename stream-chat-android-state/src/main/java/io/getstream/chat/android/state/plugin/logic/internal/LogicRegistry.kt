@@ -59,7 +59,6 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
-    private val countBuffer: StartStopBuffer<Message>
 ) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
@@ -107,7 +106,7 @@ internal class LogicRegistry internal constructor(
                 globalMutableState = globalState,
                 searchLogic = SearchLogic(mutableState),
                 coroutineScope = coroutineScope,
-                unreadCountLogic = UnreadCountLogic(mutableState, globalState, countBuffer)
+                unreadCountLogic = UnreadCountLogic(mutableState, globalState)
             )
 
             ChannelLogic(
@@ -250,7 +249,6 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
             coroutineScope: CoroutineScope,
-            countBuffer: StartStopBuffer<Message>
         ): LogicRegistry {
             if (instance != null) {
                 logger.e {
@@ -266,7 +264,6 @@ internal class LogicRegistry internal constructor(
                 repos = repos,
                 client = client,
                 coroutineScope = coroutineScope,
-                countBuffer = countBuffer
             )
                 .also { logicRegistry ->
                     instance = logicRegistry

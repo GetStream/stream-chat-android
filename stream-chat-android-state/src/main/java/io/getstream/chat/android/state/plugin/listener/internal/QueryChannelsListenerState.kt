@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 
 /**
  * [QueryChannelsListener] implementation for [StatePlugin].
@@ -41,7 +42,7 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
  */
 internal class QueryChannelsListenerState(
     private val logicProvider: LogicRegistry,
-    private val countBuffer: StartStopBuffer<Message>
+    private val globalState: MutableGlobalState
 ) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
@@ -49,7 +50,7 @@ internal class QueryChannelsListenerState(
     }
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
-        // countBuffer.hold()
+        globalState.setQueryingChannelsFree(false)
         logicProvider.queryChannels(request).run {
             setCurrentRequest(request)
             queryOffline(request.toPagination())
@@ -58,7 +59,7 @@ internal class QueryChannelsListenerState(
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logicProvider.queryChannels(request).onQueryChannelsResult(result, request)
-        // countBuffer.active()
+        globalState.setQueryingChannelsFree(true)
     }
 
     private companion object {

@@ -43,6 +43,8 @@ internal interface MutableGlobalState : GlobalState {
 
     fun setMutedUsers(mutedUsers: List<Mute>)
 
+    fun setQueryingChannelsFree(isQuerying: Boolean)
+
     /**
      * Tries emit typing event for a particular channel.
      *

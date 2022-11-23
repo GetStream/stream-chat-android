@@ -60,6 +60,8 @@ public interface GlobalState {
      */
     public val banned: StateFlow<Boolean>
 
+    public val queryingChannelsFree: StateFlow<Boolean>
+
     /**
      * Map of typing users in all active channel.
      * Use [Channel.cid] to access events for a particular channel.

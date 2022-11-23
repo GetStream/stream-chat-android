@@ -37,9 +37,7 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
@@ -61,6 +59,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.TypingEventListe
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.state.sync.internal.SyncManager
 import kotlin.reflect.KClass
@@ -86,11 +85,10 @@ public class StatePlugin internal constructor(
     private val stateRegistry: StateRegistry,
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
-    private val globalState: GlobalState,
-    private val countBuffer: StartStopBuffer<Message>
+    private val globalState: MutableGlobalState,
 ) : Plugin,
     DependencyResolver,
-    QueryChannelsListener by QueryChannelsListenerState(logic, countBuffer),
+    QueryChannelsListener by QueryChannelsListenerState(logic, globalState),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
     ChannelMarkReadListener by ChannelMarkReadListenerState(stateRegistry),
