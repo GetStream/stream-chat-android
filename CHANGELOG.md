@@ -13,6 +13,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixing erase of offline messages when entering a channel. [#4457](https://github.com/GetStream/stream-chat-android/pull/4457)
 
 ### ⬆️ Improved
 
