@@ -100,7 +100,7 @@ messageListView.setMessageEditHandler { message ->
 // Handle navigate up state
 messageListViewModel.state.observe(viewLifecycleOwner) { state ->
     if (state is MessageListViewModel.State.NavigateUp) {
-        finish()
+        requireActivity().finish()
     }
 }
 
@@ -111,8 +111,8 @@ val backHandler = {
 messageListHeaderView.setBackButtonClickListener(backHandler)
 
 // Override the default Activity's back button behaviour
-onBackPressedDispatcher.addCallback(
-    this,
+requireActivity().onBackPressedDispatcher.addCallback(
+    viewLifecycleOwner,
     object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             backHandler()

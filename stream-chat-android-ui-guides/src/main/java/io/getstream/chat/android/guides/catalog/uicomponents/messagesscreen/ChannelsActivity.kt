@@ -18,7 +18,7 @@ package io.getstream.chat.android.guides.catalog.uicomponents.messagesscreen
 
 import android.content.Context
 import android.content.Intent
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
 import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
 
