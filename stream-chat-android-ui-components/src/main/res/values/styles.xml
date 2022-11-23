@@ -1034,6 +1034,13 @@
         <item name="streamUiMessageComposerScrollbarFadingEnabled">false</item>
         <item name="streamUiMessageComposerMessageInputMaxLines">7</item>
         <item name="streamUiMessageComposerMessageInputCannotSendHintText">@string/stream_ui_message_composer_hint_cannot_send_message</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawable">@drawable/stream_ui_ic_play</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconElevation">3dp</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop">2dp</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom">2dp</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart">2dp</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd">2dp</item>
 
         <!-- Leading content -->
         <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>
