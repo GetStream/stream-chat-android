@@ -61,7 +61,7 @@ internal class UploadAttachmentsAndroidWorker(
                 }
                 is io.getstream.chat.android.client.utils.Result.Failure -> {
                     logger.i { "[doWork] Error while uploading attachments: ${result.value}" }
-                    Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to result)).build())
+                    Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to result.value.message)).build())
                 }
             }
         }

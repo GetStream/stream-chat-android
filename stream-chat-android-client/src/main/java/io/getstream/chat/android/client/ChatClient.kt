@@ -318,7 +318,8 @@ internal constructor(
                     is DisconnectCause.NetworkNotAvailable,
                     is DisconnectCause.WebSocketNotAvailable,
                     is DisconnectCause.Error,
-                    -> { }
+                    -> {
+                    }
                     is DisconnectCause.UnrecoverableError -> {
                         userStateService.onSocketUnrecoverableError()
                     }
@@ -1111,6 +1112,8 @@ internal constructor(
 
     /**
      * Disconnect the current user, stop all observers and clear user data.
+     * This method should only be used whenever the user logout from the main app.
+     * You shouldn't call this method, if the user will continue using the Chat in the future.
      *
      * @param flushPersistence if true will clear user data.
      *
@@ -1120,8 +1123,20 @@ internal constructor(
     public fun disconnect(flushPersistence: Boolean): Call<Unit> =
         CoroutineCall(clientScope) {
             logger.d { "[disconnect] flushPersistence: $flushPersistence" }
-            disconnectSuspend(flushPersistence)
-            Result.Success(Unit)
+            when (isUserSet()) {
+                true -> {
+                    disconnectSuspend(flushPersistence)
+                    Result.Success(Unit)
+                }
+                false -> {
+                    logger.i { "[disconnect] cannot disconnect as the user wasn't connected" }
+                    Result.Failure(
+                        ChatError.GenericError(
+                            message = "ChatClient can't be disconnected because user wasn't connected previously",
+                        ),
+                    )
+                }
+            }
         }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {

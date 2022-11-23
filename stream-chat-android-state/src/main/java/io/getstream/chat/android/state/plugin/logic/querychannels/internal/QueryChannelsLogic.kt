@@ -138,6 +138,8 @@ internal class QueryChannelsLogic(
         if (result is Result.Success) {
             logger.d { "Number of returned channels: ${result.value.size}" }
             updateOnlineChannels(request, result.value)
+        } else {
+            queryChannelsStateLogic.initializeChannelsIfNeeded()
         }
 
         loadingPerPage(false, request.offset > 0)
@@ -234,11 +236,11 @@ internal class QueryChannelsLogic(
             logger.d {
                 "[updateOnlineChannels] isFirstPage: ${request.isFirstPage}, " +
                     "channels.size: ${channels.size}, " +
-                    "existingChannels.size: ${existingChannels.size}, " +
+                    "existingChannels.size: ${existingChannels?.size ?: "null"}, " +
                     "currentChannelsOffset: $currentChannelsOffset"
             }
 
-            if (request.isFirstPage && existingChannels.isNotEmpty()) {
+            if (request.isFirstPage && !existingChannels.isNullOrEmpty()) {
                 var newChannelsOffset = channels.size
                 val notUpdatedChannels = existingChannels - channels.map { it.cid }.toSet()
                 logger.v { "[updateOnlineChannels] notUpdatedChannels.size: ${notUpdatedChannels.size}" }
