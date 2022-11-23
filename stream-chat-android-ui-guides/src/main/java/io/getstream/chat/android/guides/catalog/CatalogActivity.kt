@@ -46,10 +46,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.guides.login.LoginActivity
 import io.getstream.chat.android.guides.catalog.compose.customattachments.ChannelsActivity as ComposeCustomAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ChannelsActivity as ComposeCustomizingImageAndVideoAttachmentsActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.channelsscreen.ChannelsActivity as UiComponentsChannelsScreenActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.ChannelsActivity as UiComponentsCustomAttachmentsActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.customreactions.ChannelsActivity as UiComponentsCustomReactionsActivity
-import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ChannelsActivity as ComposeCustomizingImageAndVideoAttachmentsActivity
 
 /**
  * An Activity with a list of guides and samples.
