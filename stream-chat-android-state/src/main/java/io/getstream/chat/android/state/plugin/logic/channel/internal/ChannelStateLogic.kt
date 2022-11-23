@@ -26,14 +26,14 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelData
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.TypingEvent
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.TypingEvent
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
@@ -355,6 +355,7 @@ internal class ChannelStateLogic(
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
         isChannelsStateUpdate: Boolean = false,
+        isWatchChannel: Boolean = false,
     ) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
@@ -374,7 +375,8 @@ internal class ChannelStateLogic(
                     isInsideSearch = mutableState.insideSearch.value,
                     isScrollUpdate = scrollUpdate,
                     shouldRefreshMessages = shouldRefreshMessages,
-                    isChannelsStateUpdate = isChannelsStateUpdate
+                    isChannelsStateUpdate = isChannelsStateUpdate,
+                    isWatchChannel = isWatchChannel
                 )
             ) {
                 upsertMessages(channel.messages, shouldRefreshMessages)
@@ -405,19 +407,22 @@ internal class ChannelStateLogic(
      * @param isInsideSearch Whether we are inside search or not.
      * @param isScrollUpdate Whether the update is due to a scroll update, meaning pagination.
      * @param shouldRefreshMessages Whether the message list should get refreshed.
+     * @param isWatchChannel Whether the request came to watch a channel.
      *
      * @return Whether we need to upsert the messages or not.
      */
+    @Suppress("LongParameterList")
     private fun shouldUpsertMessages(
         isNotificationUpdate: Boolean,
         isInsideSearch: Boolean,
         isScrollUpdate: Boolean,
         shouldRefreshMessages: Boolean,
         isChannelsStateUpdate: Boolean,
+        isWatchChannel: Boolean
     ): Boolean {
         // upsert message if refresh is requested, on scroll updates and on notification updates when outside search
         // not to create gaps in message history
-        return shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch) ||
+        return isWatchChannel || shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch) ||
             // upsert the messages that come from the QueryChannelsStateLogic only if there are no messages in the list
             (isChannelsStateUpdate && (mutableState.messages.value.isEmpty() || !isInsideSearch))
     }
@@ -463,7 +468,8 @@ internal class ChannelStateLogic(
             shouldRefreshMessages = request.shouldRefresh,
             scrollUpdate = request.isFilteringMessages(),
             isNotificationUpdate = request.isNotificationUpdate,
-            messageLimit = request.messagesLimit()
+            messageLimit = request.messagesLimit(),
+            isWatchChannel = request.isWatchChannel
         )
     }
 

@@ -19,10 +19,10 @@ package io.getstream.chat.android.ui.helper
 import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
 import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.asMention

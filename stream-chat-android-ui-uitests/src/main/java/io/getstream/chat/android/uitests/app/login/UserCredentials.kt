@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.uitests.app.login
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 /**
  * A predefined set of available users.

@@ -21,8 +21,8 @@ import com.squareup.moshi.MultiMapJsonAdapter
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.addAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.getstream.chat.android.client.models.MessageSyncType
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageAwaitingAttachmentsEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageModerationFailedEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageSyncContentEntity

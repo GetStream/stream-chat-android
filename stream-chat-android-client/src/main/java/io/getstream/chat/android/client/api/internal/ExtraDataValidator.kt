@@ -20,10 +20,10 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.CustomObject
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CustomObject
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.CoroutineScope
 
 /**

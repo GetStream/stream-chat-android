@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Channel
 
 /**
  * Listener of [ChatClient.queryChannel] requests.

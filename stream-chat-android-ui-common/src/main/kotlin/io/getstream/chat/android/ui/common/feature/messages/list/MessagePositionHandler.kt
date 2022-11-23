@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.list
 
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 
 /**

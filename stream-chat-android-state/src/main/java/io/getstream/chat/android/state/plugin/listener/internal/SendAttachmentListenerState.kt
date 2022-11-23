@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 
 /**

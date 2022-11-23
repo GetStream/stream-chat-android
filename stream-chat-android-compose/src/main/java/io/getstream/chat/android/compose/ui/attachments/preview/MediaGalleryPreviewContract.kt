@@ -19,8 +19,8 @@ package io.getstream.chat.android.compose.ui.attachments.preview
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.models.Message
 
 /**
  * The contract used to start the [MediaGalleryPreviewActivity]

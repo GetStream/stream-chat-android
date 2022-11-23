@@ -9,8 +9,8 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.extensions.countUnreadMentionsForUser
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.state.extensions.globalState
 

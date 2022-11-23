@@ -21,8 +21,8 @@ import android.graphics.BitmapFactory
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.graphics.drawable.toBitmapOrNull
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.withContext
 import java.net.URL
 

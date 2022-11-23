@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.util.extensions
 
-import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.ChannelCapabilities
 
 /**
  * Creates a set of channel capabilities fully populated

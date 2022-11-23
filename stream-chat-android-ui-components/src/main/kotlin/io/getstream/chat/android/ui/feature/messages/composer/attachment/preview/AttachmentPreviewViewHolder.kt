@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 
 /**
  * A base [RecyclerView.ViewHolder] for attachment preview items in the message composer.

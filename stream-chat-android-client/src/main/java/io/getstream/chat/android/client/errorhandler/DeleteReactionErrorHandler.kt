@@ -18,9 +18,9 @@ package io.getstream.chat.android.client.errorhandler
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Message
 
 /**
  * Error handler for [io.getstream.chat.android.client.ChatClient.deleteReaction] calls.

@@ -27,7 +27,6 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -47,8 +46,6 @@ import io.getstream.chat.android.client.api.models.identifier.SendGiphyIdentifie
 import io.getstream.chat.android.client.api.models.identifier.SendReactionIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -93,32 +90,6 @@ import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.logger.StreamLogLevelValidator
 import io.getstream.chat.android.client.logger.StreamLoggerHandler
-import io.getstream.chat.android.client.models.AppSettings
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.BannedUser
-import io.getstream.chat.android.client.models.BannedUsersSort
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ConnectionData
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Flag
-import io.getstream.chat.android.client.models.GuestUser
-import io.getstream.chat.android.client.models.InitializationState
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.ModelFields
-import io.getstream.chat.android.client.models.Mute
-import io.getstream.chat.android.client.models.PushMessage
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.SearchMessagesResult
-import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.client.models.UploadedFile
-import io.getstream.chat.android.client.models.UploadedImage
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.VideoCallInfo
-import io.getstream.chat.android.client.models.VideoCallToken
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
@@ -161,6 +132,34 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.BannedUser
+import io.getstream.chat.android.models.BannedUsersSort
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ConnectionData
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.GuestUser
+import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.models.UploadedImage
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.VideoCallInfo
+import io.getstream.chat.android.models.VideoCallToken
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.logging.CompositeStreamLogger
 import io.getstream.logging.SilentStreamLogger
 import io.getstream.logging.StreamLog
@@ -624,6 +623,10 @@ internal constructor(
     @InternalStreamChatApi
     public fun setUserWithoutConnectingIfNeeded() {
         if (isUserSet() || clientState.initializationState.value != InitializationState.NOT_INITIALIZED) {
+            logger.d {
+                "[setUserWithoutConnectingIfNeeded] User is already set: ${isUserSet()}" +
+                    " Initialization state: ${clientState.initializationState.value}"
+            }
             return
         }
 
@@ -756,7 +759,7 @@ internal constructor(
      * Uploads a file for the given channel. Progress can be accessed via [callback].
      *
      * The Stream CDN imposes the following restrictions on file uploads:
-     * - The maximum file size is 20 MB
+     * - The maximum file size is 100 MB
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
@@ -784,7 +787,7 @@ internal constructor(
      * Uploads an image for the given channel. Progress can be accessed via [callback].
      *
      * The Stream CDN imposes the following restrictions on image uploads:
-     * - The maximum image size is 20 MB
+     * - The maximum image size is 100 MB
      * - Supported MIME types are listed in [StreamCdnImageMimeTypes.SUPPORTED_IMAGE_MIME_TYPES]
      *
      * @param channelType The channel type. ie messaging.
@@ -992,7 +995,7 @@ internal constructor(
     /**
      * Subscribes to the specific [eventTypes] of the client.
      *
-     * @see [io.getstream.chat.android.client.models.EventType] for type constants
+     * @see [EventType] for type constants
      */
     public fun subscribeFor(
         vararg eventTypes: String,
@@ -2336,7 +2339,8 @@ internal constructor(
     ): Call<Channel> {
         val currentUser = getCurrentUser()
 
-        val request = QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to memberIds))
+        val request = QueryChannelRequest()
+            .withData(extraData + mapOf(QueryChannelRequest.KEY_MEMBERS to memberIds))
         return queryChannelInternal(
             channelType = channelType,
             channelId = channelId,
@@ -2642,7 +2646,7 @@ internal constructor(
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
-        private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING
+        private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
 
         /**
          * Sets the log level to be used by the client.
@@ -2701,7 +2705,7 @@ internal constructor(
          * to upload files and images.
          *
          * The default implementation uses Stream's own CDN to store these files,
-         * which has a 20 MB upload size limit.
+         * which has a 100 MB upload size limit.
          *
          * For more info, see
          * [the File Uploads documentation](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin).
@@ -2816,6 +2820,9 @@ internal constructor(
             this.distinctApiCalls = false
         }
 
+        /**
+         * An enumeration of various network types used as a constraint inside upload attachments worker.
+         */
         public fun uploadAttachmentsNetworkType(type: UploadAttachmentsNetworkType): Builder = apply {
             this.uploadAttachmentsNetworkType = type
         }

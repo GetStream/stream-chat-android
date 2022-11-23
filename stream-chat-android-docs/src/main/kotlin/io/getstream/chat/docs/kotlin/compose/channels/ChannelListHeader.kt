@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.client.models.ConnectionState
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.state.extensions.globalState
 
 /**

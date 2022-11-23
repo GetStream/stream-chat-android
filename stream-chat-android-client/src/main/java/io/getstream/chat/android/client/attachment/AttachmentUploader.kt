@@ -18,15 +18,19 @@ package io.getstream.chat.android.client.attachment
 
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
+import io.getstream.logging.StreamLog
 import java.io.File
 
 @InternalStreamChatApi
 public class AttachmentUploader(private val client: ChatClient = ChatClient.instance()) {
+
+    private val logger = StreamLog.getLogger("Chat:AttachmentUploader")
 
     /**
      * Uploads the given attachment.
@@ -53,6 +57,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         val attachmentType = mimeType.toAttachmentType()
 
         return if (attachmentType == AttachmentType.IMAGE) {
+            logger.d { "[uploadAttachment] Uploading ${attachment.uploadId} as image" }
             uploadImage(
                 channelType = channelType,
                 channelId = channelId,
@@ -63,6 +68,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 attachmentType = attachmentType
             )
         } else {
+            logger.d { "[uploadAttachment] Uploading ${attachment.uploadId} as file" }
             uploadFile(
                 channelType = channelType,
                 channelId = channelId,
@@ -197,6 +203,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         augmentedAttachment: Attachment,
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
+        logger.d { "[onSuccessfulUpload] Attachment ${augmentedAttachment.uploadId} uploaded successfully" }
         augmentedAttachment.uploadState = Attachment.UploadState.Success
         progressCallback?.onSuccess(augmentedAttachment.url)
         return Result.Success(augmentedAttachment)
@@ -218,6 +225,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         result: Result.Failure,
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
+        logger.i { "[onFailedUpload] Attachment ${attachment.uploadId} upload failed: ${result.value}" }
         attachment.uploadState = Attachment.UploadState.Failed(result.value)
         progressCallback?.onError(result.value)
         return Result.Failure(result.value)

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 
 internal fun interface AttachmentClickListener {
     fun onAttachmentClick(attachment: Attachment)
