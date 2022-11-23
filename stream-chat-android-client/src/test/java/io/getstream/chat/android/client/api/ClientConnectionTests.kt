@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.ConnectionData
@@ -39,9 +40,11 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.randomBoolean
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -162,9 +165,17 @@ internal class ClientConnectionTests {
         client.connectUser(user, token).enqueue()
         socketListener.onEvent(connectedEvent)
 
-        client.disconnect(flushPersistence = false).await()
+        val result = client.disconnect(flushPersistence = false).await()
 
+        result `should be equal to` Result.success(Unit)
         verify(socket, times(1)).disconnect()
+    }
+
+    @Test
+    fun `Should return a failure if try to disconnect without a connected user`() = runTest {
+        val result = client.disconnect(randomBoolean()).await()
+
+        result `should be equal to` Result.error(ChatError("ChatClient can't be disconnected because user wasn't connected previously"))
     }
 
     @Test
