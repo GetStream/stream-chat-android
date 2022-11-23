@@ -366,7 +366,7 @@ internal class ChannelLogic(
             message.ownReactions = it.ownReactions
         }
 
-        channelStateLogic.upsertMessage(message)
+        channelStateLogic.upsertMessage(message, false)
     }
 
     /**

@@ -161,9 +161,9 @@ internal class ChannelStateLogic(
      *
      * @param message The message to be added or updated.
      */
-    override fun upsertMessage(message: Message) {
+    override fun upsertMessage(message: Message, updateCount: Boolean) {
         if (mutableState.visibleMessages.value.containsKey(message.id) || !mutableState.insideSearch.value) {
-            upsertMessages(listOf(message))
+            upsertMessages(listOf(message), updateCount = updateCount)
         } else {
             mutableState.updateCachedLatestMessages(parseCachedMessages(listOf(message)))
         }
@@ -176,16 +176,25 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean): Unit =
+    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, updateCount: Boolean) {
         when (shouldRefreshMessages) {
-            true -> mutableState.setMessages(messages)
+            true ->  {
+                mutableState.setMessages(messages)
+
+                if (updateCount) {
+                    mutableState._countedMessage.clear()
+                    mutableState._countedMessage.addAll(messages.map { it.id })
+                }
+
+            }
             false -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)
                 val updatedMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
                     .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
-                mutableState.upsertMessages(updatedMessages)
+                mutableState.upsertMessages(updatedMessages, updateCount)
             }
         }
+    }
 
     /**
      * Sets the date of the last message sent by the current user.

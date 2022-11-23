@@ -41,9 +41,9 @@ internal class UnreadCountLogic(
             val unreadCount: Int = readState.unreadMessages
             val lastMessageSeenDate = readState.lastMessageSeenDate
 
-            // val isMessageAlreadyInState = mutableState.visibleMessages.value.containsKey(message.id)
+            val isMessageAlreadyCounted = mutableState.isMessageAlreadyCounted(message.id)
             val shouldIncrementUnreadCount =
-                // !isMessageAlreadyInState &&
+                !isMessageAlreadyCounted &&
                 message.shouldIncrementUnreadCount(
                     currentUserId = currentUserId,
                     lastMessageAtDate = lastMessageSeenDate,
