@@ -212,6 +212,7 @@ If you want to learn more about these changes and our decisions, check out our [
 - Improved how system bar colors are handled on the attachment gallery screen. [#4269](https://github.com/GetStream/stream-chat-android/pull/4269)
 - The default attachment gallery is now able to handle videos as well as images. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 - Improved the way video length information is displayed over video previews inside the attachment picker. [#4299](https://github.com/GetStream/stream-chat-android/pull/4299)
+- Renamed `ImageAttachmentPreviewFactory` to `MediaAttachmentPreviewFactory` and gave it the ability to preview video attachments as well as image attachments. [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
 
 ### ✅ Added
 - Added `UserAvatarView` and `ChannelAvatarView` to replace `AvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
@@ -242,6 +243,16 @@ If you want to learn more about these changes and our decisions, check out our [
 - Added a guide that demonstrates how use events to close the chat screen when the current user has been removed from the channel. [#4078](https://github.com/GetStream/stream-chat-android/issues/4078)
 - Added loading more indicator to `MessageListView`. [#4309](https://github.com/GetStream/stream-chat-android/pull/4309)
 - Added the `streamUiMessageListLoadingMoreView` attribute to customize the layout of loading more indicator in `MessageListView`. [#4309](https://github.com/GetStream/stream-chat-android/pull/4309)
+- Added the ability to preview video attachments as thumbnails inside `MessageComposerView` using `MediaAttachmentPreviewFactory`.  [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
+- Added new attributes used by `MessageComposerView` that customize the way video attachments are rendered [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawable`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawableTint`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconElevation`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd`
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
@@ -255,6 +266,7 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: `ui-common` module `GiphyAction`s are now used instead of removed `GiphyAction` enum inside `ui-components` module. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: `MessageListItem` now uses `MessagePosition` from `ui-common`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - Replaced the Dexter library for checking runtime permissions with the PermissionX library. [#4338](https://github.com/GetStream/stream-chat-android/pull/4338)
+- Renamed `ImageAttachmentPreviewFactory` to `MediaAttachmentPreviewFactory`. [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
 
 ### ❌ Removed
 - Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
