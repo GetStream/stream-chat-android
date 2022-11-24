@@ -1,0 +1,60 @@
+import io.getstream.chat.android.Configuration
+import io.getstream.chat.android.Dependencies
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: "de.mannodermaus.android-junit5"
+
+ext {
+    PUBLISH_GROUP_ID = Configuration.artifactGroup
+    PUBLISH_ARTIFACT_ID = 'stream-android-push-xiaomi'
+    PUBLISH_VERSION = rootVersionName
+}
+
+apply from: "${rootDir}/scripts/publish-module.gradle"
+apply from: "${rootDir}/scripts/android.gradle"
+
+
+android {
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'consumer-rules.pro'
+        }
+        debug {
+            testCoverageEnabled false
+            consumerProguardFiles 'consumer-rules.pro'
+        }
+    }
+
+    resourcePrefix 'stream_'
+
+    lintOptions {
+        xmlReport false
+    }
+
+    testOptions.unitTests {
+        returnDefaultValues = true
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+        ]
+    }
+}
+
+dependencies {
+    api project(':stream-android-push')
+    implementation Dependencies.moshiKotlin
+    compileOnly files('../libraries/external/MiPush_SDK_Client_5_0_6-G_3rd.aar')
+
+    detektPlugins(Dependencies.detektFormatting)
+}

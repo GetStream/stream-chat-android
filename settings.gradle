@@ -6,6 +6,7 @@ include (
 		':stream-android-push',
 		':stream-android-push-firebase',
 		':stream-android-push-huawei',
+		':stream-android-push-xiaomi',
 		':stream-chat-android-ui-utils',
 		':stream-chat-android-ui-common',
 		':stream-chat-android-ui-components',
