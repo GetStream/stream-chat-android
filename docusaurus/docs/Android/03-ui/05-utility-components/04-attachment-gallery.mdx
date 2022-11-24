@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Attachment Gallery
 
-`AttachmentGalleryActivity` is an Activity used to display image and video attachments that the users have sent in the chat. Users can view, share, and download the attachments, and use a menu to easily navigate through them.
+`AttachmentGalleryActivity` is an Activity used to display image and video attachments that the users have sent in the chat. Users can view, share, and download the attachments, and use an overview to easily navigate through them.
 
 | Light Mode | Dark Mode |
 | --- | --- |
@@ -153,3 +153,120 @@ ChatUI.getNavigator().navigate(destination);
 ```
 </TabItem>
 </Tabs>
+
+## Customization
+
+The gallery can be customized through the use of styleable attributes.
+
+Let's start customizing our screen by styling the play button displayed over videos so that it features a flat design.
+
+1. Create a style that changes the way the play button is displayed in the main viewing area of the gallery:
+
+```xml
+<style name="CustomAttachmentGalleryVideoAttachmentStyle">
+    <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconTint">@color/stream_ui_literal_white</item>
+    <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius">5dp</item>
+    <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor">@color/stream_ui_literal_black</item>
+    <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop">5dp</item>
+    <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom">5dp</item>
+    <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart">5dp</item>
+    <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd">5dp</item>
+    <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconElevation">0dp</item>
+</style>
+```
+
+2. Create a style that changes the way the play button is displayed in the overview:
+
+```xml
+<style name="StreamUi.MediaAttachmentGridView">
+    <item name="streamUiMediaAttachmentGridViewPlayVideoButtonIcon">@drawable/stream_ui_ic_play</item>
+    <item name="streamUiMediaAttachmentGridViewPlayVideoIconElevation">3dp</item>
+    <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingTop">2dp</item>
+    <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingBottom">2dp</item>
+    <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingStart">3dp</item>
+    <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingEnd">2dp</item>
+    <item name="streamUiMediaAttachmentGridViewPlayVideoIconCornerRadius">24dp</item>
+    <item name="streamUiMediaAttachmentGridViewPlayVideoIconBackgroundColor">@color/stream_ui_literal_white</item>
+    <item name="streamUiMediaAttachmentGridViewImagePlaceholder">@drawable/stream_ui_picture_placeholder</item>
+</style>
+```
+
+3. Use the newly created style to create a custom Stream theme:
+
+```xml
+<style name="CustomStreamUiTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiMediaAttachmentGridViewStyle">@style/CustomMediaAttachmentGridView</item>
+    <item name="streamUiAttachmentGalleryVideoAttachmentsStyle">@style/CustomAttachmentGalleryVideoAttachmentStyle</item>
+</style>
+```
+
+4. Finally, add the custom theme to your attachment gallery Activity theme, along with a few lines that make the status and navigation bars look prettier:
+
+```xml
+<style name="CustomAttachmentGalleryTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- Style the status and navigation bars -->
+    <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@android:color/transparent</item>
+
+    <!-- Add custom stream theme you've created -->
+    <item name="streamUiTheme">@style/CustomStreamUiTheme</item>
+</style>
+```
+
+These few simple steps result in the following UI:
+
+| Light Mode | Dark Mode |
+| --- | --- |
+|![attachment_gallery_customization_example_light](../../assets/attachment_gallery_customization_example_light.png)|![attachment_gallery_customization_example_dark.png](../../assets/attachment_gallery_customization_example_dark.png)|
+
+As you can see, we've replaced the elevated white circular play button with a flat black squircle.
+
+We can customize other aspects of the gallery, for instance by removing menu options which we want to restrict from the user.<br/>
+Let's remove the download and delete options:
+
+1. Create a style that disables the previously mentioned options:
+
+```xml
+<style name="CustomAttachmentGalleryOptionsStyle">
+    <item name="streamUiDeleteEnabled">false</item>
+    <item name="streamUiSaveMediaEnabled">false</item>
+</style>
+```
+
+2. Add it to the custom Stream theme we've created in the previous example:
+
+```xml
+<style name="CustomStreamUiTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiMediaAttachmentGridViewStyle">@style/CustomMediaAttachmentGridView</item>
+    <item name="streamUiAttachmentGalleryVideoAttachmentsStyle">@style/CustomAttachmentGalleryVideoAttachmentStyle</item>
+    <!-- Add the custom options style to the custom theme -->
+    <item name="streamUiAttachmentGalleryOptionsStyle">@style/CustomAttachmentGalleryOptionsStyle</item>
+</style>
+```
+
+Which gives the options menu the following appearance:
+
+|Light|Dark|
+|---|---|
+|![attachment_gallery_customization_example_options_light](../../assets/attachment_gallery_customization_example_options_light.png)|![attachment_gallery_customization_example_options_dark](../../assets/attachment_gallery_customization_example_options_dark.png)|
+
+### Exploring the Available Styling options
+
+As you might have noticed, styling the attachment gallery is based on individual styles which are responsible for certain gallery features.
+
+You can find all of the styles [here](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/res/values/attrs_attachment_gallery_activity.xml).<br/>
+Some of these styles, such as `streamUiAttachmentGalleryTitleStyle` are applied to stock Android components, in this case a `TextView`. These accept any styled attribute that is normally applicable to the stock Android component.
+
+<!-- TODO: Finish the list -->
+
+There are others however, which apply custom styling attributes to custom Stream UI components, so let's explore them together:
+
+<!-- TODO: Finish the list -->
+
+
+
+
+
+
+
