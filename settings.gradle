@@ -5,6 +5,7 @@ plugins {
 include (
 		':stream-android-push',
 		':stream-android-push-firebase',
+		':stream-android-push-huawei',
 		':stream-chat-android-ui-utils',
 		':stream-chat-android-ui-common',
 		':stream-chat-android-ui-components',
