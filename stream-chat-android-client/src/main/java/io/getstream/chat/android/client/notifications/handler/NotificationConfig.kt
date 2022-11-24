@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.notifications.handler
 
+import io.getstream.android.push.PushDeviceGenerator
+
 /**
  * Push notifications configuration class
  */

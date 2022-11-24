@@ -74,7 +74,7 @@ internal class ChatNotificationsImpl constructor(
         notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
             ?.let {
                 it.onPushDeviceGeneratorSelected()
-                it.asyncGenerateDevice(::setDevice)
+                it.asyncGeneratePushDevice { setDevice(it.toDevice()) }
             }
     }
 
