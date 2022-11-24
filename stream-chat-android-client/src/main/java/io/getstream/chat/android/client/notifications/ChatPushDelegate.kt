@@ -42,24 +42,24 @@ internal class ChatPushDelegate(context: Context) : PushDelegate(context) {
         ChatClient.setDevice(pushDevice.toDevice())
     }
 
-    private fun PushDevice.toDevice(): Device =
-        Device(
-            token = token,
-            pushProvider = pushProvider.toDevicePushProvider(),
-            providerName = providerName,
-        )
-
-    private fun PushProvider.toDevicePushProvider(): DevicePushProvider = when (this) {
-        PushProvider.FIREBASE -> DevicePushProvider.FIREBASE
-        PushProvider.HUAWEI -> DevicePushProvider.HUAWEI
-        PushProvider.XIAOMI -> DevicePushProvider.XIAOMI
-        PushProvider.UNKNOWN -> DevicePushProvider.UNKNOWN
-    }
-
     private fun Map<String, Any?>.ifValid(effect: () -> Unit): Boolean {
         val isValid = PayloadValidator.isFromStreamServer(this) &&
             PayloadValidator.isValidNewMessage(this)
         effect.takeIf { isValid }?.invoke()
         return isValid
     }
+}
+
+internal fun PushDevice.toDevice(): Device =
+    Device(
+        token = token,
+        pushProvider = pushProvider.toDevicePushProvider(),
+        providerName = providerName,
+    )
+
+private fun PushProvider.toDevicePushProvider(): DevicePushProvider = when (this) {
+    PushProvider.FIREBASE -> DevicePushProvider.FIREBASE
+    PushProvider.HUAWEI -> DevicePushProvider.HUAWEI
+    PushProvider.XIAOMI -> DevicePushProvider.XIAOMI
+    PushProvider.UNKNOWN -> DevicePushProvider.UNKNOWN
 }
