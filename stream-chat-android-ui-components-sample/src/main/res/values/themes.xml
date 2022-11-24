@@ -15,23 +15,6 @@
     limitations under the License.
 -->
 <resources>
-
-    <style name="CustomAttachmentGalleryTheme" parent="StreamUi.AttachmentGallery">
-        <item name="streamUiTheme">@style/CustomStreamUiTheme</item>
-    </style>
-
-    <style name="CustomStreamUiTheme" parent="@style/StreamUiTheme">
-        <item name="streamUiAttachmentGalleryTitleStyle">@style/CustomAttachmentGalleryTitleStyle</item>
-    </style>
-
-    <style name="CustomAttachmentGalleryTitleStyle">
-        <item name="android:textAppearance">@style/CustomAttachmentGalleryTitleTextAppearance</item>
-    </style>
-
-    <style name="CustomAttachmentGalleryTitleTextAppearance" parent="StreamUiTextAppearance.HeadlineBold">
-        <item name="android:textColor">#FF0000</item>
-    </style>
-
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/stream_color_primary</item>
         <item name="colorPrimaryDark">@color/stream_color_primary_dark</item>

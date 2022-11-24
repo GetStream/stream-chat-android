@@ -101,18 +101,23 @@ You can also use Android themes to set attributes for the UI Components. To do t
 ```xml
 <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
     <!-- Other items... -->
-    <item name="streamUiTheme">@style/StreamTheme</item>
+    <item name="streamUiTheme">@style/CustomStreamUiTheme</item>
 </style>
 ```
-
 The theme you pass in as the `streamUiTheme` can then define a style for each type of UI Component where you can set attribute values.
 
-For example, you can create styles for avatars in the message list, or for the message list header:
+For example, you can achieve the same styling like in the examples above by overriding the `streamUiMessageListStyle` attribute:
 
 ```xml
-<style name="StreamTheme" parent="@style/StreamUiTheme">
-    <item name="streamUiMessageListItemAvatarStyle">@style/MessageListAvatarTheme</item>
-    <item name="streamUiMessageListHeaderStyle">@style/MessageListHeaderStyle</item>
+<style name="CustomStreamUiTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiMessageListStyle">@style/CustomMessageListStyle</item>
+</style>
+
+<style name="CustomMessageListStyle" parent="StreamUi.MessageList">
+    <item name="streamUiMessageBackgroundColorMine">#0277BD</item>
+    <item name="streamUiMessageBackgroundColorTheirs">#2E7D32</item>
+    <item name="streamUiMessageTextColorMine">@android:color/white</item>
+    <item name="streamUiMessageTextColorTheirs">@android:color/white</item>
 </style>
 ```
 
@@ -120,30 +125,11 @@ For example, you can create styles for avatars in the message list, or for the m
 The list of available styles you can define here is available here in our [attrs file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml).
 :::
 
-These styles can then contain attributes for the views. For example, you can make the avatars display in a given size:
-
-```xml
-<style name="MessageListAvatarTheme" parent="StreamUi.MessageList.Item.Avatar">
-    <item name="android:layout_width">48dp</item>
-    <item name="android:layout_height">48dp</item>
-</style>
-```
-
-Or you can hide the avatar that's shown by default on the message list header:
-
-```xml
-<style name="MessageListHeaderStyle" parent="StreamUi.MessageListHeader">
-    <item name="streamUiMessageListHeaderShowUserAvatar">false</item>
-</style>
-```
-
-:::note
-Your custom themes can use the default styles can use the default styles for these Views as their parent. See the [sample app's themes](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components-sample/src/main/res/values/themes.xml) for examples of this.
-:::
-
 ## Themes for Activities
 
-SDK contains the following activities: `AttachmentMediaActivity`, `AttachmentActivity` and `AttachmentGalleryActivity`. You can customize them by overriding the activity with a custom `theme` in your manifest:
+SDK contains the following activities: `AttachmentMediaActivity`, `AttachmentActivity` and `AttachmentGalleryActivity`. You can customize them by overriding the activity with a custom `theme` in your manifest.
+
+Let's see how to change the color of the title on the gallery screen:
 
 **AndroidManifest.xml**
 

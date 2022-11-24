@@ -15,7 +15,6 @@
     limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="io.getstream.chat.ui.sample"
     >
 
@@ -35,20 +34,13 @@
 
         <activity
             android:name="io.getstream.chat.ui.sample.feature.HostActivity"
-            android:windowSoftInputMode="adjustResize"
             android:exported="true"
+            android:windowSoftInputMode="adjustResize"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <activity
-            android:name="io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity"
-            android:theme="@style/CustomAttachmentGalleryTheme"
-            tools:replace="android:theme" />
-
     </application>
 </manifest>
