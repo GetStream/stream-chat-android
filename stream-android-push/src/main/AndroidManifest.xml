@@ -15,8 +15,19 @@
     limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.getstream.android.push">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.getstream.android.push"
+    >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <application>
+        <provider
+            android:name="io.getstream.android.push.PushDelegateProvider"
+            android:authorities="${applicationId}.io.getstream.android.push"
+            android:exported="false"
+            tools:node="merge"
+            />
+    </application>
 </manifest>
