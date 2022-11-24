@@ -57,6 +57,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
+    api project(':stream-android-push')
     api project(':stream-chat-android-core')
     api project(":libraries:logging:stream-logger-android")
     debugApi project(":libraries:logging:stream-logger-android-init")
