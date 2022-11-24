@@ -18,7 +18,7 @@ Note that the UI Components Message Composer View supports many advanced feature
 - Input validation such as a max length
 - Commands and mentions
 
-With that, let's see how you can build an Input View from scratch.
+With that, let's see how you can build a custom Message Composer View from scratch.
 
 :::note
 This sample is meant to be as simple as possible. You might want to architect your actual custom views in more advanced ways than shown here.
@@ -101,12 +101,14 @@ You can add this custom Message Composer View to your layout like so, combining 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-Running the app now shows the new message composer view, which you can freely style to fit your app's requirements.
+Running the app now shows the new Message Composer View, which you can freely style to fit your app's requirements.
 
 | ![Custom message composer](../../assets/custom_message_composer.png) |
 |----------------------------------------------------------------------|
 
 ## Sending and Editing Messages
+
+Let's add support for sending and editing messages:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -125,16 +127,20 @@ class CustomMessageComposerView : ConstraintLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     init {
+        // 1
         binding.sendButton.setOnClickListener {
             val text = binding.inputField.text.toString()
 
             val messageToEdit = messageToEdit
             if (messageToEdit != null) {
+                // 2
                 channelClient.updateMessage(messageToEdit.copy(text = text)).enqueue()
             } else {
+                // 3
                 channelClient.sendMessage(Message(text = text, parentId = null)).enqueue()
             }
 
+            // 4
             this.messageToEdit = null
             binding.inputField.setText("")
         }
@@ -144,6 +150,7 @@ class CustomMessageComposerView : ConstraintLayout {
         this.channelClient = channelClient
     }
 
+    // 5
     fun editMessage(message: Message) {
         this.messageToEdit = message
         binding.inputField.setText(message.text)
@@ -161,7 +168,7 @@ class CustomMessageComposerView extends ConstraintLayout {
             .inflate(LayoutInflater.from(getContext()), this);
 
     private ChannelClient channelClient;
-
+    
     private Message messageToEdit;
 
     public CustomMessageComposerView(@NonNull Context context) {
@@ -178,9 +185,12 @@ class CustomMessageComposerView extends ConstraintLayout {
     }
 
     private void init() {
+        // 1
         binding.sendButton.setOnClickListener(v -> {
+            // 2
             String text = binding.inputField.getText().toString();
-
+            
+            // 3
             if (messageToEdit != null) {
                 Message message = messageToEdit;
                 message.setText(text);
@@ -192,6 +202,7 @@ class CustomMessageComposerView extends ConstraintLayout {
                 channelClient.sendMessage(message).enqueue();
             }
 
+            // 4
             messageToEdit = null;
             binding.inputField.setText("");
         });
@@ -201,6 +212,7 @@ class CustomMessageComposerView extends ConstraintLayout {
         this.channelClient = channelClient;
     }
 
+    // 5
     public void editMessage(Message message) {
         this.messageToEdit = message;
         binding.inputField.setText(message.getText());
@@ -209,6 +221,16 @@ class CustomMessageComposerView extends ConstraintLayout {
 ```
 </TabItem>
 </Tabs>
+
+In the snippet above, you:
+
+1. Set a click listener on the _Send_ button.
+2. Read the current value from the input field.
+3. Send a new message or update the existing one.
+4. Clear the input for the next message.
+5. Add a method to allow editing existing messages.
+
+Finally, initialize the composer with `ChatClient` and let the message composer know when we are editing a message:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -230,7 +252,11 @@ messageListView.setMessageEditHandler(customMessageComposerView::editMessage);
 </TabItem>
 </Tabs>
 
+Now you can send a message to the chat. Let's see how to add support for threads.
+
 ## Handling Threads
+
+Message List View has built-in support for threads, and your custom Message Composer View can be integrated with threads as well:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -273,13 +299,13 @@ class CustomMessageComposerView : ConstraintLayout {
         this.messageToEdit = message
         binding.inputField.setText(message.text)
     }
-
+    
     fun setActiveThread(parentMessage: Message) {
         this.parentMessage = parentMessage
         this.messageToEdit = null
         binding.inputField.setText("")
     }
-
+    
     fun resetThread() {
         this.parentMessage = null
         this.messageToEdit = null
@@ -343,13 +369,13 @@ class CustomMessageComposerView extends ConstraintLayout {
         this.messageToEdit = message;
         binding.inputField.setText(message.getText());
     }
-
+    
     public void setActiveThread(Message parentMessage) {
         this.parentMessage = parentMessage;
         this.messageToEdit = null;
         binding.inputField.setText("");
     }
-
+    
     public void resetThread() {
         this.parentMessage = null;
         this.messageToEdit = null;
@@ -359,6 +385,10 @@ class CustomMessageComposerView extends ConstraintLayout {
 ```
 </TabItem>
 </Tabs>
+
+Notice how the new `parentMessage` field is used to track if you are inside a thread. If that's the case, then you need to pass the parent message ID when sending a new message using the `ChannelClient::sendMessage` method.
+
+To complete the feature, let the message composer know when we are entering or leaving a thread:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
