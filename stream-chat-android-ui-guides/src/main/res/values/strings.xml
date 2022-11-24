@@ -41,4 +41,6 @@
     <string name="uicomponents_channels_screen_guide_title">Building Channel List Screen</string>
     <string name="uicomponents_channels_screen_guide_description">A guide that demonstrates how to build a channel list screen using the UI Components SDK.</string>
 
+    <string name="uicomponents_messages_screen_guide_title">Building Message List Screen</string>
+    <string name="uicomponents_messages_screen_guide_description">A guide that demonstrates how to build a message list screen using the UI Components SDK.</string>
 </resources>

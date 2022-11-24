@@ -50,6 +50,7 @@ import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideo
 import io.getstream.chat.android.guides.catalog.uicomponents.channelsscreen.ChannelsActivity as UiComponentsChannelsScreenActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.ChannelsActivity as UiComponentsCustomAttachmentsActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.customreactions.ChannelsActivity as UiComponentsCustomReactionsActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.messagesscreen.ChannelsActivity as UiComponentsMessagesScreenActivity
 
 /**
  * An Activity with a list of guides and samples.
@@ -125,6 +126,13 @@ class CatalogActivity : AppCompatActivity() {
                 descriptionText = stringResource(R.string.uicomponents_channels_screen_guide_description)
             ) {
                 startActivity(UiComponentsChannelsScreenActivity.createIntent(this@CatalogActivity))
+            }
+
+            GuideItem(
+                titleText = stringResource(R.string.uicomponents_messages_screen_guide_title),
+                descriptionText = stringResource(R.string.uicomponents_messages_screen_guide_description)
+            ) {
+                startActivity(UiComponentsMessagesScreenActivity.createIntent(this@CatalogActivity))
             }
         }
     }

@@ -326,6 +326,28 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
+# November 23th, 2022 - 5.11.8
+## stream-chat-android-client
+### ⬆️ Improved
+- Return an error when invoking `ChatClient::disconnect` without a connected user. [#4494](https://github.com/GetStream/stream-chat-android/pull/4494)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed `IllegalArgumentException` when uploading attachments fails. [#4487](https://github.com/GetStream/stream-chat-android/pull/4487)
+- Fixed returning `ChannelsStateData.OfflineNoResults` from `QueryChannelsState::channelsStateData` when API call is still in progress. [#4496](https://github.com/GetStream/stream-chat-android/pull/4496)
+- Fixed returning an empty map from `QueryChannelsState::channels` when API call is still in progress. [#4496](https://github.com/GetStream/stream-chat-android/pull/4496)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Added the `streamUiShowReactionsForUnsentMessages` attribute to `MessageListView` that allows to show/hide the edit reactions bubble for unsent messages on the options overlay. [#4449](https://github.com/GetStream/stream-chat-android/pull/4449)
+
+### 🐞 Fixed
+- Fixed empty placeholder blinking on `ChannelListView` when loading channels. [#4496](https://github.com/GetStream/stream-chat-android/pull/4496)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed empty placeholder blinking on `ChannelList` when loading channels. [#4496](https://github.com/GetStream/stream-chat-android/pull/4496)
+
 # November 18th, 2022 - 5.11.7
 ## stream-chat-android-client
 ### ⬆️ Improved
