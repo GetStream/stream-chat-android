@@ -149,25 +149,35 @@ SDK contains the following activities: `AttachmentMediaActivity`, `AttachmentAct
 
 ```xml
 <activity
-    android:name="io.getstream.chat.android.ui.gallery.AttachmentMediaActivity"
-    android:theme="@style/MediaActivityStyle"
-    tools:replace="android:theme"
-    />
+    android:name="io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity"
+    android:theme="@style/CustomAttachmentGalleryTheme"
+    tools:replace="android:theme" />
 ```
 
 **themes.xml**
 
 ```xml
-<style name="MediaActivityStyle" parent="StreamUi.MediaActivity">
-    <item name="streamUiMediaActivityIconStyle">@style/MediaActivityIconStyle</item>
+<style name="CustomAttachmentGalleryTheme" parent="StreamUi.AttachmentGallery">
+    <item name="streamUiTheme">@style/CustomStreamUiTheme</item>
 </style>
 
-<style name="MediaActivityIconStyle" parent="StreamUi.MediaActivity.Icon">
-    <item name="android:layout_width">150dp</item>
-    <item name="android:layout_height">150dp</item>
-    <item name="android:src">@drawable/stream_ui_ic_audio</item>
+<style name="CustomStreamUiTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiAttachmentGalleryTitleStyle">@style/CustomAttachmentGalleryTitleStyle</item>
+</style>
+
+<style name="CustomAttachmentGalleryTitleStyle">
+    <item name="android:textAppearance">@style/CustomAttachmentGalleryTitleTextAppearance</item>
+</style>
+
+<style name="CustomAttachmentGalleryTitleTextAppearance" parent="StreamUiTextAppearance.HeadlineBold">
+    <item name="android:textColor">#FF0000</item>
 </style>
 ```
+
+This will produce the UI below:
+
+| ![Custom activity theme](../../assets/custom_activity_theme.png)  |
+|-------------------------------------------------------------------|
 
 ## Choose Light/Dark Theme
 
