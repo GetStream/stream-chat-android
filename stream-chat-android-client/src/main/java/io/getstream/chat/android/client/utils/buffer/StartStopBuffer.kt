@@ -26,7 +26,9 @@ import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
-public class StartStopBuffer<T>(customTrigger: StateFlow<Boolean>? = null) {
+private const val NO_LIMIT = -1
+
+public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customTrigger: StateFlow<Boolean>? = null) {
 
     init {
         customTrigger?.onEach { active ->
@@ -65,14 +67,16 @@ public class StartStopBuffer<T>(customTrigger: StateFlow<Boolean>? = null) {
     public fun enqueueData(data: T) {
         events.offer(data)
 
-        if (active.get()) {
+        if (active.get() || aboveSafetyThreshold()) {
             propagateData()
         }
     }
 
+    private fun aboveSafetyThreshold(): Boolean = events.size > bufferLimit && bufferLimit != NO_LIMIT
+
     private fun propagateData() {
         CoroutineScope(DispatcherProvider.IO).launch {
-            while (active.get() && events.isNotEmpty()) {
+            while (active.get() && events.isNotEmpty() || aboveSafetyThreshold()) {
                 events.poll()?.let {
                     withContext(DispatcherProvider.Main) {
                         func?.invoke(it)

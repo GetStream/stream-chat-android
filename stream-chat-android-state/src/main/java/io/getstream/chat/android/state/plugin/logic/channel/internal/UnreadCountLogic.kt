@@ -31,6 +31,8 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
 
+private const val COUNT_BUFFER_LIMIT = 100
+
 /**
  * Call responsible to handle counting of unread messages. Use this class to handle complex scenarios where simply
  * incrementing the count without any logic would create race conditions and inconsistent state. The counting is
@@ -44,9 +46,11 @@ import io.getstream.logging.StreamLog
 internal class UnreadCountLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
+    private val countBuffer: StartStopBuffer<ChatEvent> = StartStopBuffer(
+        bufferLimit = COUNT_BUFFER_LIMIT,
+        customTrigger = globalMutableState.queryingChannelsFree
+    )
 ) {
-
-    private val countBuffer: StartStopBuffer<ChatEvent> = StartStopBuffer(globalMutableState.queryingChannelsFree)
 
     init {
         countBuffer.subscribe(this::handleCountEvent)
