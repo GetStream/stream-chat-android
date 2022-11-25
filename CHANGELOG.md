@@ -52,6 +52,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added constructor overloads for the `MessageMode.MessageThread` class to simplify usage for Java users. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
 
 ### ⚠️ Changed
 
@@ -63,6 +64,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+Added the default value for the `message` parameter passed to the `MessageComposerViewModel:sendMessage` function. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
 
 ### ⚠️ Changed
 
