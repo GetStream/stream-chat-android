@@ -19,13 +19,24 @@ package io.getstream.chat.android.client.utils.buffer
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
-public class StartStopBuffer<T>(private val customTrigger: StateFlow<Boolean>? = null) {
+public class StartStopBuffer<T>(customTrigger: StateFlow<Boolean>? = null) {
+
+    init {
+        customTrigger?.onEach { active ->
+            if (active) {
+                active()
+            } else {
+                hold()
+            }
+        }
+    }
 
     private val events: Queue<T> = ConcurrentLinkedQueue()
     private var active = AtomicBoolean(true)
@@ -59,13 +70,9 @@ public class StartStopBuffer<T>(private val customTrigger: StateFlow<Boolean>? =
         }
     }
 
-    private fun isActive(): Boolean {
-        return customTrigger?.value ?: active.get()
-    }
-
     private fun propagateData() {
         CoroutineScope(DispatcherProvider.IO).launch {
-            while (isActive() && events.isNotEmpty()) {
+            while (active.get() && events.isNotEmpty()) {
                 events.poll()?.let {
                     withContext(DispatcherProvider.Main) {
                         func?.invoke(it)
