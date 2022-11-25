@@ -18,11 +18,11 @@ package io.getstream.chat.android.offline.repository.domain.channel.internal
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.extensions.internal.lastMessage
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.channel.lastMessageInfo
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel

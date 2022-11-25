@@ -19,11 +19,11 @@ package io.getstream.chat.android.state.plugin.factory
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
@@ -77,7 +77,7 @@ public class StreamStatePluginFactory(
     }
 
     @SuppressWarnings("LongMethod")
-    public fun createStatePlugin(
+    private fun createStatePlugin(
         user: User,
         scope: CoroutineScope,
     ): StatePlugin {

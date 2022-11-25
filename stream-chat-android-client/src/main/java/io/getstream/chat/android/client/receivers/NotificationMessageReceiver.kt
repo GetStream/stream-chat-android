@@ -26,8 +26,8 @@ import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.extensions.internal.toCid
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.logging.StreamLog
 
 internal class NotificationMessageReceiver : BroadcastReceiver() {

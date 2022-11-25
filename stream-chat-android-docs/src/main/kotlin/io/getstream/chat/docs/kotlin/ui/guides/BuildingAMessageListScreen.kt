@@ -1,13 +1,14 @@
 package io.getstream.chat.docs.kotlin.ui.guides
 
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
@@ -24,25 +25,25 @@ class BuildingAMessageListScreen : Fragment() {
     private lateinit var messageComposerView: MessageComposerView
 
     fun usage() {
-        // Create view models
-        val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+        // Create ViewModels for the Views
+        val factory = MessageListViewModelFactory(cid = "messaging:123")
         val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
         val messageListViewModel: MessageListViewModel by viewModels { factory }
         val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
-        // Bind view models
+        // Bind the ViewModels with the Views
         messageListHeaderViewModel.bindView(messageListHeaderView, viewLifecycleOwner)
         messageListViewModel.bindView(messageListView, viewLifecycleOwner)
         messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
 
         // Let both message list header and message input know when we open a thread
-        messageListViewModel.mode.observe(this) { mode ->
+        messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
             when (mode) {
                 is MessageMode.MessageThread -> {
                     messageListHeaderViewModel.setActiveThread(mode.parentMessage)
                     messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
                 }
-                MessageMode.Normal -> {
+                is MessageMode.Normal -> {
                     messageListHeaderViewModel.resetThread()
                     messageComposerViewModel.leaveThread()
                 }
@@ -60,9 +61,9 @@ class BuildingAMessageListScreen : Fragment() {
         }
 
         // Handle navigate up state
-        messageListViewModel.state.observe(this) { state ->
+        messageListViewModel.state.observe(viewLifecycleOwner) { state ->
             if (state is MessageListViewModel.State.NavigateUp) {
-                // Handle navigate up
+                requireActivity().finish()
             }
         }
 
@@ -71,5 +72,15 @@ class BuildingAMessageListScreen : Fragment() {
             messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
         }
         messageListHeaderView.setBackButtonClickListener(backHandler)
+
+        // Override the default Activity's back button behaviour
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    backHandler()
+                }
+            }
+        )
     }
 }

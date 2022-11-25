@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.at
 
 import android.view.View
 import android.view.ViewGroup
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents a handler that can handle quoted attachments of certain type and create views for them.

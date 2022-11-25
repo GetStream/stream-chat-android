@@ -16,8 +16,11 @@ public class SearchView extends Fragment {
     SearchInputView searchInputView;
     SearchResultListView searchResultListView;
 
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/#usage)
+     */
     public void usage() {
-        // Get ViewModel
+        // Instantiate the ViewModel
         SearchViewModel viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
         // Bind it with SearchResultListView
         SearchViewModelBinding.bind(viewModel, searchResultListView, getViewLifecycleOwner());
@@ -25,6 +28,9 @@ public class SearchView extends Fragment {
         searchInputView.setSearchStartedListener(viewModel::setQuery);
     }
 
+    /**
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/utility-components/search-view/#handling-actions)
+     */
     public void handlingActions() {
         searchInputView.setContinuousInputChangedListener(query -> {
             // Search query changed
@@ -32,8 +38,8 @@ public class SearchView extends Fragment {
         searchInputView.setDebouncedInputChangedListener(query -> {
             // Search query changed and has been stable for a short while
         });
-        searchInputView.setSearchStartedListener(query -> {
-            // Search is triggered
+        searchResultListView.setSearchResultSelectedListener(message -> {
+            // Handle search result click
         });
     }
 

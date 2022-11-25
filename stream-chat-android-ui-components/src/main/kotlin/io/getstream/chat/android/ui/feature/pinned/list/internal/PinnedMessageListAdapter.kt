@@ -20,7 +20,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding

@@ -19,13 +19,12 @@ package io.getstream.chat.android.state.errorhandler.internal
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.call.onErrorReturn
-import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.SendReactionErrorHandler
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -72,10 +71,4 @@ internal class SendReactionErrorHandlerImpl(
             }
         }
     }
-
-    override val name: String
-        get() = "SendReactionErrorHandlerImpl"
-
-    override val priority: Int
-        get() = ErrorHandler.DEFAULT_PRIORITY
 }

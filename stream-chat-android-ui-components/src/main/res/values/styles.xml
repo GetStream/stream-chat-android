@@ -458,6 +458,7 @@
 
         <!-- Options overly dialog -->
         <item name="streamUiOptionsOverlayDimColor">@color/stream_ui_literal_transparent</item>
+        <item name="streamUiShowReactionsForUnsentMessages">false</item>
 
         <!-- Giphy view holder -->
         <item name="streamUiGiphyCardBackgroundColor">@color/stream_ui_white</item>
@@ -604,7 +605,7 @@
     </style>
 
     <style name="StreamUi.ChannelListHeader.Avatar" parent="StreamUi.BaseAvatar">
-        <!--Style properties for Avatar inside of ChanneListHeaderView Item-->
+        <!--Style properties for Avatar inside of ChannelListHeaderView Item-->
         <item name="android:layout_width">@dimen/stream_ui_avatar_size_medium</item>
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
@@ -1034,6 +1035,13 @@
         <item name="streamUiMessageComposerScrollbarFadingEnabled">false</item>
         <item name="streamUiMessageComposerMessageInputMaxLines">7</item>
         <item name="streamUiMessageComposerMessageInputCannotSendHintText">@string/stream_ui_message_composer_hint_cannot_send_message</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawable">@drawable/stream_ui_ic_play</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconElevation">3dp</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop">2dp</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom">2dp</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart">2dp</item>
+        <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd">2dp</item>
 
         <!-- Leading content -->
         <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>

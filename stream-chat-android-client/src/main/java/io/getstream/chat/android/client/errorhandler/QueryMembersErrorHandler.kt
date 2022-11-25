@@ -16,19 +16,19 @@
 
 package io.getstream.chat.android.client.errorhandler
 
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
  * Error handler for [io.getstream.chat.android.client.ChatClient.queryMembers] calls.
  */
 @InternalStreamChatApi
-public interface QueryMembersErrorHandler : ErrorHandler {
+public interface QueryMembersErrorHandler {
 
     /**
      * Returns a [Result] from this side effect when original request is failed.

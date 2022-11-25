@@ -25,7 +25,7 @@ import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.FirebaseLogger
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.logging.StreamLog
-import io.getstream.chat.android.client.models.User as ChatUser
+import io.getstream.chat.android.models.User as ChatUser
 
 class CustomLoginViewModel : ViewModel() {
     private val logger = StreamLog.getLogger("Chat:CustomLoginViewModel")

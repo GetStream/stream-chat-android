@@ -16,14 +16,15 @@
 
 package io.getstream.chat.android.ui.common.state.messages.list
 
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents a state when a message or its reactions were selected.
  *
  * @param message The selected message.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  */
 public sealed class SelectedMessageState(public val message: Message, public val ownCapabilities: Set<String>)
 

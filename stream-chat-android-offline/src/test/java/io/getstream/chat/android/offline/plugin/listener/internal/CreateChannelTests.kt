@@ -17,14 +17,14 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.SyncStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf

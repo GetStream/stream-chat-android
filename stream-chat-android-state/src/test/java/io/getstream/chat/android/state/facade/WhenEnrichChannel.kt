@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.state.facade
 
-import io.getstream.chat.android.client.models.ChannelConfig
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.Config
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test

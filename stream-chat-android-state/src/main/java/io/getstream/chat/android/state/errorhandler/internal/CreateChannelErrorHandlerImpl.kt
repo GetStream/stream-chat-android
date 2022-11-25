@@ -20,13 +20,12 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ReturnOnErrorCall
 import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.errorhandler.CreateChannelErrorHandler
-import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
+import io.getstream.chat.android.models.Channel
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -78,10 +77,4 @@ internal class CreateChannelErrorHandlerImpl(
             }
         }
     }
-
-    override val name: String
-        get() = "CreateChannelErrorHandlerImpl"
-
-    override val priority: Int
-        get() = ErrorHandler.DEFAULT_PRIORITY
 }

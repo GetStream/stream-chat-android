@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment
 
 import android.view.ViewGroup
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 
 /**

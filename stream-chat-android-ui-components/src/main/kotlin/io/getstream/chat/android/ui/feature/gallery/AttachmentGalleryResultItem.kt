@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.feature.gallery
 
 import android.os.Parcelable
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 import kotlinx.parcelize.Parcelize
 
 /**

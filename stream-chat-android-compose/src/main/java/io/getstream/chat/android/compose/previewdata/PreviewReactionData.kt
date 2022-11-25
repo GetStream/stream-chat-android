@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.previewdata
 
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.models.Reaction
 
 /**
  * Provides sample reactions that will be used to render component previews.

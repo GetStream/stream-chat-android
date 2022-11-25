@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.state.querychannels
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Companion.ascByName
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CustomObject
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments

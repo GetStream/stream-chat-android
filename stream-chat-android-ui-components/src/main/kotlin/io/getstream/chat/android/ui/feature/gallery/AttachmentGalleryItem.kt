@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.feature.gallery
 
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.User
 import java.util.Date
 
 public data class AttachmentGalleryItem(
