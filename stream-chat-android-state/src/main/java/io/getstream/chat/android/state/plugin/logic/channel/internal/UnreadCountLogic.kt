@@ -16,6 +16,12 @@
 
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.models.ChannelUserRead
@@ -30,19 +36,47 @@ internal class UnreadCountLogic(
     private val globalMutableState: MutableGlobalState,
 ) {
 
-    private val countBuffer: StartStopBuffer<Message> = StartStopBuffer(globalMutableState.queryingChannelsFree)
+    private val countBuffer: StartStopBuffer<ChatEvent> = StartStopBuffer(globalMutableState.queryingChannelsFree)
 
     init {
-        countBuffer.subscribe(this::performCount)
+        countBuffer.subscribe(this::handleCountEvent)
     }
 
     /**
      * Increments the unread count of the Channel if necessary.
      *
-     * @param message [Message].
+     * @param chatEvent [ChatEvent].
      */
-    fun incrementUnreadCountIfNecessary(message: Message) {
-        countBuffer.enqueueData(message)
+    fun enqueueCount(chatEvent: ChatEvent) {
+        countBuffer.enqueueData(chatEvent)
+    }
+
+    private fun handleCountEvent(chatEvent: ChatEvent) {
+        when (chatEvent) {
+            is NewMessageEvent -> {
+                performCount(chatEvent.message)
+            }
+
+            is NotificationMessageNewEvent -> {
+                performCount(chatEvent.message)
+            }
+
+            is MessageReadEvent -> {
+                mutableState.upsertReads(ChannelUserRead(chatEvent.user, chatEvent.createdAt).let(::listOf))
+            }
+
+            is NotificationMarkReadEvent -> {
+                mutableState.upsertReads(ChannelUserRead(chatEvent.user, chatEvent.createdAt).let(::listOf))
+            }
+
+            is MarkAllReadEvent -> {
+                mutableState.upsertReads(ChannelUserRead(chatEvent.user, chatEvent.createdAt).let(::listOf))
+            }
+
+            else -> throw IllegalArgumentException(
+                "The event ${chatEvent.javaClass.simpleName} is not handled by UnreadCountLogic"
+            )
+        }
     }
 
     private fun performCount(message: Message) {
@@ -67,7 +101,6 @@ internal class UnreadCountLogic(
                     )
 
             if (shouldIncrementUnreadCount) {
-                StreamLog.d(TAG) { "counting message with text: ${message.text}" }
                 StreamLog.d(TAG) {
                     "It is necessary to increment the unread count for channel: " +
                         "${mutableState.channelData.value.id}. The last seen message was " +

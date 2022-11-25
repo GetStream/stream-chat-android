@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Channel
@@ -200,8 +201,12 @@ internal class ChannelStateLogicTest {
             showInChannel = true
         )
 
-        channelStateLogic.incrementUnreadCountIfNecessary(oldMessage)
-        verify(unreadCountLogic).incrementUnreadCountIfNecessary(oldMessage)
+        val oldMessageNewMessageEvent = randomNewMessageEvent(
+            message = oldMessage
+        )
+
+        channelStateLogic.incrementUnreadCountIfNecessary(oldMessageNewMessageEvent)
+        verify(unreadCountLogic).enqueueCount(oldMessageNewMessageEvent)
     }
 
     @Test
@@ -213,8 +218,12 @@ internal class ChannelStateLogicTest {
         val oldMessages = List(positiveRandomInt(20)) { randomMessage() }
         whenever(mutableState.visibleMessages) doReturn MutableStateFlow(oldMessages.associateBy(Message::id))
 
+        val eventList = oldMessages.map { message ->
+            randomNewMessageEvent(message = message)
+        }
+
         repeat(3) {
-            channelStateLogic.incrementUnreadCountIfNecessary(oldMessages.random())
+            channelStateLogic.incrementUnreadCountIfNecessary(eventList.random())
         }
 
         _unreadCount.value `should be equal to` 0

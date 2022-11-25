@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -89,8 +90,8 @@ internal class ChannelStateLogic(
      *
      * @param message [Message].
      */
-    fun incrementUnreadCountIfNecessary(message: Message) {
-        unreadCountLogic.incrementUnreadCountIfNecessary(message)
+    fun incrementUnreadCountIfNecessary(chatEvent: ChatEvent) {
+        unreadCountLogic.enqueueCount(chatEvent)
     }
 
     /**
@@ -108,7 +109,7 @@ internal class ChannelStateLogic(
      *
      * @param reads the information about the read.
      */
-    fun updateReads(reads: List<ChannelUserRead>) {
+    private fun updateReads(reads: List<ChannelUserRead>) {
         mutableState.upsertReads(reads)
     }
 
@@ -118,6 +119,10 @@ internal class ChannelStateLogic(
      * @param read the information about the read.
      */
     fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
+
+    fun enqueueUpdateRead(chatEvent: ChatEvent) {
+        unreadCountLogic.enqueueCount(chatEvent)
+    }
 
     /**
      * Updates the list of typing users.
