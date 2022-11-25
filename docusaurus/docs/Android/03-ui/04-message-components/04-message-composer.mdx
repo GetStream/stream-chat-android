@@ -364,7 +364,7 @@ Now let's see how to customize the view.
 
 ### Using XML Attributes
 
-Many attributes of this View can be configured, like changing its color, the border and the color of the message input, fonts, components visibility, and so on. The full list of available attributes can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml).
+The styling of the View can be configured by styled attributes. You can change the color of the message input, the fonts, visibility of various components and so on. The full list of available attributes can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml).
 
 Here's an example of setting a custom attribute:
 
@@ -381,7 +381,7 @@ This produces the following styling:
 |![Custom Attribute](../../assets/message_composer_custom_attribute.png)|
 |---|
 
-Different configurations can be used to achieve the desired appearance of `MessageComposerView`. If you don't need to change this View appearance at runtime, XML should be enough. But if you want to customize it at runtime, then you can use `MessageComposerViewStyle` as described in the next section.
+Different configurations can be used to achieve the desired appearance of `MessageComposerView`. If you don't need to change the View's appearance at runtime, using styled attributes should be enough. However, if you want to customize it at runtime, then you can use `MessageComposerViewStyle` as described in the next section.
 
 ### Using Style Transformations
 
