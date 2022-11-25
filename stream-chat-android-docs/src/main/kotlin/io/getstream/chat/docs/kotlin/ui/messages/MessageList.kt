@@ -45,12 +45,12 @@ class MessageListViewSnippets : Fragment() {
      * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/#usage)
      */
     fun usage() {
-        // Init view model
+        // Init ViewModel
         val viewModel: MessageListViewModel by viewModels {
             MessageListViewModelFactory(cid = "messaging:123")
         }
 
-        // Bind view and viewModel
+        // Bind View and ViewModel
         viewModel.bindView(messageListView, viewLifecycleOwner)
     }
 

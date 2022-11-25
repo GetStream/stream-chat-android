@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.getstream.chat.android.ui.helper.TransformStyle;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem;
-import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition;
 import io.getstream.chat.android.ui.common.helper.DateFormatter;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder;
@@ -33,19 +32,19 @@ import io.getstream.chat.docs.databinding.TodayMessageListItemBinding;
 /**
  * [Message List](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
  */
-public class MessageListViewSnippets extends Fragment {
+public class MessageList extends Fragment {
 
     private MessageListView messageListView;
 
     public void usage() {
-        // Init view model
+        // Init ViewModel
         ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
                 .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);
         MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
 
-        // Bind view and viewModel
+        // Bind View and ViewModel
         MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
     }
 

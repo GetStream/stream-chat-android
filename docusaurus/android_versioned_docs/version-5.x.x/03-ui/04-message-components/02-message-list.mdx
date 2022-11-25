@@ -31,19 +31,11 @@ If you want to keep the default design and behavior of this component then getti
 
 Adding `MessageListView` to your layout is as easy as inserting the following lines to your layout hierarchy:
 
-:::note
-The following example was created inside a `ConstraintLayout`.
-:::
-
 ```xml
 <io.getstream.chat.android.ui.message.list.MessageListView
-    android:id="@+id/message_list_view"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
+    android:id="@+id/messageListView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     />
 ``` 
 
@@ -763,7 +755,7 @@ To avoid overlap between the avatar and the message bubble, remember to use `str
 If you set a predicate that shows avatars for your own messages as well, use the following value:
 
 ```xml
-streamUiMessageEndMargin=">@dimen/stream_ui_message_viewholder_avatar_missing_margin"
+streamUiMessageEndMargin="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
 ```
 
 If your predicate doesn't show avatars for your own messages (the default behavior), remove the end margin:

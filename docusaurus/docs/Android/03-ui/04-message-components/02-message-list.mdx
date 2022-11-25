@@ -31,19 +31,11 @@ If you want to keep the default design and behavior of this component then getti
 
 Adding `MessageListView` to your layout is as easy as inserting the following lines to your layout hierarchy:
 
-:::note
-The following example was created inside a `ConstraintLayout`.
-:::
-
 ```xml
 <io.getstream.chat.android.ui.feature.messages.list.MessageListView
-    android:id="@+id/message_list_view"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
+    android:id="@+id/messageListView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     />
 ``` 
 
@@ -54,12 +46,12 @@ Binding it to the `View` is easily accomplished using an extension function call
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-// 1. Init view model
+// 1. Init ViewModel
 val viewModel: MessageListViewModel by viewModels {
     MessageListViewModelFactory(cid = "messaging:123")
 }
 
-// 2. Bind view and viewModel
+// 2. Bind View and ViewModel
 viewModel.bindView(messageListView, lifecycleOwner)
 ```
 </TabItem>
@@ -67,14 +59,14 @@ viewModel.bindView(messageListView, lifecycleOwner)
 <TabItem value="java" label="Java">
 
 ```java
-// Init view model
+// Init ViewModel
 ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
         .cid("messaging:123")
         .build();
 ViewModelProvider provider = new ViewModelProvider(this, factory);
 MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
 
-// Bind view and viewModel
+// Bind View and ViewModel
 MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
 ```
 </TabItem>
@@ -197,7 +189,7 @@ messageListView.setMessageEditHandler((message) -> {
 Handlers must be set before passing any data to `MessageListView`. If you're not using the default binding provided by `bindView`, please make sure to set up all the handlers yourself.
 :::
 
-This section lists only some of the more important handlers, many more exist and you can find there inside [`MessageListView`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/MessageListFragment.kt).
+This section lists only some of the more important handlers, many more exist and you can find there inside [`MessageListView`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/list/MessageListView.kt).
 
 ### Listeners
 
@@ -261,7 +253,7 @@ messageListView.setUserClickListener((user) -> {
 </TabItem>
 </Tabs>
 
-Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list.adapter/-message-list-listener-container/).
+Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list.adapter/-message-list-listener-container/).
 
 ## Customization
 
@@ -299,7 +291,7 @@ In order to do that, we need to add additional attributes to `MessageListView`:
 
 ### Using Style Transformations
 
-Both `MessageListView` and its ViewHolders can be configured programmatically (a list of supported customizations can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view-style/) and [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-item-style/)).
+Both `MessageListView` and its ViewHolders can be configured programmatically (a list of supported customizations can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list/-message-list-view-style/) and [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list/-message-list-item-style/)).
 
 As an example, let's apply the green style from the previous section, but this time programmatically:
 
@@ -766,7 +758,7 @@ To avoid overlap between the avatar and the message bubble, remember to use `str
 If you set a predicate that shows avatars for your own messages as well, use the following value:
 
 ```xml
-streamUiMessageEndMargin=">@dimen/stream_ui_message_viewholder_avatar_missing_margin"
+streamUiMessageEndMargin="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
 ```
 
 If your predicate doesn't show avatars for your own messages (the default behavior), remove the end margin:
