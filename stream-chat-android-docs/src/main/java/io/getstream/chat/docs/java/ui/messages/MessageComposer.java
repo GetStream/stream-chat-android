@@ -1,10 +1,8 @@
 package io.getstream.chat.docs.java.ui.messages;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -44,17 +42,17 @@ import kotlin.jvm.functions.Function0;
 /**
  * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
  */
-public class MessageComposer {
+public class MessageComposer extends Fragment {
 
     /**
      * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#usage)
      */
-    class Usage {
+    class Usage extends Fragment {
 
-        class ChatFragment1 extends Fragment {
+        private MessageComposerView messageComposerView;
+        private MessageListView messageListView;
 
-            MessageComposerView messageComposerView;
-
+        public void usage1() {
             // Create MessageComposerViewModel for a given channel
             ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
                     .cid("messaging:123")
@@ -62,19 +60,12 @@ public class MessageComposer {
             ViewModelProvider provider = new ViewModelProvider(this, factory);
             MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
 
-            @Override
-            public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-                super.onViewCreated(view, savedInstanceState);
-                // Bind MessageComposerViewModel with MessageComposerView
-                MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
-            }
+            // Bind MessageComposerViewModel with MessageComposerView
+            MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
         }
 
-        class ChatFragment2 extends Fragment {
 
-            MessageComposerView messageComposerView;
-            MessageListView messageListView;
-
+        public void usage2() {
             // Create ViewModels for MessageComposerView and MessageListView
             ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
                     .cid("messaging:123")
@@ -83,26 +74,22 @@ public class MessageComposer {
             MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
             MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
 
-            @Override
-            public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-                super.onViewCreated(view, savedInstanceState);
-                // Bind MessageComposerViewModel with MessageComposerView
-                MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
+            // Bind MessageComposerViewModel with MessageComposerView
+            MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
 
-                // Bind MessageListViewModel with MessageListView
-                MessageListViewModelBinding.bind(messageListViewModel, messageListView, getViewLifecycleOwner());
+            // Bind MessageListViewModel with MessageListView
+            MessageListViewModelBinding.bind(messageListViewModel, messageListView, getViewLifecycleOwner());
 
-                // Integrate MessageComposerView with MessageListView
-                messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
-                    if (mode instanceof MessageMode.MessageThread) {
-                        messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageMode.MessageThread) mode).getParentMessage()));
-                    } else if (mode instanceof MessageMode.Normal) {
-                        messageComposerViewModel.leaveThread();
-                    }
-                });
-                messageListView.setMessageReplyHandler((cid, message) -> messageComposerViewModel.performMessageAction(new Reply(message)));
-                messageListView.setMessageEditHandler((message) -> messageComposerViewModel.performMessageAction(new Edit(message)));
-            }
+            // Integrate MessageComposerView with MessageListView
+            messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
+                if (mode instanceof MessageMode.MessageThread) {
+                    messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageMode.MessageThread) mode).getParentMessage()));
+                } else if (mode instanceof MessageMode.Normal) {
+                    messageComposerViewModel.leaveThread();
+                }
+            });
+            messageListView.setMessageReplyHandler((cid, message) -> messageComposerViewModel.performMessageAction(new Reply(message)));
+            messageListView.setMessageEditHandler((message) -> messageComposerViewModel.performMessageAction(new Edit(message)));
         }
     }
 

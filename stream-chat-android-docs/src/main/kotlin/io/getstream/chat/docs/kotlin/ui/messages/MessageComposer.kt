@@ -3,10 +3,8 @@
 package io.getstream.chat.docs.kotlin.ui.messages
 
 import android.content.Context
-import android.os.Bundle
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -40,63 +38,53 @@ import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding
 /**
  * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
  */
-private object MessageComposer {
+private object MessageComposer : Fragment() {
 
     /**
      * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#usage)
      */
     class Usage {
 
-        class ChatFragment1 : Fragment() {
+        lateinit var messageComposerView: MessageComposerView
+        lateinit var messageListView: MessageListView
 
-            lateinit var messageComposerView: MessageComposerView
-
+        fun usage1() {
             // Create MessageComposerViewModel for a given channel
             val factory = MessageListViewModelFactory(cid = "messaging:123")
             val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
-            override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-                super.onViewCreated(view, savedInstanceState)
-                // Bind MessageComposerViewModel with MessageComposerView
-                messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
-            }
+            // Bind MessageComposerViewModel with MessageComposerView
+            messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
         }
 
-        class ChatFragment2 : Fragment() {
-
-            lateinit var messageComposerView: MessageComposerView
-            lateinit var messageListView: MessageListView
-
+        fun usage2() {
             // Create ViewModels for MessageComposerView and MessageListView
             val factory = MessageListViewModelFactory(cid = "messaging:123")
             val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
             val messageListViewModel: MessageListViewModel by viewModels { factory }
 
-            override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-                super.onViewCreated(view, savedInstanceState)
-                // Bind MessageComposerViewModel with MessageComposerView
-                messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
+            // Bind MessageComposerViewModel with MessageComposerView
+            messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
 
-                // Bind MessageListViewModel with MessageListView
-                messageListViewModel.bindView(messageListView, viewLifecycleOwner)
+            // Bind MessageListViewModel with MessageListView
+            messageListViewModel.bindView(messageListView, viewLifecycleOwner)
 
-                // Integrate MessageComposerView with MessageListView
-                messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
-                    when (mode) {
-                        is MessageMode.MessageThread -> {
-                            messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
-                        }
-                        is MessageMode.Normal -> {
-                            messageComposerViewModel.leaveThread()
-                        }
+            // Integrate MessageComposerView with MessageListView
+            messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
+                when (mode) {
+                    is MessageMode.MessageThread -> {
+                        messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
+                    }
+                    is MessageMode.Normal -> {
+                        messageComposerViewModel.leaveThread()
                     }
                 }
-                messageListView.setMessageReplyHandler { _, message ->
-                    messageComposerViewModel.performMessageAction(Reply(message))
-                }
-                messageListView.setMessageEditHandler { message ->
-                    messageComposerViewModel.performMessageAction(Edit(message))
-                }
+            }
+            messageListView.setMessageReplyHandler { _, message ->
+                messageComposerViewModel.performMessageAction(Reply(message))
+            }
+            messageListView.setMessageEditHandler { message ->
+                messageComposerViewModel.performMessageAction(Edit(message))
             }
         }
     }
