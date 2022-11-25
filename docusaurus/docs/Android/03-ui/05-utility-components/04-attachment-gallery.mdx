@@ -256,16 +256,18 @@ Which gives the options menu the following appearance:
 As you might have noticed, styling the attachment gallery is based on individual styles which are responsible for certain gallery features.
 
 You can find all of the styles [here](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/res/values/attrs_attachment_gallery_activity.xml).<br/>
-Some of these styles, such as `streamUiAttachmentGalleryTitleStyle` are applied to stock Android components, in this case a `TextView`. These accept any styled attribute that is normally applicable to the stock Android component.
+Some of these styles, such as `streamUiAttachmentGalleryTitleStyle` are applied to stock Android components, in this case a `TextView`. These accept any styled attribute that is normally applicable to the stock Android component. Others however power Stream UI components and have custom made styled attributes.kotlin
 
-<!-- TODO: Finish the list -->
-
-There are others however, which apply custom styling attributes to custom Stream UI components, so let's explore them together:
-
-<!-- TODO: Finish the list -->
-
-
-
+- `streamUiAttachmentGalleryCloseButtonStyle`: Styles the button used to close the gallery. Accepts all `ImageView` attributes.
+- `streamUiAttachmentGalleryTitleStyle`: Styles the title seen in the header. Accepts all `TextView` attributes.
+- `streamUiAttachmentGalleryDateStyle`: Styles the date section in the header. Accepts all `TextView` attributes.
+- `streamUiAttachmentGalleryActionsMenuStyle`: Styles the button used to activate the options menu. Accepts all `ImageView` attributes.
+- `streamUiAttachmentGalleryBottomBarImageCountStyle`: Styles the text displaying the number of all media attachments contained within the message and the position of the one currently being viewed. Accepts all `TextView` attributes.
+- `streamUiAttachmentGalleryBottomBarLeftIconStyle`: Styles the left icon inside the bottom bar. By default it shows a share icon. Accepts all `ImageView` attributes.
+- `streamUiAttachmentGalleryBottomBarRightIconStyle`: Styles the right icon inside the bottom bar. By default it shows a tiled icon that opens the menu. Accepts all `ImageView` attributes.
+- `streamUiAttachmentGalleryOptionsStyle`: Styles the actions menu. Accepts custom Stream attributes, all of which are listed [here](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/res/values/attrs_attachment_options_view.xml).
+- `streamUiAttachmentGalleryVideoAttachmentsStyle`: Styles how video attachments are displayed in the main viewing area of the gallery. Accepts custom Stream attributes, all of which are listed [here](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/res/values/attrs_attachment_gallery_video_attachments.xml).
+- `streamUiMediaAttachmentGridViewStyle`: Styles how the media overview menu is displayed. Accepts custom Stream attributes, all of which are listed [here](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/res/values/attrs_media_attachment_grid_view.xml).
 
 
 
