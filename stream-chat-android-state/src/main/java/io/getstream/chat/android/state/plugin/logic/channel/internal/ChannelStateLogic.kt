@@ -120,6 +120,10 @@ internal class ChannelStateLogic(
      */
     fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
 
+    /**
+     * Enqueues an read update. This method is useful to update the unread count only when the SDK is not updating
+     * channels data.
+     */
     fun enqueueUpdateRead(chatEvent: ChatEvent) {
         unreadCountLogic.enqueueCount(chatEvent)
     }

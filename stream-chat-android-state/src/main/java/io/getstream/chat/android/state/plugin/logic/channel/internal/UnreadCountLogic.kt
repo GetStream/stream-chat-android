@@ -31,6 +31,16 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
 
+/**
+ * Call responsible to handle counting of unread messages. Use this class to handle complex scenarios where simply
+ * incrementing the count without any logic would create race conditions and inconsistent state. The counting is
+ * delayed by StartStopBuffer<ChatEvent> and only when the SDK is not in a syncing the channels data, it realises the
+ * count. The counting messages are buffered until the count can safely happen. This class doesn't postpone any other
+ * logic, only counting logic.
+ *
+ * @param mutableState [ChannelMutableState]
+ * @param globalMutableState [MutableGlobalState]
+ */
 internal class UnreadCountLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
@@ -51,6 +61,10 @@ internal class UnreadCountLogic(
         countBuffer.enqueueData(chatEvent)
     }
 
+    /**
+     * Handles the count event accordingly with which event is passed. If the event can't be handled, it throws an
+     * IllegalArgumentException.
+     */
     private fun handleCountEvent(chatEvent: ChatEvent) {
         when (chatEvent) {
             is NewMessageEvent -> {
@@ -79,6 +93,9 @@ internal class UnreadCountLogic(
         }
     }
 
+    /**
+     * Perform count the a new message arrive.
+     */
     private fun performCount(message: Message) {
         val user = globalMutableState.user.value ?: return
         val currentUserId = user.id
