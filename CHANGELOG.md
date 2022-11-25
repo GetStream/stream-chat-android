@@ -64,6 +64,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+Added the default value for the `message` parameter passed to the `MessageComposerViewModel:sendMessage` function. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
 
 ### ⚠️ Changed
 
