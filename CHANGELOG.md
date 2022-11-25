@@ -102,6 +102,7 @@ Added the default value for the `message` parameter passed to the `MessageCompos
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Artifact removed, use `io.getstream:stream-anrdid-push-firebase:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
 
 ## stream-chat-android-pushprovider-huawei
 ### 🐞 Fixed
@@ -113,6 +114,7 @@ Added the default value for the `message` parameter passed to the `MessageCompos
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Artifact removed, use `io.getstream:stream-anrdid-push-huawei:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
 
 ## stream-chat-android-pushprovider-xiaomi
 ### 🐞 Fixed
@@ -124,6 +126,7 @@ Added the default value for the `message` parameter passed to the `MessageCompos
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Artifact removed, use `io.getstream:stream-anrdid-push-xiaomi:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
 
 # November 11th, 2022 - 6.0.0-beta1
 
