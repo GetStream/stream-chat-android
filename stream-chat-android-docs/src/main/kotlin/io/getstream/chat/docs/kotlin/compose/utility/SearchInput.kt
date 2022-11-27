@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/utility-components/search-input/#usage)
@@ -47,6 +48,8 @@ private object SearchInputUsageSnippet {
  */
 private object SearchInputHandlingActionsSnippet {
 
+    lateinit var channelListViewModel: ChannelListViewModel
+
     @Composable
     fun MySearchInput() {
         var searchQuery by rememberSaveable { mutableStateOf("") }
@@ -57,7 +60,7 @@ private object SearchInputHandlingActionsSnippet {
                 searchQuery = it
 
                 // Use ChannelListViewModel to search for channels
-                // listViewModel.setSearchQuery(it)
+                channelListViewModel.setSearchQuery(it)
             }
         )
     }
@@ -67,6 +70,8 @@ private object SearchInputHandlingActionsSnippet {
  * [Customization](https://getstream.io/chat/docs/sdk/android/compose/utility-components/search-input/#customization)
  */
 private object SearchInputCustomizationSnippet {
+
+    lateinit var channelListViewModel: ChannelListViewModel
 
     @Composable
     fun MySearchInput() {
@@ -82,7 +87,7 @@ private object SearchInputCustomizationSnippet {
                 searchQuery = it
 
                 // Use ChannelListViewModel to search for channels
-                // listViewModel.setSearchQuery(it)
+                channelListViewModel.setSearchQuery(it)
             },
             leadingIcon = {
                 // Remove the leading icon
