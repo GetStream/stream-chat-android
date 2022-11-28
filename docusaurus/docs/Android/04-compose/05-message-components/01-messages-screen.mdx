@@ -70,7 +70,7 @@ MessagesScreen(
 
 ## Customization
 
-Given that the `MessagesScreen` is a screen level solution, it offers limited customization. Currently, the options offered in the signature are the following:
+Given that `MessagesScreen` is a screen level solution, it offers limited customization. Currently, the options offered in the signature are the following:
 
 ```kotlin
 @Composable
@@ -97,14 +97,14 @@ In case you want to control the logic when using the `MessagesScreen`, you can d
 Here's an example:
 
 ```kotlin
-class MessagesActivity : BaseConnectedActivity() {
+class MessagesActivity : ComponentActivity() {
 
     // 1
     private val factory by lazy {
         MessagesViewModelFactory(
             context = this,
-            channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
-            deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+            channelId = channelId,
+            // Customization options
         )
     }
 
@@ -118,14 +118,16 @@ class MessagesActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
-                MessagesScreen( // 3
+            ChatTheme {
+                MessagesScreen(
+                    // 3
                     viewModelFactory = factory,
                     onBackPressed = { finish() },
                 )
             }
         }
     }
+}
 ```
 
 There are a few steps here that allow you to override and control the ViewModels:

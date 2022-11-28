@@ -3,11 +3,17 @@
 package io.getstream.chat.docs.kotlin.compose.messages
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#usage)
@@ -18,7 +24,7 @@ private object MessagesScreenUsageSnippet {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            // The ID of the channel you've opened
+            // Load the ID of the channel you've opened
             val channelId = "messaging:123"
 
             setContent {
@@ -44,7 +50,7 @@ private object MessagesScreenHandlingActionsSnippet {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            // The ID of the channel you've opened
+            // Load the ID of the channel you've opened
             val channelId = "messaging:123"
 
             setContent {
@@ -74,7 +80,7 @@ private object MessagesScreenCustomizationSnippet {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            // The ID of the channel you've opened
+            // Load the ID of the channel you've opened
             val channelId = "messaging:123"
 
             setContent {
@@ -92,4 +98,44 @@ private object MessagesScreenCustomizationSnippet {
             }
         }
     }
+}
+
+/**
+ * [Overriding the ViewModels](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#customization)
+ */
+private object MessageScreenOverridingTheViewModelsSnippet {
+
+    class MessagesActivity : ComponentActivity() {
+
+        // 1
+        private val factory by lazy {
+            MessagesViewModelFactory(
+                context = this,
+                channelId = channelId,
+                // Customization options
+            )
+        }
+
+        // 2
+        private val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
+
+        private val attachmentsPickerViewModel by viewModels<AttachmentsPickerViewModel>(factoryProducer = { factory })
+        private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+            setContent {
+                ChatTheme {
+                    MessagesScreen(
+                        // 3
+                        viewModelFactory = factory,
+                        onBackPressed = { finish() },
+                    )
+                }
+            }
+        }
+    }
+
+    private const val channelId: String =  "message:123"
 }
