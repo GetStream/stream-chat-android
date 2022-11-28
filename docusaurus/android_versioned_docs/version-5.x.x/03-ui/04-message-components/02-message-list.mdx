@@ -34,9 +34,8 @@ Adding `MessageListView` to your layout is as easy as inserting the following li
 ```xml
 <io.getstream.chat.android.ui.message.list.MessageListView
     android:id="@+id/messageListView"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    />
+    android:layout_width="match_parent" />
 ``` 
 
 The UI components library includes a `ViewModel` for `MessageListView`.<br/>
@@ -274,11 +273,11 @@ In order to do that, we need to add additional attributes to `MessageListView`:
 
 ```xml {11-14}
 <io.getstream.chat.android.ui.message.list.MessageListView
+    android:clipToPadding="false"
     android:id="@+id/messageListView"
-    android:layout_width="0dp"
     android:layout_height="0dp"
     android:layout_marginHorizontal="0dp"
-    android:clipToPadding="false"
+    android:layout_width="0dp"
     app:layout_constraintBottom_toTopOf="@+id/messageInputView"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -286,8 +285,7 @@ In order to do that, we need to add additional attributes to `MessageListView`:
     app:streamUiMessageBackgroundColorMine="#70AF74"
     app:streamUiMessageBackgroundColorTheirs="#FFFFFF"
     app:streamUiMessageTextColorMine="#FFFFFF"
-    app:streamUiMessageTextColorTheirs="#000000"
-    />
+    app:streamUiMessageTextColorTheirs="#000000" />
 ```
 
 ### Using Style Transformations
