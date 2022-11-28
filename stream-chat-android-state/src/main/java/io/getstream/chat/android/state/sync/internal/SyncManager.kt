@@ -329,7 +329,7 @@ internal class SyncManager(
         logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
         val queryLogicsToRestore = logicRegistry.getActiveQueryChannelsLogic()
             .asSequence()
-            .filter { queryChannelsLogic -> queryChannelsLogic.recoveryNeeded()?.value == true || recoverAll }
+            .filter { queryChannelsLogic -> queryChannelsLogic.recoveryNeeded().value || recoverAll }
             .take(QUERIES_TO_RETRY)
             .toList()
         if (queryLogicsToRestore.isEmpty()) {
