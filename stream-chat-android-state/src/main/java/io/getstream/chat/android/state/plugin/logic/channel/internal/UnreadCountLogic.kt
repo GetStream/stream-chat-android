@@ -30,6 +30,8 @@ import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMuta
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.logging.StreamLog
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 private const val COUNT_BUFFER_LIMIT = 100
 
@@ -121,12 +123,16 @@ internal class UnreadCountLogic(
                         isChannelMuted = globalMutableState.isChannelMutedForCurrentUser(mutableState.cid)
                     )
 
+            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss''SSS", Locale.ENGLISH)
+
             if (shouldIncrementUnreadCount) {
                 StreamLog.d(TAG) {
                     "It is necessary to increment the unread count for channel: " +
                         "${mutableState.channelData.value.id}. The last seen message was " +
-                        "at: $lastMessageSeenDate. " +
-                        "New unread count: ${unreadCount + 1}"
+                        "at: ${lastMessageSeenDate?.let(formatter::format)}. " +
+                        "the new message is: ${message.createdAt?.let(formatter::format)} " +
+                        "New unread count: ${unreadCount + 1} " +
+                        "Message text: ${message.text}"
                 }
                 mutableState.increaseReadWith(message)
             }
