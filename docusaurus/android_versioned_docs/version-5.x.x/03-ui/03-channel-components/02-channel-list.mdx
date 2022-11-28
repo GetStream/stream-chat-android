@@ -221,8 +221,8 @@ The transformer should be set before the View is rendered to make sure that the 
     android:layout_height="64dp"
     >
 
-    <io.getstream.chat.android.ui.avatar.ChannelAvatarView
-        android:id="@+id/channelAvatarView"
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
         style="@style/StreamUiChannelListAvatarStyle"
         android:layout_marginVertical="12dp"
         android:layout_marginStart="8dp"
@@ -242,7 +242,7 @@ The transformer should be set before the View is rendered to make sure that the 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/membersCountTextView"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toEndOf="@+id/channelAvatarView"
+        app:layout_constraintStart_toEndOf="@+id/avatarView"
         app:layout_constraintTop_toTopOf="parent"
         />
 
@@ -305,7 +305,7 @@ class CustomChannelViewHolder(
         this.channel = channel
 
         binding.apply {
-            channelAvatarView.setChannel(channel)
+            avatarView.setChannelData(channel)
             nameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
                 channel = channel,
                 currentUser = ChatClient.instance().getCurrentUser()
