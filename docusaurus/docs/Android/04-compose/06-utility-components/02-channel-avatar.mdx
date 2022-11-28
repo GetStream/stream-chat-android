@@ -1,12 +1,12 @@
 # ChannelAvatar
 
-The [`ChannelAvatar`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/common/avatar/ChannelAvatar.kt) allows you to display a channel avatar, that shows the channel image, or a grid of its active members.
+The [`ChannelAvatar`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/avatar/ChannelAvatar.kt) allows you to display a channel avatar, that shows the channel image, or a grid of its active members.
 
 Let's see how to integrate the component into your code.
 
 ## Usage
 
-With a bit of extra code for the rest of the content, when selecting a channel, the snippet above will produce the next UI:
+To use the component, simply pass the `Channel` object to the `ChannelAvatar`, like so:
 
 ```kotlin
 ChannelAvatar(
@@ -20,7 +20,8 @@ ChannelAvatar(
 
 Based on the state of the `Channel` and the number of members, it shows different types of images:
 
-![The ChannelAvatar Component](../../assets/compose_default_channel_avatar_component.png)
+| ![Default ChannelAvatar Component](../../assets/compose_default_channel_avatar_component.png) |
+|---|
 
 ## Handling Actions
 
@@ -55,12 +56,15 @@ fun ChannelAvatar(
     currentUser: User?,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.avatar,
-    contentDescription: String? = null,
+    textStyle: TextStyle = ChatTheme.typography.title3Bold,
+    groupAvatarTextStyle: TextStyle = ChatTheme.typography.captionBold,
     showOnlineIndicator: Boolean = true,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
     onlineIndicator: @Composable BoxScope.() -> Unit = {
         OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
     },
+    contentDescription: String? = null,
+    ... // Action handlers
 )
 ```
 
@@ -68,10 +72,12 @@ fun ChannelAvatar(
 * `currentUser`: The current user, used to determine avatar data.
 * `modifier`: Modifier for the root component. Useful for things like the component size, padding, background and similar.
 * `shape`: The shape of the avatar.
-* `contentDescription`: The content description of the avatar.
+* `textStyle`: The text style of the initials text.
+* `groupAvatarTextStyle`: The text style of the initials text in the group avatar.
 * `showOnlineIndicator`: If we show online indicator or not.
 * `onlineIndicatorAlignment`: The alignment of online indicator.
 * `onlineIndicator`: Custom composable that allows replacing the default online indicator.
+* `contentDescription`: The content description of the avatar.
 
 Here's an example of customizing the UI of the channel avatar:
 
@@ -86,4 +92,5 @@ ChannelAvatar(
 
 The sample above will produce a custom channel avatar with rounded corners:
 
-![The ChannelAvatar Component](../../assets/compose_custom_channel_avatar_component.png)
+| ![Custom ChannelAvatar Component](../../assets/compose_custom_channel_avatar_component.png) |
+|---|
