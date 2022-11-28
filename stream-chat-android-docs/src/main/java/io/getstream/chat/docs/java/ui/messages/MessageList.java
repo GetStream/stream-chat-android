@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.getstream.chat.android.ui.helper.TransformStyle;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem;
-import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition;
 import io.getstream.chat.android.ui.common.helper.DateFormatter;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder;
@@ -33,19 +32,19 @@ import io.getstream.chat.docs.databinding.TodayMessageListItemBinding;
 /**
  * [Message List](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/)
  */
-public class MessageListViewSnippets extends Fragment {
+public class MessageList extends Fragment {
 
     private MessageListView messageListView;
 
     public void usage() {
-        // Init view model
+        // Init ViewModel
         ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
                 .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);
         MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
 
-        // Bind view and viewModel
+        // Bind View and ViewModel
         MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
     }
 
@@ -93,25 +92,25 @@ public class MessageListViewSnippets extends Fragment {
 
     public void listeners() {
         messageListView.setMessageClickListener((message) -> {
-            // Listen to click on message events
+            // Handle message being clicked
         });
         messageListView.setEnterThreadListener((message) -> {
-            // Listen to events when enter thread associated with a message
+            // Handle thread being entered
         });
         messageListView.setAttachmentDownloadClickListener((attachment) -> {
-            // Listen to events when download click for an attachment happens
+            // Handle clicks on the download attachment button
         });
         messageListView.setUserReactionClickListener((message, user, reaction) -> {
-            // Listen to clicks on user reactions on the message options overlay
+            // Handle clicks on a reaction left by a user
         });
         messageListView.setMessageLongClickListener((message) -> {
-            // Handle long click on message
+            // Handle message being long clicked
         });
         messageListView.setAttachmentClickListener((message, attachment) -> {
-            // Handle long click on attachment
+            // Handle attachment being clicked
         });
         messageListView.setUserClickListener((user) -> {
-            // Handle click on user avatar
+            // Handle user avatar being clicked
         });
     }
 
@@ -235,7 +234,10 @@ public class MessageListViewSnippets extends Fragment {
         );
     }
 
+    @SuppressWarnings({"Lambda can be replaced with method reference", "Convert2MethodRef"})
     public void avatarPredicate() {
-        messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessagePosition.BOTTOM) && messageItem.isTheirs());
+        messageListView.setShowAvatarPredicate((messageItem) ->
+                messageItem.isTheirs()
+        );
     }
 }
