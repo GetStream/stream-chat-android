@@ -63,6 +63,17 @@
             />
 
         <activity
+            android:name=".catalog.compose.customreactions.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.compose.customreactions.MessagesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
+
+        <activity
             android:name=".catalog.compose.customizingimageandvideoattachments.MessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
