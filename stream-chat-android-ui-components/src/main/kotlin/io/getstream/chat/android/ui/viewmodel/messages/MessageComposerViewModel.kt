@@ -171,7 +171,8 @@ public class MessageComposerViewModel(
      *
      * @param message The message to send.
      */
-    public fun sendMessage(message: Message): Unit = messageComposerController.sendMessage(message)
+    @JvmOverloads
+    public fun sendMessage(message: Message = buildNewMessage()): Unit = messageComposerController.sendMessage(message)
 
     /**
      * Builds a new [Message] to send to our API. Based on the internal state, we use the current action's message and
