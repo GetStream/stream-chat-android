@@ -27,7 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 
 /**

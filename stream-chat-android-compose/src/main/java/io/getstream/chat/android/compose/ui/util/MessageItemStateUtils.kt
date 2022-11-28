@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.util
 
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**

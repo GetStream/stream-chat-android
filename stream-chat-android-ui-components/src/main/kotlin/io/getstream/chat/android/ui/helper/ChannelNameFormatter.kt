@@ -18,8 +18,8 @@ package io.getstream.chat.android.ui.helper
 
 import android.content.Context
 import androidx.annotation.StringRes
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.uiutils.extension.getDisplayName
 

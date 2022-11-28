@@ -19,9 +19,9 @@ package io.getstream.chat.android.pushprovider.xiaomi
 import android.content.Context
 import com.xiaomi.channel.commonutils.android.Region
 import com.xiaomi.mipush.sdk.MiPushClient
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.PushProvider
 import io.getstream.logging.StreamLog
 import java.util.concurrent.atomic.AtomicBoolean
 

@@ -19,17 +19,17 @@ package io.getstream.chat.android.guides.catalog.uicomponents.customattachments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.DateAttachmentFactory
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.DateAttachmentPreviewFactory
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.factory.QuotedDateAttachmentFactory
 import io.getstream.chat.android.guides.cleanup
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
 import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
@@ -49,7 +49,7 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
         ChatUI.attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
             attachmentPreviewFactories = listOf(
                 DateAttachmentPreviewFactory(),
-                ImageAttachmentPreviewFactory(),
+                MediaAttachmentPreviewFactory(),
                 FileAttachmentPreviewFactory(),
             )
         )

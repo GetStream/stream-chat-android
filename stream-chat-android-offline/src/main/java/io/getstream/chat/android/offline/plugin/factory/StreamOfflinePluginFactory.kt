@@ -18,7 +18,6 @@ package io.getstream.chat.android.offline.plugin.factory
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
@@ -30,6 +29,7 @@ import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase

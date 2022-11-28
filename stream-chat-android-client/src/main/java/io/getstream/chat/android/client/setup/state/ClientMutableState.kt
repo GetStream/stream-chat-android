@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.setup.state
 
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.InitializationState
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.InitializationState
 
 /**
  * Mutable version of [ClientState]. The class makes possible to change state of the SDK. Should only be used

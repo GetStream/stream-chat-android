@@ -75,7 +75,7 @@ class AddChannelFragment : Fragment() {
             messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
 
             messageComposerView.sendMessageButtonClickListener = {
-                messageComposerViewModel.sendMessage(messageComposerViewModel.buildNewMessage())
+                messageComposerViewModel.sendMessage()
                 addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
             }
         }

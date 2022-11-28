@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
+import io.getstream.chat.android.models.User
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.StateFlow
 

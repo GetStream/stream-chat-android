@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.state.event.handler.internal.model
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 /**
  * Represents currently logged in user.

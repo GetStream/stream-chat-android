@@ -20,14 +20,14 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -124,7 +124,7 @@ public class MessageComposerController(
      * is able to exercise in the given channel.
      *
      * e.g. send messages, delete messages, etc...
-     * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+     * For a full list @see [ChannelCapabilities].
      */
     public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
         .map { it.ownCapabilities }

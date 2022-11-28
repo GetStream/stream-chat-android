@@ -17,11 +17,11 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.Mother.randomDevice
-import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach

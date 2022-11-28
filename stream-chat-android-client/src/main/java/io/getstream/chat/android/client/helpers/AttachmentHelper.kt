@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.helpers
 
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 @InternalStreamChatApi

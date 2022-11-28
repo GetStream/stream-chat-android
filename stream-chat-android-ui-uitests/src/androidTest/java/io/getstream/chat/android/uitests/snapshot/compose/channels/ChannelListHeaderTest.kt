@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.channels
 
-import io.getstream.chat.android.client.models.ConnectionState
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test

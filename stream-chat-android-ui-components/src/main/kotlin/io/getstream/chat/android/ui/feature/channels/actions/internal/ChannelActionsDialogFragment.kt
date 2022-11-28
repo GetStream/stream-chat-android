@@ -25,8 +25,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction

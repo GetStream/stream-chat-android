@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.common.feature.messages.list
 
 import io.getstream.chat.android.client.extensions.internal.NEVER
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 
 /**

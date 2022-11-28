@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.de
 
 import android.widget.ImageView
 import androidx.core.view.isVisible
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
