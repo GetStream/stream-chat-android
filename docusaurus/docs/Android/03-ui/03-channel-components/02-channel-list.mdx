@@ -523,7 +523,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
 
 ```kotlin
 // Inflate loading view
-val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, channelListView)
+val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, null)
 // Set loading view
 channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 ```
@@ -533,7 +533,7 @@ channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PAREN
 
 ```java
 // Inflate loading view
-View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.channel_list_loading_view, channelListView);
+View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.channel_list_loading_view, null);
 // Set loading view
 channelListView.setLoadingView(loadingView, new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
 ```

@@ -142,7 +142,7 @@ private class ChannelList : Fragment() {
      */
     fun customizingLoadingView() {
         // Inflate loading view
-        val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, channelListView)
+        val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, null)
         // Set loading view
         channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
     }

@@ -145,7 +145,7 @@ public class ChannelList extends Fragment {
      */
     public void customizingLoadingView() {
         // Inflate loading view
-        View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.channel_list_loading_view, channelListView);
+        View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.channel_list_loading_view, null);
         // Set loading view
         channelListView.setLoadingView(loadingView, new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
     }
