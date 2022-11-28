@@ -139,11 +139,11 @@ internal class QueryChannelsLogic(
 
         if (result is Result.Success) {
             logger.d { "Number of returned channels: ${result.value.size}" }
-                result.value.forEach { channel ->
-                    channel.messages.lastOrNull()?.createdAt?.let{ date ->
-                        updateLastMessageSeenOfReads(channel.read, date)
-                    }
+            result.value.forEach { channel ->
+                channel.messages.lastOrNull()?.createdAt?.let { date ->
+                    updateLastMessageSeenOfReads(channel.read, date)
                 }
+            }
             updateOnlineChannels(request, result.value)
         } else {
             queryChannelsStateLogic.initializeChannelsIfNeeded()

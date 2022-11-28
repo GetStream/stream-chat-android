@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.utils.buffer
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Queue
@@ -30,19 +30,21 @@ private const val NO_LIMIT = -1
 
 public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customTrigger: StateFlow<Boolean>? = null) {
 
-    init {
-        customTrigger?.onEach { active ->
-            if (active) {
-                active()
-            } else {
-                hold()
-            }
-        }
-    }
-
     private val events: Queue<T> = ConcurrentLinkedQueue()
     private var active = AtomicBoolean(true)
     private var func: ((T) -> Unit)? = null
+
+    init {
+        CoroutineScope(DispatcherProvider.IO).launch {
+            customTrigger?.collectLatest { active ->
+                if (active) {
+                    active()
+                } else {
+                    hold()
+                }
+            }
+        }
+    }
 
     public fun hold() {
         active.set(false)
