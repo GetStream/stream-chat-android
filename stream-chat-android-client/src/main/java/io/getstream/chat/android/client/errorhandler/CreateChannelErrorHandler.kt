@@ -26,7 +26,7 @@ import io.getstream.chat.android.models.Channel
  * Error handler for [io.getstream.chat.android.client.ChatClient.createChannel] calls.
  */
 @InternalStreamChatApi
-public interface CreateChannelErrorHandler : ErrorHandler {
+public interface CreateChannelErrorHandler {
 
     /**
      * Returns a [Result] from this side effect when original request fails.

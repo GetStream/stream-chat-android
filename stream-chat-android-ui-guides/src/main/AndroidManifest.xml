@@ -58,6 +58,16 @@
             />
 
         <activity
+            android:name=".catalog.compose.customizingimageandvideoattachments.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.compose.customizingimageandvideoattachments.MessagesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
             android:name=".catalog.uicomponents.customattachments.ChannelsActivity"
             android:exported="false"
             />
@@ -71,6 +81,22 @@
         <activity
             android:name=".catalog.uicomponents.customreactions.ChannelsActivity"
             android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.uicomponents.channelsscreen.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.uicomponents.messagesscreen.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.uicomponents.messagesscreen.MessagesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             />
 
     </application>

@@ -1,6 +1,6 @@
 # UserAvatar
 
-The [`UserAvatar`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/common/avatar/UserAvatar.kt) component can be used to display a user avatar. If the user has a defined image, the `UserAvatar` will display it, otherwise it'll use the user's initials to display a text with a gradient background. And if the user is online and the user presence is enabled for the app, we'll display the online indicator. 
+The [`UserAvatar`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/avatar/UserAvatar.kt) component can be used to display a user avatar. If the user has a defined image, the `UserAvatar` will display it, otherwise it'll use the user's initials to display text with a gradient background. And if the user is online and the user presence is enabled for the app, we'll display the online indicator. 
 
 Let's see how to use it in your code.
 
@@ -20,7 +20,8 @@ UserAvatar(
 
 Depending on the state within the `User` object, the snippet above will produce the next UI:
 
-![The UserAvatar Component](../../assets/compose_default_user_avatar_component.png)
+|![Default UserAvatar Component](../../assets/compose_default_user_avatar_component.png)|
+|---|
 
 ## Handling Actions
 
@@ -54,9 +55,11 @@ fun UserAvatar(
     user: User,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.avatar,
+    textStyle: TextStyle = ChatTheme.typography.title3Bold,
     contentDescription: String? = null,
     showOnlineIndicator: Boolean = true,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
+    initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onlineIndicator: @Composable BoxScope.() -> Unit = {
         OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
     },
@@ -67,8 +70,10 @@ fun UserAvatar(
 * `user`: The user whose avatar we want to show.
 * `modifier`: Modifier for the root component. Useful for things like the component size, padding, background and similar.
 * `shape`: The shape of the avatar.
+* `textStyle`: The text style of the initials text.
 * `contentDescription`: The content description of the avatar.
 * `showOnlineIndicator`: If we show online indicator or not.
+* `initialsAvatarOffset`: The offset of the initials text.
 * `onlineIndicatorAlignment`: The alignment of online indicator.
 * `onlineIndicator`: Custom composable that allows replacing the default online indicator.
 
@@ -91,4 +96,5 @@ UserAvatar(
 
 The snippet above will produce an avatar with a blue online indicator:
 
-![The UserAvatar Component](../../assets/compose_custom_user_avatar_component.png)
+|![Custom UserAvatar Component](../../assets/compose_custom_user_avatar_component.png)|
+|---|

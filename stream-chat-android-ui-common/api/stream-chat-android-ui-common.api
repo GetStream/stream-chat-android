@@ -370,6 +370,7 @@ public abstract class io/getstream/chat/android/ui/common/state/messages/Message
 
 public final class io/getstream/chat/android/ui/common/state/messages/MessageMode$MessageThread : io/getstream/chat/android/ui/common/state/messages/MessageMode {
 	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Message;)V
 	public fun <init> (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getParentMessage ()Lio/getstream/chat/android/models/Message;
