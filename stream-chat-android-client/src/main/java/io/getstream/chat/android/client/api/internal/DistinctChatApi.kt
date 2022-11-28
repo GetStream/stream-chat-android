@@ -36,7 +36,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap

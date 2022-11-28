@@ -29,7 +29,7 @@ import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

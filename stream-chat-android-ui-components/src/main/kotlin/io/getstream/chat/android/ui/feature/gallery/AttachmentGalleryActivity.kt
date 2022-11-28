@@ -51,7 +51,7 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.use
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

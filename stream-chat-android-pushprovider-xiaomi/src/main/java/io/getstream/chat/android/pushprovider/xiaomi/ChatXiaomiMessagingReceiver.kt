@@ -20,7 +20,7 @@ import android.content.Context
 import com.xiaomi.mipush.sdk.MiPushCommandMessage
 import com.xiaomi.mipush.sdk.MiPushMessage
 import com.xiaomi.mipush.sdk.PushMessageReceiver
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * Receiver that handle Push Notifications from Xiaomi servers.

@@ -160,10 +160,10 @@ import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.logging.CompositeStreamLogger
-import io.getstream.logging.SilentStreamLogger
-import io.getstream.logging.StreamLog
-import io.getstream.logging.android.AndroidStreamLogger
+import io.getstream.log.CompositeStreamLogger
+import io.getstream.log.SilentStreamLogger
+import io.getstream.log.StreamLog
+import io.getstream.log.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -46,8 +46,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
-import io.getstream.logging.StreamLog
-import io.getstream.logging.TaggedLogger
+import io.getstream.log.StreamLog
+import io.getstream.log.TaggedLogger
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
