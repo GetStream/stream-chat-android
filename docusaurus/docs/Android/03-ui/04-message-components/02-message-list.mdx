@@ -668,8 +668,6 @@ messageListView.setMessageViewHolderFactory(new CustomMessageViewHolderFactory()
 </TabItem>
 </Tabs>
 
-If you want to support Markdown, just set `ChatUI.messageTextTransformer` to `MarkdownTextTransformer`.
-
 ## Custom Empty State
 
 `MessageListView` handles loading and empty states out of the box. If you want to customize these, you can do it at runtime.
@@ -780,6 +778,8 @@ You have the following attributes at your disposal to do so:
 * `streamUiGiphyMediaAttachmentWidth`: Sets the width of the Giphy container.
 * `streamUiGiphyMediaAttachmentHeight`: Sets the height of the Giphy container.
 * `streamUiGiphyMediaAttachmentDimensionRatio`: Sets the dimension ratio of the Giphy container.
+
+To apply them, include them in your app's theme. You can find out more about theming in the [Theming documentation page](../02-general-customization/01-theming.mdx).
 
 ### Giphy Types
 
