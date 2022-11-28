@@ -57,7 +57,7 @@ import io.getstream.chat.android.guides.catalog.compose.customattachments.factor
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
-import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Date
 
 /**
@@ -127,13 +127,11 @@ class MessagesActivity : AppCompatActivity() {
                 bottomBar = {
                     CustomMessageComposer(
                         viewModel = composerViewModel,
-                        onDateSelected = {
-                            val date = DateFormat
-                                .getDateInstance(DateFormat.LONG)
-                                .format(Date(it))
+                        onDateSelected = { date ->
+                            val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                             val attachment = Attachment(
                                 type = "date",
-                                extraData = mutableMapOf("payload" to date)
+                                extraData = mutableMapOf("payload" to payload)
                             )
 
                             composerViewModel.addSelectedAttachments(listOf(attachment))
@@ -216,7 +214,7 @@ class MessagesActivity : AppCompatActivity() {
          * @param channelId The id of the channel.
          * @return The [Intent] to start [MessagesActivity].
          */
-        fun getIntent(context: Context, channelId: String): Intent {
+        fun createIntent(context: Context, channelId: String): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
             }

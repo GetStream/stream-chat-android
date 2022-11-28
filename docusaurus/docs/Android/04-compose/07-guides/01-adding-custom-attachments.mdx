@@ -96,12 +96,10 @@ fun CustomMessagesScreen(
                     viewModel = composerViewModel,
                     onDateSelected = {
                         // 2
-                        val date = DateFormat
-                            .getDateInstance(DateFormat.LONG)
-                            .format(Date(it))
+                        val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                         val attachment = Attachment(
                             type = "date",
-                            extraData = mutableMapOf("payload" to date)
+                            extraData = mutableMapOf("payload" to payload)
                         )
                         // 3
                         composerViewModel.addSelectedAttachments(listOf(attachment))
@@ -336,18 +334,12 @@ fun QuotedDateAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
 ) {
-    val attachment = attachmentState.message.attachments.first { it.type == "date" }
-    val date = attachment.extraData["payload"].toString()
-    val formattedDate = StringBuilder().apply {
-        val dateTime = SimpleDateFormat("MMMMM dd, yyyy", Locale.getDefault()).parse(date) ?: return@apply
-        val year = Calendar.getInstance().apply {
-            timeInMillis = dateTime.time
-        }.get(Calendar.YEAR)
-        if (Calendar.getInstance().get(Calendar.YEAR) != year) {
-            append(year).append("\n")
-        }
-        append(date.replace(", $year", ""))
-    }.toString()
+    val attachment = attachmentState.message
+        .attachments
+        .first { it.type == "date" }
+    val formattedDate = attachment.extraData["payload"]
+        .toString()
+        .replace(",", "\n")
 
     Column(
         modifier = modifier
