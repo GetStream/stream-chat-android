@@ -82,6 +82,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -116,7 +117,7 @@ public class MessageInputView : ConstraintLayout {
      * Used to buffer typing updates in order to conserve API calls.
      */
     private var typingUpdatesBuffer: TypingUpdatesBuffer? = null
-    private var isKeyboardListenerRegistered: Boolean = false
+    private var keyboardListener: Unregistrar? = null
 
     private var maxMessageLength: Int = Integer.MAX_VALUE
 
@@ -437,6 +438,8 @@ public class MessageInputView : ConstraintLayout {
         hideSuggestionList()
         scope?.cancel()
         scope = null
+        keyboardListener?.unregister()
+        keyboardListener = null
         super.onDetachedFromWindow()
     }
 
@@ -829,8 +832,7 @@ public class MessageInputView : ConstraintLayout {
                     hideSuggestionList()
                 }
 
-                if (!isKeyboardListenerRegistered) {
-                    isKeyboardListenerRegistered = true
+                if (keyboardListener == null) {
                     registerKeyboardListener()
                 }
             }
@@ -870,7 +872,7 @@ public class MessageInputView : ConstraintLayout {
      */
     private fun registerKeyboardListener() {
         try {
-            KeyboardVisibilityEvent.setEventListener(activity) { isOpen: Boolean ->
+            keyboardListener = KeyboardVisibilityEvent.registerEventListener(activity) { isOpen: Boolean ->
                 if (!isOpen) {
                     binding.messageInputFieldView.clearMessageInputFocus()
                     hideSuggestionList()
