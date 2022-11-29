@@ -162,7 +162,7 @@ In the snippet above, you initialize the message composer and integrate it with 
 
 This will produce a fully working solution, as shown in the image below.
 
-![Whole Screen](../../assets/message_composer_whole_screen.png) 
+![Whole Screen](../../assets/message_composer_whole_screen.png)
 
 ## Handling Actions
 
@@ -377,7 +377,7 @@ Here's an example of setting a custom attribute:
 
 This produces the following styling:
 
-![Custom Attribute](../../assets/message_composer_custom_attribute.png) 
+![Custom Attribute](../../assets/message_composer_custom_attribute.png)
 
 Different configurations can be used to achieve the desired appearance of `MessageComposerView`. If you don't need to change this View appearance at runtime, XML should be enough. But if you need to able to customize it at runtime, then you can use `MessageComposerViewStyle` as described in the next section.
 
@@ -410,7 +410,7 @@ TransformStyle.setMessageComposerStyleTransformer(source -> {
 </TabItem>
 </Tabs>
 
-:::note 
+:::note
 The transformer should be set before the View is rendered to make sure that the new style was applied.
 :::
 
@@ -419,7 +419,7 @@ The transformer should be set before the View is rendered to make sure that the 
 With the new `MessageComposerView` you can replace certain parts of the layout with custom content views. There are several parts available for customization.
 
 * **Leading content**: Represents the left part with integration buttons.
-* **Center content**: Represents the center part with the text input. 
+* **Center content**: Represents the center part with the text input.
 * **Trailing content**: Represents the right part with the send button.
 * **Header content**: Represents the top part with the action mode title.
 * **Footer content**: Represents the bottom part with the "also send to channel" checkbox.
