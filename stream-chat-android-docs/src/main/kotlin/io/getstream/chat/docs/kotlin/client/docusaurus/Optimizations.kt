@@ -20,7 +20,7 @@ class Optimizations {
                     // Handle success
                 }
                 is Result.Failure -> {
-                    // Handler error
+                    // Handle error
                 }
             }
         }
