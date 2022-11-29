@@ -18,7 +18,7 @@ package io.getstream.chat.android.pushprovider.firebase
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
     private val logger = StreamLog.getLogger("Chat:Notifications")

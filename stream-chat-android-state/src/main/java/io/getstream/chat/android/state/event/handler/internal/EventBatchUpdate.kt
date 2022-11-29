@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process

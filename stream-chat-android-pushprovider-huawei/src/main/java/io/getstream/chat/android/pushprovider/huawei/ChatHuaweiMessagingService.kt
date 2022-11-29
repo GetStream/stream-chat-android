@@ -18,7 +18,7 @@ package io.getstream.chat.android.pushprovider.huawei
 
 import com.huawei.hms.push.HmsMessageService
 import com.huawei.hms.push.RemoteMessage
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 internal class ChatHuaweiMessagingService : HmsMessageService() {
     private val logger = StreamLog.getLogger("Chat:Notifications")

@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.util.Date
 
 private const val TAG = "Chat:SendMessageHandlerDB"
