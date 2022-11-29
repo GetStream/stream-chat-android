@@ -46,8 +46,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.guides.login.LoginActivity
 import io.getstream.chat.android.guides.catalog.compose.customattachments.ChannelsActivity as ComposeCustomAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ChannelsActivity as ComposeCustomizingImageAndVideoAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.channelsscreen.ChannelsActivity as UiComponentsChannelsScreenActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.ChannelsActivity as UiComponentsCustomAttachmentsActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.customreactions.ChannelsActivity as UiComponentsCustomReactionsActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.messagesscreen.ChannelsActivity as UiComponentsMessagesScreenActivity
 
 /**
  * An Activity with a list of guides and samples.
@@ -95,6 +98,13 @@ class CatalogActivity : AppCompatActivity() {
                 startActivity(ComposeCustomAttachmentsActivity.createIntent(this@CatalogActivity))
             }
 
+            GuideItem(
+                titleText = stringResource(R.string.compose_customizing_image_and_video_previews_title),
+                descriptionText = stringResource(R.string.compose_customizing_image_and_video_previews_description)
+            ) {
+                startActivity(ComposeCustomizingImageAndVideoAttachmentsActivity.createIntent(this@CatalogActivity))
+            }
+
             GuideSection(stringResource(R.string.catalog_section_uicomponents))
 
             GuideItem(
@@ -109,6 +119,20 @@ class CatalogActivity : AppCompatActivity() {
                 descriptionText = stringResource(R.string.uicomponents_custom_reactions_guide_description)
             ) {
                 startActivity(UiComponentsCustomReactionsActivity.createIntent(this@CatalogActivity))
+            }
+
+            GuideItem(
+                titleText = stringResource(R.string.uicomponents_channels_screen_guide_title),
+                descriptionText = stringResource(R.string.uicomponents_channels_screen_guide_description)
+            ) {
+                startActivity(UiComponentsChannelsScreenActivity.createIntent(this@CatalogActivity))
+            }
+
+            GuideItem(
+                titleText = stringResource(R.string.uicomponents_messages_screen_guide_title),
+                descriptionText = stringResource(R.string.uicomponents_messages_screen_guide_description)
+            ) {
+                startActivity(UiComponentsMessagesScreenActivity.createIntent(this@CatalogActivity))
             }
         }
     }

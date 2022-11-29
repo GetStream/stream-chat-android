@@ -3,6 +3,10 @@ import TabItem from '@theme/TabItem';
 
 # Building a Message List Screen
 
+:::note
+You can find the full code from this guide on [GitHub](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-guides/src/main/java/io/getstream/chat/android/guides/catalog/uicomponents/messagesscreen). To check the final result, clone the repository and run the `stream-chat-android-ui-guides` module.
+:::
+
 The SDK provides multiple UI Components which can be used together to build a message list screen. This guide will show you how to combine and customize `MessageListHeaderView`, `MessageListView`, and `MessageComposerView`.
 
 This is what a screen made with these three components looks like:
@@ -20,26 +24,25 @@ To add these Views to your app, first create them in an XML layout:
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
-        android:id="@+id/messagesHeaderView"
+    <io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+        android:id="@+id/messageListHeaderView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.getstream.chat.android.ui.message.list.MessageListView
+    <io.getstream.chat.android.ui.feature.messages.list.MessageListView
         android:id="@+id/messageListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="0dp"
         android:clipToPadding="false"
         app:layout_constraintBottom_toTopOf="@+id/messageComposerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView" />
+        app:layout_constraintTop_toBottomOf="@+id/messageListHeaderView" />
 
-    <io.getstream.chat.android.ui.message.composer.MessageComposerView
+    <io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
         android:id="@+id/messageComposerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -59,25 +62,25 @@ After setting up the ViewModels, this screen also requires some additional setup
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-// Create view models
-val factory: MessageListViewModelFactory = MessageListViewModelFactory(cid = "channelType:channelId")
+// Create ViewModels for the Views
+val factory = MessageListViewModelFactory(cid = "messaging:123")
 val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
 val messageListViewModel: MessageListViewModel by viewModels { factory }
 val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
-// Bind view models
+// Bind the ViewModels with the Views
 messageListHeaderViewModel.bindView(messageListHeaderView, viewLifecycleOwner)
 messageListViewModel.bindView(messageListView, viewLifecycleOwner)
 messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
 
 // Let both message list header and message input know when we open a thread
-messageListViewModel.mode.observe(this) { mode ->
+messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
     when (mode) {
-        is MessageListViewModel.Mode.Thread -> {
+        is MessageMode.MessageThread -> {
             messageListHeaderViewModel.setActiveThread(mode.parentMessage)
             messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
         }
-        MessageListViewModel.Mode.Normal -> {
+        is MessageMode.Normal -> {
             messageListHeaderViewModel.resetThread()
             messageComposerViewModel.leaveThread()
         }
@@ -95,9 +98,9 @@ messageListView.setMessageEditHandler { message ->
 }
 
 // Handle navigate up state
-messageListViewModel.state.observe(this) { state ->
+messageListViewModel.state.observe(viewLifecycleOwner) { state ->
     if (state is MessageListViewModel.State.NavigateUp) {
-        // Handle navigate up
+        requireActivity().finish()
     }
 }
 
@@ -106,34 +109,43 @@ val backHandler = {
     messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
 }
 messageListHeaderView.setBackButtonClickListener(backHandler)
+
+// Override the default Activity's back button behaviour
+requireActivity().onBackPressedDispatcher.addCallback(
+    viewLifecycleOwner,
+    object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            backHandler()
+        }
+    }
+)
 ```
 </TabItem>
 
 <TabItem value="java" label="Java">
 
 ```java
-// Create view models
+// Create ViewModels for the Views
 ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
-        .cid("channelType:channelId")
+        .cid("messaging:123")
         .build();
 ViewModelProvider provider = new ViewModelProvider(this, factory);
 MessageListHeaderViewModel messageListHeaderViewModel = provider.get(MessageListHeaderViewModel.class);
 MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
 MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
 
-// Bind view models
-MessageListHeaderViewModelBinding.bind(messageListHeaderViewModel, messageListHeaderView, this);
-boolean enforceUniqueReactions = true;
-MessageListViewModelBinding.bind(messageListViewModel, messageListView, this);
-MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, this);
+// Bind the ViewModels with the Views
+MessageListHeaderViewModelBinding.bind(messageListHeaderViewModel, messageListHeaderView, getViewLifecycleOwner());
+MessageListViewModelBinding.bind(messageListViewModel, messageListView, getViewLifecycleOwner());
+MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
 
 // Let both message list header and message input know when we open a thread
-messageListViewModel.getMode().observe(this, mode -> {
-    if (mode instanceof Thread) {
-        Message parentMessage = ((Thread) mode).getParentMessage();
+messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
+    if (mode instanceof MessageMode.MessageThread) {
+        Message parentMessage = ((MessageMode.MessageThread) mode).getParentMessage();
         messageListHeaderViewModel.setActiveThread(parentMessage);
         messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(parentMessage, null));
-    } else if (mode instanceof Normal) {
+    } else if (mode instanceof MessageMode.Normal) {
         messageListHeaderViewModel.resetThread();
         messageComposerViewModel.leaveThread();
     }
@@ -150,9 +162,9 @@ messageListView.setMessageEditHandler(message ->
 );
 
 // Handle navigate up state
-messageListViewModel.getState().observe(this, state -> {
+messageListViewModel.getState().observe(getViewLifecycleOwner(), state -> {
     if (state instanceof MessageListViewModel.State.NavigateUp) {
-        // Handle navigate up
+        requireActivity().finish();
     }
 });
 
@@ -161,6 +173,14 @@ MessageListHeaderView.OnClickListener backHandler = () -> {
     messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed.INSTANCE);
 };
 messageListHeaderView.setBackButtonClickListener(backHandler);
+
+// Override the default Activity's back button behaviour
+requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+    @Override
+    public void handleOnBackPressed() {
+        backHandler.onClick();
+    }
+});
 ```
 </TabItem>
 </Tabs>

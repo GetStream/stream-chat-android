@@ -91,6 +91,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property optionsOverlayMessageOptionsMarginBottom Defines the bottom margin between the message option list on the options overlay and the user reactions view.
  * @property optionsOverlayMessageOptionsMarginStart Defines the start margin between the message option list on the options overlay and the parent.
  * @property optionsOverlayMessageOptionsMarginEnd Defines the end margin between the message option list on the options overlay and the parent.
+ * @property showReactionsForUnsentMessages If we need to show the edit reactions bubble for unsent messages on the options overlay.
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -145,6 +146,7 @@ public data class MessageListViewStyle(
     public val optionsOverlayMessageOptionsMarginBottom: Int,
     public val optionsOverlayMessageOptionsMarginStart: Int,
     public val optionsOverlayMessageOptionsMarginEnd: Int,
+    public val showReactionsForUnsentMessages: Boolean,
 ) {
     public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
@@ -509,6 +511,11 @@ public data class MessageListViewStyle(
                         DEFAULT_MESSAGE_OPTIONS_MARGIN_END
                     )
 
+                val showReactionsForUnsentMessages = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiShowReactionsForUnsentMessages,
+                    false
+                )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
@@ -562,6 +569,7 @@ public data class MessageListViewStyle(
                     optionsOverlayMessageOptionsMarginBottom = optionsOverlayMessageOptionsMarginBottom,
                     optionsOverlayMessageOptionsMarginStart = optionsOverlayMessageOptionsMarginStart,
                     optionsOverlayMessageOptionsMarginEnd = optionsOverlayMessageOptionsMarginEnd,
+                    showReactionsForUnsentMessages = showReactionsForUnsentMessages,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

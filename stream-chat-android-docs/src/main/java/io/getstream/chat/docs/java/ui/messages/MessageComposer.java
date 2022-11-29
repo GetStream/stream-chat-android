@@ -1,10 +1,8 @@
 package io.getstream.chat.docs.java.ui.messages;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -15,11 +13,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
 
-import io.getstream.chat.android.ui.helper.TransformStyle;
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState;
 import io.getstream.chat.android.ui.common.state.messages.Edit;
 import io.getstream.chat.android.ui.common.state.messages.MessageMode;
 import io.getstream.chat.android.ui.common.state.messages.Reply;
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle;
@@ -31,58 +28,62 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMes
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerMentionSuggestionsContent;
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerTrailingContent;
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.helper.TransformStyle;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinding;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 /**
- * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#usage)
+ * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
  */
 public class MessageComposer extends Fragment {
 
-    class ChatFragmentSnippet1 extends Fragment {
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#usage)
+     */
+    class Usage extends Fragment {
 
         private MessageComposerView messageComposerView;
+        private MessageListView messageListView;
 
-        // Create MessageComposerViewModel for a given channel
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
-                .cid("channelType:channelId")
-                .build();
-        ViewModelProvider provider = new ViewModelProvider(this, factory);
-        MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+        public void usage1() {
+            // Create MessageComposerViewModel for a given channel
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+                    .cid("messaging:123")
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
 
-        @Override
-        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
+            // Bind MessageComposerViewModel with MessageComposerView
             MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
         }
-    }
 
-    class ChatFragmentSnippet2 extends Fragment {
 
-        MessageComposerView messageComposerView;
-        MessageListView messageListView;
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
-                .cid("channelType:channelId")
-                .build();
-        ViewModelProvider provider = new ViewModelProvider(this, factory);
-        MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
-        MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
+        public void usage2() {
+            // Create ViewModels for MessageComposerView and MessageListView
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+                    .cid("messaging:123")
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
+            MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
 
-        @Override
-        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
+            // Bind MessageComposerViewModel with MessageComposerView
             MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
+
+            // Bind MessageListViewModel with MessageListView
+            MessageListViewModelBinding.bind(messageListViewModel, messageListView, getViewLifecycleOwner());
 
             // Integrate MessageComposerView with MessageListView
             messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
                 if (mode instanceof MessageMode.MessageThread) {
-                    messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageMode.MessageThread) mode).getParentMessage(), null));
+                    messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageMode.MessageThread) mode).getParentMessage()));
                 } else if (mode instanceof MessageMode.Normal) {
                     messageComposerViewModel.leaveThread();
                 }
@@ -95,14 +96,12 @@ public class MessageComposer extends Fragment {
     /**
      * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#handling-actions)
      */
-    private class MessageComposerHandlingActionsSnippet {
+    class HandlingActions {
 
         private MessageComposerView messageComposerView;
-
         private MessageComposerViewModel messageComposerViewModel;
 
-
-        public void handlingActionsSnippet1() {
+        public void handlingActions1() {
             messageComposerView.setSendMessageButtonClickListener(() -> {
                 // Handle send button click
                 return Unit.INSTANCE;
@@ -149,9 +148,9 @@ public class MessageComposer extends Fragment {
             });
         }
 
-        public void handlingActionsSnippet2() {
+        public void handlingActions2() {
             messageComposerView.setSendMessageButtonClickListener(() -> {
-                messageComposerViewModel.sendMessage(messageComposerViewModel.buildNewMessage());
+                messageComposerViewModel.sendMessage();
                 return Unit.INSTANCE;
             });
             messageComposerView.setTextInputChangeListener((text) -> {
@@ -200,25 +199,21 @@ public class MessageComposer extends Fragment {
     /**
      * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#customization)
      */
-    private class MessageComposerCustomizationSnippet {
+    class Customization {
 
         private Context context;
-
-        private FragmentManager fragmentManager;
-
+        private FragmentManager supportFragmentManager;
         private MessageComposerView messageComposerView;
-
         private MessageComposerViewModel messageComposerViewModel;
 
-
-        public void styleTransformationSnippet() {
+        public void styleTransformation() {
             TransformStyle.setMessageComposerStyleTransformer(source -> {
                 // Customize the style
                 return source;
             });
         }
 
-        public void contentCustomizationSnippet1() {
+        public void contentCustomization1() {
             DefaultMessageComposerLeadingContent leadingContent = new DefaultMessageComposerLeadingContent(context);
             leadingContent.setAttachmentsButtonClickListener(() -> messageComposerView.getAttachmentsButtonClickListener().invoke());
             leadingContent.setCommandsButtonClickListener(() -> messageComposerView.getCommandsButtonClickListener().invoke());
@@ -253,7 +248,7 @@ public class MessageComposer extends Fragment {
             messageComposerView.setMentionSuggestionsContent(mentionSuggestionsContent);
         }
 
-        public void contentCustomizationSnippet2() {
+        public void contentCustomization2() {
             DefaultMessageComposerLeadingContent leadingContent = new DefaultMessageComposerLeadingContent(context);
             leadingContent.setAttachmentsButtonClickListener(() -> {
                 // Show attachment dialog and invoke messageComposerViewModel.addSelectedAttachments(attachments)
@@ -312,14 +307,17 @@ public class MessageComposer extends Fragment {
             messageComposerView.setMentionSuggestionsContent(mentionSuggestionsContent);
         }
 
-        public void contentCustomizationSnippet3() {
+        public void contentCustomization3() {
+            // Create an instance of a date picker dialog
             MaterialDatePicker<Long> datePickerDialog = MaterialDatePicker.Builder.datePicker().build();
             datePickerDialog.addOnPositiveButtonClickListener(selection -> {
                 // Handle date selection
             });
+
             CustomMessageComposerLeadingContent leadingContent = new CustomMessageComposerLeadingContent(context);
             leadingContent.datePickerButtonClickListener = () -> {
-                datePickerDialog.show(fragmentManager, null);
+                // Show the date picker dialog
+                datePickerDialog.show(supportFragmentManager, null);
                 return Unit.INSTANCE;
             };
 

@@ -19,7 +19,6 @@ import io.getstream.chat.android.ui.helper.StyleTransformer
 import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
-import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
@@ -46,12 +45,12 @@ class MessageListViewSnippets : Fragment() {
      * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/#usage)
      */
     fun usage() {
-        // Init view model
+        // Init ViewModel
         val viewModel: MessageListViewModel by viewModels {
             MessageListViewModelFactory(cid = "messaging:123")
         }
 
-        // Bind view and viewModel
+        // Bind View and ViewModel
         viewModel.bindView(messageListView, viewLifecycleOwner)
     }
 
@@ -105,25 +104,25 @@ class MessageListViewSnippets : Fragment() {
      */
     fun listeners() {
         messageListView.setMessageClickListener { message: Message ->
-            // Listen to click on message events
+            // Handle message being clicked
         }
         messageListView.setEnterThreadListener { message: Message ->
-            // Listen to events when enter thread associated with a message
+            // Handle thread being entered
         }
         messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
-            // Listen to events when download click for an attachment happens
+            // Handle clicks on the download attachment button
         }
         messageListView.setUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
-            // Listen to clicks on user reactions on the message options overlay
+            // Handle clicks on a reaction left by a user
         }
         messageListView.setMessageLongClickListener { message ->
-            // Handle long click on message
+            // Handle message being long clicked
         }
         messageListView.setAttachmentClickListener { message, attachment ->
-            // Handle long click on attachment
+            // Handle attachment being clicked
         }
         messageListView.setUserClickListener { user ->
-            // Handle click on user avatar
+            // Handle user avatar being clicked
         }
     }
 
@@ -255,7 +254,7 @@ class MessageListViewSnippets : Fragment() {
 
     fun avatarPredicate() {
         messageListView.setShowAvatarPredicate { messageItem ->
-            messageItem.positions.contains(MessagePosition.BOTTOM) && messageItem.isTheirs
+            messageItem.isTheirs
         }
     }
 }

@@ -20,7 +20,7 @@ import io.getstream.chat.android.extensions.snakeToLowerCamelCase
 import io.getstream.chat.android.models.querysort.internal.SortAttribute
 import io.getstream.chat.android.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.models.querysort.internal.compare
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * Implementation of QuerySorter for fields that implements `ComparableFieldProvider`. This QuerySorter doesn't

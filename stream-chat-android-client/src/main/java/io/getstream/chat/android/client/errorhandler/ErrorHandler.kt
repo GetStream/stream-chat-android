@@ -24,12 +24,12 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @see [io.getstream.chat.android.client.experimental.plugin.Plugin]
  */
 @InternalStreamChatApi
-public interface ErrorHandler : Comparable<ErrorHandler> {
-
-    /**
-     * The name of this plugin.
-     */
-    public val name: String
+public interface ErrorHandler :
+    DeleteReactionErrorHandler,
+    CreateChannelErrorHandler,
+    QueryMembersErrorHandler,
+    SendReactionErrorHandler,
+    Comparable<ErrorHandler> {
 
     /**
      * The priority of this [ErrorHandler]. Use it to run it before error handlers of the same type.

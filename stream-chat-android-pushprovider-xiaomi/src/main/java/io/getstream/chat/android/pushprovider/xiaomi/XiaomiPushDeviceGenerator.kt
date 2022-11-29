@@ -22,7 +22,7 @@ import com.xiaomi.mipush.sdk.MiPushClient
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**

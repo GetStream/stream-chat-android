@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * Error handler for [io.getstream.chat.android.client.ChatClient.queryMembers] calls.
  */
 @InternalStreamChatApi
-public interface QueryMembersErrorHandler : ErrorHandler {
+public interface QueryMembersErrorHandler {
 
     /**
      * Returns a [Result] from this side effect when original request is failed.

@@ -37,7 +37,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
+        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
     }
 }
 
@@ -58,6 +58,7 @@ dependencies {
     implementation project(":stream-chat-android-ui-utils")
 
     implementation Dependencies.androidxAppCompat
+    implementation Dependencies.streamLog
 
     // Compose
     implementation Dependencies.composeCompiler

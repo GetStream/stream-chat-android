@@ -28,7 +28,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -61,7 +61,7 @@ internal class UploadAttachmentsAndroidWorker(
                 }
                 is io.getstream.chat.android.client.utils.Result.Failure -> {
                     logger.i { "[doWork] Error while uploading attachments: ${result.value}" }
-                    Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to result)).build())
+                    Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to result.value.message)).build())
                 }
             }
         }
