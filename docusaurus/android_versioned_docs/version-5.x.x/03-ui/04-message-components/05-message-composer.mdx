@@ -39,84 +39,90 @@ The recommended way of setting up `MessageComposerView` is by binding it to the 
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-class ChatFragment : Fragment() {
-    lateinit var messageComposerView: MessageComposerView
+// Create MessageComposerViewModel for a given channel
+val factory = MessageListViewModelFactory(cid = "messaging:123")
+val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
-    // Create MessageComposerViewModel for a given channel
-    val factory = MessageListViewModelFactory(cid = "channelType:channelId")
-    val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        // Bind MessageComposerViewModel with MessageComposerView
-        messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
-    }
-}
+// Bind MessageComposerViewModel with MessageComposerView
+messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
 ```
 </TabItem>
 
 <TabItem value="java" label="Java">
 
 ```java
-class ChatFragment extends Fragment {
+// Create MessageComposerViewModel for a given channel
+ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+        .cid("messaging:123")
+        .build();
+ViewModelProvider provider = new ViewModelProvider(this, factory);
+MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
 
-    private MessageComposerView messageComposerView;
-
-    // Create MessageComposerViewModel for a given channel
-    ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
-            .cid("channelType:channelId")
-            .build();
-    ViewModelProvider provider = new ViewModelProvider(this, factory);
-    MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
-    }
-}
+// Bind MessageComposerViewModel with MessageComposerView
+MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
 ```
 </TabItem>
 </Tabs>
 
 Because it doesn't make sense to use the `MessageComposerView` as a standalone component, you also need to integrate it with the `MessageListView`:
 
+```xml
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <io.getstream.chat.android.ui.message.list.MessageListView
+        android:id="@+id/messageListView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/messageComposerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <io.getstream.chat.android.ui.message.composer.MessageComposerView
+        android:id="@+id/messageComposerView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-class ChatFragment : Fragment() {
-    lateinit var messageComposerView: MessageComposerView
-    lateinit var messageListView: MessageListView
+// Create ViewModels for MessageComposerView and MessageListView
+val factory = MessageListViewModelFactory(cid = "messaging:123")
+val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
+val messageListViewModel: MessageListViewModel by viewModels { factory }
 
-    // Create ViewModels for MessageComposerView and MessageListView
-    val factory = MessageListViewModelFactory(cid = "channelType:channelId")
-    val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
-    val messageListViewModel: MessageListViewModel by viewModels { factory }
+// Bind MessageComposerViewModel with MessageComposerView
+messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        // Bind MessageComposerViewModel with MessageComposerView
-        messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
+// Bind MessageListViewModel with MessageListView
+messageListViewModel.bindView(messageListView, viewLifecycleOwner)
 
-        // Integrate MessageComposerView with MessageListView
-        messageListViewModel.mode.observe(viewLifecycleOwner) {
-            when (it) {
-                is MessageListViewModel.Mode.Thread -> {
-                    messageComposerViewModel.setMessageMode(MessageMode.MessageThread(it.parentMessage))
-                }
-                is MessageListViewModel.Mode.Normal -> {
-                    messageComposerViewModel.leaveThread()
-                }
-            }
+// Integrate MessageComposerView with MessageListView
+messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
+    when (mode) {
+        is MessageMode.MessageThread -> {
+            messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
         }
-        messageListView.setMessageReplyHandler { _, message ->
-            messageComposerViewModel.performMessageAction(Reply(message))
-        }
-        messageListView.setMessageEditHandler { message ->
-            messageComposerViewModel.performMessageAction(Edit(message))
+        is MessageMode.Normal -> {
+            messageComposerViewModel.leaveThread()
         }
     }
+}
+messageListView.setMessageReplyHandler { _, message ->
+    messageComposerViewModel.performMessageAction(Reply(message))
+}
+messageListView.setMessageEditHandler { message ->
+    messageComposerViewModel.performMessageAction(Edit(message))
 }
 ```
 </TabItem>
@@ -124,34 +130,30 @@ class ChatFragment : Fragment() {
 <TabItem value="java" label="Java">
 
 ```java
-class ChatFragment extends Fragment {
+// Create ViewModels for MessageComposerView and MessageListView
+ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+        .cid("messaging:123")
+        .build();
+ViewModelProvider provider = new ViewModelProvider(this, factory);
+MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
+MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
 
-    MessageComposerView messageComposerView;
-    MessageListView messageListView;
-    ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
-            .cid("channelType:channelId")
-            .build();
-    ViewModelProvider provider = new ViewModelProvider(this, factory);
-    MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
-    MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
+// Bind MessageComposerViewModel with MessageComposerView
+MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
+// Bind MessageListViewModel with MessageListView
+MessageListViewModelBinding.bind(messageListViewModel, messageListView, getViewLifecycleOwner());
 
-        // Integrate MessageComposerView with MessageListView
-        messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
-            if (mode instanceof MessageListViewModel.Mode.Thread) {
-                messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageListViewModel.Mode.Thread) mode).getParentMessage(), null));
-            } else if (mode instanceof MessageListViewModel.Mode.Normal) {
-                messageComposerViewModel.leaveThread();
-            }
-        });
-        messageListView.setMessageReplyHandler((cid, message) -> messageComposerViewModel.performMessageAction(new Reply(message)));
-        messageListView.setMessageEditHandler((message) -> messageComposerViewModel.performMessageAction(new Edit(message)));
+// Integrate MessageComposerView with MessageListView
+messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
+    if (mode instanceof MessageMode.MessageThread) {
+        messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageMode.MessageThread) mode).getParentMessage()));
+    } else if (mode instanceof MessageMode.Normal) {
+        messageComposerViewModel.leaveThread();
     }
-}
+});
+messageListView.setMessageReplyHandler((cid, message) -> messageComposerViewModel.performMessageAction(new Reply(message)));
+messageListView.setMessageEditHandler((message) -> messageComposerViewModel.performMessageAction(new Edit(message)));
 ```
 </TabItem>
 </Tabs>
@@ -160,7 +162,7 @@ In the snippet above, you initialize the message composer and integrate it with 
 
 This will produce a fully working solution, as shown in the image below.
 
-![Whole Screen](../../assets/message_composer_whole_screen.png) 
+![Whole Screen](../../assets/message_composer_whole_screen.png)
 
 ## Handling Actions
 
@@ -375,13 +377,13 @@ Here's an example of setting a custom attribute:
 
 This produces the following styling:
 
-![Custom Attribute](../../assets/message_composer_custom_attribute.png) 
+![Custom Attribute](../../assets/message_composer_custom_attribute.png)
 
 Different configurations can be used to achieve the desired appearance of `MessageComposerView`. If you don't need to change this View appearance at runtime, XML should be enough. But if you need to able to customize it at runtime, then you can use `MessageComposerViewStyle` as described in the next section.
 
 ### Using Style Transformations
 
-You can use [TransformStyle](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/TransformStyle.kt) to apply global style transformations to all `MessageComposerView` instances. For example, you can create set up a `messageComposerStyleTransformer` like this one to change the input text color:
+You can use [TransformStyle](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/TransformStyle.kt) to apply global style transformations to all `MessageComposerView` instances. For example, you can create a `messageComposerStyleTransformer` like this one to change the input text color:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -408,7 +410,7 @@ TransformStyle.setMessageComposerStyleTransformer(source -> {
 </TabItem>
 </Tabs>
 
-:::note 
+:::note
 The transformer should be set before the View is rendered to make sure that the new style was applied.
 :::
 
@@ -417,7 +419,7 @@ The transformer should be set before the View is rendered to make sure that the 
 With the new `MessageComposerView` you can replace certain parts of the layout with custom content views. There are several parts available for customization.
 
 * **Leading content**: Represents the left part with integration buttons.
-* **Center content**: Represents the center part with the text input. 
+* **Center content**: Represents the center part with the text input.
 * **Trailing content**: Represents the right part with the send button.
 * **Header content**: Represents the top part with the action mode title.
 * **Footer content**: Represents the bottom part with the "also send to channel" checkbox.
