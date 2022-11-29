@@ -46,7 +46,7 @@ public class CoreConcepts {
         result.onSuccess((Channel) -> {
             // Handle success
             return null;
-        }).onError((ChatError) -> {
+        }).onError(chatError -> {
             // Handle error
             return null;
         });
