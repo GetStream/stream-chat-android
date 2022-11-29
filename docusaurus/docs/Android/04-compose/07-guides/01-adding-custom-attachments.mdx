@@ -141,7 +141,7 @@ val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
       // Composable that represents the UI of "date" attachments in the message list
     },
     previewContent = { modifier, attachments, onAttachmentRemoved ->
-      // Composable that represents the UI of "date" attachments in the message input
+      // Composable that represents the UI of "date" attachments in the message composer
     },
     textFormatter = { attachment -> 
       // String representation of the attachment in the channel list
@@ -241,7 +241,7 @@ What's important here is how you're able to fetch the custom attachment data, us
 Finally, you need to provide a string representation of the attachment for message preview:
 
 ```kotlin
-textFormatter = { attachment -> 
+textFormatter = { attachment ->
     attachment.extraData["payload"].toString()
 }
 ```
@@ -264,8 +264,8 @@ val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
             onAttachmentRemoved = onAttachmentRemoved
         )
     },
-    textFormatter = { attachment -> 
-      attachment.extraData["payload"].toString()
+    textFormatter = { attachment ->
+        attachment.extraData["payload"].toString()
     },
 )
 ```
@@ -404,8 +404,11 @@ class MessagesActivity : AppCompatActivity() {
         val defaultQuotedFactories = StreamAttachmentFactories.defaultQuotedFactories()
 
         setContent {
-            // pass in custom factories or combine them with the default ones
-            ChatTheme(attachmentFactories = customFactories + defaultFactories, quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories) {
+            // Pass in custom factories or combine them with the default ones
+            ChatTheme(
+                attachmentFactories = customFactories + defaultFactories,
+                quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories
+            ) {
                 CustomMessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() }
