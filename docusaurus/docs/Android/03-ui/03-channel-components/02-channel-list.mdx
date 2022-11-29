@@ -13,10 +13,10 @@ By default, a single channel item shows the following:
 
 * Channel name
 * User's read state
-* Last message
-* Timestamp of the last message
+* Latest message
+* Timestamp of the latest message
 
-It also implements swiping behaviour which allows handling different actions on the channel.
+It also supports swiping behaviour which allows handling different channel actions.
 
 ## Usage
 
@@ -29,7 +29,7 @@ To use `ChannelListView`, include it in your XML layout as shown below:
     android:layout_height="match_parent" />
 ```
 
-We recommend using the `ChannelListViewModel` to get the full list of data from the Stream API and then render it using the `ChannelListView`.
+We recommend fetching data from Stream's API using `ChanneListViewModel`, and then rendering it inside `ChannelListView.`
 
 The basic setup of the ViewModel and connecting it to the View is done the following way:
 
@@ -80,7 +80,7 @@ ChannelListViewModelBinding.bind(viewModel, channelListView, getViewLifecycleOwn
 You may need to pass a custom `ChatEventHandler` to make sure the list is updated properly. Check [ChannelListUpdates](../../02-client/06-guides/05-channel-list-updates.mdx) section to read more.
 :::
 
-All the logic of subscribing to data emitted by the ViewModel is provided by the `bindView` function. Other than channel data loading, the ViewModel is also handling actions like deleting a channel and leaving a group conversation by default.
+All the logic of subscribing to data emitted by the ViewModel is provided by the bindView function. Other than channel data loading, the ViewModel also handles actions like deleting a channel and leaving a group conversation by default.
 
 ## Handling Actions
 
@@ -393,7 +393,7 @@ These changes should have the following results:
 
 ## Creating a Custom Loading View
 
-A custom loading view can be set using the `setLoadingView` method. Assuming that we have the setup similar to previous steps, we can create a loading view with a shimmer effect by taking the following actions:
+A custom loading view can be set using the `setLoadingView` method. Assuming that we have a setup similar to the one seen in the previous steps, we can create a loading view with a shimmer effect by taking the following actions:
 
 1. Add the Shimmer dependency in your `build.gradle` file's dependencies block:
 
