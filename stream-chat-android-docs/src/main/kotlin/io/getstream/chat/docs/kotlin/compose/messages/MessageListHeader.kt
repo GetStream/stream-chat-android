@@ -52,6 +52,8 @@ private object MessageListHeaderUsageSnippet {
                     val connectionState by listViewModel.connectionState.collectAsState()
                     val messageMode = listViewModel.messageMode
 
+                    // Load the data for the header here
+
                     Column(Modifier.fillMaxSize()) {
                         MessageListHeader(
                             modifier = Modifier.wrapContentHeight(),
@@ -61,6 +63,7 @@ private object MessageListHeaderUsageSnippet {
                             messageMode = messageMode,
                             onBackPressed = { },
                             onHeaderActionClick = { },
+                            onChannelAvatarClick = { },
                         )
 
                         // Rest of your UI
@@ -99,7 +102,10 @@ private object MessageListHeaderHandlingActionsSnippet {
                         currentUser = currentUser,
                         onBackPressed = { finish() },
                         onHeaderActionClick = {
-                            // Show your custom UI
+                            // Handle clicks on the header title
+                        },
+                        onChannelAvatarClick = {
+                            // Handle clicks on the channel avatar
                         },
                         // Content
                     )
