@@ -49,8 +49,8 @@ import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.utils.extensions.addFlow
 import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
-import io.getstream.logging.StreamLog
-import io.getstream.logging.TaggedLogger
+import io.getstream.log.StreamLog
+import io.getstream.log.TaggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

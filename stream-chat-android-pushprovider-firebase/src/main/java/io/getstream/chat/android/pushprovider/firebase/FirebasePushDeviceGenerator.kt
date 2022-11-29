@@ -23,7 +23,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * Generator responsible for providing information needed to register Firebase push notifications provider

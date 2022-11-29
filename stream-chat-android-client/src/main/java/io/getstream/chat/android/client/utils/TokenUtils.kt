@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.utils
 
 import android.util.Base64
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import org.json.JSONException
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets

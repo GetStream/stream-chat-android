@@ -35,7 +35,7 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.util.Date
 
 /**

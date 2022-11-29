@@ -23,7 +23,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.util.Date
 
 private const val TAG = "Chat:ChannelTools"

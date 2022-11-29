@@ -21,7 +21,7 @@ import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.querysort.internal.SortAttribute
 import io.getstream.chat.android.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.models.querysort.internal.compare
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
