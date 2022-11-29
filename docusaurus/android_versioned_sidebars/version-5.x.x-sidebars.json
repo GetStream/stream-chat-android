@@ -57,6 +57,10 @@
               "dirName": "02-client/06-guides/10-video-integrations"
             }
           ]
+        },
+        {
+          "type": "doc",
+          "id": "client/guides/listening-for-events"
         }
       ]
     },
