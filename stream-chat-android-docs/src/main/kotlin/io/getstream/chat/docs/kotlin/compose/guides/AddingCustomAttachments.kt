@@ -110,6 +110,7 @@ private object AddingCustomAttachmentsSnippet {
                                 type = "date",
                                 extraData = mutableMapOf("payload" to payload)
                             )
+
                             composerViewModel.addSelectedAttachments(listOf(attachment))
                         }
                     )
