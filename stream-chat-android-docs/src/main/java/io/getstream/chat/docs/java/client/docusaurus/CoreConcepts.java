@@ -43,7 +43,7 @@ public class CoreConcepts {
     }
 
     public void errorHandlingReactively(Result<Channel> result) {
-        result.onSuccess((Channel) -> {
+        result.onSuccess(channel -> {
             // Handle success
             return null;
         }).onError(chatError -> {
