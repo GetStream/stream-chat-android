@@ -19,7 +19,7 @@ You can choose between overriding:
 - `ChatEventHandler` - if you want to have full control over events' types.
 
 In each case, you need to decide what to do with the particular event by returning `EventHandlingResult` that matches an action.
-You can find more details about the result class [here](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-state/src/main/java/io/getstream/chat/android/offline/event/handler/chat/ChatEventHandler.kt#L50).
+You can find more details about the result class [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-state/src/main/java/io/getstream/chat/android/state/event/handler/chat/ChatEventHandler.kt#L50).
 
 :::note
 The `ChatEventHandlerFactory` provides a `ChatEventHandler`, which gives you access to the visible channels map. By using the map, you can skip unwanted channel list updates.
