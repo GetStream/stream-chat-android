@@ -126,7 +126,8 @@ In the snippet above, you:
 
 Now you can send a custom attachment of type `date` to the chat. The resulting UI will look like this:
 
-![Sending Custom Attachment](../../assets/compose_sending_custom_attachments.png)
+|![Sending Custom Attachment](../../assets/compose_sending_custom_attachments.png)|
+|---|
 
 Now that you've set up the `DatePicker` and the custom composer, you need to build a custom attachment factory to render the item both in the input and the list. 
 
@@ -307,7 +308,8 @@ class MessagesActivity : AppCompatActivity() {
 
 Date attachments should be now correctly rendered in the message composer and in the message list like on the screenshot below:
 
-![Rendering Custom Attachment](../../assets/compose_rendering_custom_attachments.png)
+|![Rendering Custom Attachment](../../assets/compose_rendering_custom_attachments.png)|
+|---|
 
 With just a few lines of code, you're able to render any custom UI within the `MessageComposer` and `MessageList` components of our SDK. This gives the ability to build powerful features without having to change our default components — you just need a custom `AttachmentFactory`!
 
@@ -315,7 +317,8 @@ With just a few lines of code, you're able to render any custom UI within the `M
 
 Stream SDK supports quoting or replying to messages, even if they contain attachments. These quoted messages are shown inside the message bubble above the text you wrote when quoting, which is a common pattern in various chat services.
 
-![Compose Quoted Attachment Sample](../../assets/compose_quoted_attachment_example.PNG)
+|![Compose Quoted Attachment Sample](../../assets/compose_quoted_attachment_example.png)|
+|---|
 
 Since the quoted content is nested inside a regular message, it has less space available and requires a different layout. For this reason, the Compose SDK provides separate attachment factories just for the quoted content. This allows you to provide a different UI for attachments that are displayed as a part of the quoted content.
 
@@ -437,6 +440,7 @@ You can find the full source code of the `CustomMessagesScreen` component [here]
 
 Quoted date attachments should now be correctly rendered in messages where they're quoted, like in the screenshot below:
 
-![Rendering Custom Attachment](../../assets/compose_custom_quoted_message_attachment_factory.png)
+|![Rendering Custom Attachment](../../assets/compose_custom_quoted_message_attachment_factory.png)|
+|---|
 
 With even fewer lines of code than the previous custom attachment factory we have adjusted the date preview to fit a smaller layout retaining all the relevant data. This gives you even more fine grained customization to build powerful and responsive UI with the same reusable components.
