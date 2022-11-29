@@ -1142,7 +1142,7 @@ public final class io/getstream/chat/android/compose/ui/components/userreactions
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {
-	public static final fun MessagesScreen (Lio/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessagesScreen (Lio/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {
@@ -1224,7 +1224,7 @@ public final class io/getstream/chat/android/compose/ui/messages/header/Composab
 
 public final class io/getstream/chat/android/compose/ui/messages/header/MessageListHeaderKt {
 	public static final fun DefaultMessageListHeaderCenterContent (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageListHeader-TYRQsRI (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lio/getstream/chat/android/models/ConnectionState;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun MessageListHeader-LIL5028 (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Lio/getstream/chat/android/models/ConnectionState;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageContainerKt {

@@ -75,6 +75,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param elevation The elevation of the header.
  * @param onBackPressed Handler that propagates the back button click event.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
+ * @param onChannelAvatarClick Action handler called when the user taps on the channel avatar.
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
  * @param centerContent The content shown in the middle of the header and represents the core information, by default
  * [DefaultMessageListHeaderCenterContent].
@@ -93,6 +94,7 @@ public fun MessageListHeader(
     elevation: Dp = ChatTheme.dimens.headerElevation,
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (Channel) -> Unit = {},
+    onChannelAvatarClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderLeadingContent(onBackPressed = onBackPressed)
     },
@@ -110,7 +112,8 @@ public fun MessageListHeader(
     trailingContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderTrailingContent(
             channel = channel,
-            currentUser = currentUser
+            currentUser = currentUser,
+            onClick = onChannelAvatarClick,
         )
     },
 ) {
@@ -287,14 +290,20 @@ internal fun DefaultMessageListHeaderSubtitle(
  *
  * @param channel The channel used to display the avatar.
  * @param currentUser The current user. Used for choosing which avatar to display.
+ * @param onClick The handler called when the user taps on the channel avatar.
  */
 @Composable
-internal fun DefaultMessageListHeaderTrailingContent(channel: Channel, currentUser: User?) {
+internal fun DefaultMessageListHeaderTrailingContent(
+    channel: Channel,
+    currentUser: User?,
+    onClick: () -> Unit,
+) {
     ChannelAvatar(
         modifier = Modifier.size(40.dp),
         channel = channel,
         currentUser = currentUser,
         contentDescription = channel.name,
+        onClick = onClick,
     )
 }
 
