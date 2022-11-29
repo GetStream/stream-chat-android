@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerato
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

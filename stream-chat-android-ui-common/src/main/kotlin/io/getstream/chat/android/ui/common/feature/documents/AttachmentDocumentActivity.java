@@ -20,8 +20,8 @@ import java.nio.charset.StandardCharsets;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.ui.common.R;
-import io.getstream.logging.StreamLog;
-import io.getstream.logging.TaggedLogger;
+import io.getstream.log.StreamLog;
+import io.getstream.log.TaggedLogger;
 
 /**
  * An Activity showing attachments such as PDF and Office documents.

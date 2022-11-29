@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.utils.TimeProvider
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
