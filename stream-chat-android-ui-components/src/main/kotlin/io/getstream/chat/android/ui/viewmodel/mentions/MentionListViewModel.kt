@@ -26,7 +26,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.utils.Event
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel

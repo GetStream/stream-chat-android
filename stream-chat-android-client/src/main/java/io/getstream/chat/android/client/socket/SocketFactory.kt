@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.models.User
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.UnsupportedEncodingException

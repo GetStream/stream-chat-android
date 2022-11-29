@@ -79,7 +79,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.util.Date
 
 /**
