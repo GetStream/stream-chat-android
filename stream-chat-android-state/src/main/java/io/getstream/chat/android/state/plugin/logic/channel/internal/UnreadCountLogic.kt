@@ -29,7 +29,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.text.SimpleDateFormat
 import java.util.Locale
 

@@ -37,8 +37,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
-import io.getstream.logging.StreamLog
-import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
