@@ -9,7 +9,7 @@ scrollable
 boolean
 squircle
 Gradle
-livestream
+[Ll]ivestream
 Huawei
 Sonatype
 dialogs
@@ -25,6 +25,7 @@ Jetpack
 Jitpack
 Markwon
 jank
+UIs
 grayscale
 styleable
 Dark_mode
