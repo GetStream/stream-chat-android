@@ -98,6 +98,7 @@ public class ChannelAvatarView : ViewGroup {
      * @param channel The channel to show the avatar for.
      * @param currentUser The currently logged in user.
      */
+    @JvmOverloads
     public fun setChannel(
         channel: Channel,
         currentUser: User? = ChatUI.currentUserProvider.getCurrentUser(),
