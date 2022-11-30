@@ -45,7 +45,8 @@ public class ChatUIInitializer : Initializer<Unit> {
     }
 
     private fun setImageLoader(context: Context) {
-        val excludeCurrentUserFromChannelAvatars = context.resources.getBoolean(R.bool.stream_ui_excludeCurrentUserFromChannelAvatars)
+        val excludeCurrentUserFromChannelAvatars =
+            context.resources.getBoolean(R.bool.stream_ui_excludeCurrentUserFromChannelAvatars)
 
         val imageLoaderFactory = StreamImageLoaderFactory(context) {
             components {
