@@ -21,13 +21,17 @@ val message = Message(
     text = "Look at this attachment!",
     attachments = mutableListOf(attachment),
 )
-ChatClient.instance().sendMessage(channelType = "messaging", channelId = "general", message = message).enqueue { result ->
-    if (result.isSuccess) {
-        // Use result.data()
-    } else {
-        // Handle result.error()
+ChatClient.instance().sendMessage(channelType = "messaging", channelId = "general", message = message)
+    .enqueue { result ->
+        when (result) {
+            is Result.Success -> {
+                // Handle success
+            }
+            is Result.Failure -> {
+                // Handle error
+            }
+        }
     }
-}
 ```
 </TabItem>
 
@@ -42,9 +46,9 @@ message.setAttachments(Collections.singletonList(attachment));
 
 ChatClient.instance().sendMessage("messaging", "general", message).enqueue(result -> {
             if (result.isSuccess()) {
-                // Use result.data()
+                // Handle success
             } else {
-                // Handle result.error()
+                // Handle error
             }
         }
 );
