@@ -27,7 +27,9 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.avatar.internal.Avatar
 
-internal class AvatarFetcherFactory : Fetcher.Factory<Avatar> {
+internal class AvatarFetcherFactory(
+    private val excludeCurrentUserFromChannelAvatars: Boolean = false,
+) : Fetcher.Factory<Avatar> {
 
     override fun create(data: Avatar, options: Options, imageLoader: ImageLoader): Fetcher {
         val targetSize = options.size.width.pxOrElse { 0 }
@@ -45,9 +47,15 @@ internal class AvatarFetcherFactory : Fetcher.Factory<Avatar> {
                             )
                         }
                         is Avatar.ChannelAvatar -> {
+                            val users = if (excludeCurrentUserFromChannelAvatars) {
+                                data.channel.getUsersExcludingCurrent()
+                            } else {
+                                data.channel.members.map { it.user }
+                            }
+
                             ChatUI.avatarBitmapFactory.createChannelBitmapInternal(
                                 data.channel,
-                                data.channel.getUsersExcludingCurrent(),
+                                users,
                                 data.avatarStyle,
                                 targetSize
                             )
