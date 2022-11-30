@@ -43,7 +43,7 @@ import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsS
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

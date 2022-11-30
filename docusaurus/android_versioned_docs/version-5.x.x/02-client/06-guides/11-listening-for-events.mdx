@@ -11,12 +11,10 @@ As soon as you call `watchChannel` on a Channel or `queryChannels`, the SDK will
 ```kotlin
 val chatClient = ChatClient.instance()
 val channelClient = client.channel("messaging", "general")
-
 // Subscribe for new message events
 val disposable: Disposable = channelClient.subscribeFor<NewMessageEvent> { newMessageEvent ->
     val message = newMessageEvent.message
 }
-
 // Dispose when you want to stop receiving events
 disposable.dispose()
 ```
@@ -27,7 +25,6 @@ disposable.dispose()
 ```java
 ChatClient chatClient = ChatClient.instance();
 ChannelClient channelClient = chatClient.channel("messaging", "general");
-
 // Subscribe for new message events
 Disposable disposable = channelClient.subscribeFor(
         new Class[]{NewMessageEvent.class},
@@ -35,7 +32,6 @@ Disposable disposable = channelClient.subscribeFor(
             Message message = ((NewMessageEvent) event).getMessage();
         }
 );
-
 // Dispose when you want to stop receiving events
 disposable.dispose();
 ```
@@ -49,11 +45,9 @@ As an example, let's see how you can close the chat screen when the currently lo
 
 ```kotlin
 class ChatFragment : Fragment() {
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Setup chat screen components
-
         val chatClient = ChatClient.instance()
         val channelClient = chatClient.channel("messaging", "general")
         channelClient.subscribeFor<NotificationRemovedFromChannelEvent>(viewLifecycleOwner) { event ->
@@ -73,19 +67,16 @@ class ChatFragment : Fragment() {
 
 ```java
 class ChatFragment extends Fragment {
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Setup chat screen components
-
         ChatClient chatClient = ChatClient.instance();
         ChannelClient channelClient = chatClient.channel("messaging", "general");
         channelClient.subscribeFor(
                 new Class[]{NotificationRemovedFromChannelEvent.class},
                 (ChatEvent event) -> {
                     Member member = ((NotificationRemovedFromChannelEvent) event).getMember();
-
                     String removedUserId = member.getUser().getId();
                     String currentUserId = chatClient.getCurrentUser().getId();
                     if (removedUserId.equals(currentUserId)) {

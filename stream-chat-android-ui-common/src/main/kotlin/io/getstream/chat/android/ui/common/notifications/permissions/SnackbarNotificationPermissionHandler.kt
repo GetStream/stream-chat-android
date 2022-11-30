@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.notifications.permissions.NotificationPe
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.uiutils.util.openSystemSettings
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * Shows a [Snackbar] with a link to app settings on [android.Manifest.permission.POST_NOTIFICATIONS] permission denial.
