@@ -496,7 +496,7 @@ This produces the following result:
 ![Custom suggestion item](../../assets/custom_suggestion_item.jpg)
 
 ## Changing Mention Search
-It is possible to change the search method in the mention list. The default class: `DefaultUserLookupHandler` removes diacritics and uses levenstein distance to include similar words in the results.
+It is possible to change the search method in the mention list. The default class: `DefaultUserLookupHandler` removes diacritics and uses Levenstein distance to include similar words in the results.
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -551,7 +551,7 @@ You can also use your own implementation of `StreamTransliterator` to add suppor
 
 ## Attachment Size Limits
 
-There is a limit for the size of attachments you can send. The default value is 100MB and selecting a file larger than that limit will notify the user:
+There is a limit for the size of attachments you can send. The default value is 100 MB and selecting a file larger than that limit will notify the user:
 
 ![Big file feedback](../../assets/big_attachment.png)
 

@@ -63,13 +63,13 @@ new ChatClient.Builder("apiKey", context)
 _ChatClient_ must be initialized before handling push notifications. We recommend setting it up in your `Application` class.
 :::
 
-That's all you have to do to integrate the Huawei push provider artifact!
+That's all you have to do to integrate the Huawei push provider artifact.
 
 ### Using a Custom Huawei Messaging Service
 
 The Stream Huawei push provider artifact contains a `HuaweiMessagingService` implementation that sends new Huawei tokens to Stream and forwards incoming push messages to `ChatClient` to handle.
 
-If you're using Huawei notifications for other purposes inside your app as well, you will need your own custom service to replace this.  Here, you have to call `HuaweiMessagingDelegate`'s `registerHuaweiToken` and `handleRemoteMessage` methods, like so:
+If you're using Huawei notifications for other purposes inside your app as well, you will need your own custom service to replace this. Here, you have to call `HuaweiMessagingDelegate`'s `registerHuaweiToken` and `handleRemoteMessage` methods, like so:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
