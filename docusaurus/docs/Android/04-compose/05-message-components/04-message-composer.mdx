@@ -63,7 +63,9 @@ You can also customize the behavior of our components to update the rest of your
 
 The provided snippet, with the rest of the UI set up using our messages components, will render the following UI.
 
-![Default MessageComposer component](../../assets/compose_default_message_composer_component.png)
+| Light | Dark |
+|---|---|
+| ![Default MessageComposer component](../../assets/compose_default_message_composer_component.png) | ![Default MessageComposer component dark](../../assets/compose_default_message_composer_component_dark.png) |
 
 Notice how the composer shows the attachments we've selected in the input area, how it shows the label, as well as integrations on the left side and the send button on the right side.
 
@@ -171,7 +173,7 @@ fun MyCustomComposer() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Keyboard,
+                            imageVector = Icons.Default.Email,
                             contentDescription = null
                         )
 
@@ -194,7 +196,8 @@ fun MyCustomComposer() {
 
                                 composerViewModel.sendMessage(
                                     composerViewModel.buildNewMessage(
-                                        state.inputValue, state.attachments
+                                        state.inputValue,
+                                        state.attachments
                                     )
                                 )
                             },
