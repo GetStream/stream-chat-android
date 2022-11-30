@@ -39,7 +39,8 @@ This is a very basic and crude example, that just shows a list of channels with 
 
 The snippet above will generate the following UI.
 
-![The Default ChannelList Component](../../assets/compose_default_channel_list_component.png)
+|![The Default ChannelList Component](../../assets/compose_default_channel_list_component.png)|
+|---|
 
 In order to fully utilize the `Channel` items, let's see how to handle actions and state from the ViewModel.
 
@@ -56,7 +57,7 @@ fun ChannelList(
     onLastItemReached: () -> Unit = { viewModel.loadMore() },
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = { viewModel.selectChannel(it) },
-    ... // Other UI-related parameters
+    ... // Content Slots
 )
 ```
 
@@ -66,10 +67,10 @@ fun ChannelList(
 * `onChannelLongClick`: Handler when the user long taps on an item. By default, this updates state in the `viewModel`, which you can read to show custom UI and `Channel` actions if you're using a custom `ViewModel` instance. Override if you're using the default `viewModel` and you want to change the behavior.
 
 :::note
-You may need to pass a custom `ChatEventHandler` to make sure the list is updated properly. Check [ChannelListUpdates](../../02-client/06-guides/05-channel-list-updates.mdx) section to read more.
+You may need to pass a custom `ChatEventHandlerFactory` to the ViewModel to make sure the list is updated properly. Check [ChannelListUpdates](../../02-client/06-guides/05-channel-list-updates.mdx) section to read more.
 :::
 
-Here's an example of using the default `viewModel`, but overriding the behavior:
+Here's an example of using the default `ViewModel`, but overriding the behavior:
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,10 +88,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
                         selectedChannel = it
                     },
                     onChannelClick = {
-                        // Start the MessagesScreen          
+                        // Start the MessagesScreen
                     },
                 )
-                
+
                 if (selectedChannel != null) {
                     // Show custom UI
                 }
@@ -107,6 +108,16 @@ We also provide a custom `onChannelClick` handler, to open the `MessagesScreen` 
 Alternatively, you can override the default `ViewModel` and read the internal state:
 
 ```kotlin
+val listViewModel: ChannelListViewModel by viewModels {
+    ChannelViewModelFactory(
+        querySort = QuerySortByField.descByName("last_updated"),
+        filters = Filters.and(
+            Filters.eq("type", "messaging"),
+            Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
+        )
+    )
+}
+
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -152,11 +163,12 @@ fun ChannelList(
 To customize this state you can simply pass your own instance as a parameter:
 
 ```kotlin
-val myListState = rememberLazyListState()
+ val lazyListState = rememberLazyListState()
+
 ChannelList(
-    ..., // State
-    lazyListState = myListState,
-    ... // Actions & Content Slots
+    // State
+    lazyListState = lazyListState
+    // Actions & Content Slots
 )
 ```
 
@@ -175,7 +187,7 @@ fun ChannelList(
     emptySearchContent: @Composable (String) -> Unit = { ... },
     helperContent: @Composable BoxScope.() -> Unit = { ... },
     loadingMoreContent: @Composable () -> Unit = { ... },
-    itemContent: @Composable (ChannelItem) -> Unit = { ... },
+    itemContent: @Composable (ChannelItemState) -> Unit = { ... },
     divider: @Composable () -> Unit = { ... },
 )
 ```
@@ -193,46 +205,40 @@ fun ChannelList(
 Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
 
 ```kotlin
-@Composable
-fun CustomChannelListItem() {
-    val user by listViewModel.user.collectAsState() // Fetch user
+val user by listViewModel.user.collectAsState() // Fetch user
 
-    ChannelList(
-        ..., // Set up state
-        itemContent = { // Customize the channel items
-            Card(modifier = Modifier
-                .padding(2.dp)
-                .fillMaxWidth()) {
-                Row(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ChannelAvatar(
-                        modifier = Modifier.size(40.dp),
-                        channel = it.channel,
-                        currentUser = user
-                    )
+ChannelList(
+    ..., // Set up state
+    itemContent = { // Customize the channel items
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ChannelAvatar(
+                modifier = Modifier.size(40.dp),
+                channel = it.channel,
+                currentUser = user
+            )
 
-                    Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-                    Text(
-                        text = ChatTheme.channelNameFormatter.formatChannelName(it.channel),
-                        style = ChatTheme.typography.bodyBold,
-                        maxLines = 1,
-                    )
-                }
-            }
+            Text(
+                text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
+                style = ChatTheme.typography.bodyBold,
+                maxLines = 1,
+            )
         }
-    )
-}
+    }
+)
 ```
 
 The snippet above will generate the following UI:
 
-![Customized ChannelItem Component](../../assets/compose_custom_channel_list_item.png)
+|![Customized ChannelItem Component](../../assets/compose_custom_channel_list_item.png)|
+|---|
 
-As you can see, the items are now within a card and show just the image and the channel name. You can customize the items to any extent, whatever your design specification might require.
+As you can see, the items now show just the image and the channel name. You can customize the items to any extent, whatever your design specification might require.
 
 And you can customize the `emptyContent` and the `loadingContent` to your needs if you need custom UI there.
