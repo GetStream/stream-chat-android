@@ -20,8 +20,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -205,7 +203,7 @@ private object MessageComposerCustomizationSnippet {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Email,
+                                    painter = painterResource(R.drawable.ic_keyboard),
                                     contentDescription = null
                                 )
 
@@ -228,8 +226,7 @@ private object MessageComposerCustomizationSnippet {
 
                                         composerViewModel.sendMessage(
                                             composerViewModel.buildNewMessage(
-                                                state.inputValue,
-                                                state.attachments
+                                                state.inputValue, state.attachments
                                             )
                                         )
                                     },
