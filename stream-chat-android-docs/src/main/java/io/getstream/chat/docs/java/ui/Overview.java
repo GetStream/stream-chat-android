@@ -1,27 +1,33 @@
 package io.getstream.chat.docs.java.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 
 /**
  * [Overview](https://getstream.io/chat/docs/sdk/android/ui/overview/)
  */
-public class Overview extends AppCompatActivity {
+public class Overview extends Fragment {
 
-    public void viewModelsInitialization(MessageListView messageListView, LifecycleOwner viewLifecycleOwner) {
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory // 1
+    private MessageListView messageListView;
+
+    /**
+     * [ViewModels](https://getstream.io/chat/docs/sdk/android/ui/overview/#viewmodels)
+     */
+    public void viewModels() {
+        // 1
+        ViewModelProvider.Factory factory = new MessageListViewModelFactory
                 .Builder()
-                .cid("channelType:channelId")
+                .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);
-        MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class); // 2
-
-        MessageListViewModelBinding.bind(messageListViewModel, messageListView, viewLifecycleOwner); // 3
+        // 2
+        MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
+        // 3
+        MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
     }
 }
