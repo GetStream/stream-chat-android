@@ -6,7 +6,7 @@ hide_from_search: true
 
 Message represents single communication inside a channel. Besides typical communication-related fields like text, created date, or message sender, it also contains other useful components like:
 - Attachments - list of files inside the message
-- Reactions - users' reactions for the message. Common examples are: "like", "love", etc.
+- Reactions - users' reactions for the message. Common examples are: `"like"`, `"love"`, etc.
 
 ## Sending Messages
 
@@ -444,7 +444,11 @@ channelClient.getMessagesWithAttachments(
 
 ## Silent Messages
 
-Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread. They can be used to send system or transactional messages to channels such as: "your ride is waiting for you", "James updated the information for the trip", "You and Jane are now matched" and so on.
+Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread. They can be used to send system or transactional messages to channels such as:
+- "your ride is waiting for you"
+- "James updated the information for the trip"
+- "You and Jane are now matched"
+- Etc…
 
 ### Sending a Silent Message
 
