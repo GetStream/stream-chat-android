@@ -108,15 +108,7 @@ We also provide a custom `onChannelClick` handler, to open the `MessagesScreen` 
 Alternatively, you can override the default `ViewModel` and read the internal state:
 
 ```kotlin
-val listViewModel: ChannelListViewModel by viewModels {
-    ChannelViewModelFactory(
-        querySort = QuerySortByField.descByName("last_updated"),
-        filters = Filters.and(
-            Filters.eq("type", "messaging"),
-            Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-        )
-    )
-}
+val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
 
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
