@@ -123,7 +123,7 @@ class MessagesActivity : AppCompatActivity() {
                         messageComposerViewModel.addSelectedAttachments(listOf(attachment))
                     }
 
-                    // Show the date picker dialog on a click on the calendar button
+                    // Show the date picker dialog at the click of the calendar button
                     datePickerDialog.show(supportFragmentManager, null)
                 }
             }
