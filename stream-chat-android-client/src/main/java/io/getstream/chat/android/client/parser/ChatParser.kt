@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.errors.cause.MessageModerationFailedExce
 import io.getstream.chat.android.client.socket.ErrorDetail
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.Retrofit

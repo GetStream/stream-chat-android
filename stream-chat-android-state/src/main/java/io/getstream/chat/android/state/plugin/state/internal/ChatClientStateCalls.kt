@@ -27,7 +27,7 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.Q
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 
 /**

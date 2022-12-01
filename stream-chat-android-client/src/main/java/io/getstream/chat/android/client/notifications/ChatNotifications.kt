@@ -29,7 +29,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -74,7 +74,7 @@ internal class ChatNotificationsImpl constructor(
         notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
             ?.let {
                 it.onPushDeviceGeneratorSelected()
-                it.asyncGenerateDevice(::setDevice)
+                it.asyncGeneratePushDevice { setDevice(it.toDevice()) }
             }
     }
 

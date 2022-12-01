@@ -34,7 +34,7 @@ import io.getstream.chat.android.ui.feature.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentMediaActivity
 import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.uiutils.model.MimeType
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 public open class AttachmentDestination(
     public var message: Message,

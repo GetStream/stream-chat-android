@@ -30,7 +30,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * An Activity playing attachments such as audio and video.

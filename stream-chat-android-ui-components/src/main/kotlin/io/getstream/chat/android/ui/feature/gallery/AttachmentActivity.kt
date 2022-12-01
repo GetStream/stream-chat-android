@@ -30,7 +30,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.load
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * An Activity showing attachments such as websites, youtube and giphy.

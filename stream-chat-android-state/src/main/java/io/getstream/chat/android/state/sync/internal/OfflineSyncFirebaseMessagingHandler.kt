@@ -17,7 +17,7 @@
 package io.getstream.chat.android.state.sync.internal
 
 import android.content.Context
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 internal class OfflineSyncFirebaseMessagingHandler {
     private val logger = StreamLog.getLogger("Chat:OfflineSyncFirebaseMessagingHandler")
