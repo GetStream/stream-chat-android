@@ -266,7 +266,7 @@ This code will display the date picker dialog once the button is clicked:
 | ![Sending Custom Attachments](../../assets/sending_custom_attachments_v2_1.png) | ![Sending Custom Attachments](../../assets/sending_custom_attachments_v2_2.png) |
 | --- | --- |
 
-After the date has been selected, we create an instance of `Attachment` with the corresponding payload and add it to the composer with the `MessageComposerViewModel::addSelectedAttachments` method. 
+After the date has been selected, we create an instance of `Attachment` with the corresponding payload and add it to the composer by calling the `MessageComposerViewModel::addSelectedAttachments` method. 
 
 Next, we need to provide support for displaying custom attachment previews in the `MessageComposerView` by implementing the `AttachmentPreviewFactory` interface:
 
