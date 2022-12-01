@@ -5,7 +5,7 @@ import TabItem from '@theme/TabItem';
 
 ## Introduction
 
-By default our `MessageListView` disables scrolling behavior when there's a dialog present, specifically an instance of the `DialogFragment` is present in the hierarchy. This is due to our default set of components, in which we show an overlay on the `MessageListView` when the user selects a `Message`. If we allowed scrolling, users could scroll with the full screen overlay shown and that is poor user experience.
+By default our `MessageListView` disables scrolling behavior when there's a dialog present, specifically when an instance of `DialogFragment` is present in the hierarchy. This is due to our default set of components, in which we show an overlay on the `MessageListView` when the user selects a `Message`. If we allowed scrolling, users could scroll with the full screen overlay shown and that would result in poor user experience.
 
 To mitigate this, we've added special handlers in the `MessageListScrollHelper` class, which controls the internal scrolling behavior. Whenever a scroll occurs, the following piece of code is triggered:
 
@@ -36,7 +36,7 @@ In the inner piece of code we check if there are any `DialogFragments` active, a
 
 However, this behavior might not be what works for your use case, but it's still the default as this is the most commonly requested behavior. But you can customize it!
 
-## Overriding Default Scrolling Behavior
+## Overriding the Default Scrolling Behavior
 
 If you need to enable scrolling, regardless of dialogs in your app, you can customize the default scrolling behavior to enable scrolls even if there is a `DialogFragment` active. For example, if you have bottom-sheet-style persistent dialogs, permanent popups or your `MessageListView` lives within a `DialogFragment` itself.
 
