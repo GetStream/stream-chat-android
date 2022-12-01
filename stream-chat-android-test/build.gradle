@@ -18,13 +18,13 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(":stream-chat-android-core")
-    api project(":libraries:logging:stream-logger")
 
     implementation Dependencies.androidxLifecycleLiveDataKtx
     api Dependencies.coroutinesTest
     implementation Dependencies.androidxArchCoreTest
     implementation Dependencies.junitJupiterApi
     implementation Dependencies.junit4
+    implementation Dependencies.streamLog
 
     detektPlugins(Dependencies.detektFormatting)
 }

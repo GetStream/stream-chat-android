@@ -33,7 +33,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.zipWith
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 internal class LoadNotificationDataWorker(
     private val context: Context,

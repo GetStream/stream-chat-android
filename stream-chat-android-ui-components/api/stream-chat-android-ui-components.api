@@ -3096,7 +3096,9 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageCompos
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/models/Attachment;)V
 	public final fun selectCommand (Lio/getstream/chat/android/models/Command;)V
 	public final fun selectMention (Lio/getstream/chat/android/models/User;)V
+	public final fun sendMessage ()V
 	public final fun sendMessage (Lio/getstream/chat/android/models/Message;)V
+	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)V
 	public final fun setAlsoSendToChannel (Z)V
 	public final fun setMessageInput (Ljava/lang/String;)V
 	public final fun setMessageMode (Lio/getstream/chat/android/ui/common/state/messages/MessageMode;)V
@@ -3643,6 +3645,7 @@ public final class io/getstream/chat/android/ui/widgets/avatar/ChannelAvatarView
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun setChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun setChannel (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)V
 	public static synthetic fun setChannel$default (Lio/getstream/chat/android/ui/widgets/avatar/ChannelAvatarView;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)V
 }

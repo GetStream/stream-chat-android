@@ -52,6 +52,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added constructor overloads for the `MessageMode.MessageThread` class to simplify usage for Java users. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
 
 ### ⚠️ Changed
 
@@ -63,6 +64,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+Added the default value for the `message` parameter passed to the `MessageComposerViewModel:sendMessage` function. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
 
 ### ⚠️ Changed
 
@@ -100,6 +102,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Artifact removed, use `io.getstream:stream-anrdid-push-firebase:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
 
 ## stream-chat-android-pushprovider-huawei
 ### 🐞 Fixed
@@ -111,6 +114,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Artifact removed, use `io.getstream:stream-anrdid-push-huawei:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
 
 ## stream-chat-android-pushprovider-xiaomi
 ### 🐞 Fixed
@@ -122,6 +126,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Artifact removed, use `io.getstream:stream-anrdid-push-xiaomi:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
 
 # November 11th, 2022 - 6.0.0-beta1
 

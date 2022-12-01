@@ -121,11 +121,6 @@ apiValidation {
             'stream-chat-android-test',
             'stream-chat-android-compose-sample',
             'stream-chat-android-ui-guides',
-            'libraries',
-            'logging',
-            'stream-logger',
-            'stream-logger-file',
-            'stream-logger-android',
     ]
 
     nonPublicMarkers += [
