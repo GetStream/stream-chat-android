@@ -194,7 +194,7 @@ Let's start customizing our screen by styling the play button displayed over vid
 2. Create a style which changes the way the play button is displayed in the overview:
 
 ```xml
-<style name="StreamUi.MediaAttachmentGridView">
+<style name="CustomMediaAttachmentGridView">
     <item name="streamUiMediaAttachmentGridViewPlayVideoButtonIcon">@drawable/stream_ui_ic_play</item>
     <item name="streamUiMediaAttachmentGridViewPlayVideoIconElevation">3dp</item>
     <item name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingTop">2dp</item>
@@ -234,10 +234,9 @@ Let's start customizing our screen by styling the play button displayed over vid
 
 ```xml
 <activity
-   android:name="io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity"
+   android:name="io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity"
    android:theme="@style/CustomAttachmentGalleryTheme"
-   tools:replace="android:theme"
-   />
+   tools:replace="android:theme" />
 ```
 
 These few simple steps result in the following UI:
@@ -278,5 +277,3 @@ Which gives the options menu the following appearance:
 |![attachment_gallery_customization_example_options_light](../../assets/attachment_gallery_customization_example_options_light.png)|![attachment_gallery_customization_example_options_dark](../../assets/attachment_gallery_customization_example_options_dark.png)|
 
 Now you have the ability to make the gallery feel like an organic part of your app.
-
-
