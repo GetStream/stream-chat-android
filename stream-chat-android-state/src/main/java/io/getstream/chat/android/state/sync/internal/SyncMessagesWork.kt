@@ -30,7 +30,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.internal.validateCid
 import io.getstream.chat.android.state.extensions.internal.logic
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 @Suppress("TooGenericExceptionCaught")
 internal class SyncMessagesWork(

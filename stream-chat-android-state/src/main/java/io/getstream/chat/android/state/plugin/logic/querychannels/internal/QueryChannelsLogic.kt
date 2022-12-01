@@ -32,7 +32,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.flow.StateFlow
 
 private const val MESSAGE_LIMIT = 1
@@ -138,6 +138,8 @@ internal class QueryChannelsLogic(
         if (result is Result.Success) {
             logger.d { "Number of returned channels: ${result.value.size}" }
             updateOnlineChannels(request, result.value)
+        } else {
+            queryChannelsStateLogic.initializeChannelsIfNeeded()
         }
 
         loadingPerPage(false, request.offset > 0)
@@ -234,11 +236,11 @@ internal class QueryChannelsLogic(
             logger.d {
                 "[updateOnlineChannels] isFirstPage: ${request.isFirstPage}, " +
                     "channels.size: ${channels.size}, " +
-                    "existingChannels.size: ${existingChannels.size}, " +
+                    "existingChannels.size: ${existingChannels?.size ?: "null"}, " +
                     "currentChannelsOffset: $currentChannelsOffset"
             }
 
-            if (request.isFirstPage && existingChannels.isNotEmpty()) {
+            if (request.isFirstPage && !existingChannels.isNullOrEmpty()) {
                 var newChannelsOffset = channels.size
                 val notUpdatedChannels = existingChannels - channels.map { it.cid }.toSet()
                 logger.v { "[updateOnlineChannels] notUpdatedChannels.size: ${notUpdatedChannels.size}" }

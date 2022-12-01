@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.flow.StateFlow
 
 internal class ChatSocketStateService(initialState: State = State.Disconnected.Stopped) {

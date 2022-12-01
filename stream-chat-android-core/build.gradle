@@ -18,6 +18,9 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
+test {
+    useJUnitPlatform()
+}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
@@ -31,11 +34,18 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-    api project(":libraries:logging:stream-logger")
-
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxAnnotations
+    implementation Dependencies.streamLog
 
     detektPlugins(Dependencies.detektFormatting)
+
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
 }

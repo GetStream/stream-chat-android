@@ -27,7 +27,7 @@ import io.getstream.chat.android.models.User
  * Error handler for [io.getstream.chat.android.client.ChatClient.sendReaction] calls.
  */
 @InternalStreamChatApi
-public interface SendReactionErrorHandler : ErrorHandler {
+public interface SendReactionErrorHandler {
 
     /**
      * Returns a [Result] from this side effect when original request is failed.

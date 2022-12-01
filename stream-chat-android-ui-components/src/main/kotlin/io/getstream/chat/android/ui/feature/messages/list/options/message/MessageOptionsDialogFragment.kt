@@ -31,6 +31,7 @@ import androidx.core.view.updateMarginsRelative
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -217,7 +218,9 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private fun setupEditReactionsView() {
         with(binding.editReactionsView) {
             applyStyle(style.itemStyle.editReactionsViewStyle)
-            if (style.reactionsEnabled) {
+
+            val isMessageSynced = message.syncStatus == SyncStatus.COMPLETED
+            if (style.reactionsEnabled && (isMessageSynced || style.showReactionsForUnsentMessages)) {
                 setMessage(message, messageItem.isMine)
                 setReactionClickListener {
                     reactionClickListener?.onReactionClick(message, it)

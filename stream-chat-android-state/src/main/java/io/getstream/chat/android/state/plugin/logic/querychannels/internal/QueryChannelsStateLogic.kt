@@ -30,7 +30,7 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 internal class QueryChannelsStateLogic(
     private val mutableState: QueryChannelsMutableState,
@@ -57,7 +57,7 @@ internal class QueryChannelsStateLogic(
     /**
      * Get all the channels that were queried so far.
      */
-    internal fun getChannels(): Map<String, Channel> = mutableState.rawChannels
+    internal fun getChannels(): Map<String, Channel>? = mutableState.rawChannels
 
     /**
      * The the specs of the query.
@@ -140,7 +140,7 @@ internal class QueryChannelsStateLogic(
     internal fun addChannelsState(channels: List<Channel>) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
         val existingChannels = mutableState.rawChannels
-        mutableState.setChannels(existingChannels + channels.map { it.cid to it })
+        mutableState.setChannels((existingChannels ?: emptyMap()) + channels.map { it.cid to it })
         channels.forEach { channel ->
             logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
                 channel = channel,
@@ -155,9 +155,22 @@ internal class QueryChannelsStateLogic(
      */
     internal fun removeChannels(cidSet: Set<String>) {
         val existingChannels = mutableState.rawChannels
-
+        if (existingChannels == null) {
+            logger.w { "[removeChannels] rejected (existingChannels is null)" }
+            return
+        }
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
         mutableState.setChannels(existingChannels - cidSet)
+    }
+
+    /**
+     * Initializes [QueryChannelsMutableState.rawChannels] with an empty map if it wasn't initialized yet.
+     * This might happen when we don't have any channels in the offline storage and API request fails.
+     */
+    internal fun initializeChannelsIfNeeded() {
+        if (mutableState.rawChannels == null) {
+            mutableState.setChannels(emptyMap())
+        }
     }
 
     /**
@@ -167,7 +180,13 @@ internal class QueryChannelsStateLogic(
      * @param cidList The channels to refresh.
      */
     internal fun refreshChannels(cidList: Collection<String>) {
-        val newChannels = mutableState.rawChannels + mutableState.queryChannelsSpec.cids
+        val existingChannels = mutableState.rawChannels
+        if (existingChannels == null) {
+            logger.w { "[refreshChannels] rejected (existingChannels is null)" }
+            return
+        }
+
+        val newChannels = existingChannels + mutableState.queryChannelsSpec.cids
             .intersect(cidList.toSet())
             .map { cid -> cid.cidToTypeAndId() }
             .filter { (channelType, channelId) ->
@@ -195,6 +214,11 @@ internal class QueryChannelsStateLogic(
     internal fun refreshMembersStateForUser(newUser: User) {
         val userId = newUser.id
         val existingChannels = mutableState.rawChannels
+
+        if (existingChannels == null) {
+            logger.w { "[refreshMembersStateForUser] rejected (existingChannels is null)" }
+            return
+        }
 
         val affectedChannels = existingChannels
             .filter { (_, channel) -> channel.users().any { it.id == userId } }

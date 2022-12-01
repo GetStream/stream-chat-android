@@ -7,7 +7,7 @@ The SDK is optimized to avoid waste of resources and improve performance. You ca
 
 ## Multiple Calls to API
 
-After version `5.3.0`, the SDK prevents the user from making multiple calls to the backend. If a call is already running, the SDK merges a new request into the current one and the data is propagated to both requesters of the `Call`. 
+The SDK prevents the user from making multiple calls to the backend. If a call is already running, the SDK merges a new request into the current one and the data is propagated to both requesters of the `Call`.
 
 You can change the default behavior and force calls to always make new requests to API and never merge two requests into one by using:
 
@@ -40,10 +40,13 @@ For example, you can use the snippet presented below for query channels request:
 
 ```kotlin
 ChatClient.instance().queryChannels(queryChannelsRequest).forceNewRequest().enqueue { result ->
-    if (result.isSuccess) {
-        // Handle success
-    } else {
-        // Handle error
+    when (result) {
+        is Result.Success -> {
+            // Handle success
+        }
+        is Result.Failure -> {
+            // Handle error
+        }
     }
 }
 ```
@@ -69,7 +72,7 @@ The returned `Call` will be forced to make a new request to API.
 
 
 ## QuerySorter
-To sort your object and present then in a desired order, tt is possible to choose between 2 implementations of QuerySorter: `QuerySort` and `QuerySortByField`. 
+To sort your object and present then in a desired order, it is possible to choose between two implementations of QuerySorter: `QuerySortByReflection` and `QuerySortByField`.
 
 :::note
 `QuerySortByField` is the default implementation used by the SDK.
@@ -83,7 +86,6 @@ You can also choose to not use reflection and gain performance by using `QuerySo
 
 ```
 public data class Channel(
-    var cid: String = "",
     var id: String = "",
     var type: String = "",
     var name: String = "",
@@ -96,19 +98,6 @@ public data class Channel(
     var membership: Member? = null,
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 ) : CustomObject, ComparableFieldProvider {
-
-    /**
-     * Determines the last updated date/time.
-     * Returns either [lastMessageAt] or [createdAt].
-     */
-    val lastUpdated: Date?
-        get() = lastMessageAt?.takeIf { createdAt == null || it.after(createdAt) } ?: createdAt
-
-    /**
-     * Whether a channel contains unread messages or not.
-     */
-    val hasUnread: Boolean
-        get() = unreadCount?.let { it > 0 } ?: false
 
     @Suppress("ComplexMethod")
     override fun getComparableField(fieldName: String): Comparable<*>? {

@@ -690,28 +690,12 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/errorhandler/CreateChannelErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/errorhandler/CreateChannelErrorHandler;Lio/getstream/chat/android/client/errorhandler/ErrorHandler;)I
-}
-
-public final class io/getstream/chat/android/client/errorhandler/DeleteReactionErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/errorhandler/DeleteReactionErrorHandler;Lio/getstream/chat/android/client/errorhandler/ErrorHandler;)I
-}
-
 public final class io/getstream/chat/android/client/errorhandler/ErrorHandler$Companion {
 	public static final field DEFAULT_PRIORITY I
 }
 
 public final class io/getstream/chat/android/client/errorhandler/ErrorHandler$DefaultImpls {
 	public static fun compareTo (Lio/getstream/chat/android/client/errorhandler/ErrorHandler;Lio/getstream/chat/android/client/errorhandler/ErrorHandler;)I
-}
-
-public final class io/getstream/chat/android/client/errorhandler/QueryMembersErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/errorhandler/QueryMembersErrorHandler;Lio/getstream/chat/android/client/errorhandler/ErrorHandler;)I
-}
-
-public final class io/getstream/chat/android/client/errorhandler/SendReactionErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/errorhandler/SendReactionErrorHandler;Lio/getstream/chat/android/client/errorhandler/ErrorHandler;)I
 }
 
 public final class io/getstream/chat/android/client/errors/cause/MessageModerationDeletedException : io/getstream/chat/android/client/errors/cause/StreamSdkException {
@@ -2156,7 +2140,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/Plugin : io/getstream/chat/android/client/plugin/listeners/ChannelMarkReadListener, io/getstream/chat/android/client/plugin/listeners/CreateChannelListener, io/getstream/chat/android/client/plugin/listeners/DeleteMessageListener, io/getstream/chat/android/client/plugin/listeners/DeleteReactionListener, io/getstream/chat/android/client/plugin/listeners/EditMessageListener, io/getstream/chat/android/client/plugin/listeners/HideChannelListener, io/getstream/chat/android/client/plugin/listeners/MarkAllReadListener, io/getstream/chat/android/client/plugin/listeners/QueryChannelListener, io/getstream/chat/android/client/plugin/listeners/QueryChannelsListener, io/getstream/chat/android/client/plugin/listeners/QueryMembersListener, io/getstream/chat/android/client/plugin/listeners/SendAttachmentListener, io/getstream/chat/android/client/plugin/listeners/SendGiphyListener, io/getstream/chat/android/client/plugin/listeners/SendMessageListener, io/getstream/chat/android/client/plugin/listeners/SendReactionListener, io/getstream/chat/android/client/plugin/listeners/ShuffleGiphyListener, io/getstream/chat/android/client/plugin/listeners/ThreadQueryListener, io/getstream/chat/android/client/plugin/listeners/TypingEventListener {
-	public abstract fun getErrorHandlers ()Ljava/util/List;
+	public abstract fun getErrorHandler ()Lio/getstream/chat/android/client/errorhandler/ErrorHandler;
 	public abstract fun onAttachmentSendRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onChannelMarkReadPrecondition (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onCreateChannelPrecondition (Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/utils/Result;

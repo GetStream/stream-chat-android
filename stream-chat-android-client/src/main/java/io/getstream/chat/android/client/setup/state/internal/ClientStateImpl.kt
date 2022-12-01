@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.InitializationState
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

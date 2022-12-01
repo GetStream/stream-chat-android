@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.errorhandler.factory
 
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -32,5 +33,5 @@ public interface ErrorHandlerFactory {
      *
      * @return The [ErrorHandler] instance.
      */
-    public fun create(): ErrorHandler
+    public fun create(channelRepository: ChannelRepository): ErrorHandler
 }

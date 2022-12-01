@@ -25,13 +25,22 @@
     <string name="catalog_section_compose">Compose guides</string>
     <string name="catalog_section_uicomponents">UI Components guides</string>
 
-    <string name="compose_custom_attachments_guide_title">Custom attachments</string>
+    <string name="compose_custom_attachments_guide_title">Custom Attachments</string>
     <string name="compose_custom_attachments_guide_description">A guide that demonstrates how to build a date sharing feature using the Compose SDK.</string>
 
-    <string name="uicomponents_custom_attachments_guide_title">Custom attachments</string>
+    <string name="compose_customizing_image_and_video_previews_title">Customizing Image and Video Previews</string>
+    <string name="compose_customizing_image_and_video_previews_description">A guide that demonstrates customization of image and video attachments using the Compose SDK.</string>
+
+    <string name="uicomponents_custom_attachments_guide_title">Custom Attachments</string>
     <string name="uicomponents_custom_attachments_guide_description">A guide that demonstrates how to build a date sharing feature using the UI Components SDK.</string>
+    <string name="title_activity_channels">ChannelsActivity</string>
 
     <string name="uicomponents_custom_reactions_guide_title">Providing Custom Reactions</string>
     <string name="uicomponents_custom_reactions_guide_description">A guide that demonstrates how to override the supported set of reactions using the UI Components SDK.</string>
 
+    <string name="uicomponents_channels_screen_guide_title">Building Channel List Screen</string>
+    <string name="uicomponents_channels_screen_guide_description">A guide that demonstrates how to build a channel list screen using the UI Components SDK.</string>
+
+    <string name="uicomponents_messages_screen_guide_title">Building Message List Screen</string>
+    <string name="uicomponents_messages_screen_guide_description">A guide that demonstrates how to build a message list screen using the UI Components SDK.</string>
 </resources>

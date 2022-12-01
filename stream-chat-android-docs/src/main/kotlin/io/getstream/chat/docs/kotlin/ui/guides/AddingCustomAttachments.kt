@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
@@ -142,7 +142,7 @@ class AddingCustomAttachmentsSnippet : Fragment() {
         ChatUI.attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
             listOf(
                 DateAttachmentPreviewFactory(),
-                ImageAttachmentPreviewFactory(),
+                MediaAttachmentPreviewFactory(),
                 FileAttachmentPreviewFactory()
             )
         )
@@ -157,6 +157,7 @@ class AddingCustomAttachmentsSnippet : Fragment() {
         override fun onCreateViewHolder(
             parentView: ViewGroup,
             attachmentRemovalListener: (Attachment) -> Unit,
+            style: MessageComposerViewStyle?,
         ): AttachmentPreviewViewHolder {
             return ItemDateAttachmentPreviewBinding
                 .inflate(LayoutInflater.from(parentView.context), parentView, false)

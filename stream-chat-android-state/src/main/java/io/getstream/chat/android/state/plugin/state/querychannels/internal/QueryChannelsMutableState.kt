@@ -29,7 +29,7 @@ import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,7 +47,7 @@ internal class QueryChannelsMutableState(
 
     private val logger = StreamLog.getLogger("Chat:QueryChannelsState")
 
-    internal var rawChannels: Map<String, Channel>
+    internal var rawChannels: Map<String, Channel>?
         get() = _channels.value
         private set(value) {
             _channels.value = value
@@ -55,7 +55,17 @@ internal class QueryChannelsMutableState(
 
     // This is needed for queries
     internal val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
-    private val _channels = MutableStateFlow<Map<String, Channel>>(emptyMap())
+
+    /**
+     * Property that exposes a map of raw channels.
+     * The channels are later sorted and enriched with latest users updates
+     * and exposed either as [channels] or [channelsStateData].
+     * The value is nullable in order to have a clear distinction between different channels state. When the value is:
+     * - null - the state should be either [ChannelsStateData.NoQueryActive] or [ChannelsStateData.Loading]
+     * - emptyMap() - the stat should be [ChannelsStateData.OfflineNoResults]
+     * - notEmptyMap() - the state should be [ChannelsStateData.Result]
+     */
+    private val _channels = MutableStateFlow<Map<String, Channel>?>(null)
     private val _loading = MutableStateFlow(false)
     private val _loadingMore = MutableStateFlow(false)
 
@@ -65,16 +75,16 @@ internal class QueryChannelsMutableState(
     private val _endOfChannels = MutableStateFlow(false)
     private val _sortedChannels: StateFlow<List<Channel>?> =
         _channels.combine(latestUsers) { channelMap, userMap ->
-            channelMap.values.updateUsers(userMap)
+            channelMap?.values?.updateUsers(userMap)
         }.map { channels ->
-            if (channels.isNotEmpty()) {
+            if (channels?.isNotEmpty() == true) {
                 logger.d {
                     val ids = channels.joinToString { channel -> channel.id }
                     "Sorting channels: $ids"
                 }
             }
 
-            channels.sortedWith(sort.comparator).also { sortedChannels ->
+            channels?.sortedWith(sort.comparator)?.also { sortedChannels ->
                 if (sortedChannels.isNotEmpty()) {
                     logger.d {
                         val ids = sortedChannels.joinToString { channel -> channel.id }
