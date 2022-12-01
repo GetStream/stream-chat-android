@@ -22,7 +22,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactory
@@ -143,6 +143,7 @@ class AddingCustomAttachments {
             override fun onCreateViewHolder(
                 parentView: ViewGroup,
                 attachmentRemovalListener: (Attachment) -> Unit,
+                style: MessageComposerViewStyle?
             ): AttachmentPreviewViewHolder {
                 return ItemDateAttachmentPreviewBinding
                     .inflate(LayoutInflater.from(parentView.context), parentView, false)
@@ -175,7 +176,7 @@ class AddingCustomAttachments {
                 attachmentPreviewFactories = listOf(
                     DateAttachmentPreviewFactory(),
                     // The default factories
-                    ImageAttachmentPreviewFactory(),
+                    MediaAttachmentPreviewFactory(),
                     FileAttachmentPreviewFactory()
                 )
             )

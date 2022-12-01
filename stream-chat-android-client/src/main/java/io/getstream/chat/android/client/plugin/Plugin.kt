@@ -71,7 +71,7 @@ public interface Plugin :
     ChannelMarkReadListener,
     CreateChannelListener {
 
-    public val errorHandlers: List<ErrorHandler>
+    public val errorHandler: ErrorHandler?
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,

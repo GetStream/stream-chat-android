@@ -29,7 +29,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 @InternalStreamChatApi
 public class UploadAttachmentsWorker(

@@ -519,5 +519,7 @@
         <attr name="streamUiOptionsOverlayMessageOptionsMarginStart" format="dimension|reference" />
         <attr name="streamUiOptionsOverlayMessageOptionsMarginEnd" format="dimension|reference" />
 
+        <!-- Show the edit reactions bubble for unsent messages on the options overlay. -->
+        <attr name="streamUiShowReactionsForUnsentMessages" format="boolean" />
     </declare-styleable>
 </resources>

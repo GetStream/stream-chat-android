@@ -61,11 +61,7 @@ import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.di.ChatModule
-import io.getstream.chat.android.client.errorhandler.CreateChannelErrorHandler
-import io.getstream.chat.android.client.errorhandler.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.errorhandler.QueryMembersErrorHandler
-import io.getstream.chat.android.client.errorhandler.SendReactionErrorHandler
 import io.getstream.chat.android.client.errorhandler.onCreateChannelError
 import io.getstream.chat.android.client.errorhandler.onMessageError
 import io.getstream.chat.android.client.errorhandler.onQueryMembersError
@@ -164,10 +160,9 @@ import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.logging.CompositeStreamLogger
-import io.getstream.logging.SilentStreamLogger
-import io.getstream.logging.StreamLog
-import io.getstream.logging.android.AndroidStreamLogger
+import io.getstream.log.CompositeStreamLogger
+import io.getstream.log.StreamLog
+import io.getstream.log.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -281,7 +276,7 @@ internal constructor(
      * Error handlers for API calls.
      */
     private val errorHandlers: List<ErrorHandler>
-        get() = plugins.flatMap { it.errorHandlers }.sorted()
+        get() = plugins.mapNotNull { it.errorHandler }.sorted()
 
     public var logicRegistry: ChannelStateLogicProvider? = null
 
@@ -296,7 +291,7 @@ internal constructor(
         logger.i { "Initialised: ${buildSdkTrackingHeaders()}" }
     }
 
-    private suspend fun handleEvent(event: ChatEvent) {
+    private fun handleEvent(event: ChatEvent) {
         when (event) {
             is ConnectedEvent -> {
                 logger.i { "[handleEvent] event: ConnectedEvent(userId='${event.me.id}')" }
@@ -322,7 +317,8 @@ internal constructor(
                     is DisconnectCause.NetworkNotAvailable,
                     is DisconnectCause.WebSocketNotAvailable,
                     is DisconnectCause.Error,
-                    -> { }
+                    -> {
+                    }
                     is DisconnectCause.UnrecoverableError -> {
                         userStateService.onSocketUnrecoverableError()
                     }
@@ -738,7 +734,6 @@ internal constructor(
         members: List<Member> = emptyList(),
     ): Call<List<Member>> {
         logger.d { "[queryMembers] cid: $channelType:$channelId, offset: $offset, limit: $limit" }
-        val errorHandlers = errorHandlers.filterIsInstance<QueryMembersErrorHandler>()
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
             .doOnResult(userScope) { result ->
                 plugins.forEach { plugin ->
@@ -880,7 +875,6 @@ internal constructor(
      */
     @CheckResult
     public fun deleteReaction(messageId: String, reactionType: String, cid: String? = null): Call<Message> {
-        val relevantErrorHandlers = errorHandlers.filterIsInstance<DeleteReactionErrorHandler>()
         val currentUser = getCurrentUser()
 
         return api.deleteReaction(messageId = messageId, reactionType = reactionType)
@@ -909,7 +903,7 @@ internal constructor(
                 }
             }
             .precondition(plugins) { onDeleteReactionPrecondition(currentUser) }
-            .onMessageError(relevantErrorHandlers, cid, messageId)
+            .onMessageError(errorHandlers, cid, messageId)
             .share(userScope) { DeleteReactionIdentifier(messageId, reactionType, cid) }
     }
 
@@ -934,7 +928,6 @@ internal constructor(
     @CheckResult
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
-        val relevantErrorHandlers = errorHandlers.filterIsInstance<SendReactionErrorHandler>()
         val currentUser = getCurrentUser()
 
         return api.sendReaction(reaction, enforceUnique)
@@ -963,7 +956,7 @@ internal constructor(
                     )
                 }
             }
-            .onReactionError(relevantErrorHandlers, reaction, enforceUnique, currentUser!!)
+            .onReactionError(errorHandlers, reaction, enforceUnique, currentUser!!)
             .precondition(plugins) { onSendReactionPrecondition(currentUser, reaction) }
             .share(userScope) { SendReactionIdentifier(reaction, enforceUnique, cid) }
     }
@@ -1118,6 +1111,8 @@ internal constructor(
 
     /**
      * Disconnect the current user, stop all observers and clear user data.
+     * This method should only be used whenever the user logouts from the main app.
+     * You shouldn't call this method, if the user will continue using the Chat in the future.
      *
      * @param flushPersistence if true will clear user data.
      *
@@ -1127,8 +1122,20 @@ internal constructor(
     public fun disconnect(flushPersistence: Boolean): Call<Unit> =
         CoroutineCall(clientScope) {
             logger.d { "[disconnect] flushPersistence: $flushPersistence" }
-            disconnectSuspend(flushPersistence)
-            Result.Success(Unit)
+            when (isUserSet()) {
+                true -> {
+                    disconnectSuspend(flushPersistence)
+                    Result.Success(Unit)
+                }
+                false -> {
+                    logger.i { "[disconnect] cannot disconnect as the user wasn't connected" }
+                    Result.Failure(
+                        ChatError.GenericError(
+                            message = "ChatClient can't be disconnected because user wasn't connected previously",
+                        ),
+                    )
+                }
+            }
         }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
@@ -2344,7 +2351,6 @@ internal constructor(
         memberIds: List<String>,
         extraData: Map<String, Any>,
     ): Call<Channel> {
-        val relevantErrorHandlers = errorHandlers.filterIsInstance<CreateChannelErrorHandler>()
         val currentUser = getCurrentUser()
 
         val request = QueryChannelRequest()
@@ -2379,7 +2385,7 @@ internal constructor(
                 }
             }
             .onCreateChannelError(
-                errorHandlers = relevantErrorHandlers,
+                errorHandlers = errorHandlers,
                 channelType = channelType,
                 channelId = channelId,
                 memberIds = memberIds,
@@ -2926,8 +2932,7 @@ internal constructor(
         }
 
         private fun setupStreamLog() {
-            val noLoggerSet = StreamLog.inspect { it is SilentStreamLogger }
-            if (noLoggerSet && logLevel != ChatLogLevel.NOTHING) {
+            if (!StreamLog.defaultLoggerOverridden && logLevel != ChatLogLevel.NOTHING) {
                 StreamLog.setValidator(StreamLogLevelValidator(logLevel))
                 StreamLog.setLogger(
                     CompositeStreamLogger(

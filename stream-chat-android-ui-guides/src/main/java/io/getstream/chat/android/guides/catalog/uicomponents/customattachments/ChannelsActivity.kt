@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
 import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
@@ -50,8 +50,8 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
             attachmentPreviewFactories = listOf(
                 DateAttachmentPreviewFactory(),
                 // The default factories
-                ImageAttachmentPreviewFactory(),
-                FileAttachmentPreviewFactory()
+                MediaAttachmentPreviewFactory(),
+                FileAttachmentPreviewFactory(),
             )
         )
         ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(

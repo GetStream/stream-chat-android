@@ -1,6 +1,6 @@
 # MessageList
 
-The `MessageList` component is a crucial part when building a chat experience. We support two versions of the `MessageList` component:
+The `MessageList` component is a crucial part of building a chat experience. We support two versions of the `MessageList` component:
 
 * **Bound**: This version binds itself to the `MessageListViewModel` and loads all the required data. It also connects single and long item tap, pagination, and bottom reached events to the `ViewModel`.
 * **Stateless**: This is a stateless version of the list which doesn't know about the `ViewModel` and depends on pure state from external sources to render its UI.
@@ -165,6 +165,31 @@ MessageList(
 `rememberMessageListState()` keeps a separate instance of `MessagesLazyListState` based on the `parentMessageId`. This helps you keep the scroll state of the main list intact when you enter and leave threads.
 
 You can also provide your own instance of `MessagesLazyListState` where you define the starting scroll position of the state and how the focused message offset is calculated. For example, clicking on the original message contained within the reply will automatically scroll to the message and put it in focus. You can define where on the screen the focused message appears by passing in your own `MessageOffsetHandler`.
+
+## Previewing Attachments
+
+Out of the box previews are provided for the following attachment types: uploading, link, Giphy, image, video and file.
+
+### Image and Video
+
+Image and video attachments are previewed as thumbnails which can be displayed as a single tile or multiple ones depending on how many attachments are contained within the specific message. By default, these are rendered by `MediaAttachmentFactory`.
+
+:::note
+Attachment factories are used for previewing attachments. To learn more about factories and how to customize them, click on the link [here](../03-general-customization/01-chat-theme.mdx#streamattachmentfactories).
+:::
+
+In practice they appear as such:
+
+![Default Image and Video Attachment Previews](../../assets/compose_message_list_stock_media_attachments.png)
+
+Video thumbnails are a paid feature, with the pricing listed [here](https://getstream.io/chat/pricing/). They are enabled by default but can be turned off by setting the [ChatTheme](../03-general-customization/01-chat-theme.mdx) property `videoThumbnailsEnabled` to `false`.
+
+Once video thumbnails are disabled, messages containing video attachments will be displayed in the following manner:
+
+![Video Thumbnails Disabled](../../assets/compose_message_list_stock_media_attachments_video_thumbnails_disabled.png)
+
+If you want to read more about how to customize the way these attachments are displayed, head over to the relevant section seen [here](../07-guides/02-customizing-image-and-video-previews.mdx)
+
 ##  Customization
 
 We allow for a few ways of customizing the `MessageList` component, as per the signature:
@@ -274,3 +299,4 @@ As per our description, the `Avatar` and the user name `Text` are shown in a `Ro
 Using this approach, you can completely customize the items to your needs and you can use click, touch and combined modifiers to customize the touch event behavior.
 
 And you can customize the `emptyContent` and the `loadingContent` to your needs, if you need custom UI there.
+

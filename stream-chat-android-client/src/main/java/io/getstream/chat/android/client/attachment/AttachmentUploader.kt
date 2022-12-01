@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.io.File
 
 @InternalStreamChatApi

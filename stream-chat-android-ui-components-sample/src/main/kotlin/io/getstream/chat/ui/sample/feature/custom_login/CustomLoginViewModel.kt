@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.FirebaseLogger
 import io.getstream.chat.ui.sample.data.user.SampleUser
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import io.getstream.chat.android.models.User as ChatUser
 
 class CustomLoginViewModel : ViewModel() {

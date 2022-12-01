@@ -79,36 +79,21 @@ viewModelScope.launch {
 
 Actions defined in a `Call` return `Result` objects. These contain either the result of a successful operation or the error that caused the operation to fail.
 
-You can check whether a `Result` is successful or an error - exactly one of the following will be true for each `Result`:
+If the result is successful, you can get the contained data. Otherwise, you can fetch the error and handle it appropriately.
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-result.isSuccess
-result.isError
-```
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```java
-result.isSuccess();
-result.isError();
-```
-</TabItem>
-</Tabs>
-
-If the result was successful, you can get the contained data with `data()`. Otherwise, you can read `error()` and handle it appropriately.
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
-
-```kotlin
-if (result.isSuccess) {
-    // Use result.data()
-} else {
-    // Handle result.error()
+when (result) {
+    is Result.Success -> {
+        val channel: Channel = result.value
+        // Handle success
+    }
+    is Result.Failure -> {
+        val error: ChatError = result.value
+        // Handler error
+    }
 }
 ```
 </TabItem>
@@ -116,13 +101,46 @@ if (result.isSuccess) {
 <TabItem value="java" label="Java">
 
 ```java
+// Check if the call was successful
+Boolean isSuccess = result.isSuccess();
+// Check if the call had failed
+Boolean isFailure = result.isFailure();
+
 if (result.isSuccess()) {
-    // Use result.data()
+    // Handle success
+    Channel channel = result.getOrNull();
 } else {
-    // Handle result.error()
+    // Handle error
+    ChatError error = result.chatErrorOrNull();
 }
 ```
 </TabItem>
 </Tabs>
 
-Calling `data()` on a failed `Result` or calling `error()` on a successful `Result` will throw an `IllegalStateException`.
+Alternatively, you can handle `Call` operations reactively by using operators:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+result.onSuccess { channel ->
+    // Handle success
+}.onError { chatError ->
+    // Handle error
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+result.onSuccess(channel -> {
+    // Handle success
+    return null;
+}).onError(chatError -> {
+    // Handle error
+    return null;
+});
+```
+</TabItem>
+</Tabs>

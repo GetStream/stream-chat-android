@@ -26,7 +26,7 @@ import io.getstream.chat.android.models.Message
  * Error handler for [io.getstream.chat.android.client.ChatClient.deleteReaction] calls.
  */
 @InternalStreamChatApi
-public interface DeleteReactionErrorHandler : ErrorHandler {
+public interface DeleteReactionErrorHandler {
 
     /**
      * Returns a [Result] from this side effect when original request is failed.

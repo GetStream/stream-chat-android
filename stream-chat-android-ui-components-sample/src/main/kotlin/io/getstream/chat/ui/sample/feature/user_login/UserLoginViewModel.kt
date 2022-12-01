@@ -27,7 +27,7 @@ import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import io.getstream.chat.android.models.User as ChatUser
 
 class UserLoginViewModel : ViewModel() {

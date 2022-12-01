@@ -1,4 +1,4 @@
-# 100ms: Video Integration Guide for Android
+# 100ms: Guide for Android
 
 This page shows you how to integrate [100ms SDK](https://www.100ms.live/) into Stream Chat SDK for implementing video call features.
 
@@ -307,9 +307,9 @@ Let’s break down each method one by one:
 - **createVideoCallOrJoin**: This method requests an authentication token to the Stream server and joins a call with a specific `callId` parameter. If the `callId` is null, it will request creating a new call dynamically.
 - **createVideoCall**: This method creates a new call dynamically with a unique UUID for the call id.
 - **getVideoCallToken**: This method requests an authentication token to the Stream server.
-- **joinRoom**: Join a room and connect to a video call with the specific name of the room and an authentication token. You can join the room by invoking the `join` method of the `HMSSDK` and `HMSConfig`. For more details, check out the [100ms Join Room](​​https://www.100ms.live/docs/android/v2/features/Join) Android guide.
+- **joinRoom**: Join a room and connect to a video call with the specific name of the room and an authentication token. You can join the room by invoking the `join` method of the `HMSSDK` and `HMSConfig`.
 
-For more details about override methods from `HMSUpdateListener`, check out the [100ms official Join Room guideline](https://www.100ms.live/docs/android/v2/features/Join).
+For more details and to learn about override methods like `HMSUpdateListener`, check out the [100ms official Join Room guideline](https://www.100ms.live/docs/android/v2/features/Join).
 
 ## 5. Implement Video Call Layouts
 Now you’ll implement a video call screen like the below:

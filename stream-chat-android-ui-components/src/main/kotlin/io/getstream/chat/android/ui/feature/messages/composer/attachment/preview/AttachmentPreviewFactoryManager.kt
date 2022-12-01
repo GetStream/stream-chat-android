@@ -19,10 +19,11 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 import android.view.ViewGroup
 import androidx.collection.SparseArrayCompat
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FallbackAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.ImageAttachmentPreviewFactory
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory
 
 /**
  * A manager for registered attachment preview factories.
@@ -33,7 +34,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
  */
 public class AttachmentPreviewFactoryManager @JvmOverloads constructor(
     attachmentPreviewFactories: List<AttachmentPreviewFactory> = listOf(
-        ImageAttachmentPreviewFactory(),
+        MediaAttachmentPreviewFactory(),
         FileAttachmentPreviewFactory(),
     ),
     private val fallbackAttachmentPreviewFactory: FallbackAttachmentPreviewFactory = FallbackAttachmentPreviewFactory(),
@@ -51,15 +52,23 @@ public class AttachmentPreviewFactoryManager @JvmOverloads constructor(
      *
      * @param parentView The parent container.
      * @param attachmentRemovalListener Click listener for the remove attachment button.
+     * @param style Used to style the various factories. If null, the respective factory will retain
+     * the default appearance.
+     *
      * @return An instance of attachment preview ViewHolder.
      */
     public fun onCreateViewHolder(
         parentView: ViewGroup,
         viewType: Int,
         attachmentRemovalListener: (Attachment) -> Unit,
+        style: MessageComposerViewStyle? = null,
     ): AttachmentPreviewViewHolder {
         return viewTypeToFactoryMapping.get(viewType, fallbackAttachmentPreviewFactory)
-            .onCreateViewHolder(parentView, attachmentRemovalListener)
+            .onCreateViewHolder(
+                parentView = parentView,
+                attachmentRemovalListener = attachmentRemovalListener,
+                style = style
+            )
     }
 
     /**

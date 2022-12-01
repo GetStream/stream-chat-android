@@ -43,6 +43,16 @@ dependencies {
 }
 ```
 
+### State
+
+To use the state library in your application, add the following dependency:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-state:$stream_version"
+}
+```
+
 ### Offline Support
 
 To use offline support in your application, add the following dependency:
@@ -78,6 +88,18 @@ dependencies {
 ```
 
 Adding the Compose UI Components library as a dependency will automatically include the client and offline libraries as well.
+
+### Markdown support
+
+We ship an additional artifact for Markdown support which can be used together with the UI Components library:
+
+ ```groovy
+ dependencies {
+     implementation "stream-chat-android-markdown-transformer:$stream_version"
+ }
+ ```
+
+ For more information see [UI Components Configuration](../03-ui/02-general-customization/02-chatui.mdx#markdown) guide.
 
 ### Push Notifications
 

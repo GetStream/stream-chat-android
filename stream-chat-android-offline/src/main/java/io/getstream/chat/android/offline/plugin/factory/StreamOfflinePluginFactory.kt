@@ -45,7 +45,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyLi
 import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].

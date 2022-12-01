@@ -34,7 +34,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder;
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory;
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory;
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.ImageAttachmentPreviewFactory;
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory;
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactory;
@@ -165,7 +165,8 @@ public class AddingCustomAttachments extends Fragment {
             @NonNull
             @Override
             public AttachmentPreviewViewHolder onCreateViewHolder(@NonNull ViewGroup parentView,
-                                                                  @NonNull Function1<? super Attachment, Unit> attachmentRemovalListener) {
+                                                                  @NonNull Function1<? super Attachment, Unit> attachmentRemovalListener,
+                                                                  @Nullable MessageComposerViewStyle style) {
                 ItemDateAttachmentPreviewBinding binding = ItemDateAttachmentPreviewBinding
                         .inflate(LayoutInflater.from(parentView.getContext()), parentView, false);
                 return new DateAttachmentPreviewViewHolder(binding, attachmentRemovalListener);
@@ -196,7 +197,7 @@ public class AddingCustomAttachments extends Fragment {
             List<AttachmentPreviewFactory> factories = new ArrayList<>();
             factories.add(new DateAttachmentPreviewFactory());
             // The default factories
-            factories.add(new ImageAttachmentPreviewFactory());
+            factories.add(new MediaAttachmentPreviewFactory());
             factories.add(new FileAttachmentPreviewFactory());
 
             ChatUI.setAttachmentPreviewFactoryManager(new AttachmentPreviewFactoryManager(factories));

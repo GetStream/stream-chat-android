@@ -129,7 +129,7 @@ private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
  * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param permissionHandlers Handlers for various permissions.
  * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
- * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed in video previews.
+ * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed inside video previews.
  * @param content The content shown within the theme wrapper.
  */
 @OptIn(ExperimentalPermissionsApi::class)

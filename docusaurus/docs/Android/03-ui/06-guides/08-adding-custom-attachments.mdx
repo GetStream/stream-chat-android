@@ -334,6 +334,7 @@ class DateAttachmentPreviewFactory : AttachmentPreviewFactory {
     override fun onCreateViewHolder(
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
+        style: MessageComposerViewStyle?
     ): AttachmentPreviewViewHolder {
         return ItemDateAttachmentPreviewBinding
             .inflate(LayoutInflater.from(parentView.context), parentView, false)
@@ -376,7 +377,8 @@ class DateAttachmentPreviewFactory implements AttachmentPreviewFactory {
     @NonNull
     @Override
     public AttachmentPreviewViewHolder onCreateViewHolder(@NonNull ViewGroup parentView,
-                                                          @NonNull Function1<? super Attachment, Unit> attachmentRemovalListener) {
+                                                          @NonNull Function1<? super Attachment, Unit> attachmentRemovalListener,
+                                                          @Nullable MessageComposerViewStyle style) {
         ItemDateAttachmentPreviewBinding binding = ItemDateAttachmentPreviewBinding
                 .inflate(LayoutInflater.from(parentView.getContext()), parentView, false);
         return new DateAttachmentPreviewViewHolder(binding, attachmentRemovalListener);
@@ -416,7 +418,7 @@ ChatUI.attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
     attachmentPreviewFactories = listOf(
         DateAttachmentPreviewFactory(),
         // The default factories
-        ImageAttachmentPreviewFactory(),
+        MediaAttachmentPreviewFactory(),
         FileAttachmentPreviewFactory()
     )
 )
@@ -429,7 +431,7 @@ ChatUI.attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
 List<AttachmentPreviewFactory> factories = new ArrayList<>();
 factories.add(new DateAttachmentPreviewFactory());
 // The default factories
-factories.add(new ImageAttachmentPreviewFactory());
+factories.add(new MediaAttachmentPreviewFactory());
 factories.add(new FileAttachmentPreviewFactory());
 
 ChatUI.setAttachmentPreviewFactoryManager(new AttachmentPreviewFactoryManager(factories));
