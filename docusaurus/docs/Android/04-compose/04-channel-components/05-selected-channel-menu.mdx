@@ -16,30 +16,36 @@ If you're using the [`ChannelScreen`](./01-channels-screen.mdx) component, you d
 If you're looking to build a custom UI, you can add the `SelectedChannelMenu` component on top of your UI, like so:
 
 ```kotlin
-@Composable
-fun MyCustomUi() {
-    // Data for the component
-    val user by listViewModel.user.collectAsState()
-    val selectedChannelState by listViewModel.selectedChannel
-    val currentlySelectedChannel = selectedChannelState
+val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        // The rest of your content
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-        if (currentlySelectedChannel != null) {
-            val isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid)
+    setContent {
+        ChatTheme {
+            val user by listViewModel.user.collectAsState()
+            val selectedChannelState by listViewModel.selectedChannel
+            val currentlySelectedChannel = selectedChannelState
 
-            SelectedChannelMenu(
-                modifier = Modifier
-                    .fillMaxWidth() // Fill width
-                    .wrapContentHeight() // Wrap height
-                    .align(Alignment.BottomCenter), // Aligning the content to the bottom
-                selectedChannel = currentlySelectedChannel,
-                isMuted = isMuted,
-                currentUser = user,
-                onChannelOptionClick = { listViewModel.performChannelAction(it) },
-                onDismiss = { listViewModel.dismissChannelAction() }
-            )
+            Box(modifier = Modifier.fillMaxSize()) {
+                // The rest of your UI
+
+                if (currentlySelectedChannel != null) {
+                    val isMuted = listViewModel.isChannelMuted(currentlySelectedChannel.cid)
+
+                    SelectedChannelMenu(
+                        modifier = Modifier
+                            .fillMaxWidth() // Fill width
+                            .wrapContentHeight() // Wrap height
+                            .align(Alignment.BottomCenter), // Aligning the content to the bottom
+                        selectedChannel = currentlySelectedChannel,
+                        isMuted = isMuted,
+                        currentUser = user,
+                        onChannelOptionClick = { listViewModel.performChannelAction(it) },
+                        onDismiss = { listViewModel.dismissChannelAction() }
+                    )
+                }
+            }
         }
     }
 }
@@ -53,7 +59,8 @@ Notice how you also show the `SelectedChannelMenu` only if the `selectedChannel`
 
 With a bit of extra code for the rest of the content, when selecting a channel, the snippet above will produce the next UI:
 
-![The SelectedChannelMenu Component](../../assets/compose_default_selected_channel_menu_component.png)
+|![The SelectedChannelMenu Component](../../assets/compose_default_selected_channel_menu_component.png)|
+|---|
 
 This just represents the `SelectedChannelMenu` component, the rest of the UI can be whatever your implementation requires.
 
@@ -135,6 +142,7 @@ SelectedChannelMenu(
 
 This code will produce the following UI:
 
-![The SelectedChannelMenu Component](../../assets/compose_custom_selected_channel_menu_component.png)
+|![The SelectedChannelMenu Component](../../assets/compose_custom_selected_channel_menu_component.png)|
+|---|
 
-The `SelectedChannelMenu` component now looks more like a dialog that displays over other elements. This is just an example of how easy it is to apply UI customization to our components!
+The `SelectedChannelMenu` component now looks more like a dialog that displays over other elements. This is just an example of how easy it is to apply UI customization to our components.
