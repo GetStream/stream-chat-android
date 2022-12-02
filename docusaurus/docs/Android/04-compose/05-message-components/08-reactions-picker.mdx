@@ -34,7 +34,9 @@ Adding the `ReactionsPicker` component is very simple, all you need to do is mak
 
 The code above will render the following UI:
 
-![Default ReactionsPicker Component](../../assets/compose_default_reactions_picker_component.png)
+| Light | Dark |
+|---|---|
+| ![Default ReactionsPicker Component](../../assets/compose_default_reactions_picker_component.png) | ![Default ReactionsPicker Component dark](../../assets/compose_default_reactions_picker_component_dark.png) |
 
 The menu overlay has a darker background and tapping it will dismiss the component, as will pressing the system back button.
 
@@ -114,7 +116,9 @@ ReactionsPicker(
 
 The code above will result in the following UI:
 
-![Custom ReactionsPicker Component](../../assets/compose_custom_reactions_picker_component.png)
+| Light | Dark |
+|---|---|
+| ![Custom ReactionsPicker Component](../../assets/compose_custom_reactions_picker_component.png) | ![Custom ReactionsPicker Component dark](../../assets/compose_custom_reactions_picker_component_dark.png) |
 
 ```kotlin
 @Composable
@@ -145,7 +149,8 @@ fun TextLabel() {
     Text(
         modifier = Modifier.padding(start = 20.dp, top = 12.dp),
         text = "Available reactions",
-        style = ChatTheme.typography.title3Bold
+        style = ChatTheme.typography.title3Bold,
+        color = ChatTheme.colors.textHighEmphasis
     )
 }
 ```
@@ -161,6 +166,8 @@ ReactionsPicker(
 
 Doing so gives you the following UI:
 
-![ReactionsPicker Component with custom content](../../assets/compose_custom_reactions_picker_component_with_custom_content.png)
+| Light | Dark |
+|---|---|
+| ![ReactionsPicker Component with custom content](../../assets/compose_custom_reactions_picker_component_with_custom_content.png) | ![ReactionsPicker Component with custom content dark](../../assets/compose_custom_reactions_picker_component_with_custom_content_dark.png) |
 
 
