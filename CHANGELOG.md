@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixing unread messages count for channels. [#4499](https://github.com/GetStream/stream-chat-android/pull/4499)
 
 ### ⬆️ Improved
 
