@@ -23,6 +23,8 @@ You can find the full code from this guide on [GitHub](https://github.com/GetStr
 
 First of all, you'll need to customize the leading content of [MessageComposerView](../04-message-components/04-message-composer.mdx) to let the user pick a date using the date picker button. We'll take the [DefaultMessageComposerLeadingContent](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/composer/content/DefaultMessageComposerLeadingContent.kt) as a reference and add a new date picker button:
 
+Create a layout called `custom_message_composer_leading_content.xml`:
+
 ```xml
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
