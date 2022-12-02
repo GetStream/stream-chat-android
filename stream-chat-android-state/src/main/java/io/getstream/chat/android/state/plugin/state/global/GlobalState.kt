@@ -63,7 +63,7 @@ public interface GlobalState {
     /**
      * A StateFlow that tracks if the SDK is not querying information for channels.
      * This can be useful to track if counting unread messages is safe and avoid race conditions
-     * with events that increment the count. 
+     * with events that increment the count.
      */
     public val queryingChannelsFree: StateFlow<Boolean>
 
