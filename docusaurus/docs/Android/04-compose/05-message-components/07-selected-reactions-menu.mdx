@@ -102,7 +102,7 @@ fun SelectedReactionsMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionTypes,
     ... // Actions and Slot APIs
 )
 ```
@@ -110,7 +110,7 @@ fun SelectedReactionsMenu(
 * `modifier`: Modifier for the dialog component.
 * `overlayColor`: Allows you to customize the color of the overlay.
 * `shape`: Allows you to customize the shape of the dialog.
-* `reactionTypes`: Allows you to customize reactions shown in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) component.
+* `reactionTypes`: Allows you to customize reactions shown in the overlay. By default it uses `ChatTheme.reactionTypes` which is exposed by the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) component.
 
 If you want to customize the reactions, you can set up custom reactions, using [`ChatTheme`](../03-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
 
@@ -172,8 +172,11 @@ if (selectedMessageState is SelectedMessageReactionsState) {
         headerContent = {
             Text(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .background(shape = ChatTheme.shapes.avatar, color = ChatTheme.colors.infoAccent)
+                    .padding(16.dp)
+                    .background(
+                        shape = ChatTheme.shapes.avatar,
+                        color = ChatTheme.colors.infoAccent
+                    )
                     .padding(horizontal = 8.dp),
                 style = ChatTheme.typography.body,
                 color = ChatTheme.colors.textHighEmphasis,
