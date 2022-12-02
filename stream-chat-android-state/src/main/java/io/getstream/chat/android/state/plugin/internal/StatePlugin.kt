@@ -62,6 +62,7 @@ import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.state.sync.internal.SyncManager
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.reflect.KClass
 
 /**
@@ -86,9 +87,10 @@ public class StatePlugin internal constructor(
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
     private val globalState: MutableGlobalState,
+    private val queryingChannelsFree: MutableStateFlow<Boolean>
 ) : Plugin,
     DependencyResolver,
-    QueryChannelsListener by QueryChannelsListenerState(logic, globalState),
+    QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
     ChannelMarkReadListener by ChannelMarkReadListenerState(stateRegistry),

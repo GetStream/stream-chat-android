@@ -41,7 +41,6 @@ public class GlobalMutableState private constructor(
     private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
     private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
     private val _typingChannels = MutableStateFlow(emptyMap<String, TypingEvent>())
-    private val _isQueryingFree = MutableStateFlow(true)
 
     private val _user = MutableStateFlow<User?>(null)
 
@@ -58,8 +57,6 @@ public class GlobalMutableState private constructor(
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels
 
     override val user: StateFlow<User?> = _user
-
-    override val queryingChannelsFree: StateFlow<Boolean> = _isQueryingFree
 
     public companion object {
 
@@ -124,10 +121,6 @@ public class GlobalMutableState private constructor(
             typingChannelsCopy[cid] = typingEvent
         }
         _typingChannels.tryEmit(typingChannelsCopy)
-    }
-
-    override fun setQueryingChannelsFree(isQueryingFree: Boolean) {
-        _isQueryingFree.value = isQueryingFree
     }
 }
 

@@ -41,6 +41,7 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
 import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -58,6 +59,7 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
+    private val queryingChannels: StateFlow<Boolean>
 ) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
@@ -248,6 +250,7 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
             coroutineScope: CoroutineScope,
+            queryingChannelsFree: StateFlow<Boolean>
         ): LogicRegistry {
             if (instance != null) {
                 logger.e {
@@ -263,6 +266,7 @@ internal class LogicRegistry internal constructor(
                 repos = repos,
                 client = client,
                 coroutineScope = coroutineScope,
+                queryingChannels = queryingChannelsFree
             )
                 .also { logicRegistry ->
                     instance = logicRegistry

@@ -44,14 +44,6 @@ internal interface MutableGlobalState : GlobalState {
     fun setMutedUsers(mutedUsers: List<Mute>)
 
     /**
-     * Set the SDK is a state that no calls to query channels are being made. This is important for counting
-     * unread messages logic.
-     *
-     * @param isQueryingFree Boolean
-     */
-    fun setQueryingChannelsFree(isQueryingFree: Boolean)
-
-    /**
      * Tries emit typing event for a particular channel.
      *
      * @param cid The full channel id, i.e. "messaging:123" to which the message with reaction belongs.

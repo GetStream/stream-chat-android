@@ -30,6 +30,7 @@ import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMuta
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.log.StreamLog
+import kotlinx.coroutines.flow.StateFlow
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -48,9 +49,10 @@ private const val COUNT_BUFFER_LIMIT = 100
 internal class UnreadCountLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
+    private val unreadTrigger: StateFlow<Boolean>? = null,
     private val countBuffer: StartStopBuffer<ChatEvent> = StartStopBuffer(
         bufferLimit = COUNT_BUFFER_LIMIT,
-        customTrigger = globalMutableState.queryingChannelsFree
+        customTrigger = unreadTrigger
     )
 ) {
 
