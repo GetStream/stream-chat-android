@@ -43,7 +43,6 @@ The menu overlay has a darker background and tapping it will dismiss the compone
 `ReactionsPicker` exposes the following actions:
 
 ```kotlin
-@ExperimentalFoundationApi
 @Composable
 public fun ReactionsPicker(
     ..., // State,
@@ -83,7 +82,7 @@ Next, let's see how to customize `ReactionsPicker`.
 @Composable
 public fun ReactionsPicker(
     ..., // State,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     ... // Actions and content
 )
 ```
@@ -118,7 +117,6 @@ The code above will result in the following UI:
 ![Custom ReactionsPicker Component](../../assets/compose_custom_reactions_picker_component.png)
 
 ```kotlin
-@ExperimentalFoundationApi
 @Composable
 public fun ReactionsPicker(
     ..., // State and actions
