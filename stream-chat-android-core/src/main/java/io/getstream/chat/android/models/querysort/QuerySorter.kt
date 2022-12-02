@@ -18,15 +18,11 @@ package io.getstream.chat.android.models.querysort
 
 import io.getstream.chat.android.models.querysort.internal.SortSpecification
 
-import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
-
 /**
  * Interface for the sorter of the SDK. Its implementations must provide a comparator to be used for
  * sorting collections of data in the SDK.
  */
 public interface QuerySorter<T : Any> {
-
-    public var sortSpecifications: List<SortSpecification<T>>
 
     /**
      * Sort specifications that compose this QuerySorter

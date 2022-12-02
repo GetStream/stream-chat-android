@@ -16,10 +16,8 @@
 
 package io.getstream.realm.entity
 
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.ui.sample.realm.entity.toDomain
-import io.getstream.chat.ui.sample.realm.entity.toRealm
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.realm.utils.toDate
 import io.getstream.realm.utils.toRealmInstant
 import io.realm.kotlin.types.RealmInstant

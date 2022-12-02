@@ -16,25 +16,25 @@
 
 package io.getstream.realm.filter
 
-import io.getstream.chat.android.client.api.models.AndFilterObject
-import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
-import io.getstream.chat.android.client.api.models.ContainsFilterObject
-import io.getstream.chat.android.client.api.models.DistinctFilterObject
-import io.getstream.chat.android.client.api.models.EqualsFilterObject
-import io.getstream.chat.android.client.api.models.ExistsFilterObject
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.GreaterThanFilterObject
-import io.getstream.chat.android.client.api.models.GreaterThanOrEqualsFilterObject
-import io.getstream.chat.android.client.api.models.InFilterObject
-import io.getstream.chat.android.client.api.models.LessThanFilterObject
-import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.NorFilterObject
-import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
-import io.getstream.chat.android.client.api.models.NotExistsFilterObject
-import io.getstream.chat.android.client.api.models.NotInFilterObject
-import io.getstream.chat.android.client.api.models.OrFilterObject
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.AutocompleteFilterObject
+import io.getstream.chat.android.models.ContainsFilterObject
+import io.getstream.chat.android.models.DistinctFilterObject
+import io.getstream.chat.android.models.EqualsFilterObject
+import io.getstream.chat.android.models.ExistsFilterObject
+import io.getstream.chat.android.models.GreaterThanFilterObject
+import io.getstream.chat.android.models.GreaterThanOrEqualsFilterObject
+import io.getstream.chat.android.models.InFilterObject
+import io.getstream.chat.android.models.LessThanFilterObject
+import io.getstream.chat.android.models.LessThanOrEqualsFilterObject
+import io.getstream.chat.android.models.NeutralFilterObject
+import io.getstream.chat.android.models.NorFilterObject
+import io.getstream.chat.android.models.NotEqualsFilterObject
+import io.getstream.chat.android.models.NotExistsFilterObject
+import io.getstream.chat.android.models.NotInFilterObject
+import io.getstream.chat.android.models.OrFilterObject
+import io.getstream.chat.android.models.AndFilterObject
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.realm.entity.FilterNode
 
 @Suppress("ComplexMethod")

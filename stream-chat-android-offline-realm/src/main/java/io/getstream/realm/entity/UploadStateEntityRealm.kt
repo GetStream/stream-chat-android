@@ -17,7 +17,7 @@
 package io.getstream.realm.entity
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 import io.realm.kotlin.types.RealmObject
 import java.io.File
 
@@ -37,7 +37,7 @@ internal class UploadStateEntityRealm : RealmObject {
 internal fun UploadStateEntityRealm.toDomain(uploadFile: File?): Attachment.UploadState = when (this.statusCode) {
     UploadStateEntityRealm.UPLOAD_STATE_SUCCESS -> Attachment.UploadState.Success
     UploadStateEntityRealm.UPLOAD_STATE_IN_PROGRESS -> Attachment.UploadState.InProgress(0, uploadFile?.length() ?: 0)
-    UploadStateEntityRealm.UPLOAD_STATE_FAILED -> Attachment.UploadState.Failed(ChatError(message = this.errorMessage))
+    UploadStateEntityRealm.UPLOAD_STATE_FAILED -> Attachment.UploadState.Failed(ChatError.GenericError(message = ""))
     else -> error("Integer value of $statusCode can't be mapped to UploadState")
 }
 
@@ -46,10 +46,7 @@ internal fun Attachment.UploadState.toRealm(): UploadStateEntityRealm {
         Attachment.UploadState.Success -> UploadStateEntityRealm.UPLOAD_STATE_SUCCESS to null
         Attachment.UploadState.Idle -> UploadStateEntityRealm.UPLOAD_STATE_IN_PROGRESS to null
         is Attachment.UploadState.InProgress -> UploadStateEntityRealm.UPLOAD_STATE_IN_PROGRESS to null
-        is Attachment.UploadState.Failed -> UploadStateEntityRealm.UPLOAD_STATE_FAILED to (
-            this.error.message
-                ?: this.error.cause?.localizedMessage
-            )
+        is Attachment.UploadState.Failed -> UploadStateEntityRealm.UPLOAD_STATE_FAILED to (this.error.message)
     }
 
     return UploadStateEntityRealm().apply {

@@ -16,11 +16,11 @@
 
 package io.getstream.realm.entity
 
-import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.api.models.querysort.SortDirection
-import io.getstream.chat.android.client.api.models.querysort.internal.SortAttribute
-import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
+import io.getstream.chat.android.models.querysort.ComparableFieldProvider
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.models.querysort.SortDirection
+import io.getstream.chat.android.models.querysort.internal.SortAttribute
+import io.getstream.chat.android.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.offline.repository.database.converter.internal.QuerySortParser
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList

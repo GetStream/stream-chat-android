@@ -16,11 +16,11 @@
 
 package io.getstream.realm.repository
 
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.realm.entity.QueryChannelsEntityRealm
 import io.getstream.realm.entity.generateQuerySpecId
 import io.getstream.realm.entity.toDomain

@@ -16,8 +16,8 @@
 
 package io.getstream.realm.repository
 
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
+import io.getstream.chat.android.models.Attachment
 import io.getstream.realm.entity.AttachmentEntityRealm
 import io.getstream.realm.entity.toDomain
 import io.realm.kotlin.Realm

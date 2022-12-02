@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.sample.realm.entity
+package io.getstream.realm.entity
 
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 
 public fun Int.toDomain(): SyncStatus =
     when (this) {

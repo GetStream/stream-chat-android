@@ -18,12 +18,12 @@ package io.getstream.realm.entity
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.addAdapter
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.realm.filter.toFilterNode
 import io.getstream.realm.filter.toFilterObject
 import io.getstream.realm.moshi.FilterNodeAdapter

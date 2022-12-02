@@ -16,8 +16,8 @@
 
 package io.getstream.realm.entity
 
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.User
 import io.getstream.realm.utils.toDate
 import io.getstream.realm.utils.toRealmInstant
 import io.realm.kotlin.types.RealmInstant

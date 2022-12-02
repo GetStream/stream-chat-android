@@ -16,9 +16,9 @@
 
 package io.getstream.realm.repository
 
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.realm.entity.ReactionEntityRealm
 import io.getstream.realm.entity.toDomain
 import io.getstream.realm.entity.toRealm

@@ -16,9 +16,9 @@
 
 package io.getstream.realm.entity
 
-import io.getstream.chat.android.client.models.ChannelConfig
-import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Config
 import io.getstream.realm.utils.toDate
 import io.getstream.realm.utils.toRealmInstant
 import io.realm.kotlin.ext.realmListOf

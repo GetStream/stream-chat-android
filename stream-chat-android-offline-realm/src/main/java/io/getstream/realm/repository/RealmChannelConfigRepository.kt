@@ -16,8 +16,8 @@
 
 package io.getstream.realm.repository
 
-import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
+import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.realm.entity.ConfigEntityRealm
 import io.getstream.realm.entity.toDomain
 import io.getstream.realm.entity.toRealm

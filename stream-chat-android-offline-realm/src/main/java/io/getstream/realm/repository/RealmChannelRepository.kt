@@ -16,11 +16,11 @@
 
 package io.getstream.realm.repository
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.realm.entity.ChannelEntityRealm
 import io.getstream.realm.entity.toDomain
 import io.getstream.realm.entity.toRealm
