@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Replace Database
 
 The offline support module uses Room as the ORM to handle persistence in the Stream Chat SDK, but it is possible to use a custom 
@@ -13,15 +16,31 @@ SDK to access data from the database, so by changing then you will be able to us
 `withRepositoryFactoryProvider`  with a custom implementation of `RepositoryFactory.Provider`. This is a functional interface that only provides 
 [RepositoryFactory](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory.kt):
 
-```kotlin
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```
 val client = ChatClient.Builder(apiKey, context)
     .withRepositoryFactoryProvider { RealmRepositoryFactory(provideRealm()) }
-    .build()
+    .build()    
 ```
 
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+</Tabs>
 `RepositoryFactory` in the access point for all the `Repositories` of the SDK, so they must be provided by this interface:
 
-```kotlin
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin 
 public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactory {
     override fun createUserRepository(): UserRepository = RealmUserRepository(realm)
 
@@ -48,3 +67,17 @@ public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactor
 }
 ```
 
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+</Tabs>
+
+:::note 
+All the Repositories should be provided with real imeplementations. Using a `Repository` that doesn't provide real data may create unpredicted states because all the repositories are connected to SDK and are essencial to it. Mocking one or more repositories may prevent the SDK to work correctly.
+:::
