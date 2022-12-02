@@ -47,7 +47,9 @@ As you can see, showing the menu is very simple. If the `selectedMessageState` i
 
 The small snippet of code above produces the following UI:
 
-![Default SelectedMessageMenu component](../../assets/compose_default_selected_message_menu.png)
+| Light | Dark |
+|---|---|
+| ![Default SelectedMessageMenu component](../../assets/compose_default_selected_message_menu.png) | ![Default SelectedMessageMenu component dark](../../assets/compose_default_selected_message_menu_dark.png) |
 
 The component shows reactions from the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) on the top, followed by the message actions you passed in.
 
@@ -148,7 +150,9 @@ if (selectedMessageState is SelectedMessageOptionsState) {
 
 The code above will produce the following UI:
 
-![Stylised SelectedMessageMenu component](../../assets/compose_custom_selected_message_menu_shape_and_alignment.png)
+| Light | Dark |
+|---|---|
+| ![Stylised SelectedMessageMenu component](../../assets/compose_custom_selected_message_menu_shape_and_alignment.png) | ![Stylised SelectedMessageMenu component dark](../../assets/compose_custom_selected_message_menu_shape_and_alignment_dark.png) |
 
 `SelectedMessageMenu` provides you with Composable slots that are ready for more extensive customizations.
 
@@ -178,7 +182,7 @@ if (selectedMessageState is SelectedMessageOptionsState) {
             headerContent = {
                 Text(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(16.dp)
                         .background(
                             shape = ChatTheme.shapes.avatar,
                             color = ChatTheme.colors.infoAccent
@@ -197,6 +201,8 @@ The example above shows how to replace the header content with a custom `Text`.
 
 The UI Looks like this:
 
-![Stylised SelectedMessageMenu component with a custom headerContent](../../assets/compose_selected_message_menu_custom_header_slot.png)
+| Light | Dark |
+|---|---|
+| ![Stylised SelectedMessageMenu component with a custom headerContent](../../assets/compose_selected_message_menu_custom_header_slot.png) | ![Stylised SelectedMessageMenu component with a custom headerContent dark](../../assets/compose_selected_message_menu_custom_header_slot_dark.png) |
 
 
