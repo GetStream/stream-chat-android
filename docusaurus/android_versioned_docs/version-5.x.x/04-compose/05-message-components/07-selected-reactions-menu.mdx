@@ -74,8 +74,8 @@ if (selectedMessageState is SelectedMessageReactionsState) {
     SelectedReactionsMenu(
         ..., // State
         onMessageAction = { action ->
-            composerViewModel.onMessageAction(action)
-            listViewModel.onMessageAction(action)
+            composerViewModel.performMessageAction(action)
+            listViewModel.performMessageAction(action)
         },
         onShowMoreReactionsSelected = {
             listViewModel.selectExtendedReactions(selectedMessage)
