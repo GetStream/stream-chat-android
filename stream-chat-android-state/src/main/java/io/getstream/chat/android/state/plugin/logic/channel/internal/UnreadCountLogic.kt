@@ -45,6 +45,10 @@ private const val COUNT_BUFFER_LIMIT = 100
  *
  * @param mutableState [ChannelMutableState]
  * @param globalMutableState [MutableGlobalState]
+ * @param unreadTrigger StateFlow<Boolean> Trigger of the count with control and the SDK is able or not able to count
+ * the unread messages to avoid race conditions.
+ * @param countBuffer [StartStopBuffer] The buffer that holds the counting and keeps the events to be counted in a later
+ * moment.  
  */
 internal class UnreadCountLogic(
     private val mutableState: ChannelMutableState,
