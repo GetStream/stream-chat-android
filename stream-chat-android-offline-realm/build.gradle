@@ -72,7 +72,7 @@ dependencies {
 
     // Realm
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt'
-    implementation 'io.realm.kotlin:library-base:1.2.0'
+    implementation 'io.realm.kotlin:library-base:1.4.0'
 
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams

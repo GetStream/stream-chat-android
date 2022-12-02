@@ -81,7 +81,7 @@ class ChatInitializer(private val context: Context) {
             .loggerHandler(FirebaseLogger)
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
-            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .withPlugins(offlinePlugin, statePluginFactory)
             .withRepositoryFactoryProvider { RealmRepositoryFactory(configureRealm()) }
             .debugRequests(true)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)

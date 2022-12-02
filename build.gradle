@@ -43,7 +43,7 @@ buildscript {
 
 plugins {
     id 'org.jetbrains.kotlin.android' version '1.7.10' apply false
-    id 'io.realm.kotlin' version '1.2.0' apply false
+    id 'io.realm.kotlin' version '1.4.0' apply false
 }
 
 apply plugin: "com.github.ben-manes.versions"
