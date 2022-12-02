@@ -50,7 +50,6 @@ private object ReactionsPickerUsageSnippet {
                     Box(modifier = Modifier.fillMaxSize()) {
 
                         // The rest of your UI
-
                         if (selectedMessageState != null) {
                             val selectedMessage = selectedMessageState.message
                             if (selectedMessageState is SelectedMessageReactionsPickerState) {
