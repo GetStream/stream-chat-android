@@ -16,11 +16,14 @@
 
 package io.getstream.realm.filter
 
+import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.AutocompleteFilterObject
 import io.getstream.chat.android.models.ContainsFilterObject
 import io.getstream.chat.android.models.DistinctFilterObject
 import io.getstream.chat.android.models.EqualsFilterObject
 import io.getstream.chat.android.models.ExistsFilterObject
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GreaterThanFilterObject
 import io.getstream.chat.android.models.GreaterThanOrEqualsFilterObject
 import io.getstream.chat.android.models.InFilterObject
@@ -32,9 +35,6 @@ import io.getstream.chat.android.models.NotEqualsFilterObject
 import io.getstream.chat.android.models.NotExistsFilterObject
 import io.getstream.chat.android.models.NotInFilterObject
 import io.getstream.chat.android.models.OrFilterObject
-import io.getstream.chat.android.models.AndFilterObject
-import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.models.Filters
 import io.getstream.realm.entity.FilterNode
 
 @Suppress("ComplexMethod")

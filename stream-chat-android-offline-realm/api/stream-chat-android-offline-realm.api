@@ -5,9 +5,9 @@ public final class io/getstream/chat/android/offline/realm/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/ui/sample/realm/entity/SyncStatusCodeEntityKt {
-	public static final fun toDomain (I)Lio/getstream/chat/android/client/utils/SyncStatus;
-	public static final fun toRealm (Lio/getstream/chat/android/client/utils/SyncStatus;)I
+public final class io/getstream/realm/entity/SyncStatusCodeEntityKt {
+	public static final fun toDomain (I)Lio/getstream/chat/android/models/SyncStatus;
+	public static final fun toRealm (Lio/getstream/chat/android/models/SyncStatus;)I
 }
 
 public final class io/getstream/realm/initialization/InitializationKt {
@@ -20,7 +20,7 @@ public final class io/getstream/realm/repository/RealmChannelRepository : io/get
 	public fun clearChannelCache ()V
 	public fun deleteChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun evictChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insertChannel (Lio/getstream/chat/android/client/models/Channel;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertChannel (Lio/getstream/chat/android/models/Channel;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertChannels (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectAllCids (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectChannelByCid (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -33,20 +33,20 @@ public final class io/getstream/realm/repository/RealmChannelRepository : io/get
 	public fun setChannelDeletedAt (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setHiddenForChannel (Ljava/lang/String;ZLjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setHiddenForChannel (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun updateLastMessageForChannel (Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun updateLastMessageForChannel (Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun updateMembersForChannel (Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/realm/repository/RealmMessageRepository : io/getstream/chat/android/client/persistance/repository/MessageRepository {
 	public fun <init> (Lio/realm/kotlin/Realm;)V
 	public fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deleteChannelMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteChannelMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insertMessage (Lio/getstream/chat/android/client/models/Message;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertMessage (Lio/getstream/chat/android/models/Message;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertMessages (Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectMessageBySyncState (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectMessageIdsBySyncState (Lio/getstream/chat/android/client/utils/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectMessageBySyncState (Lio/getstream/chat/android/models/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectMessageIdsBySyncState (Lio/getstream/chat/android/models/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectMessages (Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectMessagesForChannel (Ljava/lang/String;Lio/getstream/chat/android/client/query/pagination/AnyChannelPaginationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectMessagesForThread (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -56,14 +56,14 @@ public final class io/getstream/realm/repository/RealmQueryChannelsRepository : 
 	public fun <init> (Lio/realm/kotlin/Realm;)V
 	public fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertQueryChannels (Lio/getstream/chat/android/client/query/QueryChannelsSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectBy (Lio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectBy (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/realm/repository/RealmUserRepository : io/getstream/chat/android/client/persistance/repository/UserRepository {
 	public fun <init> (Lio/realm/kotlin/Realm;)V
 	public fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insertCurrentUser (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun insertUser (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertCurrentUser (Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertUser (Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertUsers (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun observeLatestUsers ()Lkotlinx/coroutines/flow/StateFlow;
 	public fun selectAllUsers (IILkotlin/coroutines/Continuation;)Ljava/lang/Object;

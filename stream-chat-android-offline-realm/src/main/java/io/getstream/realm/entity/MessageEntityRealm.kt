@@ -20,7 +20,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
-import io.getstream.realm.entity.toRealm
 import io.getstream.realm.utils.toDate
 import io.getstream.realm.utils.toRealmInstant
 import io.realm.kotlin.ext.realmListOf
