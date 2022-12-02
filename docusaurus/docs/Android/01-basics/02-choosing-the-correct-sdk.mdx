@@ -31,13 +31,14 @@ First, let's take a look into a high level overview of the differences between t
 |  Runtime Customizability   |  ✅ As a custom feature                                  | ✅ As idiomatic Compose code                   |
 |      Development Cost      | ⚠️ Noticeable <br/> (Requires more boilerplate, more files generated or changed)       | ✅ Low impact with fewer files generated or changed |
 |    Stateless Components*    | ⛔️ Main components support only ViewModel driven state.                                | ✅ Fully-independent variants that don't use ViewModels.                               |
-|  Extensive Layout Changes  | ⛔️No out-of-the-box support for replacing whole views.                                 | ✅ Using slot APIs*                                       |
+|  Extensive Layout Changes  | ⛔️No out-of-the-box support for replacing whole views.*                                 | ✅ Using slot APIs*                                       |
 
-- **Main building blocks**: Large elements crucial to a chat experience such as lists, headers and the message input.
+- **Main building blocks**: Large elements crucial to a chat experience such as lists, headers and the message composer.
 - **Secondary building blocks**: Smaller elements such as avatars, typing indicators, timestamps etc. Building Composables is a lot
   easier than building Views and this enables us to deliver more reusable components.
 - **Stateless Components**: Components that don't rely on ViewModels and use only pure state, but offer the same behavior as our ViewModel-powered components. These give
 you the option of using your custom data sources to render the data.
+- **Extensive Layout Changes**: Currently in UI Components, `MessageComposerView` is our only `View` based component that allows such changes.
 - **Slot APIs**: Parts of a View or Composable layout that let you replace them with your custom UI. They allow easy UI changes and the ability to decide
   which parts of the UI you want to keep original and which you want to customize.
 
@@ -231,9 +232,9 @@ Performance wise, none of these results exclude the other and both SDKs show no 
 It should be noted that the View toolkit has been active for more than a decade and has been the native way of rendering UI in Android, so it's bound to have better performance
 in some scenarios.
 
-However, Jetpack Compose has been out for less than a year - it's a much more recent technology and that as such, it will keep
-receiving performance improvements in the future. It already outperforms our UI Components SDK in some aspects, but if you choose our Compose SDK, you should expect a performance
-bump with every Jetpack Compose Compiler and Runtime improvement.
+However, Jetpack Compose is a much more recent technology and as such, it will keep
+receiving performance improvements in the future. It already outperforms our UI Components SDK in certain aspects and if you choose our Compose SDK, you should expect a performance
+bump with every significant improvement of the Jetpack Compose toolkit.
 
 ## SDK Size Comparison
 

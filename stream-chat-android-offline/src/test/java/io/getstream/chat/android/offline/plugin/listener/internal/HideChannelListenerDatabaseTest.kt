@@ -48,7 +48,7 @@ internal class HideChannelListenerDatabaseTest {
         val cid = Pair(type, id).toCid()
 
         hideChannelListenerDatabase.onHideChannelResult(
-            result = Result.success(Unit),
+            result = Result.Success(Unit),
             channelType = type,
             channelId = id,
             clearHistory = true
@@ -63,7 +63,7 @@ internal class HideChannelListenerDatabaseTest {
         val cid = Pair(type, id).toCid()
 
         hideChannelListenerDatabase.onHideChannelResult(
-            result = Result.success(Unit),
+            result = Result.Success(Unit),
             channelType = type,
             channelId = id,
             clearHistory = true
@@ -78,7 +78,7 @@ internal class HideChannelListenerDatabaseTest {
 
         val (type, id) = randomCID().cidToTypeAndId()
         hideChannelListenerDatabase.onHideChannelResult(
-            result = Result.error(ChatError()),
+            result = Result.Failure(ChatError.GenericError("")),
             channelType = type,
             channelId = id,
             clearHistory = randomBoolean()

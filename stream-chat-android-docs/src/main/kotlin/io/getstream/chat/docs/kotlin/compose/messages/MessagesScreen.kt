@@ -85,9 +85,7 @@ private object MessagesScreenCustomizationSnippet {
                             channelId = channelId,
                             messageLimit = 30,
                             enforceUniqueReactions = true,
-                            showDateSeparators = true,
-                            showSystemMessages = true
-                        ),
+                            showSystemMessages = true),
                         showHeader = true,
                     )
                 }

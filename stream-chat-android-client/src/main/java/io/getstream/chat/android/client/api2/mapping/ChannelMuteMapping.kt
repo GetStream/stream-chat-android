@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
-import io.getstream.chat.android.client.models.ChannelMute
+import io.getstream.chat.android.models.ChannelMute
 
 internal fun DownstreamChannelMuteDto.toDomain(): ChannelMute =
     ChannelMute(

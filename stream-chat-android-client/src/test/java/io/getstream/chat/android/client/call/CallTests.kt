@@ -39,7 +39,7 @@ internal class CallTests {
 
         CoroutineCall(testCoroutines.scope) {
             mutableList.add(2)
-            Result.success(2)
+            Result.Success(2)
         }
             .doOnStart(testCoroutines.scope) { mutableList.add(1) }
             .doOnResult(testCoroutines.scope) { mutableList.add(4) }
@@ -52,34 +52,34 @@ internal class CallTests {
 
     @Test
     fun `Should return from onErrorReturn when original call gives error`() = runTest {
-        val result = CoroutineCall(testCoroutines.scope) {
-            Result(ChatError("Test error"))
+        val result = CoroutineCall<List<Int>>(testCoroutines.scope) {
+            Result.Failure(ChatError.GenericError(message = "Test error"))
         }.onErrorReturn(testCoroutines.scope) {
-            Result(listOf(0, 1))
+            Result.Success(listOf(0, 1))
         }.await()
-        result shouldBeEqualTo Result(listOf(0, 1))
+        result shouldBeEqualTo Result.Success(listOf(0, 1))
     }
 
     @Test
     fun `Should return from onErrorReturn when precondition fails`() = runTest {
         val result = CoroutineCall(testCoroutines.scope) {
-            Result(listOf(10, 20, 30))
+            Result.Success(listOf(10, 20, 30))
         }.withPrecondition(testCoroutines.scope) {
-            Result.error(ChatError("Error from precondition"))
+            Result.Failure(ChatError.GenericError(message = "Error from precondition"))
         }.onErrorReturn(testCoroutines.scope) {
-            Result(listOf(0, 1))
+            Result.Success(listOf(0, 1))
         }.await()
-        result shouldBeEqualTo Result(listOf(0, 1))
+        result shouldBeEqualTo Result.Success(listOf(0, 1))
     }
 
     @Test
     fun `Should not return from onErrorReturn when original call gives success`() = runTest {
         val result = CoroutineCall(testCoroutines.scope) {
-            Result(listOf(10, 20, 30))
+            Result.Success(listOf(10, 20, 30))
         }.onErrorReturn(testCoroutines.scope) {
-            Result(listOf(0, 1))
+            Result.Success(listOf(0, 1))
         }.await()
-        result shouldBeEqualTo Result(listOf(10, 20, 30))
+        result shouldBeEqualTo Result.Success(listOf(10, 20, 30))
     }
 
     @Test
@@ -94,7 +94,7 @@ internal class CallTests {
 
         CoroutineCall(testCoroutines.scope) {
             currentValue++
-            Result.error(ChatError())
+            Result.Failure(ChatError.GenericError(message = ""))
         }
             .retry(testCoroutines.scope, retryPolicy)
             .doOnStart(testCoroutines.scope) { currentValue++ }

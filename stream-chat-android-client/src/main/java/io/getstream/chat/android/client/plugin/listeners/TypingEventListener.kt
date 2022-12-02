@@ -19,8 +19,8 @@ package io.getstream.chat.android.client.plugin.listeners
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.EventType
 import java.util.Date
 
 /**

@@ -17,12 +17,12 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
 
 /**
 * [ShuffleGiphyListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
@@ -43,8 +43,8 @@ internal class ShuffleGiphyListenerDatabase(
      * @param result The API call result.
      */
     override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) {
-        if (result.isSuccess) {
-            val processedMessage = result.data().apply {
+        if (result is Result.Success) {
+            val processedMessage = result.value.apply {
                 syncStatus = SyncStatus.COMPLETED
             }
 

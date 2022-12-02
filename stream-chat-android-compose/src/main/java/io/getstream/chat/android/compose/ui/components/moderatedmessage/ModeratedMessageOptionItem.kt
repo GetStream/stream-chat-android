@@ -23,8 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 
 /**
  * Composable that represents a single option inside the [ModeratedMessageDialog].

@@ -3,33 +3,33 @@ import TabItem from '@theme/TabItem';
 
 # Channel List
 
-<!-- TODO: Import whatever makes sense to import from https://getstream.io/chat/docs/android/channel_list_view/?language=kotlin -->
+`ChannelListView` is a component that displays a list of channels available to the user. For users with a slower connection or that don't belong to any channels yet, `ChannelListView` also supports loading and empty states.
 
-`ChannelListView` is a component that displays a list of channels available to a user. For users with a slower connection or that don't belong to any channels yet, `ChannelListView` also supports loading and empty states.
+| Light Mode | Dark Mode |
+| --- | --- |
+|![Light_mode](../../assets/channel_list_view_component_swipe_actions.png)| ![Dark_mode](../../assets/channel_list_view_component_swipe_actions_dark.png) |
 
-![The Channel List component](../../assets/channel_list_view_component_swipe_actions.png)
-
-By default, a single list item shows the following:
+By default, a single channel item shows the following:
 
 * Channel name
 * User's read state
-* Last message
-* Timestamp of the last message
+* Latest message
+* Timestamp of the latest message
 
-It also implements swiping behaviour which allows handling different actions on the channel.
+It also supports swiping behaviour which allows handling different channel actions.
 
 ## Usage
 
 To use `ChannelListView`, include it in your XML layout as shown below:
 
 ```xml
-<io.getstream.chat.android.ui.channel.list.ChannelListView
-    android:id="@+id/channelsView"
+<io.getstream.chat.android.ui.feature.channels.list.ChannelListView
+    android:id="@+id/channelListView"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 ```
 
-We recommend using the `ChannelListViewModel` to get the full list of data from the Stream API and then render it using the `ChannelListView`.
+We recommend fetching data from Stream's API using `ChanneListViewModel`, and then rendering it inside `ChannelListView`.
 
 The basic setup of the ViewModel and connecting it to the View is done the following way:
 
@@ -44,7 +44,7 @@ val viewModel: ChannelListViewModel by viewModels {
             Filters.eq("type", "messaging"),
             Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
         ),
-        sort = ChannelListViewModel.DEFAULT_SORT,
+        sort = QuerySortByField.descByName("last_updated"),
         limit = 30,
     )
 }
@@ -64,7 +64,7 @@ FilterObject filter = Filters.and(
 
 ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()
         .filter(filter)
-        .sort(ChannelListViewModel.DEFAULT_SORT)
+        .sort(QuerySortByField.descByName("last_updated"))
         .limit(30)
         .build();
 
@@ -77,10 +77,10 @@ ChannelListViewModelBinding.bind(viewModel, channelListView, getViewLifecycleOwn
 </Tabs>
 
 :::note
-You may need to pass a custom `ChatEventHandler` to make sure the list is updated properly. Check [ChannelListUpdates](../../02-client/06-guides/03-channel-list-updates.mdx) section to read more.
+You may need to pass a custom `ChatEventHandler` to make sure the list is updated properly. Check [ChannelListUpdates](../../02-client/06-guides/05-channel-list-updates.mdx) section to read more.
 :::
 
-All the logic of subscribing to data emitted by the ViewModel is provided by the `bindView` function. Other than channel data loading, the ViewModel is also handling actions like deleting a channel and leaving a group conversation by default.
+All the logic of subscribing to data emitted by the ViewModel is provided by the `bindView` function. Other than channel data loading, the ViewModel also handles actions like deleting a channel and leaving a group conversation by default.
 
 ## Handling Actions
 
@@ -128,7 +128,7 @@ channelListView.setUserClickListener(user -> {
 </TabItem>
 </Tabs>
 
-The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.channel.list/-channel-list-view/).
+The full list of available listeners is available [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.channels.list/-channel-list-view/).
 
 ## Customization
 
@@ -157,8 +157,9 @@ The full list of available XML attributes is available under `ChannelListView` s
 The following example shows how to modify the style of all `ChannelListView` instances globally to:
 
 * Disable the default options
+* Change the foreground color
+* Change the read indicator icon
 * Change the title text style
-* Make the default icons larger
 * Change the background color for unread messages
 
 To make these changes, we need to define a custom `TransformStyle.channelListStyleTransformer`:
@@ -171,13 +172,10 @@ TransformStyle.channelListStyleTransformer = StyleTransformer { defaultStyle ->
     defaultStyle.copy(
         optionsEnabled = false,
         foregroundLayoutColor = Color.LTGRAY,
-        indicatorReadIcon = ContextCompat.getDrawable(requireContext(), R.drawable.stream_ui_ic_clock)!!,
-        channelTitleText = TextStyle(
-            color = Color.WHITE,
-            size = resources.getDimensionPixelSize(R.dimen.stream_ui_text_large),
-        ),
-        lastMessageText = TextStyle(
-            size = resources.getDimensionPixelSize(R.dimen.stream_ui_text_small),
+        indicatorReadIcon = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_flag)!!,
+        channelTitleText = defaultStyle.channelTitleText.copy(
+            color = Color.BLUE,
+            size = context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_large),
         ),
         unreadMessageCounterBackgroundColor = Color.BLUE,
     )
@@ -202,7 +200,6 @@ These changes should have the following results:
 | --- | --- |
 |![before](../../assets/channel_list_view_style_before.png)|![after](../../assets/channel_list_view_style_after.png)|
 
-
 :::note
 The transformer should be set before the View is rendered to make sure that the new style was applied.
 :::
@@ -218,21 +215,19 @@ The transformer should be set before the View is rendered to make sure that the 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
-    >
+    android:layout_height="64dp">
 
-    <io.getstream.chat.android.ui.avatar.ChannelAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
         android:id="@+id/channelAvatarView"
-        style="@style/StreamUiChannelListAvatarStyle"
+        style="@style/StreamUi.ChannelList.Item.Avatar"
         android:layout_marginVertical="12dp"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/nameTextView"
+        android:id="@+id/channelNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -243,8 +238,7 @@ The transformer should be set before the View is rendered to make sure that the 
         app:layout_constraintEnd_toStartOf="@id/membersCountTextView"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toEndOf="@+id/channelAvatarView"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/membersCountTextView"
@@ -257,9 +251,8 @@ The transformer should be set before the View is rendered to make sure that the 
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/nameTextView"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintStart_toEndOf="@id/channelNameTextView"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
@@ -304,18 +297,16 @@ class CustomChannelViewHolder(
     override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
         this.channel = channel
 
-        binding.apply {
-            channelAvatarView.setChannel(channel)
-            nameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
-                channel = channel,
-                currentUser = ChatClient.instance().getCurrentUser()
-            )
-            membersCountTextView.text = itemView.context.resources.getQuantityString(
-                R.plurals.members_count,
-                channel.members.size,
-                channel.members.size
-            )
-        }
+        binding.channelAvatarView.setChannel(channel)
+        binding.channelNameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
+            channel = channel,
+            currentUser = ChatClient.instance().getCurrentUser()
+        )
+        binding.membersCountTextView.text = itemView.context.resources.getQuantityString(
+            R.plurals.members_count,
+            channel.members.size,
+            channel.members.size
+        )
     }
 }
 ```
@@ -324,32 +315,45 @@ class CustomChannelViewHolder(
 <TabItem value="java" label="Java">
 
 ```java
-public final class CustomChannelListItemViewHolderFactory extends ChannelListItemViewHolderFactory {
-    @Override
-    public int getItemViewType(@NonNull ChannelListItem item) {
-        // Override together with createViewHolder() to introduce different view holder types
-        return super.getItemViewType(item);
-    }
-
+public class CustomChannelListItemViewHolderFactory extends ChannelListItemViewHolderFactory {
     @NonNull
     @Override
-    public BaseChannelListItemViewHolder createViewHolder(@NonNull ViewGroup parentView, int viewType) {
-        // Override to create custom create view holder logic
-        return super.createViewHolder(parentView, viewType);
+    protected BaseChannelListItemViewHolder createChannelViewHolder(@NonNull ViewGroup parent) {
+        CustomChannelListItemBinding binding = CustomChannelListItemBinding
+                .inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new CustomChannelViewHolder(binding, getListenerContainer().getChannelClickListener());
+    }
+}
+
+public class CustomChannelViewHolder extends BaseChannelListItemViewHolder {
+
+    private CustomChannelListItemBinding binding;
+
+    private Channel channel;
+
+    public CustomChannelViewHolder(CustomChannelListItemBinding binding,
+                                   ChannelListView.ChannelClickListener channelClickListener) {
+        super(binding.getRoot());
+        this.binding = binding;
+
+        binding.getRoot().setOnClickListener(v -> channelClickListener.onClick(channel));
     }
 
-    @NonNull
     @Override
-    protected BaseChannelListItemViewHolder createChannelViewHolder(@NonNull ViewGroup parentView) {
-        // Create custom channel view holder
-        return super.createChannelViewHolder(parentView);
-    }
-
-    @NonNull
-    @Override
-    protected BaseChannelListItemViewHolder createLoadingMoreViewHolder(@NonNull ViewGroup parentView) {
-        // Create custom loading more view holder
-        return super.createLoadingMoreViewHolder(parentView);
+    public void bind(@NonNull Channel channel, @NonNull ChannelListPayloadDiff diff) {
+        this.channel = channel;
+        binding.channelAvatarView.setChannel(channel);
+        String channelName = ChatUI.getChannelNameFormatter().formatChannelName(
+                channel,
+                ChatClient.instance().getCurrentUser()
+        );
+        binding.channelNameTextView.setText(channelName);
+        String memberCount = itemView.getContext().getResources().getQuantityString(
+                R.plurals.members_count,
+                channel.getMembers().size(),
+                channel.getMembers().size()
+        );
+        binding.membersCountTextView.setText(memberCount);
     }
 }
 ```
@@ -384,12 +388,12 @@ channelListView.setViewHolderFactory(customFactory);
 
 These changes should have the following results:
 
-![Custom ViewHolder](../../assets/custom_view_holder.png)
-
+|![Custom ViewHolder](../../assets/custom_view_holder.png)|
+|---|
 
 ## Creating a Custom Loading View
 
-A custom loading view can be set using the `setLoadingView` method. Assuming that we have the setup similar to previous steps, we can create a loading view with a shimmer effect by taking the following actions:
+A custom loading view can be set using the `setLoadingView` method. Assuming that we have a setup similar to the one seen in the previous steps, we can create a loading view with a shimmer effect by taking the following actions:
 
 1. Add the Shimmer dependency in your `build.gradle` file's dependencies block:
 
@@ -402,8 +406,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle"
-    >
+    android:shape="rectangle">
     <solid android:color="#CCCCCC" />
     <corners android:radius="20dp" />
 </shape>
@@ -416,8 +419,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
-    >
+    android:layout_height="64dp">
 
     <View
         android:id="@+id/avatarPlaceholder"
@@ -427,8 +429,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
         android:background="@drawable/shape_shimmer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/titlePlaceholder"
@@ -439,8 +440,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
         android:layout_marginEnd="8dp"
         android:background="@drawable/shape_shimmer"
         app:layout_constraintStart_toEndOf="@id/avatarPlaceholder"
-        app:layout_constraintTop_toTopOf="@id/avatarPlaceholder"
-        />
+        app:layout_constraintTop_toTopOf="@id/avatarPlaceholder" />
 
     <View
         android:id="@+id/subtitlePlaceholder"
@@ -452,8 +452,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
         android:background="@drawable/shape_shimmer"
         app:layout_constraintBottom_toBottomOf="@id/avatarPlaceholder"
         app:layout_constraintEnd_toStartOf="@+id/datePlaceholder"
-        app:layout_constraintStart_toEndOf="@id/avatarPlaceholder"
-        />
+        app:layout_constraintStart_toEndOf="@id/avatarPlaceholder" />
 
     <View
         android:id="@+id/datePlaceholder"
@@ -465,8 +464,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
         android:background="@drawable/shape_shimmer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/subtitlePlaceholder"
-        app:layout_constraintTop_toTopOf="@id/subtitlePlaceholder"
-        />
+        app:layout_constraintTop_toTopOf="@id/subtitlePlaceholder" />
 
     <View
         android:id="@+id/separator"
@@ -476,8 +474,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
         android:background="@drawable/shape_shimmer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
@@ -495,14 +492,12 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
     app:shimmer_auto_start="true"
     app:shimmer_base_color="#CCCCCC"
     app:shimmer_colored="true"
-    app:shimmer_highlight_color="#FFFFFF"
-    >
+    app:shimmer_highlight_color="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <include layout="@layout/item_loading_view" />
 
@@ -528,7 +523,7 @@ implementation "com.facebook.shimmer:shimmer:0.5.0"
 
 ```kotlin
 // Inflate loading view
-val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, channelListView)
+val loadingView = LayoutInflater.from(context).inflate(R.layout.channel_list_loading_view, null)
 // Set loading view
 channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 ```
@@ -538,7 +533,7 @@ channelListView.setLoadingView(loadingView, FrameLayout.LayoutParams(MATCH_PAREN
 
 ```java
 // Inflate loading view
-View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.channel_list_loading_view, channelListView);
+View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.channel_list_loading_view, null);
 // Set loading view
 channelListView.setLoadingView(loadingView, new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
 ```
@@ -547,4 +542,5 @@ channelListView.setLoadingView(loadingView, new FrameLayout.LayoutParams(MATCH_P
 
 These changes should have the following results:
 
-![Light mode](../../assets/channel_list_shimmer.png)
+|![Custom Loading View](../../assets/channel_list_shimmer.png)|
+|---|

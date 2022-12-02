@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.member.internal
 
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
 
 internal fun Member.toEntity(): MemberEntity = MemberEntity(
     userId = getUserId(),

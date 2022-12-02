@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -51,7 +51,7 @@ internal class SendMessageListenerDatabaseTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
 
         sendMessageListenerDatabase.onMessageSendResult(
-            result = Result.success(testMessage),
+            result = Result.Success(testMessage),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,
@@ -73,7 +73,7 @@ internal class SendMessageListenerDatabaseTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
 
         sendMessageListenerDatabase.onMessageSendResult(
-            result = Result.error(ChatError()),
+            result = Result.Failure(ChatError.GenericError("")),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,
@@ -95,7 +95,7 @@ internal class SendMessageListenerDatabaseTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
 
         sendMessageListenerDatabase.onMessageSendResult(
-            result = Result.error(ChatError()),
+            result = Result.Failure(ChatError.GenericError("")),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,

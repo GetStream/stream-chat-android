@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.repository.domain.reaction.internal
 
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 
 internal fun Reaction.toEntity(): ReactionEntity = ReactionEntity(
     messageId = messageId,

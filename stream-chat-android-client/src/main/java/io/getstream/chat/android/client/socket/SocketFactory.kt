@@ -17,11 +17,10 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.socket.experimental.ws.StreamWebSocket
 import io.getstream.chat.android.client.token.TokenManager
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.User
+import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.UnsupportedEncodingException
@@ -33,16 +32,7 @@ internal class SocketFactory(
     private val tokenManager: TokenManager,
     private val httpClient: OkHttpClient = OkHttpClient(),
 ) {
-
     private val logger = StreamLog.getLogger("Chat:SocketFactory")
-
-    @Throws(UnsupportedEncodingException::class)
-    fun createSocket(eventsParser: EventsParser, connectionConf: ConnectionConf): Socket {
-        val request = buildRequest(connectionConf)
-        val newWebSocket = httpClient.newWebSocket(request, eventsParser)
-        logger.i { "new web socket: ${request.url}" }
-        return Socket(newWebSocket, parser)
-    }
 
     @Throws(UnsupportedEncodingException::class)
     fun createSocket(connectionConf: ConnectionConf): StreamWebSocket {

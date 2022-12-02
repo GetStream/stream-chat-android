@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.scope.user
 
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.UserId
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeout

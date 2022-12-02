@@ -17,17 +17,17 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import java.util.Date
 
 /**
@@ -111,24 +111,27 @@ internal class CreateChannelListenerDatabase(
         result: Result<Channel>,
     ) {
         val generatedCid = "$channelType:${generateChannelIdIfNeeded(channelId, memberIds)}"
-        if (result.isSuccess) {
-            val channel = result.data().apply {
-                syncStatus = SyncStatus.COMPLETED
-            }
-
-            // Generated if might differ from the actual one. This might happen when the channel already exists.
-            if (channel.cid != generatedCid) {
-                channelRepository.deleteChannel(generatedCid)
-            }
-            channelRepository.insertChannel(channel)
-        } else {
-            channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
-                cachedChannel.syncStatus = if (result.error().isPermanent()) {
-                    SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    SyncStatus.SYNC_NEEDED
+        when (result) {
+            is Result.Success -> {
+                val channel = result.value.apply {
+                    syncStatus = SyncStatus.COMPLETED
                 }
-                channelRepository.insertChannel(cachedChannel)
+
+                // Generated if might differ from the actual one. This might happen when the channel already exists.
+                if (channel.cid != generatedCid) {
+                    channelRepository.deleteChannel(generatedCid)
+                }
+                channelRepository.insertChannel(channel)
+            }
+            is Result.Failure -> {
+                channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
+                    cachedChannel.syncStatus = if (result.value.isPermanent()) {
+                        SyncStatus.FAILED_PERMANENTLY
+                    } else {
+                        SyncStatus.SYNC_NEEDED
+                    }
+                    channelRepository.insertChannel(cachedChannel)
+                }
             }
         }
     }
@@ -147,13 +150,13 @@ internal class CreateChannelListenerDatabase(
     ): Result<Unit> {
         return when {
             channelId.isBlank() && memberIds.isEmpty() -> {
-                Result.error(ChatError(message = "Either channelId or memberIds cannot be empty!"))
+                Result.Failure(ChatError.GenericError(message = "Either channelId or memberIds cannot be empty!"))
             }
             currentUser == null -> {
-                Result.error(ChatError(message = "Current user is null!"))
+                Result.Failure(ChatError.GenericError(message = "Current user is null!"))
             }
             else -> {
-                Result.success(Unit)
+                Result.Success(Unit)
             }
         }
     }

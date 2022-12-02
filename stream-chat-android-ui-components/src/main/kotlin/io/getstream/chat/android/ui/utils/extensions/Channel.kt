@@ -18,14 +18,19 @@ package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.uiutils.extension.getMembersStatusText
+import io.getstream.chat.android.uiutils.extension.getPreviewMessage
 
 internal fun Channel.isCurrentUserBanned(): Boolean {
-    val currentUserId = ChatClient.instance().getCurrentUser()?.id ?: return false
+    val currentUserId = ChatClient.instance().globalState.user.value?.id ?: return false
     return members.any { it.user.id == currentUserId && it.banned }
 }
 
@@ -51,3 +56,39 @@ public fun Channel.getMembersStatusText(
         memberCountWithOnlineResId = R.string.stream_ui_message_list_header_member_count_online,
     )
 }
+
+/**
+ * Returns channel's last regular or system message if exists.
+ * Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
+ *
+ * @return Last message from the channel or null if it doesn't exist.
+ */
+public fun Channel.getLastMessage(): Message? = getPreviewMessage(ChatUI.currentUserProvider.getCurrentUser())
+
+internal fun Channel.diff(other: Channel): ChannelListPayloadDiff {
+    val usersChanged = getUsersExcludingCurrent() != other.getUsersExcludingCurrent()
+    return ChannelListPayloadDiff(
+        nameChanged = name != other.name,
+        avatarViewChanged = usersChanged,
+        usersChanged = usersChanged,
+        readStateChanged = read != other.read,
+        lastMessageChanged = getLastMessage() != other.getLastMessage(),
+        unreadCountChanged = unreadCount != other.unreadCount && other.unreadCount != null,
+        extraDataChanged = extraData != other.extraData
+    )
+}
+
+internal fun Channel.isMessageRead(message: Message): Boolean {
+    val currentUser = ChatClient.instance().globalState.user.value
+    return read.filter { it.user.id != currentUser?.id }
+        .mapNotNull { it.lastRead }
+        .any { it.time >= message.getCreatedAtOrThrow().time }
+}
+
+internal const val EXTRA_DATA_MUTED: String = "mutedChannel"
+
+internal var Channel.isMuted: Boolean
+    get() = extraData[EXTRA_DATA_MUTED] as Boolean? ?: false
+    set(value) {
+        extraData[EXTRA_DATA_MUTED] = value
+    }

@@ -36,7 +36,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
+        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
     }
 
     lintOptions {
@@ -103,6 +103,7 @@ dependencies {
     androidTestImplementation Dependencies.composeUiTestManifest
     androidTestImplementation Dependencies.testParameterInjector
     androidTestImplementation Dependencies.okhttpMockWebserver
+    androidTestImplementation Dependencies.threeTenBp
 
     detektPlugins(Dependencies.detektFormatting)
 }

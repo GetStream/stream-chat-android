@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
-import com.getstream.sdk.chat.model.AttachmentMetaData
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test

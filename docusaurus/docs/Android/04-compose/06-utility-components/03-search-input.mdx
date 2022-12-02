@@ -1,6 +1,6 @@
 # SearchInput
 
-The [`SearchInput`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/common/SearchInput.kt) component allows you to fill in a search query. It contains the following elements: 
+The [`SearchInput`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/SearchInput.kt) component allows you to fill in a search query. It contains the following elements: 
 
 * `leadingIcon`: The icon at the start of the search component.
 * `label`: The label shown in the search component.
@@ -31,7 +31,8 @@ SearchInput(
 
 The snippet above will produce the next UI:
 
-![The SearchInput Component](../../assets/compose_default_search_input_component.png)
+|![The SearchInput Component](../../assets/compose_default_search_input_component.png)|
+|---|
 
 ## Handling Actions
 
@@ -59,7 +60,9 @@ SearchInput(
     query = searchQuery,
     onValueChange = {
         searchQuery = it
-        listViewModel.setSearchQuery(it)
+
+        // Use ChannelListViewModel to search for channels  
+        channelListViewModel.setSearchQuery(it)
     }
 )
 ```
@@ -82,7 +85,7 @@ fun SearchInput(
 * `loadingContent`: Customizable composable function that allows you to override the default leading icon.
 * `label`: Customizable composable function parameter that overrides the search label.
 
-Here's an example of customizing the UI of the SearchInput:
+Here's an example of customizing the UI of the `SearchInput`:
 
 ```kotlin
 var searchQuery by rememberSaveable { mutableStateOf("") }
@@ -95,7 +98,9 @@ SearchInput(
     query = searchQuery,
     onValueChange = {
         searchQuery = it
-        listViewModel.setSearchQuery(it)
+
+        // Use ChannelListViewModel to search for channels   
+        channelListViewModel.setSearchQuery(it)
     },
     leadingIcon = {
         // Remove the leading icon
@@ -114,4 +119,5 @@ SearchInput(
 
 The snippet above will produce the following UI.
 
-![The SearchInput Component](../../assets/compose_custom_search_input_component.png)
+|![The SearchInput Component](../../assets/compose_custom_search_input_component.png)|
+|---|

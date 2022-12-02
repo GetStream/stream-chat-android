@@ -24,14 +24,16 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.utils.Event
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -40,7 +42,7 @@ import kotlinx.coroutines.launch
 class GroupChatInfoViewModel(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val clientState: ClientState = chatClient.clientState,
+    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     /**
@@ -61,7 +63,7 @@ class GroupChatInfoViewModel(
         _state.value = INITIAL_STATE
 
         // Update channel mute status
-        clientState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
+        globalState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
         // Update members
         _state.addSource(channelState.flatMapLatest { it.members }.asLiveData(), this::updateMembers)
@@ -87,7 +89,7 @@ class GroupChatInfoViewModel(
     }
 
     private fun handleMemberClick(member: Member) {
-        if (member.getUserId() != clientState.user.value?.id) {
+        if (member.getUserId() != globalState.user.value?.id) {
             val currentState = _state.value!!
             _events.value = Event(UiEvent.ShowMemberOptions(member, currentState.channelName))
         }
@@ -96,7 +98,7 @@ class GroupChatInfoViewModel(
     private fun changeGroupName(name: String) {
         viewModelScope.launch {
             val result = channelClient.update(message = null, mapOf("name" to name)).await()
-            if (result.isError) {
+            if (result is Result.Failure) {
                 _errorEvents.postValue(Event(ErrorEvent.ChangeGroupNameError))
             }
         }
@@ -104,16 +106,16 @@ class GroupChatInfoViewModel(
 
     private fun leaveChannel() {
         viewModelScope.launch {
-            val result = chatClient.getCurrentUser()?.let { user ->
+            val result = chatClient.globalState.user.value?.let { user ->
                 val message = Message(text = "${user.name} left")
                 chatClient.channel(channelClient.channelType, channelClient.channelId)
                     .removeMembers(listOf(user.id), message)
                     .await()
-            }
-            if (result?.isSuccess == true) {
-                _events.value = Event(UiEvent.RedirectToHome)
-            } else {
-                _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError))
+            } ?: return@launch
+
+            when (result) {
+                is Result.Success -> _events.value = Event(UiEvent.RedirectToHome)
+                is Result.Failure -> _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError))
             }
         }
     }
@@ -139,7 +141,7 @@ class GroupChatInfoViewModel(
             } else {
                 channelClient.unmute().await()
             }
-            if (result.isError) {
+            if (result is Result.Failure) {
                 _errorEvents.postValue(Event(ErrorEvent.MuteChannelError))
             }
         }

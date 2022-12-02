@@ -25,7 +25,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -48,25 +47,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.model.DeleteMessage
-import io.getstream.chat.android.common.model.EditMessage
-import io.getstream.chat.android.common.model.SendAnyway
-import io.getstream.chat.android.common.state.Delete
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.Flag
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.Resend
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageFailedModerationState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsPickerState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
-import io.getstream.chat.android.compose.state.messages.SelectedMessageState
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
@@ -83,6 +66,22 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.Delete
+import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.Flag
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.Resend
+import io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
+import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageFailedModerationState
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOptionsState
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageState
+import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 
 /**
  * Default root Messages screen component, that provides the necessary ViewModels and
@@ -184,7 +183,7 @@ public fun MessagesScreen(
                 onMediaGalleryPreviewResult = { result ->
                     when (result?.resultType) {
                         MediaGalleryPreviewResultType.QUOTE -> {
-                            val message = listViewModel.getMessageWithId(result.messageId)
+                            val message = listViewModel.getMessageById(result.messageId)
 
                             if (message != null) {
                                 composerViewModel.performMessageAction(Reply(message))
@@ -192,7 +191,7 @@ public fun MessagesScreen(
                         }
 
                         MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
-                            listViewModel.focusMessage(result.messageId)
+                            listViewModel.scrollToMessage(result.messageId)
                         }
                         null -> Unit
                     }
@@ -365,7 +364,7 @@ private fun BoxScope.MessagesScreenMenus(
  * @param selectedMessageState The state of the currently selected message.
  * @param selectedMessage The currently selected message.
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.MessagesScreenReactionsPicker(
     listViewModel: MessageListViewModel,

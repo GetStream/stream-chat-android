@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.userreactions
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -45,7 +44,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param items The list of user reactions to display.
  * @param modifier Modifier for styling.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun UserReactions(
     items: List<UserReactionItemState>,

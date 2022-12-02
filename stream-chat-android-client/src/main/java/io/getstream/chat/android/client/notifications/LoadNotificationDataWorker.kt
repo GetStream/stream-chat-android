@@ -33,8 +33,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.zipWith
-import io.getstream.chat.android.client.utils.stringify
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 internal class LoadNotificationDataWorker(
     private val context: Context,
@@ -61,13 +60,16 @@ internal class LoadNotificationDataWorker(
             )
 
             val result = getChannel.zipWith(getMessage).await()
-            if (result.isSuccess) {
-                val (channel, message) = result.data()
-                ChatClient.displayNotification(channel = channel, message = message)
-                Result.success()
-            } else {
-                logger.e { "Error while loading notification data: ${result.error().stringify()}" }
-                Result.failure()
+            when (result) {
+                is io.getstream.chat.android.client.utils.Result.Success -> {
+                    val (channel, message) = result.value
+                    ChatClient.displayNotification(channel = channel, message = message)
+                    Result.success()
+                }
+                is io.getstream.chat.android.client.utils.Result.Failure -> {
+                    logger.e { "Error while loading notification data: ${result.value}" }
+                    Result.failure()
+                }
             }
         } catch (exception: IllegalStateException) {
             logger.e { "Error while loading notification data: ${exception.message}" }
@@ -125,7 +127,7 @@ internal class LoadNotificationDataWorker(
             context: Context,
             channelId: String,
             channelType: String,
-            messageId: String
+            messageId: String,
         ) {
             val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
                 .setInputData(

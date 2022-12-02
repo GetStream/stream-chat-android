@@ -5,7 +5,7 @@ package io.getstream.chat.docs.kotlin.ui.guides
 import android.content.Context
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.SupportedReactions
+import io.getstream.chat.android.ui.helper.SupportedReactions
 import io.getstream.chat.docs.R
 
 /**
@@ -14,7 +14,6 @@ import io.getstream.chat.docs.R
 private object ProvidingCustomReactionsSnippet {
 
     fun providingCustomReactions(context: Context) {
-
         val reactions = mapOf(
             "thumbs_up" to SupportedReactions.ReactionDrawable(
                 inactiveDrawable = ContextCompat.getDrawable(context, R.drawable.ic_thumb_up)!!,
@@ -33,6 +32,7 @@ private object ProvidingCustomReactionsSnippet {
                 activeDrawable = ContextCompat.getDrawable(context, R.drawable.ic_mood_bad_selected)!!
             ),
         )
+
         ChatUI.supportedReactions = SupportedReactions(context, reactions)
     }
 }

@@ -24,7 +24,7 @@
     tools:layout_height="@dimen/stream_ui_default_header_height"
     >
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         style="?attr/streamUiChannelListHeaderAvatarStyle"
         android:layout_marginStart="8dp"

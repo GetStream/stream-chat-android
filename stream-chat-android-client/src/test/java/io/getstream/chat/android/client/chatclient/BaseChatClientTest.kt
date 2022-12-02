@@ -21,9 +21,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.helpers.CallPostponeHelper
+import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
@@ -31,17 +30,25 @@ import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal open class BaseChatClientTest {
 
     companion object {
@@ -51,9 +58,6 @@ internal open class BaseChatClientTest {
     }
 
     @Mock
-    protected lateinit var socketStateService: SocketStateService
-
-    @Mock
     protected lateinit var userStateService: UserStateService
 
     @Mock
@@ -61,6 +65,7 @@ internal open class BaseChatClientTest {
 
     @Mock
     protected lateinit var tokenManager: TokenManager
+    private lateinit var clientScope: ClientTestScope
 
     @Mock
     protected lateinit var config: ChatClientConfig
@@ -73,26 +78,31 @@ internal open class BaseChatClientTest {
     protected val clientState = mock<ClientState>()
 
     protected lateinit var chatClient: ChatClient
+    protected lateinit var fakeChatSocket: FakeChatSocket
     internal val tokenUtils: TokenUtils = mock()
     internal val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
     @BeforeEach
     fun before() {
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
-        val clientScope = ClientTestScope(testCoroutines.scope)
+        clientScope = ClientTestScope(testCoroutines.scope)
         val userScope = UserTestScope(clientScope)
+        val lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle)
+        val networkStateProvider: NetworkStateProvider = mock()
         MockitoAnnotations.openMocks(this)
+        whenever(networkStateProvider.isConnected()) doReturn true
+        fakeChatSocket = FakeChatSocket(
+            userScope = userScope,
+            lifecycleObserver = lifecycleObserver,
+            tokenManager = tokenManager,
+            networkStateProvider = networkStateProvider,
+        )
         plugins = mutableListOf()
         chatClient = ChatClient(
             config = config,
             api = api,
-            socket = socket,
             notifications = mock(),
             tokenManager = tokenManager,
-            socketStateService = socketStateService,
-            callPostponeHelper = CallPostponeHelper(userScope) {
-                socketStateService.awaitConnection()
-            },
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtils,
@@ -100,20 +110,25 @@ internal open class BaseChatClientTest {
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            socketExperimental = mock(),
-            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
+            chatSocket = fakeChatSocket,
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
         )
 
         Mockito.reset(
-            socketStateService,
             userStateService,
             socket,
             tokenManager,
             config,
             api,
         )
+    }
+
+    fun runCancellableTest(testBody: suspend TestScope.() -> Unit) {
+        runTest {
+            testBody()
+            clientScope.cancel()
+        }
     }
 }

@@ -24,10 +24,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.utils.Event
 import kotlinx.coroutines.launch
 
 class GroupChatInfoMemberOptionsViewModel(
@@ -45,7 +47,7 @@ class GroupChatInfoMemberOptionsViewModel(
 
     init {
         viewModelScope.launch {
-            val currentUser = chatClient.getCurrentUser()!!
+            val currentUser = chatClient.globalState.user.value!!
 
             val result = chatClient.queryChannels(
                 request = QueryChannelsRequest(
@@ -59,11 +61,12 @@ class GroupChatInfoMemberOptionsViewModel(
                 )
             ).await()
 
-            _state.value = if (result.isSuccess && result.data().isNotEmpty()) {
-                State(directChannelCid = result.data().first().cid, loading = false)
-            } else {
-                State(directChannelCid = null, loading = false)
+            val directChannelCid = when (result) {
+                is Result.Success -> if (result.value.isNotEmpty()) result.value.first().cid else null
+                is Result.Failure -> null
             }
+
+            _state.value = State(directChannelCid = directChannelCid, loading = false)
         }
     }
 
@@ -88,11 +91,9 @@ class GroupChatInfoMemberOptionsViewModel(
     private fun removeFromChannel(username: String) {
         viewModelScope.launch {
             val message = Message(text = "$username has been removed from this channel")
-            val result = chatClient.channel(cid).removeMembers(listOf(memberId), message).await()
-            if (result.isSuccess) {
-                _events.value = Event(UiEvent.Dismiss)
-            } else {
-                _errorEvents.postValue(Event(ErrorEvent.RemoveMemberError))
+            when (chatClient.channel(cid).removeMembers(listOf(memberId), message).await()) {
+                is Result.Success -> _events.value = Event(UiEvent.Dismiss)
+                is Result.Failure -> _errorEvents.postValue(Event(ErrorEvent.RemoveMemberError))
             }
         }
     }

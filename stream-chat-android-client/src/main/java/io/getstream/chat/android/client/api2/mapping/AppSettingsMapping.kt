@@ -19,9 +19,9 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
-import io.getstream.chat.android.client.models.App
-import io.getstream.chat.android.client.models.AppSettings
-import io.getstream.chat.android.client.models.FileUploadConfig
+import io.getstream.chat.android.models.App
+import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.FileUploadConfig
 
 internal fun AppSettingsResponse.toDomain(): AppSettings {
     return AppSettings(

@@ -37,8 +37,7 @@ public fun MessageComposer(
     },
 )
 ```
-The file containing `MessageComposer` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/messages/composer/MessageComposer.kt#L214).
+The file containing `MessageComposer` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/messages/composer/MessageComposer.kt).
 
 `MessageComposer` contains a parameter `messageComposerState: MessageComposerState`. This class holds all the necessary
 state to make `MessageComposer` work, including a set of own capabilities. These are used by the default components
@@ -52,19 +51,19 @@ public data class MessageComposerState(
     val ownCapabilities: Set<String> = setOf()
 )
 ```
-The file containing `MessageComposerState` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/common/composer/MessageComposerState.kt#L39).
+The file containing `MessageComposerState` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState.kt).
 
 `MessageComposer` regulates the following capabilities:
 
 - **send-message * **
 - **send-links * **
 - **upload-file * **
+- **send-typing-events * **
 
 :::note
 Own capabilities are publicly exposed inside `MessageComposerController` and `MessageComposerViewModel` as `ownCapabilities: StateFlow<Set<String>>`.
 
-*For this component, as well as all the other examples, the capabilities in bold are a part of the "default" behavior that is set up for most users in the dashboard.
+For this component, as well as all the other examples, the capabilities in bold are a part of the "default" behavior that is set up for most users in the dashboard.
 :::
 
 ### SelectedMessageMenu
@@ -84,8 +83,7 @@ public fun SelectedMessageMenu(
     },
 )
 ```
-The file containing `SelectedMessageMenu` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedMessageMenu.kt#L60).
+The file containing `SelectedMessageMenu` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedMessageMenu.kt).
 
 `SelectedMessageMenu` regulates the following capability:
 
@@ -136,8 +134,7 @@ public fun SelectedReactionsMenu(
     },
 )
 ```
-The file containing `SelectedReactionsMenu` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedReactionsMenu.kt#L62).
+The file containing `SelectedReactionsMenu` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedReactionsMenu.kt).
 
 `SelectedReactionsMenu` menu regulates the following capability:
 
@@ -156,8 +153,7 @@ public fun SelectedChannelMenu(
     },
 )
 ```
-The file containing `SelectedChannelMenu` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/channels/info/SelectedChannelMenu.kt#L66).
+The file containing `SelectedChannelMenu` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/channels/info/SelectedChannelMenu.kt).
 
 `SelectedChannelMenu` contains a `Channel` value. It uses the `ownCapabilities` property contained by that `Channel`
 value to leverage own capabilities inside the default center content.
@@ -191,7 +187,8 @@ Please keep this in mind should you wish to not use our `ViewModel`s.
 Let's take `MessageComposer` into consideration.
 If we left it with the default, empty set of own capabilities we would get the following result:
 
-![MessageComposer with empty capabilities](../../assets/own_capabilities_message_composer_empty_capabilities.png)
+|![MessageComposer with empty capabilities](../../assets/own_capabilities_message_composer_empty_capabilities.png)|
+|---|
 
 This leaves the user unable to perform any action provided by the composer.
 Ideally, you should let your Dashboard App settings regulate capabilities, but if you wish to control them manually, you can do so.
@@ -205,19 +202,19 @@ public object ChannelCapabilities {
     ... // Other capabilities
 }
 ```
-The file containing `ChannelCapabilities` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/ChannelCapabilities.kt#L29).
+The file containing `ChannelCapabilities` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-core/src/main/java/io/getstream/chat/android/models/ChannelCapabilities.kt).
 
 This object contains all relevant channel capabilities as type safe properties.
 You can use the properties to build a set containing only the capabilities you want enabled for the user.
 
-If you were to enable the user to send messages, links and attachments, you would build a set as follows:
+If you were to enable the user to send messages, links, attachments and typing events, you would build a set as follows:
 
 ```kotlin
 val customOwnCapabilities = setOf(
     ChannelCapabilities.SEND_MESSAGE,
     ChannelCapabilities.SEND_LINKS,
-    ChannelCapabilities.UPLOAD_FILE
+    ChannelCapabilities.UPLOAD_FILE,
+    ChannelCapabilities.SEND_TYPING_EVENTS
 )
 ```
 
@@ -232,7 +229,7 @@ val messageComposerState = MessageComposerState(
 And finally pass the `MessageComposerState` to the stateless `MessageComposer` component:
 
 ```kotlin
-public fun MessageComposer(
+MessageComposer(
     messageComposerState = messageComposerState,
     ..., // State, handlers and content.
 )
@@ -243,10 +240,12 @@ This enables the following capabilities:
 - **send-message * **
 - **send-links * **
 - **upload-file * **
+- **send-typing-events * **
 
 And results in `MessageComposer` having the following appearance:
 
-![MessageComposer with custom capabilities](../../assets/own_capabilities_message_composer_with_capabilities.png)
+|![MessageComposer with custom capabilities](../../assets/own_capabilities_message_composer_with_capabilities.png)|
+|---|
 
 :::note
 Please note that providing custom client side capabilities leaves you in charge of making sure that users are not awarded with dangerous capabilities and that different clients are in sync.

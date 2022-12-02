@@ -16,11 +16,12 @@
 
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 
@@ -37,7 +38,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(attachmentPdf), text = "Some text"),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = listOf(MessagePosition.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -45,7 +46,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     attachments = mutableListOf(attachment7z, attachmentPdf),
                     text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                 ),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessagePosition.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -53,7 +54,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt),
                     text = "Hi!"
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -61,7 +62,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     attachments = mutableListOf(attachmentDoc, attachmentXls),
                     text = "Lorem ipsum dolor sit amet"
                 ),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = listOf(MessagePosition.TOP),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -69,7 +70,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z),
                     text = "Another message"
                 ),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessagePosition.MIDDLE),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -82,7 +83,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     ),
                     text = "Bye!!!"
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -97,7 +98,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     ),
                     text = "Bye!!!"
                 ),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -106,7 +107,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     text = "Lorem ipsum dolor sit amet",
                     syncStatus = SyncStatus.FAILED_PERMANENTLY,
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -118,7 +119,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     ),
                     text = "Lorem ipsum dolor sit amet https://www.google.com/",
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -130,7 +131,7 @@ class PlainTextWithFileAttachmentsMessagesComponentBrowserFragment : BaseMessage
                     ),
                     text = "Lorem ipsum dolor sit amet https://www.google.com/",
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = false
             ),
         )

@@ -105,6 +105,24 @@
         <attr name="streamUiMessageComposerMessageInputCannotSendHintText" format="string" />
         <attr name="android:inputType" />
 
+        <!-- Overlays a drawable above video attachments. By default, used to display a play button,
+        signaling to the user that it's a video attachment. -->
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawable" format="reference"/>
+        <!-- Sets the tint of the drawable overlaid above video attachments. -->
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawableTint" format="reference|color"/>
+        <!-- Sets the background color of the icon overlaid above video attachments. -->
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor" format="reference|color"/>
+        <!-- Sets the elevation of the icon overlaid above video attachments. -->
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconElevation" format="dimension"/>
+        <!-- Sets the top padding between the video attachment drawable and its parent card. -->
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop" format="dimension"/>
+        <!-- Sets the bottom padding between the video attachment drawable and its parent card. -->
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom" format="dimension"/>
+        <!-- Sets the start padding between the video attachment drawable and its parent card. -->
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart" format="dimension"/>
+        <!-- Sets the end padding between the video attachment drawable and its parent card. -->
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd" format="dimension"/>
+
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerAttachmentsButtonIconDrawable" format="reference" />

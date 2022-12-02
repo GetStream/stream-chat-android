@@ -15,7 +15,9 @@
     limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.getstream.chat.android.client">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.getstream.chat.android.client"
+    >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -23,13 +25,26 @@
 
     <application>
 
+        <provider
+            android:name="io.getstream.android.push.delegate.PushDelegateProvider"
+            android:authorities="${applicationId}.io.getstream.android.push"
+            android:exported="false"
+            tools:node="merge"
+            >
+
+            <meta-data
+                android:name="io.getstream.chat.android.client.notifications.ChatPushDelegate"
+                android:value="io.getstream.android.push.PushDelegate"
+                />
+        </provider>
+
         <receiver
             android:name="io.getstream.chat.android.client.receivers.NotificationMessageReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.getstream.sdk.chat.READ" />
-                <action android:name="com.getstream.sdk.chat.REPLY" />
+                <action android:name="io.getstream.chat.android.READ" />
+                <action android:name="io.getstream.chat.android.REPLY" />
             </intent-filter>
         </receiver>
     </application>

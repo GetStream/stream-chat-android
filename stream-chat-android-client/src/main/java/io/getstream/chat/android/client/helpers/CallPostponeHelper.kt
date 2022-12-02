@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.withTimeout
 
 /**
@@ -38,22 +38,6 @@ internal class CallPostponeHelper(
 ) {
 
     private val logger = StreamLog.getLogger("Chat:CallPostponeHelper")
-
-    /**
-     * Postpones or immediately executes the call based on [shouldPostpone] parameter.
-     *
-     * @param shouldPostpone Whether the call should be postponed
-     * @param call A call to be run when the socket connection is established.
-     *
-     * @return Executable async [Call] responsible for querying channels
-     */
-    internal fun <T : Any> postponeCallIfNeeded(shouldPostpone: Boolean, call: () -> Call<T>): Call<T> {
-        return if (shouldPostpone) {
-            postponeCall(call)
-        } else {
-            call()
-        }
-    }
 
     /**
      * Postpones call.
@@ -74,10 +58,10 @@ internal class CallPostponeHelper(
                 call().await()
             } catch (e: Throwable) {
                 logger.e { "[postponeCall] failed: $e" }
-                Result.error(
-                    ChatError(
-                        message = "Failed to perform call. Waiting for WS connection was too long."
-                    )
+                Result.Failure(
+                    ChatError.GenericError(
+                        message = "Failed to perform call. Waiting for WS connection was too long.",
+                    ),
                 )
             }
         }

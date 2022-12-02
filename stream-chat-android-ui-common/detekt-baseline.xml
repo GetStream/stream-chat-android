@@ -1,5 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
   <ManuallySuppressedIssues/>
-  <CurrentIssues/>
+  <CurrentIssues>
+    <ID>ComplexMethod:MessageListController.kt$MessageListController$private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, ): List&lt;MessageListItemState></ID>
+    <ID>ComplexMethod:MessagePositionHandler.kt$MessagePositionHandler.Companion$@Suppress("ComplexCondition") public fun defaultHandler(): MessagePositionHandler</ID>
+    <ID>LargeClass:MessageListController.kt$MessageListController</ID>
+    <ID>LongMethod:MessageListController.kt$MessageListController$@Suppress("MagicNumber") private fun observeMessagesListState()</ID>
+    <ID>LongMethod:MessageListController.kt$MessageListController$private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, ): List&lt;MessageListItemState></ID>
+    <ID>LongParameterList:MessageListController.kt$MessageListController$( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, )</ID>
+    <ID>TooManyFunctions:MessageListController.kt$MessageListController</ID>
+  </CurrentIssues>
 </SmellBaseline>

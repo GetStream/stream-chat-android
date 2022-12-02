@@ -23,7 +23,7 @@
     android:background="?attr/selectableItemBackground"
     >
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         style="?attr/streamUiMentionPreviewItemAvatarStyle"
         android:layout_marginStart="8dp"

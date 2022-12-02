@@ -15,13 +15,6 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="stream_ui_message_input_capture_media">"Capture d\'image ou vidéo"</string>
-  <string name="stream_ui_message_input_permission_camera_message">"Des autorisations d\'accès à l\'appareil photo et au stockage sont nécessaires pour pouvoir prendre des photos et des vidéos"</string>
-  <string name="stream_ui_message_input_permission_camera_title">"Caméra et stockage Autorisation d\'accès"</string>
-  <string name="stream_ui_message_input_permission_setting_message">"Activez les autorisations dans les Paramètres de l\'application"</string>
-  <string name="stream_ui_message_input_permission_storage_message">"Des autorisations d\'accès au stockage sont nécessaires pour pouvoir envoyer et sauvegarder des photos, des vidéos, de la musique et d\'autres fichiers."</string>
-  <string name="stream_ui_message_input_permission_storage_title">"Autorisations d\'accès au stockage"</string>
-  <string name="stream_ui_message_input_permissions_setting_button">"Paramètres"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Erreur. Le fichier ne peut pas être affiché"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Un problème est survenu. Impossible d\'ouvrir la pièce jointe: %s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"Le chargement a échoué en raison d\'une URL non valide."</string>

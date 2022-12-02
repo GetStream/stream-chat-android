@@ -17,11 +17,11 @@
 package io.getstream.chat.android.offline.repository.facade
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.test.randomChannelInfo
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomReaction
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.test.runTest

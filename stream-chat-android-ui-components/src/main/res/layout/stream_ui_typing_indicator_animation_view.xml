@@ -14,7 +14,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<io.getstream.chat.android.ui.typing.TypingIndicatorAnimationView xmlns:android="http://schemas.android.com/apk/res/android"
+<io.getstream.chat.android.ui.widgets.typing.internal.TypingIndicatorAnimationView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/lvAnimatingDots"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

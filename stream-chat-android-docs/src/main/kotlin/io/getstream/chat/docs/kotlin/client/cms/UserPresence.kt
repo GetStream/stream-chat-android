@@ -6,11 +6,10 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ConnectionData
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.client.subscribeFor
+import io.getstream.chat.android.client.utils.Result
 
 class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
 
@@ -23,10 +22,13 @@ class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
             invisible = true,
         )
         client.connectUser(user, "{{ chat_user_token }}").enqueue { result ->
-            if (result.isSuccess) {
-                val user: ConnectionData = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val connectionData = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
     }
@@ -44,10 +46,13 @@ class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
             presence = true
         }
         channelClient.watch(watchRequest).enqueue { result ->
-            if (result.isSuccess) {
-                val channel: Channel = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val channel = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
 
@@ -63,10 +68,13 @@ class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
             presence = true
         }
         client.queryChannels(channelsRequest).enqueue { result ->
-            if (result.isSuccess) {
-                val channels: List<Channel> = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val channels = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
 
@@ -78,10 +86,13 @@ class UserPresence(val client: ChatClient, val channelClient: ChannelClient) {
             presence = true,
         )
         client.queryUsers(usersQuery).enqueue { result ->
-            if (result.isSuccess) {
-                val users: List<User> = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val users = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
 

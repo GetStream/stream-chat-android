@@ -28,7 +28,7 @@
         android:layout_height="match_parent"
         >
 
-        <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+        <io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
             android:id="@+id/channelListHeaderView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

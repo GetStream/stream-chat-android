@@ -20,7 +20,6 @@
   <string name="stream_ui_attachment_gallery_delete">"मिटाएं"</string>
   <string name="stream_ui_attachment_gallery_overview_title">"फ़ोटोज"</string>
   <string name="stream_ui_attachment_gallery_reply">"जवाब दें"</string>
-  <string name="stream_ui_attachment_gallery_save_image">"फ़ोटो सेव करें"</string>
   <string name="stream_ui_attachment_gallery_share">"फ़ोटो शेयर करें"</string>
   <string name="stream_ui_attachment_gallery_show_in_chat">"चैट में देखें"</string>
 </resources>

@@ -13,22 +13,21 @@ Removing the automatic initializers and not running the initializers manually wi
 
 Specifically, you'll have to do the following:
 
-1. Disable the auto-initialization of our components, by adding the following to your Manifest:
+1. Disable the auto-initialization of our UI Components library, by adding the following to your Manifest:
 
-    ```xml
-    <provider
-        android:name="androidx.startup.InitializationProvider"
-        android:authorities="${applicationId}.androidx-startup"
-        android:exported="false"
-        tools:node="merge">
-        <meta-data
-            android:name="io.getstream.chat.android.ui.common.ChatUIInitializer"
-            tools:node="remove"
-        />
-    </provider>
-    ```
+```xml
+<provider 
+    android:name="androidx.startup.InitializationProvider"
+    android:authorities="${applicationId}.androidx-startup"
+    android:exported="false"
+    tools:node="merge">
+    <meta-data
+        android:name="io.getstream.chat.android.ui.initializer.ChatUIInitializer" 
+        tools:node="remove" />
+</provider>
+```
 
-2. Initialize them manually, **before any of the Stream UI Components are used in your application**.
+2. Do the initialization manually, **before any of the Stream UI Components are used in your application**.
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -47,5 +46,5 @@ AppInitializer.getInstance(appContext).initializeComponent(ChatUIInitializer.cla
 </Tabs>
 
 :::note
-You need to have a dependency on the [App Startup library](https://developer.android.com/jetpack/androidx/releases/startup) to access `AppInitializer`.
+You need to have a dependency on the [App Startup](https://developer.android.com/jetpack/androidx/releases/startup) library to access `AppInitializer`.
 :::

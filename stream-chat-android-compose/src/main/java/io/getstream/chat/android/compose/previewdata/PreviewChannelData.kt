@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.previewdata
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
 import java.util.Date
 
 /**

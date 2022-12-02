@@ -16,19 +16,18 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatNetworkError
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.SyncStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
@@ -121,7 +120,7 @@ internal class CreateChannelTests {
             val channelType = "channelType"
             val channelId = "channelId"
             val result =
-                Result.success(randomChannel(id = channelId, type = channelType))
+                Result.Success(randomChannel(id = channelId, type = channelType))
 
             sut.onCreateChannelResult(
                 channelType = channelType,
@@ -130,7 +129,7 @@ internal class CreateChannelTests {
                 result = result,
             )
 
-            verify(repos).insertChannel(result.data())
+            verify(repos).insertChannel((result as Result.Success).value)
         }
 
     @Test
@@ -145,7 +144,7 @@ internal class CreateChannelTests {
             val channelType = "channelType"
             val channelId = "channel"
             val result =
-                Result.success(randomChannel())
+                Result.Success(randomChannel())
 
             sut.onCreateChannelResult(
                 channelType = channelType,
@@ -168,7 +167,7 @@ internal class CreateChannelTests {
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }
-            val result = Result.error<Channel>(ChatNetworkError.create(0, "", 500, null))
+            val result = Result.Failure(ChatError.NetworkError(message = "", streamCode = 0, statusCode = 500))
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOnlineState()
@@ -202,7 +201,7 @@ internal class CreateChannelTests {
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }
-            val result = Result.error<Channel>(ChatNetworkError.create(60, "", 403, null))
+            val result = Result.Failure(ChatError.NetworkError(message = "", streamCode = 60, statusCode = 403))
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOnlineState()
@@ -236,7 +235,7 @@ internal class CreateChannelTests {
                 currentUser = null,
             )
 
-            result.isError shouldBeEqualTo true
+            result shouldBeInstanceOf Result.Failure::class
         }
 
     @Test
@@ -250,7 +249,7 @@ internal class CreateChannelTests {
                 currentUser = randomUser(),
             )
 
-            result.isError shouldBeEqualTo true
+            result shouldBeInstanceOf Result.Failure::class
         }
 
     @Test
@@ -264,7 +263,7 @@ internal class CreateChannelTests {
                 currentUser = randomUser(),
             )
 
-            result.isSuccess shouldBeEqualTo true
+            result shouldBeInstanceOf Result.Success::class
         }
 
     private inner class Fixture {

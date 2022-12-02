@@ -19,12 +19,13 @@ package io.getstream.chat.ui.sample.feature.chat.info.shared
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.channel.list.ChannelListView
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
+import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
+import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder
+import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.ChatInfoSharedGroupsItemBinding
 
@@ -58,7 +59,7 @@ class ChatInfoSharedGroupsViewHolder(
             channelAvatarView.setChannel(channel)
             nameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
                 channel = channel,
-                currentUser = ChatClient.instance().getCurrentUser()
+                currentUser = ChatClient.instance().globalState.user.value
             )
             membersCountTextView.text = itemView.context.resources.getQuantityString(
                 R.plurals.members_count_title,

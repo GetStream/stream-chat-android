@@ -20,7 +20,6 @@
   <string name="stream_ui_attachment_gallery_delete">"Cancella"</string>
   <string name="stream_ui_attachment_gallery_overview_title">"Foto"</string>
   <string name="stream_ui_attachment_gallery_reply">"Rispondi"</string>
-  <string name="stream_ui_attachment_gallery_save_image">"Salva immagine"</string>
   <string name="stream_ui_attachment_gallery_share">"Condividi immagine"</string>
   <string name="stream_ui_attachment_gallery_show_in_chat">"Mostra nella chat"</string>
 </resources>

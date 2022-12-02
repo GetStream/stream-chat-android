@@ -20,11 +20,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.FirebaseLogger
 import io.getstream.chat.ui.sample.data.user.SampleUser
-import io.getstream.logging.StreamLog
-import io.getstream.chat.android.client.models.User as ChatUser
+import io.getstream.log.StreamLog
+import io.getstream.chat.android.models.User as ChatUser
 
 class CustomLoginViewModel : ViewModel() {
     private val logger = StreamLog.getLogger("Chat:CustomLoginViewModel")
@@ -59,23 +60,26 @@ class CustomLoginViewModel : ViewModel() {
 
         ChatClient.instance().connectUser(chatUser, loginCredentials.userToken)
             .enqueue { result ->
-                if (result.isSuccess) {
-                    _state.postValue(State.RedirectToChannels)
-                    logger.d { "User set successfully" }
-                    FirebaseLogger.userId = result.data().user.id
+                when (result) {
+                    is Result.Success -> {
+                        _state.postValue(State.RedirectToChannels)
+                        logger.d { "User set successfully" }
+                        FirebaseLogger.userId = result.value.user.id
 
-                    App.instance.userRepository.setUser(
-                        SampleUser(
-                            apiKey = loginCredentials.apiKey,
-                            id = loginCredentials.userId,
-                            name = loginCredentials.userName,
-                            token = loginCredentials.userToken,
-                            image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
+                        App.instance.userRepository.setUser(
+                            SampleUser(
+                                apiKey = loginCredentials.apiKey,
+                                id = loginCredentials.userId,
+                                name = loginCredentials.userName,
+                                token = loginCredentials.userToken,
+                                image = "https://getstream.io/random_png?id=${loginCredentials.userId}&name=${loginCredentials.userName}&size=200"
+                            )
                         )
-                    )
-                } else {
-                    _state.postValue(State.Error(result.error().message))
-                    logger.d { "Failed to set user ${result.error()}" }
+                    }
+                    is Result.Failure -> {
+                        _state.postValue(State.Error(result.value.message))
+                        logger.d { "Failed to set user ${result.value}" }
+                    }
                 }
             }
     }

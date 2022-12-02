@@ -16,7 +16,7 @@
 
 package io.getstream.chat.ui.sample.feature.chat.info
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import java.io.Serializable
 import java.util.Date
 

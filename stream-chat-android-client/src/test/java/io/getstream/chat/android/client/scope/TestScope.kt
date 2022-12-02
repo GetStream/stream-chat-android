@@ -17,13 +17,12 @@
 package io.getstream.chat.android.client.scope
 
 import io.getstream.chat.android.client.call.SharedCalls
-import io.getstream.chat.android.client.models.UserId
 import io.getstream.chat.android.client.scope.user.UserIdentifier
 import io.getstream.chat.android.client.scope.user.UserJob
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.UserId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.job
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope

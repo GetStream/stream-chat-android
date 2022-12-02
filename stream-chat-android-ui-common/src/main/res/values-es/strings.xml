@@ -15,13 +15,6 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="stream_ui_message_input_capture_media">"Tomar foto o vídeo"</string>
-  <string name="stream_ui_message_input_permission_camera_message">"Los permisos de Cámar y acceso a almacenamiento son necesarios para tomar fotos y vídeos"</string>
-  <string name="stream_ui_message_input_permission_camera_title">"Permiso de Cámara y acceso a almacenamiento"</string>
-  <string name="stream_ui_message_input_permission_setting_message">"Habilitar los permisos en los ajustes de la aplicación"</string>
-  <string name="stream_ui_message_input_permission_storage_message">"El permiso de acceso al almacenamiento es necesario para poderenviar y guardar fotos, vídeos, música y otros ficheros"</string>
-  <string name="stream_ui_message_input_permission_storage_title">"Permiso de acceso a almacenamiento"</string>
-  <string name="stream_ui_message_input_permissions_setting_button">"Ajustes"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Error. El fichero no se puede mostrar"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Algo salió mal. No se pudo abrir el archivo adjunto: %1$s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"No se pudo cargar debido a que es una URL invalida."</string>

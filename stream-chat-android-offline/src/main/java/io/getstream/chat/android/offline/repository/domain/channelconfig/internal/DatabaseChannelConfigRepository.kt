@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.repository.domain.channelconfig.internal
 
-import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
+import io.getstream.chat.android.models.ChannelConfig
 import java.util.Collections
 
 /**

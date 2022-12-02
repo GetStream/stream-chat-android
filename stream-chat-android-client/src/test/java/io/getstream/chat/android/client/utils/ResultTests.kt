@@ -29,7 +29,7 @@ internal class ResultTests {
         val action = mock<Action>()
         val suspendAction = mock<SuspendAction>()
 
-        Result.success("123")
+        Result.Success("123")
             .onSuccess { string -> action.doAction(string) }
             .onSuccessSuspend { string -> suspendAction.doAction(string) }
 

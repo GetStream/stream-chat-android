@@ -34,12 +34,14 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -57,11 +59,16 @@ import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 public fun MessageText(
     message: Message,
     modifier: Modifier = Modifier,
-    onLongItemClick: (Message) -> Unit
+    onLongItemClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
 
-    val styledText = buildAnnotatedMessageText(message)
+    val textColor = if (message.isMine(ChatClient.instance())) {
+        ChatTheme.colors.ownMessageText
+    } else {
+        ChatTheme.colors.otherMessageText
+    }
+    val styledText = buildAnnotatedMessageText(message.text, textColor)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808

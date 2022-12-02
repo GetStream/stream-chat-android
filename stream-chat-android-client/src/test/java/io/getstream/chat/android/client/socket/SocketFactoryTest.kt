@@ -18,10 +18,10 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.Mother.randomUser
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.randomString
 import okhttp3.OkHttpClient
 import okhttp3.WebSocketListener
@@ -31,7 +31,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.only
 import org.mockito.kotlin.verify
@@ -42,25 +41,10 @@ import java.util.Locale
 
 internal class SocketFactoryTest {
 
-    private val eventsParser: EventsParser = mock()
     private val httpClient: OkHttpClient = mock<OkHttpClient>().apply {
         whenever(this.newWebSocket(any(), any())) doReturn mock()
     }
     private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token), httpClient)
-
-    /** [arguments] */
-    @ParameterizedTest
-    @MethodSource("arguments")
-    internal fun test(connectionConf: SocketFactory.ConnectionConf, expectedUrl: String) {
-        socketFactory.createSocket(eventsParser, connectionConf)
-
-        verify(httpClient, only()).newWebSocket(
-            org.mockito.kotlin.check {
-                it.url.toString() `should be equal to` expectedUrl
-            },
-            eq(eventsParser)
-        )
-    }
 
     /** [arguments] */
     @ParameterizedTest

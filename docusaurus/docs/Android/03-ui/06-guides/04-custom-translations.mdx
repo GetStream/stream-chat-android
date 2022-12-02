@@ -40,10 +40,12 @@ These strings are also grouped in resource files prefixed with `strings_`. Each 
 * [strings_channel_list.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_channel_list.xml)
 * [strings_channel_list_header.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_channel_list_header.xml)
 * [strings_mention_list.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_mention_list.xml)
-* [strings_message_input.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_message_input.xml)
+* [strings_message_composer.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_message_composer.xml)
 * [strings_message_list.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_message_list.xml)
 * [strings_message_list_header.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_message_list_header.xml)
 * [strings_search.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_search.xml)
+* [strings_mention_list.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_mention_list.xml)
+* [strings_pinned_message_list.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_pinned_message_list.xml)
 * [strings_common.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_common.xml)
 
 ### Adding a new language
@@ -85,7 +87,7 @@ To change the strings used by default, place the string resources you want to ov
 
 ### Removing existing languages
 
-The Android UI Components include resources for all of the languages mentioned above. If your app doesn't support all those languages, you can can exclude some of them by explicitly defining a list of supported languages inside your `build.gradle` file:
+The Android UI Components include resources for all of the languages mentioned above. If your app doesn't support all those languages, you can exclude some of them by explicitly defining a list of supported languages inside your `build.gradle` file:
 
 ```groovy
 defaultConfig {
@@ -97,7 +99,7 @@ With the configuration here, your app will include only _English_ and _Spanish_ 
 
 ### Translating User Messages
 
-Stream Chat provide the ability to run users' messages through automatic translation.
+Stream Chat provides the ability to run users' messages through automatic translation.
 While machine translation is never perfect it can enable two users to communicate with
 each other without speaking the same language. For more information, see the full guide
 to [adding automatic translation](https://getstream.io/chat/docs/android/translation/).

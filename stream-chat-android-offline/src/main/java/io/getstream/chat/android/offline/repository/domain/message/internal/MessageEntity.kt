@@ -21,8 +21,8 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import io.getstream.chat.android.client.models.MessageSyncType
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.MessageSyncType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity

@@ -1,0 +1,208 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting Started
+
+Let's see how you can get started with the Android Chat SDK after adding the required [dependencies](./03-dependencies.mdx). This page shows you how to initialize the SDK in your app.
+
+:::note
+If you're looking for a complete, step-by-step guide that includes setting up an Android project from scratch, try our [Android In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/) or the [Jetpack Compose Android In-App Messaging Tutorial](https://getstream.io/chat/compose/tutorial/) in case you want to use our Compose powered Chat SDK.
+:::
+
+### Setting up the ChatClient
+
+Your first step is initializing the `ChatClient`, which is the main entry point for all operations in the library. `ChatClient` is a singleton: you'll create it once and re-use it across your application.
+
+The best practice is to initialize `ChatClient` in the `Application` class:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+class App : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        val chatClient = ChatClient.Builder("apiKey", applicationContext).build()
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class App extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        ChatClient chatClient = new ChatClient.Builder("apiKey", getApplicationContext()).build();
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+The _Builder_ for `ChatClient` exposes configuration options for features such as [Logging](./06-logging.mdx).
+
+:::note
+To generate an API key, you can sign up for a [free 30-day trial](https://getstream.io/chat/trial/). You can then access your API key in the [Dashboard](https://getstream.io/dashboard).
+:::
+
+If you create the `ChatClient` instance following the pattern shown in the previous example, you will be able to access that instance from any part of your application using the `instance()` method:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val chatClient = ChatClient.instance() // Returns the singleton instance
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ChatClient chatClient = ChatClient.instance();  // Returns the singleton instance
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+### Adding the Offline Plugin
+
+If you want to have offline support or **use our UI Components**, you'll need to initialize the `OfflinePlugin` class and add it to the `ChatClient.Builder`. You can skip this step if you're only using the low-level client.
+
+The initialization should be done using `StreamOfflinePluginFactory`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val offlinePluginFactory = StreamOfflinePluginFactory(
+    config = Config(
+        // Enables background sync which syncs user actions performed while offline.
+        backgroundSyncEnabled = true,
+        // Enables the ability to receive information about user activity such as last active date and if they are online right now.
+        userPresence = true,
+        // Enables using the database as an internal caching mechanism.
+        persistenceEnabled = true,
+        // An enumeration of various network types used as a constraint inside upload attachments worker.
+        uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+    ),
+    appContext = context,
+)
+
+ChatClient.Builder(apiKey, context).withPlugin(offlinePluginFactory).build()
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Enables background sync which syncs user actions performed while offline.
+boolean backgroundSyncEnabled = true;
+// Enables the ability to receive information about user activity such as last active date and if they are online right now.
+boolean userPresence = true;
+// Enables using the database as an internal caching mechanism.
+boolean persistenceEnabled = true;
+// An enumeration of various network types used as a constraint inside upload attachments worker.
+UploadAttachmentsNetworkType uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING;
+// Whether the SDK will use a new sequential event handling mechanism.
+boolean useSequentialEventHandler = false;
+
+StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(new Config(backgroundSyncEnabled, userPresence, persistenceEnabled, uploadAttachmentsNetworkType, useSequentialEventHandler), context);
+new ChatClient.Builder("apiKey", context).withPlugin(offlinePluginFactory).build();
+```
+</TabItem>
+</Tabs>
+
+For more information on working with `OfflinePlugin`, see [Offline Support](../02-client/06-guides/06-offline-support.mdx)
+
+### Connecting a User
+
+The next step is to connect the user. This requires a valid Stream Chat token. As you must use your `API_SECRET` to create this token, it is unsafe to generate this token outside of a secure server.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val user = User(
+    id = "bender",
+    name = "Bender",
+    image = "https://bit.ly/321RmWb",
+)
+
+// Connect the user only if they aren't already connected
+if (ChatClient.instance().getCurrentUser() == null) {
+
+    ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
+        .enqueue { result ->
+            when (result) {
+                is Result.Success -> {
+                    // Handle success
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
+            }
+        }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+User user = new User();
+user.setId("bender");
+user.setName("Bender");
+user.setImage("https://bit.ly/321RmWb");
+
+// Connect the user only if they aren't already connected
+if (ChatClient.instance().getCurrentUser() == null) {
+
+    ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
+            .enqueue((result) -> {
+                if (result.isSuccess()) {
+                    // Handle success
+                } else {
+                    // Handle error
+                }
+            });
+}
+```
+</TabItem>
+</Tabs>
+
+:::note
+To learn more about how to create a token and different user types, see [Tokens & Authentication](https://getstream.io/chat/docs/android/tokens_and_authentication/?language=kotlin).
+:::
+
+If the `connectUser()` call was successful, you are now ready to use the SDK! 🎉
+
+:::warning
+You shouldn't call `connectUser` if the user is already set! You can use `ChatClient.instance().getCurrentUser()` to verify if the user is already connected.
+:::
+
+The methods of the `ChatClient` class allow you to create channels, send messages, add reactions, and perform many more low-level operations. You can also use the SDK's pre-built UI Components that will perform data fetching and sending for you, as described below.
+
+:::note
+For more information on handling complex scenarios, check out our [Handling User Connection](../02-client/06-guides/04-handling-user-connection.mdx) guide.
+:::
+
+### Adding UI Components
+
+There are two UI Component implementations available: one built on regular, XML based Android Views, and another built from the ground up in [Jetpack Compose](https://developer.android.com/jetpack/compose).
+
+Take a look at the Overview pages of the implementations to get started with them:
+- [XML based UI Components](../03-ui/01-overview.mdx)
+- [Jetpack Compose UI Components](../04-compose/01-overview.mdx)

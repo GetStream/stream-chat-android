@@ -69,6 +69,7 @@ import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
@@ -103,20 +104,21 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 
 private val streamDateFormatter = StreamDateFormatter()
 
+@Suppress("LargeClass")
 internal object EventArguments {
     private val date = Date(1593411268000)
     private const val dateString = "2020-06-29T06:14:28.000Z"
@@ -641,6 +643,51 @@ internal object EventArguments {
         user = user
     )
 
+    private val events: List<ChatEvent> = listOf(
+        channelTruncatedEvent,
+        channelTruncatedServerSideEvent,
+        channelUpdatedEvent,
+        channelUpdatedByUserEvent,
+        channelVisibleEvent,
+        memberAddedEvent,
+        memberRemovedEvent,
+        memberUpdatedEvent,
+        messageDeletedEvent,
+        messageDeletedServerSideEvent,
+        messageReadEvent,
+        messageUpdatedEvent,
+        notificationAddedToChannelEvent,
+        notificationChannelDeletedEvent,
+        notificationChannelTruncatedEvent,
+        notificationInviteAcceptedEvent,
+        notificationInviteRejectedEvent,
+        notificationInvitedEvent,
+        notificationMarkReadEvent,
+        notificationMessageNewEvent,
+        notificationRemovedFromChannelEvent,
+        reactionDeletedEvent,
+        reactionNewEvent,
+        reactionUpdateEvent,
+        typingStartEvent,
+        typingStopEvent,
+        channelUserBannedEvent,
+        globalUserBannedEvent,
+        userDeletedEvent,
+        userPresenceChangedEvent,
+        userStartWatchingEvent,
+        userStopWatchingEvent,
+        channelUserUnbannedEvent,
+        globalUserUnbannedEvent,
+        userUpdatedEvent,
+        channelDeletedEvent,
+        channelHiddenEvent,
+        notificationChannelMutesUpdatedEvent,
+        notificationMutesUpdatedEvent,
+        newMessageEvent,
+        newMessageWithoutUnreadCountsEvent,
+        markAllReadEvent,
+    )
+
     private fun eventArgumentsList() = listOf(
         Arguments.of(createChannelTruncatedEventStringJson(), channelTruncatedEvent),
         Arguments.of(createChannelTruncatedServerSideEventStringJson(), channelTruncatedServerSideEvent),
@@ -690,6 +737,8 @@ internal object EventArguments {
         Arguments.of(createUnknownEventStringJson("some.unknown.type"), otherUnknownEvent),
         Arguments.of(createMarkAllReadEventStringJson(), markAllReadEvent),
     )
+
+    fun randomEvent(): ChatEvent = events.random()
 
     @JvmStatic
     fun eventAdapterArgumentsList() = eventArgumentsList()

@@ -21,50 +21,7 @@ Fragments and Activities representing self-contained screens are easy to use. Th
 
 ## Usage
 
-To use the channel list screen, you just need to add `ChannelListFragment` to your Activity or Fragment:
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
-
-```kotlin
-class MyChannelListActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.stream_ui_fragment_container)
-
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, ChannelListFragment.newInstance())
-                .commit()
-        }
-    }
-}
-```
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```java
-public final class MyChannelListActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.stream_ui_fragment_container);
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, ChannelListFragment.newInstance())
-                    .commit();
-        }
-    }
-}
-```
-</TabItem>
-</Tabs>
-
-Alternatively, you can simply start `ChannelListActivity` from the SDK to achieve similar result with a single line of code:
+To use the channel list screen, simply start `ChannelListActivity` from the SDK:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -82,9 +39,63 @@ context.startActivity(ChannelListActivity.createIntent(context));
 </TabItem>
 </Tabs>
 
-This small snippet will produce a fully working solution, as shown in the image below.
+This single line of code will produce a fully working solution, as shown in the image below.
 
-![The Channel List Screen Component](../../assets/channel_list_screen.png)
+|![The Channel List Screen Component](../../assets/channel_list_screen.png)|
+|---|
+
+Alternatively, you can achieve the same result by adding `ChannelListFragment` from the SDK to your Fragment or Activity:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+```
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+class MyChannelListActivity : AppCompatActivity(R.layout.fragment_container) {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, ChannelListFragment.newInstance())
+                .commit()
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+public final class MyChannelListActivity extends AppCompatActivity {
+
+    public MyChannelListActivity() {
+        super(R.layout.fragment_container);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, ChannelListFragment.newInstance())
+                    .commit();
+        }
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+Next, let's see how to handle actions on the screen.
 
 ## Handling Actions
 
@@ -94,7 +105,7 @@ To handle actions supported by `ChannelListFragment` you have to implement corre
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-class MyChannelListActivity : AppCompatActivity(),
+class MyChannelListActivity : AppCompatActivity(R.layout.fragment_container),
     ChannelListFragment.HeaderActionButtonClickListener,
     ChannelListFragment.HeaderUserAvatarClickListener,
     ChannelListFragment.ChannelListItemClickListener,
@@ -133,6 +144,10 @@ public final class MyChannelListActivity extends AppCompatActivity implements
         ChannelListFragment.ChannelListItemClickListener,
         ChannelListFragment.SearchResultClickListener {
 
+    public MyChannelListActivity() {
+        super(R.layout.fragment_container);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,7 +178,7 @@ public final class MyChannelListActivity extends AppCompatActivity implements
 </TabItem>
 </Tabs>
 
-These are main click listeners you can use with the `ChannelListFragment`:
+These are the main click listeners you can use with the `ChannelListFragment`:
 
 * `HeaderActionButtonClickListener`: Click listener for the right button in the header. Not implemented by default.
 * `HeaderUserAvatarClickListener`: Click listener for the left button in the header represented by the avatar of the current user. Not implemented by default.
@@ -172,9 +187,9 @@ These are main click listeners you can use with the `ChannelListFragment`:
 
 ## Customization
 
-Channel list screen component offers limited customization. The `ChannelListFragment` exposes a builder with the following methods: 
+The channel list screen component offers limited customization. The `ChannelListFragment` exposes a builder with the following methods: 
 
-* `setFragment`: Sets custom channel list Fragment. The Fragment must be a subclass of `ChannelListFragment`.
+* `setFragment`: Sets a custom channel list Fragment. The Fragment must be a subclass of `ChannelListFragment`.
 * `customTheme`: Custom theme for the screen.
 * `showHeader`: Whether the header is shown or hidden.
 * `showSearch`: Whether the search input is shown or hidden.
@@ -190,7 +205,9 @@ class CustomChannelListFragment : ChannelListFragment() {
 
     override fun setupChannelListHeader(channelListHeaderView: ChannelListHeaderView) {
         super.setupChannelListHeader(channelListHeaderView)
-        // Customize channel list header view. For example, set a custom avatar click listener:
+        // Customize channel list header view
+
+        // For example, set a custom listener for the avatar
         channelListHeaderView.setOnUserAvatarClickListener {
             // Handle avatar click
         }
@@ -245,7 +262,9 @@ public final class CustomChannelListFragment extends ChannelListFragment {
     @Override
     protected void setupChannelListHeader(@NonNull ChannelListHeaderView channelListHeaderView) {
         super.setupChannelListHeader(channelListHeaderView);
-        // Customize channel list header view. For example, set a custom avatar click listener:
+        // Customize channel list header view
+
+        // For example, set a custom listener for the avatar
         channelListHeaderView.setOnUserAvatarClickListener(() -> {
             // Handle avatar click
         });
@@ -299,6 +318,29 @@ public final class CustomChannelListActivity extends ChannelListActivity {
         });
     }
 }
+```
+</TabItem>
+</Tabs>
+
+Then you need to add `CustomChannelListActivity` to your `AndroidManifest.xml`, create an Intent for it using the `ChannelListActivity.createIntent()` method, and finally start the Activity:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+context.startActivity(
+    ChannelListActivity.createIntent(
+        context = context,
+        activityClass = CustomChannelListActivity::class.java
+    )
+)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+context.startActivity(ChannelListActivity.createIntent(context, CustomChannelListActivity.class));
 ```
 </TabItem>
 </Tabs>

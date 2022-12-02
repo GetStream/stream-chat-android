@@ -3,9 +3,8 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:UserRepository.kt$UserRepository$apiKey != null &amp;&amp; id != null &amp;&amp; name != null &amp;&amp; token != null &amp;&amp; image != null</ID>
-    <ID>ComplexMethod:ChatFragment.kt$ChatFragment$private fun initMessagesViewModel()</ID>
-    <ID>ForbiddenComment:ChatInfoViewModel.kt$ChatInfoViewModel$// TODO: Handle error</ID>
-    <ID>LongMethod:ChatFragment.kt$ChatFragment$private fun initMessagesViewModel()</ID>
+    <ID>ComplexMethod:ChatFragment.kt$ChatFragment$private fun initMessageListViewModel()</ID>
+    <ID>LongMethod:ChatFragment.kt$ChatFragment$private fun initMessageListViewModel()</ID>
     <ID>LongMethod:ComponentBrowserAvatarViewFragment.kt$ComponentBrowserAvatarViewFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:OnlyMediaAttachmentsMessagesComponentBrowserFragment.kt$OnlyMediaAttachmentsMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
@@ -13,7 +12,7 @@
     <ID>LongMethod:PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithFileAttachmentsMessagesComponentBrowserFragment$@OptIn(InternalStreamChatApi::class) override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
     <ID>LongMethod:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
     <ID>LongMethod:RepliedMessagesComponentBrowserFragment.kt$RepliedMessagesComponentBrowserFragment$@OptIn(InternalStreamChatApi::class) override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
-    <ID>LongParameterList:AddChannelViewController.kt$AddChannelViewController$( private val headerView: AddChannelHeader, private val usersTitle: TextView, private val usersRecyclerView: RecyclerView, private val createGroupContainer: ViewGroup, private val messageListView: MessageListView, private val messageInputView: MessageInputView, private val emptyStateView: View, private val loadingView: View, private val isAddGroupChannel: Boolean, )</ID>
+    <ID>LongParameterList:AddChannelViewController.kt$AddChannelViewController$( private val headerView: AddChannelHeader, private val usersTitle: TextView, private val usersRecyclerView: RecyclerView, private val createGroupContainer: ViewGroup, private val messageListView: MessageListView, private val messageComposerView: MessageComposerView, private val emptyStateView: View, private val loadingView: View, private val isAddGroupChannel: Boolean, )</ID>
     <ID>LongParameterList:ConfirmationDialogFragment.kt$ConfirmationDialogFragment.Companion$( @DrawableRes iconResId: Int, @ColorRes iconTintResId: Int, title: String, description: String, confirmText: String, cancelText: String, hasConfirmButton: Boolean = true, )</ID>
     <ID>MagicNumber:ChatFragment.kt$ChatFragment$4</ID>
     <ID>MagicNumber:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$10</ID>
@@ -26,7 +25,6 @@
     <ID>MagicNumber:DateDividerComponentBrowserFragment.kt$DateDividerComponentBrowserFragment$6</ID>
     <ID>MagicNumber:DateDividerComponentBrowserFragment.kt$DateDividerComponentBrowserFragment$7</ID>
     <ID>MaxLineLength:AddChannelFragment.kt$AddChannelFragment$is AddChannelViewModel.ErrorEvent.CreateChannelError -> R.string.add_channel_error_create_channel</ID>
-    <ID>MaxLineLength:AddChannelViewModel.kt$AddChannelViewModel$private</ID>
     <ID>MaxLineLength:AddGroupChannelMembersAdapter.kt$AddGroupChannelMembersAdapter.MemberViewHolder$inner</ID>
     <ID>MaxLineLength:AddGroupChannelSelectNameFragment.kt$AddGroupChannelSelectNameFragment$is AddGroupChannelSelectNameViewModel.ErrorEvent.CreateChannelError -> R.string.add_group_channel_error_create_channel</ID>
     <ID>MaxLineLength:ChatInfoFragment.kt$ChatInfoFragment$is ChatInfoItem.Option.Stateful.MuteDistinctChannel -> ChatInfoViewModel.Action.OptionMuteDistinctChannelClicked(isChecked)</ID>

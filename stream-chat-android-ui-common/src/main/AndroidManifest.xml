@@ -42,13 +42,13 @@
 
     <application>
         <activity
-            android:name="com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity"
+            android:name=".feature.documents.AttachmentDocumentActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             />
 
         <provider
-            android:name="com.getstream.sdk.chat.StreamFileProvider"
+            android:name=".StreamFileProvider"
             android:authorities="${applicationId}.streamfileprovider"
             android:exported="false"
             android:grantUriPermissions="true"

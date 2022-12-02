@@ -42,9 +42,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.datepicker.MaterialDatePicker
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -57,6 +54,9 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.dateAttachmentFactory
 import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.quotedDateAttachmentFactory
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
 import java.text.DateFormat
 import java.util.Date
 
@@ -97,7 +97,7 @@ class MessagesActivity : AppCompatActivity() {
     @Composable
     fun CustomMessagesScreen(
         channelId: String,
-        onBackPressed: () -> Unit = {}
+        onBackPressed: () -> Unit = {},
     ) {
         val factory = MessagesViewModelFactory(
             context = LocalContext.current,

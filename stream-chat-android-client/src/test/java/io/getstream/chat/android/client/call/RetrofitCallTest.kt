@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
-import org.amshove.kluent.`should be true`
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
@@ -47,7 +47,7 @@ internal class RetrofitCallTest {
     }
 
     val resultValue = Mother.randomString()
-    val validResult: Result<String> = Result.success(resultValue)
+    val validResult: Result<String> = Result.Success(resultValue)
     val parser: ChatParser = mock()
 
     @Test
@@ -69,8 +69,8 @@ internal class RetrofitCallTest {
 
         val result = call.execute()
 
-        result.isError.`should be true`()
-        result.error() `should be instance of` ChatError::class
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value `should be instance of` ChatError::class
         blockedRetrofit2Call.isStarted() `should be equal to` true
         blockedRetrofit2Call.isCompleted() `should be equal to` true
     }
@@ -85,8 +85,8 @@ internal class RetrofitCallTest {
         blockedRetrofit2Call.unblock()
         val result = deferedResult.await()
 
-        result.isError.`should be true`()
-        result.error() `should be instance of` ChatError::class
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value `should be instance of` ChatError::class
         blockedRetrofit2Call.isStarted() `should be equal to` true
         blockedRetrofit2Call.isCompleted() `should be equal to` false
         blockedRetrofit2Call.isCanceled() `should be equal to` true

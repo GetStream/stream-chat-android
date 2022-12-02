@@ -46,7 +46,7 @@ internal class ThreadQueryListenerDatabaseTest {
         val message = randomMessage()
         val messageList = listOf(message)
 
-        threadQueryListenerDatabase.onGetRepliesResult(Result.success(messageList), randomString(), randomInt())
+        threadQueryListenerDatabase.onGetRepliesResult(Result.Success(messageList), randomString(), randomInt())
 
         verify(userRepository).insertUsers(any())
         verify(messageRepository).insertMessages(messageList, false)
@@ -57,7 +57,7 @@ internal class ThreadQueryListenerDatabaseTest {
         val message = randomMessage()
         val messageList = listOf(message)
 
-        threadQueryListenerDatabase.onGetRepliesResult(Result.error(ChatError()), randomString(), randomInt())
+        threadQueryListenerDatabase.onGetRepliesResult(Result.Failure(ChatError.GenericError("")), randomString(), randomInt())
 
         verify(userRepository, never()).insertUsers(any())
         verify(messageRepository, never()).insertMessages(messageList, false)

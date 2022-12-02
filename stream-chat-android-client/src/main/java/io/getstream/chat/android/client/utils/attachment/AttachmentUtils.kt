@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.utils.attachment
 
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 
 /**
  * @return If the attachment type is image.

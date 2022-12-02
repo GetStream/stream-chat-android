@@ -50,7 +50,7 @@
 
     </FrameLayout>
 
-    <io.getstream.chat.android.ui.gallery.overview.MediaAttachmentGridView
+    <io.getstream.chat.android.ui.feature.gallery.overview.MediaAttachmentGridView
         android:id="@+id/mediaAttachmentGridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

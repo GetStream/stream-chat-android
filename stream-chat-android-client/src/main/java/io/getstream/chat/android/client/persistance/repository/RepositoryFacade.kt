@@ -18,17 +18,17 @@ package io.getstream.chat.android.client.persistance.repository
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelConfig
-import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

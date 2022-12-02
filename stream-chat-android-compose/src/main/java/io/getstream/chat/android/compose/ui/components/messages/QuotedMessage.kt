@@ -28,20 +28,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.utils.extensions.isMine
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.utils.extensions.initials
+import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
  * Wraps the quoted message into a component that shows only the sender avatar, text and single attachment preview.
  *
- * @param message Message to show.
+ * @param message The quoted message to show.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param modifier Modifier for styling.
+ * @param replyMessage The message that contains the reply.
  * @param leadingContent The content shown at the start of the quoted message. By default we provide
  * [DefaultQuotedMessageLeadingContent] which shows the sender avatar in case the sender is not the current user.
  * @param centerContent The content shown at the center of the quoted message. By default we provide
@@ -56,8 +57,14 @@ public fun QuotedMessage(
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
+    replyMessage: Message? = null,
     leadingContent: @Composable (Message) -> Unit = { DefaultQuotedMessageLeadingContent(message = it) },
-    centerContent: @Composable RowScope.(Message) -> Unit = { DefaultQuotedMessageCenterContent(it) },
+    centerContent: @Composable RowScope.(Message) -> Unit = {
+        DefaultQuotedMessageCenterContent(
+            message = it,
+            replyMessage = replyMessage,
+        )
+    },
     trailingContent: @Composable (Message) -> Unit = { DefaultQuotedMessageTrailingContent(message = it) },
 ) {
     Row(
@@ -127,13 +134,16 @@ internal fun DefaultQuotedMessageTrailingContent(message: Message) {
  * Represents the default content shown in the center of the quoted message wrapped inside a message bubble.
  *
  * @param message The quoted message.
+ * @param replyMessage The message that contains the reply.
  */
 @Composable
 public fun RowScope.DefaultQuotedMessageCenterContent(
     message: Message,
+    replyMessage: Message? = null,
 ) {
     QuotedMessageContent(
         message = message,
+        replyMessage = replyMessage,
         modifier = Modifier.weight(1f, fill = false)
     )
 }

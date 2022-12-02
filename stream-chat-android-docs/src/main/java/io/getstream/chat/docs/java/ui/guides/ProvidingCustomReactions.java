@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.getstream.chat.android.ui.ChatUI;
-import io.getstream.chat.android.ui.SupportedReactions;
+import io.getstream.chat.android.ui.helper.SupportedReactions;
 import io.getstream.chat.docs.R;
 
 /**

@@ -17,7 +17,7 @@
 package io.getstream.chat.android.compose.ui.attachments.preview.handler
 
 import android.content.Context
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 
 /**
  * Represents a handler that can show a preview for an attachment of certain type.

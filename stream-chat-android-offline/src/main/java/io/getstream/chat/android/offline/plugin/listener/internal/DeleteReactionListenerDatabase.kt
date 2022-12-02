@@ -19,15 +19,15 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
 import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import java.util.Date
 
 internal class DeleteReactionListenerDatabase(
@@ -102,9 +102,9 @@ internal class DeleteReactionListenerDatabase(
      */
     override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> {
         return if (currentUser != null) {
-            Result.success(Unit)
+            Result.Success(Unit)
         } else {
-            Result.error(ChatError(message = "Current user is null!"))
+            Result.Failure(ChatError.GenericError(message = "Current user is null!"))
         }
     }
 }

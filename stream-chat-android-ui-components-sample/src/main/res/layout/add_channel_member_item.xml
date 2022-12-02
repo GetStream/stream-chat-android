@@ -24,7 +24,7 @@
     android:orientation="horizontal"
     >
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         android:layout_width="24dp"
         android:layout_height="24dp"

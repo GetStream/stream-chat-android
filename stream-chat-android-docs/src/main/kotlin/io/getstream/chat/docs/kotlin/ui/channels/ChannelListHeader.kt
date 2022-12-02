@@ -1,17 +1,15 @@
-// ktlint-disable filename
-
 package io.getstream.chat.docs.kotlin.ui.channels
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
-import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
-import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
+import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.channels.bindView
 
 /**
  * [Channel List Header](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/)
  */
-private class ChannelListHeaderViewSnippets : Fragment() {
+private class ChannelListHeader : Fragment() {
 
     private lateinit var channelListHeaderView: ChannelListHeaderView
 
@@ -19,8 +17,9 @@ private class ChannelListHeaderViewSnippets : Fragment() {
      * [Usage](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-header/#usage)
      */
     fun usage() {
-        // Get ViewModel
+        // Instantiate the ViewModel
         val viewModel: ChannelListHeaderViewModel by viewModels()
+
         // Bind it with ChannelListHeaderView
         viewModel.bindView(channelListHeaderView, viewLifecycleOwner)
     }

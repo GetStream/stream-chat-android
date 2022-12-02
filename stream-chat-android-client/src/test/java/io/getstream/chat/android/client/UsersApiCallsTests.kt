@@ -17,13 +17,13 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Flag
-import io.getstream.chat.android.client.models.Mute
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach

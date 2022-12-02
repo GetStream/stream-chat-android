@@ -67,7 +67,7 @@ import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
 
 internal class EventAdapterFactory : JsonAdapter.Factory {

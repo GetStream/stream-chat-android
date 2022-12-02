@@ -1,0 +1,255 @@
+/*
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.ui.common.utils
+
+import android.content.ComponentName
+import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Environment
+import androidx.core.content.FileProvider
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.StreamFileProvider
+import java.io.File
+import java.io.IOException
+
+private const val DEFAULT_BITMAP_QUALITY = 90
+
+@InternalStreamChatApi
+public object StreamFileUtil {
+
+    private fun getFileProviderAuthority(context: Context): String {
+        val compName = ComponentName(context, StreamFileProvider::class.java.name)
+        val providerInfo = context.packageManager.getProviderInfo(compName, 0)
+        return providerInfo.authority
+    }
+
+    public fun getUriForFile(context: Context, file: File): Uri =
+        FileProvider.getUriForFile(context, getFileProviderAuthority(context), file)
+
+    public fun writeImageToSharableFile(context: Context, bitmap: Bitmap): Uri? {
+        return try {
+            val file = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
+                "share_image_${System.currentTimeMillis()}.png"
+            )
+            file.outputStream().use { out ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
+                out.flush()
+            }
+            getUriForFile(context, file)
+        } catch (_: IOException) {
+            null
+        }
+    }
+
+    /**
+     * Creates a Stream cache directory if one doesn't exist already.
+     *
+     * @param context The [Context] necessary to perform
+     * file operations.
+     *
+     * @return Returns a [Result]. If the action was successful
+     * [Result.Success] will contain a [File] pointing to the cache directory,
+     * otherwise [Result.Failure] will contain a [ChatError].
+     */
+    @Suppress("TooGenericExceptionCaught")
+    private fun getOrCreateStreamCacheDir(
+        context: Context,
+    ): Result<File> {
+        return try {
+            val file = File(context.cacheDir, STREAM_CACHE_DIR_NAME).also { streamCacheDir ->
+                streamCacheDir.mkdirs()
+            }
+
+            Result.Success(file)
+        } catch (e: Exception) {
+            Result.Failure(
+                ChatError.ThrowableError(
+                    message = "Could not get or create the Stream cache directory",
+                    cause = e,
+                ),
+            )
+        }
+    }
+
+    /**
+     * Deletes all the content contained within the
+     * Stream cache directory.
+     *
+     * @param context The [Context] necessary to perform
+     * file operations.
+     *
+     * @return Returns a [Result]. If the action was successful
+     * [Result.Success] will contain [Unit], otherwise [Result.Failure]
+     * will contain a [ChatError].
+     */
+    @Suppress("TooGenericExceptionCaught")
+    public fun clearStreamCache(
+        context: Context,
+    ): Result<Unit> {
+        return try {
+            val directory = File(context.cacheDir, STREAM_CACHE_DIR_NAME)
+            directory.deleteRecursively()
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Failure(
+                ChatError.ThrowableError(
+                    message = "Could clear the Stream cache directory",
+                    cause = e,
+                ),
+            )
+        }
+    }
+
+    /**
+     * Fetches the given attachment from cache if it has been previously cached.
+     * Returns an error otherwise.
+     *
+     * @param context The Android [Context] used for path resolving and [Uri] fetching.
+     * @param attachment the attachment to be downloaded.
+     *
+     * @return A [Uri] to the file is returned in the form of [Result.Success]
+     * if the file was successfully fetched from the cache. Returns a [ChatError]
+     * accessible via [Result.Failure] otherwise.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    public fun getFileFromCache(
+        context: Context,
+        attachment: Attachment,
+    ): Result<Uri> {
+        return try {
+            when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
+                is Result.Failure -> getOrCreateCacheDirResult
+                is Result.Success -> {
+                    val streamCacheDir = getOrCreateCacheDirResult.value
+
+                    val attachmentHashCode = (attachment.url ?: attachment.assetUrl)?.hashCode()
+                    val fileName = CACHED_FILE_PREFIX + attachmentHashCode.toString() + attachment.name
+
+                    val file = File(streamCacheDir, fileName)
+
+                    // First we check if the file exists.
+                    // We then check the hash code is valid and check file size
+                    // equality to make sure we've completed the download successfully.
+                    val isFileCached = file.exists() &&
+                        attachmentHashCode != null &&
+                        file.length() == attachment.fileSize.toLong()
+
+                    if (isFileCached) {
+                        Result.Success(getUriForFile(context, file))
+                    } else {
+                        Result.Failure(ChatError.GenericError(message = "No such file in cache."))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Result.Failure(
+                ChatError.ThrowableError(
+                    message = "Cannot determine if the file has been cached.",
+                    cause = e,
+                ),
+            )
+        }
+    }
+
+    /**
+     * Hashes the links of given attachments and then tries to create a new file
+     * under that hash. If the file already exists checks that the full file
+     * has been written and shares it if it has, in other cases downloads the file
+     * and writes it.
+     *
+     * @param context The Android [Context] used for path resolving and [Uri] fetching.
+     * @param attachment the attachment to be downloaded.
+     *
+     * @return Returns a [Result]. If the action was successful
+     * [Result.Success] will contain a [Uri] pointing to the file, otherwise [Result.Failure]
+     * will contain a [ChatError].
+     */
+    @Suppress("ReturnCount")
+    public suspend fun writeFileToShareableFile(
+        context: Context,
+        attachment: Attachment,
+    ): Result<Uri> {
+        val runCatching = kotlin.runCatching {
+            when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
+                is Result.Failure -> getOrCreateCacheDirResult
+                is Result.Success -> {
+                    val streamCacheDir = getOrCreateCacheDirResult.value
+
+                    val attachmentHashCode = (attachment.url ?: attachment.assetUrl)?.hashCode()
+                    val fileName = CACHED_FILE_PREFIX + attachmentHashCode.toString() + attachment.name
+
+                    val file = File(streamCacheDir, fileName)
+
+                    if (file.exists() &&
+                        attachmentHashCode != null &&
+                        file.length() == attachment.fileSize.toLong()
+                    ) {
+                        Result.Success(getUriForFile(context, file))
+                    } else {
+                        val fileUrl = attachment.assetUrl ?: attachment.url ?: return Result.Failure(
+                            ChatError.GenericError(message = "File URL cannot be null.")
+                        )
+
+                        when (val response = ChatClient.instance().downloadFile(fileUrl).await()) {
+                            is Result.Success -> {
+                                // write the response to a file
+                                response.value.byteStream().use { inputStream ->
+                                    file.outputStream().use { outputStream ->
+                                        inputStream.copyTo(outputStream)
+                                    }
+                                }
+
+                                Result.Success(getUriForFile(context, file))
+                            }
+                            is Result.Failure -> response
+                        }
+                    }
+                }
+            }
+        }
+
+        return runCatching.getOrNull() ?: createFailureResultFromException(runCatching.exceptionOrNull())
+    }
+
+    private fun createFailureResultFromException(throwable: Throwable?): Result.Failure {
+        return Result.Failure(
+            throwable?.let { exception ->
+                ChatError.ThrowableError(message = "Could not write to file.", cause = exception)
+            } ?: ChatError.GenericError(message = "Could not write to file.")
+        )
+    }
+
+    /**
+     * The name of the Stream cache directory.
+     *
+     * This does not include file separators so do not forget to include them
+     * when using this to access the directory or files contained within.
+     */
+    private const val STREAM_CACHE_DIR_NAME = "stream_cache"
+
+    /**
+     * The prefix to all cached file names.
+     */
+    private const val CACHED_FILE_PREFIX = "TMP"
+}

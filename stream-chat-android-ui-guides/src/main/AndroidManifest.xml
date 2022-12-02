@@ -47,34 +47,54 @@
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.compose.customattachments.ChannelsActivity"
+            android:name=".catalog.compose.customattachments.ChannelsActivity"
             android:exported="false"
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.compose.customattachments.MessagesActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            />
-
-        <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.ChannelsActivity"
-            android:exported="false"
-            />
-
-        <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.MessagesActivity"
+            android:name=".catalog.compose.customattachments.MessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.ChannelsActivity"
+            android:name=".catalog.compose.customizingimageandvideoattachments.ChannelsActivity"
             android:exported="false"
             />
 
         <activity
-            android:name="io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.MessagesActivity"
+            android:name=".catalog.compose.customizingimageandvideoattachments.MessagesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".catalog.uicomponents.customattachments.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.uicomponents.customattachments.MessagesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
+
+        <activity
+            android:name=".catalog.uicomponents.customreactions.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.uicomponents.channelsscreen.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.uicomponents.messagesscreen.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.uicomponents.messagesscreen.MessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />

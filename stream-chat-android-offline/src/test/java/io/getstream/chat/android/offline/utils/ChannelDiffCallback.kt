@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
 
 internal data class ChannelDiffCallback(
     var oldChannels: List<Channel>,

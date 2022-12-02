@@ -19,7 +19,7 @@ package io.getstream.chat.ui.sample.feature.channel.add.group
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 class AddGroupChannelMembersSharedViewModel : ViewModel() {
 

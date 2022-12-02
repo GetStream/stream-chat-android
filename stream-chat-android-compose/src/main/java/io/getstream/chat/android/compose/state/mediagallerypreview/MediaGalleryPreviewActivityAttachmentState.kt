@@ -17,8 +17,8 @@
 package io.getstream.chat.android.compose.state.mediagallerypreview
 
 import android.os.Parcelable
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import kotlinx.parcelize.Parcelize
 
 /**

@@ -18,9 +18,9 @@ package io.getstream.chat.android.uitests.snapshot.uicomponents
 
 import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
-import com.getstream.sdk.chat.coil.StreamCoil
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.common.images.internal.StreamCoil
 import io.getstream.chat.android.uitests.util.FakeImageLoader
 import org.junit.Before
 

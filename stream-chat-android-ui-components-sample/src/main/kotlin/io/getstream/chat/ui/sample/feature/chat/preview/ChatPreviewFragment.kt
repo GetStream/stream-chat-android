@@ -25,14 +25,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.message.input.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
-import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.state.utils.EventObserver
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatPreviewBinding
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
@@ -90,7 +88,7 @@ class ChatPreviewFragment : Fragment() {
         val factory = MessageListViewModelFactory(cid)
         val messageListHeaderViewModel = factory.create(MessageListHeaderViewModel::class.java)
         val messageListViewModel = factory.create(MessageListViewModel::class.java)
-        val messageInputViewModel = factory.create(MessageInputViewModel::class.java)
+        val messageComposerViewModel = factory.create(MessageComposerViewModel::class.java)
 
         binding.messagesHeaderView.apply {
             messageListHeaderViewModel.bindView(this, viewLifecycleOwner)
@@ -111,10 +109,10 @@ class ChatPreviewFragment : Fragment() {
             messageListViewModel.bindView(this, viewLifecycleOwner)
         }
 
-        binding.messageInputView.apply {
+        binding.messageComposerView.apply {
             isVisible = true
-            messageInputViewModel.bindView(this, viewLifecycleOwner)
-            setOnSendButtonClickListener {
+            messageComposerViewModel.bindView(this, viewLifecycleOwner)
+            sendMessageButtonClickListener = {
                 viewModel.onAction(ChatPreviewViewModel.Action.MessageSent)
             }
         }

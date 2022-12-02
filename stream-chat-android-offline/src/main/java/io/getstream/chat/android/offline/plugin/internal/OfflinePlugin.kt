@@ -17,8 +17,6 @@
 package io.getstream.chat.android.offline.plugin.internal
 
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
-import io.getstream.chat.android.client.interceptor.MessageInterceptor
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
@@ -28,11 +26,13 @@ import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.User
 import kotlin.reflect.KClass
 
 /**
@@ -51,7 +51,6 @@ import kotlin.reflect.KClass
  * @param createChannelListener [CreateChannelListener]
  * @param activeUser User associated with [OfflinePlugin] instance.
  * @param provideDependency Resolves dependency within [OfflinePlugin].
- * gets separated from [OfflinePlugin].
  */
 @Suppress("LongParameterList")
 internal class OfflinePlugin(
@@ -65,6 +64,7 @@ internal class OfflinePlugin(
     private val deleteMessageListener: DeleteMessageListener,
     private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
+    private val sendAttachmentListener: SendAttachmentListener,
     private val queryMembersListener: QueryMembersListener,
     private val createChannelListener: CreateChannelListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
@@ -80,10 +80,11 @@ internal class OfflinePlugin(
     ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
     QueryMembersListener by queryMembersListener,
-    CreateChannelListener by createChannelListener {
+    CreateChannelListener by createChannelListener,
+    SendAttachmentListener by sendAttachmentListener {
 
-    override val interceptors: List<MessageInterceptor> = emptyList()
-    override val errorHandlers: List<ErrorHandler> = emptyList()
+    override val errorHandler: ErrorHandler? = null
+
     override fun onUserSet(user: User) { /* No-Op */ }
 
     override fun onUserDisconnected() { /* No-Op */ }

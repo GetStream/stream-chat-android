@@ -24,8 +24,8 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import io.getstream.chat.android.ui.mention.list.viewmodel.MentionListViewModel
-import io.getstream.chat.android.ui.mention.list.viewmodel.bindView
+import io.getstream.chat.android.ui.viewmodel.mentions.MentionListViewModel
+import io.getstream.chat.android.ui.viewmodel.mentions.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentMentionsBinding

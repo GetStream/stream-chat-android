@@ -19,7 +19,7 @@ package io.getstream.chat.ui.sample.feature.user_login
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.databinding.ItemOptionsBinding

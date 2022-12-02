@@ -26,16 +26,16 @@ import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.extensions.internal.toCid
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.log.StreamLog
 
 internal class NotificationMessageReceiver : BroadcastReceiver() {
 
     companion object {
-        private const val ACTION_READ = "com.getstream.sdk.chat.READ"
-        private const val ACTION_REPLY = "com.getstream.sdk.chat.REPLY"
-        private const val ACTION_DISMISS = "com.getstream.sdk.chat.DISMISS"
+        private const val ACTION_READ = "io.getstream.chat.android.READ"
+        private const val ACTION_REPLY = "io.getstream.chat.android.REPLY"
+        private const val ACTION_DISMISS = "io.getstream.chat.android.DISMISS"
         private const val KEY_MESSAGE_ID = "message_id"
         private const val KEY_CHANNEL_ID = "id"
         private const val KEY_CHANNEL_TYPE = "type"

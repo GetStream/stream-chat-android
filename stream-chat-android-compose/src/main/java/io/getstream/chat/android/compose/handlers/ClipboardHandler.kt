@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.handlers
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
 
 /**
  * Abstraction over the [ClipboardHandlerImpl] that allows users to copy messages.

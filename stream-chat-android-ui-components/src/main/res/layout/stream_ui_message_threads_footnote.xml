@@ -44,7 +44,7 @@
         tools:visibility="gone"
         />
     
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/secondTheirUserImage"
         android:layout_marginStart="@dimen/stream_ui_message_thread_reply_avatar_half_size"
         style="?attr/streamUiThreadAvatarStyle"
@@ -57,7 +57,7 @@
         tools:visibility="gone"
         />
     
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/firstTheirUserImage"
         style="?attr/streamUiThreadAvatarStyle"
         app:layout_constraintStart_toEndOf="@id/threadsOrnamentLeft"
@@ -86,7 +86,7 @@
         tools:text="100 Thread Replies"
         />
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/secondMineUserImage"
         style="?attr/streamUiThreadAvatarStyle"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
@@ -98,7 +98,7 @@
         tools:src="@tools:sample/avatars"
         />
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/firstMineUserImage"
         style="?attr/streamUiThreadAvatarStyle"
         app:layout_constraintEnd_toStartOf="@id/threadsOrnamentRight"

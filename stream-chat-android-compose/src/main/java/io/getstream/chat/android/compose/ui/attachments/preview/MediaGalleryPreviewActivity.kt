@@ -16,21 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
-/*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
- *
- * Licensed under the Stream License;
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -121,21 +106,13 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
-import com.getstream.sdk.chat.StreamFileUtil
-import com.getstream.sdk.chat.images.StreamImageLoader
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.initials
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -166,6 +143,16 @@ import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
+import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.extensions.initials
+import io.getstream.chat.android.uiutils.extension.hasLink
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -276,8 +263,15 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         message: Message,
         initialAttachmentPosition: Int,
     ) {
+
+        // Filters out any link attachments. Pass this value along to all children
+        // Composables that read message attachments to prevent inconsistent state.
+        val filteredAttachments = message.attachments.filter { attachment ->
+            !attachment.hasLink()
+        }
+
         val startingPosition =
-            if (initialAttachmentPosition !in message.attachments.indices) 0 else initialAttachmentPosition
+            if (initialAttachmentPosition !in filteredAttachments.indices) 0 else initialAttachmentPosition
 
         val scaffoldState = rememberScaffoldState()
         val pagerState = rememberPagerState(initialPage = startingPosition)
@@ -296,7 +290,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                     .fillMaxSize()
                                     .padding(contentPadding)
                             ) {
-                                MediaPreviewContent(pagerState, message.attachments) {
+                                MediaPreviewContent(pagerState, filteredAttachments) {
                                     coroutineScope.launch {
                                         scaffoldState.snackbarHostState.showSnackbar(
                                             message = getString(R.string.stream_ui_message_list_video_display_error)
@@ -330,7 +324,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 },
                 bottomBar = {
                     if (message.id.isNotEmpty()) {
-                        MediaGalleryPreviewBottomBar(message.attachments, pagerState)
+                        MediaGalleryPreviewBottomBar(filteredAttachments, pagerState)
                     }
                 }
             )
@@ -343,6 +337,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 MediaGalleryPreviewOptions(
                     options = defaultMediaOptions(message = message),
                     pagerState = pagerState,
+                    attachments = filteredAttachments,
                     modifier = Modifier.animateEnterExit(
                         enter = slideInVertically(),
                         exit = slideOutVertically()
@@ -358,6 +353,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 ) {
                     MediaGallery(
                         pagerState = pagerState,
+                        attachments = filteredAttachments,
                         modifier = Modifier.animateEnterExit(
                             enter = slideInVertically(initialOffsetY = { height -> height / 2 }),
                             exit = slideOutVertically(targetOffsetY = { height -> height / 2 })
@@ -480,12 +476,14 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      *
      * @param options The options available for the attachment.
      * @param pagerState The state of the pager, used to fetch the current attachment.
+     * @param attachments The list of attachments for which we display options.
      * @param modifier Modifier for styling.
      */
     @Composable
     private fun MediaGalleryPreviewOptions(
         options: List<MediaGalleryPreviewOption>,
         pagerState: PagerState,
+        attachments: List<Attachment>,
         modifier: Modifier,
     ) {
         Box(
@@ -510,7 +508,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     options.forEachIndexed { index, option ->
-                        MediaGalleryPreviewOptionItem(option, pagerState)
+                        MediaGalleryPreviewOptionItem(
+                            mediaGalleryPreviewOption = option,
+                            pagerState = pagerState,
+                            attachments = attachments
+                        )
 
                         if (index != options.lastIndex) {
                             Spacer(
@@ -531,11 +533,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      *
      * @param mediaGalleryPreviewOption The option information to show.
      * @param pagerState The state of the pager, used to handle selected actions.
+     * @param attachments The list of attachments for which we display options.
      */
     @Composable
     private fun MediaGalleryPreviewOptionItem(
         mediaGalleryPreviewOption: MediaGalleryPreviewOption,
         pagerState: PagerState,
+        attachments: List<Attachment>,
     ) {
         val downloadPermissionHandler = ChatTheme.permissionHandlerProvider
             .first { it.canHandle(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
@@ -551,9 +555,10 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     onClick = {
                         mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false)
                         handleMediaAction(
-                            mediaGalleryPreviewOption.action,
-                            pagerState.currentPage,
-                            downloadPermissionHandler
+                            mediaGalleryPreviewAction = mediaGalleryPreviewOption.action,
+                            currentPage = pagerState.currentPage,
+                            permissionHandler = downloadPermissionHandler,
+                            attachments = attachments
                         )
                     },
                     enabled = mediaGalleryPreviewOption.isEnabled
@@ -588,11 +593,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * @param currentPage The index of the current media attachment.
      * @param permissionHandler Checks if we have the necessary permissions
      * to perform an action if the action needs a specific Android permission.
+     * @param attachments The list of attachments for which actions need to be handled.
      */
     private fun handleMediaAction(
         mediaGalleryPreviewAction: MediaGalleryPreviewAction,
         currentPage: Int,
         permissionHandler: PermissionHandler,
+        attachments: List<Attachment>,
     ) {
         val message = mediaGalleryPreviewAction.message
 
@@ -613,11 +620,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     )
                 )
             }
-            is Delete -> mediaGalleryPreviewViewModel.deleteCurrentMediaAttachment(message.attachments[currentPage])
+            is Delete -> mediaGalleryPreviewViewModel.deleteCurrentMediaAttachment(attachments[currentPage])
             is SaveMedia -> {
                 permissionHandler
                     .onHandleRequest(
-                        mapOf(DownloadPermissionHandler.PayloadAttachment to message.attachments[currentPage])
+                        mapOf(DownloadPermissionHandler.PayloadAttachment to attachments[currentPage])
                     )
             }
         }
@@ -1060,13 +1067,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                     attachment = attachment
                                 )
 
-                                if (result.isSuccess) {
-                                    shareAttachment(
-                                        mediaUri = result.data(),
-                                        attachmentType = attachment.type
+                                when (result) {
+                                    is Result.Success -> shareAttachment(
+                                        mediaUri = result.value,
+                                        attachmentType = attachment.type,
                                     )
-                                } else {
-                                    mediaGalleryPreviewViewModel.promptedAttachment = attachment
+                                    is Result.Failure -> mediaGalleryPreviewViewModel.promptedAttachment = attachment
                                 }
                             }
                             else -> shareAttachment(attachment)
@@ -1320,13 +1326,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
         mediaGalleryPreviewViewModel.isSharingInProgress = false
 
-        if (result.isSuccess) {
-            shareAttachment(
-                mediaUri = result.data(),
-                attachmentType = attachment.type
+        when (result) {
+            is Result.Success -> shareAttachment(
+                mediaUri = result.value,
+                attachmentType = attachment.type,
             )
-        } else {
-            toastFailedShare()
+            is Result.Failure -> toastFailedShare()
         }
     }
 
@@ -1334,11 +1339,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * Represents the image gallery where the user can browse all media attachments and quickly jump to them.
      *
      * @param pagerState The state of the pager, used to navigate to specific media attachments.
+     * @param attachments The list of attachments to be displayed.
      * @param modifier Modifier for styling.
      */
     @Composable
     private fun MediaGallery(
         pagerState: PagerState,
+        attachments: List<Attachment>,
         modifier: Modifier = Modifier,
     ) {
         val message = mediaGalleryPreviewViewModel.message
@@ -1374,7 +1381,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(ColumnCount),
                         content = {
-                            itemsIndexed(message.attachments) { index, attachment ->
+                            itemsIndexed(attachments) { index, attachment ->
                                 MediaGalleryItem(index, attachment, message.user, pagerState)
                             }
                         }

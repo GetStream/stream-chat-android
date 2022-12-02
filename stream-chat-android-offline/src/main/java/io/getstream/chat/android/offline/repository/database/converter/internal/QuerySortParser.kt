@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.offline.repository.database.converter.internal
 
-import io.getstream.chat.android.client.api.models.querysort.ComparableFieldProvider
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.api.models.querysort.SortDirection
-import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
+import io.getstream.chat.android.models.querysort.ComparableFieldProvider
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.models.querysort.SortDirection
+import io.getstream.chat.android.models.querysort.internal.SortSpecification
 
 /**
  * A parser to create [QuerySorter] from different ways.

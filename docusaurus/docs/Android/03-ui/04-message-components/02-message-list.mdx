@@ -3,20 +3,20 @@ import TabItem from '@theme/TabItem';
 
 # Message List
 
-`MessageListView` is one of our core UI components, which displays a list of messages for a channel. It contains the following list of possible items:
+`MessageListView` is one of our core UI components, which displays a list of messages for the given channel. It contains the following list of possible items:
 
 - Plain text message
-- Text and attachments (media or file) message
-- Deleted message (only for current user)
-- Error message (e.g. autoblocked message with inappropriate content)
-- System message (e.g. some user joined a channel)
+- Text message with attachments (media or file)
+- Deleted message (depending on the set `DeletedMessageVisibility` value)
+- Error message (e.g. inappropriate messages blocked by moderation)
+- System message (e.g. when a user joins the channel)
 - Giphy preview
 - Date separator
 - Loading more indicator
 - Thread separator (for thread mode only)
 - Typing indicator
 
-You're able to customize the appearance of this component using custom attributes as well as method calls at runtime. `MessageListView` also contains the set of overridable action/option handlers and event listeners. By default, this component has the following look:
+You're able to customize the appearance of this component using custom attributes as well as method calls at runtime. `MessageListView` also contains a set of overridable action/option handlers and event listeners. By default, this component has the following appearance:
 
 | Light Mode | Dark Mode |
 | --- | --- |
@@ -24,37 +24,33 @@ You're able to customize the appearance of this component using custom attribute
 
 ## Usage
 
-If you want to use all default features and default design of this component then getting started with it is easy:
+If you want to keep the default design and behavior of this component then getting started with it is very simple:
 
-1. Add the component to your xml layout hierarchy.
-2. Bind it with a `MessageListViewModel`.
+1. Add the component to your XML layout hierarchy.
+2. Bind it to a `MessageListViewModel`.
 
-Adding `MessageListView` to your layout is easy as inserting following lines to your layout hierarchy (example for `ConstraintLayout`):
+Adding `MessageListView` to your layout is as easy as inserting the following lines to your layout hierarchy:
 
 ```xml
-<io.getstream.chat.android.ui.message.list.MessageListView
-        android:id="@+id/message_list_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+<io.getstream.chat.android.ui.feature.messages.list.MessageListView
+    android:id="@+id/messageListView"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent" />
 ``` 
 
-The UI components library includes a ViewModel for `MessageListView` and the `bindView` extension function makes it easy to use a default setup:
+The UI components library includes a `ViewModel` for `MessageListView`.<br/>
+Binding it to the `View` is easily accomplished using an extension function called `bindView`:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-// 1. Init view model
+// 1. Init ViewModel
 val viewModel: MessageListViewModel by viewModels {
     MessageListViewModelFactory(cid = "messaging:123")
 }
 
-// 2. Bind view and viewModel
+// 2. Bind View and ViewModel
 viewModel.bindView(messageListView, lifecycleOwner)
 ```
 </TabItem>
@@ -62,37 +58,42 @@ viewModel.bindView(messageListView, lifecycleOwner)
 <TabItem value="java" label="Java">
 
 ```java
-// Init view model
+// Init ViewModel
 ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
         .cid("messaging:123")
         .build();
 ViewModelProvider provider = new ViewModelProvider(this, factory);
 MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
 
-// Bind view and viewModel
-boolean enforceUniqueReactions = true;
-MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner(), enforceUniqueReactions);
+// Bind View and ViewModel
+MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
 ```
 </TabItem>
 </Tabs>
 
 ## Handling Actions
 
-`MessageListView` comes with a set of actions available out-of-the-box by long pressing a message:
+`MessageListView` contains a set of actions which are activated by long pressing a message:
 
 * Adding reactions
-* Replies
-* Thread replies
+* Replying
+* Replying in a thread
 * Copying the message
-* Editing the message (if you are an owner)
-* Deleting the message (if you are an owner)
-* Flagging the message (if it doesn't belong to you)
+* Editing the message
+* Deleting the message
+* Flagging the message
+
+:::note
+Certain actions are subject to how user permissions are setup. You can find them inside the [Stream Dashboard](https://dashboard.getstream.io).<br/>
+Learn more about permissions [here](https://getstream.io/chat/docs/other-rest/chat_permission_policies/).
+:::
 
 | Light Mode | Dark Mode |
 | --- | --- |
 |![Message_options_in light mode](../../assets/message_options_light.png)|![Message options in dark mode](../../assets/message_options_dark.png)|
 
-Default action handlers are set up when binding the ViewModel with the View. You can customize the default behavior by overriding each of the following handlers:
+Default action handlers are set up when binding the ViewModel to the View.<br/>
+You can customize the default behavior by overriding each of the following handlers:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -119,7 +120,7 @@ messageListView.setMessagePinHandler { message: Message ->
 messageListView.setMessageUnpinHandler { message: Message ->
     // Handle when message is going to be unpinned
 }
-messageListView.setGiphySendHandler { message: Message, giphyAction: GiphyAction ->
+messageListView.setGiphySendHandler { giphyAction: GiphyAction ->
     // Handle when some giphyAction is going to be performed
 }
 messageListView.setMessageRetryHandler { message: Message ->
@@ -161,7 +162,7 @@ messageListView.setMessagePinHandler((message) -> {
 messageListView.setMessageUnpinHandler((message) -> {
     // Handle when message is going to be unpinned
 });
-messageListView.setGiphySendHandler((message, giphyAction) -> {
+messageListView.setGiphySendHandler((giphyAction) -> {
     // Handle when some giphyAction is going to be performed
 });
 messageListView.setMessageRetryHandler((message) -> {
@@ -184,39 +185,41 @@ messageListView.setMessageEditHandler((message) -> {
 </Tabs>
 
 :::note
-Handlers must be set before passing any data to `MessageListView`. If you don't use the default binding that `bindView` provides, please make sure you're setting up all handlers.
+Handlers must be set before passing any data to `MessageListView`. If you're not using the default binding provided by `bindView`, please make sure to set up all the handlers yourself.
 :::
+
+This section lists only some of the more important handlers, many more exist and you can find there inside [`MessageListView`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/list/MessageListView.kt).
 
 ### Listeners
 
-In addition to the required handlers, `MessageListView` also provides some optional listeners. They are also set by default if you use `bindView`.
+In addition to the required handlers, `MessageListView` also provides optional listeners. They are also set by default if you use `bindView`.
 
-You can always override them to get events when something happens:
+You can always override them to get the event when something happens:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 messageListView.setMessageClickListener { message: Message ->
-    // Listen to click on message events
+    // Handle message being clicked
 }
 messageListView.setEnterThreadListener { message: Message ->
-    // Listen to events when enter thread associated with a message
+    // Handle thread being entered
 }
 messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
-    // Listen to events when download click for an attachment happens
+    // Handle clicks on the download attachment button
 }
 messageListView.setUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
-    // Listen to clicks on user reactions on the message options overlay
+    // Handle clicks on a reaction left by a user
 }
 messageListView.setMessageLongClickListener { message ->
-    // Handle long click on message
+    // Handle message being long clicked
 }
 messageListView.setAttachmentClickListener { message, attachment ->
-    // Handle long click on attachment
+    // Handle attachment being clicked
 }
 messageListView.setUserClickListener { user ->
-    // Handle click on user avatar
+    // Handle user avatar being clicked
 }
 ```
 </TabItem>
@@ -225,41 +228,41 @@ messageListView.setUserClickListener { user ->
 
 ```java
 messageListView.setMessageClickListener((message) -> {
-    // Listen to click on message events
+    // Handle message being clicked
 });
 messageListView.setEnterThreadListener((message) -> {
-    // Listen to events when enter thread associated with a message
+    // Handle thread being entered
 });
 messageListView.setAttachmentDownloadClickListener((attachment) -> {
-    // Listen to events when download click for an attachment happens
+    // Handle clicks on the download attachment button
 });
 messageListView.setUserReactionClickListener((message, user, reaction) -> {
-    // Listen to clicks on user reactions on the message options overlay
+    // Handle clicks on a reaction left by a user
 });
 messageListView.setMessageLongClickListener((message) -> {
-    // Handle long click on message
+    // Handle message being long clicked
 });
 messageListView.setAttachmentClickListener((message, attachment) -> {
-    // Handle long click on attachment
+    // Handle attachment being clicked
 });
 messageListView.setUserClickListener((user) -> {
-    // Handle click on user avatar
+    // Handle user avatar being clicked
 });
 ```
 </TabItem>
 </Tabs>
 
-Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list.adapter/-message-list-listener-container/).
+Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list.adapter/-message-list-listener-container/).
 
 ## Customization
 
-You can change the appearance of this component to fit your app's design requirements. There are two ways to change the style: using XML attributes and runtime changes.
+You can change the appearance of this component to fit your app's design requirements. These changes can be done either at compile-time through the use of XML attributes, or at runtime by using style transformations.
 
 ### Using XML Attributes
 
-`MessageListView` provides a large set of xml attributes available for customization. The full list of them is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
+`MessageListView` provides a large set of xml attributes available for customization. The complete list is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
 
-Let's consider an example when we want to change the style of messages sent by the current user.
+Let's consider an example in which we want to change the style of messages sent by the current user.
 
 | Light Mode | Dark Mode |
 | --- | --- |
@@ -268,26 +271,25 @@ Let's consider an example when we want to change the style of messages sent by t
 In order to do that, we need to add additional attributes to `MessageListView`:
 
 ```xml {11-14}
-<io.getstream.chat.android.ui.message.list.MessageListView
+<io.getstream.chat.android.ui.feature.messages.list.MessageListView
+    android:clipToPadding="false"
     android:id="@+id/messageListView"
-    android:layout_width="0dp"
     android:layout_height="0dp"
     android:layout_marginHorizontal="0dp"
-    android:clipToPadding="false"
-    app:layout_constraintBottom_toTopOf="@+id/messageInputView"
+    android:layout_width="0dp"
+    app:layout_constraintBottom_toTopOf="@+id/messageComposerView"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
     app:streamUiMessageBackgroundColorMine="#70AF74"
     app:streamUiMessageBackgroundColorTheirs="#FFFFFF"
     app:streamUiMessageTextColorMine="#FFFFFF"
-    app:streamUiMessageTextColorTheirs="#000000"
-    />
+    app:streamUiMessageTextColorTheirs="#000000" />
 ```
 
 ### Using Style Transformations
 
-Both `MessageListView` and its ViewHolders can be configured programmatically (a list of supported customizations can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-view-style/) and [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.message.list/-message-list-item-style/)).
+Both `MessageListView` and its ViewHolders can be configured programmatically (a list of supported customizations can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list/-message-list-view-style/) and [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list/-message-list-item-style/)).
 
 As an example, let's apply the green style from the previous section, but this time programmatically:
 
@@ -327,7 +329,7 @@ TransformStyle.setMessageListItemStyleTransformer(source -> {
 The transformers should be set before the views are rendered to make sure that the new style was applied.
 :::
 
-As another example, let's modify the default view which allows scrolling to the bottom when the new message arrives:
+As another example, let's modify the default view which allows scrolling to the bottom when a new message arrives:
 
 | Before | After |
 | --- | --- |
@@ -364,19 +366,20 @@ TransformStyle.setMessageListStyleTransformer(source -> {
 
 ## Channel Feature Flags
 
-Some xml attributes let you to enable/disable features in `MessageListView`.
-- `streamUiScrollButtonEnabled` - show/hide the scroll-to-bottom button
-- `streamUiScrollButtonUnreadEnabled` - show/hide the unread count badge on the scroll-to-bottom button
-- `streamUiReactionsEnabled` - whether users can react to messages
-- `streamUiReplyEnabled` - whether users can reply to messages
-- `streamUiCopyMessageActionEnabled` - whether users can copy messages
-- `streamUiRetryMessageEnabled` - whether users can retry failed messages
-- `streamUiEditMessageEnabled` - whether users can edit their messages
-- `streamUiFlagMessageEnabled` - whether users can flag messages
-- `streamUiFlagMessageConfirmationEnabled` - whether users will see the confirmation dialog when flag messages
-- `streamUiDeleteMessageEnabled` - whether users can delete their messages
-- `streamUiDeleteConfirmationEnabled` - whether users will see the confirmation dialog when deleting messages
-- `streamUiThreadsEnabled` - whether users can create thread replies
+Certain xml attributes let you to enable/disable features in `MessageListView`.
+- `streamUiScrollButtonEnabled` - Show/hide the scroll-to-bottom button.
+- `streamUiScrollButtonUnreadEnabled` - Show/hide the unread count badge on the scroll-to-bottom button.
+- `streamUiReactionsEnabled` - Whether users can react to messages.
+- `streamUiReplyEnabled` - Whether users can reply to messages.
+- `streamUiCopyMessageActionEnabled` - Whether users can copy messages.
+- `streamUiRetryMessageEnabled` - Whether users can retry failed messages.
+- `streamUiEditMessageEnabled` - Whether users can edit their messages.
+- `streamUiFlagMessageEnabled` - Whether users can flag messages.
+- `streamUiFlagMessageConfirmationEnabled` - Whether users will see the confirmation dialog while flagging messages.
+- `streamUiDeleteMessageEnabled` - Whether users can delete their messages.
+- `streamUiDeleteConfirmationEnabled` - Whether users will see the confirmation dialog when deleting messages.
+- `streamUiThreadsEnabled` - Whether users can create thread replies.
+- `streamUiPinMessageEnabled` - Whether users can pin messages.
 
 These attributes let you enable/disable configuration for channel features. E.g. if a channel's configuration supports message replies, but you disabled it via xml attributes, then members of this channel won't see such an option.
 
@@ -407,21 +410,21 @@ messageListView.setEditMessageEnabled(false);
 |![message list options before](../../assets/message_list_options_before.png)|![message list options after](../../assets/message_list_options_after.png)|
 
 ## Messages Start Position
-You can configure the messages to start at the top or the bottom of the view (Default: bottom) by using `streamUiMessagesStart` and `streamUiThreadMessagesStart` attributes.
+You can configure the messages to start at the top or the bottom **(default)** of the view by using `streamUiMessagesStart` and `streamUiThreadMessagesStart` attributes.
 
 | Bottom | Top |
 | --- | --- |
 |![messages at the bottom](../../assets/messages_at_the_top.png)|![messages at the top](../../assets/messages_at_the_bottom.png)|
 
 :::note
-Messages' position doesn't affect the stack. The default is from bottom to top. if you would like to change it, use the method `setCustomLinearLayoutManager` and set a `LinearLayoutManager` with your desired definitions.
+The start position does not affect the orientation. The default is from bottom to top. If you would like to change that, use the method `setCustomLinearLayoutManager` and set a `LinearLayoutManager` with the desired orientation.
 :::
 
 
 ## Filtering Messages
 
-You can filter some messages if you don't want to show them in your `MessageListView`.
-Imagine you want to hide all messages that contain the word "secret". This can be done with following lines:
+You can filter out certain messages if you don't want to show them in the `MessageListView`.
+Imagine you want to hide all messages which contain the word "secret". This can be achieved using the following code:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -462,44 +465,42 @@ The predicate has to return `true` for the items that you _do_ want to display i
 2. Write your own logic for creating ViewHolders. 
 3. Create a new factory instance and set it on `MessageListView`.
 
-Let's consider an example when we want to create custom ViewHolders for messages that came from other users less than 24 hours ago. The result should look like this:
+Let's consider an example in which we want to create a custom ViewHolder for messages sent by other users less than 24 hours ago. The result should look like this:
 
-![](../../assets/message_list_custom_vh_factory.png)
+| ![](../../assets/message_list_custom_vh_factory.png) |
+| --- |
 
 1. Add a new layout called `today_message_list_item.xml`:
 
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
+    android:layout_height="wrap_content">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:layout_marginStart="40dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         app:cardBackgroundColor="@android:color/holo_green_dark"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/marginEnd"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/textLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@android:color/primary_text_light"
+            android:gravity="start"
             android:padding="16dp"
-            />
+            android:textColor="@android:color/primary_text_light" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -508,8 +509,7 @@ Let's consider an example when we want to create custom ViewHolders for messages
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.7"
-        />
+        app:layout_constraintGuide_percent="0.7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
@@ -556,7 +556,7 @@ class TodayViewHolder extends BaseMessageItemViewHolder<MessageListItem.MessageI
 </TabItem>
 </Tabs>
 
-3. Add a new `CustomMessageViewHolderFactory` class that checks each message, and uses the custom ViewHolder when necessary:
+3. Add a new `CustomMessageViewHolderFactory` class that evaluates each message, and uses the custom ViewHolder when necessary:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -643,7 +643,7 @@ class CustomMessageViewHolderFactory extends MessageListItemViewHolderFactory {
 </TabItem>
 </Tabs>
 
-4. Finally, set an instance of the custom factory on `MessageListView`
+4. Finally, set an instance of the custom factory on `MessageListView`:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -661,13 +661,11 @@ messageListView.setMessageViewHolderFactory(new CustomMessageViewHolderFactory()
 </TabItem>
 </Tabs>
 
-Additionally, you can also use `ChatUI.markdown` for Markdown support. If you do that, don't use `android:autoLink` attribute because it'll break the markdown [Linkify](https://noties.io/Markwon/docs/v4/linkify/) implementation. This property is deprecated and `ChatUI.messageTextTransformer` should be used instead. See [docs](../02-general-customization/02-chatui.mdx) for more information.
-
 ## Custom Empty State
 
-`MessageListView` handles loading and empty states out-of-box. If you want to customize these, you can do it at runtime.
+`MessageListView` handles loading and empty states out of the box. If you want to customize these, you can do it at runtime.
 
-Let's consider an example when you want to set a custom empty state:
+Let's consider an example where you want to set a custom empty state:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -708,57 +706,89 @@ messageListView.setEmptyStateView(
 
 This code will display the following empty state:
 
-![The custom empty state in action](../../assets/message_lis_custom_empty_state.png)
-## Configure When Avatar Appears
-Is it possible to configure when the avatar for messages appears. You can use `MessageListView.setShowAvatarPredicate` and pass a predicate to define when the avatar is going to be shown. This example implements the default behaviour:
+| ![The custom empty state in action](../../assets/message_lis_custom_empty_state.png) |
+| --- |
+## Configure When the User Avatar Appears
+By default, user avatars will appear next to messages that are either the last message in a group of messages, or the only one within it.
+
+| ![message_list_show_avatar_predicate_default](../../assets/message_list_show_avatar_predicate_default.png) |
+|---|
+
+You can configure when the user avatar will appear by setting your own predicate using `MessageListView.setShowAvatarPredicate()`.<br/>
+For instance, the following code will make the user avatar appear next to all messages sent by other users, regardless of their position.
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-messageListView.setShowAvatarPredicate(
-    ShowAvatarPredicate { messageItem ->
-        messageItem.positions.contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs
-    }
-)
+messageListView.setShowAvatarPredicate { messageItem ->
+    messageItem.isTheirs
+}
 ```
 </TabItem>
 
 <TabItem value="java" label="Java">
 
 ```java
-messageListView.setShowAvatarPredicate((messageItem) -> messageItem.getPositions().contains(MessageListItem.Position.BOTTOM) && messageItem.isTheirs());
+messageListView.setShowAvatarPredicate((messageItem) ->
+        messageItem.isTheirs()
+);
 ```
 </TabItem>
 </Tabs>
 
+The result looks like this:
+
+| ![message_list_show_avatar_predicate_custom](../../assets/message_list_show_avatar_predicate_custom.png) |
+|---|
+
 :::note
-To avoid overlap between the avatar and the messages of the chat, remember to use `streamUiMessageStartMargin` and `streamUiMessageEndMargin` to create space for the avatar of the messages.
+To avoid overlap between the avatar and the message bubble, remember to use `streamUiMessageStartMargin` and `streamUiMessageEndMargin` to create space for the message avatar.
 :::
 
-If you set a predicate that shows avatars for your own messages as well, use this value:
+If you set a predicate that shows avatars for your own messages as well, use the following value:
 
 ```xml
-streamUiMessageEndMargin=">@dimen/stream_ui_message_viewholder_avatar_missing_margin"
+streamUiMessageEndMargin="@dimen/stream_ui_message_viewholder_avatar_missing_margin"
 ```
 
-If your predicate doesn't show avatars for your own messages (this is the default behavior), remove the end margin:
+If your predicate doesn't show avatars for your own messages (the default behavior), remove the end margin:
 
 ```xml
 streamUiMessageEndMargin="0dp"
 ```
-## Configure giphy
-It is possible to configure the gifs size. Prior of version 4.23.0 gifs were auto-sizable and will resize themselves accordingly with the size of the image they load.
+### Giphy Sizing Modes
 
-As of v5.0.0, our Giphy holders are much more customizable. You can use three Giphy load modes:
-* `original`: The original Giphy file size, as given by the API.
-* `fixedHeight`: Smaller file size Giphy, that uses fixed height in order to improve scrolling performance and image loading speed.
-* `fixedHeightDownsampled`: Same as `fixedHeight`, but downsampled to only a few frames, making it roughly 6x smaller and faster to load, but less visually appealing.
+We offer two sizing modes:
 
-Alongside these Giphy types, you can also choose the `scaleType` when loading the Giphy:
-* `fitCenter`: The recommended setting, fits the GIF to the center of the container and keeps the aspect ratio.
-* `centerCrop`: Useful if you want larger size giphies and items, but don't care if the image is cropped.
-* `center`: Doesn't scale the image and centers it in the parent. Not recommended for most Giphy images as it will cause a lot of whitespace and smaller images.
+* `adaptive`: The container will automatically resize itself to respect the aspect ratio of the Giphy it is hosting.
+* `fixed_size`: The container will retain a fixed size, regardless of the aspect ratio of the Giphy it is hosting.
+
+If you use adaptive sizing, you're all set. However, if you use fixed sizing, you also need to set the container dimensions.
+
+You have the following attributes at your disposal to do so:
+
+* `streamUiGiphyMediaAttachmentWidth`: Sets the width of the Giphy container.
+* `streamUiGiphyMediaAttachmentHeight`: Sets the height of the Giphy container.
+* `streamUiGiphyMediaAttachmentDimensionRatio`: Sets the dimension ratio of the Giphy container.
+
+To apply them, include them in your app's theme. You can find out more about theming in the [Theming documentation page](../02-general-customization/01-theming.mdx).
+
+### Giphy Types
+
+The following represent the available types(quality modes):
+
+* `original`: The original Giphy quality.
+* `fixedHeight`: Usually results in a slightly lower quality than the original, but improves performance.
+* `fixedHeightDownsampled`: Lower visual fidelity than the original along with a lower FPS (frames per second) count.
+
+### Scale type:
+
+The scale type affects how the Giphys are rendered inside the container with regards to the difference in their sizes and aspect ratios. If you are using adaptive sizing, then it's best not to change this setting. If however you decide to use fixed height sizing, then you can fine tune the way Giphys are displayed.
+
+We support every scale type used by the stock Android `ImageView` attribute `scaleType`, some of them being:
+
+* `fitCenter`: Changes the aspect ratio of the Giphy in order to fit it inside its container.
+* `centerCrop`: Centers the Giphy and crops it to the aspect ratio of its container.
+* `center`: Doesn't scale the image and centers it inside its container.
 * ...
-
-We recommend always using `fitCenter` as the go-to way of loading Giphy images that doesn't cause images to crop. For the best performance, we recommend either `fixedHeight`, or `fixedHeightDownsampled` if you don't mind the low frame rate.

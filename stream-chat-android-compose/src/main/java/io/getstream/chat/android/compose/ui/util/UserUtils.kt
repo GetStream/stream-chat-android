@@ -17,8 +17,8 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.uiutils.extension.getLastSeenText
 
 /**

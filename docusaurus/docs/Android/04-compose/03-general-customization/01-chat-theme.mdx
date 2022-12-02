@@ -20,6 +20,7 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * **MessageOptionsUserReactionAlignment**: Used to define how message reactions are aligned when browsing all reactions for a given message.
 * **PermissionHandlers**: Used to handle permissions inside the app. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
 * **AttachmentsPickerTabFactories**: Used to display different tabs in the attachments picker dialog.
+* **VideoThumbnailsEnabled**: Dictates whether video thumbnails will be displayed inside video previews. They are a paid feature and enabled by default and the pricing can be found [here](https://getstream.io/chat/pricing/).
 
 :::note
 In case any of these properties are not provided, because you're not using the `ChatTheme` to wrap our Compose UI Components, you'll get an exception saying that required properties are missing. 

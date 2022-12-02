@@ -19,8 +19,8 @@
 
 package io.getstream.chat.android.client.scope.user
 
-import io.getstream.chat.android.client.models.UserId
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.UserId
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.ChildHandle
 import kotlinx.coroutines.ChildJob
 import kotlinx.coroutines.CompletableJob

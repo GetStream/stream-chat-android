@@ -1,6 +1,6 @@
 # MessageList
 
-The `MessageList` component is a crucial part when building a chat experience. We support two versions of the `MessageList` component:
+The `MessageList` component is a crucial part of building a chat experience. We support two versions of the `MessageList` component:
 
 * **Bound**: This version binds itself to the `MessageListViewModel` and loads all the required data. It also connects single and long item tap, pagination, and bottom reached events to the `ViewModel`.
 * **Stateless**: This is a stateless version of the list which doesn't know about the `ViewModel` and depends on pure state from external sources to render its UI.
@@ -77,19 +77,22 @@ The `MessageList` component exposes the following actions, as per the signature:
 ```kotlin
 @Composable
 fun MessageList(
-	..., // State & UI
+    ..., // State & UI
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
-    onMessagesStartReached: () -> Unit = { viewModel.loadMore() },
+    onMessagesPageStartReached: () -> Unit = { viewModel.loadOlderMessages() },
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
+    onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToMessage(it.id) },
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
-            viewModel.focusMessage(it.messageId)
+            viewModel.scrollToMessage(it.messageId)
         }
     },
+    onMessagesPageEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
+    onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
     ... // Content
 )
 ```
@@ -97,11 +100,14 @@ fun MessageList(
 * `onThreadClick`: Handler used when the user taps on a message with a thread.
 * `onLongItemClick`: Handler used when the user long taps on an item.
 * `onReactionsClick`: Handler used when the user taps on a reaction to a message.
-* `onMessagesStartReached`: Handler used when the user reaches the oldest message, to trigger pagination.
+* `onMessagesPageStartReached`: Handler used when the user reaches the oldest loaded message, to trigger pagination.
 * `onLastVisibleMessageChanged`: Handler used when the user scrolls and the last visible item changes.
 * `onScrollToBottom`: Handler used when the user reaches the newest message. Used to remove the "New message" or "Scroll to bottom" actions from the UI.
 * `onGiphyActionClick`: Handler used when the user clicks on one of the actions in a Giphy message. Giphy images with actions are displayed only directly after using the Giphy slash command.
+* `onQuotedMessageClick`: Handler used when the user clicks on a quoted message. By default will search for the message that has been quoted and will scroll to it.
 * `onMediaGalleryPreviewResult`: Handler used when the user receives a result from the Media Gallery Preview screen, after opening an image or a video attachment.
+* `onMessagesPageEndReached`: Handler used when the user reaches the newest loaded message, to trigger pagination.
+* `onScrollToBottomClicked`: Handler used when the user clicks on the scroll to bottom button.
 
 You can customize the behavior here by providing your own actions, like so:
 
@@ -112,11 +118,14 @@ MessageList(
     onThreadClick = { message -> },
     onLongItemClick = { message -> },
     onReactionsClick = { message -> },
-    onMessagesStartReached = { },
+    onMessagesPageStartReached = { },
     onLastVisibleMessageChanged = { message -> },
     onScrollToBottom = { },
     onGiphyActionClick = { giphyAction -> },
+    onQuotedMessageClick = { message -> },
     onMediaGalleryPreviewResult = { mediaGalleryPreviewResult -> },
+    onMessagesPageEndReached = { messageId -> },
+    onScrollToBottomClicked = { }
      // Content
 )
 ```
@@ -129,18 +138,18 @@ We recommend using the **bound** version for ease of use. Alternatively, you can
 
 ### Controlling the scroll state
 
-The `MessageList` allows you to control the scroll state of the list by providing a `lazyListState` parameter, like so:
+The `MessageList` allows you to control the scroll state of the list by providing a `messagesLazyListState` parameter, like so:
 
 ```kotlin
 @Composable
 fun MessageList(
     ..., // State, UI & Actions
-    lazyListState: LazyListState = rememberMessageListState(parentMessageId),
+    messagesLazyListState: MessagesLazyListState = rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     ... // Content
 )
 ```
 
-* `lazyListState`: The scroll state of the list. While not a handler, you can use it to control the scroll and trigger custom scroll actions.
+* `messagesLazyListState`: The scroll state of the list. While not a handler, you can use it to control the scroll and trigger custom scroll actions.
 
 You can customize this state in the following way:
 
@@ -149,13 +158,37 @@ val myListState = rememberMessageListState(parentMessageId = state.parentMessage
 
 MessageList(
     ..., // the rest of the state, UI & actions
-    lazyListState = myListState,
+    messagesLazyListState = myListState,
 )
 ```
 
-`rememberMessageListState()` keeps a separate instance of `LazyListState` based on the `parentMessageId`. This helps you keep the scroll state of the main list intact when you enter and leave threads.
+`rememberMessageListState()` keeps a separate instance of `MessagesLazyListState` based on the `parentMessageId`. This helps you keep the scroll state of the main list intact when you enter and leave threads.
 
-You can also provide your own instance of `LazyListState` based on your custom logic where you define the starting scroll position of the state, the offset and how it behaves based on user events. For example, when deep linking.
+You can also provide your own instance of `MessagesLazyListState` where you define the starting scroll position of the state and how the focused message offset is calculated. For example, clicking on the original message contained within the reply will automatically scroll to the message and put it in focus. You can define where on the screen the focused message appears by passing in your own `MessageOffsetHandler`.
+
+## Previewing Attachments
+
+Out of the box previews are provided for the following attachment types: uploading, link, Giphy, image, video and file.
+
+### Image and Video
+
+Image and video attachments are previewed as thumbnails which can be displayed as a single tile or multiple ones depending on how many attachments are contained within the specific message. By default, these are rendered by `MediaAttachmentFactory`.
+
+:::note
+Attachment factories are used for previewing attachments. To learn more about factories and how to customize them, click on the link [here](../03-general-customization/01-chat-theme.mdx#streamattachmentfactories).
+:::
+
+In practice they appear as such:
+
+![Default Image and Video Attachment Previews](../../assets/compose_message_list_stock_media_attachments.png)
+
+Video thumbnails are a paid feature, with the pricing listed [here](https://getstream.io/chat/pricing/). They are enabled by default but can be turned off by setting the [ChatTheme](../03-general-customization/01-chat-theme.mdx) property `videoThumbnailsEnabled` to `false`.
+
+Once video thumbnails are disabled, messages containing video attachments will be displayed in the following manner:
+
+![Video Thumbnails Disabled](../../assets/compose_message_list_stock_media_attachments_video_thumbnails_disabled.png)
+
+If you want to read more about how to customize the way these attachments are displayed, head over to the relevant section seen [here](../07-guides/02-customizing-image-and-video-previews.mdx)
 
 ##  Customization
 
@@ -164,18 +197,22 @@ We allow for a few ways of customizing the `MessageList` component, as per the s
 ```kotlin
 @Composable
 fun MessageList(
-	..., // State and actions
+    ..., // State and actions
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(...),
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(viewModel.currentMessagesState, lazyListState)
+        DefaultMessagesHelperContent(
+            messagesState = viewModel.currentMessagesState,
+            messagesLazyListState = messagesLazyListState,
+            scrollToBottom = onScrollToBottomClicked,
+        )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
-            messageListItem = messageListItem,
+            messageListItemState = messageListItem,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
@@ -262,3 +299,4 @@ As per our description, the `Avatar` and the user name `Text` are shown in a `Ro
 Using this approach, you can completely customize the items to your needs and you can use click, touch and combined modifiers to customize the touch event behavior.
 
 And you can customize the `emptyContent` and the `loadingContent` to your needs, if you need custom UI there.
+

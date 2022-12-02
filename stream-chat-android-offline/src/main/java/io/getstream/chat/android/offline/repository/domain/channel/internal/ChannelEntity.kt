@@ -19,7 +19,7 @@ package io.getstream.chat.android.offline.repository.domain.channel.internal
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.MemberEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import java.util.Date

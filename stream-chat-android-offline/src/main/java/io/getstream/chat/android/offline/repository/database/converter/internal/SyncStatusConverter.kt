@@ -17,7 +17,7 @@
 package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 
 internal class SyncStatusConverter {
     @TypeConverter

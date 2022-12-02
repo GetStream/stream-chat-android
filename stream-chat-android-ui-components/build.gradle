@@ -62,6 +62,7 @@ dependencies {
     api project(":stream-chat-android-ui-common")
     implementation project(":stream-chat-android-ui-utils")
 
+    implementation Dependencies.streamLog
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
@@ -79,7 +80,7 @@ dependencies {
     implementation Dependencies.stfalconImageViewer
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.keyboardVisibilityEvent
-    implementation Dependencies.dexter
+    implementation Dependencies.permissionx
 
     // Tests
     testImplementation project(":stream-chat-android-test")

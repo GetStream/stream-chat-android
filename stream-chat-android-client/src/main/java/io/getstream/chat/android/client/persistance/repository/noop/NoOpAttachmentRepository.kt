@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.persistance.repository.noop
 
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
+import io.getstream.chat.android.models.Attachment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 

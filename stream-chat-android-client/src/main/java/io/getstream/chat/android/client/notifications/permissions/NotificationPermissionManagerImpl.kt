@@ -34,7 +34,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.client.R
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 @Suppress("ProtectedMemberInFinalClass", "ComplexCondition")
 internal class NotificationPermissionManagerImpl(

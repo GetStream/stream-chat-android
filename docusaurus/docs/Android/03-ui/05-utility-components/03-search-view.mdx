@@ -20,7 +20,7 @@ Here's an example layout using these two Views:
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.getstream.chat.android.ui.search.SearchInputView
+    <io.getstream.chat.android.ui.feature.search.SearchInputView
         android:id="@+id/searchInputView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@ Here's an example layout using these two Views:
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.getstream.chat.android.ui.search.list.SearchResultListView
+    <io.getstream.chat.android.ui.feature.search.list.SearchResultListView
         android:id="@+id/searchResultListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -60,8 +60,9 @@ searchViewModel.bindView(searchResultListView, viewLifecycleOwner)
 <TabItem value="java" label="Java">
 
 ```java
-// Get ViewModel
+// Instantiate the ViewModel
 SearchViewModel viewModel = new ViewModelProvider(this).get(SearchViewModel.class);
+
 // Bind it with SearchResultListView
 SearchViewModelBinding.bind(viewModel, searchResultListView, getViewLifecycleOwner());
 ```
@@ -74,10 +75,8 @@ Finally, start the search by passing the search query to the ViewModel:
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-searchInputView.setSearchStartedListener { query ->
-    // Search is triggered
-    searchViewModel.setQuery(query)
-}
+// Notify ViewModel when search is triggered
+searchInputView.setSearchStartedListener(viewModel::setQuery)
 ```
 </TabItem>
 
@@ -130,7 +129,7 @@ searchInputView.setDebouncedInputChangedListener(query -> {
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-searchResultView.setSearchResultSelectedListener { message ->
+searchResultListView.setSearchResultSelectedListener { message ->
     // Handle search result click
 }
 ```
@@ -139,14 +138,14 @@ searchResultView.setSearchResultSelectedListener { message ->
 <TabItem value="java" label="Java">
 
 ```java
-searchInputView.setSearchStartedListener(query -> {
-    // Search is triggered
+searchResultListView.setSearchResultSelectedListener(message -> {
+    // Handle search result click
 });
 ```
 </TabItem>
 </Tabs>
 
-The full list of listeners available for `SearchInputView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.search/-search-input-view/), and for `SearchResultListView` [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.search.list/-search-result-list-view/).
+The full list of listeners available for `SearchInputView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.search/-search-input-view/), and for `SearchResultListView` [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.search.list/-search-result-list-view/).
 
 ## Updating the Search Query Programmatically
 

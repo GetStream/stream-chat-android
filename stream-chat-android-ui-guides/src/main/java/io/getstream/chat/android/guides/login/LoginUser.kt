@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.guides.login
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 /**
  * A data class that encapsulates all the information needed to initialize

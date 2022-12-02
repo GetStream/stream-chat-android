@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.persistance.repository.factory
 
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
@@ -26,6 +24,8 @@ import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepo
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 
 /**
  * Factory that creates all repositories of SDK.

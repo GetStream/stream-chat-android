@@ -1,6 +1,7 @@
 {
   "upload": {
     "type": "android",
+    "deprecate": "project",
     "files": [
       {
         "pattern": "stream-chat-android-ui-common/src/main/res/values/strings*.xml",

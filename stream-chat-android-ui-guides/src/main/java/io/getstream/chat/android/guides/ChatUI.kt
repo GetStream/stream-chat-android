@@ -16,17 +16,22 @@
 
 package io.getstream.chat.android.guides
 
+import android.content.Context
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPreviewFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+import io.getstream.chat.android.ui.helper.SupportedReactions
 
 /**
  * Reset [ChatUI] fields to the default values so that customizations showcased in one
  * guide don't affect other guides.
+ *
+ * @param context The Application [Context].
  */
-fun ChatUI.cleanup() {
+fun ChatUI.cleanup(context: Context) {
     attachmentFactoryManager = AttachmentFactoryManager()
     attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager()
     quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager()
+    supportedReactions = SupportedReactions(context)
 }

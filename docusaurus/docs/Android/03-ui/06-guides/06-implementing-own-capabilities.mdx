@@ -42,23 +42,42 @@ After setting own capabilities, the following capabilities will be regulated:
 - ban-channel-members
 
 :::note
-*For this component, as well as all the other examples, the capabilities in bold are a part of the "default" behavior that is set up for most users in the dashboard.
+For this component, as well as all the other examples, the capabilities in bold are a part of the "default" behavior that is set up for most users in the dashboard.
 :::
 
-### MessageInputView
+### MessageComposerView
 
-Inside `MessageInputView` you will find the following function:
+Inside `MessageComposerView` you will find the following function:
 
 ```kotlin
-public fun setOwnCapabilities(ownCapabilities: Set<String>)
+public fun renderState(state: MessageComposerState)
 ```
 
-After setting own capabilities, the following capabilities will be regulated:
+The file containing `MessageComposerView` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/composer/MessageComposerView.kt).
+
+Let's take a look at `MessageComposerState`:
+
+```kotlin
+public data class MessageComposerState(
+    ..., // State
+    val ownCapabilities: Set<String> = setOf()
+)
+```
+
+The file containing `MessageComposerState` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState.kt).
+
+`MessageComposerView` regulates the following capabilities:
 
 - **send-message * **
 - **send-links * **
 - **upload-file * **
 - **send-typing-events * **
+
+:::note
+Own capabilities are publicly exposed inside `MessageComposerController` and `MessageComposerViewModel` as `ownCapabilities: StateFlow<Set<String>>`.
+
+For this component, as well as all the other examples, the capabilities in bold are a part of the "default" behavior that is set up for most users in the dashboard.
+:::
 
 ### ChannelListView
 
@@ -81,7 +100,7 @@ correctly using own capabilities.
 
 ### Other capabilities
 
-There are channel capabilities which are not implemented in the SDK because we do not offer the corresponding components
+There are channel capabilities that are not implemented in the SDK because we do not offer the corresponding components
 or the functionality.
 You can implement these yourself after creating the correct components.
 
@@ -97,12 +116,13 @@ Please note that while we do offer a search component, its functionality is not 
 
 # How capabilities affect the UI
 
-Let's take `MessageInputView` into consideration.
+Let's take `MessageComposerView` into consideration.
 If we left it with the default, empty set of own capabilities we would get the following result:
 
-![MessageInputView with empty capabilities](../../assets/own_capabilities_message_input_view_empty_capabilities.png)
+|![MessageComposerView with empty capabilities](../../assets/own_capabilities_message_composer_view_empty_capabilities.png)|
+|---|
 
-This leaves the user unable to perform any action provided by `MessageInputView`.
+This leaves the user unable to perform any action provided by `MessageComposerView`.
 Ideally, you should let your Dashboard App settings regulate capabilities, but if you wish to control them manually, you can do so.
 
 Take a look at the object called `ChannelCapabilities`:
@@ -114,8 +134,7 @@ public object ChannelCapabilities {
     ... // Other capabilities
 }
 ```
-The file containing `ChannelCapabilities` can be
-found [here](https://github.com/GetStream/stream-chat-android/blob/0f1f54e912baf7a7284d9a4d1435fb6743aa9c78/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/ChannelCapabilities.kt#L29).
+The file containing `ChannelCapabilities` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/ChannelCapabilities.kt).
 
 This object contains all relevant channel capabilities as type safe properties.
 You can use the properties to build a set containing only the capabilities you want enabled for the user.
@@ -131,12 +150,19 @@ val customOwnCapabilities = setOf(
 )
 ```
 
-Then call the following method from an instance of `MessageInputView` and pass in your set of capabilities:
+Then use it to create `MessageComposerState`:
 
 ```kotlin
-messageInputView.setOwnCapabilities(ownCapabilities = customOwnCapabilities)
+val messageComposerState = MessageComposerState(
+    ownCapabilities = customOwnCapabilities
+)
 ```
 
+And finally call the `MessageComposerView::renderState` method with `messageComposerState` parameter:
+
+```kotlin
+messageComposerView.renderState(messageComposerState)
+```
 This enables the following capabilities:
 
 - **send-message * **
@@ -144,9 +170,10 @@ This enables the following capabilities:
 - **upload-file * **
 - **send-typing-events * **
 
-And results in `MessageInputView` having the following appearance:
+And results in `MessageComposerView` having the following appearance:
 
-![MessageInputView with custom capabilities](../../assets/own_capabilities_message_input_view_with_capabilities.png)
+|![MessageComposerView with custom capabilities](../../assets/own_capabilities_message_composer_view_with_capabilities.png)|
+|---|
 
 :::note
 Please note that providing custom client side capabilities leaves you in charge of making sure that users are not awarded with dangerous capabilities and that different clients are in sync.

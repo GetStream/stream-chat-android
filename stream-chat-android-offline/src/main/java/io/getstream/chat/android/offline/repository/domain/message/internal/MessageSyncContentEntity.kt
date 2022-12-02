@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.utils.SyncStatus
 
 /**
  * An addition to provide more details of the [SyncStatus].

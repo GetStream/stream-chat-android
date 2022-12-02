@@ -16,10 +16,11 @@
 
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 import java.util.Date
@@ -37,37 +38,37 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(text = "Lorem ipsum dolor"),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = listOf(MessagePosition.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessagePosition.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Ut enim ad minim veniam", createdAt = date),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit", createdAt = date),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Whaaat?", createdAt = date),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Ephemeral", createdAt = date, type = "ephemeral"),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = true,
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Ephemeral", createdAt = date, syncStatus = SyncStatus.FAILED_PERMANENTLY),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -76,7 +77,7 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
                     createdAt = date,
                     attachments = mutableListOf(attachmentLink, attachmentLink)
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -85,7 +86,7 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
                     createdAt = date,
                     attachments = mutableListOf(attachmentLink)
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = false
             ),
         )

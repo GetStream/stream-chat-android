@@ -21,10 +21,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOVE
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserEditReactionsViewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMessage
 

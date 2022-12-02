@@ -26,7 +26,7 @@
     android:paddingBottom="@dimen/stream_ui_spacing_small"
     >
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         style="?attr/streamUiSuggestionListViewMentionAvatarStyle"
         app:layout_constraintBottom_toBottomOf="parent"

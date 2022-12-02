@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.components
 
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test

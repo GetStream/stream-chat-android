@@ -19,12 +19,12 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.onSuccessSuspend
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelConfig
 
 /**
  * Implementation for [QueryChannelListener] that handles database update.
@@ -35,7 +35,7 @@ internal class QueryChannelListenerDatabase(private val repos: RepositoryFacade)
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onQueryChannelRequest(channelType: String, channelId: String, request: QueryChannelRequest) {
         /*

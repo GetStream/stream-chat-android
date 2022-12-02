@@ -1,7 +1,8 @@
 package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.client.utils.Result
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/channel-list-updates/">Channel List Updates</a>
@@ -19,10 +20,13 @@ class HandlingUserConnection {
         if (ChatClient.instance().getCurrentUser() == null) {
             ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
                 .enqueue { result ->
-                    if (result.isSuccess) {
-                        // Handle success
-                    } else {
-                        // Handle error
+                    when (result) {
+                        is Result.Success -> {
+                            // Handle success
+                        }
+                        is Result.Failure -> {
+                            // Handle error
+                        }
                     }
                 }
         }
@@ -30,10 +34,13 @@ class HandlingUserConnection {
 
     fun disconnectTheUser() {
         ChatClient.instance().disconnect(flushPersistence = false).enqueue { result ->
-            if (result.isSuccess) {
-                // Handle success
-            } else {
-                // Handle error
+            when (result) {
+                is Result.Success -> {
+                    // Handle success
+                }
+                is Result.Failure -> {
+                    // Handle error
+                }
             }
         }
     }
@@ -48,10 +55,13 @@ class HandlingUserConnection {
         // Connect the first user
         ChatClient.instance().connectUser(user = user1, token = "userToken") // Replace with a real token
             .enqueue { result ->
-                if (result.isSuccess) {
-                    // Handle success
-                } else {
-                    // Handle error
+                when (result) {
+                    is Result.Success -> {
+                        // Handle success
+                    }
+                    is Result.Failure -> {
+                        // Handle error
+                    }
                 }
             }
 
@@ -63,10 +73,13 @@ class HandlingUserConnection {
 
         ChatClient.instance().switchUser(user = user2, token = "userToken") // Replace with a real token
             .enqueue { result ->
-                if (result.isSuccess) {
-                    // Handle success
-                } else {
-                    // Handle error
+                when (result) {
+                    is Result.Success -> {
+                        // Handle success
+                    }
+                    is Result.Failure -> {
+                        // Handle error
+                    }
                 }
             }
     }

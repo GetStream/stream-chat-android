@@ -33,16 +33,16 @@ internal class ErrorCall<T : Any>(
     }
 
     override fun execute(): Result<T> {
-        return Result(e)
+        return Result.Failure(e)
     }
 
     override fun enqueue(callback: Call.Callback<T>) {
         scope.launch(DispatcherProvider.Main) {
-            callback.onResult(Result(e))
+            callback.onResult(Result.Failure(e))
         }
     }
 
     override suspend fun await(): Result<T> = withContext(scope.coroutineContext) {
-        Result(e)
+        Result.Failure(e)
     }
 }

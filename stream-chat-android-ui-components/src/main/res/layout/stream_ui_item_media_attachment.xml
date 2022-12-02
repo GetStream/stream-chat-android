@@ -54,7 +54,7 @@
         app:layout_constraintVertical_bias="0"
         >
 
-        <io.getstream.chat.android.ui.avatar.UserAvatarView
+        <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
             android:id="@+id/userAvatarView"
             style="@style/StreamUiGalleryAvatarStyle"
             android:layout_margin="1dp"

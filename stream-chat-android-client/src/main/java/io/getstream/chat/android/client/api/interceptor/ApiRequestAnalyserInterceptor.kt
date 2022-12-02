@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
-import io.getstream.chat.android.client.models.Constants
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import io.getstream.chat.android.models.Constants
 import okhttp3.Interceptor
 import okhttp3.Response
 import okio.Buffer

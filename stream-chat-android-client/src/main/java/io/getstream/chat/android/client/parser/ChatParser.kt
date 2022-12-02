@@ -18,12 +18,11 @@ package io.getstream.chat.android.client.parser
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.errors.cause.MessageModerationFailedException
 import io.getstream.chat.android.client.socket.ErrorDetail
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
@@ -39,14 +38,16 @@ internal interface ChatParser {
     @Suppress("TooGenericExceptionCaught")
     fun <T : Any> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
         return try {
-            Result(fromJson(raw, clazz))
+            Result.Success(fromJson(raw, clazz))
         } catch (expected: Throwable) {
-            Result(ChatError("fromJsonOrError error parsing of $clazz into $raw", expected))
+            Result.Failure(
+                ChatError.ThrowableError("fromJsonOrError error parsing of $clazz into $raw", expected)
+            )
         }
     }
 
     @Suppress("TooGenericExceptionCaught", "NestedBlockDepth")
-    fun toError(okHttpResponse: Response): ChatNetworkError {
+    fun toError(okHttpResponse: Response): ChatError.NetworkError {
         val statusCode: Int = okHttpResponse.code
 
         return try {
@@ -54,7 +55,10 @@ internal interface ChatParser {
             val body = okHttpResponse.peekBody(Long.MAX_VALUE).string()
 
             if (body.isEmpty()) {
-                ChatNetworkError.create(ChatErrorCode.NO_ERROR_BODY, statusCode = statusCode)
+                ChatError.NetworkError.fromChatErrorCode(
+                    chatErrorCode = ChatErrorCode.NO_ERROR_BODY,
+                    statusCode = statusCode,
+                )
             } else {
                 val error = try {
                     fromJson(body, ErrorResponse::class.java)
@@ -62,41 +66,40 @@ internal interface ChatParser {
                     ErrorResponse().apply { message = body }
                 }
                 val cause = error.extractCause()
-                ChatNetworkError.create(
+                ChatError.NetworkError(
                     streamCode = error.code,
-                    description = error.message +
+                    message = error.message +
                         moreInfoTemplate(error.moreInfo) +
                         buildDetailsTemplate(error.details),
                     statusCode = statusCode,
-                    cause = cause
+                    cause = cause,
                 )
             }
         } catch (expected: Throwable) {
             StreamLog.e(tag, expected) { "[toError] failed" }
-            ChatNetworkError.create(
-                code = ChatErrorCode.NETWORK_FAILED,
+            ChatError.NetworkError.fromChatErrorCode(
+                chatErrorCode = ChatErrorCode.NETWORK_FAILED,
                 cause = expected,
-                statusCode = statusCode
+                statusCode = statusCode,
             )
         }
     }
 
-    fun toError(errorResponseBody: ResponseBody): ChatNetworkError {
+    fun toError(errorResponseBody: ResponseBody): ChatError.NetworkError {
         return try {
             val errorResponse: ErrorResponse = fromJson(errorResponseBody.string(), ErrorResponse::class.java)
             val (code, message, statusCode, _, moreInfo) = errorResponse
 
-            ChatNetworkError.create(
+            ChatError.NetworkError(
                 streamCode = code,
-                description = message + moreInfoTemplate(moreInfo),
-                statusCode = statusCode
+                message = message + moreInfoTemplate(moreInfo),
+                statusCode = statusCode,
             )
         } catch (expected: Throwable) {
             StreamLog.e(tag, expected) { "[toError] failed" }
-            ChatNetworkError.create(
-                code = ChatErrorCode.NETWORK_FAILED,
+            ChatError.NetworkError.fromChatErrorCode(
+                chatErrorCode = ChatErrorCode.NETWORK_FAILED,
                 cause = expected,
-                statusCode = -1
             )
         }
     }

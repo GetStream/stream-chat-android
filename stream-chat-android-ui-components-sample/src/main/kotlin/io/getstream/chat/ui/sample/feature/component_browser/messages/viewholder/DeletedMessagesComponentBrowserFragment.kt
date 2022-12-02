@@ -16,8 +16,9 @@
 
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import java.util.Date
 
 class DeletedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
@@ -26,27 +27,27 @@ class DeletedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = listOf(MessagePosition.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessagePosition.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
                 message = Message(deletedAt = Date()),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = true
             )
         )

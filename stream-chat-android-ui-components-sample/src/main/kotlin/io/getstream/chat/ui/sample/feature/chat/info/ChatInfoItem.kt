@@ -19,8 +19,8 @@ package io.getstream.chat.ui.sample.feature.chat.info
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
 import io.getstream.chat.ui.sample.R
 
 sealed class ChatInfoItem {

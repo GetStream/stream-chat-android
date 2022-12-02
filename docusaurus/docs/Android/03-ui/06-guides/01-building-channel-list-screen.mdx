@@ -3,6 +3,10 @@ import TabItem from '@theme/TabItem';
 
 # Building a Channel List Screen
 
+:::note
+You can find the full code from this guide on [GitHub](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-guides/src/main/java/io/getstream/chat/android/guides/catalog/uicomponents/channelsscreen). To check the final result, clone the repository and run the `stream-chat-android-ui-guides` module.
+:::
+
 The SDK provides two components, `ChannelListHeaderView` and `ChannelListView` which work best together to display a list of channels.
 
 This is what a screen made up of these two components looks like:
@@ -18,28 +22,24 @@ To add these Views to your app, first create them in an XML layout:
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
-    <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+    <io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
         android:id="@+id/channelListHeaderView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <io.getstream.chat.android.ui.channel.list.ChannelListView
+    <io.getstream.chat.android.ui.feature.channels.list.ChannelListView
         android:id="@+id/channelListView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/channelListHeaderView"
-        />
+        app:layout_constraintTop_toBottomOf="@id/channelListHeaderView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
@@ -59,7 +59,7 @@ val channelListFactory: ChannelListViewModelFactory = ChannelListViewModelFactor
         Filters.eq("type", "messaging"),
         Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
     ),
-    sort = QuerySortByField.descByName("lastUpdated"),
+    sort = QuerySortByField.descByName("last_updated"),
     limit = 30,
 )
 val channelListViewModel: ChannelListViewModel by viewModels { channelListFactory }
@@ -78,7 +78,7 @@ FilterObject filter = Filters.and(
 
 ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()
         .filter(filter)
-        .sort(QuerySortByField.descByName("lastUpdated"))
+        .sort(QuerySortByField.descByName("last_updated"))
         .limit(30)
         .build();
 

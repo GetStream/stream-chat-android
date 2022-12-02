@@ -13,6 +13,11 @@ jobs:
       - uses: actions/checkout@v3.1.0
         with:
           ref: develop
+      - uses: tibdex/github-app-token@v1.7.0
+        id: generate-token
+        with:
+          app_id: ${{ secrets.APP_ID_OBTAIN_TOKEN }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY_OBTAIN_TOKEN }}
       - uses: localazy/download@v1
         with:
           read_key: ${{ secrets.LOCALAZY_READ_KEY }}
@@ -25,8 +30,8 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
-            commit-message: Update translations
-            title: Update translations
+            commit-message: "AUTOMATION: Update translations"
+            title: "AUTOMATION: Update translations"
             delete-branch: true
             reviewers: GetStream/android-developers
             body: |
@@ -36,3 +41,4 @@ jobs:
 
               [1]: https://github.com/peter-evans/create-pull-request
             branch: update-translations
+            token: ${{ steps.generate-token.outputs.token }}

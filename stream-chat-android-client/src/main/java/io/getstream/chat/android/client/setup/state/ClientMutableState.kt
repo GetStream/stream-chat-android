@@ -16,41 +16,31 @@
 
 package io.getstream.chat.android.client.setup.state
 
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.InitializationState
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.InitializationState
 
 /**
  * Mutable version of [ClientState]. The class makes possible to change state of the SDK. Should only be used
  * internally by the SDK.
  */
-@InternalStreamChatApi
-public interface ClientMutableState : ClientState {
-
-    /**
-     * Sets the [User]
-     *
-     * @param user [User]
-     */
-    public fun setUser(user: User)
+internal interface ClientMutableState : ClientState {
 
     /**
      * Sets the [ConnectionState]
      *
      * @param connectionState [ConnectionState]
      */
-    public fun setConnectionState(connectionState: ConnectionState)
+    fun setConnectionState(connectionState: ConnectionState)
 
     /**
      * Sets initialized
      *
      * @param state [InitializationState]
      */
-    public fun setInitializationState(state: InitializationState)
+    fun setInitializationState(state: InitializationState)
 
     /**
      * Clears the state of [ClientMutableState].
      */
-    public override fun clearState()
+    public fun clearState()
 }

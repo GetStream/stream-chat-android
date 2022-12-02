@@ -16,10 +16,11 @@
 
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachment7z
 import io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.Companion.attachmentDoc
@@ -66,7 +67,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     )
                 ),
                 isMine = true,
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM)
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM)
             ),
             MessageListItem.MessageItem(
                 message = Message(
@@ -75,7 +76,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     user = me,
                     replyTo = Message(text = "Text from reply message", user = other)
                 ),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = listOf(MessagePosition.TOP),
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -91,7 +92,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         user = other
                     )
                 ),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessagePosition.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -109,7 +110,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         user = other
                     )
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -124,12 +125,12 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                         user = me
                     )
                 ),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
                 message = theirMessage,
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -146,7 +147,7 @@ class RepliedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFrag
                     text = "Bye!!!",
                     replyTo = theirMessage
                 ),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = true
             ),
         )

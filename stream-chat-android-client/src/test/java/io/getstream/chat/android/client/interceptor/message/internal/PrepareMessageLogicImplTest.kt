@@ -18,23 +18,31 @@ package io.getstream.chat.android.client.interceptor.message.internal
 
 import io.getstream.chat.android.client.Mother.randomAttachment
 import io.getstream.chat.android.client.Mother.randomUser
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 internal class PrepareMessageLogicImplTest {
 
+    private val channelMessagesUpdateLogic: ChannelMessagesUpdateLogic = mock()
+
     private val clientState: ClientState = mock()
-    private val prepareMessageInterceptorImpl = PrepareMessageLogicImpl(clientState)
+    private val logic: ChannelStateLogicProvider = mock {
+        on(it.channelStateLogic(any(), any())) doReturn channelMessagesUpdateLogic
+    }
+    private val prepareMessageInterceptorImpl = PrepareMessageLogicImpl(clientState, logic)
 
     @Test
     fun `given a message has attachments, the status should be updated accordingly`() {

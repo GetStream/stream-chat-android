@@ -24,7 +24,7 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: Build
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug :stream-chat-android-ui-uitests:assembleDebugAndroidTest
 
   release_build:
     name: Release build

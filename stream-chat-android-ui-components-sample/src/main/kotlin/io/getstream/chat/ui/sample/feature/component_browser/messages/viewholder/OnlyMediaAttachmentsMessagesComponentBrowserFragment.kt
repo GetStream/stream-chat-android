@@ -16,9 +16,10 @@
 
 package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder
 
-import com.getstream.sdk.chat.adapter.MessageListItem
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.component_browser.utils.drawableResToUri
 
@@ -32,7 +33,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(Attachment(type = "image", imageUrl = uri1))),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = listOf(MessagePosition.TOP),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -42,7 +43,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri2)
                     )
                 ),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessagePosition.MIDDLE),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -53,7 +54,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri3)
                     )
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = true
             ),
             MessageListItem.MessageItem(
@@ -63,7 +64,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri2)
                     )
                 ),
-                positions = listOf(MessageListItem.Position.TOP),
+                positions = listOf(MessagePosition.TOP),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -74,7 +75,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri3)
                     )
                 ),
-                positions = listOf(MessageListItem.Position.MIDDLE),
+                positions = listOf(MessagePosition.MIDDLE),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -86,7 +87,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri1)
                     )
                 ),
-                positions = listOf(MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.BOTTOM),
                 isMine = false
             ),
             MessageListItem.MessageItem(
@@ -100,7 +101,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri3),
                     )
                 ),
-                positions = listOf(MessageListItem.Position.TOP, MessageListItem.Position.BOTTOM),
+                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
                 isMine = true
             )
         )

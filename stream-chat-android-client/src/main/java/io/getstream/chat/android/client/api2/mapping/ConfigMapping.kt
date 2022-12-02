@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.CommandDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
-import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.models.Config
 
 internal fun ConfigDto.toDomain(): Config =
     Config(

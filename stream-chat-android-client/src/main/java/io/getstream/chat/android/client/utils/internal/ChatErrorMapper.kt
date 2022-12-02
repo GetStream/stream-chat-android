@@ -17,17 +17,16 @@
 package io.getstream.chat.android.client.utils.internal
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.errors.cause.MessageModerationFailedException
-import io.getstream.chat.android.client.models.MessageModerationFailed
-import io.getstream.chat.android.client.models.MessageSyncDescription
-import io.getstream.chat.android.client.models.MessageSyncType
-import io.getstream.chat.android.client.models.ModerationViolation
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.MessageModerationFailed
+import io.getstream.chat.android.models.MessageSyncDescription
+import io.getstream.chat.android.models.MessageSyncType
+import io.getstream.chat.android.models.ModerationViolation
 
 @InternalStreamChatApi
 public fun ChatError.toMessageSyncDescription(): MessageSyncDescription? {
-    val networkError = this as? ChatNetworkError ?: return null
+    val networkError = this as? ChatError.NetworkError ?: return null
     return when (val cause = networkError.cause) {
         is MessageModerationFailedException -> MessageSyncDescription(
             type = MessageSyncType.FAILED_MODERATION,

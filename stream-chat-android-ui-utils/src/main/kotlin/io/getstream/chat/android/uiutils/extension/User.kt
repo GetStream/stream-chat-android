@@ -19,7 +19,7 @@ package io.getstream.chat.android.uiutils.extension
 import android.content.Context
 import android.text.format.DateUtils
 import androidx.annotation.StringRes
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 /**
  * Returns a string describing the elapsed time since the user was online (was watching the channel).

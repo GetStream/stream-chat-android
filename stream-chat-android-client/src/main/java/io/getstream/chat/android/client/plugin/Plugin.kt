@@ -17,18 +17,10 @@
 package io.getstream.chat.android.client.plugin
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.interceptor.MessageInterceptor
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
@@ -39,6 +31,7 @@ import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
@@ -46,6 +39,13 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySorter
 import java.util.Date
 
 /**
@@ -61,6 +61,7 @@ public interface Plugin :
     ShuffleGiphyListener,
     DeleteMessageListener,
     SendMessageListener,
+    SendAttachmentListener,
     EditMessageListener,
     QueryChannelListener,
     QueryChannelsListener,
@@ -70,8 +71,7 @@ public interface Plugin :
     ChannelMarkReadListener,
     CreateChannelListener {
 
-    public val interceptors: List<MessageInterceptor>
-    public val errorHandlers: List<ErrorHandler>
+    public val errorHandler: ErrorHandler?
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -82,14 +82,16 @@ public interface Plugin :
         filter: FilterObject,
         sort: QuerySorter<Member>,
         members: List<Member>,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onDeleteReactionRequest(
         cid: String?,
         messageId: String,
         reactionType: String,
         currentUser: User,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onDeleteReactionResult(
         cid: String?,
@@ -97,16 +99,18 @@ public interface Plugin :
         reactionType: String,
         currentUser: User,
         result: Result<Message>,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
-    override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> = Result.success(Unit)
+    override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onSendReactionRequest(
         cid: String?,
         reaction: Reaction,
         enforceUnique: Boolean,
         currentUser: User,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onSendReactionResult(
         cid: String?,
@@ -114,99 +118,116 @@ public interface Plugin :
         enforceUnique: Boolean,
         currentUser: User,
         result: Result<Reaction>,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override fun onSendReactionPrecondition(
         currentUser: User?,
         reaction: Reaction,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onGetRepliesPrecondition(
         messageId: String,
         limit: Int,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onGetRepliesRequest(
         messageId: String,
         limit: Int,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onGetRepliesResult(
         result: Result<List<Message>>,
         messageId: String,
         limit: Int,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onGetRepliesMorePrecondition(
         messageId: String,
         firstId: String,
         limit: Int,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onGetRepliesMoreRequest(
         messageId: String,
         firstId: String,
         limit: Int,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onGetRepliesMoreResult(
         result: Result<List<Message>>,
         messageId: String,
         firstId: String,
         limit: Int,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
-    override fun onGiphySendResult(cid: String, result: Result<Message>) { /* No-Op */ }
+    override fun onGiphySendResult(cid: String, result: Result<Message>) { /* No-Op */
+    }
 
-    override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) { /* No-Op */ }
+    override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) { /* No-Op */
+    }
 
-    override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> = Result.success(Unit)
+    override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> = Result.Success(Unit)
 
-    override suspend fun onMessageDeleteRequest(messageId: String) { /* No-Op */ }
+    override suspend fun onMessageDeleteRequest(messageId: String) { /* No-Op */
+    }
 
     override suspend fun onMessageDeleteResult(
         originalMessageId: String,
         result: Result<Message>,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onMessageSendResult(
         result: Result<Message>,
         channelType: String,
         channelId: String,
         message: Message,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
-    override suspend fun onMessageEditRequest(message: Message) { /* No-Op */ }
+    override suspend fun onMessageEditRequest(message: Message) { /* No-Op */
+    }
 
-    override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) { /* No-Op */ }
+    override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) { /* No-Op */
+    }
 
     override suspend fun onQueryChannelPrecondition(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onQueryChannelRequest(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onQueryChannelResult(
         result: Result<Channel>,
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
-    override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> = Result.success(Unit)
+    override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> =
+        Result.Success(Unit)
 
-    override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) { /* No-Op */ }
+    override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) { /* No-Op */
+    }
 
     override suspend fun onQueryChannelsResult(
         result: Result<List<Channel>>,
         request: QueryChannelsRequest,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override fun onTypingEventPrecondition(
         eventType: String,
@@ -214,7 +235,7 @@ public interface Plugin :
         channelId: String,
         extraData: Map<Any, Any>,
         eventTime: Date,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     override fun onTypingEventRequest(
         eventType: String,
@@ -222,7 +243,8 @@ public interface Plugin :
         channelId: String,
         extraData: Map<Any, Any>,
         eventTime: Date,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override fun onTypingEventResult(
         result: Result<ChatEvent>,
@@ -231,33 +253,37 @@ public interface Plugin :
         channelId: String,
         extraData: Map<Any, Any>,
         eventTime: Date,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onHideChannelPrecondition(
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onHideChannelRequest(
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onHideChannelResult(
         result: Result<Unit>,
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
-    override suspend fun onMarkAllReadRequest() { /* No-Op */ }
+    override suspend fun onMarkAllReadRequest() { /* No-Op */
+    }
 
     override suspend fun onChannelMarkReadPrecondition(
         channelType: String,
         channelId: String,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onCreateChannelRequest(
         channelType: String,
@@ -265,20 +291,26 @@ public interface Plugin :
         memberIds: List<String>,
         extraData: Map<String, Any>,
         currentUser: User,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override suspend fun onCreateChannelResult(
         channelType: String,
         channelId: String,
         memberIds: List<String>,
         result: Result<Channel>,
-    ) { /* No-Op */ }
+    ) { /* No-Op */
+    }
 
     override fun onCreateChannelPrecondition(
         currentUser: User?,
         channelId: String,
         memberIds: List<String>,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
+
+    override suspend fun onAttachmentSendRequest(channelType: String, channelId: String, message: Message) {
+        /* No-Op */
+    }
 
     public fun onUserSet(user: User)
 

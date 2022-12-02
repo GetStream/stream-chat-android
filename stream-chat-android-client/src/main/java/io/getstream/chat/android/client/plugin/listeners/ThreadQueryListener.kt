@@ -17,16 +17,17 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Message
 
 /** Listener for reply queries. */
 public interface ThreadQueryListener {
     /**
-     * Runs precondition check for [ChatClient.getReplies]. If it returns [Result.isSuccess] then the request is run
-     * otherwise it returns [Result.error] and no request is made.
+     * Runs precondition check for [ChatClient.getReplies]. If it returns [Result.Success] then the request is run
+     * otherwise it returns [Result.Failure] and no request is made.
      */
-    public suspend fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> = Result.success(Unit)
+    public suspend fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> =
+        Result.Success(Unit)
 
     /** Runs side effect before the request is launched. */
     public suspend fun onGetRepliesRequest(messageId: String, limit: Int)
@@ -35,14 +36,14 @@ public interface ThreadQueryListener {
     public suspend fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int)
 
     /**
-     * Runs precondition check for [ChatClient.getRepliesMore]. If it returns [Result.isSuccess] then the request is run
-     * otherwise it returns [Result.error] and no request is made.
+     * Runs precondition check for [ChatClient.getRepliesMore]. If it returns [Result.Success] then the request is run
+     * otherwise it returns [Result.Failure] and no request is made.
      */
     public suspend fun onGetRepliesMorePrecondition(
         messageId: String,
         firstId: String,
         limit: Int,
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> = Result.Success(Unit)
 
     /** Runs side effect before the request is launched. */
     public suspend fun onGetRepliesMoreRequest(

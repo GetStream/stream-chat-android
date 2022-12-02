@@ -18,11 +18,11 @@
 
 package io.getstream.chat.android.client.utils.message
 
-import io.getstream.chat.android.client.models.AttachmentType
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.MessageType
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.utils.date.after
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
 
 private const val ITEM_COUNT_OF_TWO: Int = 2
 

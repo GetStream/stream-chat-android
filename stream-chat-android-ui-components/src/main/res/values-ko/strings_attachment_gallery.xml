@@ -20,7 +20,6 @@
   <string name="stream_ui_attachment_gallery_delete">"삭제"</string>
   <string name="stream_ui_attachment_gallery_overview_title">"사진"</string>
   <string name="stream_ui_attachment_gallery_reply">"회신"</string>
-  <string name="stream_ui_attachment_gallery_save_image">"이미지를 저장합니다"</string>
   <string name="stream_ui_attachment_gallery_share">"이미지 공유"</string>
   <string name="stream_ui_attachment_gallery_show_in_chat">"채팅에서 확인하기"</string>
 </resources>

@@ -23,7 +23,7 @@
     android:padding="@dimen/stream_ui_spacing_tiny"
     >
 
-    <io.getstream.chat.android.ui.avatar.UserAvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/replyAvatarView"
         style="?attr/streamUiReplyAvatarStyle"
         android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"

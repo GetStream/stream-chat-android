@@ -3,6 +3,10 @@ import TabItem from '@theme/TabItem';
 
 # Providing Custom Reactions
 
+:::note
+You can find the full code from this guide on [GitHub](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-guides/src/main/java/io/getstream/chat/android/guides/catalog/uicomponents/customreactions). To check the final result, clone the repository and run the `stream-chat-android-ui-guides` module.
+:::
+
 By default, the UI Components SDK provides the following reaction options and corresponding icons for them:
 
 - `like`
@@ -11,9 +15,10 @@ By default, the UI Components SDK provides the following reaction options and co
 - `wow`
 - `sad`
 
-![The Default Message Options Overlay](../../assets/custom_reactions_message_options_overlay_before.png)
+|![The Default Message Options Overlay](../../assets/custom_reactions_message_options_overlay_before.png)|
+|---|
 
-If you want to override the supported set of reactions, you'll need provide you custom set of reactions using the `ChatUI.supportedReactions` property.
+If you want to override the supported reactions, you need to create a custom instance of `SupportedReactions` with your custom set of reactions and provide it using the `ChatUI.supportedReactions` property.
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -21,23 +26,24 @@ If you want to override the supported set of reactions, you'll need provide you 
 ```kotlin
 val reactions = mapOf(
     "thumbs_up" to SupportedReactions.ReactionDrawable(
-        inactiveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_up)!!,
-        activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_up_selected)!!
+        inactiveDrawable = ContextCompat.getDrawable(context, R.drawable.ic_thumb_up)!!,
+        activeDrawable = ContextCompat.getDrawable(context, R.drawable.ic_thumb_up_selected)!!
     ),
     "thumbs_down" to SupportedReactions.ReactionDrawable(
-        inactiveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_down)!!,
-        activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_down_selected)!!
+        inactiveDrawable = ContextCompat.getDrawable(context, R.drawable.ic_thumb_down)!!,
+        activeDrawable = ContextCompat.getDrawable(context, R.drawable.ic_thumb_down_selected)!!
     ),
     "mood_good" to SupportedReactions.ReactionDrawable(
-        inactiveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_good)!!,
-        activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_good_selected)!!
+        inactiveDrawable = ContextCompat.getDrawable(context, R.drawable.ic_mood_good)!!,
+        activeDrawable = ContextCompat.getDrawable(context, R.drawable.ic_mood_good_selected)!!
     ),
     "mood_bad" to SupportedReactions.ReactionDrawable(
-        inactiveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_bad)!!,
-        activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_bad_selected)!!
-    ),
+        inactiveDrawable = ContextCompat.getDrawable(context, R.drawable.ic_mood_bad)!!,
+        activeDrawable = ContextCompat.getDrawable(context, R.drawable.ic_mood_bad_selected)!!
+    )
 )
-ChatUI.supportedReactions = SupportedReactions(this, reactions)
+
+ChatUI.supportedReactions = SupportedReactions(context, reactions)
 ```
 </TabItem>
 
@@ -79,6 +85,8 @@ ChatUI.setSupportedReactions(new SupportedReactions(context, reactions));
 </Tabs>
 
 In the example above, we defined a set of 4 custom reactions and provided corresponding icons for them. Notice that you need to provide icons for both normal and selected states.
+
+## The Resulting UI
 
 The code above will produce the following UI:
 

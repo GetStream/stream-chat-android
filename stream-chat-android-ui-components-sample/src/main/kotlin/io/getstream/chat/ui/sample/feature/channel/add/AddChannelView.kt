@@ -29,9 +29,9 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.message.input.MessageInputView
-import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.AddChannelEmptyMessageListViewBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelViewBinding
@@ -49,8 +49,8 @@ class AddChannelView : FrameLayout {
     val messageListView: MessageListView
         get() = binding.messageListView
 
-    val messageInputView: MessageInputView
-        get() = binding.messageInputView
+    val messageComposerView: MessageComposerView
+        get() = binding.messageComposerView
 
     constructor(context: Context) : super(context) {
         init(null)
@@ -69,12 +69,12 @@ class AddChannelView : FrameLayout {
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        if (binding.messageInputView.isVisible && ev.action == MotionEvent.ACTION_DOWN) {
-            val messageInputViewRect = Rect().apply {
-                binding.messageInputView.getHitRect(this)
+        if (binding.messageComposerView.isVisible && ev.action == MotionEvent.ACTION_DOWN) {
+            val messageComposerViewRect = Rect().apply {
+                binding.messageComposerView.getHitRect(this)
             }
-            if (messageInputViewRect.contains(ev.x.toInt(), ev.y.toInt())) {
-                controller.messageInputViewClicked()
+            if (messageComposerViewRect.contains(ev.x.toInt(), ev.y.toInt())) {
+                controller.messageComposerViewClicked()
             }
         }
         return super.onInterceptTouchEvent(ev)
@@ -85,7 +85,6 @@ class AddChannelView : FrameLayout {
             val isAddGroupChannel = it.getBoolean(R.styleable.AddChannelView_isAddGroupChannel, false)
 
             binding.createGroupContainer.isVisible = !isAddGroupChannel
-            binding.messageInputView.isVisible = !isAddGroupChannel
             binding.headerView.isVisible = !isAddGroupChannel
             binding.groupHeaderView.isVisible = isAddGroupChannel
 
@@ -95,7 +94,7 @@ class AddChannelView : FrameLayout {
                 binding.usersRecyclerView,
                 binding.createGroupContainer,
                 binding.messageListView,
-                binding.messageInputView,
+                binding.messageComposerView,
                 binding.emptyStateView,
                 loadingView,
                 isAddGroupChannel = isAddGroupChannel

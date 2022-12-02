@@ -4,17 +4,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.api.models.WatchChannelRequest;
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.Filters;
+import io.getstream.chat.android.models.User;
 
 public class UserPresence {
     private ChatClient client;
@@ -29,9 +29,9 @@ public class UserPresence {
         user.setInvisible(true);
         client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
             if (result.isSuccess()) {
-                User userRes = result.data().getUser();
+                User userRes = result.getOrNull().getUser();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
     }
@@ -49,9 +49,9 @@ public class UserPresence {
         watchRequest.getData().put("members", Arrays.asList("john", "jack"));
         channelClient.watch(watchRequest).enqueue(result -> {
             if (result.isSuccess()) {
-                Channel channel = result.data();
+                Channel channel = result.getOrNull();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 
@@ -75,9 +75,9 @@ public class UserPresence {
         );
         client.queryChannels(channelsRequest).enqueue(result -> {
             if (result.isSuccess()) {
-                List<Channel> channels = result.data();
+                List<Channel> channels = result.getOrNull();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 
@@ -89,9 +89,9 @@ public class UserPresence {
         usersQuery.setPresence(true);
         client.queryUsers(usersQuery).enqueue(result -> {
             if (result.isSuccess()) {
-                List<User> users = result.data();
+                List<User> users = result.getOrNull();
             } else {
-                // Handle result.error()
+                // Handle error
             }
         });
 

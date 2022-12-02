@@ -17,11 +17,11 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Message
 
 /**
  * ThreadQueryListenerFull handles database read and updates. It updates the database once the requests for backend
@@ -57,8 +57,8 @@ internal class ThreadQueryListenerDatabase(
     }
 
     private suspend fun onResult(result: Result<List<Message>>) {
-        if (result.isSuccess) {
-            val messages = result.data()
+        if (result is Result.Success) {
+            val messages = result.value
 
             userRepository.insertUsers(messages.flatMap(Message::users))
             messageRepository.insertMessages(messages)

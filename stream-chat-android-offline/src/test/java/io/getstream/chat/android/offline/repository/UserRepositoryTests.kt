@@ -17,9 +17,9 @@
 package io.getstream.chat.android.offline.repository
 
 import app.cash.turbine.test
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserDao
 import io.getstream.chat.android.test.TestCoroutineRule

@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.compose.previewdata
 
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.MessageType
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.Reaction
 import java.util.Date
 
 /**

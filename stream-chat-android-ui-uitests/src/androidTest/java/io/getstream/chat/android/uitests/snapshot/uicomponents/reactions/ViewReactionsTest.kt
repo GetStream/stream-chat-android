@@ -21,7 +21,7 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import com.karumi.shot.FragmentScenarioUtils.waitForFragment
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.SupportedReactions
+import io.getstream.chat.android.ui.helper.SupportedReactions
 import org.junit.Test
 
 @InternalStreamChatApi

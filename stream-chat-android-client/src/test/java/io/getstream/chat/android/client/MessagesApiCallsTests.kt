@@ -17,22 +17,30 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.SearchMessagesResult
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class MessagesApiCallsTests {
 
     companion object {
@@ -47,6 +55,7 @@ internal class MessagesApiCallsTests {
     @BeforeEach
     fun before() {
         mock = MockClientBuilder(testCoroutines)
+
         client = mock.build()
     }
 
@@ -55,11 +64,9 @@ internal class MessagesApiCallsTests {
         val messageId = "message-id"
         val message = Message(text = "a-message")
 
-        Mockito.`when`(
-            mock.api.getMessage(messageId)
-        ).thenReturn(
-            RetroSuccess(message).toRetrofitCall()
-        )
+        whenever(mock.api.getMessage(messageId)).thenReturn(RetroSuccess(message).toRetrofitCall())
+        whenever(mock.attachmentSender.sendAttachments(any(), any(), any(), any(), any()))
+            .doReturn(Result.Success(message))
 
         val result = client.getMessage(messageId).await()
 
@@ -170,13 +177,16 @@ internal class MessagesApiCallsTests {
         val messageText = "message-a"
         val message = Message(text = messageText)
 
-        Mockito.`when`(
+        whenever(
             mock.api.sendMessage(
                 mock.channelType,
                 mock.channelId,
                 message,
             )
         ).thenReturn(RetroSuccess(message).toRetrofitCall())
+
+        whenever(mock.attachmentSender.sendAttachments(any(), any(), any(), any(), any()))
+            .doReturn(Result.Success(message))
 
         val result = client.sendMessage(mock.channelType, mock.channelId, message).await()
 
@@ -187,8 +197,9 @@ internal class MessagesApiCallsTests {
     fun sendMessageError() = runTest {
         val messageText = "message-a"
         val message = Message(text = messageText)
+        val requestResult = Result.Failure(ChatError.GenericError(message = ""))
 
-        Mockito.`when`(
+        whenever(
             mock.api.sendMessage(
                 mock.channelType,
                 mock.channelId,
@@ -196,9 +207,12 @@ internal class MessagesApiCallsTests {
             )
         ).thenReturn(RetroError<Message>(mock.serverErrorCode).toRetrofitCall())
 
+        whenever(mock.attachmentSender.sendAttachments(any(), any(), any(), any(), any()))
+            .doReturn(requestResult)
+
         val result = client.sendMessage(mock.channelType, mock.channelId, message).await()
 
-        verifyError(result, mock.serverErrorCode)
+        result `should be equal to` requestResult
     }
 
     @Test

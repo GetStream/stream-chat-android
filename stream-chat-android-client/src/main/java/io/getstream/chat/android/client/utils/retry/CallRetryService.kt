@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.utils.retry
 
-import io.getstream.chat.android.client.extensions.isPermanent
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.delay
 
 /**
@@ -41,25 +41,32 @@ internal class CallRetryService(private val retryPolicy: RetryPolicy) {
         var result: Result<T>
         while (true) {
             result = task()
-            if (result.isSuccess || result.error().isPermanent()) {
-                break
-            }
-            val shouldRetry = retryPolicy.shouldRetry(attempt, result.error())
-            val timeout = retryPolicy.retryTimeout(attempt, result.error())
+            when (result) {
+                is Result.Success -> break
+                is Result.Failure -> {
+                    if (result.value.isPermanent()) {
+                        break
+                    }
+                    val shouldRetry = retryPolicy.shouldRetry(attempt, result.value)
+                    val timeout = retryPolicy.retryTimeout(attempt, result.value)
 
-            if (shouldRetry) {
-                // temporary failure, continue
-                logger.i {
-                    "API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}"
+                    if (shouldRetry) {
+                        // temporary failure, continue
+                        logger.i {
+                            "API call failed (attempt $attempt), retrying in $timeout seconds." +
+                                " Error was ${result.value}"
+                        }
+                        delay(timeout.toLong())
+                        attempt += 1
+                    } else {
+                        logger.i {
+                            "API call failed (attempt $attempt). " +
+                                "Giving up for now, will retry when connection recovers. " +
+                                "Error was ${result.value}"
+                        }
+                        break
+                    }
                 }
-                delay(timeout.toLong())
-                attempt += 1
-            } else {
-                logger.i {
-                    "API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. " +
-                        "Error was ${result.error()}"
-                }
-                break
             }
         }
         return result

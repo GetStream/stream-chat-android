@@ -14,7 +14,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<io.getstream.chat.android.ui.message.preview.internal.MessagePreviewView xmlns:android="http://schemas.android.com/apk/res/android"
+<io.getstream.chat.android.ui.feature.messages.preview.internal.MessagePreviewView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     />

@@ -30,6 +30,8 @@
     <color name="stream_compose_error_accent">#FF3742</color>
     <color name="stream_compose_info_accent">#20E070</color>
     <color name="stream_compose_highlight">#FBF4DD</color>
+    <color name="stream_compose_show_more_overlay">#99000000</color>
+    <color name="stream_compose_show_more_text">#FFFFFF</color>
 
     <!-- Default Dark colors -->
     <color name="stream_compose_text_high_emphasis_dark">#FFFFFF</color>
@@ -46,6 +48,8 @@
     <color name="stream_compose_error_accent_dark">#FF3742</color>
     <color name="stream_compose_info_accent_dark">#20E070</color>
     <color name="stream_compose_highlight_dark">#302D22</color>
+    <color name="stream_compose_show_more_overlay_dark">#99000000</color>
+    <color name="stream_compose_show_more_text_dark">#FFFFFF</color>
 
     <!-- Avatar gradient colors -->
     <color name="stream_compose_avatar_gradient_orange">#FF8A65</color>

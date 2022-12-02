@@ -28,15 +28,16 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
-import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
-import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
-import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
-import io.getstream.chat.android.ui.search.list.viewmodel.bindView
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.ui.common.utils.Utils
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.channels.bindView
+import io.getstream.chat.android.ui.viewmodel.search.SearchViewModel
+import io.getstream.chat.android.ui.viewmodel.search.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -50,7 +51,7 @@ class ChannelListFragment : Fragment() {
     private val viewModel: ChannelListViewModel by viewModels {
         val user = App.instance.userRepository.getUser()
         val userId = if (user == SampleUser.None) {
-            ChatClient.instance().getCurrentUser()?.id ?: ""
+            ChatClient.instance().globalState.user.value?.id ?: ""
         } else {
             user.id
         }

@@ -26,8 +26,8 @@ import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachment
 import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
-import io.getstream.chat.android.ui.utils.GiphyInfoType
-import io.getstream.chat.android.ui.utils.GiphySizingMode
+import io.getstream.chat.android.ui.common.utils.GiphyInfoType
+import io.getstream.chat.android.ui.common.utils.GiphySizingMode
 
 /**
  * Provides different attachment factories that build custom message content based on a given attachment.

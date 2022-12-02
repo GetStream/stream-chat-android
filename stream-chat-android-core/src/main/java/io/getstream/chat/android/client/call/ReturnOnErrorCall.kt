@@ -65,8 +65,8 @@ public class ReturnOnErrorCall<T : Any>(
         }
     }
 
-    private suspend fun map(result: Result<T>): Result<T> = when (result.isSuccess) {
-        true -> result
-        else -> onErrorReturn(result.error())
+    private suspend fun map(result: Result<T>): Result<T> = when (result) {
+        is Result.Success -> result
+        is Result.Failure -> onErrorReturn(result.value)
     }
 }

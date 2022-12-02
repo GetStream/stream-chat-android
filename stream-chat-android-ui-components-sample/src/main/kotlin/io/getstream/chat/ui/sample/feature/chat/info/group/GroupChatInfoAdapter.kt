@@ -18,7 +18,7 @@ package io.getstream.chat.ui.sample.feature.chat.info.group
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupMemberItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupNameItemBinding

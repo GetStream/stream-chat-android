@@ -50,10 +50,7 @@ class App : Application() {
     private fun initializeToggleService() {
         ToggleService.init(
             applicationContext,
-            mapOf(
-                ToggleService.TOGGLE_KEY_MESSAGE_COMPOSER to true,
-                ToggleService.TOGGLE_KEY_SOCKET_REFACTOR to true,
-            ),
+            emptyMap(),
         )
     }
 

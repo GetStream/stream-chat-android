@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -30,6 +31,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,15 +39,15 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.compose.state.messages.MessagesState
-import io.getstream.chat.android.compose.state.messages.MyOwn
-import io.getstream.chat.android.compose.state.messages.NewMessageState
-import io.getstream.chat.android.compose.state.messages.list.MessageFocused
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
-import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.messages.MessagesScrollingOption
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+import io.getstream.chat.android.ui.common.state.messages.list.MyOwn
+import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -76,7 +78,7 @@ import kotlin.math.abs
 @Composable
 @Suppress("LongParameterList", "LongMethod", "ComplexMethod")
 public fun Messages(
-    messagesState: MessagesState,
+    messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
     onMessagesStartReached: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
@@ -97,21 +99,12 @@ public fun Messages(
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
-    val endOfMessages = messagesState.oldestMessageLoaded
-    val startOfMessages = messagesState.newestMessageLoaded
-    val isLoadingMoreNewMessages = messagesState.isLoadingMoreNewMessages
-    val isLoadingMoreOldMessages = messagesState.isLoadingMoreOldMessages
+    val endOfMessages = messagesState.endOfOldMessagesReached
+    val startOfMessages = messagesState.endOfNewMessagesReached
+    val isLoadingMoreNewMessages = messagesState.isLoadingNewerMessages
+    val isLoadingMoreOldMessages = messagesState.isLoadingOlderMessages
 
     val density = LocalDensity.current
-
-    /** Marks the bottom most item as read every time it changes. **/
-    OnLastVisibleItemChanged(lazyListState) { messageIndex ->
-        val message = messagesState.messageItems.getOrNull(messageIndex)
-
-        if (message is MessageItemState) {
-            onLastVisibleMessageChanged(message.message)
-        }
-    }
 
     Box(modifier = modifier) {
         LazyColumn(
@@ -194,6 +187,15 @@ public fun Messages(
 
         helperContent()
     }
+
+    /** Marks the bottom most item as read every time it changes. **/
+    OnLastVisibleItemChanged(lazyListState) { messageIndex ->
+        val message = messagesState.messageItems.getOrNull(messageIndex)
+
+        if (message is MessageItemState) {
+            onLastVisibleMessageChanged(message.message)
+        }
+    }
 }
 
 /**
@@ -212,9 +214,10 @@ private fun OnLastVisibleItemChanged(lazyListState: LazyListState, onChanged: (f
  * @param messagesLazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
  * @param scrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  */
+@SuppressLint("UnrememberedMutableState")
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
-    messagesState: MessagesState,
+    messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
     scrollToBottom: (() -> Unit) -> Unit,
 ) {
@@ -222,7 +225,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val messages = messagesState.messageItems
     val newMessageState = messagesState.newMessageState
-    val areNewestMessagesLoaded = messagesState.newestMessageLoaded
+    val areNewestMessagesLoaded = messagesState.endOfNewMessagesReached
     val isMessageInThread = messagesState.parentMessageId != null
 
     val coroutineScope = rememberCoroutineScope()
@@ -232,6 +235,10 @@ internal fun BoxScope.DefaultMessagesHelperContent(
     val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
 
     val offset = messagesLazyListState.focusedMessageOffset
+
+    val hasLoadedThread by derivedStateOf {
+        messagesState.messageItems.size > 1 && messagesState.parentMessageId != null
+    }
 
     LaunchedEffect(newMessageState, focusedItemIndex, offset) {
 
@@ -244,12 +251,12 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         }
 
         val shouldScrollToBottom = shouldScrollToBottom(
-            focusedItemIndex = focusedItemIndex,
-            firstVisibleItemIndex = firstVisibleItemIndex.value,
-            newMessageState = newMessageState,
-            areNewestMessagesLoaded = areNewestMessagesLoaded,
-            isScrollInProgress = lazyListState.isScrollInProgress
-        )
+            focusedItemIndex,
+            firstVisibleItemIndex.value,
+            newMessageState,
+            areNewestMessagesLoaded,
+            lazyListState.isScrollInProgress
+        ) || hasLoadedThread
 
         if (shouldScrollToBottom) {
             coroutineScope.launch {
@@ -298,7 +305,7 @@ private fun shouldScrollToBottom(
     firstVisibleItemIndex: Int,
     newMessageState: NewMessageState?,
     areNewestMessagesLoaded: Boolean,
-    isScrollInProgress: Boolean
+    isScrollInProgress: Boolean,
 ): Boolean {
     newMessageState ?: return false
 

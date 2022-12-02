@@ -21,7 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserMessagesHeaderViewBinding
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomChannel
 import io.getstream.chat.ui.sample.feature.component_browser.utils.randomMember

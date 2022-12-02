@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.messages
 
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test

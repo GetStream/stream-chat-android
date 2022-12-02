@@ -15,7 +15,6 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="stream_ui_mention">@%1$s</string>
   <string name="stream_ui_message_preview_sender">"&lt;b&gt;%1$s&lt;/b&gt;에&lt;b&gt;%2$s&lt;/b&gt;"</string>
   <string name="stream_ui_user_status_last_seen">"마지막 온라인: %s"</string>
   <string name="stream_ui_user_status_last_seen_just_now">"방금 확인했습니다"</string>

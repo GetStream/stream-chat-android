@@ -16,10 +16,9 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
-import io.getstream.chat.android.client.models.Constants
 import io.getstream.chat.android.core.internal.StreamHandsOff
-import io.getstream.logging.SilentStreamLogger
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.Constants
+import io.getstream.log.StreamLog
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -40,8 +39,7 @@ internal class HttpLoggingInterceptor : Interceptor {
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount", "TooGenericExceptionCaught", "ReturnCount")
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        val noLoggerSet = StreamLog.inspect { it is SilentStreamLogger }
-        if (noLoggerSet) {
+        if (!StreamLog.defaultLoggerOverridden) {
             return chain.proceed(request)
         }
 

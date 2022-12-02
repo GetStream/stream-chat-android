@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.state.messages.attachments
 
-import com.getstream.sdk.chat.model.AttachmentMetaData
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
  * Represents each attachment item in our attachment picker. Each item can be selected and has an

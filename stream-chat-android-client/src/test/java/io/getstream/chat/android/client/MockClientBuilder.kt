@@ -16,15 +16,11 @@
 
 package io.getstream.chat.android.client
 
-import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
-import io.getstream.chat.android.client.clientstate.SocketStateService
+import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.helpers.CallPostponeHelper
-import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
@@ -34,8 +30,9 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,12 +71,12 @@ internal class MockClientBuilder(
         connectionId
     )
 
-    private lateinit var socket: FakeSocket
     private lateinit var fileUploader: FileUploader
 
     lateinit var api: MoshiChatApi
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var client: ChatClient
+    lateinit var attachmentSender: AttachmentsSender
 
     fun build(): ChatClient {
         val config = ChatClientConfig(
@@ -93,33 +90,23 @@ internal class MockClientBuilder(
             false
         )
 
-        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutineExtension.dispatcher)
-
         val tokenUtil: TokenUtils = mock()
         val clientState: ClientState = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
-        Mockito.`when`(clientState.user) doReturn userStateFlow
-        socket = FakeSocket()
         fileUploader = mock()
         notificationsManager = mock()
 
         api = mock()
+        attachmentSender = mock()
 
-        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutineExtension.scope)
         val userScope = UserTestScope(clientScope)
-        val callPostponeHelper = CallPostponeHelper(userScope) {
-            socketStateService.awaitConnection()
-        }
         client = ChatClient(
             config,
             api,
-            socket,
             notificationsManager,
             tokenManager = FakeTokenManager(token),
-            socketStateService = socketStateService,
-            callPostponeHelper = callPostponeHelper,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtil,
@@ -127,16 +114,17 @@ internal class MockClientBuilder(
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            socketExperimental = mock(),
-            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
+            chatSocket = mock(),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState
         )
 
+        client.attachmentsSender = attachmentSender
+
         client.connectUser(user, token).enqueue()
 
-        socket.sendEvent(connectedEvent)
+        // socket.sendEvent(connectedEvent)
 
         return client.apply {
             plugins = mutableListOf()

@@ -27,17 +27,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
-import io.getstream.chat.android.compose.state.messages.MessagesState
-import io.getstream.chat.android.compose.state.messages.list.GiphyAction
-import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 
 /**
  * Default MessageList component, that relies on [MessageListViewModel] to connect all the data
@@ -86,10 +86,10 @@ public fun MessageList(
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
-    onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToSelectedMessage(it) },
+    onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToMessage(it.id) },
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
-            viewModel.focusMessage(it.messageId)
+            viewModel.scrollToMessage(it.messageId)
         }
     },
     onMessagesPageEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
@@ -106,7 +106,7 @@ public fun MessageList(
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
-            messageListItem = messageListItem,
+            messageListItemState = messageListItem,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
@@ -141,7 +141,7 @@ public fun MessageList(
 /**
  * The default message container item.
  *
- * @param messageListItem The state of the message list item.
+ * @param messageListItemState The state of the message list item.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onLongItemClick Handler when the user long taps on an item.
@@ -151,7 +151,7 @@ public fun MessageList(
  */
 @Composable
 internal fun DefaultMessageContainer(
-    messageListItem: MessageListItemState,
+    messageListItemState: MessageListItemState,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onLongItemClick: (Message) -> Unit,
@@ -160,7 +160,7 @@ internal fun DefaultMessageContainer(
     onQuotedMessageClick: (Message) -> Unit,
 ) {
     MessageContainer(
-        messageListItem = messageListItem,
+        messageListItemState = messageListItemState,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
@@ -204,7 +204,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * Clean representation of the MessageList that is decoupled from ViewModels. This components allows
  * users to connect the UI to their own data providers, as it relies on pure state.
  *
- * @param currentState The state of the component, represented by [MessagesState].
+ * @param currentState The state of the component, represented by [MessageListState].
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
@@ -231,7 +231,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  */
 @Composable
 public fun MessageList(
-    currentState: MessagesState,
+    currentState: MessageListState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messagesLazyListState: MessagesLazyListState =
@@ -259,7 +259,7 @@ public fun MessageList(
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
     itemContent: @Composable (MessageListItemState) -> Unit = {
         DefaultMessageContainer(
-            messageListItem = it,
+            messageListItemState = it,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,
@@ -269,11 +269,12 @@ public fun MessageList(
         )
     },
 ) {
-    val (isLoading, _, _, messages) = currentState
+    val isLoading = currentState.isLoading
+    val messages = currentState.messageItems
 
     when {
         isLoading -> loadingContent()
-        !isLoading && messages.isNotEmpty() -> Messages(
+        messages.isNotEmpty() -> Messages(
             modifier = modifier,
             contentPadding = contentPadding,
             messagesState = currentState,

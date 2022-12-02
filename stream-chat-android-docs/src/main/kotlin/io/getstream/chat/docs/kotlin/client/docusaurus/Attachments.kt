@@ -3,8 +3,9 @@
 package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.client.utils.Result
 import java.io.File
 
 /**
@@ -24,10 +25,13 @@ class Attachments {
         )
         ChatClient.instance().sendMessage(channelType = "messaging", channelId = "general", message = message)
             .enqueue { result ->
-                if (result.isSuccess) {
-                    // Use result.data()
-                } else {
-                    // Handle result.error()
+                when (result) {
+                    is Result.Success -> {
+                        // Handle success
+                    }
+                    is Result.Failure -> {
+                        // Handle error
+                    }
                 }
             }
     }

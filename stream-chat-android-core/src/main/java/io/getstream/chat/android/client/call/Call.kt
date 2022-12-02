@@ -78,7 +78,7 @@ public interface Call<T : Any> {
     @InternalStreamChatApi
     public companion object {
         public fun <T : Any> callCanceledError(): Result<T> =
-            Result.error(ChatError("The call was canceled before complete its execution."))
+            Result.Failure(ChatError.GenericError(message = "The call was canceled before complete its execution."))
 
         @SuppressWarnings("TooGenericExceptionCaught")
         public suspend fun <T : Any> runCatching(
@@ -92,7 +92,7 @@ public interface Call<T : Any> {
 
         private fun <T : Any> Throwable.toResult(): Result<T> = when (this) {
             is CancellationException -> callCanceledError()
-            else -> Result.error(this)
+            else -> Result.Failure(ChatError.ThrowableError(message = "", cause = this))
         }
     }
 }
@@ -168,11 +168,10 @@ public fun <T : Any> Call<T>.enqueue(
     onSuccess: (T) -> Unit = onSuccessStub,
     onError: (ChatError) -> Unit = onErrorStub,
 ) {
-    enqueue {
-        if (it.isSuccess) {
-            onSuccess(it.data())
-        } else {
-            onError(it.error())
+    enqueue { result ->
+        when (result) {
+            is Result.Success -> onSuccess(result.value)
+            is Result.Failure -> onError(result.value)
         }
     }
 }

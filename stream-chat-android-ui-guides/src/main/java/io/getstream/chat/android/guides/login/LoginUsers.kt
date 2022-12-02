@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.guides.login
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 /**
  * Contains hardcoded [LoginUser] for the demo environment.

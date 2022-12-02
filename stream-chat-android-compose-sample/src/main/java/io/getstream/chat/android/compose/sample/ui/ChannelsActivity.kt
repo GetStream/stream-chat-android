@@ -46,9 +46,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
@@ -63,6 +60,10 @@ import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.state.extensions.globalState
 import kotlinx.coroutines.launch
 
 class ChannelsActivity : BaseConnectedActivity() {
@@ -116,7 +117,7 @@ class ChannelsActivity : BaseConnectedActivity() {
      */
     @Composable
     private fun MyCustomUiSimplified() {
-        val user by ChatClient.instance().clientState.user.collectAsState()
+        val user by ChatClient.instance().globalState.user.collectAsState()
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),

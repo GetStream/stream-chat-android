@@ -2,8 +2,8 @@ package io.getstream.chat.docs.kotlin.ui.general
 
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatDelegate
-import io.getstream.chat.android.ui.StyleTransformer
-import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.helper.StyleTransformer
+import io.getstream.chat.android.ui.helper.TransformStyle
 
 /**
  * [Theming](https://getstream.io/chat/docs/sdk/android/ui/general-customization/theming/)

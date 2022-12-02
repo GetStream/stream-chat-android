@@ -6,20 +6,16 @@ public final class io/getstream/chat/android/ui/utils/BuildConfig {
 }
 
 public final class io/getstream/chat/android/uiutils/extension/AttachmentKt {
-	public static final fun hasLink (Lio/getstream/chat/android/client/models/Attachment;)Z
-	public static final fun isAnyFileType (Lio/getstream/chat/android/client/models/Attachment;)Z
-	public static final fun isUploading (Lio/getstream/chat/android/client/models/Attachment;)Z
+	public static final fun hasLink (Lio/getstream/chat/android/models/Attachment;)Z
+	public static final fun isAnyFileType (Lio/getstream/chat/android/models/Attachment;)Z
+	public static final fun isUploading (Lio/getstream/chat/android/models/Attachment;)Z
 }
 
 public final class io/getstream/chat/android/uiutils/extension/ChannelKt {
-	public static final fun getDisplayName (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;II)Ljava/lang/String;
-	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIILjava/lang/Object;)Ljava/lang/String;
-	public static final fun getMembersStatusText (Lio/getstream/chat/android/client/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/client/models/User;IIIII)Ljava/lang/String;
-	public static final fun getPreviewMessage (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/models/Message;
-}
-
-public final class io/getstream/chat/android/uiutils/extension/ContextKt {
-	public static final fun openSystemSettings (Landroid/content/Context;)V
+	public static final fun getDisplayName (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;II)Ljava/lang/String;
+	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;IIILjava/lang/Object;)Ljava/lang/String;
+	public static final fun getMembersStatusText (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;IIIII)Ljava/lang/String;
+	public static final fun getPreviewMessage (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/Message;
 }
 
 public final class io/getstream/chat/android/uiutils/extension/DateKt {
@@ -27,7 +23,7 @@ public final class io/getstream/chat/android/uiutils/extension/DateKt {
 }
 
 public final class io/getstream/chat/android/uiutils/extension/FiltersKt {
-	public static final fun defaultChannelListFilter (Lio/getstream/chat/android/client/models/Filters;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/api/models/FilterObject;
+	public static final fun defaultChannelListFilter (Lio/getstream/chat/android/models/Filters;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/FilterObject;
 }
 
 public final class io/getstream/chat/android/uiutils/extension/StringKt {
@@ -36,7 +32,7 @@ public final class io/getstream/chat/android/uiutils/extension/StringKt {
 }
 
 public final class io/getstream/chat/android/uiutils/extension/UserKt {
-	public static final fun getLastSeenText (Lio/getstream/chat/android/client/models/User;Landroid/content/Context;III)Ljava/lang/String;
+	public static final fun getLastSeenText (Lio/getstream/chat/android/models/User;Landroid/content/Context;III)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/uiutils/model/MimeType {
@@ -75,8 +71,12 @@ public final class io/getstream/chat/android/uiutils/util/ColorUtilsKt {
 
 public final class io/getstream/chat/android/uiutils/util/EmojiUtil {
 	public static final field INSTANCE Lio/getstream/chat/android/uiutils/util/EmojiUtil;
-	public final fun getEmojiCount (Lio/getstream/chat/android/client/models/Message;)I
-	public final fun isEmojiOnly (Lio/getstream/chat/android/client/models/Message;)Z
-	public final fun isSingleEmoji (Lio/getstream/chat/android/client/models/Message;)Z
+	public final fun getEmojiCount (Lio/getstream/chat/android/models/Message;)I
+	public final fun isEmojiOnly (Lio/getstream/chat/android/models/Message;)Z
+	public final fun isSingleEmoji (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public final class io/getstream/chat/android/uiutils/util/IntentUtilsKt {
+	public static final fun openSystemSettings (Landroid/content/Context;)V
 }
 

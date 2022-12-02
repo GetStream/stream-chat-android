@@ -21,9 +21,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
@@ -72,16 +73,18 @@ class ChatInfoSharedAttachmentsViewModel(
             limit = QUERY_LIMIT,
             types = listOf(attachmentsType.requestTypeKey),
         ).await()
-        if (result.isSuccess) {
-            val newMessages = result.data()
-            messages = messages + newMessages
-            _state.value = State(
-                results = mapAttachments(messages),
-                isLoading = false,
-                canLoadMore = newMessages.size == QUERY_LIMIT
-            )
-        } else {
-            _state.value = State(
+
+        when (result) {
+            is Result.Success -> {
+                val newMessages = result.value
+                messages = messages + newMessages
+                _state.value = State(
+                    results = mapAttachments(messages),
+                    isLoading = false,
+                    canLoadMore = newMessages.size == QUERY_LIMIT,
+                )
+            }
+            is Result.Failure -> _state.value = State(
                 results = mapAttachments(messages),
                 isLoading = false,
                 canLoadMore = true,

@@ -3,26 +3,22 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Updated Kotlin version to `1.7.20`. (#4247)[https://github.com/GetStream/stream-chat-android/pull/4247]
 
 ### ✅ Added
 
 ### ⚠️ Changed
-- Separated `state` and `offline` modules. (#4214)[https://github.com/GetStream/stream-chat-android/pull/4214]
 
 ### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixing unread messages count for channels. [#4499](https://github.com/GetStream/stream-chat-android/pull/4499)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `isFilteringMessages` check on `QueryChannelRequest` request. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
-- Exposed `MessageType`, `AttachmentType` and `ChannelType` classes containing useful constants. [#4285](https://github.com/GetStream/stream-chat-android/pull/4285)
 
 ### ⚠️ Changed
-- Removed `Channel::cid` from constructor. It's now an immutable property calculated based on `type` and `id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
 
 ### ❌ Removed
 
@@ -32,38 +28,175 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `loadNewestMessages` method to `ChatClient` that loads newest messages in the channel and clears the rest. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ⚠️ Changed
-- Changed the logic how the end of pages is determined inside `ChannelLogic.onQueryChannelResult`. Added loadNewestMessages in `ChannelLogic`. Added check to prevent upserting new messages if newest page isn't loaded to avoid breaking pagination. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 
 ### ❌ Removed
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Stop showing a blink of empty state screen when loading channel without loading from database first. [#4261](https://github.com/GetStream/stream-chat-android/pull/4261)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# December 1st, 2022 - 6.0.0-beta2
+
+I hope you're interested in our latest major release - v6.0.0-beta2! We're currently in the process of preparing migration guides and updating all of our
+documentation, but in the meantime, you can look into what we plan to release in v6 of Android Chat.
+
+If you want to learn more about these changes and our decisions, check out our [Android Chat v6 Blog Post](https://getstream.io/blog/announcement-android-sdk-6-beta/).
+
+## Common changes for all artifacts
+### ✅ Added
+- Added `Result::getOrNull`, `Result::getOrThrow` and `Result.chatErrorOrNull` to simplify getting `value` for Java users. [#4415](https://github.com/GetStream/stream-chat-android/pull/4415)
+
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixing erase of offline messages when entering a channel. [#4457](https://github.com/GetStream/stream-chat-android/pull/4457)
+
+## stream-chat-android-state
+### ❌ Removed
+- Removed `StateAwarePlugin` interface.[4435](https://github.com/GetStream/stream-chat-android/pull/4435)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Added constructor overloads for the `MessageMode.MessageThread` class to simplify usage for Java users. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Added the default value for the `message` parameter passed to the `MessageComposerViewModel:sendMessage` function. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
+
+## stream-chat-android-pushprovider-firebase
+### ❌ Removed
+- Artifact removed, use `io.getstream:stream-android-push-firebase:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
+
+## stream-chat-android-pushprovider-huawei
+### ❌ Removed
+- Artifact removed, use `io.getstream:stream-android-push-huawei:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
+
+## stream-chat-android-pushprovider-xiaomi
+### ❌ Removed
+- Artifact removed, use `io.getstream:stream-android-push-xiaomi:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
+
+# November 11th, 2022 - 6.0.0-beta1
+
+I hope you're interested in our latest major release - v6.0.0-beta1! We're currently in the process of preparing migration guides and updating all of our
+documentation, but in the meantime, you can look into what we plan to release in v6 of Android Chat.
+
+If you want to learn more about these changes and our decisions, check out our [Android Chat v6 Blog Post](https://getstream.io/blog/announcement-android-sdk-6-beta/).
+
+## Common changes for all artifacts
+### ⬆️ Improved
+- Updated Kotlin version to `1.7.20`. (#4247)[https://github.com/GetStream/stream-chat-android/pull/4247]
+
+### ⚠️ Changed
+- Separated `state` and `offline` modules. (#4214)[https://github.com/GetStream/stream-chat-android/pull/4214]
+- Moved `ClientState.user` to `GlobalState.user` because the state module is the one that correctly updates the user in the SDK. [#4333](https://github.com/GetStream/stream-chat-android/pull/4333)
+- 🚨 Breaking change: Converted `Result` class into sealed class with two implementations: `Result.Success` and `Result.Failure`. [#4356](https://github.com/GetStream/stream-chat-android/pull/4356)
+- 🚨 Breaking change: Converted `ChatError` class into sealed class with three implementations: `ChatError.Generic`, `ChatError.Throwable` and `ChatError.Network`. [#4368](https://github.com/GetStream/stream-chat-android/pull/4368)
+
+## stream-chat-android-client
+### ⬆️ Improved
+- Removing unnecessary configuration fields for `OfflinePluginConfig`. [#4376](https://github.com/GetStream/stream-chat-android/pull/4376)
+
+### ✅ Added
+- Added `isFilteringMessages` check on `QueryChannelRequest` request. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Exposed `MessageType`, `AttachmentType` and `ChannelType` classes containing useful constants. [#4285](https://github.com/GetStream/stream-chat-android/pull/4285)
+
+### ⚠️ Changed
+- Removed `Channel::cid` from constructor. It's now an immutable property calculated based on `type` and `id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
+
+### ❌ Removed
+- ClientMutableState is now an internal interface, intead of a public interface. [#4374](https://github.com/GetStream/stream-chat-android/pull/4374)
+- Remove ClientState.clearState() [#4372](https://github.com/GetStream/stream-chat-android/pull/4372)
+
+## stream-chat-android-offline
+### ✅ Added
+- Added `loadNewestMessages` method to `ChatClient` that loads newest messages in the channel and clears the rest. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+
+### ⚠️ Changed
+- Changed the logic how the end of pages is determined inside `ChannelLogic.onQueryChannelResult`. Added loadNewestMessages in `ChannelLogic`. Added check to prevent upserting new messages if newest page isn't loaded to avoid breaking pagination. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Stop showing a blink of empty state screen when loading channel without loading from database first. [#4261](https://github.com/GetStream/stream-chat-android/pull/4261)
+- Fixing hard coded user presence of watchChannel method. [#4375](https://github.com/GetStream/stream-chat-android/pull/4375)
+
+### ✅ Added
 - Adding ChannelState.getMessageById to fetch messages from the state of the SDK. [#4292](https://github.com/GetStream/stream-chat-android/pull/4292)
+- Added `loadNewestMessages` method to `ChatClient` that loads newest messages in the channel and clears the rest. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+
 ### ⚠️ Changed
 - Separated `QueryChannelListenerState` into state and databased focused classes. [#4188](https://github.com/GetStream/stream-chat-android/pull/4188)
 - Separated `ThreadQueryListener` into state and databased focused classes. [#4208](https://github.com/GetStream/stream-chat-android/pull/4208)
 - Rename of `QueryChannelsListenerImpl` to `QueryChannelsListenerState` [#4170](https://github.com/GetStream/stream-chat-android/pull/4170)
 - Renamed `ChannelData::channelId` to `ChannelData::id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
 - Removed `ChannelData::cid` from constructor. It's now an immutable property calculated based on `type` and `id`. [#4322](https://github.com/GetStream/stream-chat-android/pull/4322)
+- Moved the send attachment logic to the LLC (Low Level Client) module [#4244](https://github.com/GetStream/stream-chat-android/pull/4244)
 
 ### ❌ Removed
 - Removed `EventHandlerImpl` from the codebase. [#4207](https://github.com/GetStream/stream-chat-android/pull/4207)
 
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Updated Compose compiler version to `1.3.2`. (#4247)[https://github.com/GetStream/stream-chat-android/pull/4247]
 
 ### ✅ Added
+- Added `MessageListController` which generalizes message list state and actions, exposing them to each SDK's ViewModel. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Added `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorItemState`, `ThreadSeparatorItemState`, `SystemMessageItemState`, `TypingItemState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState` to keep track of the message list states. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Added `ClipboardHandler` that handles copy/pasting. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Added `DateSeparatorHandler` that handles when date separators should be shown. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Added `MessagePositionHandler` that determines the message group position inside the list. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Added `GiphyAction` to control giphies. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ### ⚠️ Changed
 - `DateFormatter::formatDate` and `DateFormatter::formatTime` methods now accept Dates instead of classes from ThreeTenABP API. [#4320](https://github.com/GetStream/stream-chat-android/pull/4320)
@@ -75,6 +208,7 @@
 ### 🐞 Fixed
 - Fixed scroll to bottom. [#3849](https://github.com/GetStream/stream-chat-android/pull/3849)
 - Fixed search for messages. [#3861](https://github.com/GetStream/stream-chat-android/pull/3861)
+- Fixed thread list initials scroll state. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ### ⬆️ Improved
 - Improved asking for `WRITE_EXTERNAL_STORAGE` permission. The permission won't be requested starting from Android Q unless legacy external storage is requested. [#4219](https://github.com/GetStream/stream-chat-android/pull/4219)
@@ -82,6 +216,7 @@
 - Improved how system bar colors are handled on the attachment gallery screen. [#4269](https://github.com/GetStream/stream-chat-android/pull/4269)
 - The default attachment gallery is now able to handle videos as well as images. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 - Improved the way video length information is displayed over video previews inside the attachment picker. [#4299](https://github.com/GetStream/stream-chat-android/pull/4299)
+- Renamed `ImageAttachmentPreviewFactory` to `MediaAttachmentPreviewFactory` and gave it the ability to preview video attachments as well as image attachments. [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
 
 ### ✅ Added
 - Added `UserAvatarView` and `ChannelAvatarView` to replace `AvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
@@ -109,6 +244,19 @@
 - Added the attribute `streamUiAttachmentsPickerVideoIconDrawableTint` to the `AttachmentsPickerDialog` styleable. You can use this attribute to change to tint of the video drawable displayed in the attachment picker video previews. [#4299](https://github.com/GetStream/stream-chat-android/pull/4299)
 - Added the attribute `streamUiAttachmentVideoLogoIconTint` to the `MessageInputView` styleable. You can use this attribute to change to tint of the video drawable displayed in the attachment picker video previews. [#4299](https://github.com/GetStream/stream-chat-android/pull/4299)
 - Added the property `videoIconDrawableTint` to `AttachmentSelectionDialogStyle`. You can use this property to change to tint of the video drawable displayed in the attachment picker video previews. [#4299](https://github.com/GetStream/stream-chat-android/pull/4299)
+- Added a guide that demonstrates how use events to close the chat screen when the current user has been removed from the channel. [#4078](https://github.com/GetStream/stream-chat-android/issues/4078)
+- Added loading more indicator to `MessageListView`. [#4309](https://github.com/GetStream/stream-chat-android/pull/4309)
+- Added the `streamUiMessageListLoadingMoreView` attribute to customize the layout of loading more indicator in `MessageListView`. [#4309](https://github.com/GetStream/stream-chat-android/pull/4309)
+- Added the ability to preview video attachments as thumbnails inside `MessageComposerView` using `MediaAttachmentPreviewFactory`.  [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
+- Added new attributes used by `MessageComposerView` that customize the way video attachments are rendered [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawable`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawableTint`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconElevation`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart`
+  * `streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd`
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
@@ -117,15 +265,26 @@
 - 🚨 Breaking change: Attribute `streamUiSaveImageIcon` has been renamed to `streamUiSaveMediaIcon`. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 - 🚨 Breaking change: String resource `stream_ui_attachment_gallery_save_image` has been renamed to `stream_ui_attachment_gallery_save_media`. [#4283](https://github.com/GetStream/stream-chat-android/pull/4283)
 - Aligned the information displayed in the title and subtitle of `ChannelActionsDialogFragment` with the information in `MessageListHeaderView`. [#4306](https://github.com/GetStream/stream-chat-android/pull/4306)
+- 🚨 Breaking change: `MessageListViewModel` now uses `MessageListController` for state and action handling. Updated `MessageListViewModelFactory` with new parameters to be able to build `MessageListController`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- 🚨 Breaking change: `MessageListViewModel.Event.MessageReaction` no longer takes `enforceUnique` as a parameter, instead it is handled as part of `enforceUniqueReaction` inside `MessageListViewModelFactory` and `MessageListController`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- 🚨 Breaking change: `ui-common` module `GiphyAction`s are now used instead of removed `GiphyAction` enum inside `ui-components` module. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- 🚨 Breaking change: `MessageListItem` now uses `MessagePosition` from `ui-common`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Replaced the Dexter library for checking runtime permissions with the PermissionX library. [#4338](https://github.com/GetStream/stream-chat-android/pull/4338)
+- Renamed `ImageAttachmentPreviewFactory` to `MediaAttachmentPreviewFactory`. [#4386](https://github.com/GetStream/stream-chat-android/pull/4386)
 
 ### ❌ Removed
 - Removed `AvatarView` in favor of `UserAvatarView` and `ChannelAvatarView` to keep consistency with the Compose UI SDK. [#4165](https://github.com/GetStream/stream-chat-android/pull/4165)
 - The function `MessageListItemViewHolderFactory.createImageAttachmentsViewHolder()` has been removed in favor of the function `MessageListItemViewHolderFactory.createMediaAttachmentsViewHolder()` which returns a `ViewHolder` capable of previewing both images and videos. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
 - `ImageAttachmentViewStyle` has been removed and replaced by `MediaAttachmentViewStyle`. The new style controls how previews of both image and video attachments are displayed inside the message list. [#4158](https://github.com/GetStream/stream-chat-android/pull/4158)
+- 🚨 Breaking change: Removed the old `MessageInputView`. Use `MessageComposerView` instead. [#4289](https://github.com/GetStream/stream-chat-android/pull/4289)
+- Removed `GiphyAction` enum. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Removed `MessageListItem.Position` enum. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed pagination when the newest messages aren't loaded and we are paginating newer messages pagination. Fixed scroll to bottom if the newest messages aren't loaded. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Fixed thread list initials scroll state. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- Added a guide showing how to customize image and video previews. You can find it [here](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-list/#image-and-video) [#4373](https://github.com/GetStream/stream-chat-android/pull/4373)
 
 ### ⬆️ Improved
 - Improved the way the [ChannelsScreen](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channels-screen/) is built. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
@@ -135,6 +294,7 @@
 - Improved the stability of cooldown timer in slow mode. [#4251](https://github.com/GetStream/stream-chat-android/pull/4251)
 - Improved how system bar colors are handled on the gallery screen. [#4267](https://github.com/GetStream/stream-chat-android/pull/4267)
 - Improved the way video length information is displayed over video previews inside the attachment picker. [#4299](https://github.com/GetStream/stream-chat-android/pull/4299)
+- The default factory for previewing video and image attachment now is `MediaAttachmentFactory`. It holds numerous improvements, the biggest of which are the ability to reload the image intelligently if the image wasn't loaded and network connection is re-established and the access to the new and improved media gallery. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 
 ### ✅ Added
 - Added a new gallery called `MediaGalleryPreviewActivity`. This gallery is an upgrade over `ImagePreviewActivity` as it has the capability to reproduce videos as well as images, automatically reloads non-cached images upon regaining network connection and works in offline mode. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
@@ -146,6 +306,8 @@
 - Added a page about [Sample Apps](https://getstream.io/chat/docs/sdk/android/resources/sample-apps/) to the docs. [#4282](https://github.com/GetStream/stream-chat-android/pull/4282)
 - Added end pagination handler to `MessageList` and support for bidirectional pagination. Added scroll to bottom handler to `MessagesList` to load the newest messages before scrolling if they are not loaded already. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
 - Added `MessageLazyListState` to replace the default `LazyListState`. `MessageLazyListState` is used to track the scroll position of the message list as well as the focused message offset. [#3948](https://github.com/GetStream/stream-chat-android/pull/3948)
+- Added properties `showMoreOverlay` and `showMoreCountText` to `ChatTheme`. These properties are designed to change the appearance of the show more count that appears when a message contains more media attachments than are able to be displayed in the message list media content preview. [#4293](https://github.com/GetStream/stream-chat-android/pull/4293)
+- Added `TypingItemState` as a type of `MessageistItemState`. To show the typing item custom composable needs to be provided.
 
 ### ⚠️ Changed
 - Changed the way ChannelsScreen and MessagesScreen components are built. Instead of exposing a ton of parameters for customization, we now expose a ViewModelFactory that accepts them. [#4183](https://github.com/GetStream/stream-chat-android/pull/4183)
@@ -160,53 +322,79 @@
 - Started the deprecation process for `ImageAttachmentFactory`, please use `MediaAttachmentFactory` as it has all the functionality of the previous factory while adding additional features such as displaying video previews modifiable number of tiles in a group preview. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Started the deprecation process for `ImageAttachmentContent`, please use `MediaAttachmentContent` as it has all the functionality of the previous component while adding additional features such as displaying video previous and modifiable number of tiles in a group preview. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
 - Started the deprecation process for `ImageAttachmentQuotedContent`, please use `MediaAttachmentQuotedContent` as it retains all of the previous functionality while adding the ability to preview video attachments. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- 🚨 Breaking change: Compose now uses `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorItemState`, `ThreadSeparatorItemState`, `SystemMessageItemState`, `TypingItemState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState` found in `ui-common` package. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- 🚨 Breaking change: `MessageListViewModel` now uses `MessageListController` for state and action handling. Updated `MessagesViewModelFactory` with new parameters to be able to build `MessageListController`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
 ### ❌ Removed
+- 🚨 Breaking change: Removed compose `MessageMode` indicating whether the list is in thread mode or normal mode in favor of ui-common `MessageMode`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+- 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
+# November 23th, 2022 - 5.11.8
+## stream-chat-android-client
 ### ⬆️ Improved
-- The default factory for previewing video and image attachment now is `MediaAttachmentFactory`. It holds numerous improvements, the biggest of which are the ability to reload the image intelligently if the image wasn't loaded and network connection is re-established and the access to the new and improved media gallery. [#4096](https://github.com/GetStream/stream-chat-android/pull/4096)
+- Return an error when invoking `ChatClient::disconnect` without a connected user. [#4494](https://github.com/GetStream/stream-chat-android/pull/4494)
 
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed `IllegalArgumentException` when uploading attachments fails. [#4487](https://github.com/GetStream/stream-chat-android/pull/4487)
+- Fixed returning `ChannelsStateData.OfflineNoResults` from `QueryChannelsState::channelsStateData` when API call is still in progress. [#4496](https://github.com/GetStream/stream-chat-android/pull/4496)
+- Fixed returning an empty map from `QueryChannelsState::channels` when API call is still in progress. [#4496](https://github.com/GetStream/stream-chat-android/pull/4496)
+
+## stream-chat-android-ui-components
 ### ✅ Added
+- Added the `streamUiShowReactionsForUnsentMessages` attribute to `MessageListView` that allows to show/hide the edit reactions bubble for unsent messages on the options overlay. [#4449](https://github.com/GetStream/stream-chat-android/pull/4449)
+
+### 🐞 Fixed
+- Fixed empty placeholder blinking on `ChannelListView` when loading channels. [#4496](https://github.com/GetStream/stream-chat-android/pull/4496)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed empty placeholder blinking on `ChannelList` when loading channels. [#4496](https://github.com/GetStream/stream-chat-android/pull/4496)
+
+# November 18th, 2022 - 5.11.7
+## stream-chat-android-client
+### ⬆️ Improved
+- Improved logs for sending message with attachments. [#4448](https://github.com/GetStream/stream-chat-android/pull/4448)
 
 ### ⚠️ Changed
+- Changed default worker's constraints from `NetworkType.NOT_ROAMING` to `NetworkType.CONNECTED`. [#4448](https://github.com/GetStream/stream-chat-android/pull/4448)
 
-### ❌ Removed
+# November 16th, 2022 - 5.11.6
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed the race condition when connecting the user just after receiving a push notification when the application is killed. [#4429](https://github.com/GetStream/stream-chat-android/pull/4429)
+
+# November 15th, 2022 - 5.11.5
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixing postponing api calls to avoid showing empty screen in the wrong moment. [#4344](https://github.com/GetStream/stream-chat-android/pull/4344)
+
+### ✅ Added
+- Added `thumbUrl` field to the return type of the `FileUploader::sendImage` method, so that clients are able to return image thumb URL when implementing their custom `FileUploader`. [#4423](https://github.com/GetStream/stream-chat-android/pull/4423)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed an edge case in which deleting an attachment using the attachment gallery would not delete it given the message was freshly uploaded.  [#4349](https://github.com/GetStream/stream-chat-android/pull/4349)
+- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- When a user uploads image attachments in a message that contains links, the link attachments are no longer displayed inside the attachment gallery along with the image attachments. [#4399](https://github.com/GetStream/stream-chat-android/pull/4399)
+
+# November 3th, 2022 - 5.11.4
+## stream-chat-android-compose
+### ✅ Added
+- Added `ownMessageQuotedBackground`, `otherMessageQuotedBackground`, `ownMessageQuotedText` and `otherMessageQuotedText` options to `StreamColors`, to make it possible to customize the appearance of quoted messages via `ChatTheme`. [#4335](https://github.com/GetStream/stream-chat-android/pull/4335)
 
 ## stream-chat-android-pushprovider-firebase
 ### 🐞 Fixed
+- Fix multi-bundle feature when using Firebase as Push Provider. [#4341](https://github.com/GetStream/stream-chat-android/pull/4341)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
+# October 31th, 2022 - 5.11.3
+## stream-chat-android-client
 ### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
+- Fixed `OutOfMemoryException` in `HttpLoggingInterceptor` when sending big attachments. [#4314](https://github.com/GetStream/stream-chat-android/pull/4314)
 
 # October 17th, 2022 - 5.11.2
 ## stream-chat-android-ui-components
@@ -1671,7 +1859,7 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 
 ### ⚠️ Changed
 - 🚨 Breaking change: `RetryPolicy` in `ChatDomain` is now immutable and can only be set with Builder before creating an instance of it.
-- 🚨 Breaking change: `ChannelEventsHandler` is renamed to `ChatEventHandler`, it's function is renamed from `onChannelEvent` to `handleChatEvent`, EventHandlingResult is sealed class now. To get more details read [our docs](https://getstream.io/chat/docs/sdk/android/ui/components/channel-list/#chateventhandler)
+- 🚨 Breaking change: `ChannelEventsHandler` is renamed to `ChatEventHandler`, it's function is renamed from `onChannelEvent` to `handleChatEvent`, EventHandlingResult is sealed class now. To get more details read [our docs](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#chateventhandler)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed

@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.flatMapSuspend
 import io.getstream.chat.android.client.utils.onErrorSuspend
-import io.getstream.chat.android.client.utils.onSuccess
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -44,7 +43,7 @@ internal class WithPreconditionCall<T : Any>(
             val result = precondition()
             result
                 .onSuccess { originalCall.enqueue { callScope.launch { notifyResult(it, callback) } } }
-                .onErrorSuspend { notifyResult(Result.error(it), callback) }
+                .onErrorSuspend { notifyResult(Result.Failure(it), callback) }
         }
     }
 

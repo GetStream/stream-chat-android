@@ -52,20 +52,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.client.utils.message.isThreadStart
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
-import io.getstream.chat.android.compose.state.messages.list.GiphyAction
-import io.getstream.chat.android.compose.state.messages.list.MessageFocused
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Middle
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.None
-import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Top
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
@@ -81,6 +72,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -149,7 +146,8 @@ public fun MessageItem(
         DefaultMessageItemTrailingContent(messageItem = it)
     },
 ) {
-    val (message, _, _, _, focusState) = messageItem
+    val message = messageItem.message
+    val focusState = messageItem.focusState
 
     val clickModifier = if (message.isDeleted()) {
         Modifier
@@ -226,9 +224,9 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .align(Alignment.Bottom)
 
     if (!messageItem.isMine && (
-        messageItem.shouldShowFooter ||
-            messageItem.groupPosition == Bottom ||
-            messageItem.groupPosition == None
+        messageItem.showMessageFooter ||
+            messageItem.groupPosition.contains(MessagePosition.BOTTOM) ||
+            messageItem.groupPosition.contains(MessagePosition.NONE)
         )
     ) {
         UserAvatar(
@@ -352,7 +350,8 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
     }
 
     val position = messageItem.groupPosition
-    val spacerSize = if (position == None || position == Bottom) 4.dp else 2.dp
+    val spacerSize =
+        if (position.contains(MessagePosition.NONE) || position.contains(MessagePosition.BOTTOM)) 4.dp else 2.dp
 
     Spacer(Modifier.size(spacerSize))
 }
@@ -484,10 +483,12 @@ internal fun RegularMessageContent(
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
-    val (message, position, _, ownsMessage, _) = messageItem
+    val message = messageItem.message
+    val position = messageItem.groupPosition
+    val ownsMessage = messageItem.isMine
 
-    val messageBubbleShape = when (position) {
-        Top, Middle -> RoundedCornerShape(16.dp)
+    val messageBubbleShape = when {
+        position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE) -> RoundedCornerShape(16.dp)
         else -> {
             if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
         }
@@ -563,8 +564,9 @@ internal fun DefaultMessageTextContent(
     Column {
         if (quotedMessage != null) {
             QuotedMessage(
-                modifier = Modifier.padding(2.dp),
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 message = quotedMessage,
+                replyMessage = message,
                 onLongItemClick = { onLongItemClick(message) },
                 onQuotedMessageClick = onQuotedMessageClick
             )

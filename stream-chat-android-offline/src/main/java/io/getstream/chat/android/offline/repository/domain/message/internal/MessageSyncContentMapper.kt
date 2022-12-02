@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
-import io.getstream.chat.android.client.models.MessageAwaitingAttachments
-import io.getstream.chat.android.client.models.MessageModerationFailed
-import io.getstream.chat.android.client.models.MessageSyncContent
-import io.getstream.chat.android.client.models.MessageSyncNone
-import io.getstream.chat.android.client.models.ModerationViolation
+import io.getstream.chat.android.models.MessageAwaitingAttachments
+import io.getstream.chat.android.models.MessageModerationFailed
+import io.getstream.chat.android.models.MessageSyncContent
+import io.getstream.chat.android.models.MessageSyncNone
+import io.getstream.chat.android.models.ModerationViolation
 
 internal fun MessageSyncContentEntity.toModel(): MessageSyncContent {
     return when (this) {

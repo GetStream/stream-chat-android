@@ -29,7 +29,7 @@
         android:scrollbars="vertical"
         />
 
-    <io.getstream.chat.android.ui.message.list.internal.ScrollButtonView
+    <io.getstream.chat.android.ui.feature.messages.list.internal.ScrollButtonView
         android:id="@+id/scrollToBottomButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

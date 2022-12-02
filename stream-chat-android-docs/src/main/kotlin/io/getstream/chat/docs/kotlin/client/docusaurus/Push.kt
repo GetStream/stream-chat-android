@@ -12,21 +12,21 @@ import com.huawei.hms.push.HmsMessageService
 import com.xiaomi.mipush.sdk.MiPushCommandMessage
 import com.xiaomi.mipush.sdk.MiPushMessage
 import com.xiaomi.mipush.sdk.PushMessageReceiver
+import io.getstream.android.push.firebase.FirebaseMessagingDelegate
+import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
+import io.getstream.android.push.huawei.HuaweiMessagingDelegate
+import io.getstream.android.push.huawei.HuaweiPushDeviceGenerator
+import io.getstream.android.push.xiaomi.XiaomiMessagingDelegate
+import io.getstream.android.push.xiaomi.XiaomiPushDeviceGenerator
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
-import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate
-import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator
-import io.getstream.chat.android.pushprovider.huawei.HuaweiMessagingDelegate
-import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator
-import io.getstream.chat.android.pushprovider.xiaomi.XiaomiMessagingDelegate
-import io.getstream.chat.android.pushprovider.xiaomi.XiaomiPushDeviceGenerator
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/">Push Notifications</a>

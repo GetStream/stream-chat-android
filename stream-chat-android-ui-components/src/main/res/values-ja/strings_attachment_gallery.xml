@@ -20,7 +20,6 @@
   <string name="stream_ui_attachment_gallery_delete">"削除"</string>
   <string name="stream_ui_attachment_gallery_overview_title">"写真"</string>
   <string name="stream_ui_attachment_gallery_reply">"返信"</string>
-  <string name="stream_ui_attachment_gallery_save_image">"画像を保存"</string>
   <string name="stream_ui_attachment_gallery_share">"画像を共有する"</string>
   <string name="stream_ui_attachment_gallery_show_in_chat">"チャットで表示"</string>
 </resources>

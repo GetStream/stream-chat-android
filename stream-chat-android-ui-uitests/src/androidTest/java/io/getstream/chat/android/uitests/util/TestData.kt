@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.uitests.util
 
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.MessageType
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import java.util.Date
@@ -124,28 +124,24 @@ object TestData {
     fun channel1() = Channel().apply {
         type = "messaging"
         id = "channel1"
-        cid = "messaging:channel1"
         unreadCount = 0
     }
 
     fun channel2() = Channel().apply {
         type = "messaging"
         id = "channel2"
-        cid = "messaging:channel2"
         unreadCount = 0
     }
 
     fun channel3() = Channel().apply {
         type = "messaging"
         id = "channel3"
-        cid = "messaging:channel3"
         unreadCount = 0
     }
 
     fun channel4() = Channel().apply {
         type = "messaging"
         id = "channel4"
-        cid = "messaging:channel4"
         unreadCount = 0
     }
 

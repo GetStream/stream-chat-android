@@ -1,7 +1,7 @@
 package io.getstream.chat.docs.java.client.docusaurus;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.models.User;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/channel-list-updates/">Channel List Updates</a>

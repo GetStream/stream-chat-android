@@ -56,13 +56,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
-import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.AttachmentType
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
@@ -73,6 +67,12 @@ import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
@@ -277,7 +277,7 @@ internal fun RowScope.MultipleMediaAttachments(
                         )
 
                         if (!isUploading) {
-                            MediaAttachmentViewMoreOverlay(
+                            MediaAttachmentShowMoreOverlay(
                                 mediaCount = attachmentCount,
                                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                                 modifier = Modifier.align(Alignment.Center)
@@ -461,7 +461,7 @@ internal fun PlayButton(
  * @param modifier Modifier for styling.
  */
 @Composable
-internal fun MediaAttachmentViewMoreOverlay(
+internal fun MediaAttachmentShowMoreOverlay(
     mediaCount: Int,
     maximumNumberOfPreviewedItems: Int,
     modifier: Modifier = Modifier,
@@ -471,7 +471,7 @@ internal fun MediaAttachmentViewMoreOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = ChatTheme.colors.overlay),
+            .background(color = ChatTheme.colors.showMoreOverlay),
     ) {
         Text(
             modifier = modifier
@@ -480,7 +480,7 @@ internal fun MediaAttachmentViewMoreOverlay(
                 id = R.string.stream_compose_remaining_media_attachments_count,
                 remainingMediaCount
             ),
-            color = ChatTheme.colors.barsBackground,
+            color = ChatTheme.colors.showMoreCountText,
             style = ChatTheme.typography.title1,
             textAlign = TextAlign.Center
         )

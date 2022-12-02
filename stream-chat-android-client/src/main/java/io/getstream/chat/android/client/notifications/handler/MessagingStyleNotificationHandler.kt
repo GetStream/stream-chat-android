@@ -29,13 +29,13 @@ import androidx.core.app.Person
 import androidx.core.content.edit
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.log.StreamLog
 import java.util.Date
 
 /**

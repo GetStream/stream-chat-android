@@ -20,46 +20,60 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.getstream.sdk.chat.utils.AttachmentConstants
-import com.getstream.sdk.chat.utils.AttachmentFilter
-import com.getstream.sdk.chat.utils.StorageHelper
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.common.composer.MessageComposerController
-import io.getstream.chat.android.common.state.DeletedMessageVisibility
-import io.getstream.chat.android.common.state.MessageFooterVisibility
-import io.getstream.chat.android.compose.handlers.ClipboardHandlerImpl
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import java.util.concurrent.TimeUnit
+import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
+import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
+import io.getstream.chat.android.ui.common.helper.ClipboardHandler
+import io.getstream.chat.android.ui.common.helper.ClipboardHandlerImpl
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
+import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
+import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
  * Currently builds the [MessageComposerViewModel], [MessageListViewModel] and [AttachmentsPickerViewModel].
  * @param context Used to build the [ClipboardManager].
  * @param channelId The current channel ID, to load the messages from.
+ * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param chatClient The client to use for API calls.
+ * @param clientState The current state of the SDK.
+ * @param messageLimit The number of messages to load in a single page.
+ * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
- * @param messageLimit The limit when loading messages.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 20mb for Stream CDN.
- * @param showDateSeparators If we should show date separator items in the list.
+ * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 100 MB for Stream CDN.
  * @param showSystemMessages If we should show system message items in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
- * @param dateSeparatorThresholdMillis The millisecond amount that represents the threshold for adding date separators.
+ * @param dateSeparatorHandler Handler that determines when the date separators should be visible.
+ * @param threadDateSeparatorHandler Handler that determines when the thread date separators should be visible.
+ * @param messagePositionHandler Determines the position of the message inside a group.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
     private val channelId: String,
+    private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val clientState: ClientState = chatClient.clientState,
+    private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
+    private val clipboardHandler: ClipboardHandler =
+        ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
     private val enforceUniqueReactions: Boolean = true,
-    private val messageLimit: Int = MessageListViewModel.DefaultMessageLimit,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
-    private val showDateSeparators: Boolean = true,
     private val showSystemMessages: Boolean = true,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold),
+    private val dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
+    private val threadDateSeparatorHandler: DateSeparatorHandler =
+        DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
+    private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
 ) : ViewModelProvider.Factory {
 
     /**
@@ -78,17 +92,21 @@ public class MessagesViewModelFactory(
         },
         MessageListViewModel::class.java to {
             MessageListViewModel(
-                chatClient = chatClient,
-                channelId = channelId,
-                messageLimit = messageLimit,
-                enforceUniqueReactions = enforceUniqueReactions,
-                clipboardHandler =
-                ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
-                showDateSeparators = showDateSeparators,
-                showSystemMessages = showSystemMessages,
-                deletedMessageVisibility = deletedMessageVisibility,
-                messageFooterVisibility = messageFooterVisibility,
-                dateSeparatorThresholdMillis = dateSeparatorThresholdMillis
+                MessageListController(
+                    cid = channelId,
+                    clipboardHandler = clipboardHandler,
+                    messageId = messageId,
+                    messageLimit = messageLimit,
+                    chatClient = chatClient,
+                    clientState = clientState,
+                    enforceUniqueReactions = enforceUniqueReactions,
+                    showSystemMessages = showSystemMessages,
+                    deletedMessageVisibility = deletedMessageVisibility,
+                    messageFooterVisibility = messageFooterVisibility,
+                    dateSeparatorHandler = dateSeparatorHandler,
+                    threadDateSeparatorHandler = threadDateSeparatorHandler,
+                    messagePositionHandler = messagePositionHandler,
+                )
             )
         },
         AttachmentsPickerViewModel::class.java to {

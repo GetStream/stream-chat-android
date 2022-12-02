@@ -17,10 +17,11 @@
 package io.getstream.chat.android.client.query.request
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
 
 /* Default filter to include FilterObject in a channel by its cid
 *
@@ -42,10 +43,10 @@ public object ChannelFilterRequest {
             messageLimit = 0,
             memberLimit = 0,
         )
-        return queryChannelsInternal(request).await().let {
-            when (it.isSuccess) {
-                true -> it.data()
-                else -> emptyList()
+        return queryChannelsInternal(request).await().let { result ->
+            when (result) {
+                is Result.Success -> result.value
+                is Result.Failure -> emptyList()
             }
         }
     }

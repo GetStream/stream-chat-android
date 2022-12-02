@@ -1,9 +1,10 @@
 package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -20,10 +21,13 @@ class CoreConcepts {
     fun runningCallsAsynchronously(channelClient: ChannelClient, message: Message, viewModelScope: CoroutineScope) {
         // Safe to call from the main thread
         channelClient.sendMessage(message).enqueue { result: Result<Message> ->
-            if (result.isSuccess) {
-                val sentMessage = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val sentMessage = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
 
@@ -34,13 +38,23 @@ class CoreConcepts {
     }
 
     fun errorHandling(result: Result<Channel>) {
-        result.isSuccess
-        result.isError
+        when (result) {
+            is Result.Success -> {
+                val channel: Channel = result.value
+                // Handle success
+            }
+            is Result.Failure -> {
+                val error: ChatError = result.value
+                // Handler error
+            }
+        }
+    }
 
-        if (result.isSuccess) {
-            // Use result.data()
-        } else {
-            // Handle result.error()
+    fun errorHandlingReactively(result: Result<Channel>) {
+        result.onSuccess { channel ->
+            // Handle success
+        }.onError { chatError ->
+            // Handle error
         }
     }
 }

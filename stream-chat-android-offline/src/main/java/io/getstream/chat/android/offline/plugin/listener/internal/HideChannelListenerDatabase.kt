@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
-import io.getstream.chat.android.client.utils.toUnitResult
 import java.util.Date
 
 /**
@@ -33,18 +32,18 @@ import java.util.Date
  */
 internal class HideChannelListenerDatabase(
     private val channelRepository: ChannelRepository,
-    private val messageRepository: MessageRepository
+    private val messageRepository: MessageRepository,
 ) : HideChannelListener {
 
     /**
-     * Run precondition for the request. If it returns [Result.isSuccess] then the request is run otherwise it returns
-     * [Result.error] and no request is made.
+     * Run precondition for the request. If it returns [Result.Success] then the request is run otherwise it returns
+     * [Result.Failure] and no request is made.
      *
      * @param channelType Type of the requested channel.
      * @param channelId Id of the requested channel.
      * @param clearHistory Boolean, if you want to clear the history of this channel or not.
      *
-     * @return [Result.success] if precondition passes otherwise [Result.error]
+     * @return [Result.Success] if precondition passes otherwise [Result.Failure]
      */
     override suspend fun onHideChannelPrecondition(
         channelType: String,
@@ -77,7 +76,7 @@ internal class HideChannelListenerDatabase(
         channelId: String,
         clearHistory: Boolean,
     ) {
-        if (result.isSuccess) {
+        if (result is Result.Success) {
             val cid = Pair(channelType, channelId).toCid()
 
             if (clearHistory) {

@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.clientstate
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test

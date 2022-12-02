@@ -21,11 +21,12 @@ import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.message.isRegular
 import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.extensions.globalState
 
 /**
  * Returns channel's last regular or system message if exists.
@@ -59,7 +60,7 @@ public fun Channel.getPreviewMessage(currentUser: User?): Message? =
  */
 public fun Channel.getDisplayName(
     context: Context,
-    currentUser: User? = ChatClient.instance().getCurrentUser(),
+    currentUser: User? = ChatClient.instance().globalState.user.value,
     @StringRes fallback: Int,
     maxMembers: Int = 5,
 ): String {

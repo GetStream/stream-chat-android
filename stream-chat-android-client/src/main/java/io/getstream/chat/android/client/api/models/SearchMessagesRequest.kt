@@ -16,8 +16,9 @@
 
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.querysort.QuerySorter
 
 public data class SearchMessagesRequest @JvmOverloads constructor(
     /**

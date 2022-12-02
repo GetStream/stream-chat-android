@@ -28,6 +28,8 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     @InternalStreamChatApi
     public var shouldRefresh: Boolean = false
     @InternalStreamChatApi
+    public var isWatchChannel: Boolean = false
+    @InternalStreamChatApi
     public var isNotificationUpdate: Boolean = false
 
     public val messages: MutableMap<String, Any> = mutableMapOf()
@@ -187,8 +189,9 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return result
     }
 
-    private companion object {
+    internal companion object {
         private const val KEY_LIMIT = "limit"
         private const val KEY_OFFSET = "offset"
+        internal const val KEY_MEMBERS = "members"
     }
 }

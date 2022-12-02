@@ -22,13 +22,14 @@ import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.UploadedFile
-import io.getstream.chat.android.client.models.UploadedImage
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.models.UploadedImage
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeTrue
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -94,7 +95,7 @@ internal class StreamFileUploaderTest {
 
         val result = streamFileUploader.sendFile(channelType, channelId, userId, File(""))
 
-        result.data() shouldBeEqualTo UploadedFile(file = file, thumbUrl = thumbUrl)
+        (result as Result.Success).value shouldBeEqualTo UploadedFile(file = file, thumbUrl = thumbUrl)
     }
 
     @Test
@@ -105,7 +106,7 @@ internal class StreamFileUploaderTest {
 
         val result = streamFileUploader.sendFile(channelType, channelId, userId, File(""))
 
-        result.isError.shouldBeTrue()
+        result shouldBeInstanceOf Result.Failure::class
     }
 
     @Test
@@ -157,7 +158,7 @@ internal class StreamFileUploaderTest {
 
         val result = streamFileUploader.sendImage(channelType, channelId, userId, File(""))
 
-        result.data() shouldBeEqualTo UploadedImage(file = file)
+        (result as Result.Success).value shouldBeEqualTo UploadedImage(file = file)
     }
 
     @Test
@@ -168,7 +169,7 @@ internal class StreamFileUploaderTest {
 
         val result = streamFileUploader.sendImage(channelType, channelId, userId, File(""))
 
-        result.isError.shouldBeTrue()
+        result shouldBeInstanceOf Result.Failure::class
     }
 
     @Test

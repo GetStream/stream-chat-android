@@ -18,10 +18,10 @@ package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents the content that's shown in a quoted message if the attachments are not empty.

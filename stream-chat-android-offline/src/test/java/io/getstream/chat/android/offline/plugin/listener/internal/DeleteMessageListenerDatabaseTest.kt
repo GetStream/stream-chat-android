@@ -23,9 +23,8 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.test.randomCID
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -37,15 +36,14 @@ import org.mockito.kotlin.whenever
 
 internal class DeleteMessageListenerDatabaseTest {
 
-    private val clientState: ClientState = mock {
-        on(it.user) doReturn MutableStateFlow(randomUser())
-    }
+    private val clientState: ClientState = mock()
 
+    private val currentUser = randomUser()
     private val messageRepository: MessageRepository = mock()
     private val userRepository: UserRepository = mock()
 
     private val deleteMessageListenerState: DeleteMessageListenerDatabase =
-        DeleteMessageListenerDatabase(clientState, messageRepository, userRepository)
+        DeleteMessageListenerDatabase(clientState, currentUser.id, messageRepository, userRepository)
 
     @Test
     fun `when internet is available, the message should be updated as in progress before the request`() = runTest {
@@ -99,7 +97,7 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.success(testMessage))
+        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Success(testMessage))
 
         verify(messageRepository).insertMessage(
             argThat { message ->
@@ -120,7 +118,7 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.error(ChatError()))
+        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Failure(ChatError.GenericError("")))
 
         verify(messageRepository).insertMessage(
             argThat { message ->

@@ -17,26 +17,27 @@
 package io.getstream.chat.android.compose.viewmodel.channels
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.AndFilterObject
-import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelMute
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.common.state.DeleteConversation
-import io.getstream.chat.android.offline.plugin.state.StateRegistry
-import io.getstream.chat.android.offline.plugin.state.global.internal.GlobalMutableState
-import io.getstream.chat.android.offline.plugin.state.querychannels.ChannelsStateData
-import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.models.AndFilterObject
+import io.getstream.chat.android.models.AutocompleteFilterObject
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.OrFilterObject
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
+import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -284,7 +285,7 @@ internal class ChannelListViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
@@ -335,6 +336,7 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 initialSort = initialSort,
                 initialFilters = initialFilters,
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState, globalState)
             )
         }
     }

@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Channel List Header
 
-`ChannelListHeaderView` is a component that shows the title of the channels list, the current connection status, the avatar of the current user, and provides an action button which can be used to create a new conversation. It is designed to be displayed at the top of the channels screen of your app.
+`ChannelListHeaderView` is a component that shows the title of the channels list, the current connection status, the avatar of the current user, and provides an action button that can be used to create a new conversation. It is designed to be displayed at the top of the channels screen of your app.
  
  | Light Mode | Dark Mode |
  | --- | --- |
@@ -14,11 +14,10 @@ import TabItem from '@theme/TabItem';
 To use `ChannelListHeaderView`, include it in your XML layout as shown below:
 
 ```xml
-<io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+<io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
     android:id="@+id/channelListHeaderView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    />
+    android:layout_height="wrap_content" />
 ```
 
 `ChannelListHeaderView` is supposed to work with `ChannelListHeaderViewModel`. The basic setup of the ViewModel and connecting it with the View can be done in the following way:
@@ -28,16 +27,17 @@ To use `ChannelListHeaderView`, include it in your XML layout as shown below:
 
  ```kotlin
 // Instantiate the ViewModel
-val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
-// Bind the ViewModel with ChannelListView
-channelListHeaderViewModel.bindView(channelHeaderView, viewLifecycleOwner)
+val viewModel: ChannelListHeaderViewModel by viewModels()
+
+// Bind the ViewModel with ChannelListHeaderView
+viewModel.bindView(channelListHeaderView, viewLifecycleOwner)
 ```
 </TabItem>
 
 <TabItem value="java" label="Java">
 
 ```java
-// Get ViewModel
+// Instantiate the ViewModel
 ChannelListHeaderViewModel viewModel = new ViewModelProvider(this).get(ChannelListHeaderViewModel.class);
 
 // Bind it with ChannelListHeaderView
@@ -46,7 +46,7 @@ ChannelListHeaderViewModelBinding.bind(viewModel, channelListHeaderView, getView
 </TabItem>
 </Tabs>
 
-The `ChannelListHeaderViewModel::bindView` function provides all the logic of subscribing to data emitted by the ViewModel. By default, the ViewModel will make the View display the avatar of the currently logged-in user as well as the "Searching for network" state when needed.
+The `ChannelListHeaderViewModel::bindView` function provides all the logic of subscribing to data emitted by the ViewModel. By default, the ViewModel will make the View display the avatar of the currently logged-in user as well as the "Waiting for network" state when needed.
 
  | Light Mode | Dark Mode |
  | --- | --- |
@@ -90,15 +90,14 @@ You can also use XML attributes to hide those Views instead. This is explained b
 
 The appearance of `ChannelListHeaderView` can be conveniently modified using its XML attributes.   
 ```xml
-    <io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
-        android:id="@+id/channelListHeaderView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:streamUiShowUserAvatar="false"
-        app:streamUiShowOfflineProgressBar="false"
-        app:streamUiActionButtonIcon="@drawable/ic_stream_logo"
-        app:streamUiOnlineTitleTextStyle="bold"
-        />
+<io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
+    android:id="@+id/channelListHeaderView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:streamUiShowUserAvatar="false"
+    app:streamUiShowOfflineProgressBar="false"
+    app:streamUiActionButtonIcon="@drawable/ic_stream_logo"
+    app:streamUiOnlineTitleTextStyle="bold" />
 ```
 
 The example above hides the avatar view, makes the title text bold and sets the drawable of the action button to a custom icon.

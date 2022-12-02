@@ -16,25 +16,10 @@
 
 package io.getstream.chat.android.client.parser
 
-import io.getstream.chat.android.client.api.models.AndFilterObject
-import io.getstream.chat.android.client.api.models.AutocompleteFilterObject
-import io.getstream.chat.android.client.api.models.ContainsFilterObject
-import io.getstream.chat.android.client.api.models.DistinctFilterObject
-import io.getstream.chat.android.client.api.models.EqualsFilterObject
-import io.getstream.chat.android.client.api.models.ExistsFilterObject
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.GreaterThanFilterObject
-import io.getstream.chat.android.client.api.models.GreaterThanOrEqualsFilterObject
-import io.getstream.chat.android.client.api.models.InFilterObject
-import io.getstream.chat.android.client.api.models.LessThanFilterObject
-import io.getstream.chat.android.client.api.models.LessThanOrEqualsFilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.NorFilterObject
-import io.getstream.chat.android.client.api.models.NotEqualsFilterObject
-import io.getstream.chat.android.client.api.models.NotExistsFilterObject
-import io.getstream.chat.android.client.api.models.NotInFilterObject
-import io.getstream.chat.android.client.api.models.OrFilterObject
 import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomInt
@@ -62,80 +47,80 @@ internal class FilterObjectTypeAdapterTest {
         @Suppress("LongMethod", "ComplexMethod")
         fun writeArguments() = listOf(
             Arguments.of(NeutralFilterObject, "{}"),
-            randomString().let { Arguments.of(ExistsFilterObject(it), "{\"$it\":{\"\$exists\":true}}") },
-            randomString().let { Arguments.of(NotExistsFilterObject(it), "{\"$it\":{\"\$exists\":false}}") },
+            randomString().let { Arguments.of(Filters.exists(it), "{\"$it\":{\"\$exists\":true}}") },
+            randomString().let { Arguments.of(Filters.notExists(it), "{\"$it\":{\"\$exists\":false}}") },
             randomString().let { fieldName ->
                 randomString().let { value ->
                     Arguments.of(
-                        AutocompleteFilterObject(fieldName, value),
+                        Filters.autocomplete(fieldName, value),
                         "{\"$fieldName\":{\"\$autocomplete\":\"$value\"}}"
                     )
                 }
             },
             randomString().let { fieldName ->
                 randomString().let { value ->
-                    Arguments.of(EqualsFilterObject(fieldName, value), "{\"$fieldName\":\"$value\"}")
+                    Arguments.of(Filters.eq(fieldName, value), "{\"$fieldName\":\"$value\"}")
                 }
             },
             randomString().let { fieldName ->
                 randomInt().let { value ->
-                    Arguments.of(EqualsFilterObject(fieldName, value), "{\"$fieldName\":$value}")
+                    Arguments.of(Filters.eq(fieldName, value), "{\"$fieldName\":$value}")
                 }
             },
             randomString().let { fieldName ->
                 randomBoolean().let { value ->
-                    Arguments.of(EqualsFilterObject(fieldName, value), "{\"$fieldName\":$value}")
+                    Arguments.of(Filters.eq(fieldName, value), "{\"$fieldName\":$value}")
                 }
             },
             randomString().let { fieldName ->
                 randomString().let { value ->
-                    Arguments.of(NotEqualsFilterObject(fieldName, value), "{\"$fieldName\":{\"\$ne\":\"$value\"}}")
+                    Arguments.of(Filters.ne(fieldName, value), "{\"$fieldName\":{\"\$ne\":\"$value\"}}")
                 }
             },
             randomString().let { fieldName ->
                 randomInt().let { value ->
-                    Arguments.of(NotEqualsFilterObject(fieldName, value), "{\"$fieldName\":{\"\$ne\":$value}}")
+                    Arguments.of(Filters.ne(fieldName, value), "{\"$fieldName\":{\"\$ne\":$value}}")
                 }
             },
             randomString().let { fieldName ->
                 randomBoolean().let { value ->
-                    Arguments.of(NotEqualsFilterObject(fieldName, value), "{\"$fieldName\":{\"\$ne\":$value}}")
+                    Arguments.of(Filters.ne(fieldName, value), "{\"$fieldName\":{\"\$ne\":$value}}")
                 }
             },
             randomString().let { fieldName ->
                 randomString().let { value ->
-                    Arguments.of(ContainsFilterObject(fieldName, value), "{\"$fieldName\":{\"\$contains\":\"$value\"}}")
+                    Arguments.of(Filters.contains(fieldName, value), "{\"$fieldName\":{\"\$contains\":\"$value\"}}")
                 }
             },
             randomString().let { fieldName ->
                 randomInt().let { value ->
-                    Arguments.of(ContainsFilterObject(fieldName, value), "{\"$fieldName\":{\"\$contains\":$value}}")
+                    Arguments.of(Filters.contains(fieldName, value), "{\"$fieldName\":{\"\$contains\":$value}}")
                 }
             },
             randomString().let { fieldName ->
                 randomBoolean().let { value ->
-                    Arguments.of(ContainsFilterObject(fieldName, value), "{\"$fieldName\":{\"\$contains\":$value}}")
+                    Arguments.of(Filters.contains(fieldName, value), "{\"$fieldName\":{\"\$contains\":$value}}")
                 }
             },
             randomString().let { fieldName ->
                 randomString().let { value ->
-                    Arguments.of(GreaterThanFilterObject(fieldName, value), "{\"$fieldName\":{\"\$gt\":\"$value\"}}")
+                    Arguments.of(Filters.greaterThan(fieldName, value), "{\"$fieldName\":{\"\$gt\":\"$value\"}}")
                 }
             },
             randomString().let { fieldName ->
                 randomInt().let { value ->
-                    Arguments.of(GreaterThanFilterObject(fieldName, value), "{\"$fieldName\":{\"\$gt\":$value}}")
+                    Arguments.of(Filters.greaterThan(fieldName, value), "{\"$fieldName\":{\"\$gt\":$value}}")
                 }
             },
             randomString().let { fieldName ->
                 randomBoolean().let { value ->
-                    Arguments.of(GreaterThanFilterObject(fieldName, value), "{\"$fieldName\":{\"\$gt\":$value}}")
+                    Arguments.of(Filters.greaterThan(fieldName, value), "{\"$fieldName\":{\"\$gt\":$value}}")
                 }
             },
             randomString().let { fieldName ->
                 randomString().let { value ->
                     Arguments.of(
-                        GreaterThanOrEqualsFilterObject(fieldName, value),
+                        Filters.greaterThanEquals(fieldName, value),
                         "{\"$fieldName\":{\"\$gte\":\"$value\"}}"
                     )
                 }
@@ -143,7 +128,7 @@ internal class FilterObjectTypeAdapterTest {
             randomString().let { fieldName ->
                 randomInt().let { value ->
                     Arguments.of(
-                        GreaterThanOrEqualsFilterObject(fieldName, value),
+                        Filters.greaterThanEquals(fieldName, value),
                         "{\"$fieldName\":{\"\$gte\":$value}}"
                     )
                 }
@@ -151,138 +136,132 @@ internal class FilterObjectTypeAdapterTest {
             randomString().let { fieldName ->
                 randomBoolean().let { value ->
                     Arguments.of(
-                        GreaterThanOrEqualsFilterObject(fieldName, value),
+                        Filters.greaterThanEquals(fieldName, value),
                         "{\"$fieldName\":{\"\$gte\":$value}}"
                     )
                 }
             },
             randomString().let { fieldName ->
                 randomString().let { value ->
-                    Arguments.of(LessThanFilterObject(fieldName, value), "{\"$fieldName\":{\"\$lt\":\"$value\"}}")
+                    Arguments.of(Filters.lessThan(fieldName, value), "{\"$fieldName\":{\"\$lt\":\"$value\"}}")
                 }
             },
             randomString().let { fieldName ->
                 randomInt().let { value ->
-                    Arguments.of(LessThanFilterObject(fieldName, value), "{\"$fieldName\":{\"\$lt\":$value}}")
+                    Arguments.of(Filters.lessThan(fieldName, value), "{\"$fieldName\":{\"\$lt\":$value}}")
                 }
             },
             randomString().let { fieldName ->
                 randomBoolean().let { value ->
-                    Arguments.of(LessThanFilterObject(fieldName, value), "{\"$fieldName\":{\"\$lt\":$value}}")
+                    Arguments.of(Filters.lessThan(fieldName, value), "{\"$fieldName\":{\"\$lt\":$value}}")
                 }
             },
             randomString().let { fieldName ->
                 randomString().let { value ->
                     Arguments.of(
-                        LessThanOrEqualsFilterObject(fieldName, value),
+                        Filters.lessThanEquals(fieldName, value),
                         "{\"$fieldName\":{\"\$lte\":\"$value\"}}"
                     )
                 }
             },
             randomString().let { fieldName ->
                 randomInt().let { value ->
-                    Arguments.of(LessThanOrEqualsFilterObject(fieldName, value), "{\"$fieldName\":{\"\$lte\":$value}}")
+                    Arguments.of(Filters.lessThanEquals(fieldName, value), "{\"$fieldName\":{\"\$lte\":$value}}")
                 }
             },
             randomString().let { fieldName ->
                 randomBoolean().let { value ->
-                    Arguments.of(LessThanOrEqualsFilterObject(fieldName, value), "{\"$fieldName\":{\"\$lte\":$value}}")
+                    Arguments.of(Filters.lessThanEquals(fieldName, value), "{\"$fieldName\":{\"\$lte\":$value}}")
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomString() }.toSet().let { values ->
+                List(positiveRandomInt(20)) { randomString() }.let { values ->
                     Arguments.of(
-                        InFilterObject(fieldName, values),
-                        "{\"$fieldName\":{\"\$in\":[\"${values.joinToString(separator = "\",\"")}\"]}}"
+                        Filters.`in`(fieldName, values),
+                        "{\"$fieldName\":{\"\$in\":[\"${values.toSet().joinToString(separator = "\",\"")}\"]}}"
                     )
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.let { values ->
                     Arguments.of(
-                        InFilterObject(fieldName, values),
-                        "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}"
+                        Filters.`in`(fieldName, values),
+                        "{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}"
                     )
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomBoolean() }.toSet().let { values ->
+                List(positiveRandomInt(20)) { randomBoolean() }.let { values ->
                     Arguments.of(
-                        InFilterObject(fieldName, values),
-                        "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}"
+                        Filters.`in`(fieldName, values),
+                        "{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}"
                     )
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomString() }.toSet().let { values ->
+                List(positiveRandomInt(20)) { randomString() }.let { values ->
                     Arguments.of(
-                        NotInFilterObject(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[\"${values.joinToString(separator = "\",\"")}\"]}}"
+                        Filters.nin(fieldName, values),
+                        "{\"$fieldName\":{\"\$nin\":[\"${values.toSet().joinToString(separator = "\",\"")}\"]}}"
                     )
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.let { values ->
                     Arguments.of(
-                        NotInFilterObject(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}"
+                        Filters.nin(fieldName, values),
+                        "{\"$fieldName\":{\"\$nin\":[${values.toSet().joinToString(separator = ",")}]}}"
                     )
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomBoolean() }.toSet().let { values ->
+                List(positiveRandomInt(20)) { randomBoolean() }.let { values ->
                     Arguments.of(
-                        NotInFilterObject(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}"
+                        Filters.nin(fieldName, values),
+                        "{\"$fieldName\":{\"\$nin\":[${values.toSet().joinToString(separator = ",")}]}}"
                     )
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.let { values ->
                     Arguments.of(
-                        AndFilterObject(
-                            setOf(
-                                InFilterObject(fieldName, values),
-                                EqualsFilterObject(fieldName, values.first())
-                            )
+                        Filters.and(
+                            Filters.`in`(fieldName, values),
+                            Filters.eq(fieldName, values.first()),
                         ),
-                        "{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}" +
+                        "{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}" +
                             ",{\"$fieldName\":${values.first()}}]}"
                     )
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.let { values ->
                     Arguments.of(
-                        OrFilterObject(
-                            setOf(
-                                InFilterObject(fieldName, values),
-                                EqualsFilterObject(fieldName, values.first())
-                            )
+                        Filters.or(
+                            Filters.`in`(fieldName, values),
+                            Filters.eq(fieldName, values.first()),
                         ),
-                        "{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}" +
+                        "{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}" +
                             ",{\"$fieldName\":${values.first()}}]}"
                     )
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.toSet().let { values ->
+                List(positiveRandomInt(20)) { randomInt() }.let { values ->
                     Arguments.of(
-                        NorFilterObject(
-                            setOf(
-                                InFilterObject(fieldName, values),
-                                EqualsFilterObject(fieldName, values.first())
-                            )
+                        Filters.nor(
+                            Filters.`in`(fieldName, values),
+                            Filters.eq(fieldName, values.first()),
                         ),
-                        "{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}" +
+                        "{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}" +
                             ",{\"$fieldName\":${values.first()}}]}"
                     )
                 }
             },
-            List(positiveRandomInt(20)) { randomString() }.toSet().let { memberIds ->
+            List(positiveRandomInt(20)) { randomString() }.let { memberIds ->
                 Arguments.of(
-                    DistinctFilterObject(memberIds),
-                    "{\"distinct\":true,\"members\":[\"${memberIds.joinToString(separator = "\",\"")}\"]}"
+                    Filters.distinct(memberIds),
+                    "{\"distinct\":true,\"members\":[\"${memberIds.toSet().joinToString(separator = "\",\"")}\"]}"
                 )
             }
         )
