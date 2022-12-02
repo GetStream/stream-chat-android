@@ -58,6 +58,7 @@ internal class ChannelMutableState(
     override val cid: String = "%s:%s".format(channelType, channelId)
 
     private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
+    private val _countedMessage: MutableSet<String> = mutableSetOf()
     private val _typing = MutableStateFlow(TypingEvent(channelId, emptyList()))
     private val _typingChatEvents = MutableStateFlow<Map<String, TypingStartEvent>>(emptyMap())
     private val _rawReads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
@@ -397,8 +398,12 @@ internal class ChannelMutableState(
         _watcherCount.value = watchersCount.takeUnless { it < 0 } ?: _watchers.value.size
     }
 
-    fun deleteMessage(message: Message) {
+    fun deleteMessage(message: Message, updateCount: Boolean = true) {
         _messages.value = _messages.value - message.id
+
+        if (updateCount) {
+            _countedMessage.remove(message.id)
+        }
     }
 
     fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
@@ -411,8 +416,12 @@ internal class ChannelMutableState(
      *
      * @param message message to be upserted.
      */
-    fun upsertMessage(message: Message) {
+    fun upsertMessage(message: Message, updateCount: Boolean = true) {
         _messages.value = _messages.value + (message.id to message)
+
+        if (updateCount) {
+            _countedMessage.add(message.id)
+        }
     }
 
     fun upsertUserPresence(user: User) {
@@ -475,8 +484,12 @@ internal class ChannelMutableState(
         _messages.value = _messages.value.filter { it.value.wasCreatedAfter(date) }
     }
 
-    fun upsertMessages(updatedMessages: Collection<Message>) {
+    fun upsertMessages(updatedMessages: Collection<Message>, updateCount: Boolean = true) {
         _messages.value += updatedMessages.associateBy(Message::id)
+
+        if (updateCount) {
+            _countedMessage.addAll(updatedMessages.map { it.id })
+        }
     }
 
     fun setMessages(messages: List<Message>) {
@@ -493,6 +506,16 @@ internal class ChannelMutableState(
     fun updateCachedLatestMessages(messages: Map<String, Message>) {
         cachedLatestMessages.value = messages
     }
+
+    fun clearCountedMessages() {
+        _countedMessage.clear()
+    }
+
+    fun insertCountedMessages(ids: List<String>) {
+        _countedMessage.addAll(ids)
+    }
+
+    fun isMessageAlreadyCounted(messageId: String): Boolean = _countedMessage.contains(messageId)
 
     override fun getMessageById(id: String): Message? = _messages.value[id]
 

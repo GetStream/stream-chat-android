@@ -14,21 +14,39 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.utils
+package io.getstream.chat.android.client.utils.buffer
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
-public class StartStopBuffer<T> {
+private const val NO_LIMIT = -1
+
+@InternalStreamChatApi
+public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customTrigger: StateFlow<Boolean>? = null) {
 
     private val events: Queue<T> = ConcurrentLinkedQueue()
     private var active = AtomicBoolean(true)
     private var func: ((T) -> Unit)? = null
+
+    init {
+        CoroutineScope(DispatcherProvider.IO).launch {
+            customTrigger?.collectLatest { active ->
+                if (active) {
+                    active()
+                } else {
+                    hold()
+                }
+            }
+        }
+    }
 
     public fun hold() {
         active.set(false)
@@ -39,18 +57,6 @@ public class StartStopBuffer<T> {
 
         if (func != null) {
             propagateData()
-        }
-    }
-
-    private fun propagateData() {
-        CoroutineScope(DispatcherProvider.IO).launch {
-            while (active.get() && events.isNotEmpty()) {
-                events.poll()?.let {
-                    withContext(DispatcherProvider.Main) {
-                        func?.invoke(it)
-                    }
-                }
-            }
         }
     }
 
@@ -65,8 +71,22 @@ public class StartStopBuffer<T> {
     public fun enqueueData(data: T) {
         events.offer(data)
 
-        if (active.get()) {
+        if (active.get() || aboveSafetyThreshold()) {
             propagateData()
+        }
+    }
+
+    private fun aboveSafetyThreshold(): Boolean = events.size > bufferLimit && bufferLimit != NO_LIMIT
+
+    private fun propagateData() {
+        CoroutineScope(DispatcherProvider.IO).launch {
+            while (active.get() && events.isNotEmpty() || aboveSafetyThreshold()) {
+                events.poll()?.let {
+                    withContext(DispatcherProvider.Main) {
+                        func?.invoke(it)
+                    }
+                }
+            }
         }
     }
 }
