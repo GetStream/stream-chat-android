@@ -2499,16 +2499,6 @@ public final class io/getstream/chat/android/client/utils/attachment/AttachmentU
 	public static final fun isVideo (Lio/getstream/chat/android/models/Attachment;)Z
 }
 
-public final class io/getstream/chat/android/client/utils/buffer/StartStopBuffer {
-	public fun <init> ()V
-	public fun <init> (ILkotlinx/coroutines/flow/StateFlow;)V
-	public synthetic fun <init> (ILkotlinx/coroutines/flow/StateFlow;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun active ()V
-	public final fun enqueueData (Ljava/lang/Object;)V
-	public final fun hold ()V
-	public final fun subscribe (Lkotlin/jvm/functions/Function1;)V
-}
-
 public final class io/getstream/chat/android/client/utils/channel/ChannelUtilsKt {
 }
 
