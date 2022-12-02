@@ -49,7 +49,7 @@ private const val COUNT_BUFFER_LIMIT = 100
 internal class UnreadCountLogic(
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
-    private val unreadTrigger: StateFlow<Boolean>? = null,
+    private val unreadTrigger: StateFlow<Boolean>,
     private val countBuffer: StartStopBuffer<ChatEvent> = StartStopBuffer(
         bufferLimit = COUNT_BUFFER_LIMIT,
         customTrigger = unreadTrigger
