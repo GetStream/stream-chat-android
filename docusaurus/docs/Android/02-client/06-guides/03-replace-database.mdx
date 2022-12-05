@@ -280,3 +280,12 @@ internal fun Channel.lastMessage(): Message? = messages.lastOrNull()
 </TabItem>
 
 </Tabs>
+
+The exceptions to the Entity classes is `QueryChannelsEntityRealm` and `QuerySorterInfoEntityRealm`. 
+
+`QueryChannelsEntityRealm` has the information about the filters used in the queries. The filters are can stored as graph where each node represents a filter that may or may not be composed by one or more filters. Example: The `And` filter is composed by many other filters and the `Equals` filter is composed by two values and an operation. We discuss in detail how to store this data in the next section. 
+
+`QuerySorterInfoEntityRealm` [Write this section later.]
+
+## Storing QueryChannelsEntityRealm
+
