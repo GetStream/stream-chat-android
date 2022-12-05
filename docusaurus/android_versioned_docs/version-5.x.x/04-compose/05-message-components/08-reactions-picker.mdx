@@ -78,7 +78,6 @@ Next, let's see how to customize `ReactionsPicker`.
 `ReactionsPicker` allows you to customize the reactions you are showing:
 
 ```kotlin
-@ExperimentalFoundationApi
 @Composable
 public fun ReactionsPicker(
     ..., // State,
@@ -87,9 +86,9 @@ public fun ReactionsPicker(
 )
 ```
 
-* `reactionTypes`: Allows you customize which reactions are shown. By default it uses `reactionTypes` inside of [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
+* `reactionTypes`: Allows you to customize which reactions are shown. By default it uses `reactionIconFactory` inside of [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
 
-You can customize these either by overriding `ChatTheme.reactionTypes` or passing in your own `Map` of reactions.
+The best way to customize this is by overriding `ChatTheme.reactionIconFactory` with your own implementation of `ReactionIconFactory` so that all of your components wrapped inside of `ChatTheme` draw from the same source.
 
 By default `ReactionsPicker` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
@@ -134,7 +133,7 @@ public fun ReactionsPicker(
 
 Apart from customization through modifiers, the component provides these slots:
 
-* `headerContent`: Allows you to customize what content you show on the top part of `ReactionsPicker`. Empty by default,
+* `headerContent`: Allows you to customize what content you show on the top part of `ReactionsPicker`. Empty by default.
 * `centerContent`: Allows you to customize what content you show on the bottom part of `ReactionsPicker`. Shows reactions by default.
 
 As an example, let's override the header content. First create a custom text label:
