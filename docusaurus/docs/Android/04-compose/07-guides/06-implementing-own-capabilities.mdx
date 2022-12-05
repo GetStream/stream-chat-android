@@ -51,7 +51,7 @@ public data class MessageComposerState(
     val ownCapabilities: Set<String> = setOf()
 )
 ```
-The file containing `MessageComposerState` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/common/composer/MessageComposerState.kt).
+The file containing `MessageComposerState` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState.kt).
 
 `MessageComposer` regulates the following capabilities:
 
@@ -187,7 +187,8 @@ Please keep this in mind should you wish to not use our `ViewModel`s.
 Let's take `MessageComposer` into consideration.
 If we left it with the default, empty set of own capabilities we would get the following result:
 
-![MessageComposer with empty capabilities](../../assets/own_capabilities_message_composer_empty_capabilities.png)
+|![MessageComposer with empty capabilities](../../assets/own_capabilities_message_composer_empty_capabilities.png)|
+|---|
 
 This leaves the user unable to perform any action provided by the composer.
 Ideally, you should let your Dashboard App settings regulate capabilities, but if you wish to control them manually, you can do so.
@@ -201,7 +202,7 @@ public object ChannelCapabilities {
     ... // Other capabilities
 }
 ```
-The file containing `ChannelCapabilities` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/models/ChannelCapabilities.kt).
+The file containing `ChannelCapabilities` can be found [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-core/src/main/java/io/getstream/chat/android/models/ChannelCapabilities.kt).
 
 This object contains all relevant channel capabilities as type safe properties.
 You can use the properties to build a set containing only the capabilities you want enabled for the user.
@@ -228,7 +229,7 @@ val messageComposerState = MessageComposerState(
 And finally pass the `MessageComposerState` to the stateless `MessageComposer` component:
 
 ```kotlin
-public fun MessageComposer(
+MessageComposer(
     messageComposerState = messageComposerState,
     ..., // State, handlers and content.
 )
@@ -243,7 +244,8 @@ This enables the following capabilities:
 
 And results in `MessageComposer` having the following appearance:
 
-![MessageComposer with custom capabilities](../../assets/own_capabilities_message_composer_with_capabilities.png)
+|![MessageComposer with custom capabilities](../../assets/own_capabilities_message_composer_with_capabilities.png)|
+|---|
 
 :::note
 Please note that providing custom client side capabilities leaves you in charge of making sure that users are not awarded with dangerous capabilities and that different clients are in sync.
