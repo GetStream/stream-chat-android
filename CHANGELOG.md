@@ -49,7 +49,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Exposed a way to allow you to include the current user avatar in the Channel avatar [#4561](https://github.com/GetStream/stream-chat-android/pull/4561)
 
 ### ⚠️ Changed
 
@@ -120,6 +119,11 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# December 5th, 2022 - 5.11.9
+## stream-chat-android-ui-common
+### ✅ Added
+- Exposed a way to allow you to include the current user avatar in the Channel avatar [#4561](https://github.com/GetStream/stream-chat-android/pull/4561)
 
 # November 23th, 2022 - 5.11.8
 ## stream-chat-android-client
