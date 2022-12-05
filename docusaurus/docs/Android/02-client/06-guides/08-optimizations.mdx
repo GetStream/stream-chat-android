@@ -40,10 +40,13 @@ For example, you can use the snippet presented below for query channels request:
 
 ```kotlin
 ChatClient.instance().queryChannels(queryChannelsRequest).forceNewRequest().enqueue { result ->
-    if (result.isSuccess) {
-        // Handle success
-    } else {
-        // Handle error
+    when (result) {
+        is Result.Success -> {
+            // Handle success
+        }
+        is Result.Failure -> {
+            // Handle error
+        }
     }
 }
 ```

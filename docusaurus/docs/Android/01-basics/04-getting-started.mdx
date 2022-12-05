@@ -175,7 +175,15 @@ A great chat solution should be capable of caching data and handling network con
 `OfflinePlugin` works best when used together with `StatePlugin`.
 :::
 
-You can add it in the following manner:
+First, add the dependency which contains offline support:
+
+```groovy {2}
+dependencies {
+    implementation "io.getstream:stream-chat-android-offline:$stream_version"
+}
+```
+
+Then, you can add the plugin in the following manner:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
