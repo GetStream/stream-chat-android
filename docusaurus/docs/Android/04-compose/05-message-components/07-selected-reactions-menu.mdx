@@ -47,7 +47,7 @@ The aforementioned code produces the following UI:
 |---|---|
 | ![Default SelectedReactionsMenu component](../../assets/compose_default_selected_reactions_menu.png) | ![Default SelectedReactionsMenu component dark](../../assets/compose_default_selected_reactions_menu_dark.png) |
 
-The component shows reactions from the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) on the top, followed by a list of message reactions.
+The component shows tha available reactions from the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) on the top, followed by a list of message reactions.
 
 To dismiss the component just tap outside of the dialog or press the system back button.
 
@@ -104,7 +104,8 @@ fun SelectedReactionsMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
+    @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     ... // Actions and Slot APIs
 )
 ```
@@ -112,9 +113,10 @@ fun SelectedReactionsMenu(
 * `modifier`: Modifier for the dialog component.
 * `overlayColor`: Allows you to customize the color of the overlay.
 * `shape`: Allows you to customize the shape of the dialog.
-* `reactionTypes`: Allows you to customize reactions shown in the overlay. By default it uses `ChatTheme.reactionTypes` which is exposed by the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) component.
+* `reactionTypes`: Allows you to customize reactions shown in the overlay. By default it uses `ChatTheme.reactionIconFactory` which is exposed by the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) component.
+* `showMoreReactionsIcon`: Allows you to customize the show more reactions icon. By default, the icon will appear when `ChatTheme.reactionIconFactory` provides more than five reactions.
 
-If you want to customize the reactions, you can set up custom reactions, using [`ChatTheme`](../03-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
+The best way to customize reactions is by overriding `ChatTheme.reactionIconFactory` with your own implementation of `ReactionIconFactory` so that all of your components wrapped inside of `ChatTheme` draw from the same source.
 
 By default `SelectedReactionsMenu` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
