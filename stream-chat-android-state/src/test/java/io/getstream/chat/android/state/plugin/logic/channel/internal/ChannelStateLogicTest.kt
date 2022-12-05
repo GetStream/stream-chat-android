@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Channel
@@ -51,6 +52,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -73,7 +75,8 @@ internal class ChannelStateLogicTest {
             globalMutableState = globalMutableState,
             searchLogic = SearchLogic(mutableState),
             attachmentUrlValidator = attachmentUrlValidator,
-            coroutineScope = testCoroutines.scope
+            coroutineScope = testCoroutines.scope,
+            unreadCountLogic = unreadCountLogic
         )
     }
 
@@ -114,6 +117,7 @@ internal class ChannelStateLogicTest {
         on(it.channelMutes) doReturn MutableStateFlow(emptyList())
         on(it.user) doReturn MutableStateFlow(user)
     }
+    private val unreadCountLogic: UnreadCountLogic = mock()
 
     private val attachmentUrlValidator: AttachmentUrlValidator = mock {
         on(it.updateValidAttachmentsUrl(any(), any())) doAnswer { invocationOnMock ->
@@ -197,8 +201,12 @@ internal class ChannelStateLogicTest {
             showInChannel = true
         )
 
-        channelStateLogic.incrementUnreadCountIfNecessary(oldMessage)
-        verify(mutableState).increaseReadWith(oldMessage)
+        val oldMessageNewMessageEvent = randomNewMessageEvent(
+            message = oldMessage
+        )
+
+        channelStateLogic.incrementUnreadCountIfNecessary(oldMessageNewMessageEvent)
+        verify(unreadCountLogic).enqueueCount(oldMessageNewMessageEvent)
     }
 
     @Test
@@ -210,8 +218,12 @@ internal class ChannelStateLogicTest {
         val oldMessages = List(positiveRandomInt(20)) { randomMessage() }
         whenever(mutableState.visibleMessages) doReturn MutableStateFlow(oldMessages.associateBy(Message::id))
 
+        val eventList = oldMessages.map { message ->
+            randomNewMessageEvent(message = message)
+        }
+
         repeat(3) {
-            channelStateLogic.incrementUnreadCountIfNecessary(oldMessages.random())
+            channelStateLogic.incrementUnreadCountIfNecessary(eventList.random())
         }
 
         _unreadCount.value `should be equal to` 0
@@ -259,7 +271,7 @@ internal class ChannelStateLogicTest {
         channelStateLogic.propagateChannelQuery(channel, request)
 
         verify(mutableState, times(0)).updateCachedLatestMessages(any())
-        verify(mutableState, times(0)).upsertMessages(any())
+        verify(mutableState, times(0)).upsertMessages(any(), any())
     }
 
     @Test
@@ -276,7 +288,7 @@ internal class ChannelStateLogicTest {
             messageLimit = 30
         )
 
-        verify(mutableState, times(0)).upsertMessages(any())
+        verify(mutableState, times(0)).upsertMessages(any(), any())
     }
 
     @Test
@@ -289,7 +301,7 @@ internal class ChannelStateLogicTest {
             .withMessages(Pagination.GREATER_THAN, randomString(), 1)
 
         channelStateLogic.propagateChannelQuery(channel, filteringRequest)
-        verify(mutableState).upsertMessages(any())
+        verify(mutableState).upsertMessages(any(), any())
     }
 
     @Test
@@ -301,7 +313,7 @@ internal class ChannelStateLogicTest {
         val request = QueryChannelRequest().apply { isNotificationUpdate = true }.withMessages(1)
         channelStateLogic.propagateChannelQuery(channel, request)
 
-        verify(mutableState, times(0)).upsertMessages(any())
+        verify(mutableState, times(0)).upsertMessages(any(), any())
     }
 
     @Test
@@ -337,8 +349,8 @@ internal class ChannelStateLogicTest {
             updatedLocallyAt = randomDateAfter((message.updatedLocallyAt ?: message.updatedAt ?: NEVER).time)
         )
 
-        channelStateLogic.upsertMessage(updatedMessage)
+        channelStateLogic.upsertMessage(updatedMessage, false)
 
-        verify(mutableState).upsertMessages(listOf(updatedMessage))
+        verify(mutableState).upsertMessages(eq(listOf(updatedMessage)), any())
     }
 }

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.utils
+package io.getstream.chat.android.client.utils.buffer
 
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be in`
+import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -161,6 +163,32 @@ internal class StartStopBufferTest {
             active()
 
             lastNumber `should be equal to` data2
+        }
+    }
+
+    @Test
+    fun `when buffer overflows, it should start emitting its items`() {
+        StartStopBuffer<String>(bufferLimit = 2).run {
+
+            val initialData = "0"
+            var lastNumber = initialData
+            val data1 = "data1"
+            val data2 = "data2"
+            val data3 = "data3"
+
+            hold()
+
+            subscribe { data ->
+                lastNumber = data
+            }
+
+            enqueueData(data1)
+            enqueueData(data2)
+            enqueueData(data3)
+
+            // Verifies that overflow happened and items were emitted. If that happened lastNumber was overwritten.
+            lastNumber `should not be equal to` initialData
+            lastNumber `should be in` listOf(data1, data2, data3)
         }
     }
 }
