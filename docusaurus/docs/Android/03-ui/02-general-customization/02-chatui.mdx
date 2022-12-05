@@ -236,6 +236,26 @@ This results in avatars rendered like this:
 
 ![Shades of gray images for offline users](../../assets/gray_scaled_image.png)
 
+
+
+#### Excluding and Including the Current User in ChannelAvatars
+
+The default setting for our `ChannelAvatar`s is to exclude the current user's image from the bitmap matrix. 
+
+![Group Avatar Current User Excluded](../../assets/group_avatar_current_user_excluded.png)
+
+If you want to disable this setting, you can do so by overriding a resource in your app, like so:
+
+```xml
+<resources>
+    <bool name="stream_ui_excludeCurrentUserFromChannelAvatars">false</bool>
+</resources>
+```
+
+By passing `false` to `stream_ui_excludeCurrentUserFromChannelAvatars`, you'll stop the current user from being excluded in the list of last active users in a channel, when displaying the `Channel` members bitmap.
+
+![Group Avatar Current User Excluded](../../assets/group_avatar_current_user_included.png)
+
 ### Adding Extra Headers to Image Requests
 
 If you're [using your own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn), you might also need to add extra headers to image loading requests. You can do this by creating your own implementation of the `ImageHeadersProvider` interface and then setting it on `ChatUI`:

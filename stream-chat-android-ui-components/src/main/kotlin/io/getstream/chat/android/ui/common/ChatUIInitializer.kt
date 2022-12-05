@@ -45,6 +45,9 @@ public class ChatUIInitializer : Initializer<Unit> {
     }
 
     private fun setImageLoader(context: Context) {
+        val excludeCurrentUserFromChannelAvatars =
+            context.resources.getBoolean(R.bool.stream_ui_excludeCurrentUserFromChannelAvatars)
+
         val imageLoaderFactory = StreamImageLoaderFactory(context) {
             components {
                 // duplicated as we can not extend component
@@ -54,7 +57,7 @@ public class ChatUIInitializer : Initializer<Unit> {
                 } else {
                     add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
                 }
-                add(AvatarFetcherFactory())
+                add(AvatarFetcherFactory(excludeCurrentUserFromChannelAvatars))
                 add(AvatarKeyer)
                 add(VideoFrameDecoder.Factory())
             }
