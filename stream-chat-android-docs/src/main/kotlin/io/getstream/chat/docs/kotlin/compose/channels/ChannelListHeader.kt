@@ -15,19 +15,18 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
-import io.getstream.chat.android.state.extensions.globalState
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list-header/#usage)
  */
 private object ChannelListHeaderUsageSnippet {
 
-    class MyActivity : AppCompatActivity() {
+    class ChannelsActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
-            val user = ChatClient.instance().globalState.user.value
+            val user = ChatClient.instance().getCurrentUser()
             setContent {
                 ChatTheme {
                     ChannelListHeader(
@@ -46,7 +45,7 @@ private object ChannelListHeaderUsageSnippet {
  */
 private object ChannelListHeaderHandlingActionsSnippet {
 
-    class MyActivity : AppCompatActivity() {
+    class ChannelsActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -68,12 +67,12 @@ private object ChannelListHeaderHandlingActionsSnippet {
  */
 private object ChannelListHeaderCustomizationSnippet {
 
-    class MyActivity : AppCompatActivity() {
+    class ChannelsActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
-            val user = ChatClient.instance().globalState.user.value
+            val user = ChatClient.instance().getCurrentUser()
             setContent {
                 ChatTheme {
                     ChannelListHeader(
