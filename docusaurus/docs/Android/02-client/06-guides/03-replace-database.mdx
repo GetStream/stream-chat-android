@@ -22,7 +22,14 @@ SDK to access data from the database, so by changing then you will be able to us
 ```
 val client = ChatClient.Builder(apiKey, context)
     .withRepositoryFactoryProvider { RealmRepositoryFactory(provideRealm()) }
-    .build()    
+    .build()
+    
+public fun configureRealm(): Realm =
+    RealmConfiguration.Builder(schema = realmSchema())
+        .schemaVersion(SCHEMA_VERSION)
+        .deleteRealmIfMigrationNeeded()
+        .build()
+        .let(Realm::open)    
 ```
 
 </TabItem>
@@ -35,6 +42,10 @@ val client = ChatClient.Builder(apiKey, context)
 
 </TabItem>
 </Tabs>
+
+:::note
+We will cover realmSchema() later in this documentation.
+::: 
 
 `RepositoryFactory` in the access point for all the `Repositories` of the SDK, so they must be provided by this interface:
 
@@ -79,9 +90,70 @@ public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactor
 </TabItem>
 </Tabs>
 
-:::note 
+:::caution 
 All the Repositories should be provided with real implementations. Using a `Repository` that doesn't provide real data may create unpredicted states because all the repositories are connected to SDK and are essencial to it. Mocking one or more repositories may prevent the SDK to work correctly.
 :::
 
-## Implementing MessageRepository
+## Implementing ChannelRepository
+
+To save to and fetch channels from Realm, it is necessary to implement a version of ChannelRepository interface that handles Realm. You can find the following implementation with some of the methods: 
+
+```
+public class RealmChannelRepository(private val realm: Realm) : ChannelRepository {
+	override suspend fun clear() {
+        realm.writeBlocking {
+            query<ChannelEntityRealm>().find().let(this::delete)
+        }
+    }
+    
+    override suspend fun deleteChannel(cid: String) {
+        val channel = realm.query<ChannelEntityRealm>("cid == '$cid'")
+            .first()
+            .find()
+
+        realm.writeBlocking {
+            channel?.let(::findLatest)?.let(::delete)
+        }
+    }
+    
+    override suspend fun insertChannel(channel: Channel) {
+        realm.writeBlocking {
+            this.copyToRealm(channel.toRealm(), updatePolicy = UpdatePolicy.ALL)
+        }
+    }
+    
+    override suspend fun selectChannelByCid(cid: String): Channel? =
+        selectChannelByCidRealm(cid)?.toDomain()
+    
+    private fun selectChannelByCidRealm(cid: String): ChannelEntityRealm? =
+        realm.query<ChannelEntityRealm>("cid == '$cid'")
+            .first()
+            .find()
+            
+    // All the other methods must be implemented, following this same approach.
+}
+```
+
+This is the key of changing the database in the Stream Android SDK. All you need to do is implement the `Repository` interfaces handling the database of choice.
+
+As you can, see in order to Realm understand how to save your data, you must create a scheme. So the model classes you the SDK logic must be represented as `Entity` classes. Those are: 
+
+todo: Remove Realm from all entities
+- AttachmentEntityRealm
+- ChannelEntityRealm
+- ChannelUserReadEntityRealm
+- ConfigEntityRealm
+- CommandEntityRealm
+- MemberEntityRealm
+- MessageEntityRealm
+- QueryChannelsEntityRealm
+- QuerySorterInfoEntityRealm
+- SortSpecificationEntityRealm
+- ReactionCountEntityRealm
+- ReactionEntityRealm
+- ReactionScoreEntityRealm
+- SyncStateEntityRealm
+- UploadStateEntityRealm
+- UserEntityRealm
+
 
