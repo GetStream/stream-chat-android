@@ -33,9 +33,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
 The `ChannelsScreen` can be used without any parameters, but we advise that you pass in the title of your app, as well as the action handlers.
 :::
 
-This small snippet will produce a fully-working solution, as shown in the image below.
+This small snippet will produce a fully working solution, as shown in the image below.
 
-![The ChannelsScreen Component](../../assets/compose_default_channels_screen_component.png) 
+| ![The ChannelsScreen Component](../../assets/compose_default_channels_screen_list_component.png) | ![The ChannelsScreen Component](../../assets/compose_default_channels_screen_actions_component.png) |
+|---|---|
 
 To get a better feel of the component, you'll want to customize its actions.
 
@@ -45,7 +46,7 @@ When it comes to action handlers exposed in the `ChannelsScreen` signature you h
 
 ```kotlin
 fun ChannelsScreen(
-    ..., // Filters and UI customization
+    ..., // ViewModel factory and UI customization
     onHeaderActionClick: () -> Unit = {},
     onHeaderAvatarClick: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
@@ -54,10 +55,10 @@ fun ChannelsScreen(
 )
 ```
 
-There are four main action handlers you can use with the `ChannelsScreen`:
+There are several action handlers you can use with the `ChannelsScreen`:
 
 * `onHeaderActionClick`: Handler for the default header trailing icon click action.
-* `onHeaderAvatarClick`: Handler for the clicks on the user avatar in the header.  
+* `onHeaderAvatarClick`: Handler for the clicks on the user avatar in the header.
 * `onItemClick`: Handler for a `Channel` being clicked.
 * `onViewChannelInfoAction`: Handler for the **View info** action selected in `SelectedChannelMenu`. 
 * `onBackPressed`: Handler for the system back button being clicked.
@@ -72,7 +73,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
         ChatTheme {
             ChannelsScreen(
                 onItemClick = {
-                    // Open messages screen          
+                    // Open messages screen
                 },
                 onHeaderActionClick = {
                     // Handle the header click action
@@ -83,7 +84,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 onViewChannelInfoAction = {
                     // Show UI to view more channel info
                 },
-                onBackPressed = { finish() },
+                onBackPressed = { finish() }
             )
         }
     }
@@ -92,18 +93,18 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ## Customization
 
-`ChannelsScreen` is one of our **screen components** and as such it doesn't offer much customization. As with any component, you can customize the content theme and styling by wrapping it the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
+`ChannelsScreen` is one of our **screen components** and as such it doesn't offer much customization. As with any component, you can customize the content theme and styling by wrapping it in the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
 
 When it comes to UI and behavior customization in the `ChannelsScreen` signature you have access to the following:
 
 ```kotlin
 fun ChannelsScreen(
     viewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(
-      ... // params
+      ... // Params
     ),
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
-    isShowingSearch: Boolean = true,
+    isShowingSearch: Boolean = false,
     ... // Action handlers
 )
 ```
@@ -120,7 +121,7 @@ In case you want to control the logic when using the `ChannelsScreen`, you can d
 Here's an example:
 
 ```kotlin
-class ChannelsActivity : BaseConnectedActivity() {
+class ChannelsActivity : AppCompatActivity() {
 
     // 1
     private val factory by lazy {
@@ -143,6 +144,7 @@ class ChannelsActivity : BaseConnectedActivity() {
             )
         }
     }
+}
 ```
 
 There are a few steps here that allow you to override and control the ViewModels:
