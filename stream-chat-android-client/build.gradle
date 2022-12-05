@@ -58,8 +58,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(':stream-chat-android-core')
-    api project(":libraries:logging:stream-logger-android")
-    debugApi project(":libraries:logging:stream-logger-android-init")
 
     implementation Dependencies.kotlinReflect
 
@@ -72,6 +70,10 @@ dependencies {
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesAndroid
     implementation Dependencies.retrofit
+    implementation Dependencies.streamLog
+    implementation Dependencies.streamLogAndroid
+    debugImplementation Dependencies.streamLogAndroidInit
+    implementation Dependencies.streamPushDelegate
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
     ksp Dependencies.moshiCodegen

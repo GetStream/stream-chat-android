@@ -18,14 +18,7 @@ include (
 		':stream-chat-android-compose',
 		':stream-chat-android-compose-sample',
 		':stream-chat-android-markdown-transformer',
-		':stream-chat-android-pushprovider-firebase',
-		':stream-chat-android-pushprovider-huawei',
-		':stream-chat-android-pushprovider-xiaomi',
 		':stream-chat-android-ui-uitests',
-		':libraries:logging:stream-logger',
-		':libraries:logging:stream-logger-file',
-		':libraries:logging:stream-logger-android',
-		':libraries:logging:stream-logger-android-init',
 )
 
 buildCache {

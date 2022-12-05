@@ -64,6 +64,7 @@ public class GlobalMutableState private constructor(
         @VisibleForTesting
         @Volatile
         public var instance: GlobalMutableState? = null
+
         /**
          * Gets the singleton of [GlobalMutableState] or creates it in the first call.
          */

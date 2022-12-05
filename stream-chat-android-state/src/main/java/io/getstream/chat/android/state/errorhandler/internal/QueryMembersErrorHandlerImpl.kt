@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 
 /**

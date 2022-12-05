@@ -28,7 +28,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(

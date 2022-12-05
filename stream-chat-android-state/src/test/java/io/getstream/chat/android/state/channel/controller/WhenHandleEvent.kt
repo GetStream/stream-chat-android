@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.test.randomReactionNewEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomTypingStopEvent
 import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
@@ -99,6 +98,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     fun `when user watching event arrives, last message should upsert messages, increment count and appear`() = runTest {
         val user = User()
         val newDate = Date(Long.MAX_VALUE)
+
         val newMessage = randomMessage(
             id = "thisId",
             createdAt = newDate,
@@ -112,8 +112,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(userStartWatchingEvent)
 
-        verify(channelStateLogic).upsertMessage(newMessage)
-        verify(channelStateLogic).incrementUnreadCountIfNecessary(newMessage)
+        verify(channelStateLogic).upsertMessage(newMessage, false)
+        verify(channelStateLogic).incrementUnreadCountIfNecessary(userStartWatchingEvent)
         verify(channelStateLogic).toggleHidden(false)
     }
 
@@ -173,7 +173,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(readEvent)
 
-        verify(channelStateLogic).updateRead(ChannelUserRead(currentUser, readEvent.createdAt))
+        verify(channelStateLogic).enqueueUpdateRead(readEvent)
     }
 
     // Read event notification
@@ -183,7 +183,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(readEvent)
 
-        verify(channelStateLogic).updateRead(ChannelUserRead(currentUser, readEvent.createdAt))
+        verify(channelStateLogic).enqueueUpdateRead(readEvent)
     }
 
     // Reaction event

@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic
+import io.getstream.chat.android.state.plugin.logic.channel.internal.UnreadCountLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
@@ -38,8 +39,9 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -57,6 +59,7 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
+    private val queryingChannelsFree: StateFlow<Boolean>
 ) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
@@ -103,7 +106,8 @@ internal class LogicRegistry internal constructor(
                 mutableState = mutableState,
                 globalMutableState = globalState,
                 searchLogic = SearchLogic(mutableState),
-                coroutineScope = coroutineScope
+                coroutineScope = coroutineScope,
+                unreadCountLogic = UnreadCountLogic(mutableState, globalState, queryingChannelsFree)
             )
 
             ChannelLogic(
@@ -246,6 +250,7 @@ internal class LogicRegistry internal constructor(
             repos: RepositoryFacade,
             client: ChatClient,
             coroutineScope: CoroutineScope,
+            queryingChannelsFree: StateFlow<Boolean>
         ): LogicRegistry {
             if (instance != null) {
                 logger.e {
@@ -260,7 +265,8 @@ internal class LogicRegistry internal constructor(
                 userPresence = userPresence,
                 repos = repos,
                 client = client,
-                coroutineScope = coroutineScope
+                coroutineScope = coroutineScope,
+                queryingChannelsFree = queryingChannelsFree
             )
                 .also { logicRegistry ->
                     instance = logicRegistry
