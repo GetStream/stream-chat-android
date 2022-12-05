@@ -98,7 +98,10 @@ All the Repositories should be provided with real implementations. Using a `Repo
 
 To save to and fetch channels from Realm, it is necessary to implement a version of ChannelRepository interface that handles Realm. You can find the following implementation with some of the methods: 
 
-```
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
 public class RealmChannelRepository(private val realm: Realm) : ChannelRepository {
 	override suspend fun clear() {
         realm.writeBlocking {
@@ -134,26 +137,37 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
 }
 ```
 
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+
+</Tabs>
+
 This is the key of changing the database in the Stream Android SDK. All you need to do is implement the `Repository` interfaces handling the database of choice.
 
 As you can, see in order to Realm understand how to save your data, you must create a scheme. So the model classes you the SDK logic must be represented as `Entity` classes. Those are: 
 
-todo: Remove Realm from all entities
-- AttachmentEntityRealm
-- ChannelEntityRealm
-- ChannelUserReadEntityRealm
-- ConfigEntityRealm
-- CommandEntityRealm
-- MemberEntityRealm
-- MessageEntityRealm
-- QueryChannelsEntityRealm
-- QuerySorterInfoEntityRealm
-- SortSpecificationEntityRealm
-- ReactionCountEntityRealm
-- ReactionEntityRealm
-- ReactionScoreEntityRealm
-- SyncStateEntityRealm
-- UploadStateEntityRealm
-- UserEntityRealm
+- AttachmentEntity
+- ChannelEntity
+- ChannelUserReadEntity
+- ConfigEntity
+- CommandEntity
+- MemberEntity
+- MessageEntity
+- QueryChannelsEntity
+- QuerySorterInfoEntity
+- SortSpecificationEntity
+- ReactionCountEntity
+- ReactionEntity
+- ReactionScoreEntity
+- SyncStateEntity
+- UploadStateEntity
+- UserEntity
 
 
