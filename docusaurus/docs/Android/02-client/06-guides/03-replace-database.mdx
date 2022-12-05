@@ -35,6 +35,7 @@ val client = ChatClient.Builder(apiKey, context)
 
 </TabItem>
 </Tabs>
+
 `RepositoryFactory` in the access point for all the `Repositories` of the SDK, so they must be provided by this interface:
 
 <Tabs>
@@ -79,5 +80,8 @@ public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactor
 </Tabs>
 
 :::note 
-All the Repositories should be provided with real imeplementations. Using a `Repository` that doesn't provide real data may create unpredicted states because all the repositories are connected to SDK and are essencial to it. Mocking one or more repositories may prevent the SDK to work correctly.
+All the Repositories should be provided with real implementations. Using a `Repository` that doesn't provide real data may create unpredicted states because all the repositories are connected to SDK and are essencial to it. Mocking one or more repositories may prevent the SDK to work correctly.
 :::
+
+## Implementing MessageRepository
+
