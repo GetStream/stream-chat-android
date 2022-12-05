@@ -2,28 +2,28 @@
 
 The `ChatTheme` component is a wrapper that **you should use as the root** of all Compose UI Components. It's used to provide the default properties that help us style the application, such as:
 
-* **IsDarkTheme**: Flag that determines if the application should be themed in light or dark mode.
-* **Colors**: Defines a palette of colors we support in the app. These are applied to all components and provide us with a dark/light mode by default, but can be used to override the design system completely.
-* **Dimens**: Used for defining the dimensions of various components such as avatars, attachment content, reactions etc.
-* **Typography**: Used for all text elements, to apply different text styles to each component. Can be used to change the typography completely.
-* **Shapes**: Defines several shapes we use across our Compose UI components. Can be used to change the shape of messages, input fields, avatars and attachments.
-* **RippleTheme**: Defines the appearance for ripples. Can be used to override the ripple colors used in light and dark modes.
-* **AttachmentFactories**: Used to process messages and show different types of attachment UI, given the provided factories. Can be used to override the UI for file, image and link attachments, as well as to add custom attachment types.
-* **AttachmentPreviewHandlers**: Used to provide previews for all supported attachment types. If you do not wish to use the default previews, you can customize this.
-* **Quoted AttachmentFactories**: Used to process messages and show different types of attachment UI, when quoting a message that contains an attachment.
-* **ReactionIconFactory**: Used to create a reaction icon for the given reaction type. You can use the default factory that supports a predefined set of reactions, or provide a custom one.
-* **DateFormatter**: Used to define the timestamp formatting in the app. You can use the default formatting, or customize it to your needs.
-* **ChannelNameFormatter**: Used to define the channel name formatting in the app. You can use the default implementation, or customize it according to your needs.
-* **MessagePreviewFormatter**: Used to define the message preview formatting in the app. You can use the default implementation, or customize the display of message previews according to your needs.
-* **ImageLoaderFactory**: Used to create Coil image loader instances. You can use the default image loader factory, or provide a custom one.
-* **MessageAlignmentProvider**: Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
-* **MessageOptionsUserReactionAlignment**: Used to define how message reactions are aligned when browsing all reactions for a given message.
-* **PermissionHandlers**: Used to handle permissions inside the app. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
-* **AttachmentsPickerTabFactories**: Used to display different tabs in the attachments picker dialog.
-* **VideoThumbnailsEnabled**: Dictates whether video thumbnails will be displayed inside video previews. They are a paid feature and enabled by default and the pricing can be found [here](https://getstream.io/chat/pricing/).
+* `isDarkTheme`: Flag that determines if the application should be themed in light or dark mode.
+* `colors`: Defines a palette of colors we support in the app. These are applied to all components and provide us with a dark/light mode by default, but can be used to override the design system completely.
+* `dimens`: Used for defining the dimensions of various components such as avatars, attachment content, reactions etc.
+* `typography`: Used for all text elements, to apply different text styles to each component. Can be used to change the typography completely.
+* `shapes`: Defines several shapes we use across our Compose UI components. Can be used to change the shape of messages, input fields, avatars and attachments.
+* `rippleTheme`: Defines the appearance for ripples. Can be used to override the ripple colors used in light and dark modes.
+* `attachmentFactories`: Used to process messages and show different types of attachment UI, given the provided factories. Can be used to override the UI for file, image and link attachments, as well as to add custom attachment types.
+* `attachmentPreviewHandlers`: Used to provide previews for all supported attachment types. If you do not wish to use the default previews, you can customize this.
+* `quotedAttachmentFactories`: Used to process messages and show different types of attachment UI, when quoting a message that contains an attachment.
+* `reactionIconFactory`: Used to create a reaction icon for the given reaction type. You can use the default factory that supports a predefined set of reactions, or provide a custom one.
+* `dateFormatter`: Used to define the timestamp formatting in the app. You can use the default formatting, or customize it to your needs.
+* `channelNameFormatter`: Used to define the channel name formatting in the app. You can use the default implementation, or customize it according to your needs.
+* `messagePreviewFormatter`: Used to define the message preview formatting in the app. You can use the default implementation, or customize the display of message previews according to your needs.
+* `imageLoaderFactory`: Used to create Coil image loader instances. You can use the default image loader factory, or provide a custom one.
+* `messageAlignmentProvider`: Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
+* `messageOptionsUserReactionAlignment`: Used to define how message reactions are aligned when browsing all reactions for a given message.
+* `permissionHandlers`: Used to handle permissions inside the app. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
+* `attachmentsPickerTabFactories`: Used to display different tabs in the attachments picker dialog.
+* `videoThumbnailsEnabled`: Dictates whether video thumbnails will be displayed inside video previews. They are a paid feature and enabled by default and the pricing can be found [here](https://getstream.io/chat/pricing/).
 
 :::note
-In case any of these properties are not provided, because you're not using the `ChatTheme` to wrap our Compose UI Components, you'll get an exception saying that required properties are missing. 
+If any of these properties are not provided to our Compose UI Components due to not being wrapped inside of `ChatTheme`, you'll get an exception saying that the required properties are missing.
 :::
 
 Let's see how to use the `ChatTheme` and how to customize the UI within.
