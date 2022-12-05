@@ -26,7 +26,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.channel.lastMessageInfo
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.util.Date
 
 /**

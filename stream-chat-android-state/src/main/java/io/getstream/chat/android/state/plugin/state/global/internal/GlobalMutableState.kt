@@ -64,6 +64,7 @@ public class GlobalMutableState private constructor(
         @VisibleForTesting
         @Volatile
         public var instance: GlobalMutableState? = null
+
         /**
          * Gets the singleton of [GlobalMutableState] or creates it in the first call.
          */
@@ -78,12 +79,13 @@ public class GlobalMutableState private constructor(
     }
 
     override fun clearState() {
+        _user.value = null
         _totalUnreadCount.value = 0
         _channelUnreadCount.value = 0
-        _banned.value = false
-
         _mutedUsers.value = emptyList()
         _channelMutes.value = emptyList()
+        _banned.value = false
+        _typingChannels.value = emptyMap()
     }
 
     override fun setUser(user: User) {

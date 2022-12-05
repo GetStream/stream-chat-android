@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Handling User Connection
 
-This page gives you more insights on how to properly connect, disconnect or switch the user.connect
+This page gives you more insights on how to properly connect, disconnect or switch the user.
 
 ## Connecting a User
 
@@ -27,10 +27,13 @@ val user = User(
 if (ChatClient.instance().getCurrentUser() == null) {
     ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
         .enqueue { result ->
-            if (result.isSuccess) {
-                // Handle success
-            } else {
-                // Handle error
+            when (result) {
+                is Result.Success -> {
+                    // Handle success
+                }
+                is Result.Failure -> {
+                    // Handle error
+                }
             }
         }
 }
@@ -73,10 +76,13 @@ However, you might want to explicitly disconnect the user, for example as a part
 
 ```kotlin
 ChatClient.instance().disconnect(flushPersistence = false).enqueue { result ->
-    if (result.isSuccess) {
-        // Handle success
-    } else {
-        // Handle error
+    when (result) {
+        is Result.Success -> {
+            // Handle success
+        }
+        is Result.Failure -> {
+            // Handle error
+        }
     }
 }
 ```
@@ -119,12 +125,15 @@ val user1 = User(
 // Connect the first user
 ChatClient.instance().connectUser(user = user1, token = "userToken") // Replace with a real token
     .enqueue { result ->
-        if (result.isSuccess) {
-            // Handle success
-        } else {
-            // Handle error
+        when (result) {
+            is Result.Success -> {
+                // Handle success
+            }
+            is Result.Failure -> {
+                // Handle error
+            }
         }
-}
+    }
 
 val user2 = User(
     id = "bender2",
@@ -134,12 +143,15 @@ val user2 = User(
 
 ChatClient.instance().switchUser(user = user2, token = "userToken") // Replace with a real token
     .enqueue { result ->
-        if (result.isSuccess) {
-            // Handle success
-        } else {
-            // Handle error
+        when (result) {
+            is Result.Success -> {
+                // Handle success
+            }
+            is Result.Failure -> {
+                // Handle error
+            }
         }
-}
+    }
 ```
 </TabItem>
 

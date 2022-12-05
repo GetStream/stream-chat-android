@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * ThreadQueryListenerState handles both state in the SDK. It uses, if available, the database

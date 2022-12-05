@@ -48,7 +48,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserEntity
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -329,7 +329,7 @@ internal class SyncManager(
         logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
         val queryLogicsToRestore = logicRegistry.getActiveQueryChannelsLogic()
             .asSequence()
-            .filter { queryChannelsLogic -> queryChannelsLogic.recoveryNeeded()?.value == true || recoverAll }
+            .filter { queryChannelsLogic -> queryChannelsLogic.recoveryNeeded().value || recoverAll }
             .take(QUERIES_TO_RETRY)
             .toList()
         if (queryLogicsToRestore.isEmpty()) {

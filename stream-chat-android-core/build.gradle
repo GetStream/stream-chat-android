@@ -34,11 +34,10 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-    api project(":libraries:logging:stream-logger")
-
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxAnnotations
+    implementation Dependencies.streamLog
 
     detektPlugins(Dependencies.detektFormatting)
 
