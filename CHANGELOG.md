@@ -5,7 +5,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `Result::getOrNull`, `Result::getOrThrow` and `Result.chatErrorOrNull` to simplify getting `value` for Java users. [#4415](https://github.com/GetStream/stream-chat-android/pull/4415)
 
 ### ⚠️ Changed
 
@@ -13,7 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixing erase of offline messages when entering a channel. [#4457](https://github.com/GetStream/stream-chat-android/pull/4457)
+- Fixing unread messages count for channels. [#4499](https://github.com/GetStream/stream-chat-android/pull/4499)
 
 ### ⬆️ Improved
 
@@ -44,7 +43,6 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
-- Removed `StateAwarePlugin` interface.[4435](https://github.com/GetStream/stream-chat-android/pull/4435)
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -52,7 +50,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added constructor overloads for the `MessageMode.MessageThread` class to simplify usage for Java users. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
 
 ### ⚠️ Changed
 
@@ -64,7 +61,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-Added the default value for the `message` parameter passed to the `MessageComposerViewModel:sendMessage` function. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
 
 ### ⚠️ Changed
 
@@ -92,38 +88,44 @@ Added the default value for the `message` parameter passed to the `MessageCompos
 
 ### ❌ Removed
 
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
+# December 1st, 2022 - 6.0.0-beta2
 
-### ⬆️ Improved
+I hope you're interested in our latest major release - v6.0.0-beta2! We're currently in the process of preparing migration guides and updating all of our
+documentation, but in the meantime, you can look into what we plan to release in v6 of Android Chat.
 
+If you want to learn more about these changes and our decisions, check out our [Android Chat v6 Blog Post](https://getstream.io/blog/announcement-android-sdk-6-beta/).
+
+## Common changes for all artifacts
 ### ✅ Added
+- Added `Result::getOrNull`, `Result::getOrThrow` and `Result.chatErrorOrNull` to simplify getting `value` for Java users. [#4415](https://github.com/GetStream/stream-chat-android/pull/4415)
 
-### ⚠️ Changed
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixing erase of offline messages when entering a channel. [#4457](https://github.com/GetStream/stream-chat-android/pull/4457)
 
+## stream-chat-android-state
 ### ❌ Removed
+- Removed `StateAwarePlugin` interface.[4435](https://github.com/GetStream/stream-chat-android/pull/4435)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Added constructor overloads for the `MessageMode.MessageThread` class to simplify usage for Java users. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Added the default value for the `message` parameter passed to the `MessageComposerViewModel:sendMessage` function. [#4427](https://github.com/GetStream/stream-chat-android/pull/4427)
+
+## stream-chat-android-pushprovider-firebase
+### ❌ Removed
+- Artifact removed, use `io.getstream:stream-android-push-firebase:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
 
 ## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
 ### ❌ Removed
+- Artifact removed, use `io.getstream:stream-android-push-huawei:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
 
 ## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
 ### ❌ Removed
+- Artifact removed, use `io.getstream:stream-android-push-xiaomi:VERSION` instead. [#4512](https://github.com/GetStream/stream-chat-android/pull/4512)
 
 # November 11th, 2022 - 6.0.0-beta1
 

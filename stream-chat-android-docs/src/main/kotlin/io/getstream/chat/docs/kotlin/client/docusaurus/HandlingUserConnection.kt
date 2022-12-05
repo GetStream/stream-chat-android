@@ -25,7 +25,7 @@ class HandlingUserConnection {
                             // Handle success
                         }
                         is Result.Failure -> {
-                            // Handler error
+                            // Handle error
                         }
                     }
                 }
@@ -39,7 +39,7 @@ class HandlingUserConnection {
                     // Handle success
                 }
                 is Result.Failure -> {
-                    // Handler error
+                    // Handle error
                 }
             }
         }
@@ -60,7 +60,7 @@ class HandlingUserConnection {
                         // Handle success
                     }
                     is Result.Failure -> {
-                        // Handler error
+                        // Handle error
                     }
                 }
             }
@@ -78,7 +78,7 @@ class HandlingUserConnection {
                         // Handle success
                     }
                     is Result.Failure -> {
-                        // Handler error
+                        // Handle error
                     }
                 }
             }
