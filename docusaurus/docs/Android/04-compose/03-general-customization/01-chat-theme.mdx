@@ -86,15 +86,13 @@ setContent {
 }
 ```
 
-In the snippet above, we customized the shapes to be different from the default values. We made both the message types rounded, the input field rectangular and changed the avatar to not be circular.
+In the snippet above, we customized the shapes to be different from the default values. We made the message bubbles rounded, the input field rectangular and the avatar a rounded rectangle.
 
 This snippet above will produce the following screen:
 
 | Light Theme | Dark Theme |
 |---|---|
 | ![Custom ChatTheme Component](../../assets/compose_custom_chat_theme_component.png) | ![Custom ChatTheme Component](../../assets/compose_custom_chat_theme_component_dark.png) |
-
-You can see how the input field is rectangular, how all messages have rounded corners, regardless of their position in the list or who sent the message. Finally, the avatars are now a squircle, instead of a circle.
 
 It's really easy to customize these properties or provide static customization that you just reuse all over your app.
 
@@ -136,7 +134,7 @@ These are really easy to customize, as you've seen before, and can make your app
 
 Defines the appearance for ripples. The default ripple theme is `StreamRippleTheme`.
 
-You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/StreamRippleTheme.kt).
+You can find out more about it by reading the [object documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamRippleTheme.kt).
 
 You can easily customize the ripple colors in light and dark modes by overriding `ChatTheme.rippleTheme` with your own implementation of `RippleTheme`.
 
@@ -172,7 +170,7 @@ Reactions are easily customizable by passing in your own `ReactionIconFactory` w
 
 Used for formatting various times and dates such as the timestamp you see when a message is displayed. The default date formatter in `ChatTheme` is Stream's `DefaultDateFormatter`.
 
-You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/DateFormatter.kt).
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/helper/DateFormatter.kt).
 
 The date formatter can be customized by overriding `ChatTheme.dateFormatter` with your own implementation of `DateFormatter`.
 
@@ -196,7 +194,7 @@ The message preview formatter can be customized by overriding `ChatTheme.message
 
 `StreamCoilImageLoaderFactory.defaultFactory()` provides the default factory that creates new Coil `ImageLoader` instances.
 
-You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory.kt).
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/DefaultStreamCoilImageLoader.kt).
 
 You can easily customize how the images are loaded by passing your own implementation of `StreamCoilImageLoaderFactory` to `ChatTheme` or by using the default factory to provide an `ImageLoader` and calling `loader.newBuilder()` to expand or override its behavior.
 
@@ -212,7 +210,7 @@ As with all of the other `ChatTheme` properties, you can easily customize how th
 
 Determines the alignment of the reaction icon inside user reactions. By default, they are aligned to the end.
 
-You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/common/MessageOptionsUserReactionAlignment.kt).
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment.kt).
 
 You can also align the reactions to the start of the user avatar or align them depending on the user who left them.
 
