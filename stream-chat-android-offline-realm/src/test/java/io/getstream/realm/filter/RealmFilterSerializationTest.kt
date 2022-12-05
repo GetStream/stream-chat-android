@@ -18,7 +18,7 @@ package io.getstream.realm.filter
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.addAdapter
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.Filters
 import io.getstream.realm.entity.FilterNode
 import io.getstream.realm.moshi.FilterNodeAdapter
 import org.amshove.kluent.`should be equal to`

@@ -16,8 +16,8 @@
 
 package io.getstream.realm.filter
 
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.realm.entity.FilterNode
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
