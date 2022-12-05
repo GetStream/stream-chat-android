@@ -39,6 +39,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
 
 /**
@@ -93,6 +94,9 @@ public class StreamStatePluginFactory(
         val stateRegistry = StateRegistry.create(
             scope.coroutineContext.job, scope, globalState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )
+
+        val isQueryingFree = MutableStateFlow(true)
+
         val logic = LogicRegistry.create(
             stateRegistry = stateRegistry,
             globalState = globalState,
@@ -101,6 +105,7 @@ public class StreamStatePluginFactory(
             client = chatClient,
             clientState = clientState,
             coroutineScope = scope,
+            queryingChannelsFree = isQueryingFree
         )
 
         chatClient.logicRegistry = logic
@@ -141,7 +146,8 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             syncManager = syncManager,
             eventHandler = eventHandler,
-            globalState = globalState
+            globalState = globalState,
+            queryingChannelsFree = isQueryingFree
         )
     }
 

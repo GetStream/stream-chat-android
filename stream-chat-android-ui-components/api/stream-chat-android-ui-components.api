@@ -2856,14 +2856,6 @@ public final class io/getstream/chat/android/ui/utils/Debouncer {
 public final class io/getstream/chat/android/ui/utils/ImageUtilsKt {
 }
 
-public final class io/getstream/chat/android/ui/utils/StartStopBuffer {
-	public fun <init> ()V
-	public final fun active ()V
-	public final fun enqueueData (Ljava/lang/Object;)V
-	public final fun hold ()V
-	public final fun subscribe (Lkotlin/jvm/functions/Function1;)V
-}
-
 public final class io/getstream/chat/android/ui/utils/extensions/ChannelKt {
 	public static final fun getLastMessage (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Message;
 	public static final fun getMembersStatusText (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;)Ljava/lang/String;

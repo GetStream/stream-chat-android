@@ -215,6 +215,7 @@ internal class EventHandlerSequential(
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
             }
+
             queryChannelsLogic.refreshChannelState(event.cid)
         }
 
