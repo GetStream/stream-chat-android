@@ -2932,9 +2932,9 @@ internal constructor(
         }
 
         private fun setupStreamLog() {
-            if (!StreamLog.defaultLoggerOverridden && logLevel != ChatLogLevel.NOTHING) {
+            if (!StreamLog.isInstalled && logLevel != ChatLogLevel.NOTHING) {
                 StreamLog.setValidator(StreamLogLevelValidator(logLevel))
-                StreamLog.setLogger(
+                StreamLog.install(
                     CompositeStreamLogger(
                         AndroidStreamLogger(),
                         StreamLoggerHandler(loggerHandler)

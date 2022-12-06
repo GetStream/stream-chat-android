@@ -23,7 +23,7 @@ public object TestLoggingHelper {
 
     public fun initialize(now: () -> Long = { System.currentTimeMillis() }) {
         StreamLog.setValidator { _, _ -> true }
-        StreamLog.setLogger(
+        StreamLog.install(
             KotlinStreamLogger(now = now)
         )
     }
