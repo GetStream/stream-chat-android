@@ -70,6 +70,19 @@ internal class RealmFilterObjectKtTest {
     }
 
     @Test
+    fun `it should be possible to convert and revert a filter object to realm - case 2`() {
+        val filterObject = Filters.and(
+            Filters.eq("name", "leandro"),
+            Filters.greaterThan("age", 18)
+        )
+
+        val filterNode = filterObject.toFilterNode()
+        val newFilter = filterNode.toFilterObject()
+
+        newFilter `should be equal to` filterObject
+    }
+
+    @Test
     fun `it should be possible to convert and revert a filter object to realm - complex scenario`() {
         val filterObject = Filters.and(
             Filters.eq("name", "leandro"),

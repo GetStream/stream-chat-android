@@ -86,6 +86,22 @@ internal class RealmFilterSerializationTest {
     }
 
     @Test
+    fun `it should be possible to convert filter node to string in and out - complex case12`() {
+        val adapter = Moshi.Builder()
+            .addAdapter(FilterNodeAdapter())
+            .build()
+            .adapter(FilterNode::class.java)
+
+        val filter = Filters.and(
+            Filters.eq("type", "messaging"),
+            Filters.greaterThan("age", 18.0),
+        )
+        val filterAsString = filter.toFilterNode().let(adapter::toJson)
+        val filterNode = adapter.fromJson(filterAsString)
+        filterNode?.toFilterObject() `should be equal to` filter
+    }
+
+    @Test
     fun `it should be possible to convert filter node to string in and out - complex case2`() {
         val adapter = Moshi.Builder()
             .addAdapter(FilterNodeAdapter())

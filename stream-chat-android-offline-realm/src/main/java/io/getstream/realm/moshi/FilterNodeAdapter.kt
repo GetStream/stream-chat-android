@@ -108,8 +108,7 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
                 }
 
                 else -> {
-                    (nodeValue as? Boolean)?.let(writer::value)
-                    (nodeValue as? String)?.let(writer::value)
+                    writeFilterNode(writer, nodeValue)
                 }
             }
         }
@@ -148,5 +147,14 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
         writer.beginArray()
         (value as Iterable<String>).forEach(writer::value)
         writer.endArray()
+    }
+
+    private fun writeFilterNode(writer: JsonWriter, nodeValue: Any) {
+        when (nodeValue) {
+            is Boolean -> writer.value(nodeValue)
+            is String -> writer.value(nodeValue)
+            is Number -> writer.value(nodeValue)
+            else -> throw IllegalStateException("Unsupported type of filter")
+        }
     }
 }
