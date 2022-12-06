@@ -362,6 +362,53 @@ internal fun generateQuerySpecId(filter: FilterObject, querySort: QuerySorter<ou
 
 We need to define the adapter for the serialization and deserialization. So let's start defining the structure of our `Filters`. 
 
-The Filters are represented as a graph. Let's represent the graph as `Nodes` and  `Edges`
+Before serializing our Filters, we should convert then into a structure that is easier reason about. Then this structure can be converted in and out to the filters that the SDK uses.
 
+We are going to represent the `Filters` as a graph, with `Nodes` and `Edges`.  Let's pick the following example:
+
+```
+Filters.and(
+    Filters.eq("type", "messaging"),
+    Filters.`in`("members", listOf(userId)),
+    Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+)
+```
+
+This filter can be represented by the following graph:
+
+[put the graph here!!]
+
+Now that we defined the structure of the composition of filters, we need to define as code how building block. 
+
+Each node can be represented by the class `FilterNode`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```
+internal data class FilterNode(
+    var filterType: String? = null,
+    var field: String? = null,
+    var value: Any? = null,
+)
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+
+</Tabs>
+
+
+Every filter must have a type and the properties `field` and `value` should be populated accordingly with its type.
+
+`Filters` that are compositions of other filters like `AND` and `OR` won't have any `field` and the value will be other `filters`. `Filters` that are an operation, like `EQUALS` should have both `field` and `value`. 
+
+By converting `Filters` to `FilterNode` we have an structure that contains only one class and then we can create a serialization adapter for this class making the process of serializing and deserializing `Filters` easy. 
 
