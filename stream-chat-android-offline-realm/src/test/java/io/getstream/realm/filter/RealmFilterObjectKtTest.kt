@@ -27,8 +27,7 @@ internal class RealmFilterObjectKtTest {
 
     @Test
     fun `it should be possible to convert a empty filter`() {
-        val emptyFilerEntity = FilterNode().apply {
-            filterType = ""
+        val emptyFilerEntity = FilterNode(filterType = "").apply {
             field = ""
             value = ""
         }

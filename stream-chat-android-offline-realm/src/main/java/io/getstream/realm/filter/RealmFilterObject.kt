@@ -55,7 +55,7 @@ internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
     is InFilterObject -> createFilterNodeEntity(KEY_IN, this.fieldName, this.values)
     is NotInFilterObject -> createFilterNodeEntity(KEY_NOT_IN, this.fieldName, this.values)
     is AutocompleteFilterObject -> createFilterNodeEntity(KEY_AUTOCOMPLETE, this.fieldName, this.value)
-    is DistinctFilterObject -> createFilterNodeEntity(null, null, null)
+    is DistinctFilterObject -> createFilterNodeEntity(KEY_DISTINCT, null, null)
     is NeutralFilterObject -> createFilterNodeEntity(KEY_NEUTRAL, null, null)
 }
 
@@ -79,15 +79,13 @@ internal fun FilterNode.toFilterObject(): FilterObject = when (this.filterType) 
     else -> Filters.neutral()
 }
 
-private fun createBooleanLogicFilterNode(filterType: String?, value: Any): FilterNode =
-    FilterNode().apply {
-        this.filterType = filterType
+private fun createBooleanLogicFilterNode(filterType: String, value: Any): FilterNode =
+    FilterNode(filterType = filterType).apply {
         this.value = value
     }
 
-private fun createFilterNodeEntity(filterType: String?, field: String?, value: Any?): FilterNode =
-    FilterNode().apply {
-        this.filterType = filterType
+private fun createFilterNodeEntity(filterType: String, field: String?, value: Any?): FilterNode =
+    FilterNode(filterType = filterType).apply {
         this.field = field
         this.value = value
     }

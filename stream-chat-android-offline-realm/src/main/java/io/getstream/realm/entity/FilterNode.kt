@@ -18,7 +18,7 @@ package io.getstream.realm.entity
 
 @Suppress("VariableNaming")
 internal data class FilterNode(
-    var filterType: String? = null,
+    var filterType: String,
     var field: String? = null,
     var value: Any? = null,
 )
