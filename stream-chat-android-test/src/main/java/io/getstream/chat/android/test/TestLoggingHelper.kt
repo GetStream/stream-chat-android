@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.test
 
+import io.getstream.log.StreamLog
 import io.getstream.log.kotlin.KotlinStreamLogger
 
 public object TestLoggingHelper {
