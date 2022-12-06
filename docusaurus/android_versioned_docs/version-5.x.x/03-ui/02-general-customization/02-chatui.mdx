@@ -18,6 +18,7 @@ The full list of `ChatUI` properties you can override include:
 * `supportedReactions`: The set of supported message reactions.
 * `mimeTypeIconProvider`: The icons used for different mime types.
 * `fonts`: The default font for TextViews displayed by UI Components.
+* `avatarBitmapFactory`: The factory responsible for creating user and channel avatar bitmaps displayed by `AvatarView`. Can be used to modify the default bitmaps that are loaded, or to add custom avatar loading logic.
 * `imageHeadersProvider`: Allows adding extra headers to image loading requests.
 * `markdown`: Interface to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic or use more markdown modules. This property is deprecated and [ChatUI.messageTextTransformer](#transforming-message-text) should be used instead.
 * `style`: Allows overriding the global, default style of UI components, like the TextStyle.
@@ -454,17 +455,17 @@ Overriding the `DateFormatter` allows you to change the way dates are formatted 
 
 ```kotlin
 ChatUI.dateFormatter = object: DateFormatter {
-    private val dateFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
-    private val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
+    private val dateFormatter = DateTimeFormatter.ofPattern("yy MM dd")
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-    override fun formatDate(date: Date?): String {
-        date ?: return ""
-        return dateFormat.format(date)
+    override fun formatDate(localDateTime: LocalDateTime?): String {
+        localDateTime ?: return ""
+        return dateFormatter.format(localDateTime)
     }
 
-    override fun formatTime(date: Date?): String {
-        date ?: return ""
-        return timeFormat.format(date)
+    override fun formatTime(localTime: LocalTime?): String {
+        localTime ?: return ""
+        return dateTimeFormatter.format(localTime)
     }
 }
 ```
@@ -474,20 +475,27 @@ ChatUI.dateFormatter = object: DateFormatter {
 
 ```java
 ChatUI.setDateFormatter(new DateFormatter() {
-    private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    private final DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yy MM dd");
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-    public String formatDate(Date date) {
-        // Provide a way to format Date
-        return dateFormat.format(date);
+    @NonNull
+    @Override
+    public String formatDate(@Nullable LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return "";
+        }
+        return dateFormatter.format(localDateTime);
     }
 
-    public String formatTime(Date date) {
-        // Provide a way to format Time
-        return timeFormat.format(date);
+    @NonNull
+    @Override
+    public String formatTime(@Nullable LocalTime localTime) {
+        if (localTime == null) {
+            return "";
+        }
+        return dateTimeFormatter.format(localTime);
     }
 });
-
 ```
 </TabItem>
 </Tabs>

@@ -73,13 +73,12 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.util.Date
 
 /**
@@ -366,7 +365,7 @@ internal class ChannelLogic(
             message.ownReactions = it.ownReactions
         }
 
-        channelStateLogic.upsertMessage(message)
+        channelStateLogic.upsertMessage(message, updateCount = false)
     }
 
     /**
@@ -442,7 +441,7 @@ internal class ChannelLogic(
         when (event) {
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
-                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
+                channelStateLogic.incrementUnreadCountIfNecessary(event)
                 channelStateLogic.toggleHidden(false)
             }
             is MessageUpdatedEvent -> {
@@ -464,7 +463,7 @@ internal class ChannelLogic(
                 if (!mutableState.insideSearch.value) {
                     upsertEventMessage(event.message)
                 }
-                channelStateLogic.incrementUnreadCountIfNecessary(event.message)
+                channelStateLogic.incrementUnreadCountIfNecessary(event)
                 channelStateLogic.toggleHidden(false)
             }
             is ReactionNewEvent -> {
@@ -532,13 +531,13 @@ internal class ChannelLogic(
                 channelStateLogic.setTyping(event.user.id, event)
             }
             is MessageReadEvent -> {
-                channelStateLogic.updateRead(ChannelUserRead(event.user, event.createdAt))
+                channelStateLogic.enqueueUpdateRead(event)
             }
             is NotificationMarkReadEvent -> {
-                channelStateLogic.updateRead(ChannelUserRead(event.user, event.createdAt))
+                channelStateLogic.enqueueUpdateRead(event)
             }
             is MarkAllReadEvent -> {
-                channelStateLogic.updateRead(ChannelUserRead(event.user, event.createdAt))
+                channelStateLogic.enqueueUpdateRead(event)
             }
             is NotificationInviteAcceptedEvent -> {
                 channelStateLogic.addMember(event.member)

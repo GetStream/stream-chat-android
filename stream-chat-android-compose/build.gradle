@@ -58,6 +58,7 @@ dependencies {
     implementation project(":stream-chat-android-ui-utils")
 
     implementation Dependencies.androidxAppCompat
+    implementation Dependencies.streamLog
 
     // Compose
     implementation Dependencies.composeCompiler

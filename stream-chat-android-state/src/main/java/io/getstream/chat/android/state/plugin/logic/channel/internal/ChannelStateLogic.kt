@@ -21,11 +21,11 @@ import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
-import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -37,8 +37,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 
@@ -56,6 +55,7 @@ internal class ChannelStateLogic(
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val unreadCountLogic: UnreadCountLogic,
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
 
@@ -88,36 +88,8 @@ internal class ChannelStateLogic(
      *
      * @param message [Message].
      */
-    fun incrementUnreadCountIfNecessary(message: Message) {
-        val user = globalMutableState.user.value ?: return
-        val currentUserId = user.id
-
-        /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
-         * same time, one increment can be lost.
-         */
-        synchronized(this) {
-            val readState = mutableState.read.value?.copy() ?: ChannelUserRead(user)
-            val unreadCount: Int = readState.unreadMessages
-            val lastMessageSeenDate = readState.lastMessageSeenDate
-
-            val isMessageAlreadyInState = mutableState.visibleMessages.value.containsKey(message.id)
-            val shouldIncrementUnreadCount = !isMessageAlreadyInState &&
-                message.shouldIncrementUnreadCount(
-                    currentUserId = currentUserId,
-                    lastMessageAtDate = lastMessageSeenDate,
-                    isChannelMuted = globalMutableState.isChannelMutedForCurrentUser(mutableState.cid)
-                )
-
-            if (shouldIncrementUnreadCount) {
-                StreamLog.d(TAG) {
-                    "It is necessary to increment the unread count for channel: " +
-                        "${mutableState.channelData.value.id}. The last seen message was " +
-                        "at: $lastMessageSeenDate. " +
-                        "New unread count: ${unreadCount + 1}"
-                }
-                mutableState.increaseReadWith(message)
-            }
-        }
+    fun incrementUnreadCountIfNecessary(chatEvent: ChatEvent) {
+        unreadCountLogic.enqueueCount(chatEvent)
     }
 
     /**
@@ -135,7 +107,7 @@ internal class ChannelStateLogic(
      *
      * @param reads the information about the read.
      */
-    fun updateReads(reads: List<ChannelUserRead>) {
+    private fun updateReads(reads: List<ChannelUserRead>) {
         mutableState.upsertReads(reads)
     }
 
@@ -145,6 +117,14 @@ internal class ChannelStateLogic(
      * @param read the information about the read.
      */
     fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
+
+    /**
+     * Enqueues an read update. This method is useful to update the unread count only when the SDK is not updating
+     * channels data.
+     */
+    fun enqueueUpdateRead(chatEvent: ChatEvent) {
+        unreadCountLogic.enqueueCount(chatEvent)
+    }
 
     /**
      * Updates the list of typing users.
@@ -188,9 +168,9 @@ internal class ChannelStateLogic(
      *
      * @param message The message to be added or updated.
      */
-    override fun upsertMessage(message: Message) {
+    override fun upsertMessage(message: Message, updateCount: Boolean) {
         if (mutableState.visibleMessages.value.containsKey(message.id) || !mutableState.insideSearch.value) {
-            upsertMessages(listOf(message))
+            upsertMessages(listOf(message), updateCount = updateCount)
         } else {
             mutableState.updateCachedLatestMessages(parseCachedMessages(listOf(message)))
         }
@@ -203,16 +183,24 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean): Unit =
+    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, updateCount: Boolean) {
         when (shouldRefreshMessages) {
-            true -> mutableState.setMessages(messages)
+            true -> {
+                mutableState.setMessages(messages)
+
+                if (updateCount) {
+                    mutableState.clearCountedMessages()
+                    mutableState.insertCountedMessages(messages.map { it.id })
+                }
+            }
             false -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)
                 val updatedMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
                     .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
-                mutableState.upsertMessages(updatedMessages)
+                mutableState.upsertMessages(updatedMessages, updateCount)
             }
         }
+    }
 
     /**
      * Sets the date of the last message sent by the current user.

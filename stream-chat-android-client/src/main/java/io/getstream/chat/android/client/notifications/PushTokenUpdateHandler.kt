@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 internal class PushTokenUpdateHandler(context: Context) {
     private val logger = StreamLog.getLogger("Chat:Notifications")
