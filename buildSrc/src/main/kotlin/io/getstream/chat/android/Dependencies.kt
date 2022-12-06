@@ -198,7 +198,7 @@ object Dependencies {
     const val stfalconImageViewer = "com.github.stfalcon-studio:StfalconImageViewer:${Versions.STFALCON_IMAGE_VIEWER}"
     const val streamLog = "io.getstream:stream-log:${Versions.STREAM_LOG}"
     const val streamLogAndroid = "io.getstream:stream-log-android:${Versions.STREAM_LOG}"
-    const val streamLogAndroidInit = "io.getstream:stream-log-android-file:${Versions.STREAM_LOG}"
+    const val streamLogAndroidFile = "io.getstream:stream-log-android-file:${Versions.STREAM_LOG}"
     const val streamPush = "io.getstream:stream-android-push:${Versions.STREAM_PUSH}"
     const val streamPushDelegate = "io.getstream:stream-android-push-delegate:${Versions.STREAM_PUSH}"
     const val streamPushFirebase = "io.getstream:stream-android-push-firebase:${Versions.STREAM_PUSH}"
