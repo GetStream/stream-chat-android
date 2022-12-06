@@ -289,3 +289,79 @@ The exceptions to the Entity classes is `QueryChannelsEntityRealm` and `QuerySor
 
 ## Storing QueryChannelsEntityRealm
 
+To define the `QueryChannelsEntityRealm`, we define the filters as a string that will be parsed using moshi. Filters of search should not be a very complex graph will hundreds of node, so keeping the filter as string should not be a problem for most cases. It is advisable to review the filter logic, if the the filter become very big. `QueryChannelsEntityRealm` can be defined in the following way:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+
+```kotlin
+internal class QueryChannelsEntityRealm : RealmObject {
+    @PrimaryKey
+    var id: String = ""
+    var filter_as_string: String? = null
+    var query_sort: QuerySorterInfoEntityRealm? = null
+    var cids: RealmList<String> = realmListOf()
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+
+</Tabs>
+
+The conversion of `QueryChannelsEntityRealm` can be done by converting the Filter in and out to String using an adapter of Moshi:
+
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```
+internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
+    val thisQuery = this
+    val adapter = filterNodeAdapter()
+
+    return QueryChannelsEntityRealm().apply {
+        id = generateQuerySpecId(thisQuery.filter, thisQuery.querySort)
+        filter_as_string = adapter.toJson(thisQuery.filter.toFilterNode())
+        query_sort = thisQuery.querySort.toRealm()
+        cids = thisQuery.cids.toRealmList()
+    }
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+private fun filterNodeAdapter() =
+    Moshi.Builder()
+        .addAdapter(FilterNodeAdapter())
+        .build()
+        .adapter(FilterNode::class.java)
+
+internal fun generateQuerySpecId(filter: FilterObject, querySort: QuerySorter<out Channel>): String {
+    return "${filter.hashCode()}-${querySort.toDto().hashCode()}"
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+
+</Tabs>
+
+We need to define the adapter for the serialization and deserialization. So let's start defining the structure of our `Filters`. 
+
+The Filters are represented as a graph. Let's represent the graph as `Nodes` and  `Edges`
+
+
