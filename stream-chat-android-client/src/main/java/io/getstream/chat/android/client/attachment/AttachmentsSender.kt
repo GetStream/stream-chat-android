@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
@@ -50,7 +50,7 @@ internal class AttachmentsSender(
 
     private var jobsMap: Map<String, Job> = emptyMap()
     private val uploadIds = mutableMapOf<String, UUID>()
-    private val logger = StreamLog.getLogger("Chat:AttachmentsSender")
+    private val logger by taggedLogger("Chat:AttachmentsSender")
 
     internal suspend fun sendAttachments(
         message: Message,

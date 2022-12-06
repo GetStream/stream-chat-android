@@ -35,6 +35,7 @@ import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutabl
 import io.getstream.chat.android.state.sync.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.state.sync.internal.SyncManager
 import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -52,7 +53,7 @@ public class StreamStatePluginFactory(
     private val config: StatePluginConfig,
     private val appContext: Context,
 ) : PluginFactory {
-    private val logger = StreamLog.getLogger("Chat:StatePluginFactory")
+    private val logger by taggedLogger("Chat:StatePluginFactory")
 
     init {
         ConfigSingleton.statePluginConfig = config

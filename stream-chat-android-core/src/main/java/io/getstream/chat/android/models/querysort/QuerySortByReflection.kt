@@ -21,7 +21,7 @@ import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.querysort.internal.SortAttribute
 import io.getstream.chat.android.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.models.querysort.internal.compare
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -33,7 +33,7 @@ import kotlin.reflect.KProperty1
  */
 @Suppress("TooManyFunctions")
 public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
-    private val logger = StreamLog.getLogger("QuerySort")
+    private val logger by taggedLogger("QuerySort")
 
     private val fieldSearcher: FieldSearcher = FieldSearcher()
 

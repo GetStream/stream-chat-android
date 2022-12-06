@@ -26,7 +26,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.utils.Event
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -63,7 +63,7 @@ public class MentionListViewModel : ViewModel() {
     private val _errorEvents: MutableLiveData<Event<Unit>> = MutableLiveData()
     public val errorEvents: LiveData<Event<Unit>> = _errorEvents
 
-    private val logger = StreamLog.getLogger("Chat:MentionListViewModel")
+    private val logger by taggedLogger("Chat:MentionListViewModel")
 
     init {
         scope.launch {

@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api.interceptor
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.Constants
 import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -33,7 +34,7 @@ import java.util.concurrent.TimeUnit
 
 internal class HttpLoggingInterceptor : Interceptor {
 
-    private val logger = StreamLog.getLogger("Chat:Http")
+    private val logger by taggedLogger("Chat:Http")
 
     @Throws(IOException::class)
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount", "TooGenericExceptionCaught", "ReturnCount")

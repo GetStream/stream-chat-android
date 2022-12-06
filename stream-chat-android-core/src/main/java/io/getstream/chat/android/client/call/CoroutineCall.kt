@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -33,7 +33,7 @@ public class CoroutineCall<T : Any>(
     private val suspendingTask: suspend CoroutineScope.() -> Result<T>,
 ) : Call<T> {
 
-    private val logger = StreamLog.getLogger("Chat:CoroutineCall")
+    private val logger by taggedLogger("Chat:CoroutineCall")
 
     private val jobs = hashSetOf<Job>()
 

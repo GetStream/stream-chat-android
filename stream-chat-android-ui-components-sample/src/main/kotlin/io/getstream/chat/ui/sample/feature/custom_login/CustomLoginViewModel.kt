@@ -24,11 +24,11 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.FirebaseLogger
 import io.getstream.chat.ui.sample.data.user.SampleUser
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import io.getstream.chat.android.models.User as ChatUser
 
 class CustomLoginViewModel : ViewModel() {
-    private val logger = StreamLog.getLogger("Chat:CustomLoginViewModel")
+    private val logger by taggedLogger("Chat:CustomLoginViewModel")
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> = _state
 

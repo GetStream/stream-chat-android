@@ -35,7 +35,7 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import java.util.Date
 
 /**
@@ -52,7 +52,7 @@ internal class MessagingStyleNotificationHandler(
     private val permissionHandler: NotificationPermissionHandler?
 ) : NotificationHandler {
 
-    private val logger = StreamLog.getLogger("Chat:MsnHandler")
+    private val logger by taggedLogger("Chat:MsnHandler")
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)

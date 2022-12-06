@@ -27,7 +27,7 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.Q
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -38,7 +38,7 @@ internal class ChatClientStateCalls(
     private val state: StateRegistry,
     private val scope: CoroutineScope,
 ) {
-    private val logger = StreamLog.getLogger("ChatClientState")
+    private val logger by taggedLogger("ChatClientState")
 
     /** Reference request of the channels query. */
     internal fun queryChannels(

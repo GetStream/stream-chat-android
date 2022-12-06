@@ -21,7 +21,7 @@ import android.app.Application
 import android.content.Context
 import android.widget.Toast
 import io.getstream.chat.android.client.R
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 /**
  * Shows a [Toast] with a link to app settings on [android.Manifest.permission.POST_NOTIFICATIONS] permission denial.
@@ -33,7 +33,7 @@ public class DefaultNotificationPermissionHandler(
     private val context: Context,
 ) : NotificationPermissionHandler, ActivityLifecycleCallbacks() {
 
-    private val logger = StreamLog.getLogger("Chat:Default-NPH")
+    private val logger by taggedLogger("Chat:Default-NPH")
 
     private var currentActivity: Activity? = null
 

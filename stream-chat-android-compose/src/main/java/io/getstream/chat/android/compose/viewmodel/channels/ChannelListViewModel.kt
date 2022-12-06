@@ -43,7 +43,7 @@ import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsS
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -83,7 +83,7 @@ public class ChannelListViewModel(
      */
     private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(initialFilters)
 
-    private val logger = StreamLog.getLogger("ChannelListVM")
+    private val logger by taggedLogger("ChannelListVM")
 
     /**
      * State flow that keeps the value of the current [QuerySorter] for channels.

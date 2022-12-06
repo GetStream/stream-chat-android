@@ -29,7 +29,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 @InternalStreamChatApi
 public class UploadAttachmentsWorker(
@@ -41,7 +41,7 @@ public class UploadAttachmentsWorker(
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
 ) {
 
-    private val logger = StreamLog.getLogger("Chat:UploadAttachmentsWorker")
+    private val logger by taggedLogger("Chat:UploadAttachmentsWorker")
 
     @Suppress("TooGenericExceptionCaught")
     @InternalStreamChatApi

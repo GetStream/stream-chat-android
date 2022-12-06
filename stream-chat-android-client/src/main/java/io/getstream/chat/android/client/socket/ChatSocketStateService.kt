@@ -19,11 +19,11 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.StateFlow
 
 internal class ChatSocketStateService(initialState: State = State.Disconnected.Stopped) {
-    private val logger = StreamLog.getLogger("Chat:SocketState")
+    private val logger by taggedLogger("Chat:SocketState")
 
     suspend fun observer(onNewState: (State) -> Unit) {
         stateMachine.stateFlow.collect(onNewState)

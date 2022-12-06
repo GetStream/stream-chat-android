@@ -46,8 +46,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
-import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
@@ -71,7 +71,7 @@ public class MessageListViewModel(
     /**
      * The logger used to print to errors, warnings, information and other things to log.
      */
-    private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageListViewModel")
+    private val logger: TaggedLogger by taggedLogger("Chat:MessageListViewModel")
 
     /**
      * Holds information about the current channel and is actively updated.

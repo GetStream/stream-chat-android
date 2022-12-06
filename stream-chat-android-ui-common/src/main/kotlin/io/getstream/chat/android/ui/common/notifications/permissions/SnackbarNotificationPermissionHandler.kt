@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.notifications.permissions.NotificationPe
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.uiutils.util.openSystemSettings
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 /**
  * Shows a [Snackbar] with a link to app settings on [android.Manifest.permission.POST_NOTIFICATIONS] permission denial.
@@ -42,7 +42,7 @@ public class SnackbarNotificationPermissionHandler(
     private val context: Context,
 ) : NotificationPermissionHandler, ActivityLifecycleCallbacks() {
 
-    private val logger = StreamLog.getLogger("Chat:Snackbar-NPH")
+    private val logger by taggedLogger("Chat:Snackbar-NPH")
 
     private var currentActivity: Activity? = null
 
