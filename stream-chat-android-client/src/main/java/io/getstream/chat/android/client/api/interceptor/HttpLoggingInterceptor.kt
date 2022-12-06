@@ -39,7 +39,7 @@ internal class HttpLoggingInterceptor : Interceptor {
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount", "TooGenericExceptionCaught", "ReturnCount")
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        if (!StreamLog.defaultLoggerOverridden) {
+        if (!StreamLog.isInstalled) {
             return chain.proceed(request)
         }
 
