@@ -43,7 +43,7 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewMode
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
-import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Date
 
 /**
@@ -114,18 +114,16 @@ class MessagesActivity : AppCompatActivity() {
                         .build()
 
                     // Add an attachment to the message input when the user selects a date
-                    datePickerDialog.addOnPositiveButtonClickListener {
-                        val date = DateFormat
-                            .getDateInstance(DateFormat.LONG)
-                            .format(Date(it))
+                    datePickerDialog.addOnPositiveButtonClickListener { date ->
+                        val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                         val attachment = Attachment(
                             type = "date",
-                            extraData = mutableMapOf("payload" to date)
+                            extraData = mutableMapOf("payload" to payload)
                         )
                         messageComposerViewModel.addSelectedAttachments(listOf(attachment))
                     }
 
-                    // Show the date picker dialog when the attachment button is clicked
+                    // Show the date picker dialog at the click of the calendar button
                     datePickerDialog.show(supportFragmentManager, null)
                 }
             }
@@ -174,7 +172,8 @@ class MessagesActivity : AppCompatActivity() {
             val hasMentionSuggestions = state.mentionSuggestions.isNotEmpty()
             val isInEditMode = state.action is Edit
 
-            binding.attachmentsButton.isEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
+            binding.attachmentsButton.isEnabled =
+                !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
             binding.attachmentsButton.isVisible =
                 style.attachmentsButtonVisible && canSendMessage && canUploadFile && !isInEditMode
 

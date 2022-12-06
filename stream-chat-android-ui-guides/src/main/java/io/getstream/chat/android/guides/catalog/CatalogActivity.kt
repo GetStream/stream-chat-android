@@ -49,6 +49,7 @@ import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.guides.login.LoginActivity
 import io.getstream.chat.android.guides.catalog.compose.customattachments.ChannelsActivity as ComposeCustomAttachmentsActivity
 import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ChannelsActivity as ComposeCustomizingImageAndVideoAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.compose.customreactions.ChannelsActivity as ComposeCustomReactionsActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.channelsscreen.ChannelsActivity as UiComponentsChannelsScreenActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.ChannelsActivity as UiComponentsCustomAttachmentsActivity
 import io.getstream.chat.android.guides.catalog.uicomponents.customcomposer.ChannelsActivity as UiComponentsCustomComposerActivity
@@ -111,6 +112,13 @@ class CatalogActivity : AppCompatActivity() {
                     descriptionText = stringResource(R.string.compose_customizing_image_and_video_previews_description)
                 ) {
                     startActivity(ComposeCustomizingImageAndVideoAttachmentsActivity.createIntent(this@CatalogActivity))
+                }
+
+                GuideItem(
+                    titleText = stringResource(R.string.compose_custom_reactions_guide_title),
+                    descriptionText = stringResource(R.string.compose_custom_reactions_guide_description)
+                ) {
+                    startActivity(ComposeCustomReactionsActivity.createIntent(this@CatalogActivity))
                 }
 
                 GuideSection(stringResource(R.string.catalog_section_uicomponents))

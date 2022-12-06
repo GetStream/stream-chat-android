@@ -1109,6 +1109,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewFactoryManager {
 	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
 	public fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/FallbackAttachmentPreviewFactory;)V
 	public synthetic fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/FallbackAttachmentPreviewFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getItemViewType (Lio/getstream/chat/android/models/Attachment;)I
@@ -2855,14 +2856,6 @@ public final class io/getstream/chat/android/ui/utils/Debouncer {
 public final class io/getstream/chat/android/ui/utils/ImageUtilsKt {
 }
 
-public final class io/getstream/chat/android/ui/utils/StartStopBuffer {
-	public fun <init> ()V
-	public final fun active ()V
-	public final fun enqueueData (Ljava/lang/Object;)V
-	public final fun hold ()V
-	public final fun subscribe (Lkotlin/jvm/functions/Function1;)V
-}
-
 public final class io/getstream/chat/android/ui/utils/extensions/ChannelKt {
 	public static final fun getLastMessage (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Message;
 	public static final fun getMembersStatusText (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;)Ljava/lang/String;
@@ -3096,7 +3089,9 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageCompos
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/models/Attachment;)V
 	public final fun selectCommand (Lio/getstream/chat/android/models/Command;)V
 	public final fun selectMention (Lio/getstream/chat/android/models/User;)V
+	public final fun sendMessage ()V
 	public final fun sendMessage (Lio/getstream/chat/android/models/Message;)V
+	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)V
 	public final fun setAlsoSendToChannel (Z)V
 	public final fun setMessageInput (Ljava/lang/String;)V
 	public final fun setMessageMode (Lio/getstream/chat/android/ui/common/state/messages/MessageMode;)V
@@ -3643,6 +3638,7 @@ public final class io/getstream/chat/android/ui/widgets/avatar/ChannelAvatarView
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun setChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun setChannel (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)V
 	public static synthetic fun setChannel$default (Lio/getstream/chat/android/ui/widgets/avatar/ChannelAvatarView;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)V
 }

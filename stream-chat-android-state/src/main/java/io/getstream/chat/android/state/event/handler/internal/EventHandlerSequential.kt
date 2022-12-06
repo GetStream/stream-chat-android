@@ -91,7 +91,7 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -215,6 +215,7 @@ internal class EventHandlerSequential(
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
             }
+
             queryChannelsLogic.refreshChannelState(event.cid)
         }
 

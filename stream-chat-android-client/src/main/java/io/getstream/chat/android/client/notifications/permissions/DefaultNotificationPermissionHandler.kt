@@ -21,7 +21,7 @@ import android.app.Application
 import android.content.Context
 import android.widget.Toast
 import io.getstream.chat.android.client.R
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 
 /**
  * Shows a [Toast] with a link to app settings on [android.Manifest.permission.POST_NOTIFICATIONS] permission denial.
