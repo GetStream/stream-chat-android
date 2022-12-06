@@ -29,7 +29,7 @@ import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -45,7 +45,7 @@ internal class QueryChannelsMutableState(
     latestUsers: StateFlow<Map<String, User>>,
 ) : QueryChannelsState {
 
-    private val logger = StreamLog.getLogger("Chat:QueryChannelsState")
+    private val logger by taggedLogger("Chat:QueryChannelsState")
 
     internal var rawChannels: Map<String, Channel>?
         get() = _channels.value

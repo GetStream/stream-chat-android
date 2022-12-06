@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.withTimeout
 
 /**
@@ -37,7 +37,7 @@ internal class CallPostponeHelper(
     private val awaitConnection: suspend () -> Unit,
 ) {
 
-    private val logger = StreamLog.getLogger("Chat:CallPostponeHelper")
+    private val logger by taggedLogger("Chat:CallPostponeHelper")
 
     /**
      * Postpones call.

@@ -19,7 +19,7 @@ package io.getstream.chat.android.state.event.handler.internal.batch
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -34,7 +34,7 @@ internal class SocketEventCollector(
     private val scope: CoroutineScope,
     private val fireEvent: suspend (BatchEvent) -> Unit,
 ) {
-    private val logger = StreamLog.getLogger("Chat:EventCollector")
+    private val logger by taggedLogger("Chat:EventCollector")
     private val mutex = Mutex()
     private val postponed = Postponed()
     private val timeoutJob = TimeoutJob()

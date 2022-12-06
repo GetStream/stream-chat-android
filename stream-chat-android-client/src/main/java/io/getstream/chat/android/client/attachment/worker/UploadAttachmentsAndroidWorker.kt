@@ -29,6 +29,7 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -41,7 +42,7 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        val logger = StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
+        val logger by taggedLogger("Chat:UploadAttachmentsAndroidWorker")
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
 

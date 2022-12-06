@@ -26,7 +26,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.channel.lastMessageInfo
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import java.util.Date
 
 /**
@@ -40,7 +40,7 @@ internal class DatabaseChannelRepository(
     cacheSize: Int = 100,
 ) : ChannelRepository {
 
-    private val logger = StreamLog.getLogger("Chat:ChannelRepository")
+    private val logger by taggedLogger("Chat:ChannelRepository")
 
     // the channel cache is simple, just keeps the last several users in memory
     private val channelCache = LruCache<String, Channel>(cacheSize)

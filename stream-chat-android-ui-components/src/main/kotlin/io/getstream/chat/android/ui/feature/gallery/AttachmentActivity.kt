@@ -30,7 +30,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.load
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 /**
  * An Activity showing attachments such as websites, youtube and giphy.
@@ -38,7 +38,7 @@ import io.getstream.log.StreamLog
 public class AttachmentActivity : AppCompatActivity() {
     private lateinit var binding: StreamUiActivityAttachmentBinding
 
-    private val logger = StreamLog.getLogger("Chat:AttachmentActivity")
+    private val logger by taggedLogger("Chat:AttachmentActivity")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -49,8 +49,8 @@ import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.utils.extensions.addFlow
 import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
-import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -136,7 +136,7 @@ public class ChannelListViewModel(
     /**
      * The logger used to print information, warnings, errors, etc. to log.
      */
-    private val logger: TaggedLogger = StreamLog.getLogger("Chat:ChannelList-VM")
+    private val logger: TaggedLogger by taggedLogger("Chat:ChannelList-VM")
 
     /**
      * Filters the requested channels.

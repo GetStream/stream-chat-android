@@ -33,7 +33,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
@@ -51,7 +51,7 @@ internal class QueryChannelsLogic(
     private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
 ) {
 
-    private val logger = StreamLog.getLogger("QueryChannelsLogic")
+    private val logger by taggedLogger("QueryChannelsLogic")
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {
         if (queryChannelsStateLogic.isLoading()) {

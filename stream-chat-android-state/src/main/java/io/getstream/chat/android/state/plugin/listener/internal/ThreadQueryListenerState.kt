@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 /**
  * ThreadQueryListenerState handles both state in the SDK. It uses, if available, the database
@@ -37,7 +37,7 @@ internal class ThreadQueryListenerState(
     private val messageRepository: MessageRepository,
 ) : ThreadQueryListener {
 
-    private val logger = StreamLog.getLogger("Chat:ThreadQueryListener")
+    private val logger by taggedLogger("Chat:ThreadQueryListener")
 
     override suspend fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> {
         val loadingMoreMessage = logic.thread(messageId).isLoadingMessages()

@@ -163,6 +163,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.CompositeStreamLogger
 import io.getstream.log.StreamLog
 import io.getstream.log.android.AndroidStreamLogger
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -206,7 +207,7 @@ internal constructor(
     public val clientState: ClientState,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
-    private val logger = StreamLog.getLogger("Chat:Client")
+    private val logger by taggedLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
 
     @InternalStreamChatApi

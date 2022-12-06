@@ -18,11 +18,11 @@ package io.getstream.chat.android.client.clientstate
 
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 import io.getstream.chat.android.models.User
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.StateFlow
 
 internal class UserStateService {
-    private val logger = StreamLog.getLogger("Chat:UserStateService")
+    private val logger by taggedLogger("Chat:UserStateService")
 
     fun onUserUpdated(user: User) {
         logger.d { "[onUserUpdated] user.id: '${user.id}'" }

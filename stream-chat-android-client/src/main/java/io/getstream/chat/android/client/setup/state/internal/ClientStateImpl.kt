@@ -21,13 +21,13 @@ import io.getstream.chat.android.client.setup.state.ClientMutableState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.InitializationState
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 internal class ClientStateImpl(private val networkStateProvider: NetworkStateProvider) : ClientMutableState {
 
-    private val logger = StreamLog.getLogger("Chat:ClientState")
+    private val logger by taggedLogger("Chat:ClientState")
 
     private val _initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
     private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)

@@ -27,11 +27,11 @@ import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import io.getstream.chat.android.models.User as ChatUser
 
 class UserLoginViewModel : ViewModel() {
-    private val logger = StreamLog.getLogger("Chat:UserLoginViewModel")
+    private val logger by taggedLogger("Chat:UserLoginViewModel")
     private val _state = MutableLiveData<State>()
     private val _events = MutableLiveData<Event<UiEvent>>()
 
