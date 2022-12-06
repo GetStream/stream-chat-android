@@ -362,6 +362,8 @@ internal fun generateQuerySpecId(filter: FilterObject, querySort: QuerySorter<ou
 
 We need to define the adapter for the serialization and deserialization. So let's start defining the structure of our `Filters`. 
 
+## Representing Filters as a graph.
+
 Before serializing our Filters, we should convert then into a structure that is easier reason about. Then this structure can be converted in and out to the filters that the SDK uses.
 
 We are going to represent the `Filters` as a graph, with `Nodes` and `Edges`.  Let's pick the following example:
@@ -369,14 +371,14 @@ We are going to represent the `Filters` as a graph, with `Nodes` and `Edges`.  L
 ```
 Filters.and(
     Filters.eq("type", "messaging"),
-    Filters.`in`("members", listOf(userId)),
+    Filters.`in`("members", listOf("1054")),
     Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
 )
 ```
 
 This filter can be represented by the following graph:
 
-[put the graph here!!]
+![filter_graph](../../assets/filter_graph.png)
 
 Now that we defined the structure of the composition of filters, we need to define as code how building block. 
 
@@ -408,7 +410,152 @@ internal data class FilterNode(
 
 Every filter must have a type and the properties `field` and `value` should be populated accordingly with its type.
 
-`Filters` that are compositions of other filters like `AND` and `OR` won't have any `field` and the value will be other `filters`. `Filters` that are an operation, like `EQUALS` should have both `field` and `value`. 
+`Filters` that are compositions of other filters like `AND` and `OR` won't have any `field` and the value will be other `filters`. `Filters` that are an operation, like `EQUALS` should have both `field` and `value`. The `Filter` `EXISTS` only contains the value that it should look for, there isn't any value in this case. 
 
-By converting `Filters` to `FilterNode` we have an structure that contains only one class and then we can create a serialization adapter for this class making the process of serializing and deserializing `Filters` easy. 
+By converting `Filters` to `FilterNode` we have an structure that contains only one class and then we can create a serialization adapter for this class making the process of serializing and deserializing `Filters` easy.
 
+ 
+Let's create an extension function that converts a `FilterObject` to a `FilterNode`: 
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+``` kotlin
+internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
+    is AndFilterObject -> createCompositeFilterNode(KEY_AND, this.filterObjects.map(FilterObject::toFilterNode))
+    is OrFilterObject -> createCompositeFilterNode(KEY_OR, this.filterObjects.map(FilterObject::toFilterNode))
+    is NorFilterObject -> createCompositeFilterNode(KEY_NOR, this.filterObjects.map(FilterObject::toFilterNode))
+    is ExistsFilterObject -> createFilterNode(KEY_EXIST, this.fieldName, null)
+    is NotExistsFilterObject -> createFilterNode(KEY_NOT_EXIST, this.fieldName, null)
+    is EqualsFilterObject -> createFilterNode(KEY_EQUALS, this.fieldName, this.value)
+    is NotEqualsFilterObject -> createFilterNode(KEY_NOT_EQUALS, this.fieldName, this.value)
+    is ContainsFilterObject -> createFilterNode(KEY_CONTAINS, this.fieldName, this.value)
+    is GreaterThanFilterObject -> createFilterNode(KEY_GREATER_THAN, this.fieldName, this.value)
+    is GreaterThanOrEqualsFilterObject ->
+        createFilterNode(KEY_GREATER_THAN_OR_EQUALS, this.fieldName, this.value)
+    is LessThanFilterObject -> createFilterNode(KEY_LESS_THAN, this.fieldName, this.value)
+    is LessThanOrEqualsFilterObject -> createFilterNode(KEY_LESS_THAN_OR_EQUALS, this.fieldName, this.value)
+    is InFilterObject -> createFilterNode(KEY_IN, this.fieldName, this.values)
+    is NotInFilterObject -> createFilterNode(KEY_NOT_IN, this.fieldName, this.values)
+    is AutocompleteFilterObject -> createFilterNode(KEY_AUTOCOMPLETE, this.fieldName, this.value)
+    is DistinctFilterObject -> createFilterNode(KEY_DISTINCT, null, null)
+    is NeutralFilterObject -> createFilterNode(KEY_NEUTRAL, null, null)
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+
+</Tabs>
+
+As you can see. There are two types of nodes **Composite Nodes** and **Filter Nodes**. 
+
+**Composite nodes** are nodes that point to one of more nodes, like AND, OR and NOR they apply a boolean logic to the results of the nodes they point to. 
+
+**Filter nodes** are nodes that realize and operation like compating if a field is equal to a value, if a field is bigger than a value, etc. 
+
+Those can be created in a simple way:
+
+```
+private fun createCompositeFilterNode(filterType: String, value: Any): FilterNode =
+    FilterNode(filterType = filterType).apply {
+        this.value = value
+    }
+
+private fun createFilterNode(filterType: String, field: String?, value: Any?): FilterNode =
+    FilterNode(filterType = filterType).apply {
+        this.field = field
+        this.value = value
+    }
+```
+
+Composite nodes won't have any field, but must always contain a value and Filter nodes may contain fields and values. 
+
+Now that defiened the function `FilterObject.toFilterNode` we already know how to convert any `FilterObject` into a composition of `FilterNodes`. Now we can serialize our nodes.
+
+## Serializing FilterNode
+
+```
+internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
+    override fun fromJson(reader: JsonReader): FilterNode {
+	    // Let's define it later. 
+    }
+
+    override fun toJson(writer: JsonWriter, node: FilterNode?) {
+        val type = node?.filterType
+        val field = node?.field
+        val value = node?.value
+
+        writer.beginObject()
+
+        type?.let { nodeType ->
+            writer.name("filter_type")
+            writer.value(nodeType)
+        }
+
+        field?.let { nodeField ->
+            writer.name("field")
+            writer.value(nodeField)
+        }
+
+        value?.let { nodeValue ->
+            writer.name("value")
+
+            when {
+                isCompositeNode(type) -> {
+                    writeCompositeNode(writer, nodeValue)
+                }
+
+                isMultipleValueNode(type) -> {
+                    writeMultipleValueNode(writer, value)
+                }
+
+                else -> {
+                    writeFilterNode(writer, nodeValue)
+                }
+            }
+        }
+
+        writer.endObject()
+    }
+
+    private fun isCompositeNode(nodeType: String?): Boolean =
+        nodeType == KEY_AND || nodeType == KEY_OR || nodeType == KEY_NOR
+
+    private fun isMultipleValueNode(nodeType: String?): Boolean {
+        return nodeType == KEY_IN || nodeType == KEY_NOT_IN
+    }
+
+    private fun writeCompositeNode(writer: JsonWriter, nodeValue: Any) {
+        writer.beginArray()
+        (nodeValue as Iterable<FilterNode>).forEach { filterNode ->
+            toJson(writer, filterNode)
+        }
+        writer.endArray()
+    }
+
+    private fun writeMultipleValueNode(writer: JsonWriter, value: Any) {
+        writer.beginArray()
+        (value as Iterable<String>).forEach(writer::value)
+        writer.endArray()
+    }
+
+    private fun writeFilterNode(writer: JsonWriter, nodeValue: Any) {
+        when (nodeValue) {
+            is Boolean -> writer.value(nodeValue)
+            is String -> writer.value(nodeValue)
+            is Number -> writer.value(nodeValue)
+            else -> throw IllegalStateException("Unsupported type of filter")
+        }
+    }
+
+```
+
+We write 
