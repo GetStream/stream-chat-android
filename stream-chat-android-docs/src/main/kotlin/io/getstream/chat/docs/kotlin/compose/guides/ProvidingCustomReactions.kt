@@ -60,11 +60,6 @@ private object ProvidingCustomReactionsSnippet {
         }
 
         @Composable
-        override fun createReactionIcons(): Map<String, ReactionIcon> {
-            return supportedReactions.associateWith { createReactionIcon(it) }
-        }
-
-        @Composable
         override fun createReactionIcon(type: String): ReactionIcon {
             return when (type) {
                 THUMBS_UP -> ReactionIcon(
@@ -83,8 +78,13 @@ private object ProvidingCustomReactionsSnippet {
                     painter = painterResource(R.drawable.ic_mood_bad),
                     selectedPainter = painterResource(R.drawable.ic_mood_bad_selected)
                 )
-                else -> throw IllegalArgumentException()
+                else -> throw IllegalArgumentException("Unsupported reaction type")
             }
+        }
+
+        @Composable
+        override fun createReactionIcons(): Map<String, ReactionIcon> {
+            return supportedReactions.associateWith { createReactionIcon(it) }
         }
 
         companion object {
