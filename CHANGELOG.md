@@ -72,8 +72,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
 
 ### ⚠️ Changed
+- Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
 
 ### ❌ Removed
 
