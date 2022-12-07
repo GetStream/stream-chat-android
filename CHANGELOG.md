@@ -75,6 +75,8 @@
 - Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: Renamed `onHeaderActionClick` to `onHeaderTitleClick` in `MessagesScreen`. Change made in order to better reflect the handler's behavior. [#4535](https://github.com/GetStream/stream-chat-android/pull/4535)
+- 🚨 Breaking change: Renamed `onHeaderActionClick` to `onHeaderTitleClick` in `MessageListHeader`. Change made in order to better reflect the handler's behavior. [#4535](https://github.com/GetStream/stream-chat-android/pull/4535)
 - Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
 
 ### ❌ Removed

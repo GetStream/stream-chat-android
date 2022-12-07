@@ -36,7 +36,7 @@ private object ProvidingCustomReactionsSnippet {
                             channelId = channelId,
                         ),
                         onBackPressed = { finish() },
-                        onHeaderActionClick = {}
+                        onHeaderTitleClick = {}
                     )
                 }
             }
