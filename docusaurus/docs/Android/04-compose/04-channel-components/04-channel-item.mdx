@@ -15,6 +15,8 @@ Let's see how to use and customize this component.
 To use the `ChannelItem`, it's best to override the `itemContent` parameter in the `ChannelList` and use it for the channel items:
 
 ```kotlin
+val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -41,7 +43,8 @@ This is a very basic and crude example of a `ChannelList`, where you override th
 
 The snippet above will generate the following UI.
 
-![The Default ChannelList Component](../../assets/compose_default_channel_list_component.png)
+|![The Default ChannelList Component](../../assets/compose_default_channel_list_component.png)|
+|---|
 
 To fully utilize the `ChannelItem` let's see how to handle its actions and how to customize its Slot APIs.
 
@@ -64,10 +67,14 @@ fun ChannelItem(
 Here's an example of using the default component, but overriding the behavior:
 
 ```kotlin
+val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     setContent {
+        val user by listViewModel.user.collectAsState() // Fetch user
+        
         ChatTheme {
             ChannelList(
                 itemContent = { channelItem ->
@@ -111,15 +118,17 @@ fun ChannelItem(
 
 * `modifier`: The modifier for the root component. You can apply a background, elevation, padding, shape, touch handlers and much more.
 * `leadingContent`: Customizable composable that allows you to override the content that appears at the start of the list item. By default, it represents a `ChannelAvatar`.
-* `centerConent`: Customizable composable that allows you to override the center part of the list item. By default, it represents the `ChannelDetails` that show its name and the last message preview.
-* `trailingContent`: Customizable composable that allows you to override the content that appears at the end of the list item. By default, it represents the `ChannelLastMessageInfo` that shows the unread message indicator if there are unread messages and the last message read state.
+* `centerConent`: Customizable composable that allows you to override the center part of the list item. By default, it represents channel details that show its name and the last message preview.
+* `trailingContent`: Customizable composable that allows you to override the content that appears at the end of the list item. By default, it represents the information section that shows the unread message indicator if there are unread messages and the last message read state.
 
 Here's a simple example for building your own channel item, by overriding the mentioned parameters:
 
 ```kotlin
+val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
+
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    
+
     setContent {
         val user by listViewModel.user.collectAsState() // Fetch user
 
@@ -158,6 +167,7 @@ As you can see, it's very easy to override and completely replace the Slot APIs 
 
 The snippet above will generate the following UI:
 
-![Custom ChannelItem Component](../../assets/compose_custom_channel_list_item.png)
+|![Custom ChannelItem Component](../../assets/compose_custom_channel_list_item.png)|
+|---|
 
 It was really easy to provide a completely custom UI for the channel items while still keeping the same functionality and actions of the rest of the screen.
