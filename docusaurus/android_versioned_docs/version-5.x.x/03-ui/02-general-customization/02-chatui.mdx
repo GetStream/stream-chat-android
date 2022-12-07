@@ -90,13 +90,11 @@ As a result, only the _love_ reaction is available in the chat, and when selecte
 
 ### Custom MIME Type Icons
 
-When possible, the SDK displays thumbnails for image files. For other files, mime type icons are displayed in `MessageListView` and in the file browser UI.
-
-<!-- TODO add screenshot for this -->
+When possible, the SDK displays thumbnails for image and video files. When thumbnails are unavailable or when other types of files are in question, mime type icons are displayed in `MessageListView`, `MessageComposer` and attachment picker.
 
 By default, the SDK provides built-in MIME type icons for the most popular file types and displays a generic file icon for others.
 
-To customize these icons, you need to override `ChatUI.mimeTypeIconProvider` in the following way:
+To customize these icons, you need to override `ChatUI.mimeTypeIconProvider` like so:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -107,11 +105,11 @@ ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
         // Generic icon for missing MIME type
         mimeType == null -> R.drawable.stream_ui_ic_file
         // Special icon for XLS files
-        mimeType == "application/vnd.ms-excel" -> R.drawable.ic_file_xls
+        mimeType == "application/vnd.ms-excel" -> R.drawable.stream_ui_ic_file_xls
         // Generic icon for audio files
-        mimeType.contains("audio") -> R.drawable.ic_file_mp3
+        mimeType.contains("audio") -> R.drawable.stream_ui_ic_file_mp3
         // Generic icon for video files
-        mimeType.contains("video") -> R.drawable.ic_file_mov
+        mimeType.contains("video") -> R.drawable.stream_ui_ic_file_mov
         // Generic icon for other files
         else -> R.drawable.stream_ui_ic_file
     }
@@ -144,33 +142,33 @@ ChatUI.setMimeTypeIconProvider(mimeType -> {
 </TabItem>
 </Tabs>
 
-### Customizing Avatar
-The `AvatarView` is used in the lists of channels, users, and messages. The avatar is a small picture that identifies a specific channel or user. 
+### Customizing Avatars
+`AvatarView` is used in the lists of channels, users, and messages. An avatar is a small image which identifies a specific channel or user.
 
-The image in the `AvatarView` is being displayed based on `image` property, present in both `Channel` and `User` objects:
+The image in the `AvatarView` is being displayed based on the `image` property, present in both `Channel` and `User` objects:
 
 ![Default avatar](../../assets/default_channel.png)
 
-The `AvatarView` will use default gradient color with initials if the `image` property cannot be loaded:
+The `AvatarView` will use the default gradient color with initials if the `image` property cannot be loaded:
 
 ![Default avatar](../../assets/default_avatar.png)
 
 
-#### Customizing Avatar Using Styles
-You can configure avatar shape, border width, online indicator and other aspects using [AvatarStyle](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android/src/main/java/com/getstream/sdk/chat/view/messages/AvatarStyle.kt). You can create this kind of avatar by changing the shape and border-radius: 
+#### Customizing Avatars Using Styles
+You can configure the avatar shape, border width, online indicator and other aspects using [AvatarStyle](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/avatar/AvatarStyle.kt). You can create this kind of avatar by changing the shape and corner radius:
 
 ![Light_mode](../../assets/square_avatar.png)
 
-You can also change the background and the picture using `AvatarBitmapFactory`.
+You can also change the background and the image using `AvatarBitmapFactory`.
 
-#### Customizing Avatar Using AvatarBitmapFactory
+#### Customizing Avatars Using AvatarBitmapFactory
 
 Overriding the `AvatarBitmapFactory` allows you to add custom logic for the channel's and user's avatars displayed using `AvatarView`. 
 
-The factory has a pair of methods for both user and channel avatars, such as `createUserBitmap` and `createDefaultUserBitmap`. The first should load the avatar from the network, this is attempted first when an avatar is requested. If the first method fails, the `Default` variant is called as a fallback. This should have an implementation that never fails, and always returns a valid bitmap.
+The factory has a pair of methods for both the user and channel avatars, such as `createUserBitmap` and `createDefaultUserBitmap`. The first should load the avatar from the network, this is attempted first when an avatar is requested. If the first method fails, the `Default` variant is called as a fallback. This should have an implementation that never fails, and always returns a valid bitmap.
 
 :::note
-The methods mentioned above are suspending functions. If you don't use coroutines, you'll find variants with `Blocking` in their name that you can use instead.
+The methods mentioned above are suspending functions. If you don't use coroutines, you'll find variants with `Blocking` in their name which you can use instead.
 :::
 
 **If you don't want to use avatars from the internet and only use the default avatar**, you can call `createDefaultUserBitmap` inside `createUserBitmap` in your custom implementation of `AvatarBitmapFactory`:
@@ -221,7 +219,7 @@ Which creates:
 ![White avatars](../../assets/white_avatars.png)
 
 
-If you add custom loading logic for your avatars, you can also override the `userBitmapKey` and `channelBitmapKey` methods to get correct caching behavior. The cache keys returned from these methods should include a representation of the pieces of data you use to load the avatars.
+If you add custom loading logic for your avatars, you can also override the `userBitmapKey` and `channelBitmapKey` methods to get the correct caching behavior. The cache keys returned from these methods should include a representation of the pieces of data you use to load the avatars.
 
 Here's an example of a custom factory that extends `AvatarBitmapFactory`, which applies a grayscale transformation to the avatars of users who are currently offline:
 
