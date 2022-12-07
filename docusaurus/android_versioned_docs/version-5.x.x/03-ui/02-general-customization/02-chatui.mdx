@@ -147,17 +147,23 @@ ChatUI.setMimeTypeIconProvider(mimeType -> {
 
 The image in the `AvatarView` is being displayed based on the `image` property, present in both `Channel` and `User` objects:
 
-![Default avatar](../../assets/default_channel.png)
+| Light Mode | Dark Mode |
+|---|---|
+| ![Default Avatar Light Mode](../../assets/default_channel.png) | ![Default Avatar Dark Mode](../../assets/default_channel_dark.png) |
 
 The `AvatarView` will use the default gradient color with initials if the `image` property cannot be loaded:
 
-![Default avatar](../../assets/default_avatar.png)
+| Light Mode | Dark Mode |
+|---|---|
+| ![Default Avatar Light Mode](../../assets/default_avatar.png) | ![Default Avatar Dark Mode](../../assets/default_avatar_dark.png) |
 
 
 #### Customizing Avatars Using Styles
 You can configure the avatar shape, border width, online indicator and other aspects using [AvatarStyle](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/avatar/AvatarStyle.kt). You can create this kind of avatar by changing the shape and corner radius:
 
-![Light_mode](../../assets/square_avatar.png)
+| Light Mode | Dark Mode |
+|---|---|
+| ![Light Mode](../../assets/square_avatar.png) | ![Dark Mode](../../assets/square_avatar_dark.png)
 
 You can also change the background and the image using `AvatarBitmapFactory`.
 
@@ -204,51 +210,25 @@ new AvatarBitmapFactory(context) {
 
 The default color set includes a variety of colors: 
 
-![Colorful avatars](../../assets/colorful_avatars.png)
+| Light Mode | Dark Mode |
+|---|---|
+| ![Colorful Avatars Light Mode](../../assets/colorful_avatars.png) | ![Colorful Avatars Dark Mode](../../assets/colorful_avatars_dark.png) |
 
 The set can be overridden in the `color.xml` file - you can expand or reduce the number of supported colors, like in the example below:
 
 ```
 <array name="stream_ui_avatar_gradient_colors">
-    <item>@color/stream_ui_literal_white</item>
+    <item>@color/stream_ui_avatar_gradient_blue</item>
 </array>        
 ```
 
 Which creates:
 
-![White avatars](../../assets/white_avatars.png)
-
+| Light Mode | Dark Mode |
+|---|---|
+| ![Blue Gradient Avatars Light Mode](../../assets/blue_gradients_avatars.png) | ![Blue Gradient Avatars Dark Mode](../../assets/blue_gradients_avatars_dark.png) |
 
 If you add custom loading logic for your avatars, you can also override the `userBitmapKey` and `channelBitmapKey` methods to get the correct caching behavior. The cache keys returned from these methods should include a representation of the pieces of data you use to load the avatars.
-
-Here's an example of a custom factory that extends `AvatarBitmapFactory`, which applies a grayscale transformation to the avatars of users who are currently offline:
-
-```kotlin
-ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
-    override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
-        val imageResult = context.imageLoader.execute(
-            ImageRequest.Builder(context)
-                .data(user.image)
-                .apply {
-                    if (!user.online) {
-                        transformations(GrayscaleTransformation())
-                    }
-                }
-                .build()
-        )
-
-        return (imageResult.drawable as? BitmapDrawable)?.bitmap
-    }
-}
-```
-
-:::note
-This example uses the [Coil](https://github.com/coil-kt/coil) library for loading the image URL and applying transformations to it. If you use Coil version 2.x, you should copy-paste [GrayscaleTransformation.kt](https://github.com/coil-kt/coil/blob/845f39383f332428077c666e3567b954675ce248/coil-base/src/main/java/coil/transform/GrayscaleTransformation.kt) manually in your project for building this example.
-:::
-
-This results in avatars rendered like this:
-
-![Shades of gray images for offline users](../../assets/gray_scaled_image.png)
 
 ### Adding Extra Headers to Image Requests
 
