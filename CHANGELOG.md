@@ -72,8 +72,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
 
 ### ⚠️ Changed
+- Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
 
 ### ❌ Removed
 
@@ -329,6 +331,11 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: Removed compose `MessageMode` indicating whether the list is in thread mode or normal mode in favor of ui-common `MessageMode`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+
+# December 5th, 2022 - 5.11.9
+## stream-chat-android-ui-common
+### ✅ Added
+- Exposed a way to allow you to include the current user avatar in the Channel avatar [#4561](https://github.com/GetStream/stream-chat-android/pull/4561)
 
 # November 23th, 2022 - 5.11.8
 ## stream-chat-android-client
