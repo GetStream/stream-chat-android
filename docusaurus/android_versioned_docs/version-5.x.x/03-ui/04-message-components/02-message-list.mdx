@@ -461,9 +461,9 @@ The predicate has to return `true` for the items that you _do_ want to display i
 
 ## Custom Message Views
 
-`MessageListView` provides an API for creating custom ViewHolders. To use your own ViewHolder: 
+`MessageListView` provides an API for creating custom ViewHolders. To use your own ViewHolder:
 1. Extend `MessageListItemViewHolderFactory`.
-2. Write your own logic for creating ViewHolders. 
+2. Write your own logic for creating ViewHolders.
 3. Create a new factory instance and set it on `MessageListView`.
 
 Let's consider an example in which we want to create a custom ViewHolder for messages sent by other users less than 24 hours ago. The result should look like this:

@@ -18,9 +18,6 @@ include (
 		':stream-chat-android-compose',
 		':stream-chat-android-compose-sample',
 		':stream-chat-android-markdown-transformer',
-		':stream-chat-android-pushprovider-firebase',
-		':stream-chat-android-pushprovider-huawei',
-		':stream-chat-android-pushprovider-xiaomi',
 		':stream-chat-android-ui-uitests',
 )
 

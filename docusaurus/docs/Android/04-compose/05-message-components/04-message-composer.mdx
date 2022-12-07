@@ -5,10 +5,10 @@ The `MessageComposer` is arguably one of the most important components when buil
 There are two versions of the composer that we provide:
 
 * **Bound**: This version relies on a `ViewModel` to set up all of its operations, like sending, editing and replying to a message, as well as handling UI state when the user performs different message actions. 
-* **Stateless**: This is a stateless version of the composer that doesn't know about `ViewModel`s or business logic. It exposes several actions and customization options that let you override the behavior and UI of the component.
+* **Stateless**: This is a stateless version of the composer which doesn't know about `ViewModel`s or business logic. It exposes several actions and customization options that let you override the behavior and UI of the component.
 
 :::note 
-The **bound** version of the composer uses the **stateless** composer internally. That way, when providing the same state to either component, the behavior will be the same. 
+The **bound** version of the composer uses the **stateless** composer internally. That way, when providing the same state to either component, the behavior remains the same.
 
 Additionally, we cannot provide a default `ViewModel`, as it requires the `channelId` to send data, so you'll have to build an instance yourself.
 :::
@@ -45,25 +45,27 @@ fun MyCustomUi() {
 }
 ```
 
-Because it doesn't make sense to use the `MessageComposer` as a standalone component, this example shows how to add it in a `Scaffold`, with the rest of your UI.
+Since it doesn't make sense to use the `MessageComposer` as a standalone component, this example shows how to add it in a `Scaffold`, along with the rest of your UI.
 
 In this example, you took the following steps:
 
-* **Step 1**: You set up the `MessageComposer` as a `bottomBar` of a `Scaffold`. This way you dedicate the space on the screen while fitting in the rest of your content.
+* **Step 1**: You set up the `MessageComposer` as a `bottomBar` of a `Scaffold`. This way you dedicate space on the screen to it, while fitting in the rest of your content.
 * **Step 2**: You customize the `MessageComposer` using a set of `Modifier`s to make it fill the parent width and wrap its height.
 * **Step 3**: You pass in the `ViewModel` to bind the composer to. This helps it load all the info it needs to show various states.
 * **Step 4**: You customize some of the actions of the composer to propagate them to other parts of your business logic.
-* **Step 5**: You can set up the rest of your UI in the `Scaffold` body, which can be any of our other components or your custom UI.
+* **Step 5**: You can set up the rest of your UI in the `Scaffold` body, which could host any of our other components or your custom UI.
 
 :::note
-Notice how our components allow you to customize the UI to whatever your needs may be as you can combine them with your custom UI or our other components.
+Notice how our components allow you to customize the UI to suit your needs by combining them with your custom UI or our other components.
 
 You can also customize the behavior of our components to update the rest of your UI state accordingly.
 :::
 
 The provided snippet, with the rest of the UI set up using our messages components, will render the following UI.
 
-![Default MessageComposer component](../../assets/compose_default_message_composer_component.png)
+| Light | Dark |
+|---|---|
+| ![Default MessageComposer component](../../assets/compose_default_message_composer_component.png) | ![Default MessageComposer component dark](../../assets/compose_default_message_composer_component_dark.png) |
 
 Notice how the composer shows the attachments we've selected in the input area, how it shows the label, as well as integrations on the left side and the send button on the right side.
 
@@ -89,26 +91,26 @@ fun MessageComposer(
 )
 ```
 
-* `onSendMessage`: Handler when the user taps on the **Send** button.
-* `onAttachmentsClick`: Handler when the user taps on the default attachments integration. 
-* `onCommandsClick`: Handler when the user taps on the default commands integration.
-* `onValueChange`: Handler that exposes text value changes in the composer.
-* `onAttachmentRemoved`: Handler when the user removes an attachment from selected attachments, in the input area.
-* `onCancelAction`: Handler when the user cancels the current message action, usually `Edit` or `Reply` actions.
-* `onMentionSelected`: Handler when the user selects a mention.
-* `onCommandSelected`: Handler when the user selects an instant command.
-* `onAlsoSendToChannelSelected`: Handler when the user toggles the checkbox for sending messages from thread to channels.
+* `onSendMessage`: Handler used when the user taps on the **Send** button.
+* `onAttachmentsClick`: Handler used when the user taps on the default attachments integration.
+* `onCommandsClick`: Handler used when the user taps on the default commands integration.
+* `onValueChange`: Handler used that exposes text value changes in the composer.
+* `onAttachmentRemoved`: Handler used when the user removes an attachment from selected attachments, in the input area.
+* `onCancelAction`: Handler used when the user cancels the current message action, usually `Edit` or `Reply` actions.
+* `onMentionSelected`: Handler used when the user selects a mention.
+* `onCommandSelected`: Handler used when the user selects an instant command.
+* `onAlsoSendToChannelSelected`: Handler used when the user toggles the checkbox for sending messages from thread to channels.
 
 As you can see, most of these actions update the state in the `MessageComposerViewModel`, or are empty, by default.
 
-To customize these actions, simply pass in a lambda function for each when building your custom UI with our `MessageComposer`, like in the example above.
+To customize these actions, simply pass in a lambda function for each one when building your custom UI with our `MessageComposer`, like in the example above.
 
 ## Handling Typing Updates
 
 Typing updates should be sent sparingly as a way of saving valuable API calls. Luckily, we offer such behavior out of the box.
-`MessageComposerViewModel` contains `MessageComposerController`, which in turn uses [`DefaultTypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/DefaultTypingUpdatesBuffer.kt) in order to intelligently make start and stop typing API calls.
+`MessageComposerViewModel` contains `MessageComposerController`, which in turn uses [`DefaultTypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/utils/typing/internal/DefaultTypingUpdatesBuffer.kt) in order to intelligently make start and stop typing API calls.
 
-If you want to implement your own buffering mechanism you can pass in an implementation of the [`TypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer.kt) interface instead:
+If you want to implement your own buffering mechanism you can pass in an implementation of the [`TypingUpdatesBuffer`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/utils/typing/TypingUpdatesBuffer.kt) interface instead:
 
 ```kotlin
 composerViewModel.setTypingUpdatesBuffer(
@@ -135,11 +137,11 @@ fun MessageComposer(
 )
 ```
 
-* `modifier`: Modifier for root component styling. This is useful to set the composer alignment, size, padding and more.
-* `headerContent`: Slot that's shown as the header. By default `MessageInputOptions` that show when a message is being edited, or we're replying to another message.
+* `modifier`: Modifier for root component styling. Used for setting the composer alignment, size, padding and more.
+* `headerContent`: Slot that's shown as the header. By default hosts `MessageInputOptions` which show when a message is being edited, or we're replying to another message.
 * `footerContent`: Slot that's shown as the footer. Present in the Thread mode and allows the user to also send messages from threads to channels.
-* `mentionPopupContent`: Slot that acts as a popup. By default it shows the `MentionSuggestionList` when the user starts the mention action.
-* `commandPopupContent`: Slot that acts as a popup. By default it shows the `CommandSuggestionList` when the user starts a slash command action.
+* `mentionPopupContent`: Slot that acts as a popup. By default it shows `MentionSuggestionList` when the user starts the mention action.
+* `commandPopupContent`: Slot that acts as a popup. By default it shows `CommandSuggestionList` when the user starts a slash command action.
 * `integrations`: By default, we show the attachment picker and slash command integrations in our composer. You can override this to support custom integrations.
 * `label`: Slot that represents the hint, or the label, where there is no user input.
 * `input`: Slot that represents the core part of the composer, where the user can write new messages. It also displays pending attachments if the user chooses attachments for upload.
@@ -171,7 +173,7 @@ fun MyCustomComposer() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Keyboard,
+                            imageVector = Icons.Default.Email,
                             contentDescription = null
                         )
 
@@ -194,7 +196,8 @@ fun MyCustomComposer() {
 
                                 composerViewModel.sendMessage(
                                     composerViewModel.buildNewMessage(
-                                        state.inputValue, state.attachments
+                                        state.inputValue,
+                                        state.attachments
                                     )
                                 )
                             },
@@ -212,8 +215,11 @@ fun MyCustomComposer() {
 
 Notice how you've removed the integrations by passing in an empty composable function, how you override the `input` parameter to provide a `MessageInput` that's more suitable to your needs, and how within the `input` you can customize the `label` and `innerTrailingContent` slots. You also replaced the outer `trailingContent` to remove the send button.
 
-This snippet will provide the following UI. It was really easy to customize this and there are many things you can do with the `MessageComposer` to make it fit your design needs!
+This snippet will provide the following UI:
 
- ![Custom MessageComposer component](../../assets/compose_custom_message_composer_component.png)
+| ![Custom MessageComposer component](../../assets/compose_custom_message_composer_component.png) |
+|---|
+
+Changing the way `MessageComposer` looks is easy and the given example barely scratches the surface of the many ways in which it can be customized.
 
 <!-- TODO WIP PAGE If you want a completely custom UI for the composer with custom behavior, please read our Creating a Custom Message Input (../07-guides/04-custom-message-input.mdx) guide.-->

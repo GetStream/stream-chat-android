@@ -81,9 +81,9 @@ messageListView.setAttachmentDeleteOptionClickHandler(resultItem -> {
 </TabItem>
 </Tabs>
 
-## Navigating To Attachment Gallery
+## Navigating to the Attachment Gallery
 
-By default, the Attachment Gallery is opened when a user clicks on an attachment in `MessageListView`. In that case, all actions mentioned above have a default implementation, which can be changed by overriding `MessageListView`'s handlers.
+By default, the Attachment Gallery is opened when a user clicks on an attachment in `MessageListView`. In which case, all actions mentioned above have a default implementation, which can be changed by overriding `MessageListView`'s handlers.
 
 You can also navigate to `AttachmentGalleryActivity` manually from anywhere else in your code. In this case, you will need to implement all available actions:
 
@@ -153,3 +153,73 @@ ChatUI.getNavigator().navigate(destination);
 ```
 </TabItem>
 </Tabs>
+
+## Customization
+
+The gallery can be customized through the use of styleable attributes. These are organized into individual styles which apply to a certain aspect or feature of the gallery.
+
+You can find all of the styles listed [here](https://github.com/GetStream/stream-chat-android/blob/v5/stream-chat-android-ui-components/src/main/res/values/attrs_attachment_gallery_activity.xml).<br/>
+Some of these styles are applied directly to stock Android components. These accept any attribute that is normally applicable to the given stock Android component. Others power Stream UI components and have custom made styled attributes.
+
+- `streamUiAttachmentGalleryCloseButtonStyle`: Styles the button used to close the gallery. Accepts all `ImageView` attributes.
+- `streamUiAttachmentGalleryTitleStyle`: Styles the title seen in the header. Accepts all `TextView` attributes.
+- `streamUiAttachmentGalleryDateStyle`: Styles the date section in the header. Accepts all `TextView` attributes.
+- `streamUiAttachmentGalleryActionsMenuStyle`: Styles the button used to activate the options menu. Accepts all `ImageView` attributes.
+- `streamUiAttachmentGalleryBottomBarImageCountStyle`: Styles the text displaying the number of all media attachments contained within the message and the position of the one currently being viewed. Accepts all `TextView` attributes.
+- `streamUiAttachmentGalleryBottomBarLeftIconStyle`: Styles the left icon inside the bottom bar. By default it shows a share icon. Accepts all `ImageView` attributes.
+- `streamUiAttachmentGalleryBottomBarRightIconStyle`: Styles the right icon inside the bottom bar. By default it shows a tiled icon that opens the menu. Accepts all `ImageView` attributes.
+- `streamUiAttachmentGalleryOptionsStyle`: Styles the actions menu. Accepts custom Stream attributes, all of which are listed [here](https://github.com/GetStream/stream-chat-android/blob/v5/stream-chat-android-ui-components/src/main/res/values/attrs_attachment_options_view.xml).
+
+### Creating styles to change the appearance
+
+Let's customize our screen by changing the attachment actions available to the user.
+
+1. Create a style that disables the abilities to download and delete images:
+
+```xml
+<style name="CustomAttachmentGalleryOptionsStyle">
+    <item name="streamUiDeleteEnabled">false</item>
+    <item name="streamUiSaveImageEnabled">false</item>
+</style>
+```
+
+2. Use the newly created style to create a custom Stream theme:
+
+```xml
+<style name="CustomStreamUiTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiAttachmentGalleryOptionsStyle">@style/CustomAttachmentGalleryOptionsStyle</item>
+</style>
+```
+
+3. Finally, add the custom theme to your attachment gallery Activity theme, along with a few lines that make the status and navigation bars look prettier:
+
+```xml
+<style name="CustomAttachmentGalleryTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- Style the status and navigation bars -->
+    <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@android:color/transparent</item>
+
+    <!-- Add custom stream theme you've created -->
+    <item name="streamUiTheme">@style/CustomStreamUiTheme</item>
+</style>
+```
+
+4. Finally, override the default gallery theme in your app's manifest:
+
+```xml
+<activity
+   android:name="io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity"
+   android:theme="@style/CustomAttachmentGalleryTheme"
+   tools:replace="android:theme" />
+```
+
+This results in the attachment actions menu looking like so:
+
+|Light|Dark|
+|---|---|
+|![attachment_gallery_customization_example_options_light](../../assets/attachment_gallery_customization_example_options_light.png)|![attachment_gallery_customization_example_options_dark](../../assets/attachment_gallery_customization_example_options_dark.png)|
+
+Styling the gallery further follows the same trend as the previous example. Simply create a style which targets the feature you want to customize and add it to your custom Stream theme.
+
+Now you have the ability to make the gallery feel like an organic part of your app.

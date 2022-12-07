@@ -33,16 +33,15 @@ It also contains all the basic model objects you'll interact with when using Str
 ### State
 
 The state library is a plugin that gives you the possibility to reactively observe data through `StateFlow`s.
-It adds a sync feature which handles re-sending messages, reactions, and syncing other actions the user had performed while offline.
+It also adds a sync feature which handles re-sending messages, reactions, and syncing other actions the user had performed while offline.
 
 :::note
-The state plugin doesn't add a persistence layer.<br/> Consider using it together with `Offline Plugin`.
+The state plugin doesn't add a persistence layer.<br/> Consider using it together with `OfflinePlugin`.
 :::
 
-<!-- TODO update link once State documentation is ready -->
 This plugin exposes easy-to-use `StateFlow` objects containing the loading state, the list of channels available to the current user and more.
 It also contains information on any individual channel such as the messages inside it, users currently typing, all channel members and more.
-See [State](../02-client/06-guides/04-offline-support.mdx) for more details.
+See [State](../02-client/06-guides/03-state-plugin.mdx) for more details.
 
 If you want to build a custom UI for Stream Chat, you can build it on top of the state library.
 
@@ -54,6 +53,8 @@ The offline support is a plugin that implements such capabilities and provides t
 * Decreases initial load times, especially when the network connection is poor.
 * Enables the user to see cached channels and messages while offline.
 * Enables the user to perform actions such as sending messages and reactions while offline.
+
+See [Offline Support](../02-client/06-guides/04-offline-support.mdx) for more details.
 
 ### UI Components
 

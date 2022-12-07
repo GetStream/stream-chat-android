@@ -8,7 +8,8 @@ By default, the Compose SDK provides the following reaction options and correspo
 - `wow`
 - `sad`
 
-![The Default Selected Message Menu](../../assets/compose_custom_reactions_factory_selected_message_menu_before.png)
+|![The Default Selected Message Menu](../../assets/compose_custom_reactions_factory_selected_message_menu_before.png)| ![The Default Selected Message Menu Dark](../../assets/compose_custom_reactions_factory_selected_message_menu_before_dark.png) |
+|---|---|
 
 If you want to override the supported set of reactions, you need to create your custom implementation of `ReactionIconFactory` and provide it via `ChatTheme`.
 
@@ -78,7 +79,7 @@ class CustomReactionIconFactory : ReactionIconFactory {
                 painter = painterResource(R.drawable.ic_mood_bad),
                 selectedPainter = painterResource(R.drawable.ic_mood_bad_selected)
             )
-            else -> throw IllegalArgumentException()
+            else -> throw IllegalArgumentException("Unsupported reaction type")
         }
     }
 
@@ -114,7 +115,10 @@ class MessagesActivity : AppCompatActivity() {
             // Pass your factory to ChatTheme here
             ChatTheme(reactionIconFactory = CustomReactionIconFactory()) {
                 MessagesScreen(
-                    channelId = channelId,
+                    viewModelFactory = MessagesViewModelFactory(
+                        context = this,
+                        channelId = channelId,
+                    ),
                     onBackPressed = { finish() },
                     onHeaderActionClick = {}
                 )

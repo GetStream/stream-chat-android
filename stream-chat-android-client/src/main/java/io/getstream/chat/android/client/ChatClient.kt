@@ -161,7 +161,6 @@ import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.CompositeStreamLogger
-import io.getstream.log.SilentStreamLogger
 import io.getstream.log.StreamLog
 import io.getstream.log.android.AndroidStreamLogger
 import kotlinx.coroutines.CoroutineScope
@@ -2933,8 +2932,7 @@ internal constructor(
         }
 
         private fun setupStreamLog() {
-            val noLoggerSet = StreamLog.inspect { it is SilentStreamLogger }
-            if (noLoggerSet && logLevel != ChatLogLevel.NOTHING) {
+            if (!StreamLog.defaultLoggerOverridden && logLevel != ChatLogLevel.NOTHING) {
                 StreamLog.setValidator(StreamLogLevelValidator(logLevel))
                 StreamLog.setLogger(
                     CompositeStreamLogger(
