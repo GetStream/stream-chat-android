@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -125,7 +126,6 @@ import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.android.ui.navigation.destinations.AttachmentDestination
 import io.getstream.chat.android.ui.navigation.destinations.WebLinkDestination
 import io.getstream.chat.android.ui.utils.ListenerDelegate
-import io.getstream.chat.android.ui.utils.StartStopBuffer
 import io.getstream.chat.android.ui.utils.extensions.activity
 import io.getstream.chat.android.ui.utils.extensions.copyToClipboard
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper

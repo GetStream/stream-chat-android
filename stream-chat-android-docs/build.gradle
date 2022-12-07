@@ -89,9 +89,6 @@ dependencies {
     implementation project(":stream-chat-android-state")
     implementation project(":stream-chat-android-ui-components")
     implementation project(":stream-chat-android-compose")
-    implementation project(":stream-chat-android-pushprovider-firebase")
-    implementation project(":stream-chat-android-pushprovider-huawei")
-    implementation project(":stream-chat-android-pushprovider-xiaomi")
     implementation project(":stream-chat-android-markdown-transformer")
 
     // Compose
@@ -104,6 +101,9 @@ dependencies {
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeAccompanistPermissions
     implementation Dependencies.composeAccompanistPager
+    implementation Dependencies.streamPushFirebase
+    implementation Dependencies.streamPushHuawei
+    implementation Dependencies.streamPushXiaomi
 
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidxFragmentKtx
@@ -112,6 +112,6 @@ dependencies {
     implementation Dependencies.shimmer
     implementation Dependencies.firebaseMessaging
     implementation Dependencies.huaweiPush
-    compileOnly files('../libraries/external/MiPush_SDK_Client_5_0_6-G_3rd.aar')
+    compileOnly files('../libraries/external/MiPush_SDK_Client_5_1_1-G_3rd.aar')
     implementation Dependencies.coil
 }

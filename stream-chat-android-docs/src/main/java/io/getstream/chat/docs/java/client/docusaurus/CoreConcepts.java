@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.java.client.docusaurus;
 
 import io.getstream.chat.android.client.channel.ChannelClient;
+import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.models.Channel;
 import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.client.utils.Result;
@@ -27,13 +28,27 @@ public class CoreConcepts {
     }
 
     public void errorHandling(Result<Channel> result) {
+        // Check if the call was successful
         Boolean isSuccess = result.isSuccess();
+        // Check if the call had failed
         Boolean isFailure = result.isFailure();
 
         if (result.isSuccess()) {
             // Handle success
+            Channel channel = result.getOrNull();
         } else {
             // Handle error
+            ChatError error = result.chatErrorOrNull();
         }
+    }
+
+    public void errorHandlingReactively(Result<Channel> result) {
+        result.onSuccess(channel -> {
+            // Handle success
+            return null;
+        }).onError(chatError -> {
+            // Handle error
+            return null;
+        });
     }
 }

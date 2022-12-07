@@ -30,7 +30,7 @@ class Attachments {
                         // Handle success
                     }
                     is Result.Failure -> {
-                        // Handler error
+                        // Handle error
                     }
                 }
             }

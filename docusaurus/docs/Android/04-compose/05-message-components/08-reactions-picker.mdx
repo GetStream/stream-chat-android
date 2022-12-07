@@ -34,11 +34,9 @@ Adding the `ReactionsPicker` component is very simple, all you need to do is mak
 
 The code above will render the following UI:
 
-![Default ReactionsPicker Component](../../assets/compose_default_reactions_picker_component.png)
-
-:::note
-`MessagesScreen` will give you the ability to display `ReactionsPicker` only if you have defined more than 5 reactions inside of [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
-:::
+| Light | Dark |
+|---|---|
+| ![Default ReactionsPicker Component](../../assets/compose_default_reactions_picker_component.png) | ![Default ReactionsPicker Component dark](../../assets/compose_default_reactions_picker_component_dark.png) |
 
 The menu overlay has a darker background and tapping it will dismiss the component, as will pressing the system back button.
 
@@ -47,7 +45,6 @@ The menu overlay has a darker background and tapping it will dismiss the compone
 `ReactionsPicker` exposes the following actions:
 
 ```kotlin
-@ExperimentalFoundationApi
 @Composable
 public fun ReactionsPicker(
     ..., // State,
@@ -83,18 +80,17 @@ Next, let's see how to customize `ReactionsPicker`.
 `ReactionsPicker` allows you to customize the reactions you are showing:
 
 ```kotlin
-@ExperimentalFoundationApi
 @Composable
 public fun ReactionsPicker(
     ..., // State,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     ... // Actions and content
 )
 ```
 
-* `reactionTypes`: Allows you customize which reactions are shown. By default it uses `reactionTypes` inside of [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
+* `reactionTypes`: Allows you to customize which reactions are shown. By default it uses `reactionIconFactory` inside of [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
 
-You can customize these either by overriding `ChatTheme.reactionTypes` or passing in your own `Map` of reactions.
+The best way to customize this is by overriding `ChatTheme.reactionIconFactory` with your own implementation of `ReactionIconFactory` so that all of your components wrapped inside of `ChatTheme` draw from the same source.
 
 By default `ReactionsPicker` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
@@ -119,10 +115,11 @@ ReactionsPicker(
 
 The code above will result in the following UI:
 
-![Custom ReactionsPicker Component](../../assets/compose_custom_reactions_picker_component.png)
+| Light | Dark |
+|---|---|
+| ![Custom ReactionsPicker Component](../../assets/compose_custom_reactions_picker_component.png) | ![Custom ReactionsPicker Component dark](../../assets/compose_custom_reactions_picker_component_dark.png) |
 
 ```kotlin
-@ExperimentalFoundationApi
 @Composable
 public fun ReactionsPicker(
     ..., // State and actions
@@ -140,7 +137,7 @@ public fun ReactionsPicker(
 
 Apart from customization through modifiers, the component provides these slots:
 
-* `headerContent`: Allows you to customize what content you show on the top part of `ReactionsPicker`. Empty by default,
+* `headerContent`: Allows you to customize what content you show on the top part of `ReactionsPicker`. Empty by default.
 * `centerContent`: Allows you to customize what content you show on the bottom part of `ReactionsPicker`. Shows reactions by default.
 
 As an example, let's override the header content. First create a custom text label:
@@ -151,7 +148,8 @@ fun TextLabel() {
     Text(
         modifier = Modifier.padding(start = 20.dp, top = 12.dp),
         text = "Available reactions",
-        style = ChatTheme.typography.title3Bold
+        style = ChatTheme.typography.title3Bold,
+        color = ChatTheme.colors.textHighEmphasis
     )
 }
 ```
@@ -167,6 +165,8 @@ ReactionsPicker(
 
 Doing so gives you the following UI:
 
-![ReactionsPicker Component with custom content](../../assets/compose_custom_reactions_picker_component_with_custom_content.png)
+| Light | Dark |
+|---|---|
+| ![ReactionsPicker Component with custom content](../../assets/compose_custom_reactions_picker_component_with_custom_content.png) | ![ReactionsPicker Component with custom content dark](../../assets/compose_custom_reactions_picker_component_with_custom_content_dark.png) |
 
 

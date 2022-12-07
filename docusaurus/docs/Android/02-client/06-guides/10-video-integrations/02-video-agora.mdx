@@ -1,4 +1,7 @@
-# Agora: Video Integration Guide for Android
+# Agora: Guide for Android
+
+<!-- Code is available here: https://github.com/GetStream/android-video-integration-agora -->
+
 
 This page shows you how to integrate [Agora](https://www.agora.io/en/) into Stream Chat SDK for implementing video call features.
 
@@ -78,7 +81,8 @@ Next, add the dependencies below to your app-level **build.gradle** file:
 implementation "io.agora.rtc:full-sdk:4.0.0.4"
 
 // Stream chat SDK
-implementation "io.getstream:stream-chat-android-ui-components:5.11.1"
+implementation "io.getstream:stream-chat-android-ui-components:6.0.0"
+implementation "io.getstream:stream-chat-android-offline:6.0.0"
 ```
 
 Add permissions for network and device access. In `/app/Manifests/AndroidManifest.xml`, add the following permissions after `</application>` tag:
@@ -146,7 +150,7 @@ As you can see from the sample above, you need to create `RtcEngineConfig` with 
 
 Next, you can create a new video call with an unique call id and get a video call token with Stream chat SDK like the below:
 
-```kotlin {4, 14}
+```kotlin
 private suspend fun createVideoCall(): VideoCallInfo = withContext(Dispatchers.IO) {
     val uuid = UUID.randomUUID().toString()
     val (channelType, channelId) = cid.cidToTypeAndId()
@@ -156,12 +160,17 @@ private suspend fun createVideoCall(): VideoCallInfo = withContext(Dispatchers.I
         callType = CallType.VIDEO.name.lowercase(),
         callId = uuid
     ).await()
-    result.data()
+    when (result) {
+        is Result.Success -> result.value
+        is Result.Failure -> throw IllegalStateException("Couldn't create a call.")
+    }
 }
 
 private suspend fun getVideoCallToken(callId: String): String = withContext(Dispatchers.IO) {
-    val result = chatClient.getVideoCallToken(callId).await()
-    result.data().token
+    when (val result = chatClient.getVideoCallToken(callId).await()) {
+        is Result.Success -> result.value.token
+        is Result.Failure -> throw IllegalStateException("Couldn't get a token.")
+    }
 }
 ```
 
@@ -263,12 +272,17 @@ class VideoCallViewModel constructor(
             callType = CallType.VIDEO.name.lowercase(),
             callId = uuid
         ).await()
-        result.data()
+        when (result) {
+            is Result.Success -> result.value
+            is Result.Failure -> throw IllegalStateException("Couldn't create a call.")
+        }
     }
 
     private suspend fun getVideoCallToken(callId: String): String = withContext(Dispatchers.IO) {
-        val result = chatClient.getVideoCallToken(callId).await()
-        result.data().token
+        when (val result = chatClient.getVideoCallToken(callId).await()) {
+            is Result.Success -> result.value.token
+            is Result.Failure -> throw IllegalStateException("Couldn't get a token.")
+        }
     }
 
     fun setupRemoteVideo(onSetupRemoteVideo: (Int) -> Unit) {
@@ -731,27 +745,31 @@ class ChannelViewModel constructor(
 
     private val channel = chatClient.channel(cid)
 
-    fun createCallAttachment(callType: CallType, callId: String) {
+    fun createCallAttachment(callType: CallType, agoraChannel: String) {
         viewModelScope.launch {
-            val channelResult = channel.watch().await()
-            if (channelResult.isSuccess) {
-                val callStatus = channelResult.data().extraData[CHANNEL_CALL_STATUS].toString()
-                if (CallStatus.getCallStatus(callStatus) != CallStatus.ON_CALL) {
-                    val attachment = Attachment(
-                        title = callType.attachmentForCallOn,
-                        text = Instant.now().toEpochMilli().toString(),
-                        extraData = mutableMapOf("callId" to callId)
-                    )
-                    val message = Message(
-                        cid = cid,
-                        attachments = mutableListOf(attachment),
-                    )
-                    channel.sendMessage(message).await()
-                    channel.update(
-                        extraData = mapOf(
-                            CHANNEL_CALL_STATUS to CallStatus.ON_CALL.status
+            when (val channelResult = channel.watch().await()) {
+                is Result.Success -> {
+                    val callStatus = channelResult.value.extraData[CHANNEL_CALL_STATUS].toString()
+                    if (CallStatus.getCallStatus(callStatus) != CallStatus.ON_CALL) {
+                        val attachment = Attachment(
+                            title = callType.attachmentForCallOn,
+                            text = Instant.now().toEpochMilli().toString(),
+                            extraData = mutableMapOf("channel" to agoraChannel)
                         )
-                    ).await()
+                        val message = Message(
+                            cid = cid,
+                            attachments = mutableListOf(attachment),
+                        )
+                        channel.sendMessage(message).await()
+                        channel.update(
+                            extraData = mapOf(
+                                CHANNEL_CALL_STATUS to CallStatus.ON_CALL.status
+                            )
+                        ).await()
+                    }
+                }
+                is Result.Failure -> {
+                    // Handle error
                 }
             }
         }
@@ -759,24 +777,28 @@ class ChannelViewModel constructor(
 
     fun leaveOnCall(callType: CallType) {
         viewModelScope.launch {
-            val channelResult = channel.watch().await()
-            if (channelResult.isSuccess) {
-                val callStatus = channelResult.data().extraData[CHANNEL_CALL_STATUS].toString()
-                if (CallStatus.getCallStatus(callStatus) == CallStatus.ON_CALL) {
-                    val message = channelResult.data().messages.reversed().firstOrNull {
-                        it.attachments.any { attachment -> attachment.isCallOnAttachment() }
-                    } ?: return@launch
-                    val attachment = Attachment(
-                        title = callType.attachmentForCallOff,
-                        text = Instant.now().toEpochMilli().toString()
-                    )
-                    message.attachments = mutableListOf(attachment)
-                    channel.updateMessage(message).await()
-                    channel.update(
-                        extraData = mapOf(
-                            CHANNEL_CALL_STATUS to CallStatus.OFF_CALL.status
+            when (val channelResult = channel.watch().await()) {
+                is Result.Success -> {
+                    val callStatus = channelResult.value.extraData[CHANNEL_CALL_STATUS].toString()
+                    if (CallStatus.getCallStatus(callStatus) == CallStatus.ON_CALL) {
+                        val message = channelResult.value.messages.reversed().firstOrNull {
+                            it.attachments.any { attachment -> attachment.isCallOnAttachment() }
+                        } ?: return@launch
+                        val attachment = Attachment(
+                            title = callType.attachmentForCallOff,
+                            text = Instant.now().toEpochMilli().toString()
                         )
-                    ).await()
+                        message.attachments = mutableListOf(attachment)
+                        channel.updateMessage(message).await()
+                        channel.update(
+                            extraData = mapOf(
+                                CHANNEL_CALL_STATUS to CallStatus.OFF_CALL.status
+                            )
+                        ).await()
+                    }
+                }
+                is Result.Failure -> {
+                    // Handle error
                 }
             }
         }

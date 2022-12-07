@@ -85,8 +85,8 @@ fun MessageList(
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
-    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
-        if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
+    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {
+        if (it?.resultType == ImagePreviewResultType.SHOW_IN_CHAT) {
             viewModel.focusMessage(it.messageId)
         }
     },
@@ -101,7 +101,7 @@ fun MessageList(
 * `onLastVisibleMessageChanged`: Handler used when the user scrolls and the last visible item changes.
 * `onScrollToBottom`: Handler used when the user reaches the newest message. Used to remove the "New message" or "Scroll to bottom" actions from the UI.
 * `onGiphyActionClick`: Handler used when the user clicks on one of the actions in a Giphy message. Giphy images with actions are displayed only directly after using the Giphy slash command.
-* `onMediaGalleryPreviewResult`: Handler used when the user receives a result from the Media Gallery Preview screen, after opening an image or a video attachment.
+* `onImagePreviewResult`: Handler used when the user receives a result from the Image Preview screen, after opening an image attachment.
 
 You can customize the behavior here by providing your own actions, like so:
 
@@ -116,8 +116,8 @@ MessageList(
     onLastVisibleMessageChanged = { message -> },
     onScrollToBottom = { },
     onGiphyActionClick = { giphyAction -> },
-    onMediaGalleryPreviewResult = { mediaGalleryPreviewResult -> },
-     // Content
+    onImagePreviewResult = { imagePreviewResult -> },
+    // Content
 )
 ```
 
@@ -176,12 +176,11 @@ fun MessageList(
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItem = messageListItem,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onImagePreviewResult = onImagePreviewResult,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onQuotedMessageClick = onQuotedMessageClick,
+            onGiphyActionClick = onGiphyActionClick
         )
     },
 )

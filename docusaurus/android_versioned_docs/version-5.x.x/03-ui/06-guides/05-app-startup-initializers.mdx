@@ -22,6 +22,10 @@ Specifically, you'll have to do the following:
         android:exported="false"
         tools:node="merge">
         <meta-data
+            android:name="com.getstream.sdk.chat.startup.ThreeTenInitializer"
+            tools:node="remove"
+        />
+        <meta-data
             android:name="io.getstream.chat.android.ui.common.ChatUIInitializer"
             tools:node="remove"
         />
@@ -34,18 +38,22 @@ Specifically, you'll have to do the following:
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-AppInitializer.getInstance(appContext).initializeComponent(ChatUIInitializer::class.java)
+AppInitializer.getInstance(appContext).run {
+    initializeComponent(ThreeTenInitializer::class.java)
+    initializeComponent(ChatUIInitializer::class.java)
+}
 ```
 </TabItem>
 
 <TabItem value="java" label="Java">
 
 ```java
+AppInitializer.getInstance(appContext).initializeComponent(ThreeTenInitializer.class);
 AppInitializer.getInstance(appContext).initializeComponent(ChatUIInitializer.class);
 ```
 </TabItem>
 </Tabs>
 
-:::note
-You need to have a dependency on the [App Startup library](https://developer.android.com/jetpack/androidx/releases/startup) to access `AppInitializer`.
-:::
+   :::note
+   You need to have a dependency on the [App Startup library](https://developer.android.com/jetpack/androidx/releases/startup) to access `AppInitializer`.
+   :::

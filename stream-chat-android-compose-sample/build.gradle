@@ -88,11 +88,10 @@ dependencies {
     implementation project(':stream-chat-android-compose')
     implementation project(":stream-chat-android-offline")
 
-    implementation project(":stream-chat-android-pushprovider-firebase")
-
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.materialComponents
+    implementation Dependencies.streamPushFirebase
 
     // Compose
     implementation Dependencies.composeCompiler
