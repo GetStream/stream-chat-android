@@ -13,7 +13,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#usage)
@@ -61,7 +60,7 @@ private object MessagesScreenHandlingActionsSnippet {
                             channelId = channelId
                         ),
                         onBackPressed = { finish() }, // Navigation handler
-                        onHeaderActionClick = { channel ->
+                        onHeaderTitleClick = { channel ->
                             // Show channel info
                         },
                     )

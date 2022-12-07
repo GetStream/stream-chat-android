@@ -49,13 +49,13 @@ The `MessagesScreen` component exposes two actions, as per the signature:
 fun MessagesScreen(
     ..., // State
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: (channel: Channel) -> Unit = {},
+    onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
 )
 ```
 
 * `onBackPressed`: Called when the user taps on the header back button.
-* `onHeaderActionClick`: Called when the user taps on the header title. Useful for showing the channel information.
+* `onHeaderTitleClick`: Called when the user taps on the header title. Useful for showing the channel information.
 * `onChannelAvatarClick`: Called when the user taps on the channel avatar. Can also be used to show more channel information. 
 
 Here's an example of setting up custom behavior:
@@ -64,7 +64,7 @@ Here's an example of setting up custom behavior:
 MessagesScreen(
     ..., // State
     onBackPressed = { finish() }, // Navigation handler
-    onHeaderActionClick = { channel ->
+    onHeaderTitleClick = { channel ->
         // Show channel info
     },
     onChannelAvatarClick = {}

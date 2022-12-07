@@ -96,7 +96,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
  * @param showHeader If we're showing the header or not.
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
- * @param onHeaderActionClick Handler for when the user taps on the header action.
+ * @param onHeaderTitleClick Handler for when the user taps on the header title section.
  * @param onChannelAvatarClick Handler called when the user taps on the channel avatar.
  */
 @Suppress("LongMethod")
@@ -105,7 +105,7 @@ public fun MessagesScreen(
     viewModelFactory: MessagesViewModelFactory,
     showHeader: Boolean = true,
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: (channel: Channel) -> Unit = {},
+    onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
@@ -149,7 +149,7 @@ public fun MessagesScreen(
                         connectionState = connectionState,
                         messageMode = messageMode,
                         onBackPressed = backAction,
-                        onHeaderActionClick = onHeaderActionClick,
+                        onHeaderTitleClick = onHeaderTitleClick,
                         onChannelAvatarClick = onChannelAvatarClick,
                     )
                 }
