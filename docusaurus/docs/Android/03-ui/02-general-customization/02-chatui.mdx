@@ -38,43 +38,62 @@ The full list of `ChatUI` properties you can override include:
 
 ### Custom Reactions
 
-As shown below, by default the SDK provides 5 built-in reactions.
+By default, the SDK provides 5 built-in reactions:
 
-![Default reactions](../../assets/chatui_default_reactions.png)
+| Light Theme | Dark Theme |
+|---|---|
+| ![Default reactions light theme](../../assets/chatui_default_reactions.png) | ![Default reactions dark theme](../../assets/chatui_default_reactions_dark.png) |
 
-You can override the default set of reactions. In order to define a custom set of reactions for your app, you need to pass the the following data to the `ChatUI.supportedReactions` property:
+You can change the default reactions by overriding `ChatUI.supportedReactions` with your own set of reactions:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-val loveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_reaction_love)!!
-val loveDrawableSelected = ContextCompat.getDrawable(this, R.drawable.ic_reaction_love)!!.apply { setTint(Color.RED) }
+// Create a drawable for the non-selected reaction option
+val loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
+// Create a drawable for the selected reaction option and set a tint to it
+val loveDrawableSelected =
+    ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!.apply { setTint(Color.RED) }
+
+// Create a map of reactions
 val supportedReactionsData = mapOf(
     "love" to SupportedReactions.ReactionDrawable(loveDrawable, loveDrawableSelected)
 )
-ChatUI.supportedReactions = SupportedReactions(this, supportedReactionsData)
+
+// Replace the default reactions with your custom reactions
+ChatUI.supportedReactions = SupportedReactions(context, supportedReactionsData)
 ```
 </TabItem>
 
 <TabItem value="java" label="Java">
 
 ```java
+// Create a drawable for the non-selected reaction option
 Drawable loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love);
+// Create a drawable for the selected reaction option and set a tint to it
 Drawable loveDrawableSelected = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love);
 loveDrawableSelected.setTint(Color.RED);
+
+// Create a map of reactions
 Map<String, SupportedReactions.ReactionDrawable> supportedReactionsData = new HashMap<>();
 supportedReactionsData.put("love", new SupportedReactions.ReactionDrawable(loveDrawable, loveDrawableSelected));
+
+// Replace the default reactions with your custom reactions
 ChatUI.setSupportedReactions(new SupportedReactions(context, supportedReactionsData));
 ```
 </TabItem>
 </Tabs>
 
-As a result, there will only be a _love_ reaction available in the chat, and when selected, the reaction icon will have a red tint.
+As a result, only the _love_ reaction is available in the chat, and when selected, it will have a red tint.
 
-| Normal state - available reactions | Active state - reaction selected |
+| Normal state - available reactions (Light Mode) | Selected state - reaction selected (Light Mode) |
 | --- | --- |
-|![Light_mode](../../assets/chat_ui_custom_reaction.png)|![Dark_mode](../../assets/chat_ui_custom_reaction_active.png)|
+|![Normal state Available Reactions Light Mode](../../assets/chat_ui_custom_reaction.png)|![Selected state Available Reactions Light Mode](../../assets/chat_ui_custom_reaction_active.png)|
+
+| Normal state - available reactions (Dark Mode) | Selected state - reaction selected (Dark Mode) |
+| --- | --- |
+|![Normal state Available Reactions Dark Mode](../../assets/chat_ui_custom_reaction_dark.png)|![Normal state Available Reactions Dark Mode](../../assets/chat_ui_custom_reaction_active_dark.png)|
 
 ### Custom MIME Type Icons
 

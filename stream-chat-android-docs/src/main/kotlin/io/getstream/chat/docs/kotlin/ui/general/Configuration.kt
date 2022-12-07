@@ -38,12 +38,18 @@ private class ChatUiSnippets {
      * [Custom Reactions](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#custom-reactions)
      */
     fun customReactions() {
+        // Create a drawable for the non-selected reaction option
         val loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
+        // Create a drawable for the selected reaction option and set a tint to it
         val loveDrawableSelected =
             ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!.apply { setTint(Color.RED) }
+
+        // Create a map of reactions
         val supportedReactionsData = mapOf(
             "love" to SupportedReactions.ReactionDrawable(loveDrawable, loveDrawableSelected)
         )
+
+        // Replace the default reactions with your custom reactions
         ChatUI.supportedReactions = SupportedReactions(context, supportedReactionsData)
     }
 

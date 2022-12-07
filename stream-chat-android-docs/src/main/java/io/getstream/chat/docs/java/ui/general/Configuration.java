@@ -35,11 +35,17 @@ public class Configuration {
     Context context;
 
     public void customReactions() {
+        // Create a drawable for the non-selected reaction option
         Drawable loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love);
+        // Create a drawable for the selected reaction option and set a tint to it
         Drawable loveDrawableSelected = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love);
         loveDrawableSelected.setTint(Color.RED);
+
+        // Create a map of reactions
         Map<String, SupportedReactions.ReactionDrawable> supportedReactionsData = new HashMap<>();
         supportedReactionsData.put("love", new SupportedReactions.ReactionDrawable(loveDrawable, loveDrawableSelected));
+
+        // Replace the default reactions with your custom reactions
         ChatUI.setSupportedReactions(new SupportedReactions(context, supportedReactionsData));
     }
 
