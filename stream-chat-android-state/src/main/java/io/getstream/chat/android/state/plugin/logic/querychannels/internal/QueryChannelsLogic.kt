@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filte
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -34,6 +35,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.log.StreamLog
 import kotlinx.coroutines.flow.StateFlow
+import java.util.Date
 
 private const val MESSAGE_LIMIT = 1
 private const val MEMBER_LIMIT = 30
@@ -137,6 +139,11 @@ internal class QueryChannelsLogic(
 
         if (result is Result.Success) {
             logger.d { "Number of returned channels: ${result.value.size}" }
+            result.value.forEach { channel ->
+                channel.messages.lastOrNull()?.createdAt?.let { date ->
+                    updateLastMessageSeenOfReads(channel.read, date)
+                }
+            }
             updateOnlineChannels(request, result.value)
         } else {
             queryChannelsStateLogic.initializeChannelsIfNeeded()
@@ -144,6 +151,12 @@ internal class QueryChannelsLogic(
 
         loadingPerPage(false, request.offset > 0)
         logger.d { "loadingPerPage: false. success: $result.isSuccess" }
+    }
+
+    private fun updateLastMessageSeenOfReads(reads: List<ChannelUserRead>, lastSeenDate: Date) {
+        reads.forEach { channelUserRead ->
+            channelUserRead.lastMessageSeenDate = lastSeenDate
+        }
     }
 
     /**

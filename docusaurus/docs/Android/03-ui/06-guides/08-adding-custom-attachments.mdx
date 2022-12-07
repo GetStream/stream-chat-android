@@ -1,13 +1,16 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Adding Custom Attachments
 
 ## Introduction
 
-By default Stream Chat supports several built-in attachment types like image, video, file and Giphy. You can also add your own types of attachments such as location, contact, audio, sticker, etc.
+By default, Stream Chat supports several built-in attachment types such as image, video, file and Giphy. You can also add your own types of attachments such as location, contact, audio, sticker, etc.
 
-In this guide, we'll demonstrate how to build a date sharing feature. Chat users will be able to pick a date from a calendar, preview their selection in the message input and see the sent attachment within a message in the message list.
+In this guide, we'll demonstrate how to build a date sharing feature. Chat users will be able to pick a date from the calendar, preview their selection in the message input and see the sent attachment within a message in the message list.
 
 This involves the following steps:
-1. Customizing the message composer so that it is capable of sending messages with `date` attachments.
+1. Customizing the message composer so that it is capable of sending messages containing `date` attachments.
 2. Adding support for `date` attachments in the message list.
 
 :::note
@@ -18,10 +21,13 @@ You can find the full code from this guide on [GitHub](https://github.com/GetStr
 
 ## Sending Date Attachments
 
-First of all, you'll need to customize the leading content of [MessageComposerView](../04-message-components/04-message-composer.mdx) to let the user pick a date using the date picker button. We'll take the [DefaultMessageComposerLeadingContent](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerLeadingContent.kt) as a reference and add a new date picker button:
+First of all, you'll need to customize the leading content of [MessageComposerView](../04-message-components/04-message-composer.mdx) to let the user pick a date using the date picker button. We'll take the [DefaultMessageComposerLeadingContent](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/composer/content/DefaultMessageComposerLeadingContent.kt) as a reference and add a new date picker button:
+
+Add an icon for the new button and name it `ic_calendar.xml`. Then create a layout called `custom_message_composer_leading_content.xml`:
 
 ```xml
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -39,6 +45,7 @@ First of all, you'll need to customize the leading content of [MessageComposerVi
             android:layout_height="32dp"
             android:padding="4dp"
             android:src="@drawable/ic_calendar"
+            app:tint="@color/stream_ui_grey"
             tools:ignore="ContentDescription" />
 
         <ImageView
@@ -61,6 +68,9 @@ First of all, you'll need to customize the leading content of [MessageComposerVi
 
 </merge>
 ```
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
@@ -105,7 +115,8 @@ class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent 
         val hasMentionSuggestions = state.mentionSuggestions.isNotEmpty()
         val isInEditMode = state.action is Edit
 
-        binding.attachmentsButton.isEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
+        binding.attachmentsButton.isEnabled =
+            !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
         binding.attachmentsButton.isVisible =
             style.attachmentsButtonVisible && canSendMessage && canUploadFile && !isInEditMode
 
@@ -115,9 +126,81 @@ class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent 
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class CustomMessageComposerLeadingContent extends FrameLayout implements MessageComposerContent {
+
+    private CustomMessageComposerLeadingContentBinding binding;
+    private MessageComposerViewStyle style;
+
+    public Function1<Unit, Unit> attachmentsButtonClickListener;
+    public Function1<Unit, Unit> commandsButtonClickListener;
+
+    // Click listener for the date picker button
+    public Function1<Unit, Unit> calendarButtonClickListener;
+
+    public CustomMessageComposerLeadingContent(@NonNull Context context) {
+        this(context, null);
+    }
+
+    public CustomMessageComposerLeadingContent(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public CustomMessageComposerLeadingContent(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        binding = CustomMessageComposerLeadingContentBinding.inflate(LayoutInflater.from(getContext()), this);
+        binding.attachmentsButton.setOnClickListener(v -> attachmentsButtonClickListener.invoke(Unit.INSTANCE));
+        binding.commandsButton.setOnClickListener(v -> commandsButtonClickListener.invoke(Unit.INSTANCE));
+
+        // Set click listener for the date picker button
+        binding.calendarButton.setOnClickListener(v -> calendarButtonClickListener.invoke(Unit.INSTANCE));
+    }
+
+    @Override
+    public void attachContext(@NonNull MessageComposerContext messageComposerContext) {
+        this.style = messageComposerContext.getStyle();
+    }
+
+    @Override
+    public void renderState(@NonNull MessageComposerState state) {
+        boolean canSendMessage = state.getOwnCapabilities().contains(ChannelCapabilities.SEND_MESSAGE);
+        boolean canUploadFile = state.getOwnCapabilities().contains(ChannelCapabilities.UPLOAD_FILE);
+        boolean hasTextInput = !state.getInputValue().isEmpty();
+        boolean hasAttachments = !state.getAttachments().isEmpty();
+        boolean hasCommandInput = state.getInputValue().startsWith("/");
+        boolean hasCommandSuggestions = !state.getCommandSuggestions().isEmpty();
+        boolean hasMentionSuggestions = !state.getMentionSuggestions().isEmpty();
+        boolean isInEditMode = state.getAction() instanceof Edit;
+
+        boolean attachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions;
+        binding.attachmentsButton.setEnabled(attachmentsButtonEnabled);
+
+        boolean attachmentsButtonVisible = style.getAttachmentsButtonVisible() && canSendMessage && canUploadFile && !isInEditMode;
+        binding.attachmentsButton.setVisibility(attachmentsButtonVisible ? VISIBLE : GONE);
+
+        boolean commandsButtonEnabled = !hasTextInput && !hasAttachments;
+        binding.commandsButton.setEnabled(commandsButtonEnabled);
+
+        boolean commandsButtonVisible = style.getCommandsButtonVisible() && canSendMessage && !isInEditMode;
+        binding.commandsButton.setVisibility(commandsButtonVisible ? VISIBLE : GONE);
+
+        binding.commandsButton.setSelected(hasCommandSuggestions);
+    }
+}
+
+```
+</TabItem>
+</Tabs>
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-// Set a custom leading content view
+// Set custom leading content view
 messageComposerView.setLeadingContent(
     CustomMessageComposerLeadingContent(context).also {
         it.attachmentsButtonClickListener = { messageComposerView.attachmentsButtonClickListener() }
@@ -129,31 +212,63 @@ messageComposerView.setLeadingContent(
                 .build()
 
             // Add an attachment to the message input when the user selects a date
-            datePickerDialog.addOnPositiveButtonClickListener {
-                val date = DateFormat
-                    .getDateInstance(DateFormat.LONG)
-                    .format(Date(it))
+            datePickerDialog.addOnPositiveButtonClickListener { date ->
+                val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                 val attachment = Attachment(
                     type = "date",
-                    extraData = mutableMapOf("payload" to date)
+                    extraData = mutableMapOf("payload" to payload)
                 )
                 messageComposerViewModel.addSelectedAttachments(listOf(attachment))
             }
 
-            // Show the date picker
+            // Show the date picker dialog on a click on the calendar button
             datePickerDialog.show(childFragmentManager, null)
         }
     }
 )
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+CustomMessageComposerLeadingContent leadingContent = new CustomMessageComposerLeadingContent(context);
+leadingContent.attachmentsButtonClickListener = unit -> messageComposerView.getAttachmentsButtonClickListener().invoke();
+leadingContent.commandsButtonClickListener = unit -> messageComposerView.getCommandsButtonClickListener().invoke();
+leadingContent.calendarButtonClickListener = unit -> {
+    // Create an instance of a date picker dialog
+    MaterialDatePicker<Long> datePickerDialog = MaterialDatePicker.Builder
+        .datePicker()
+        .build();
+    
+    // Add an attachment to the message input when the user selects a date
+    datePickerDialog.addOnPositiveButtonClickListener(date -> {
+        String payload = new SimpleDateFormat("MMMM dd, yyyy").format(new Date(date));
+        Attachment attachment = new Attachment();
+        attachment.setType("date");
+        Map<String, Object> extraData = new HashMap<>();
+        extraData.put("payload", payload);
+        attachment.setExtraData(extraData);
+        messageComposerViewModel.addSelectedAttachments(Collections.singletonList(attachment));
+    });
+    
+    // Show the date picker dialog on a click on the calendar button
+    datePickerDialog.show(getChildFragmentManager(), null);
+    return Unit.INSTANCE;
+};
+
+// Set custom leading content view
+messageComposerView.setLeadingContent(leadingContent);
+```
+</TabItem>
+</Tabs>
 
 This code will display the date picker dialog once the button is clicked:
 
-|||
-| --- | --- |
 | ![Sending Custom Attachments](../../assets/sending_custom_attachments_v2_1.png) | ![Sending Custom Attachments](../../assets/sending_custom_attachments_v2_2.png) |
+| --- | --- |
 
-After the date has been selected, we create an instance of `Attachment` with the corresponding payload and add it to the composer with the `MessageComposerViewModel::addSelectedAttachments` method. 
+After the date has been selected, we create an instance of `Attachment` with the corresponding payload and add it to the composer by calling the `MessageComposerViewModel::addSelectedAttachments` method. 
 
 Next, we need to provide support for displaying custom attachment previews in the `MessageComposerView` by implementing the `AttachmentPreviewFactory` interface:
 
@@ -208,6 +323,9 @@ Let's create a layout for the ViewHolder and name it `item_date_attachment_previ
 </androidx.cardview.widget.CardView>
 ```
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 class DateAttachmentPreviewFactory : AttachmentPreviewFactory {
 
@@ -218,6 +336,7 @@ class DateAttachmentPreviewFactory : AttachmentPreviewFactory {
     override fun onCreateViewHolder(
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
+        style: MessageComposerViewStyle?
     ): AttachmentPreviewViewHolder {
         return ItemDateAttachmentPreviewBinding
             .inflate(LayoutInflater.from(parentView.context), parentView, false)
@@ -245,24 +364,87 @@ class DateAttachmentPreviewFactory : AttachmentPreviewFactory {
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class DateAttachmentPreviewFactory implements AttachmentPreviewFactory {
+
+    @Override
+    public boolean canHandle(@NonNull Attachment attachment) {
+        return attachment.getType().equals("date");
+    }
+
+    @NonNull
+    @Override
+    public AttachmentPreviewViewHolder onCreateViewHolder(@NonNull ViewGroup parentView,
+                                                          @NonNull Function1<? super Attachment, Unit> attachmentRemovalListener,
+                                                          @Nullable MessageComposerViewStyle style) {
+        ItemDateAttachmentPreviewBinding binding = ItemDateAttachmentPreviewBinding
+                .inflate(LayoutInflater.from(parentView.getContext()), parentView, false);
+        return new DateAttachmentPreviewViewHolder(binding, attachmentRemovalListener);
+    }
+
+    class DateAttachmentPreviewViewHolder extends AttachmentPreviewViewHolder {
+
+        private ItemDateAttachmentPreviewBinding binding;
+        private Attachment attachment;
+
+        public DateAttachmentPreviewViewHolder(ItemDateAttachmentPreviewBinding binding, Function1<? super Attachment, Unit> attachmentRemovalListener) {
+            super(binding.getRoot());
+            this.binding = binding;
+
+            binding.deleteButton.setOnClickListener(v -> attachmentRemovalListener.invoke(attachment));
+        }
+
+        @Override
+        public void bind(@NonNull Attachment attachment) {
+            this.attachment = attachment;
+
+            binding.dateTextView.setText((String) attachment.getExtraData().get("payload"));
+        }
+    }
+}
+```
+</TabItem>
+</Tabs>
 
 Finally, provide the factory via `ChatUI`:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 ChatUI.attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
-    listOf(
-        // The new factory
-        DateAttachmentPreviewFactory(), 
+    attachmentPreviewFactories = listOf(
+        DateAttachmentPreviewFactory(),
         // The default factories
-        ImageAttachmentPreviewFactory(),
-        FileAttachmentPreviewFactory(),
+        MediaAttachmentPreviewFactory(),
+        FileAttachmentPreviewFactory()
     )
 )
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+List<AttachmentPreviewFactory> factories = new ArrayList<>();
+factories.add(new DateAttachmentPreviewFactory());
+// The default factories
+factories.add(new MediaAttachmentPreviewFactory());
+factories.add(new FileAttachmentPreviewFactory());
+
+ChatUI.setAttachmentPreviewFactoryManager(new AttachmentPreviewFactoryManager(factories));
+```
+</TabItem>
+</Tabs>
 
 Now we are ready to send a custom attachment of type `date` to the chat. The resulting UI will look like this:
 
-![Sending Custom Attachments](../../assets/sending_custom_attachments_v2_3.png)
+| ![Sending Custom Attachments](../../assets/sending_custom_attachments_v2_3.png) |
+| --- |
 
 Next, you'll need to build a custom attachment factory to render the item in the message list.
 
@@ -310,6 +492,7 @@ Add a new layout called `item_date_attachment.xml`:
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
         android:src="@drawable/ic_calendar"
+        app:tint="@color/stream_ui_grey"
         tools:ignore="ContentDescription" />
 
     <TextView
@@ -322,6 +505,9 @@ Add a new layout called `item_date_attachment.xml`:
 
 </androidx.cardview.widget.CardView>
 ```
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 class DateAttachmentFactory : AttachmentFactory {
@@ -375,24 +561,109 @@ class DateAttachmentFactory : AttachmentFactory {
     }
 }
 ```
+</TabItem>
 
-What's really exciting here is the ability to fetch custom attachment data using `attachment.extraData["payload"]`. You can format the data in any way you want here, which makes our attachments very powerful.
+<TabItem value="java" label="Java">
+
+```java
+class DateAttachmentFactory implements AttachmentFactory {
+
+    @Override
+    public boolean canHandle(@NonNull Message message) {
+        for (Attachment attachment : message.getAttachments()) {
+            if (attachment.getType().equals("date")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NonNull
+    @Override
+    public InnerAttachmentViewHolder createViewHolder(@NonNull Message message,
+                                                      @Nullable MessageListListenerContainer listeners,
+                                                      @NonNull ViewGroup parent) {
+        ItemDateAttachmentBinding binding = ItemDateAttachmentBinding
+                .inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new DateAttachmentViewHolder(binding, listeners);
+    }
+
+    class DateAttachmentViewHolder extends InnerAttachmentViewHolder {
+
+        private ItemDateAttachmentBinding binding;
+        private Message message;
+
+        public DateAttachmentViewHolder(ItemDateAttachmentBinding binding, MessageListListenerContainer listeners) {
+            super(binding.getRoot());
+            this.binding = binding;
+
+            binding.dateTextView.setOnClickListener(v -> listeners.getAttachmentClickListener().onAttachmentClick(
+                    message,
+                    message.getAttachments().get(0)
+            ));
+            binding.dateTextView.setOnLongClickListener(v -> {
+                listeners.getMessageLongClickListener().onMessageLongClick(message);
+                return true;
+            });
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull Message message) {
+            this.message = message;
+
+            Attachment dateAttachment = null;
+            for (Attachment attachment : message.getAttachments()) {
+                if (attachment.getType().equals("date")) {
+                    dateAttachment = attachment;
+                    break;
+                }
+            }
+
+            binding.dateTextView.setText((String) dateAttachment.getExtraData().get("payload"));
+        }
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+What's really exciting here is the ability to fetch custom attachment data using `attachment.extraData["payload"]`. You can format the data any way you want here, which makes our attachments very powerful.
 
 To complete the date sharing feature you just need to provide `DateAttachmentFactory` via `ChatUI`:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
-ChatUI.attachmentFactoryManager = AttachmentFactoryManager(listOf(DateAttachmentFactory()))
+ChatUI.attachmentFactoryManager = AttachmentFactoryManager(
+    attachmentFactories = listOf(
+        DateAttachmentFactory()
+    )
+)
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+List<DateAttachmentFactory> factories = Collections.singletonList(new DateAttachmentFactory());
+
+ChatUI.setAttachmentFactoryManager(new AttachmentFactoryManager(factories));
+```
+</TabItem>
+</Tabs>
 
 Date attachments should now be correctly rendered in the message input and in the message list like in the screenshot below:
 
-![Rendering Custom Attachment](../../assets/rendering_custom_attachments_v2.png)
+|![Rendering Custom Attachment](../../assets/rendering_custom_attachments_v2.png)|
+| --- |
 
 ## Quoted Messages
 
 Stream SDK supports quoting or replying to messages, even if they contain attachments. These quoted messages are shown inside the message bubble above the text you wrote when quoting, which is a common pattern in various chat services.
 
-![Quoted Attachments](../../assets/quoted_attachment.png)
+|![Quoted Attachments](../../assets/quoted_attachment.png)|
+|---|
 
 Since the quoted content is nested inside a regular message, it has less space available and requires a different layout. For this reason, the UI Components SDK provides separate attachment factories just for the quoted content. This allows you to provide a different UI for attachments that are displayed as a part of the quoted content.
 
@@ -450,6 +721,7 @@ First, create the view that you're going to render for the attachment and call i
                 android:layout_height="24dp"
                 android:layout_margin="4dp"
                 android:src="@drawable/ic_calendar"
+                app:tint="@color/stream_ui_grey"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -466,42 +738,67 @@ First, create the view that you're going to render for the attachment and call i
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-    
+
 </merge>
 ```
 
 And the view class `QuotedDateAttachmentView`:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
-class QuotedDateAttachmentView(context: Context): FrameLayout(context) {
+class QuotedDateAttachmentView(context: Context) : FrameLayout(context) {
 
     private val binding = ViewQuotedDateAttachmentBinding.inflate(LayoutInflater.from(context), this)
 
     fun showDate(attachment: Attachment) {
-        binding.dateTextView.text = parseDate(attachment)
-    }
-
-    private fun parseDate(attachment: Attachment): String {
-        val date = attachment.extraData["payload"].toString()
-        return StringBuilder().apply {
-            val dateTime = SimpleDateFormat("MMMMM dd, yyyy", Locale.getDefault()).parse(date) ?: return@apply
-            val year = Calendar.getInstance().apply {
-                timeInMillis = dateTime.time
-            }.get(Calendar.YEAR)
-            if (Calendar.getInstance().get(Calendar.YEAR) != year) {
-                append(year).append("\n")
-            }
-            append(date.replace(", $year", ""))
-        }.toString()
+        binding.dateTextView.text = attachment.extraData["payload"]
+            .toString()
+            .replace(",", "\n")
     }
 }
 ```
-As before, you fetch the custom data from `attachment.extraData["payload"]`. You format it so that you don't show the year if it's the current one, and you show the month in a new line.
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class QuotedDateAttachmentView extends FrameLayout {
+
+    private ViewQuotedDateAttachmentBinding binding;
+
+    public QuotedDateAttachmentView(@NonNull Context context) {
+        this(context, null);
+    }
+
+    public QuotedDateAttachmentView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public QuotedDateAttachmentView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        binding = ViewQuotedDateAttachmentBinding.inflate(LayoutInflater.from(getContext()), this);
+    }
+
+    public void showDate(Attachment attachment) {
+        String payload = (String) attachment.getExtraData().get("payload");
+        binding.dateTextView.setText(payload.replace(",", "\n"));
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+As before, you fetch the custom data from `attachment.extraData["payload"]`. You format it so that the year is placed on a separate line.
 
 Now that you've built the custom view for quoted content, for your custom attachments, the `QuotedAttachmentFactory` will look like this:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
-class QuotedDateAttachmentFactory: QuotedAttachmentFactory {
+class QuotedDateAttachmentFactory : QuotedAttachmentFactory {
     override fun canHandle(message: Message): Boolean {
         return message.attachments.any { it.type == "date" }
     }
@@ -513,16 +810,65 @@ class QuotedDateAttachmentFactory: QuotedAttachmentFactory {
     }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class QuotedDateAttachmentFactory implements QuotedAttachmentFactory {
+
+    @Override
+    public boolean canHandle(@NonNull Message message) {
+        for (Attachment attachment : message.getAttachments()) {
+            if (attachment.getType().equals("date")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NonNull
+    @Override
+    public View generateQuotedAttachmentView(@NonNull Message message, @NonNull ViewGroup parent) {
+        QuotedDateAttachmentView quotedDateAttachmentView = new QuotedDateAttachmentView(parent.getContext());
+        quotedDateAttachmentView.showDate(message.getAttachments().get(0));
+        return quotedDateAttachmentView;
+    }
+}
+```
+</TabItem>
+</Tabs>
 
 To complete the quoted attachment feature and show it inside the UI you need to provide the `QuotedDateAttachmentFactory` via `ChatUI` alongside the `DefaultQuotedAttachmentFactory` to show the rest of the attachments:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
-ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(listOf(
-    QuotedDateAttachmentFactory(),
-    DefaultQuotedAttachmentMessageFactory()
-))
+ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(
+    quotedAttachmentFactories = listOf(
+        QuotedDateAttachmentFactory(),
+        // The default factory
+        DefaultQuotedAttachmentMessageFactory()
+    )
+)
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+List<QuotedAttachmentFactory> factories = new ArrayList<>();
+factories.add(new QuotedDateAttachmentFactory());
+// The default factory
+factories.add(new DefaultQuotedAttachmentMessageFactory());
+
+ChatUI.setQuotedAttachmentFactoryManager(new QuotedAttachmentFactoryManager(factories));
+```
+</TabItem>
+</Tabs>
 
 Quoted messages with a date attachment should now be rendered inside the message list, like in the screenshot below:
 
-![Quoted Attachments](../../assets/quoted_attachment_final_v2.png)
+|![Quoted Attachments](../../assets/quoted_attachment_final_v2.png)|
+| --- |

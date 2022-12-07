@@ -1109,6 +1109,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewFactoryManager {
 	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
 	public fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/FallbackAttachmentPreviewFactory;)V
 	public synthetic fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/FallbackAttachmentPreviewFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getItemViewType (Lio/getstream/chat/android/models/Attachment;)I
@@ -2853,14 +2854,6 @@ public final class io/getstream/chat/android/ui/utils/Debouncer {
 }
 
 public final class io/getstream/chat/android/ui/utils/ImageUtilsKt {
-}
-
-public final class io/getstream/chat/android/ui/utils/StartStopBuffer {
-	public fun <init> ()V
-	public final fun active ()V
-	public final fun enqueueData (Ljava/lang/Object;)V
-	public final fun hold ()V
-	public final fun subscribe (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/ChannelKt {
