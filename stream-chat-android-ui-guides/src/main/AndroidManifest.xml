@@ -110,6 +110,17 @@
             android:windowSoftInputMode="adjustResize"
             />
 
+        <activity
+            android:name=".catalog.uicomponents.customcomposer.ChannelsActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".catalog.uicomponents.customcomposer.MessagesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
+
     </application>
 
 </manifest>
