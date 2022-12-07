@@ -28,6 +28,7 @@
         android:paddingVertical="12dp"
         >
 
+        <!-- The new date picker button -->
         <ImageView
             android:id="@+id/calendarButton"
             android:layout_width="32dp"

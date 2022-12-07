@@ -31,9 +31,11 @@
     <string name="compose_customizing_image_and_video_previews_title">Customizing Image and Video Previews</string>
     <string name="compose_customizing_image_and_video_previews_description">A guide that demonstrates customization of image and video attachments using the Compose SDK.</string>
 
+    <string name="compose_custom_reactions_guide_title">Providing Custom Reactions</string>
+    <string name="compose_custom_reactions_guide_description">A guide that demonstrates how to override the supported set of reactions using the Compose SDK.</string>
+
     <string name="uicomponents_custom_attachments_guide_title">Custom Attachments</string>
     <string name="uicomponents_custom_attachments_guide_description">A guide that demonstrates how to build a date sharing feature using the UI Components SDK.</string>
-    <string name="title_activity_channels">ChannelsActivity</string>
 
     <string name="uicomponents_custom_reactions_guide_title">Providing Custom Reactions</string>
     <string name="uicomponents_custom_reactions_guide_description">A guide that demonstrates how to override the supported set of reactions using the UI Components SDK.</string>
@@ -43,4 +45,7 @@
 
     <string name="uicomponents_messages_screen_guide_title">Building Message List Screen</string>
     <string name="uicomponents_messages_screen_guide_description">A guide that demonstrates how to build a message list screen using the UI Components SDK.</string>
+
+    <string name="uicomponents_custom_composer_guide_title">Custom Message Composer</string>
+    <string name="uicomponents_custom_composer_guide_description">A guide that demonstrates how to build a custom message composer using the UI Components SDK.</string>
 </resources>

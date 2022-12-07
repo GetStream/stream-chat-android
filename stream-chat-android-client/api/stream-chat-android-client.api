@@ -611,7 +611,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClientExtensi
 }
 
 public final class io/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic$DefaultImpls {
-	public static synthetic fun upsertMessages$default (Lio/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic;Ljava/util/List;ZILjava/lang/Object;)V
+	public static synthetic fun upsertMessage$default (Lio/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V
+	public static synthetic fun upsertMessages$default (Lio/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic;Ljava/util/List;ZZILjava/lang/Object;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/channel/state/ChannelState {

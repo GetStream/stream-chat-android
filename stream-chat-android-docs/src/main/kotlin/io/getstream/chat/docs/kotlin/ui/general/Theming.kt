@@ -13,10 +13,10 @@ class Theming {
     fun styleTransformations() {
         TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
             defaultViewStyle.copy(
-                messageBackgroundColorMine = Color.parseColor("#70AF74"),
-                messageBackgroundColorTheirs = Color.WHITE,
+                messageBackgroundColorMine = Color.parseColor("#0277BD"),
+                messageBackgroundColorTheirs = Color.parseColor("#2E7D32"),
                 textStyleMine = defaultViewStyle.textStyleMine.copy(color = Color.WHITE),
-                textStyleTheirs = defaultViewStyle.textStyleTheirs.copy(color = Color.BLACK),
+                textStyleTheirs = defaultViewStyle.textStyleTheirs.copy(color = Color.WHITE),
             )
         }
     }
