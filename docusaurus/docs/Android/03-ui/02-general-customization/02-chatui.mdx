@@ -5,27 +5,32 @@ import TabItem from '@theme/TabItem';
 
 The SDK provides an API for general configuration of the UI Component library's behavior and appearance, which is exposed via the `ChatUI` object.
 
-`ChatUI` allows you to override default implementations of commonly used parts of SDK like:
+`ChatUI` allows you to override the default implementations of commonly used parts of the SDK such as:
 
 * Available message reactions
+* The UI used for rendering attachments
 * MIME type icons for attachments
 * Default font used across the UI components
-* Avatar bitmap loading logic
 * Attachments URLs
+* Text transformations
 
 The full list of `ChatUI` properties you can override include:
 
+* `style`: Allows overriding the global, default style of UI components, such as `defaultTextStyle`.
+* `navigator`: Allows intercepting and modifying default navigation between SDK components (e.g. navigating from `MessageListView` to `AttachmentGalleryActivity`).
+* `imageHeadersProvider`: Allows adding extra headers to image loading requests.
+* `fonts`: The default font for `TextView`s displayed by UI Components.
+* `messageTextTransformer`: Used to transform the way text is rendered on screen, e.g. create clickable link text or implement markdown support. You can override it with `MarkdownTextTransformer` if you want to use Stream's ready-made markdown support.
 * `supportedReactions`: The set of supported message reactions.
 * `mimeTypeIconProvider`: The icons used for different mime types.
-* `fonts`: The default font for TextViews displayed by UI Components.
-* `imageHeadersProvider`: Allows adding extra headers to image loading requests.
-* `markdown`: Interface to customize the markdown parsing behaviour, useful if you want to provide your custom markdown parsing logic or use more markdown modules. This property is deprecated and [ChatUI.messageTextTransformer](#transforming-message-text) should be used instead.
-* `style`: Allows overriding the global, default style of UI components, like the TextStyle.
-* `navigator`: Allows intercepting and modifying default navigation between SDKs components (e.g. redirection from `MessageListView` to `AttachmentGalleryActivity`).
-* `messageTextTransformer`: Allows customizing the message text's format or style. For example, you can use it to provide markdown support or highlight specific messages by making them bold.
 * `channelNameFormatter`: Allows customizing the way channel names are formatted.
-* `messagePreviewFormatter`: Allows to generate a preview text for the given message.
+* `messagePreviewFormatter`: Allows you to generate a preview text for the given message.
 * `dateFormatter`: Allows changing the way dates are formatted.
+* `attachmentFactoryManager`: Allows changing the way attachments are displayed in the message list. Includes adding UI for custom attachments.
+* `attachmentPreviewFactoryManager`: Allows changing the way attachments are displayed in the message composer. Includes adding UI for custom attachments.
+* `quotedAttachmentFactoryManager`: Allows changing the way attachments are displayed in quoted messages both in the message list and the message composer. Includes adding UI for custom attachments.
+* `currentUserProvider`: provides the currently logged in user.
+* `videoThumbnailsEnabled`: Changes whether video thumbnails are displayed or not. Video thumbnails are a paid feature, You can find the pricing [here](https://getstream.io/chat/pricing/).
 
 :::note
 `ChatUI` is initialized out-of-the-box with default implementations - no initialization is required on app startup.
