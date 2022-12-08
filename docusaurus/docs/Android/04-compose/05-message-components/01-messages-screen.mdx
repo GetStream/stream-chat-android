@@ -9,8 +9,6 @@ The `MessagesScreen` component is the second screen component in the SDK, out of
 * **Message options**: Shown when the user selects the message by long tapping. Allows the user to react to messages and perform different actions such as deleting, editing, replying, starting a thread and more.
 * **Reactions menu**: Shown when the user taps on a reaction to a message. Displays all of the reactions left on the message along with the option to add or change yours.
 
-<!-- TODO WIP PAGE The `MessagesScreen` is very complex and sets up many interactions between different components. We recommend reading our Building Messages Screen (../07-guides/03-building-messages-screen.mdx) guide for more information on this component and other internal components. -->
-
 ## Usage
 
 The benefit of a screen component solution is easy integration. All you need to do to integrate `MessagesScreen` in your app is to call it within `setContent()` in your `Activity` or `Fragment` and pass in the `MessagesViewModelFactory` with your `channelId`:
@@ -36,7 +34,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 This small snippet of code will render the UI shown below:
 
-![Default MessagesScreen component](../../assets/compose_default_messages_screen_component.png)
+| Light | Dark |
+| --- | --- |
+| ![Default MessagesScreen component](../../assets/compose_default_messages_screen_component.png) | ![Default MessagesScreen component dark](../../assets/compose_default_messages_screen_component_dark.png) |
 
 Next, learn more about handling screen actions.
 
@@ -49,28 +49,31 @@ The `MessagesScreen` component exposes two actions, as per the signature:
 fun MessagesScreen(
     ..., // State
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: (channel: Channel) -> Unit = {},
+    onHeaderTitleClick: (channel: Channel) -> Unit = {},
+    onChannelAvatarClick: () -> Unit = {},
 )
 ```
 
 * `onBackPressed`: Called when the user taps on the header back button.
-* `onHeaderActionClick`: Called when the user taps on the header title. Useful for showing the channel information.
+* `onHeaderTitleClick`: Called when the user taps on the header title. Useful for showing the channel information.
+* `onChannelAvatarClick`: Called when the user taps on the channel avatar. Can also be used to show more channel information. 
 
-Here's an example of setting up custom behavior for the user tapping on the back button and the channel info:
+Here's an example of setting up custom behavior:
 
 ```kotlin
 MessagesScreen(
     ..., // State
     onBackPressed = { finish() }, // Navigation handler
-    onHeaderActionClick = { channel ->
+    onHeaderTitleClick = { channel ->
         // Show channel info
     },
+    onChannelAvatarClick = {}
 )
 ```
 
 ## Customization
 
-Given that the `MessagesScreen` is a screen level solution, it offers limited customization. Currently, the options offered in the signature are the following:
+Given that `MessagesScreen` is a screen level solution, it offers limited customization. Currently, the options offered in the signature are the following:
 
 ```kotlin
 @Composable
@@ -86,7 +89,11 @@ fun MessagesScreen(
 
 If you set `showHeader` to `false` you'll get the following UI:
 
-![MessagesScreen without the MessageListHeader](../../assets/compose_custom_messages_screen_component.png)
+| Light | Dark |
+| --- | --- |
+| ![MessagesScreen without the MessageListHeader](../../assets/compose_custom_messages_screen_component.png) | ![MessagesScreen without the MessageListHeader Dark](../../assets/compose_custom_messages_screen_component_dark.png) |
+
+
 
 As you can see, the header is removed from the screen, rendering only the list and the composer.
 
@@ -97,14 +104,14 @@ In case you want to control the logic when using the `MessagesScreen`, you can d
 Here's an example:
 
 ```kotlin
-class MessagesActivity : BaseConnectedActivity() {
+class MessagesActivity : ComponentActivity() {
 
     // 1
     private val factory by lazy {
         MessagesViewModelFactory(
             context = this,
-            channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
-            deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+            channelId = channelId,
+            // Customization options
         )
     }
 
@@ -118,14 +125,16 @@ class MessagesActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
-                MessagesScreen( // 3
+            ChatTheme {
+                MessagesScreen(
+                    // 3
                     viewModelFactory = factory,
                     onBackPressed = { finish() },
                 )
             }
         }
     }
+}
 ```
 
 There are a few steps here that allow you to override and control the ViewModels:
@@ -139,5 +148,3 @@ The `ViewModel`s should be the same and you should easily be able to react to th
 Even though `MessagesScreen` offers limited customization, you can still achieve a unique look and feel by modifying `ChatTheme` parameters.
 For more information on how to do so read our [ChatTheme](../03-general-customization/01-chat-theme.mdx) page.
 :::
-
-<!-- TODO WIP PAGE If you want more customization of this screen, read our Building Messages Screen (../07-guides/03-building-messages-screen.mdx) and Building Custom Screens (../07-guides/05-building-custom-screens.mdx) guides. -->
