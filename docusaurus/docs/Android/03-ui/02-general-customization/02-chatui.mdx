@@ -264,7 +264,7 @@ You can use `AutoLinkableTextTransformer` if you want to apply custom transforma
 
 ### Markdown
 
-The SDK provides a standalone Markdown module `stream-chat-android-markdown-transformer` that contains `MarkdownTextTransformer` which is an implementation of `ChatMessageTextTransformer`. It uses [Markwon](https://github.com/noties/Markwon) library internally.
+The SDK provides a standalone Markdown module `stream-chat-android-markdown-transformer` that contains `MarkdownTextTransformer` which is an implementation of `ChatMessageTextTransformer`. It uses the [Markwon](https://github.com/noties/Markwon) library internally.
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -286,7 +286,9 @@ If you use `MarkdownTextTransformer`, don't use `android:autoLink` attribute bec
 
 Then the SDK will parse Markdown automatically:
 
-![Markdown messages](../../assets/markdown_support.png)
+| Markdown Input in the Message Composer | Message with Markdown in the Message List |
+|---|---|
+| ![Markdown messages](../../assets/markdown_support.png) | ![Markdown messages](../../assets/markdown_support_result.png) |
 
 ### Navigator
 
