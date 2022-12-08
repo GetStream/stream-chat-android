@@ -62,7 +62,7 @@ private object MessageListHeaderUsageSnippet {
                             connectionState = connectionState,
                             messageMode = messageMode,
                             onBackPressed = { },
-                            onHeaderActionClick = { },
+                            onHeaderTitleClick = { },
                             onChannelAvatarClick = { },
                         )
 
@@ -101,7 +101,7 @@ private object MessageListHeaderHandlingActionsSnippet {
                         channel = channel,
                         currentUser = currentUser,
                         onBackPressed = { finish() },
-                        onHeaderActionClick = {
+                        onHeaderTitleClick = {
                             // Handle clicks on the header title
                         },
                         onChannelAvatarClick = {

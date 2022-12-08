@@ -98,7 +98,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     onBackPressed = {
                         finish()
                     },
-                    onHeaderActionClick = {}
+                    onHeaderTitleClick = {}
                 )
 
                 // MyCustomUi()

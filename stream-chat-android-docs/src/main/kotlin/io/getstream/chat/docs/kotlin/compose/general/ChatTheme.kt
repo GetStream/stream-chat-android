@@ -32,7 +32,7 @@ private object ChatThemeUsageSnippet {
                             messageLimit = 30
                         ),
                         onBackPressed = { finish() },
-                        onHeaderActionClick = {}
+                        onHeaderTitleClick = {}
                     )
                 }
             }
@@ -67,7 +67,7 @@ private object ChatThemeCustomizationSnippet {
                             channelId = "messaging:123",
                         ),
                         onBackPressed = { finish() },
-                        onHeaderActionClick = {}
+                        onHeaderTitleClick = {}
                     )
                 }
             }

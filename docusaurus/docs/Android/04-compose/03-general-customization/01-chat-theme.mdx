@@ -32,18 +32,20 @@ Let's see how to use the `ChatTheme` and how to customize the UI within.
 
 To use the `ChatTheme`, simply wrap your UI content with it, like in the following example:
 
-```kotlin {6,13}
+```kotlin {5,15}
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val channelId = "messaging:123"
 
     setContent {
         ChatTheme {
             MessagesScreen(
-                channelId = channelId,
-                messageLimit = 30,
+                viewModelFactory = MessagesViewModelFactory(
+                    context = this,
+                    channelId = "messaging:123",
+                    messageLimit = 30
+                ),
                 onBackPressed = { finish() },
-                onHeaderActionClick = {}
+                onHeaderTitleClick = {}
             )
         }
     }
@@ -77,10 +79,12 @@ setContent {
         )
     ) {
         MessagesScreen(
-            channelId = "messaging:123",
-            messageLimit = 30,
+            viewModelFactory = MessagesViewModelFactory(
+                context = this,
+                channelId = "messaging:123",
+            ),
             onBackPressed = { finish() },
-            onHeaderActionClick = {}
+            onHeaderTitleClick = {}
         )
     }
 }

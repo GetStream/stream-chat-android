@@ -31,7 +31,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     connectionState = connectionState,
                     messageMode = messageMode,
                     onBackPressed = { },
-                    onHeaderActionClick = { },
+                    onHeaderTitleClick = { },
                     onChannelAvatarClick = { },
                 )
 
@@ -61,17 +61,17 @@ The `MessageListHeader` exposes these actions, as per the signature:
 fun MessageListHeader(
     ..., // State
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: (Channel) -> Unit = {},
+    onHeaderTitleClick: (Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
 )
 ```
 
 * `onBackPressed`: Handler used when the user clicks on the back button.
-* `onHeaderActionClick`: Handler used when the user clicks on the channel title.
+* `onHeaderTitleClick`: Handler used when the user clicks on the channel title.
 * `onChannelAvatarClick`: Handler used when the user clicks on the channel avatar.
 
 :::note
-The `leadingContent` uses `onBackPressed` as its default action, while the `centerContent` uses `onHeaderActionClick` and the `trailingContent` uses `onChannelAvatarClick`. If you want to keep the same UI but change the behavior, you can override `onBackPressed`, `onHeaderActionClick` or `onChannelAvatarClick`.
+The `leadingContent` uses `onBackPressed` as its default action, while the `centerContent` uses `onHeaderTitleClick` and the `trailingContent` uses `onChannelAvatarClick`. If you want to keep the same UI but change the behavior, you can override `onBackPressed`, `onHeaderTitleClick` or `onChannelAvatarClick`.
 
 Otherwise, skip over to [Customization](#customization) to learn how to customize the UI.
 :::
@@ -82,7 +82,7 @@ To customize these actions, simply use the `MessageListHeader` with the rest of 
 MessageListHeader(
     ..., // State
     onBackPressed = { finish() },
-    onHeaderActionClick = {
+    onHeaderTitleClick = {
         // Handle clicks on the header title
     },
     onChannelAvatarClick = {
@@ -142,7 +142,7 @@ fun MessageListHeader(
             currentUser = currentUser,
             typingUsers = typingUsers,
             messageMode = messageMode,
-            onHeaderActionClick = onHeaderActionClick,
+            onHeaderTitleClick = onHeaderTitleClick,
             connectionState = connectionState
         )
     },
@@ -157,7 +157,7 @@ fun MessageListHeader(
 ```
 
 * `leadingContent`: Represents the content at the beginning of the header. By default shows a back button that you can override or customize the behavior of by overriding `onBackPressed`.
-* `centerContent`: Represents the core and center part of the header. By default shows information about the channel that you can override or customize the behavior of by overriding `onHeaderActionClick`.
+* `centerContent`: Represents the core and center part of the header. By default shows information about the channel that you can override or customize the behavior of by overriding `onHeaderTitleClick`.
 * `trailingContent`: Represents the content at the end of the header. By default shows the channel avatar that you can override or customize the behavior of by overriding `onChannelAvatarClick`.
 
 **Here's an example of customizing the UI:**
