@@ -148,7 +148,7 @@ public class Configuration {
      */
     public void customizingNavigator() {
         ChatNavigationHandler chatNavigatorHandler = destination -> {
-            // Perform some custom action here
+            // Perform a custom action here
             return true;
         };
 

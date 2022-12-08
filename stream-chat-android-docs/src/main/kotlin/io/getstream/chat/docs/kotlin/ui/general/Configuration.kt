@@ -140,7 +140,7 @@ private class ChatUiSnippets {
      */
     fun customizingNavigator() {
         val navigationHandler = ChatNavigationHandler { destination: ChatDestination ->
-            // Perform some custom action here
+            // Perform a custom action here
             true
         }
 

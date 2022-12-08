@@ -294,17 +294,17 @@ Then the SDK will parse Markdown automatically:
 
 The SDK performs navigation in certain cases:
 
-- Navigating to `AttachmentGalleryActivity` to display the gallery of pictures in the chat.
+- Navigating to `AttachmentGalleryActivity` after clicking on a video or an image attachment.
 - Opening the browser after clicking a link in the chat.
 
-This is done performed by `ChatNavigator`, which you can provide a custom `ChatNavigationHandler` implementation to override its behavior:
+This action is performed by `ChatNavigator`. You can customize its behavior by providing your own implementation of `ChatNavigationHandler`:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 val navigationHandler = ChatNavigationHandler { destination: ChatDestination ->
-    // Perform some custom action here
+    // Perform a custom action here
     true
 }
 
@@ -316,7 +316,7 @@ ChatUI.navigator = ChatNavigator(navigationHandler)
 
 ```java
 ChatNavigationHandler chatNavigatorHandler = destination -> {
-    // Perform some custom action here
+    // Perform a custom action here
     return true;
 };
 
