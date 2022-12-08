@@ -187,15 +187,19 @@ You can customize the default fonts used by all of the UI components. To change 
 
 ```kotlin
 ChatUI.fonts = object : ChatFonts {
+
+    // Fetch the font you want to use
+    val font = ResourcesCompat.getFont(context, R.font.stream_roboto_regular)
+
     override fun setFont(textStyle: TextStyle, textView: TextView) {
-        textStyle.apply(textView)
+        textView.setTypeface(font, Typeface.BOLD)
     }
 
     override fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface) {
-        textStyle.apply(textView)
+        textView.setTypeface(font, Typeface.BOLD)
     }
 
-    override fun getFont(textStyle: TextStyle): Typeface? = textStyle.font
+    override fun getFont(textStyle: TextStyle): Typeface? = font
 }
 ```
 </TabItem>
@@ -204,20 +208,24 @@ ChatUI.fonts = object : ChatFonts {
 
 ```java
 ChatUI.setFonts(new ChatFonts() {
+
+    // Fetch the font you want to use
+    final Typeface font = ResourcesCompat.getFont(context, R.font.stream_roboto_regular);
+
     @Override
     public void setFont(@NonNull TextStyle textStyle, @NonNull TextView textView) {
-        textStyle.apply(textView);
+        textView.setTypeface(font, Typeface.BOLD);
     }
 
     @Override
     public void setFont(@NonNull TextStyle textStyle, @NonNull TextView textView, @NonNull Typeface defaultTypeface) {
-        textStyle.apply(textView);
+        textView.setTypeface(font, Typeface.BOLD);
     }
 
     @Nullable
     @Override
     public Typeface getFont(@NonNull TextStyle textStyle) {
-        return textStyle.getFont();
+        return font;
     }
 });
 ```
