@@ -7,7 +7,7 @@ The Jetpack Compose SDK exposes three types of components:
 * **Stateless components**: low-level, stateless `Composable`s for full customizability.
 
 :::note
-All components from the SDK have to be wrapped in a [`ChatTheme`](03-general-customization/01-chat-theme.mdx) which provides theming and other customization options. You don't have to individually wrap components in [`ChatTheme`](03-general-customization/01-chat-theme.mdx), but it has to be present somewhere above the Chat components in the hierarchy.
+All components from the SDK have to be wrapped in [`ChatTheme`](03-general-customization/01-chat-theme.mdx) which provides theming and other customization options. You don't have to individually wrap components in [`ChatTheme`](03-general-customization/01-chat-theme.mdx), but it has to be present somewhere above the Chat components in the hierarchy.
 :::
 
 Let's go through each type to see what the difference is and how to use them.
@@ -95,7 +95,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-You can go build these components in two ways:
+You can build these components in two ways:
 
 * Providing an instance of our `ViewModel` yourself - this lets you control the lifecycle of the VM or customize the behavior of your UI, by calling functions directly on the VM.
 * Using the default argument for the `ViewModel` - this is less work, but you can't control the lifecycle of the VM, nor can you call functions on it to support custom behavior.

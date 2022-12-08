@@ -48,7 +48,7 @@ class MessagesActivity : AppCompatActivity() {
                         channelId = channelId,
                     ),
                     onBackPressed = { finish() },
-                    onHeaderActionClick = {}
+                    onHeaderTitleClick = {}
                 )
             }
         }
