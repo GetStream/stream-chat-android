@@ -503,3 +503,51 @@ ChatUI.setQuotedAttachmentFactoryManager(quotedAttachmentFactoryManager);
 #### Guide on Adding Support for Custom Attachments
 
 We offer a [guide](../06-guides/08-adding-custom-attachments.mdx) on implementing custom attachment support which covers the topic extensively.
+
+## Disabling Video Thumbnails
+
+Video thumbnails are enabled by default, but since they are a paid feature, they can also be disabled.
+
+When video thumbnails are enabled, the UI takes the following appearance:
+
+| Messages List (Light Mode) | Attachment Gallery (Light Mode) |
+|---|---|
+| ![Messages List Video Thumbs enabled Light Mode](../../assets/configuration_message_list_video_thumbs_enabled.png) | ![Attachment Gallery Video Thumbs enabled Light Mode](../../assets/configuration_attachment_gallery_video_thumbs_enabled.png) |
+
+| Messages List (Dark Mode) | Attachment Gallery (Dark Mode) |
+|---|---|
+| ![Messages List Video Thumbs enabled Dark Mode](../../assets/configuration_message_list_video_thumbs_enabled_dark.png) | ![Attachment Gallery Video Thumbs enabled Dark Mode](../../assets/configuration_attachment_gallery_video_thumbs_enabled_dark.png) |
+
+
+You can disable the video thumbnails like so:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.videoThumbnailsEnabled = false
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setVideoThumbnailsEnabled(false);
+```
+</TabItem>
+</Tabs>
+
+Which makes the UI look like so:
+
+| Messages List (Light Mode) | Attachment Gallery (Light Mode) |
+|---|---|
+| ![Messages List Video Thumbs disabled Light Mode](../../assets/configuration_message_list_video_thumbs_disabled.png) | ![Attachment Gallery Video Thumbs disabled Light Mode](../../assets/configuration_attachment_gallery_video_thumbs_disabled.png) |
+
+| Messages List (Dark Mode) | Attachment Gallery (Dark Mode) |
+|---|---|
+| ![Messages List Video Thumbs disabled Dark Mode](../../assets/configuration_message_list_video_thumbs_disabled_dark.png) | ![Attachment Gallery Video Thumbs disabled Dark Mode](../../assets/configuration_attachment_gallery_video_thumbs_disabled_dark.png) |
+
+:::note
+Only the video thumbnails fetched from Stream's APIs are paid and can be disabled. Video thumbnails loaded from local storage - such as the ones in the attachment picker - are not paid and will remain enabled.
+:::
+

@@ -214,4 +214,11 @@ private class ChatUiSnippets {
             ChatUI.quotedAttachmentFactoryManager = quotedAttachmentFactoryManager
         }
     }
+
+    /**
+     * [Disabling Video Thumbnails](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#disabling-video-thumbnails)
+     */
+    private fun disablingVideoThumbnails() {
+        ChatUI.videoThumbnailsEnabled = false
+    }
 }
