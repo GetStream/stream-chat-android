@@ -22,6 +22,9 @@ import java.util.Map;
 import io.getstream.chat.android.markdown.MarkdownTextTransformer;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.common.helper.DateFormatter;
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager;
 import io.getstream.chat.android.ui.font.ChatFonts;
 import io.getstream.chat.android.ui.font.TextStyle;
 import io.getstream.chat.android.ui.helper.SupportedReactions;
@@ -186,5 +189,36 @@ public class Configuration {
                     }
                 }
         );
+    }
+
+    /**
+     * [Customizing Attachments](https://getstream.io/chat/docs/sdk/android/v5/ui/general-customization/chatui/#customizing-attachments)
+     */
+    private class CustomizingAttachments {
+
+        private void customizeMessageList() {
+            AttachmentFactoryManager attachmentFactoryManager = new AttachmentFactoryManager(
+                    // Set your custom attachment factories here
+            );
+
+            ChatUI.setAttachmentFactoryManager(attachmentFactoryManager);
+        }
+
+        private void customizeMessageComposerOrInput() {
+            AttachmentPreviewFactoryManager attachmentPreviewFactoryManager = new AttachmentPreviewFactoryManager(
+                    // Set your custom attachment factories here
+            );
+
+            ChatUI.setAttachmentPreviewFactoryManager(attachmentPreviewFactoryManager);
+        }
+
+        private void customizeQuotedMessageContent() {
+            QuotedAttachmentFactoryManager quotedAttachmentFactoryManager = new QuotedAttachmentFactoryManager(
+                    // Set your custom attachment factories here
+            );
+
+            ChatUI.setQuotedAttachmentFactoryManager(quotedAttachmentFactoryManager);
+        }
+
     }
 }

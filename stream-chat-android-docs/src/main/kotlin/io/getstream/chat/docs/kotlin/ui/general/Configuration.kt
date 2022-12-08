@@ -13,7 +13,10 @@ import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
 import io.getstream.chat.android.ui.font.ChatFonts
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.ChannelNameFormatter
@@ -179,6 +182,36 @@ private class ChatUiSnippets {
                 date ?: return ""
                 return timeFormat.format(date)
             }
+        }
+    }
+
+    /**
+     * [Customizing Attachments](https://getstream.io/chat/docs/sdk/android/v5/ui/general-customization/chatui/#customizing-attachments)
+     */
+    private class CustomizingAttachments {
+
+        private fun customizeMessageList() {
+            val attachmentFactoryManager = AttachmentFactoryManager(
+                // Set your custom attachment factories here
+            )
+
+            ChatUI.attachmentFactoryManager = attachmentFactoryManager
+        }
+
+        private fun customizeMessageComposerOrInput() {
+            val attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
+                // Set your custom attachment factories here
+            )
+
+            ChatUI.attachmentPreviewFactoryManager = attachmentPreviewFactoryManager
+        }
+
+        private fun customizeQuotedMessageContent() {
+            val quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(
+                // Set your custom attachment factories here
+            )
+
+            ChatUI.quotedAttachmentFactoryManager = quotedAttachmentFactoryManager
         }
     }
 }

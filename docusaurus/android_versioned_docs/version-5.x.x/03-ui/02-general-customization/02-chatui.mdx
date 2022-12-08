@@ -495,3 +495,95 @@ ChatUI.setDateFormatter(new DateFormatter() {
 ```
 </TabItem>
 </Tabs>
+
+### Customizing Attachments
+
+Stream allows both overriding the way the out-of-the-box supported attachments (image, video, etc.) are displayed, and implementing UI for custom attachments.
+
+In the intro section, we've mentioned the different types of attachment factory managers. Depending on which part of the UI you want to customize, you will have to override different `ChatUI` properties.
+
+If you want to customize the way attachments are presented in `MessageListView`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val attachmentFactoryManager = AttachmentFactoryManager(
+    // Set your custom attachment factories here
+)
+
+ChatUI.attachmentFactoryManager = attachmentFactoryManager
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+AttachmentFactoryManager attachmentFactoryManager = new AttachmentFactoryManager(
+        // Set your custom attachment factories here
+);
+
+ChatUI.setAttachmentFactoryManager(attachmentFactoryManager);
+```
+</TabItem>
+</Tabs>
+
+If you want to customize the way attachments are presented in `MessageInputView` or `MessageComposerView`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
+    // Set your custom attachment factories here
+)
+
+ChatUI.attachmentPreviewFactoryManager = attachmentPreviewFactoryManager
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+AttachmentPreviewFactoryManager attachmentPreviewFactoryManager = new AttachmentPreviewFactoryManager(
+        // Set your custom attachment factories here
+);
+
+ChatUI.setAttachmentPreviewFactoryManager(attachmentPreviewFactoryManager);
+```
+</TabItem>
+</Tabs>
+
+If you want to customize the way attachments are presented inside quoted messages in `MessageListView`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(
+    // Set your custom attachment factories here
+)
+
+ChatUI.quotedAttachmentFactoryManager = quotedAttachmentFactoryManager
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+QuotedAttachmentFactoryManager quotedAttachmentFactoryManager = new QuotedAttachmentFactoryManager(
+        // Set your custom attachment factories here
+);
+
+ChatUI.setQuotedAttachmentFactoryManager(quotedAttachmentFactoryManager);
+```
+</TabItem>
+</Tabs>
+
+#### Guide on Adding Support for Custom Attachments
+
+The following documentation pages cover the topic extensively:
+
+* [Detailed guide on implementing custom attachments if you are using `MessageInputView`](../06-guides/08-adding-custom-attachments-message-input.mdx)
+* [Detailed guide on implementing custom attachments if you are using `MessageComposerView`](../06-guides/09-adding-custom-attachments-message-composer.mdx)
+
