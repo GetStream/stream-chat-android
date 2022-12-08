@@ -36,7 +36,7 @@ The full list of `ChatUI` properties you can override include:
 `ChatUI` is initialized out-of-the-box with default implementations - no initialization is required on app startup.
 :::
 
-### Custom Reactions
+## Custom Reactions
 
 By default, the SDK provides 5 built-in reactions:
 
@@ -95,7 +95,7 @@ As a result, only the _love_ reaction is available in the chat, and when selecte
 | --- | --- |
 |![Normal state Available Reactions Dark Mode](../../assets/chat_ui_custom_reaction_dark.png)|![Normal state Available Reactions Dark Mode](../../assets/chat_ui_custom_reaction_active_dark.png)|
 
-### Custom MIME Type Icons
+## Custom MIME Type Icons
 
 When possible, the SDK displays thumbnails for image and video files. When thumbnails are unavailable or when other types of files are in question, mime type icons are displayed in `MessageListView`, `MessageComposer` and attachment picker.
 
@@ -149,7 +149,7 @@ ChatUI.setMimeTypeIconProvider(mimeType -> {
 </TabItem>
 </Tabs>
 
-### Adding Extra Headers to Image Requests
+## Adding Extra Headers to Image Requests
 
 If you're [using your own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn), you might also need to add extra headers to image loading requests. You can do this by creating your own implementation of the `ImageHeadersProvider` interface and then setting it on `ChatUI`:
 
@@ -178,7 +178,7 @@ ChatUI.setImageHeadersProvider(() -> {
 </TabItem>
 </Tabs>
 
-### Changing the Default Font
+## Changing the Default Font
 
 You can customize the default fonts used by all of the UI components. To change the fonts, implement the `ChatFont` interface and set the new implementation on `ChatUI`:
 
@@ -232,7 +232,7 @@ ChatUI.setFonts(new ChatFonts() {
 </TabItem>
 </Tabs>
 
-### Transforming Message Text
+## Transforming Message Text
 
 You can easily provide a transformer that can transform and apply the message text to a given `TextView`. You need to override `ChatUI.messageTextTransformer` to an instance of `ChatMessageTextTransformer`s implementation.
 
@@ -262,7 +262,7 @@ Stream UI TextView components don't have `android:autoLink` property set because
 You can use `AutoLinkableTextTransformer` if you want to apply custom transformation but keep links clickable.
 :::
 
-### Markdown
+## Markdown
 
 The SDK provides a standalone Markdown module `stream-chat-android-markdown-transformer` that contains `MarkdownTextTransformer` which is an implementation of `ChatMessageTextTransformer`. It uses the [Markwon](https://github.com/noties/Markwon) library internally.
 
@@ -290,7 +290,7 @@ Then the SDK will parse Markdown automatically:
 |---|---|
 | ![Markdown Input in the Message Composer](../../assets/markdown_support.png) | ![Markdown Message in the Message List](../../assets/markdown_support_result.png) |
 
-### Navigator
+## Navigator
 
 The SDK performs navigation in certain cases:
 
@@ -325,7 +325,7 @@ ChatUI.setNavigator(new ChatNavigator(chatNavigatorHandler));
 </TabItem>
 </Tabs>
 
-### Customizing ChannelNameFormatter
+## Customizing ChannelNameFormatter
 
 You can customize the way channel names are formatted by overriding the default `ChannelNameFormatter`:
 
@@ -347,7 +347,7 @@ ChatUI.setChannelNameFormatter((channel, currentUser) -> channel.getName());
 </TabItem>
 </Tabs>
 
-### Customizing MessagePreviewFormatter
+## Customizing MessagePreviewFormatter
 
 You can change the way the last messages are formatted in the channel list by overriding the default `MessagePreviewFormatter`:
 
@@ -369,7 +369,7 @@ ChatUI.setMessagePreviewFormatter((channel, message, currentUser) -> message.get
 </TabItem>
 </Tabs>
 
-### Customizing DateFormatter
+## Customizing DateFormatter
 
 Overriding the `DateFormatter` allows you to change the way dates are formatted in the application:
 
@@ -416,7 +416,7 @@ ChatUI.setDateFormatter(new DateFormatter() {
 </TabItem>
 </Tabs>
 
-### Customizing Attachments
+## Customizing Attachments
 
 Stream allows both overriding the way the out-of-the-box supported attachments (image, video, etc.) are displayed, and implementing UI for custom attachments.
 
@@ -500,7 +500,7 @@ ChatUI.setQuotedAttachmentFactoryManager(quotedAttachmentFactoryManager);
 </TabItem>
 </Tabs>
 
-#### Guide on Adding Support for Custom Attachments
+### Guide on Adding Support for Custom Attachments
 
 We offer a [guide](../06-guides/08-adding-custom-attachments.mdx) on implementing custom attachment support which covers the topic extensively.
 
