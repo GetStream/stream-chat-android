@@ -373,7 +373,7 @@ fun QuotedDateAttachmentContent(
 }
 ```
 
-As before, we are fetching the custom attachment data using `attachment.extraData["payload"]`. We also split the full date into two lines for a more compact preview.
+As before, we are fetching the custom attachment data using `attachment.extraData["payload"]`. We also split the full date into separate lines for a more compact preview.
 
 This time we don't need the `textFormatter` or `previewContent`. The `textFormatter` is used to show the description of the attachment in the `ChannelList` and that will be handled by the parent message. The `previewContent` is used in the `MessageComposer` and it only shows the parent message before it's sent.
 
