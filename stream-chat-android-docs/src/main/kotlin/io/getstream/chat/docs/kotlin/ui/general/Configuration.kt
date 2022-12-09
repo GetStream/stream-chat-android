@@ -6,22 +6,27 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+import io.getstream.chat.android.ui.font.ChatFonts
+import io.getstream.chat.android.ui.font.TextStyle
+import io.getstream.chat.android.ui.helper.ChannelNameFormatter
 import io.getstream.chat.android.ui.helper.MessagePreviewFormatter
 import io.getstream.chat.android.ui.helper.MimeTypeIconProvider
 import io.getstream.chat.android.ui.helper.SupportedReactions
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
-import io.getstream.chat.android.ui.helper.ChannelNameFormatter
-import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
-import io.getstream.chat.android.ui.navigation.ChatNavigator
-import io.getstream.chat.android.ui.font.ChatFonts
-import io.getstream.chat.android.ui.font.TextStyle
-import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.navigation.ChatNavigationHandler
-import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.navigation.ChatNavigationHandler
+import io.getstream.chat.android.ui.navigation.ChatNavigator
+import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
 import io.getstream.chat.docs.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -38,12 +43,18 @@ private class ChatUiSnippets {
      * [Custom Reactions](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#custom-reactions)
      */
     fun customReactions() {
+        // Create a drawable for the non-selected reaction option
         val loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
+        // Create a drawable for the selected reaction option and set a tint to it
         val loveDrawableSelected =
             ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!.apply { setTint(Color.RED) }
+
+        // Create a map of reactions
         val supportedReactionsData = mapOf(
             "love" to SupportedReactions.ReactionDrawable(loveDrawable, loveDrawableSelected)
         )
+
+        // Replace the default reactions with your custom reactions
         ChatUI.supportedReactions = SupportedReactions(context, supportedReactionsData)
     }
 
@@ -81,17 +92,31 @@ private class ChatUiSnippets {
     /**
      * [Changing the Default Font](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#changing-the-default-font)
      */
-    fun changingTheDefaultFont() {
-        ChatUI.fonts = object : ChatFonts {
-            override fun setFont(textStyle: TextStyle, textView: TextView) {
-                textStyle.apply(textView)
-            }
+    class ChangingTheDefaultFont : AppCompatActivity() {
 
-            override fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface) {
-                textStyle.apply(textView)
-            }
+        /**
+         * Holds no significant value, it's just so that
+         * we can simply use 'context' inside the tutorials
+         * without specifying where it's coming from.
+         */
+        val context = applicationContext
 
-            override fun getFont(textStyle: TextStyle): Typeface? = textStyle.font
+        fun changingTheDefaultFont() {
+            ChatUI.fonts = object : ChatFonts {
+
+                // Fetch the font you want to use
+                val font = ResourcesCompat.getFont(context, R.font.stream_roboto_regular)
+
+                override fun setFont(textStyle: TextStyle, textView: TextView) {
+                    textView.setTypeface(font, Typeface.BOLD)
+                }
+
+                override fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface) {
+                    textView.setTypeface(font, Typeface.BOLD)
+                }
+
+                override fun getFont(textStyle: TextStyle): Typeface? = font
+            }
         }
     }
 
@@ -118,7 +143,7 @@ private class ChatUiSnippets {
      */
     fun customizingNavigator() {
         val navigationHandler = ChatNavigationHandler { destination: ChatDestination ->
-            // Perform some custom action here
+            // Perform a custom action here
             true
         }
 
@@ -158,5 +183,42 @@ private class ChatUiSnippets {
                 return timeFormat.format(date)
             }
         }
+    }
+
+    /**
+     * [Customizing Attachments](https://getstream.io/chat/docs/sdk/android/v5/ui/general-customization/chatui/#customizing-attachments)
+     */
+    private class CustomizingAttachments {
+
+        private fun customizeMessageList() {
+            val attachmentFactoryManager = AttachmentFactoryManager(
+                // Set your custom attachment factories here
+            )
+
+            ChatUI.attachmentFactoryManager = attachmentFactoryManager
+        }
+
+        private fun customizeMessageComposerOrInput() {
+            val attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
+                // Set your custom attachment factories here
+            )
+
+            ChatUI.attachmentPreviewFactoryManager = attachmentPreviewFactoryManager
+        }
+
+        private fun customizeQuotedMessageContent() {
+            val quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(
+                // Set your custom attachment factories here
+            )
+
+            ChatUI.quotedAttachmentFactoryManager = quotedAttachmentFactoryManager
+        }
+    }
+
+    /**
+     * [Disabling Video Thumbnails](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#disabling-video-thumbnails)
+     */
+    private fun disablingVideoThumbnails() {
+        ChatUI.videoThumbnailsEnabled = false
     }
 }
