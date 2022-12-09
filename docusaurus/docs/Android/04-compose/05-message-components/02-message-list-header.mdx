@@ -1,6 +1,6 @@
 # MessageListHeader
 
-The `MessageListHeader` component is a clean, stateless component, that doesn't require a `ViewModel`. It allows you to customize the data, design style, action
+The `MessageListHeader` component is a clean, stateless component which doesn't require a `ViewModel`. It allows you to customize the data, design style, action
 handlers and override the internal composable slots.
 
 Out of the box it sets the following:
@@ -31,7 +31,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     connectionState = connectionState,
                     messageMode = messageMode,
                     onBackPressed = { },
-                    onHeaderActionClick = { },
+                    onHeaderTitleClick = { },
+                    onChannelAvatarClick = { },
                 )
 
                 // Rest of your UI
@@ -53,22 +54,24 @@ Now let's see how to handle the header actions.
 
 ## Handling Actions
 
-The `MessageListHeader` exposes two actions, as per the signature:
+The `MessageListHeader` exposes these actions, as per the signature:
 
 ```kotlin
 @Composable
 fun MessageListHeader(
     ..., // State
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: (Channel) -> Unit = {},
+    onHeaderTitleClick: (Channel) -> Unit = {},
+    onChannelAvatarClick: () -> Unit = {},
 )
 ```
 
 * `onBackPressed`: Handler used when the user clicks on the back button.
-* `onHeaderActionClick`: Handler used when the user clicks on the title for more information about the channel.
+* `onHeaderTitleClick`: Handler used when the user clicks on the channel title.
+* `onChannelAvatarClick`: Handler used when the user clicks on the channel avatar.
 
 :::note
-The `leadingContent` uses `onBackPressed` as its default action, while the `centerContent` uses `onHeaderActionClick`. If you want to keep the same UI but change the behavior, you can override `onBackPressed` or `onHeaderActionClick`.
+The `leadingContent` uses `onBackPressed` as its default action, while the `centerContent` uses `onHeaderTitleClick` and the `trailingContent` uses `onChannelAvatarClick`. If you want to keep the same UI but change the behavior, you can override `onBackPressed`, `onHeaderTitleClick` or `onChannelAvatarClick`.
 
 Otherwise, skip over to [Customization](#customization) to learn how to customize the UI.
 :::
@@ -79,8 +82,11 @@ To customize these actions, simply use the `MessageListHeader` with the rest of 
 MessageListHeader(
     ..., // State
     onBackPressed = { finish() },
-    onHeaderActionClick = {
-      // Show your custom UI
+    onHeaderTitleClick = {
+        // Handle clicks on the header title
+    },
+    onChannelAvatarClick = {
+        // Handle clicks on the channel avatar
     },
     ... // Content
 )
@@ -136,22 +142,23 @@ fun MessageListHeader(
             currentUser = currentUser,
             typingUsers = typingUsers,
             messageMode = messageMode,
-            onHeaderActionClick = onHeaderActionClick,
+            onHeaderTitleClick = onHeaderTitleClick,
             connectionState = connectionState
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderTrailingContent(
             channel = channel,
-            currentUser = currentUser
+            currentUser = currentUser,
+            onClick = onChannelAvatarClick,
         )
     },
 )
 ```
 
-* `leadingContent`: Represents the content at the beginning of the header. By default shows a back button that you can override or customize the behavior of `onBackPressed`.
-* `centerContent`: Represents the core and center part of the header. By default shows information about the channel that you can override or customize the behavior of `onHeaderActionClick`.
-* `trailingContent`: Represents the content at the end of the header. By default shows the channel avatar that you can override.
+* `leadingContent`: Represents the content at the beginning of the header. By default shows a back button that you can override or customize the behavior of by overriding `onBackPressed`.
+* `centerContent`: Represents the core and center part of the header. By default shows information about the channel that you can override or customize the behavior of by overriding `onHeaderTitleClick`.
+* `trailingContent`: Represents the content at the end of the header. By default shows the channel avatar that you can override or customize the behavior of by overriding `onChannelAvatarClick`.
 
 **Here's an example of customizing the UI:**
 
@@ -189,7 +196,6 @@ MessageListHeader(
         )
     },
     trailingContent = { InfoButton() }
-)
 )
 ```
 

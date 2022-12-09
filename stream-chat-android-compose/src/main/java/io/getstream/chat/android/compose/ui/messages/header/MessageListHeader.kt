@@ -74,7 +74,8 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param shape The shape of the header.
  * @param elevation The elevation of the header.
  * @param onBackPressed Handler that propagates the back button click event.
- * @param onHeaderActionClick Action handler when the user taps on the header action.
+ * @param onHeaderTitleClick Action handler when the user taps on the header title section.
+ * @param onChannelAvatarClick Action handler called when the user taps on the channel avatar.
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
  * @param centerContent The content shown in the middle of the header and represents the core information, by default
  * [DefaultMessageListHeaderCenterContent].
@@ -92,7 +93,8 @@ public fun MessageListHeader(
     shape: Shape = ChatTheme.shapes.header,
     elevation: Dp = ChatTheme.dimens.headerElevation,
     onBackPressed: () -> Unit = {},
-    onHeaderActionClick: (Channel) -> Unit = {},
+    onHeaderTitleClick: (Channel) -> Unit = {},
+    onChannelAvatarClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderLeadingContent(onBackPressed = onBackPressed)
     },
@@ -103,14 +105,15 @@ public fun MessageListHeader(
             currentUser = currentUser,
             typingUsers = typingUsers,
             messageMode = messageMode,
-            onHeaderActionClick = onHeaderActionClick,
+            onHeaderTitleClick = onHeaderTitleClick,
             connectionState = connectionState
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         DefaultMessageListHeaderTrailingContent(
             channel = channel,
-            currentUser = currentUser
+            currentUser = currentUser,
+            onClick = onChannelAvatarClick,
         )
     },
 ) {
@@ -160,7 +163,7 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
  * @param modifier Modifier for styling.
  * @param typingUsers The list of typing users.
  * @param messageMode Currently active message mode, used to define the title information.
- * @param onHeaderActionClick Handler for when the user taps on the header content.
+ * @param onHeaderTitleClick Handler for when the user taps on the header title section.
  * @param connectionState A flag that governs if we show the subtitle or the network loading view.
  */
 @Composable
@@ -170,7 +173,7 @@ public fun DefaultMessageListHeaderCenterContent(
     modifier: Modifier = Modifier,
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
-    onHeaderActionClick: (Channel) -> Unit = {},
+    onHeaderTitleClick: (Channel) -> Unit = {},
     connectionState: ConnectionState = ConnectionState.CONNECTED,
 ) {
     val title = when (messageMode) {
@@ -192,7 +195,7 @@ public fun DefaultMessageListHeaderCenterContent(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = { onHeaderActionClick(channel) }
+                onClick = { onHeaderTitleClick(channel) }
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -287,14 +290,20 @@ internal fun DefaultMessageListHeaderSubtitle(
  *
  * @param channel The channel used to display the avatar.
  * @param currentUser The current user. Used for choosing which avatar to display.
+ * @param onClick The handler called when the user taps on the channel avatar.
  */
 @Composable
-internal fun DefaultMessageListHeaderTrailingContent(channel: Channel, currentUser: User?) {
+internal fun DefaultMessageListHeaderTrailingContent(
+    channel: Channel,
+    currentUser: User?,
+    onClick: () -> Unit,
+) {
     ChannelAvatar(
         modifier = Modifier.size(40.dp),
         channel = channel,
         currentUser = currentUser,
         contentDescription = channel.name,
+        onClick = onClick,
     )
 }
 

@@ -14,35 +14,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.models.User
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-item/#usage)
  */
 private object ChannelItemUsageSnippet {
 
-    class MyActivity : AppCompatActivity() {
-        val factory by lazy {
-            ChannelViewModelFactory(
-                ChatClient.instance(),
-                QuerySortByField.descByName("last_updated"),
-                Filters.and(
-                    Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-                )
-            )
-        }
-
-        val listViewModel: ChannelListViewModel by viewModels { factory }
+    class ChannelsActivity : AppCompatActivity() {
+        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -72,19 +58,8 @@ private object ChannelItemUsageSnippet {
  */
 private object ChannelItemHandlingActionsSnippet {
 
-    class MyActivity : AppCompatActivity() {
-        val factory by lazy {
-            ChannelViewModelFactory(
-                ChatClient.instance(),
-                QuerySortByField.descByName("last_updated"),
-                Filters.and(
-                    Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-                )
-            )
-        }
-
-        val listViewModel: ChannelListViewModel by viewModels { factory }
+    class ChannelsActivity : AppCompatActivity() {
+        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -119,18 +94,7 @@ private object ChannelItemHandlingActionsSnippet {
 private object ChannelItemCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
-        val factory by lazy {
-            ChannelViewModelFactory(
-                ChatClient.instance(),
-                QuerySortByField.descByName("last_updated"),
-                Filters.and(
-                    Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-                )
-            )
-        }
-
-        val listViewModel: ChannelListViewModel by viewModels { factory }
+        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
