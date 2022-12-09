@@ -102,15 +102,18 @@ private object AddingCustomAttachmentsSnippet {
                     // Message list header
                 },
                 bottomBar = {
+                    // 1
                     CustomMessageComposer(
                         viewModel = composerViewModel,
                         onDateSelected = { date ->
+                            // 2
                             val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                             val attachment = Attachment(
                                 type = "date",
                                 extraData = mutableMapOf("payload" to payload)
                             )
 
+                            // 3
                             composerViewModel.addSelectedAttachments(listOf(attachment))
                         }
                     )
