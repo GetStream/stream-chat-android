@@ -25,6 +25,5 @@
     <ID>MaxLineLength:LoginUsers.kt$LoginUsers$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.7Y4QCvc42Km8ETLdCQT5ynjiKVbZZbuN0XTiGxJNU6k"</ID>
     <ID>MaxLineLength:LoginUsers.kt$LoginUsers$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.lNaWC2Opyq6gmV50a2BGxK-5gm5mwCpefnUA30_k9YA"</ID>
     <ID>MaxLineLength:LoginUsers.kt$LoginUsers$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGhpZXJyeSJ9.hZi4pBPt2v2HSoS-7Yn7Ll2a1twhs763MlRGFAday2c"</ID>
-    <ID>NestedBlockDepth:QuotedDateAttachmentFactory.kt$@Composable fun QuotedDateAttachmentContent( attachmentState: AttachmentState, modifier: Modifier = Modifier, )</ID>
   </CurrentIssues>
 </SmellBaseline>
