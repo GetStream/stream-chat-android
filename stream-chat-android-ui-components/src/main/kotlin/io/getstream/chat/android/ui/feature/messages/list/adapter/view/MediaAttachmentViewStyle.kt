@@ -88,7 +88,7 @@ public data class MediaAttachmentViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MediaAttachmentView,
-                R.attr.streamUiMessageListImageAttachmentStyle,
+                R.attr.streamUiMessageListMediaAttachmentStyle,
                 R.style.StreamUi_MessageList_MediaAttachment
             ).use { a ->
                 val progressIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentProgressIcon)
