@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDimension
@@ -521,7 +522,7 @@ public data class MessageComposerViewStyle(
                 val messageInputVideoAttachmentIconCornerRadius =
                     a.getDimension(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoCornerRadius,
-                        0f
+                        20.dpToPxPrecise()
                     )
 
                 val messageInputVideoAttachmentIconElevation =
