@@ -32,7 +32,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
  * @param fallbackAttachmentPreviewFactory The fallback factory that will be used in case there are
  * no other factories that can handle the attachment.
  */
-public class AttachmentPreviewFactoryManager(
+public class AttachmentPreviewFactoryManager @JvmOverloads constructor(
     attachmentPreviewFactories: List<AttachmentPreviewFactory> = listOf(
         MediaAttachmentPreviewFactory(),
         FileAttachmentPreviewFactory(),

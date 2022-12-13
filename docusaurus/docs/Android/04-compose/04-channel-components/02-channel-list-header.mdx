@@ -15,7 +15,8 @@ To use the `ChannelListHeader`, you can add it to your UI, within `setContent()`
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-        
+
+    val user = ChatClient.instance().getCurrentUser()
     setContent {
         ChatTheme {
             ChannelListHeader(
@@ -30,7 +31,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 This will produce the UI below:
 
-![The ChannelListHeader Component](../../assets/compose_default_channel_list_header_component.png)
+|![The ChannelListHeader Component](../../assets/compose_default_channel_list_header_component.png)|
+|---|
 
 :::note 
 The `ChannelListHeader` can be used without any parameters, but we advise that you pass in the title of your app, the current user, as well as the action handlers.
@@ -130,6 +132,7 @@ By overriding the `trailingContent` parameter, you replace the default action UI
 
 The snippet above will produce the following UI.
 
-![The ChannelListHeader Component](../../assets/compose_custom_channel_list_header_component.png)
+|![The ChannelListHeader Component](../../assets/compose_custom_channel_list_header_component.png)|
+|---|
 
 <!-- TODO WIP PAGE You can also choose to build a completely custom header and integrate it with the rest of our components. To learn how to do that, read our Building Custom Screens (../07-guides/05-building-custom-screens.mdx) guide. -->

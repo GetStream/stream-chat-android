@@ -1,8 +1,15 @@
-# Creating a Custom Message Composer View
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-If the built-in [Message Composer View](../04-message-components/04-message-composer.mdx) and its available customization options don't fit your app's needs, you can create an Input View of your own.
+# Creating a Custom Message Composer
 
-Note that the UI Components Input View supports many advanced features that you'll otherwise have to implement yourself if you want to use them in your app:
+:::note
+You can find the full code from this guide on [GitHub](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-guides/src/main/java/io/getstream/chat/android/guides/catalog/uicomponents/customcomposer). To check the final result, clone the repository and run the `stream-chat-android-ui-guides` module.
+:::
+
+If the built-in [Message Composer View](../04-message-components/04-message-composer.mdx) and its available customization options don't fit your app's needs, you can create a Message Composer View of your own.
+
+Note that the UI Components Message Composer View supports many advanced features that you'll otherwise have to implement yourself if you want to use them in your app:
 
 - Sending and editing messages
 - Handling threads and replies
@@ -11,13 +18,13 @@ Note that the UI Components Input View supports many advanced features that you'
 - Input validation such as a max length
 - Commands and mentions
 
-With that, let's see how you can build an Input View from scratch.
+With that, let's see how you can build a custom Message Composer View from scratch.
 
 :::note
 This sample is meant to be as simple as possible. You might want to architect your actual custom views in more advanced ways than shown here.
 :::
 
-### Creating a Layout
+## Creating a Layout
 
 For this example, you'll create a custom View that extends `ConstraintLayout`. It'll inflate the following layout internally, which consists of a simple `EditText` and a `Button`.
 
@@ -32,6 +39,7 @@ For this example, you'll create a custom View that extends `ConstraintLayout`. I
         android:id="@+id/inputField"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendButton"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,377 +49,383 @@ For this example, you'll create a custom View that extends `ConstraintLayout`. I
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:text="Send"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </merge>
 ```
 
-Create a new class called `CustomMessageInput`, extending `ConstraintLayout` and adding the necessary basic View constructors. You can use [View Binding](https://developer.android.com/topic/libraries/view-binding) to inflate the layout created above and easily access the Views it contains.
+Create a new class called `CustomMessageComposerView`, extending `ConstraintLayout` and adding the necessary basic View constructors. You can use [View Binding](https://developer.android.com/topic/libraries/view-binding) to inflate the layout created above and easily access the Views it contains.
 
 ```kotlin
-class CustomMessageInput : ConstraintLayout {
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+class CustomMessageComposerView : ConstraintLayout {
 
-    val binding = CustomMessageInputBinding.inflate(LayoutInflater.from(context), this)
+    private val binding = ViewCustomMessageComposerBinding.inflate(LayoutInflater.from(context), this)
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 }
 ```
 
-You can add this custom Input View to your layout like so, combining it with other UI Components:
+You can add this custom Message Composer View to your layout like so, combining it with other UI Components:
 
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
-        android:id="@+id/messageListHeaderView"/>
+    <io.getstream.chat.android.ui.feature.messages.list.MessageListView
+        android:id="@+id/messageListView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/customMessageComposerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <io.getstream.chat.android.ui.message.list.MessageListView
-        android:id="@+id/messageListView" />
-
-    <com.example.chattutorial.custominput.CustomMessageInput
-        android:id="@+id/messageInputView"
+    <com.example.CustomMessageComposerView
+        android:id="@+id/customMessageComposerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-Running the app now shows the new message input view, which you can freely style to fit your app's requirements.
+Running the app now shows the new Message Composer View, which you can freely style to fit your app's requirements.
 
-![The message list screen with a custom input view](../../assets/custom-message-input-layout.png)
+| ![Custom message composer](../../assets/custom_message_composer.png) |
+|---|
 
-### Sending Messages
+## Sending and Editing Messages
 
-Time to add basic functionality to the layout.
+Let's add support for sending and editing messages:
 
-This requires two new properties in the View. First, it needs the `cid` of the channel that the message has to be sent to. Secondly, it needs a reference to `ChatClient` to perform calls via the Stream SDK.
-
-The `cid` can't be passed in as a constructor parameter, so you'll use a `lateinit var` for it. Be careful to always set this before attempting to set a message.
-
-```kotlin
-lateinit var cid: String
-```
-
-The `ChatClient` can always be obtained via the `instance()` method after it's been initialized in your app:
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-val chatClient = ChatClient.instance()
-```
+class CustomMessageComposerView : ConstraintLayout {
 
-Finally, you need to set a listener on the _Send_ button to read the current input and send a message. Here's all the new code together:
+    private val binding = ViewCustomMessageComposerBinding.inflate(LayoutInflater.from(context), this)
 
-```kotlin
-class CustomMessageInput : ConstraintLayout {
-    /* Constructors, binding ... */
+    private lateinit var channelClient: ChannelClient
 
-    lateinit var cid: String
-    val chatClient = ChatClient.instance()
-
-    init {
-        binding.sendButton.setOnClickListener {
-            // 1
-            val text = binding.inputField.text.toString()
-            // 2
-            val message = Message(cid = cid, text = text)
-            // 3
-            chatClient.channel(cid).sendMessage(message).enqueue { result ->
-                if (result.isSuccess) {
-                    // Yay!
-                } else {
-                    Toast.makeText(context, "Failed to send message", Toast.LENGTH_SHORT).show()
-                }
-            }
-            // 4
-            binding.inputField.setText("")
-        }
-    }
-}
-```
-
-Here's what you're doing here, step-by-step:
-
-1. Reading the current value from the `inputField`.
-2. Creating the `Message` object to send, passing in the `cid` of the current channel and the `text` that it should contain.
-3. Using `ChatClient` to send a message, with some basic error handling added. Note that `ChatClient::channel` returns a `ChannelClient` that simplifies performing operation in a particular channel.
-4. Clearing the input for the next message.
-
-Finally, don't forget to set the `cid` after the view is created, like so:
-
-```kotlin
-binding.messageInputView.cid = cid
-```
-
-### Supporting Typing Indicators
-
-Stream uses events for indicating when a user starts or stop typing in a channel. In a custom Input View, you'll have to send these events if you want to support typing indicators in your app.
-
-First, create a `Runnable` object within the View that will send a the "typing stopped" event when called:
-
-```kotlin
-val stopTyping: Runnable = Runnable {
-    chatClient.channel(cid).stopTyping(parentId = null).enqueue()
-}
-```
-
-Note that `enqueue` is called without a callback, so you're not checking whether or not the operation succeeded or what its result was. This is simplification as these events are not usually high priority.
-
-:::note
-The `parentId` here would be the ID of the parent message in case you're typing in a thread (see below about supporting threading).
-:::
-
-Then, inside the `init` block, add a `TextWatcher` to the `inputField` that will detect changes in the text input:
-
-```kotlin
-binding.inputField.addTextChangedListener(object : TextWatcher {
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-    override fun afterTextChanged(s: Editable?) {
-        // 1
-        if (s.isNullOrEmpty()) {
-            post(stopTyping)
-            return
-        }
-
-        // 2
-        chatClient.channel(cid).keystroke(parentId = null).enqueue()
-        
-        // 3
-        removeCallbacks(stopTyping)
-        postDelayed(stopTyping, 5000L)
-    }
-})
-```
-
-In this snippet, you:
-
-1. Check if the input is now empty, in this case you can immediately send a "typing stopped" event.
-2. Send a keystroke event.
-3. Remove all pending 'typing stopped events', and schedule a new one to be sent in a couple seconds from now.
-
-You can use more advanced logic for sending these events in your own application, this is a basic example.
-
-### Editing Messages
-
-Stream allows users to edit existing messages. By default, this can be triggered from the [Message List component](../04-message-components/02-message-list.mdx), by long tapping a message to access various actions.
-
-To support this, you'll need to store the message being edited and add a new method that lets users set this property:
-
-```kotlin
-var messageToEdit: Message? = null
-
-fun editMessage(message: Message) {
-    messageToEdit = message
-    binding.inputField.setText(message.text)
-}
-```
-
-The input field is also updated here to reflect the original text of the message.
-
-:::note
-You might want to add additional UI and listeners to cancel a pending edit and clear this value. You could also update the text / icon of the _Send_ button when a message is being edited.
-:::
-
-Next, the listener of the _Send_ button has to be updated:
-
-```kotlin
-binding.sendButton.setOnClickListener {
-    val text = binding.inputField.text.toString()
-
-    val toEdit = messageToEdit
-    if (toEdit != null) {
-        // 1
-        val message = toEdit.copy(text = text)
-        chatClient.channel(cid).updateMessage(message).enqueue { result ->
-            if (result.isError) {
-                Toast.makeText(context, "Failed to edit message", Toast.LENGTH_SHORT).show()
-            }
-        }
-    } else {
-        // 2
-        val message = Message(cid = cid, text = text)
-        chatClient.channel(cid).sendMessage(message).enqueue { /* ... */ }
-    }
-
-    // 3
-    binding.inputField.setText("")
-    messageToEdit = null 
-}
-```
-
-1. Editing a message is done by copying the original message and updating its text, then using the `updateMessage` method on `ChatClient`.
-2. Sending a new message is the same as before.
-3. As a last step, you clear the message under edit.
-
-Finally, connect the Input View to the Message List to trigger edits from the list:
-
-```kotlin
-binding.messageListView.setMessageEditHandler(binding.messageInputView::editMessage)
-```
-
-### Handling Threads
-
-Message List View has built-in support for threads, and your custom Input View can be integrated with threads as well.
-
-For this, you'll need to keep track of an additional value within the view: the current parent message.
-
-```kotlin
-var parentMessage: Message? = null
-```
-
-Add a pair of methods to be able to update the value of this property:
-
-```kotlin
-fun setActiveThread(parentMessage: Message) {
-    messageToEdit = null
-    binding.inputField.setText("")
-
-    this.parentMessage = parentMessage
-}
-
-fun resetThread() {
-    messageToEdit = null
-    binding.inputField.setText("")
-
-    parentMessage = null
-}
-```
-
-When entering or exiting a thread, it's a good idea to clear the current input as well as any pending edits.
-
-To send a message to a thread, modify the sending code like so:
-
-```kotlin
-val message = Message(cid = cid, text = text)
-parentMessage?.let { parent ->
-    message.parentId = parent.id
-}
-chatClient.channel(cid).sendMessage(message).enqueue { /* ... */ }
-```
-
-This sets the `parentId` value on the newly created message if there is a parent message available.
-
-:::note
-Another message property related to threading is `showInChannel`. Setting this to `true` will show a message sent to a thread in the main channel as well. You can add additional UI to let users choose this option, for example, the UI Components message input implementation shows a checkbox for this.
-:::
-
-To connect this with the thread handling of the Message List View, add the following calls in your screen's implementation (this assumes that you're also using the default Message List Header View):
-
-```kotlin
-messageListViewModel.mode.observe(this) { mode ->
-    when (mode) {
-        is Thread -> {
-            messageListHeaderViewModel.setActiveThread(mode.parentMessage)
-            binding.messageInputView.setActiveThread(mode.parentMessage)
-        }
-        Normal -> {
-            messageListHeaderViewModel.resetThread()
-            binding.messageInputView.resetThread()
-        }
-    }
-}
-```
-
-Finally, if you've added typing event support, make sure to update both the `keystroke` and `stopTyping` calls to include the parent ID now that threading is supported:
-
-```kotlin
-chatClient.channel(cid).keystroke(parentId = parentMessage?.id).enqueue()
-chatClient.channel(cid).stopTyping(parentId = parentMessage?.id).enqueue()
-```
-
-### Full Source Code
-
-Here's the full source code of a custom message input view that includes all of the features from above:
-
-```kotlin
-class CustomMessageInput : ConstraintLayout {
+    private var messageToEdit: Message? = null
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    val binding = CustomMessageInputBinding.inflate(LayoutInflater.from(context), this)
-    lateinit var cid: String
-    val chatClient = ChatClient.instance()
-    
-    val stopTyping: Runnable = Runnable {
-        chatClient.channel(cid).stopTyping(cid = cid, parentId = parentMessage?.id).enqueue()
+    init {
+        // 1
+        binding.sendButton.setOnClickListener {
+            val text = binding.inputField.text.toString()
+
+            val messageToEdit = messageToEdit
+            if (messageToEdit != null) {
+                // 2
+                channelClient.updateMessage(messageToEdit.copy(text = text)).enqueue()
+            } else {
+                // 3
+                channelClient.sendMessage(Message(text = text, parentId = null)).enqueue()
+            }
+
+            // 4
+            this.messageToEdit = null
+            binding.inputField.setText("")
+        }
     }
 
-    var messageToEdit: Message? = null
-    var parentMessage: Message? = null
+    fun setChannelClient(channelClient: ChannelClient) {
+        this.channelClient = channelClient
+    }
+
+    // 5
+    fun editMessage(message: Message) {
+        this.messageToEdit = message
+        binding.inputField.setText(message.text)
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class CustomMessageComposerView extends ConstraintLayout {
+
+    private ViewCustomMessageComposerBinding binding = ViewCustomMessageComposerBinding
+            .inflate(LayoutInflater.from(getContext()), this);
+
+    private ChannelClient channelClient;
+    
+    private Message messageToEdit;
+
+    public CustomMessageComposerView(@NonNull Context context) {
+        this(context, null);
+    }
+
+    public CustomMessageComposerView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public CustomMessageComposerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        // 1
+        binding.sendButton.setOnClickListener(v -> {
+            // 2
+            String text = binding.inputField.getText().toString();
+            
+            // 3
+            if (messageToEdit != null) {
+                Message message = messageToEdit;
+                message.setText(text);
+                channelClient.updateMessage(message).enqueue();
+            } else {
+                Message message = new Message();
+                message.setText(text);
+                message.setParentId(null);
+                channelClient.sendMessage(message).enqueue();
+            }
+
+            // 4
+            messageToEdit = null;
+            binding.inputField.setText("");
+        });
+    }
+
+    public void setChannelClient(ChannelClient channelClient) {
+        this.channelClient = channelClient;
+    }
+
+    // 5
+    public void editMessage(Message message) {
+        this.messageToEdit = message;
+        binding.inputField.setText(message.getText());
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+In the snippet above, you:
+
+1. Set a click listener on the _Send_ button.
+2. Read the current value from the input field.
+3. Send a new message or update the existing one.
+4. Clear the input for the next message.
+5. Add a method to allow editing existing messages.
+
+Finally, initialize the composer with `ChatClient` and let the message composer know when we are editing a message:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+customMessageComposerView.setChannelClient(ChatClient.instance().channel(cid))
+
+messageListView.setMessageEditHandler(customMessageComposerView::editMessage)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+customMessageComposerView.setChannelClient(ChatClient.instance().channel(cid));
+
+messageListView.setMessageEditHandler(customMessageComposerView::editMessage);
+```
+</TabItem>
+</Tabs>
+
+Now you can send a message to the chat. Let's see how to add support for threads.
+
+## Handling Threads
+
+Message List View has built-in support for threads, and your custom Message Composer View can be integrated with threads as well:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+class CustomMessageComposerView : ConstraintLayout {
+
+    private val binding = ViewCustomMessageComposerBinding.inflate(LayoutInflater.from(context), this)
+    
+    private lateinit var channelClient: ChannelClient
+    
+    private var messageToEdit: Message? = null
+    private var parentMessage: Message? = null
+    
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     init {
         binding.sendButton.setOnClickListener {
             val text = binding.inputField.text.toString()
 
-            val toEdit = messageToEdit
-            if (toEdit != null) {
-                val message = toEdit.copy(text = text)
-                chatClient.channel(cid).updateMessage(message).enqueue { result ->
-                    if (result.isError) {
-                        Toast.makeText(context, "Failed to edit message", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            val messageToEdit = messageToEdit
+            if (messageToEdit != null) {
+                channelClient.updateMessage(messageToEdit.copy(text = text)).enqueue()
             } else {
-                val message = Message(cid = cid, text = text)
-                parentMessage?.let { parent ->
-                    message.parentId = parent.id
-                    message.showInChannel
-                }
-                chatClient.channel(cid).sendMessage(message).enqueue { result ->
-                    if (result.isSuccess) {
-                        // Yay!
-                    } else {
-                        Toast.makeText(context, "Failed to send message", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                channelClient.sendMessage(Message(text = text, parentId = parentMessage?.id)).enqueue()
             }
 
+            this.messageToEdit = null
             binding.inputField.setText("")
-            messageToEdit = null
         }
+    }
 
-        binding.inputField.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                if (s.isNullOrEmpty()) {
-                    post(stopTyping)
-                    return
-                }
-
-                chatClient.channel(cid).keystroke(parentId = parentMessage?.id).enqueue()
-
-                removeCallbacks(stopTyping)
-                postDelayed(stopTyping, 5000L)
-            }
-        })
+    fun setChannelClient(channelClient: ChannelClient) {
+        this.channelClient = channelClient
     }
 
     fun editMessage(message: Message) {
-        messageToEdit = message
+        this.messageToEdit = message
         binding.inputField.setText(message.text)
     }
-
-    fun resetThread() {
-        messageToEdit = null
-        binding.inputField.setText("")
-
-        parentMessage = null
-    }
-
+    
     fun setActiveThread(parentMessage: Message) {
-        messageToEdit = null
-        binding.inputField.setText("")
-
         this.parentMessage = parentMessage
+        this.messageToEdit = null
+        binding.inputField.setText("")
     }
-
+    
+    fun resetThread() {
+        this.parentMessage = null
+        this.messageToEdit = null
+        binding.inputField.setText("")
+    }
 }
 ```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class CustomMessageComposerView extends ConstraintLayout {
+
+    private ViewCustomMessageComposerBinding binding = ViewCustomMessageComposerBinding
+            .inflate(LayoutInflater.from(getContext()), this);
+    
+    private ChannelClient channelClient;
+    
+    private Message messageToEdit;
+    private Message parentMessage;
+    
+    public CustomMessageComposerView(@NonNull Context context) {
+        this(context, null);
+    }
+    
+    public CustomMessageComposerView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+    
+    public CustomMessageComposerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        binding.sendButton.setOnClickListener(v -> {
+            String text = binding.inputField.getText().toString();
+
+            if (messageToEdit != null) {
+                Message message = messageToEdit;
+                message.setText(text);
+                channelClient.updateMessage(message).enqueue();
+            } else {
+                Message message = new Message();
+                message.setText(text);
+                message.setParentId(parentMessage != null ? parentMessage.getId() : null);
+                channelClient.sendMessage(message).enqueue();
+            }
+
+            messageToEdit = null;
+            binding.inputField.setText("");
+        });
+    }
+
+    public void setChannelClient(ChannelClient channelClient) {
+        this.channelClient = channelClient;
+    }
+
+    public void editMessage(Message message) {
+        this.messageToEdit = message;
+        binding.inputField.setText(message.getText());
+    }
+    
+    public void setActiveThread(Message parentMessage) {
+        this.parentMessage = parentMessage;
+        this.messageToEdit = null;
+        binding.inputField.setText("");
+    }
+    
+    public void resetThread() {
+        this.parentMessage = null;
+        this.messageToEdit = null;
+        binding.inputField.setText("");
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+Notice how the new `parentMessage` field is used to track if you are inside a thread. If that's the case, then you need to pass the parent message ID when sending a new message using the `ChannelClient::sendMessage` method.
+
+To complete the feature, let the message composer know when we are entering or leaving a thread:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+customMessageComposerView.setChannelClient(ChatClient.instance().channel(cid))
+
+messageListView.setMessageEditHandler(customMessageComposerView::editMessage)
+
+messageListViewModel.mode.observe(viewLifecycleOwner) { mode ->
+    when (mode) {
+        is MessageMode.MessageThread -> {
+            customMessageComposerView.setActiveThread(mode.parentMessage)
+        }
+        is MessageMode.Normal -> {
+            customMessageComposerView.resetThread()
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+customMessageComposerView.setChannelClient(ChatClient.instance().channel(cid));
+
+messageListView.setMessageEditHandler(customMessageComposerView::editMessage);
+
+messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
+    if (mode instanceof MessageMode.MessageThread) {
+        MessageMode.MessageThread messageThread = (MessageMode.MessageThread) mode;
+        customMessageComposerView.setActiveThread(messageThread.getParentMessage());
+    } else if (mode instanceof MessageMode.Normal) {
+        customMessageComposerView.resetThread();
+    }
+});
+```
+</TabItem>
+</Tabs>

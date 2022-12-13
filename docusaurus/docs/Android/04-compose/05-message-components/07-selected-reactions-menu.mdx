@@ -2,10 +2,10 @@
 
 The `SelectedReactionsMenu` is a component that displays a list of message reactions with the users who left them. If a message already contains reactions, the user can tap on the section with reactions to show the component.
 
-This is a **stateless component** that you can easily add to your UI if you're building a custom Messages screen. The component shows the following UI:
+This is a **stateless component** which you can easily add to your UI if you're building a custom Messages screen. The component shows the following UI:
 
-* **Reaction options**: The top part that shows a list of reactions the user can use to react to the message.
-* **User reactions**: The main part that shows a list of users with their reactions left for the message.
+* **Reaction options**: The top part which shows a list of reactions the user can use to react to the message.
+* **User reactions**: The main part which shows a list of users with their reactions left for the message.
 
 Let's see how to use the component.
 
@@ -43,9 +43,11 @@ As you can see, showing the menu is very simple. If the `selectedMessageState` i
 
 The aforementioned code produces the following UI:
 
-![Default SelectedReactionsMenu component](../../assets/compose_default_selected_reactions_menu.png)
+| Light | Dark |
+|---|---|
+| ![Default SelectedReactionsMenu component](../../assets/compose_default_selected_reactions_menu.png) | ![Default SelectedReactionsMenu component dark](../../assets/compose_default_selected_reactions_menu_dark.png) |
 
-The component shows reactions from the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) on the top, followed by a list of message reactions.
+The component shows tha available reactions from the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) on the top, followed by a list of message reactions.
 
 To dismiss the component just tap outside of the dialog or press the system back button.
 
@@ -74,8 +76,8 @@ if (selectedMessageState is SelectedMessageReactionsState) {
     SelectedReactionsMenu(
         ..., // State
         onMessageAction = { action ->
-            composerViewModel.onMessageAction(action)
-            listViewModel.onMessageAction(action)
+            composerViewModel.performMessageAction(action)
+            listViewModel.performMessageAction(action)
         },
         onShowMoreReactionsSelected = {
             listViewModel.selectExtendedReactions(selectedMessage)
@@ -102,7 +104,8 @@ fun SelectedReactionsMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
+    @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     ... // Actions and Slot APIs
 )
 ```
@@ -110,9 +113,10 @@ fun SelectedReactionsMenu(
 * `modifier`: Modifier for the dialog component.
 * `overlayColor`: Allows you to customize the color of the overlay.
 * `shape`: Allows you to customize the shape of the dialog.
-* `reactionTypes`: Allows you to customize reactions shown in the overlay. By default it uses `ChatTheme.reactionTypes` that is exposed through the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) component.
+* `reactionTypes`: Allows you to customize reactions shown in the overlay. By default it uses `ChatTheme.reactionIconFactory` which is exposed by the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) component.
+* `showMoreReactionsIcon`: Allows you to customize the show more reactions icon. By default, the icon will appear when `ChatTheme.reactionIconFactory` provides more than five reactions.
 
-If you want to customize the reactions, you can set up custom reactions, using [`ChatTheme`](../03-general-customization/01-chat-theme.mdx)'s `reactionTypes` parameter.
+The best way to customize reactions is by overriding `ChatTheme.reactionIconFactory` with your own implementation of `ReactionIconFactory` so that all of your components wrapped inside of `ChatTheme` draw from the same source.
 
 By default `SelectedReactionsMenu` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
@@ -142,7 +146,9 @@ if (selectedMessageState is SelectedMessageReactionsState) {
 
 The code above will produce the following UI:
 
-![Custom SelectedReactionsMenu component](../../assets/compose_custom_selected_reactions_menu_shape_and_alignment.png)
+| Light | Dark |
+|---|---|
+| ![Custom SelectedReactionsMenu component](../../assets/compose_custom_selected_reactions_menu_shape_and_alignment.png) | ![Custom SelectedReactionsMenu component dark](../../assets/compose_custom_selected_reactions_menu_shape_and_alignment_dark.png) |
 
 `SelectedReactionsMenu` provides you with `Composable` slots that are ready for more extensive customizations.
 
@@ -172,8 +178,11 @@ if (selectedMessageState is SelectedMessageReactionsState) {
         headerContent = {
             Text(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .background(shape = ChatTheme.shapes.avatar, color = ChatTheme.colors.infoAccent)
+                    .padding(16.dp)
+                    .background(
+                        shape = ChatTheme.shapes.avatar,
+                        color = ChatTheme.colors.infoAccent
+                    )
                     .padding(horizontal = 8.dp),
                 style = ChatTheme.typography.body,
                 color = ChatTheme.colors.textHighEmphasis,
@@ -188,6 +197,8 @@ The example above shows how to replace the header content with a custom `Text`.
 
 The result looks like this:
 
-![Custom SelectedReactionsMenu component with a custom header content](../../assets/compose_custom_selected_reactions_menu_custom_header_slot.png)
+| Light | Dark |
+|---|---|
+| ![Custom SelectedReactionsMenu component with a custom header content](../../assets/compose_custom_selected_reactions_menu_custom_header_slot.png) | ![Custom SelectedReactionsMenu component with a custom header content dark](../../assets/compose_custom_selected_reactions_menu_custom_header_slot_dark.png) |
 
 

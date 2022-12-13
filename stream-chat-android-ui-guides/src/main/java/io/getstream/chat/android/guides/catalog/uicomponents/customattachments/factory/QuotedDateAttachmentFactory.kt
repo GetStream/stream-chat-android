@@ -25,9 +25,6 @@ import io.getstream.chat.android.guides.databinding.ViewQuotedDateAttachmentBind
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactory
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 /**
  * A custom [QuotedAttachmentFactory] that adds support for quoted date attachments.
@@ -48,21 +45,9 @@ class QuotedDateAttachmentFactory : QuotedAttachmentFactory {
         private val binding = ViewQuotedDateAttachmentBinding.inflate(LayoutInflater.from(context), this)
 
         fun showDate(attachment: Attachment) {
-            binding.dateTextView.text = parseDate(attachment)
-        }
-
-        private fun parseDate(attachment: Attachment): String {
-            val date = attachment.extraData["payload"].toString()
-            return StringBuilder().apply {
-                val dateTime = SimpleDateFormat("MMMMM dd, yyyy", Locale.getDefault()).parse(date) ?: return@apply
-                val year = Calendar.getInstance().apply {
-                    timeInMillis = dateTime.time
-                }.get(Calendar.YEAR)
-                if (Calendar.getInstance().get(Calendar.YEAR) != year) {
-                    append(year).append("\n")
-                }
-                append(date.replace(", $year", ""))
-            }.toString()
+            binding.dateTextView.text = attachment.extraData["payload"]
+                .toString()
+                .replace(",", "\n")
         }
     }
 }
