@@ -46,7 +46,7 @@ public class Configuration {
         // Create a drawable for the non-selected reaction option
         Drawable loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love);
         // Create a drawable for the selected reaction option and set a tint to it
-        Drawable loveDrawableSelected = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love);
+        Drawable loveDrawableSelected = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love).mutate();
         loveDrawableSelected.setTint(Color.RED);
 
         // Create a map of reactions
