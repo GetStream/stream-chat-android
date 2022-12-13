@@ -371,6 +371,7 @@ public class MessageComposerController(
      * @param value Current state value.
      */
     public fun setMessageInput(value: String) {
+        if (this.input.value == value) return
         this.input.value = value
 
         if (canSendTypingUpdates.value) {
