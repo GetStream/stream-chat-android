@@ -10,7 +10,7 @@ Video thumbnails are a paid feature, with the pricing listed [here](https://gets
 
 ## Customization
 
-Attachments are rendered inside various Chat UI Components such as the message list or the message composer. Different components allow you to stylize attachment rendering in different ways.
+Attachments are rendered inside various Chat UI Components such as `MessageListView` or `MessageComposerView`. Different components allow you to stylize attachment rendering in different ways.
 
 ### MessageListView
 
@@ -37,7 +37,7 @@ First, create a new style which will transform the design of the video icon:
 ```
 
 :::note
-Only certain attributes were used here, you can find the rest in the [source file](https://github.com/GetStream/stream-chat-android/blob/develop/stream-chat-android-ui-components/src/main/res/values/attrs_media_attachment_view.xml).
+Only certain attributes were used here, you can find the rest in the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_media_attachment_view.xml).
 :::
 
 Next, add it to your Stream theme:
@@ -48,7 +48,7 @@ Next, add it to your Stream theme:
 </style>
 ```
 
-And finally, add that to your app theme:
+And finally, override `streamUiTheme`:
 
 ```xml
 <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -85,6 +85,10 @@ All we need to do to replicate the custom UI we created for `MessageListView` is
     />
 ```
 
+:::note
+Only certain attributes were used here, you can find the rest in the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml).
+:::
+
 Which results in the following UI:
 
 | Custom Image and Video Attachment Previews (Light Mode) | Custom Image and Video Attachment Previews (Dark Mode) |
@@ -119,17 +123,25 @@ First, create a style that changes the way video attachments are rendered inside
 </style>
 ```
 
+:::note
+Only certain attributes were used here, you can find the rest in the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_attachment_gallery_video_attachments.xml).
+:::
+
 Second, create one that changes the way video attachments are rendered inside the overview:
 
 ```xml
 <style name="StreamTheme.MediaAttachmentGridViewStyle" parent="@style/StreamUiTheme">
     <item name="streamUiMediaAttachmentGridViewPlayVideoIconTint">@color/stream_ui_literal_white</item>
     <item name="streamUiMediaAttachmentGridViewPlayVideoIconBackgroundColor">@color/stream_ui_literal_black</item>
-    <item name="streamUiAttachmentGalleryViewMediaPlayVideoIconElevation">0dp</item>
+    <item name="streamUiMediaAttachmentGridViewPlayVideoIconElevation">0dp</item>
     <item name="streamUiMediaAttachmentGridViewPlayVideoIconCornerRadius">10dp</item>
     <item name="streamUiMediaAttachmentGridViewPlayVideoIconPadding">4dp</item>
 </style>
 ```
+
+:::note
+Only certain attributes were used here, you can find the rest in the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_media_attachment_grid_view.xml).
+:::
 
 Then, add them to your Stream theme:
 
@@ -140,7 +152,7 @@ Then, add them to your Stream theme:
 </style>
 ```
 
-Afterwards, add it to your custom attachment gallery `Activity` theme:
+Afterwards, override `streamUiTheme` in your custom gallery `Activity` theme:
 
 ```xml
 <style name="CustomAttachmentGalleryTheme" parent="StreamUi.AttachmentGallery">
