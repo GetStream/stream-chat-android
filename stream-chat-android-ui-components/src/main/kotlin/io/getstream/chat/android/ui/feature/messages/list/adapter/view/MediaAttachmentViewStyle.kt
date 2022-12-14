@@ -28,6 +28,7 @@ import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.use
 
@@ -87,7 +88,7 @@ public data class MediaAttachmentViewStyle(
             context.obtainStyledAttributes(
                 attrs,
                 R.styleable.MediaAttachmentView,
-                R.attr.streamUiMessageListImageAttachmentStyle,
+                R.attr.streamUiMessageListMediaAttachmentStyle,
                 R.style.StreamUi_MessageList_MediaAttachment
             ).use { a ->
                 val progressIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentProgressIcon)
@@ -179,6 +180,11 @@ public data class MediaAttachmentViewStyle(
                         0
                     )
 
+                val playVideoIconPadding =
+                    a.getDimensionOrNull(
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPadding,
+                    )?.toInt()
+
                 return MediaAttachmentViewStyle(
                     progressIcon = progressIcon,
                     mediaPreviewBackgroundColor = mediaPreviewBackgroundColor,
@@ -190,10 +196,10 @@ public data class MediaAttachmentViewStyle(
                     playVideoIconTint = playVideoIconTint,
                     playVideoIconBackgroundColor = playVideoIconBackgroundColor,
                     playVideoIconElevation = playVideoIconElevation,
-                    playVideoIconPaddingTop = playVideoIconPaddingTop,
-                    playVideoIconPaddingBottom = playVideoIconPaddingBottom,
-                    playVideoIconPaddingStart = playVideoIconPaddingStart,
-                    playVideoIconPaddingEnd = playVideoIconPaddingEnd,
+                    playVideoIconPaddingTop = playVideoIconPadding ?: playVideoIconPaddingTop,
+                    playVideoIconPaddingBottom = playVideoIconPadding ?: playVideoIconPaddingBottom,
+                    playVideoIconPaddingStart = playVideoIconPadding ?: playVideoIconPaddingStart,
+                    playVideoIconPaddingEnd = playVideoIconPadding ?: playVideoIconPaddingEnd,
                     playVideoIconCornerRadius = playVideoIconCornerRadius
                 ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }

@@ -26,7 +26,7 @@
         <attr name="streamUiMessageListViewReactionsStyle" format="reference" />
         <attr name="streamUiSingleReactionViewStyle" format="reference" />
         <attr name="streamUiMessageListGiphyAttachmentStyle" format="reference" />
-        <attr name="streamUiMessageListImageAttachmentStyle" format="reference" />
+        <attr name="streamUiMessageListMediaAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListFileAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListUnsupportedAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListItemAvatarStyle" format="reference" />

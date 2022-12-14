@@ -27,6 +27,7 @@ import io.getstream.chat.android.ui.feature.gallery.overview.MediaAttachmentGrid
 import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
+import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 
 /**
@@ -140,6 +141,11 @@ public data class MediaAttachmentGridViewStyle(
                     0
                 )
 
+            val playVideoIconPadding =
+                it.getDimensionOrNull(
+                    R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconPadding,
+                )?.toInt()
+
             val imagePlaceholder = it.getDrawable(
                 R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewImagePlaceholder
             ) ?: ContextCompat.getDrawable(
@@ -154,10 +160,10 @@ public data class MediaAttachmentGridViewStyle(
                 playVideoIconBackgroundColor = playVideoIconBackgroundColor,
                 playVideoIconCornerRadius = playVideoIconCornerRadius,
                 playVideoIconElevation = playVideoIconElevation,
-                playVideoIconPaddingTop = playVideoIconPaddingTop,
-                playVideoIconPaddingBottom = playVideoIconPaddingBottom,
-                playVideoIconPaddingStart = playVideoIconPaddingStart,
-                playVideoIconPaddingEnd = playVideoIconPaddingEnd,
+                playVideoIconPaddingTop = playVideoIconPadding ?: playVideoIconPaddingTop,
+                playVideoIconPaddingBottom = playVideoIconPadding ?: playVideoIconPaddingBottom,
+                playVideoIconPaddingStart = playVideoIconPadding ?: playVideoIconPaddingStart,
+                playVideoIconPaddingEnd = playVideoIconPadding ?: playVideoIconPaddingEnd,
                 imagePlaceholder = imagePlaceholder,
             ).let(TransformStyle.mediaAttachmentGridViewStyle::transform)
         }
