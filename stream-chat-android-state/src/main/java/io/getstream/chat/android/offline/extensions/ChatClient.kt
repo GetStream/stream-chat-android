@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.toResultError
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.offline.extensions.internal.getAttachmentFallbackName
 import io.getstream.chat.android.offline.extensions.internal.logic
 import io.getstream.chat.android.offline.extensions.internal.requestsAsState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -198,7 +199,7 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
             val logger = StreamLog.getLogger("Chat:DownloadAttachment")
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val url = attachment.assetUrl ?: attachment.imageUrl
-            val subPath = attachment.name ?: attachment.title
+            val subPath = attachment.name ?: attachment.title ?: attachment.getAttachmentFallbackName() ?: "attachment"
 
             logger.d { "Downloading attachment. Name: $subPath, Url: $url" }
 
