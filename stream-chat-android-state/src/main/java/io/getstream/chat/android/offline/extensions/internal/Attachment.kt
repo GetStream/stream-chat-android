@@ -30,5 +30,5 @@ internal fun Attachment.getAttachmentFallbackName(): String? {
         else -> this.assetUrl ?: this.imageUrl ?: this.thumbUrl
     }
 
-    return url?.let { Regex("""[^\/]*(?=\?)""").find(it)?.value }
+    return url?.let { Regex("""[^/]+(?=\?)""").find(it)?.value }
 }
