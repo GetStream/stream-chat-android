@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.datepicker.MaterialDatePicker
-import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
@@ -41,12 +40,10 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.docs.R
-import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
 /**
  * [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/)
@@ -105,16 +102,18 @@ private object AddingCustomAttachmentsSnippet {
                     // Message list header
                 },
                 bottomBar = {
+                    // 1
                     CustomMessageComposer(
                         viewModel = composerViewModel,
-                        onDateSelected = {
-                            val date = DateFormat
-                                .getDateInstance(DateFormat.LONG)
-                                .format(Date(it))
+                        onDateSelected = { date ->
+                            // 2
+                            val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                             val attachment = Attachment(
                                 type = "date",
-                                extraData = mutableMapOf("payload" to date)
+                                extraData = mutableMapOf("payload" to payload)
                             )
+
+                            // 3
                             composerViewModel.addSelectedAttachments(listOf(attachment))
                         }
                     )
@@ -311,18 +310,12 @@ private object AddingCustomAttachmentsSnippet {
         attachmentState: AttachmentState,
         modifier: Modifier = Modifier,
     ) {
-        val attachment = attachmentState.message.attachments.first { it.type == "date" }
-        val date = attachment.extraData["payload"].toString()
-        val formattedDate = StringBuilder().apply {
-            val dateTime = SimpleDateFormat("MMMMM dd, yyyy", Locale.getDefault()).parse(date) ?: return@apply
-            val year = Calendar.getInstance().apply {
-                timeInMillis = dateTime.time
-            }.get(Calendar.YEAR)
-            if (Calendar.getInstance().get(Calendar.YEAR) != year) {
-                append(year).append("\n")
-            }
-            append(date.replace(", $year", ""))
-        }.toString()
+        val attachment = attachmentState.message
+            .attachments
+            .first { it.type == "date" }
+        val formattedDate = attachment.extraData["payload"]
+            .toString()
+            .replace(",", "\n")
 
         Column(
             modifier = modifier

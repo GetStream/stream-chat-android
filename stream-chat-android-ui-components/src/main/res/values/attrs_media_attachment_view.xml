@@ -45,15 +45,15 @@
         </attr>
 
         <!-- The icon overlaid on top of video attachment previews. -->
-        <attr name="streamUiMediaAttachmentPlayVideoIcon" format="reference"/>
+        <attr name="streamUiMediaAttachmentPlayVideoIcon" format="reference" />
         <!-- Tints the icon overlaid on top of video attachment previews. -->
-        <attr name="streamUiMediaAttachmentPlayVideoIconTint" format="reference|color"/>
+        <attr name="streamUiMediaAttachmentPlayVideoIconTint" format="reference|color" />
         <!-- The background color of the View containing the play button. -->
-        <attr name="streamUiMediaAttachmentPlayVideoIconBackgroundColor" format="color|reference"/>
+        <attr name="streamUiMediaAttachmentPlayVideoIconBackgroundColor" format="color|reference" />
         <!-- The corner radius of the play button. -->
-        <attr name="streamUiMediaAttachmentPlayVideoIconCornerRadius" format="dimension"/>
+        <attr name="streamUiMediaAttachmentPlayVideoIconCornerRadius" format="dimension" />
         <!-- The elevation of the play button. -->
-        <attr name="streamUiMediaAttachmentPlayVideoIconElevation" format="dimension"/>
+        <attr name="streamUiMediaAttachmentPlayVideoIconElevation" format="dimension" />
         <!-- Sets the top padding of the play video icon. -->
         <attr name="streamUiMediaAttachmentPlayVideoIconPaddingTop" format="dimension" />
         <!-- Sets the bottom padding of the play video icon. -->
@@ -62,5 +62,9 @@
         <attr name="streamUiMediaAttachmentPlayVideoIconPaddingStart" format="dimension" />
         <!-- Sets the end padding of the play video icon. -->
         <attr name="streamUiMediaAttachmentPlayVideoIconPaddingEnd" format="dimension" />
+        <!-- Sets the padding of the play video icon on all sides.
+        Using this attribute will override other padding attributes such as start the padding set on
+        top, bottom, start and end sides of the icon. -->
+        <attr name="streamUiMediaAttachmentPlayVideoIconPadding" format="dimension" />
     </declare-styleable>
 </resources>

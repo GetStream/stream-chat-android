@@ -107,21 +107,27 @@
 
         <!-- Overlays a drawable above video attachments. By default, used to display a play button,
         signaling to the user that it's a video attachment. -->
-        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawable" format="reference"/>
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawable" format="reference" />
         <!-- Sets the tint of the drawable overlaid above video attachments. -->
-        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawableTint" format="reference|color"/>
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawableTint" format="reference|color" />
         <!-- Sets the background color of the icon overlaid above video attachments. -->
-        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor" format="reference|color"/>
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor" format="reference|color" />
+        <!-- Sets the corner radius of the parent card containing the video icon. -->
+        <attr name="streamUiMessageComposerMessageInputVideoCornerRadius" format="dimension" />
         <!-- Sets the elevation of the icon overlaid above video attachments. -->
-        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconElevation" format="dimension"/>
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconElevation" format="dimension" />
         <!-- Sets the top padding between the video attachment drawable and its parent card. -->
-        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop" format="dimension"/>
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop" format="dimension" />
         <!-- Sets the bottom padding between the video attachment drawable and its parent card. -->
-        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom" format="dimension"/>
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom" format="dimension" />
         <!-- Sets the start padding between the video attachment drawable and its parent card. -->
-        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart" format="dimension"/>
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart" format="dimension" />
         <!-- Sets the end padding between the video attachment drawable and its parent card. -->
-        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd" format="dimension"/>
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd" format="dimension" />
+        <!-- Sets the padding between the video attachment drawable and its parent card, on all
+        sides. Using this attribute will override other padding attributes such as start the padding
+        set on top, bottom, start and end sides of the icon. -->
+        <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding" format="dimension" />
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />

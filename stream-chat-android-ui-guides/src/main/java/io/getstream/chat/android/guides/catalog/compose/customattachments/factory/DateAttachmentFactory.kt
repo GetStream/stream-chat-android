@@ -59,7 +59,9 @@ val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
             onAttachmentRemoved = onAttachmentRemoved
         )
     },
-    textFormatter = { attachment -> attachment.extraData["payload"].toString() },
+    textFormatter = { attachment ->
+        attachment.extraData["payload"].toString()
+    },
 )
 
 /**
