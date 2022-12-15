@@ -27,6 +27,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
+import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 
 /**
@@ -136,6 +137,11 @@ public data class AttachmentGalleryViewMediaStyle(
                     0
                 )
 
+            val viewMediaPlayVideoIconPadding =
+                it.getDimensionOrNull(
+                    R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPadding,
+                )?.toInt()
+
             val viewMediaPlayVideoIconWidth =
                 it.getLayoutDimension(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayIconWidth,
@@ -161,10 +167,12 @@ public data class AttachmentGalleryViewMediaStyle(
                 viewMediaPlayVideoIconBackgroundColor = viewMediaPlayVideoIconBackgroundColor,
                 viewMediaPlayVideoIconCornerRadius = viewMediaPlayVideoIconCornerRadius,
                 viewMediaPlayVideoIconElevation = viewMediaPlayVideoIconElevation,
-                viewMediaPlayVideoIconPaddingTop = viewMediaPlayVideoIconPaddingTop,
-                viewMediaPlayVideoIconPaddingBottom = viewMediaPlayVideoIconPaddingBottom,
-                viewMediaPlayVideoIconPaddingStart = viewMediaPlayVideoIconPaddingStart,
-                viewMediaPlayVideoIconPaddingEnd = viewMediaPlayVideoIconPaddingEnd,
+                viewMediaPlayVideoIconPaddingTop = viewMediaPlayVideoIconPadding ?: viewMediaPlayVideoIconPaddingTop,
+                viewMediaPlayVideoIconPaddingBottom = viewMediaPlayVideoIconPadding
+                    ?: viewMediaPlayVideoIconPaddingBottom,
+                viewMediaPlayVideoIconPaddingStart = viewMediaPlayVideoIconPadding
+                    ?: viewMediaPlayVideoIconPaddingStart,
+                viewMediaPlayVideoIconPaddingEnd = viewMediaPlayVideoIconPadding ?: viewMediaPlayVideoIconPaddingEnd,
                 viewMediaPlayVideoIconWidth = viewMediaPlayVideoIconWidth,
                 viewMediaPlayVideoIconHeight = viewMediaPlayVideoIconHeight,
                 imagePlaceholder = imagePlaceholder,
