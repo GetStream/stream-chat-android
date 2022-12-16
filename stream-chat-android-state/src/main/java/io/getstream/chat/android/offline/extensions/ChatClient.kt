@@ -203,7 +203,7 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val url = attachment.assetUrl ?: attachment.imageUrl
             val subPath = attachment.name ?: attachment.title ?: attachment.parseAttachmentNameFromUrl()
-            ?: createAttachmentFallbackName()
+                ?: createAttachmentFallbackName()
 
             logger.d { "Downloading attachment. Name: $subPath, Url: $url" }
 
