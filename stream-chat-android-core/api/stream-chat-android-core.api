@@ -1794,3 +1794,43 @@ public final class io/getstream/chat/android/models/querysort/internal/SortSpeci
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode : java/lang/Enum {
+	public static final field BOTTOM Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+	public static final field CENTER Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+	public static final field LEFT Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+	public static final field RIGHT Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+	public static final field TOP Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+	public final fun getQueryParameterName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+	public static fun values ()[Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+}
+
+public final class io/getstream/chat/android/models/streamcdn/image/StreamCdnOriginalImageDimensions {
+	public fun <init> (II)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnOriginalImageDimensions;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/streamcdn/image/StreamCdnOriginalImageDimensions;IIILjava/lang/Object;)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnOriginalImageDimensions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOriginalHeight ()I
+	public final fun getOriginalWidth ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode : java/lang/Enum {
+	public static final field CLIP Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
+	public static final field CROP Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
+	public static final field FILL Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
+	public static final field SCALE Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
+	public final fun getQueryParameterName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
+	public static fun values ()[Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
+}
+
+public final class io/getstream/chat/android/models/streamcdn/image/extensions/StringExtensionsKt {
+	public static final fun createResizedStreamCdnImageUrl (Ljava/lang/String;FFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;)Ljava/lang/String;
+	public static synthetic fun createResizedStreamCdnImageUrl$default (Ljava/lang/String;FFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;ILjava/lang/Object;)Ljava/lang/String;
+	public static final fun getStreamCdnHostedImageDimensions (Ljava/lang/String;)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnOriginalImageDimensions;
+}
+
