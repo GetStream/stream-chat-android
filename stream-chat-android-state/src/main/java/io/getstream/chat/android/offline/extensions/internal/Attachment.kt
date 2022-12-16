@@ -24,11 +24,15 @@ import io.getstream.chat.android.client.models.Attachment
  * Useful in situations where no attachment name or title has been provided and
  * we need a name in order to download the file to storage.
  */
-internal fun Attachment.getAttachmentFallbackName(): String? {
+internal fun Attachment.parseAttachmentNameFromUrl(): String? {
     val url = when (this.type) {
         "image" -> this.imageUrl ?: this.assetUrl ?: this.thumbUrl
         else -> this.assetUrl ?: this.imageUrl ?: this.thumbUrl
     }
 
-    return url?.substringAfterLast("/")?.substringBefore("?")
+    return url?.substringAfterLast(
+        delimiter = "/",
+        missingDelimiterValue = ""
+    )?.takeIf { it.isNotBlank() }
+        ?.substringBefore("?")
 }
