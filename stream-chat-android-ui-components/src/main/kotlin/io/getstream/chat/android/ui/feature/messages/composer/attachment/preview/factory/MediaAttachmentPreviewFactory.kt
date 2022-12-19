@@ -133,6 +133,7 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
                         setCardBackgroundColor(backgroundColor)
                     }
                     elevation = style.messageInputVideoAttachmentIconElevation
+                    radius = style.messageInputVideoAttachmentIconCornerRadius
                 }
             }
         }

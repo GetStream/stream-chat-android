@@ -107,7 +107,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -133,7 +133,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     private val userScope: UserScope,
 ) : ChatApi {
 
-    private val logger = StreamLog.getLogger("Chat:MoshiChatApi")
+    private val logger by taggedLogger("Chat:MoshiChatApi")
 
     private val callPostponeHelper: CallPostponeHelper by lazy {
         CallPostponeHelper(

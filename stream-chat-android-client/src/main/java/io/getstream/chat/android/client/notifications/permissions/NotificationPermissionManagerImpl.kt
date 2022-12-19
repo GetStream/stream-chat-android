@@ -34,7 +34,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.client.R
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 @Suppress("ProtectedMemberInFinalClass", "ComplexCondition")
 internal class NotificationPermissionManagerImpl(
@@ -43,7 +43,7 @@ internal class NotificationPermissionManagerImpl(
     private val onPermissionStatus: (NotificationPermissionStatus) -> Unit,
 ) : NotificationPermissionManager, ActivityLifecycleCallbacks() {
 
-    private val logger = StreamLog.getLogger("Chat:Notifications-PM")
+    private val logger by taggedLogger("Chat:Notifications-PM")
 
     private val handler = Handler(Looper.getMainLooper())
     private val permissionContract = ActivityResultContracts.RequestPermission()

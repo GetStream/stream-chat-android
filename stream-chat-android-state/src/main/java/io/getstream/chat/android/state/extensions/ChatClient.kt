@@ -47,7 +47,7 @@ import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -202,7 +202,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 public fun ChatClient.downloadAttachment(context: Context, attachment: Attachment): Call<Unit> {
     return CoroutineCall(state.scope) {
         try {
-            val logger = StreamLog.getLogger("Chat:DownloadAttachment")
+            val logger by taggedLogger("Chat:DownloadAttachment")
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val url = attachment.assetUrl ?: attachment.imageUrl
             val subPath = attachment.name ?: attachment.title

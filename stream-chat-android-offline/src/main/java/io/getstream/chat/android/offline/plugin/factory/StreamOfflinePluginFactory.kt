@@ -45,7 +45,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ShuffleGiphyLi
 import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryListenerDatabase
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
@@ -54,7 +54,7 @@ import io.getstream.log.StreamLog
  */
 public class StreamOfflinePluginFactory(private val appContext: Context) : PluginFactory, RepositoryFactory.Provider {
 
-    private val logger = StreamLog.getLogger("Chat:OfflinePluginFactory")
+    private val logger by taggedLogger("Chat:OfflinePluginFactory")
 
     override fun createRepositoryFactory(user: User): RepositoryFactory {
         logger.i { "[createRepositoryFactory] user.id: '${user.id}'" }

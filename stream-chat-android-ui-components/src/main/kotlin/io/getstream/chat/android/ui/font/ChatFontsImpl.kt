@@ -21,7 +21,7 @@ import android.graphics.Typeface
 import android.widget.TextView
 import androidx.annotation.FontRes
 import androidx.core.content.res.ResourcesCompat
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import java.util.HashMap
 
 internal class ChatFontsImpl(
@@ -32,7 +32,7 @@ internal class ChatFontsImpl(
     private val resourceMap: MutableMap<Int, Typeface> = HashMap()
     private val pathMap: MutableMap<String, Typeface> = HashMap()
 
-    private val logger = StreamLog.getLogger(ChatFonts::class.java.simpleName)
+    private val logger by taggedLogger(ChatFonts::class.java.simpleName)
 
     override fun setFont(textStyle: TextStyle, textView: TextView) {
         if (textStyle.font != null) {

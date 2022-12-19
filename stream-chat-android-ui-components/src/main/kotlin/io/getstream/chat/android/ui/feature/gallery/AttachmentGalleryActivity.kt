@@ -51,7 +51,7 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.use
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,7 +62,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     private lateinit var binding: StreamUiActivityAttachmentGalleryBinding
 
-    private val logger = StreamLog.getLogger("Chat:AttachmentGalleryActivity")
+    private val logger by taggedLogger("Chat:AttachmentGalleryActivity")
 
     /**
      * If the "reply" option is present in the list.

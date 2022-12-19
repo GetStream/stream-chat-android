@@ -20,7 +20,7 @@
 package io.getstream.chat.android.client.scope.user
 
 import io.getstream.chat.android.models.UserId
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.ChildHandle
 import kotlinx.coroutines.ChildJob
 import kotlinx.coroutines.CompletableJob
@@ -54,7 +54,7 @@ private class UserJobImpl(
     private val getUserId: () -> UserId?
 ) : CompletableJob by delegate, UserJob {
 
-    private val logger = StreamLog.getLogger("Chat:UserJob")
+    private val logger by taggedLogger("Chat:UserJob")
 
     /**
      * Wraps child job with [UserChildJob] and attaches it so that [UserJob] job becomes its parent.

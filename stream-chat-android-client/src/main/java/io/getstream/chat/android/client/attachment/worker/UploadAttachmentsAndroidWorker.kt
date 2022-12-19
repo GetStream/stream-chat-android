@@ -28,7 +28,8 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.log.StreamLog
+import io.getstream.log.streamLog
+import io.getstream.log.taggedLogger
 import java.util.UUID
 
 internal class UploadAttachmentsAndroidWorker(
@@ -41,7 +42,7 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        val logger = StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
+        val logger by taggedLogger("Chat:UploadAttachmentsAndroidWorker")
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
 
@@ -91,8 +92,9 @@ internal class UploadAttachmentsAndroidWorker(
                 )
                 .build()
 
-            StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
-                .d { "[start] Enqueueing attachments upload work for $messageId" }
+            streamLog(tag = "Chat:UploadAttachmentsAndroidWorker") {
+                "[start] Enqueueing attachments upload work for $messageId"
+            }
 
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
@@ -109,8 +111,9 @@ internal class UploadAttachmentsAndroidWorker(
          * @param workId UUID of the enqueued work.
          */
         fun stop(context: Context, workId: UUID) {
-            StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
-                .d { "[stop] Upload attachments work cancelled" }
+            streamLog(tag = "Chat:UploadAttachmentsAndroidWorker") {
+                "[stop] Upload attachments work cancelled"
+            }
             WorkManager.getInstance(context).cancelWorkById(workId)
         }
 

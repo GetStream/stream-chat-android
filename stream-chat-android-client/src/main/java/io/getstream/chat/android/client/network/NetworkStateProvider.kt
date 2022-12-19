@@ -21,12 +21,12 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkStateProvider(private val connectivityManager: ConnectivityManager) {
 
-    private val logger = StreamLog.getLogger("Chat:NetworkStateProvider")
+    private val logger by taggedLogger("Chat:NetworkStateProvider")
     private val lock: Any = Any()
     private val callback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {

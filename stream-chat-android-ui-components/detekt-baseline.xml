@@ -66,6 +66,7 @@
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor</ID>
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius</ID>
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconElevation</ID>
+    <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPadding</ID>
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom</ID>
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd</ID>
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart</ID>
@@ -109,14 +110,15 @@
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextStyle</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextFontAssets</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFontAssets</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$a.getColorOrNull(R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor)</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$a.getColorOrNull(R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawableTint)</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawable)</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$messageInputVideoAttachmentIconDrawablePaddingBottom = messageInputVideoAttachmentIconDrawablePaddingBottom</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$messageInputVideoAttachmentIconDrawablePaddingEnd = messageInputVideoAttachmentIconDrawablePaddingEnd</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$messageInputVideoAttachmentIconDrawablePaddingStart = messageInputVideoAttachmentIconDrawablePaddingStart</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$messageInputVideoAttachmentIconDrawablePaddingTop = messageInputVideoAttachmentIconDrawablePaddingTop</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$messageInputVideoAttachmentIconDrawablePaddingBottom</ID>
     <ID>MaxLineLength:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle$*</ID>
     <ID>MaxLineLength:MessageListItemDecoratorProvider.kt$MessageListItemDecoratorProvider$*</ID>
     <ID>MaxLineLength:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date</ID>

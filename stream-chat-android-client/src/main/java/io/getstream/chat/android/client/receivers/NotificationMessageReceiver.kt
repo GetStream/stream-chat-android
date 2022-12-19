@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 internal class NotificationMessageReceiver : BroadcastReceiver() {
 
@@ -132,7 +132,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             }
     }
 
-    private val logger = StreamLog.getLogger("NotificationMessageReceiver")
+    private val logger by taggedLogger("NotificationMessageReceiver")
 
     override fun onReceive(context: Context, intent: Intent) {
         val channelType = intent.getStringExtra(KEY_CHANNEL_TYPE) ?: return

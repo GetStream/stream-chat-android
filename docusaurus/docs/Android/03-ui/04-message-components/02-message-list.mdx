@@ -254,6 +254,30 @@ messageListView.setUserClickListener((user) -> {
 
 Other available listeners for `MessageListView` can be found [here](https://getstream.github.io/stream-chat-android/stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list.adapter/-message-list-listener-container/).
 
+## Previewing Attachments
+
+Out of the box previews are provided for the following attachment types: uploading, link, Giphy, image, video and file.
+
+### Image and Video
+
+Image and video attachments are previewed as thumbnails which can be displayed as a single tile or multiple ones depending on how many attachments are contained within the specific message.
+
+In practice they appear as such:
+
+| Video Thumbnails Enabled (Light Mode) | Video Thumbnails Enabled (Dark Mode) |
+|---|---|
+| ![Default Image and Video Attachment Previews Light Mode](../../assets/message_list_video_thumbs_enabled.png) | ![Default Image and Video Attachment Previews Dark Mode](../../assets/message_list_video_thumbs_enabled_dark.png) |
+
+Video thumbnails are a paid feature, with the pricing listed [here](https://getstream.io/chat/pricing/). They are enabled by default but can be turned off by setting the `ChatUI` property `videoThumbnailsEnabled` to `false`. You can read more about disabling video thumbnails in the [configuration documentation](../02-general-customization/02-chatui.mdx#disabling-video-thumbnails)
+
+Once video thumbnails are disabled, messages containing video attachments will be displayed in the following manner:
+
+| Video Thumbnails Disabled (Light Mode) | Video Thumbnails Disabled (Dark Mode) |
+|---|---|
+| ![Video Thumbnails Disabled Light mode](../../assets/message_list_video_thumbs_disabled.png) | ![Video Thumbnails Disabled Light mode](../../assets/message_list_video_thumbs_disabled_dark.png) |
+<!-- TODO link in the actual guide once it is finish -->
+If you want to read more about how to customize the way these attachments are displayed, head over to the relevant section seen [here](../07-guides/TODO-link-in-the-actual-guide-once-it-is-finish)
+
 ## Customization
 
 You can change the appearance of this component to fit your app's design requirements. These changes can be done either at compile-time through the use of XML attributes, or at runtime by using style transformations.

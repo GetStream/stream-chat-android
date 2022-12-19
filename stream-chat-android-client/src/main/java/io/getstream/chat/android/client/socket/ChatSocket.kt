@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
 import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -49,7 +50,7 @@ internal open class ChatSocket(
     private val networkStateProvider: NetworkStateProvider,
 ) {
     private var streamWebSocket: StreamWebSocket? = null
-    private val logger = StreamLog.getLogger("Chat:Socket")
+    private val logger by taggedLogger("Chat:Socket")
     private var connectionConf: SocketFactory.ConnectionConf? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val chatSocketStateService = ChatSocketStateService()
