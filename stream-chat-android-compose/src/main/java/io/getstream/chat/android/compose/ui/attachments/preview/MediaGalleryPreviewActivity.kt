@@ -149,6 +149,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.initials
@@ -1460,7 +1461,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         ) {
             val data =
                 if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
-                    attachment.imagePreviewUrl
+                    attachment.imagePreviewUrl.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
                 } else {
                     null
                 }

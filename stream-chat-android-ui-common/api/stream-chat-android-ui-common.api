@@ -300,6 +300,9 @@ public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdn
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/images/resizing/StringExtensionsKt {
+}
+
 public final class io/getstream/chat/android/ui/common/notifications/StreamCoilUserIconBuilder : io/getstream/chat/android/client/notifications/handler/UserIconBuilder {
 	public static final field $stable I
 	public fun <init> (Landroid/content/Context;)V
