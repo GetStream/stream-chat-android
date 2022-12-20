@@ -72,6 +72,7 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.streamcdn.image.extensions.createResizedStreamCdnImageUrl
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.extension.hasLink
 
@@ -340,7 +341,16 @@ internal fun MediaAttachmentContentItem(
     val data =
         if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
             when (message.syncStatus) {
-                SyncStatus.COMPLETED -> attachment.imagePreviewUrl
+                SyncStatus.COMPLETED -> if (ChatTheme.streamCdnImageResizing.imageResizingEnabled) {
+                    attachment.imagePreviewUrl.createResizedStreamCdnImageUrl(
+                        resizedWidthPercentage = ChatTheme.streamCdnImageResizing.resizedWidthPercentage,
+                        resizedHeightPercentage = ChatTheme.streamCdnImageResizing.resizedHeightPercentage,
+                        resizeMode = ChatTheme.streamCdnImageResizing.resizeMode,
+                        cropMode = ChatTheme.streamCdnImageResizing.cropMode
+                    )
+                } else {
+                    attachment.imagePreviewUrl
+                }
                 else -> attachment.upload
             }
         } else {

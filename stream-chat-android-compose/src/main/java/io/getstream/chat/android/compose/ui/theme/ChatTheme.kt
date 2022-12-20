@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
 
 /**
@@ -106,6 +107,12 @@ private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
             "Make sure to wrap all usages of Stream components in a ChatTheme."
     )
 }
+private val LocalStreamCdnImageResizing = compositionLocalOf<StreamCdnImageResizing> {
+    error(
+        "No StreamCdnImageResizing provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme."
+    )
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -130,6 +137,9 @@ private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
  * @param permissionHandlers Handlers for various permissions.
  * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
  * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed inside video previews.
+ * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
+ * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
+ * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
  * @param content The content shown within the theme wrapper.
  */
 @OptIn(ExperimentalPermissionsApi::class)
@@ -162,6 +172,7 @@ public fun ChatTheme(
     ).onEach { if (it is DownloadPermissionHandler) it.ObservePermissionChanges() },
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
     videoThumbnailsEnabled: Boolean = true,
+    streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing(),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -187,6 +198,7 @@ public fun ChatTheme(
         LocalPermissionManagerProvider provides permissionHandlers,
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
+        LocalStreamCdnImageResizing provides streamCdnImageResizing,
     ) {
         content()
     }
@@ -325,4 +337,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalVideoThumbnailsEnabled.current
+
+    /**
+     * Retrieves the value of [StreamCdnImageResizing] at the call site's position in the hierarchy.
+     */
+    public val streamCdnImageResizing: StreamCdnImageResizing
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalStreamCdnImageResizing.current
 }

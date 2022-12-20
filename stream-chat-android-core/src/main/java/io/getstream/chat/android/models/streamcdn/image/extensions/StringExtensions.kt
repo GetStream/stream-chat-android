@@ -57,11 +57,13 @@ public fun String.getStreamCdnHostedImageDimensions(): StreamCdnOriginalImageDim
  *
  * @param resizedWidthPercentage The percentage of the original image width the resized image width will be.
  * @param resizedHeightPercentage The percentage of the original image height the resized image height will be.
+ * @param resizeMode Sets the image resizing mode. The default mode is [StreamCdnResizeImageMode.CLIP].
+ * @param cropMode Sets the image crop mode. The default mode is [StreamCdnCropImageMode.CENTER].
  */
 public fun String?.createResizedStreamCdnImageUrl(
-    @FloatRange(0.0, 1.0, fromInclusive = false) resizedWidthPercentage: Float,
-    @FloatRange(0.0, 1.0, fromInclusive = false) resizedHeightPercentage: Float,
-    resizeStrategy: StreamCdnResizeImageMode? = null,
+    @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) resizedWidthPercentage: Float,
+    @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) resizedHeightPercentage: Float,
+    resizeMode: StreamCdnResizeImageMode? = null,
     cropMode: StreamCdnCropImageMode? = null
 ): String? {
     val streamCdnImageDimensions = this?.getStreamCdnHostedImageDimensions()
@@ -73,7 +75,7 @@ public fun String?.createResizedStreamCdnImageUrl(
 
         this.appendValueAsQueryParameterIfNotNull(value = resizedWidth, name = "w")
             .appendValueAsQueryParameterIfNotNull(value = resizedHeight, name = "h")
-            .appendValueAsQueryParameterIfNotNull(value = resizeStrategy?.queryParameterName, name = "resize")
+            .appendValueAsQueryParameterIfNotNull(value = resizeMode?.queryParameterName, name = "resize")
             .appendValueAsQueryParameterIfNotNull(value = cropMode?.queryParameterName, name = "crop")
     } else {
         val logger = StreamLog.getLogger("Chat:resizedStreamCdnImageUrl")
