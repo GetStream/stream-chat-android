@@ -115,14 +115,26 @@ public fun String.createResizedStreamCdnImageUrl(
     cropMode: StreamCdnCropImageMode? = null,
 ): String {
     val logger = StreamLog.getLogger("Chat:resizedStreamCdnImageUrl")
+
     val streamCdnImageDimensions = this.getStreamCdnHostedImageDimensions()
 
     return if (streamCdnImageDimensions != null) {
 
+        val imageLinkUri = this.toUri()
+
+        if (imageLinkUri.wasImagePreviouslyResized()) {
+            logger.w {
+                "Image URL already contains resizing parameters. Please apply resizing parameters only to " +
+                    "original image URLs."
+            }
+
+            return this@createResizedStreamCdnImageUrl
+        }
+
         val resizedWidth: Int = (streamCdnImageDimensions.originalWidth * resizedWidthPercentage).toInt()
         val resizedHeight: Int = (streamCdnImageDimensions.originalHeight * resizedHeightPercentage).toInt()
 
-        val resizedImageUrl = this.toUri()
+        val resizedImageUrl = imageLinkUri
             .buildUpon()
             .appendValueAsQueryParameterIfNotNull(key = "w", value = resizedWidth)
             .appendValueAsQueryParameterIfNotNull(key = "h", value = resizedHeight)
@@ -138,12 +150,22 @@ public fun String.createResizedStreamCdnImageUrl(
         resizedImageUrl
     } else {
         logger.w {
-            "Only images hosted by Stream's CDN containing original width and height query parameters" +
+            "Only images hosted by Stream's CDN containing original width and height query parameters " +
                 "can be resized"
         }
         this
     }
 }
+
+/**
+ * Checks if a string contains resizing related query parameters.
+ *
+ * @return true if the URL contains resizing parameters, false otherwise.
+ */
+private fun Uri.wasImagePreviouslyResized(): Boolean =
+    queryParameterNames.run {
+        contains("w") || contains("h") || contains("resize") || contains("crop")
+    }
 
 /**
  * A convenience method which evaluates if [value] is null or not and appends
