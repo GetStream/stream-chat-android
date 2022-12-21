@@ -40,6 +40,7 @@ import io.getstream.chat.android.client.utils.toResultError
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.extensions.internal.logic
+import io.getstream.chat.android.offline.extensions.internal.parseAttachmentNameFromUrl
 import io.getstream.chat.android.offline.extensions.internal.requestsAsState
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
@@ -54,6 +55,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * [StateRegistry] instance that contains all state objects exposed in offline plugin.
@@ -198,7 +202,8 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
             val logger = StreamLog.getLogger("Chat:DownloadAttachment")
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val url = attachment.assetUrl ?: attachment.imageUrl
-            val subPath = attachment.name ?: attachment.title
+            val subPath = attachment.name ?: attachment.title ?: attachment.parseAttachmentNameFromUrl()
+                ?: createAttachmentFallbackName()
 
             logger.d { "Downloading attachment. Name: $subPath, Url: $url" }
 
@@ -330,3 +335,21 @@ private suspend fun ChatClient.loadMessageByIdInternal(
         Result(ChatError("Error while fetching messages from backend. Messages around id: $messageId"))
     }
 }
+
+/**
+ * Creates a fallback name for attachments without [Attachment.name] or [Attachment.title] properties.
+ * Fallback names are generated in the following manner: "attachment_2022-16-12_12-15-06".
+ */
+private fun createAttachmentFallbackName(): String {
+    val dateString = SimpleDateFormat(ATTACHMENT_FALLBACK_NAME_DATE_FORMAT, Locale.getDefault())
+        .format(Date())
+        .toString()
+
+    return "attachment_$dateString"
+}
+
+/**
+ * Date format pattern used for creating fallback names for attachments without [Attachment.name] or [Attachment.title]
+ * properties
+ */
+private const val ATTACHMENT_FALLBACK_NAME_DATE_FORMAT: String = "yyyy-MM-dd_HH-mm-ss"
