@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.common.images.resizing
 
+import io.getstream.chat.android.client.extensions.createResizedStreamCdnImageUrl
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.models.streamcdn.image.extensions.createResizedStreamCdnImageUrl
 
 /**
  * A convenience method which applies Stream CDN image resizing if it's enabled and applicable.

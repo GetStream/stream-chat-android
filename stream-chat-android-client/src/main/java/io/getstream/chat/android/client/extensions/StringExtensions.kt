@@ -16,7 +16,14 @@
 
 package io.getstream.chat.android.client.extensions
 
+import android.net.Uri
+import androidx.annotation.FloatRange
+import androidx.core.net.toUri
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
+import io.getstream.chat.android.models.streamcdn.image.StreamCdnOriginalImageDimensions
+import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
+import io.getstream.log.StreamLog
 
 private val snakeRegex = "_[a-zA-Z]".toRegex()
 private val camelRegex = "(?<=[a-zA-Z])[A-Z]".toRegex()
@@ -56,4 +63,114 @@ public fun String.cidToTypeAndId(): Pair<String, String> {
     check(isNotEmpty()) { "cid can not be empty" }
     check(':' in this) { "cid needs to be in the format channelType:channelId. For example, messaging:123" }
     return checkNotNull(split(":").takeIf { it.size >= 2 }?.let { it.first() to it.last() })
+}
+
+/**
+ * Returns [StreamCdnOriginalImageDimensions] if the image is hosted by Stream's CDN and is resizable,
+ * otherwise returns null.
+ *
+ * @return Class containing the original width and height dimensions of the image or null.
+ */
+public fun String.getStreamCdnHostedImageDimensions(): StreamCdnOriginalImageDimensions? {
+    return try {
+        val width = this.substringAfter(delimiter = "ow=", missingDelimiterValue = "")
+            .takeIf { it.isNotBlank() }
+            ?.substringBefore("&")
+            ?.toInt()
+
+        val height = this.substringAfter(delimiter = "oh=", missingDelimiterValue = "")
+            .takeIf { it.isNotBlank() }
+            ?.substringBefore("&")
+            ?.toInt()
+
+        if (height != null && width != null) {
+            StreamCdnOriginalImageDimensions(
+                originalWidth = width,
+                originalHeight = height
+            )
+        } else {
+            null
+        }
+    } catch (e: java.lang.Exception) {
+        val logger = StreamLog.getLogger("Chat: getStreamCDNHostedImageDimensions")
+        logger.e { "Failed to parse Stream CDN image dimensions from the URL:\n ${e.stackTraceToString()}" }
+
+        null
+    }
+}
+
+/**
+ * Generates a string URL with Stream CDN image resizing query parameters added to it. Once this URL is called, Stream's
+ * CDN will generate a resized image which is accessible using the link returned by this function.
+ *
+ * @param resizedWidthPercentage The percentage of the original image width the resized image width will be.
+ * @param resizedHeightPercentage The percentage of the original image height the resized image height will be.
+ * @param resizeMode Sets the image resizing mode. The default mode is [StreamCdnResizeImageMode.CLIP].
+ * @param cropMode Sets the image crop mode. The default mode is [StreamCdnCropImageMode.CENTER].
+ */
+public fun String.createResizedStreamCdnImageUrl(
+    @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) resizedWidthPercentage: Float,
+    @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) resizedHeightPercentage: Float,
+    resizeMode: StreamCdnResizeImageMode? = null,
+    cropMode: StreamCdnCropImageMode? = null,
+): String {
+    val logger = StreamLog.getLogger("Chat:resizedStreamCdnImageUrl")
+    val streamCdnImageDimensions = this.getStreamCdnHostedImageDimensions()
+
+    return if (streamCdnImageDimensions != null) {
+
+        val resizedWidth: Int = (streamCdnImageDimensions.originalWidth * resizedWidthPercentage).toInt()
+        val resizedHeight: Int = (streamCdnImageDimensions.originalHeight * resizedHeightPercentage).toInt()
+
+        val resizedImageUrl = this.toUri()
+            .buildUpon()
+            .appendValueAsQueryParameterIfNotNull(key = "w", value = resizedWidth)
+            .appendValueAsQueryParameterIfNotNull(key = "h", value = resizedHeight)
+            .appendValueAsQueryParameterIfNotNull(key = "resize", value = resizeMode?.queryParameterName)
+            .appendValueAsQueryParameterIfNotNull(key = "crop", value = cropMode?.queryParameterName)
+            .build()
+            .toString()
+
+        logger.i {
+            "Resized Stream CDN hosted image URL: $resizedImageUrl"
+        }
+
+        resizedImageUrl
+    } else {
+        logger.w {
+            "Only images hosted by Stream's CDN containing original width and height query parameters" +
+                "can be resized"
+        }
+        this
+    }
+}
+
+/**
+ * A convenience method which evaluates if [value] is null or not and appends
+ * it with the accompanying parameter key name in the form of a query parameter.
+ *
+ * @param key Query parameter key.
+ * @param value Query parameter value.
+ */
+private fun Uri.Builder.appendValueAsQueryParameterIfNotNull(key: String, value: String?): Uri.Builder {
+    return if (value != null) {
+        this.appendQueryParameter(key, value)
+    } else {
+        this
+    }
+}
+
+/**
+ * A convenience method which evaluates if [value] is null or not and appends
+ * it with the accompanying parameter key name in the form of a query parameter.
+ *
+ * @param key Query parameter key.
+ * @param value Query parameter value.
+ */
+private fun Uri.Builder.appendValueAsQueryParameterIfNotNull(key: String, value: Int?): Uri.Builder {
+    return if (value != null) {
+        this.appendQueryParameter(key, value.toString())
+    } else {
+        this
+    }
 }

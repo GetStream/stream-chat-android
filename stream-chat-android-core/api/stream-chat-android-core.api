@@ -1828,9 +1828,3 @@ public final class io/getstream/chat/android/models/streamcdn/image/StreamCdnRes
 	public static fun values ()[Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
 }
 
-public final class io/getstream/chat/android/models/streamcdn/image/extensions/StringExtensionsKt {
-	public static final fun createResizedStreamCdnImageUrl (Ljava/lang/String;FFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;)Ljava/lang/String;
-	public static synthetic fun createResizedStreamCdnImageUrl$default (Ljava/lang/String;FFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;ILjava/lang/Object;)Ljava/lang/String;
-	public static final fun getStreamCdnHostedImageDimensions (Ljava/lang/String;)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnOriginalImageDimensions;
-}
-
