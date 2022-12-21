@@ -29,13 +29,33 @@ import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
  * @param imageResizingEnabled Enables or disables image resizing.
  * @param resizedWidthPercentage The percentage of the original image width the resized image width will be.
  * @param resizedHeightPercentage The percentage of the original image height the resized image height will be.
- * @param resizeMode Sets the image resizing mode. The default mode is [StreamCdnResizeImageMode.CLIP].
- * @param cropMode Sets the image crop mode. The default mode is [StreamCdnCropImageMode.CENTER].
+ * @param resizeMode Sets the image resizing mode. If null, the default mode used by the CDN is
+ * [StreamCdnResizeImageMode.CLIP].
+ * @param cropMode Sets the image crop mode. If null, the default mode used by the CDN is
+ * [StreamCdnCropImageMode.CENTER].
  */
 public data class StreamCdnImageResizing(
-    val imageResizingEnabled: Boolean = false,
-    @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) val resizedWidthPercentage: Float = 0.5f,
-    @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) val resizedHeightPercentage: Float = 0.5f,
-    val resizeMode: StreamCdnResizeImageMode = StreamCdnResizeImageMode.CLIP,
-    val cropMode: StreamCdnCropImageMode = StreamCdnCropImageMode.CENTER,
-)
+    val imageResizingEnabled: Boolean,
+    @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) val resizedWidthPercentage: Float,
+    @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) val resizedHeightPercentage: Float,
+    val resizeMode: StreamCdnResizeImageMode?,
+    val cropMode: StreamCdnCropImageMode?,
+) {
+
+    public companion object {
+
+        /**
+         * Creates the default Stream CDN image resizing strategy where the image
+         * resizing is disabled.
+         *
+         * @return Stream CDN hosted image resizing strategy in the form of [StreamCdnImageResizing].
+         */
+        public fun defaultStreamCdnImageResizing(): StreamCdnImageResizing = StreamCdnImageResizing(
+            imageResizingEnabled = false,
+            resizedWidthPercentage = 1f,
+            resizedHeightPercentage = 1f,
+            resizeMode = null,
+            cropMode = null
+        )
+    }
+}

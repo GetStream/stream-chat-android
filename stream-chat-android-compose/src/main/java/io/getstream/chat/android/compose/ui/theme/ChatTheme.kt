@@ -172,7 +172,7 @@ public fun ChatTheme(
     ).onEach { if (it is DownloadPermissionHandler) it.ObservePermissionChanges() },
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
     videoThumbnailsEnabled: Boolean = true,
-    streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing(),
+    streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {

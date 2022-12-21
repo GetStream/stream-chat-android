@@ -280,9 +280,8 @@ public final class io/getstream/chat/android/ui/common/images/internal/StreamIma
 
 public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing {
 	public static final field $stable I
-	public fun <init> ()V
+	public static final field Companion Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing$Companion;
 	public fun <init> (ZFFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;)V
-	public synthetic fun <init> (ZFFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component2 ()F
 	public final fun component3 ()F
@@ -298,6 +297,10 @@ public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdn
 	public final fun getResizedWidthPercentage ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing$Companion {
+	public final fun defaultStreamCdnImageResizing ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
 }
 
 public final class io/getstream/chat/android/ui/common/images/resizing/StringExtensionsKt {

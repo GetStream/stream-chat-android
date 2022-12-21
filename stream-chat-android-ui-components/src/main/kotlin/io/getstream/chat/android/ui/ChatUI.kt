@@ -161,5 +161,5 @@ public object ChatUI {
      * query parameters.
      */
     @JvmStatic
-    public var StreamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing()
+    public var streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing()
 }
