@@ -370,6 +370,7 @@ internal fun MediaAttachmentContentItem(
     }
 
     val areVideosEnabled = ChatTheme.videoThumbnailsEnabled
+    val streamCdnImageResizing = ChatTheme.streamCdnImageResizing
 
     Box(
         modifier = modifier
@@ -384,7 +385,8 @@ internal fun MediaAttachmentContentItem(
                             MediaGalleryPreviewContract.Input(
                                 message = message,
                                 initialPosition = attachmentPosition,
-                                videoThumbnailsEnabled = areVideosEnabled
+                                videoThumbnailsEnabled = areVideosEnabled,
+                                streamCdnImageResizing = streamCdnImageResizing,
                             )
                         )
                     } else {

@@ -148,7 +148,10 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
+import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -200,6 +203,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             KeyMediaGalleryPreviewActivityState
         )
         val videoThumbnailsEnabled = intent?.getBooleanExtra(KeyVideoThumbnailsEnabled, true) ?: true
+        val streamCdnImageResizing = intent?.createStreamCdnImageResizing()
+            ?: StreamCdnImageResizing.defaultStreamCdnImageResizing()
         val messageId = mediaGalleryPreviewActivityState?.messageId ?: ""
 
         if (!mediaGalleryPreviewViewModel.hasCompleteMessage) {
@@ -216,7 +221,10 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         }
 
         setContent {
-            ChatTheme(videoThumbnailsEnabled = videoThumbnailsEnabled) {
+            ChatTheme(
+                videoThumbnailsEnabled = videoThumbnailsEnabled,
+                streamCdnImageResizing = streamCdnImageResizing
+            ) {
                 SetupSystemUI()
 
                 val message = mediaGalleryPreviewViewModel.message
@@ -1529,6 +1537,36 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Fetches individual image resizing options from the bundle and
+     * packs them into [StreamCdnImageResizing].
+     *
+     * @return An instance of [StreamCdnImageResizing] created from individual options fetched from
+     * the bundle packed inside the given intent.
+     */
+    private fun Intent.createStreamCdnImageResizing(): StreamCdnImageResizing {
+        val imageResizingEnabled = getBooleanExtra(KeyImageResizingEnabled, false)
+
+        val resizedWidthPercentage = getFloatExtra(KeyStreamCdnResizeImagedWidthPercentage, 0.5f)
+        val resizedHeightPercentage = getFloatExtra(KeyStreamCdnResizeImagedHeightPercentage, 0.5f)
+
+        val resizeModeEnumValue = getStringExtra(KeyStreamCdnResizeImageMode)
+        val resizeMode =
+            if (resizeModeEnumValue != null) StreamCdnResizeImageMode.valueOf(value = resizeModeEnumValue) else null
+
+        val cropModeEnumValue = getStringExtra(KeyStreamCdnResizeImageCropMode)
+        val cropMode =
+            if (cropModeEnumValue != null) StreamCdnCropImageMode.valueOf(value = cropModeEnumValue) else null
+
+        return StreamCdnImageResizing(
+            imageResizingEnabled = imageResizingEnabled,
+            resizedWidthPercentage = resizedWidthPercentage,
+            resizedHeightPercentage = resizedHeightPercentage,
+            cropMode = cropMode,
+            resizeMode = resizeMode,
+        )
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         StreamFileUtil.clearStreamCache(context = applicationContext)
@@ -1559,6 +1597,36 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
          * will be displayed in previews or not.
          */
         private const val KeyVideoThumbnailsEnabled: String = "videoThumbnailsEnabled"
+
+        /**
+         * Represents the key for the [Boolean] value found inside [StreamCdnImageResizing]
+         * turning image resizing on or off.
+         */
+        private const val KeyImageResizingEnabled: String = "imageResizingEnabled"
+
+        /**
+         * Represents the key for the [Float] value found inside [StreamCdnImageResizing]
+         * dictating the resized image width percentage.
+         */
+        private const val KeyStreamCdnResizeImagedWidthPercentage: String = "streamCdnResizeImagedWidthPercentage"
+
+        /**
+         * Represents the key for the [Float] value found inside [StreamCdnImageResizing]
+         * dictating the resized image height percentage.
+         */
+        private const val KeyStreamCdnResizeImagedHeightPercentage: String = "streamCdnResizeImagedHeightPercentage"
+
+        /**
+         * Represents the key for the [StreamCdnResizeImageMode] value found inside [StreamCdnImageResizing]
+         * dictating the resize image mode.
+         */
+        private const val KeyStreamCdnResizeImageMode: String = "streamCdnResizeImageMode"
+
+        /**
+         * Represents the key for the [StreamCdnCropImageMode] value found inside [StreamCdnImageResizing]
+         * dictating the crop image mode.
+         */
+        private const val KeyStreamCdnResizeImageCropMode: String = "streamCdnResizeImageCropMode"
 
         /**
          * Represents the key for the starting attachment position based on the clicked attachment.
@@ -1597,12 +1665,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
          * @param message The [Message] containing the attachments.
          * @param attachmentPosition The initial position of the clicked media attachment.
          * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
+         * @param streamCdnImageResizing Sets the Stream CDN hosted image resizing strategy. Turned off by default.
+         * Please note that only Stream CDN hosted images containing original width (ow) and original height (oh)
+         * parameters are able to be resized.
          */
         public fun getIntent(
             context: Context,
             message: Message,
             attachmentPosition: Int,
             videoThumbnailsEnabled: Boolean,
+            streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
         ): Intent {
             return Intent(context, MediaGalleryPreviewActivity::class.java).apply {
                 val mediaGalleryPreviewActivityState = message.toMediaGalleryPreviewActivityState()
@@ -1610,6 +1682,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 putExtra(KeyMediaGalleryPreviewActivityState, mediaGalleryPreviewActivityState)
                 putExtra(KeyAttachmentPosition, attachmentPosition)
                 putExtra(KeyVideoThumbnailsEnabled, videoThumbnailsEnabled)
+
+                // Image resizing options
+                putExtra(KeyImageResizingEnabled, streamCdnImageResizing.imageResizingEnabled)
+                putExtra(KeyStreamCdnResizeImagedWidthPercentage, streamCdnImageResizing.resizedWidthPercentage)
+                putExtra(KeyStreamCdnResizeImagedHeightPercentage, streamCdnImageResizing.resizedHeightPercentage)
+                putExtra(KeyStreamCdnResizeImageMode, streamCdnImageResizing.resizeMode?.name)
+                putExtra(KeyStreamCdnResizeImageCropMode, streamCdnImageResizing.cropMode?.name)
             }
         }
     }
