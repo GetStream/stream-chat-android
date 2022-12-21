@@ -1461,7 +1461,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         ) {
             val data =
                 if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
-                    attachment.imagePreviewUrl.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+                    attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
                 } else {
                     null
                 }

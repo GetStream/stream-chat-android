@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.streamcdn.image.extensions.createResized
  * @return The URL to the resized image if resizing was applicable, otherwise returns the URL to the original image.
  */
 @InternalStreamChatApi
-public fun String?.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing: StreamCdnImageResizing): String? =
+public fun String.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing: StreamCdnImageResizing): String =
     if (streamCdnImageResizing.imageResizingEnabled) {
         this.createResizedStreamCdnImageUrl(
             resizedHeightPercentage = streamCdnImageResizing.resizedWidthPercentage,

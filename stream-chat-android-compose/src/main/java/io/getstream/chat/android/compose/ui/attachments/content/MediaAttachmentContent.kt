@@ -342,7 +342,7 @@ internal fun MediaAttachmentContentItem(
         if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
             when (message.syncStatus) {
                 SyncStatus.COMPLETED ->
-                    attachment.imagePreviewUrl.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+                    attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
                 else -> attachment.upload
             }
         } else {

@@ -60,15 +60,15 @@ public fun String.getStreamCdnHostedImageDimensions(): StreamCdnOriginalImageDim
  * @param resizeMode Sets the image resizing mode. The default mode is [StreamCdnResizeImageMode.CLIP].
  * @param cropMode Sets the image crop mode. The default mode is [StreamCdnCropImageMode.CENTER].
  */
-public fun String?.createResizedStreamCdnImageUrl(
+public fun String.createResizedStreamCdnImageUrl(
     @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) resizedWidthPercentage: Float,
     @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) resizedHeightPercentage: Float,
     resizeMode: StreamCdnResizeImageMode? = null,
     cropMode: StreamCdnCropImageMode? = null
-): String? {
-    val streamCdnImageDimensions = this?.getStreamCdnHostedImageDimensions()
+): String {
+    val streamCdnImageDimensions = this.getStreamCdnHostedImageDimensions()
 
-    return if (this != null && streamCdnImageDimensions != null) {
+    return if (streamCdnImageDimensions != null) {
 
         val resizedWidth: Int = (streamCdnImageDimensions.originalWidth * resizedWidthPercentage).toInt()
         val resizedHeight: Int = (streamCdnImageDimensions.originalHeight * resizedHeightPercentage).toInt()
