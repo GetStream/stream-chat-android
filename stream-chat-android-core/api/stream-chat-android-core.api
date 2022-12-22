@@ -1828,11 +1828,3 @@ public final class io/getstream/chat/android/models/streamcdn/image/StreamCdnRes
 	public static fun values ()[Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
 }
 
-public final class io/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageQueryParameterKeys {
-	public static final field INSTANCE Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageQueryParameterKeys;
-	public static final field QUERY_PARAMETER_KEY_CROP_MODE Ljava/lang/String;
-	public static final field QUERY_PARAMETER_KEY_RESIZED_HEIGHT Ljava/lang/String;
-	public static final field QUERY_PARAMETER_KEY_RESIZED_WIDTH Ljava/lang/String;
-	public static final field QUERY_PARAMETER_KEY_RESIZE_MODE Ljava/lang/String;
-}
-
