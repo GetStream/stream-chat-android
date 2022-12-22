@@ -17,14 +17,14 @@
 package io.getstream.chat.android.client.utils
 
 import android.util.Base64
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import org.json.JSONException
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 
 internal object TokenUtils {
 
-    val logger = StreamLog.getLogger("Chat:TokenUtils")
+    val logger by taggedLogger("Chat:TokenUtils")
 
     fun getUserId(token: String): String = try {
         JSONObject(

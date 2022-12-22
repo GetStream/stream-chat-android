@@ -27,16 +27,16 @@ This tutorial assumes you already use [Stream Chat SDK for Android](https://gets
 
 First, let’s go over a quick introduction to [100ms](https://www.100ms.live). It is a service that allows you to do video conferencing, audio, and more. Their aim is to provide you with a wide range of extensible features, all while allowing you to get started quickly with minimum effort.
 
-To get started, you must [set up an account](https://dashboard.100ms.live/register) for the platform – click the **Try For Free** button for a trial to use for this tutorial. You can sign up with either a Google or GitHub account, or you can use any other email address. You will receive an email asking you to confirm your credentials.
+To get started, you must [set up an account](https://dashboard.100ms.live/register) for the platform, click the **Try For Free** button for a trial to use for this tutorial. You can sign up with either a Google or GitHub account, or you can use any other email address. You will receive an email asking you to confirm your credentials.
 
 Next, you’ll get a quick tour of how to create your own video conference. Here is an outline of the steps you must take:
 
 1. Choose a template: Select **Video Conferencing**, hit **Next**
 2. Add a few more details: Enter everything that is valid for you
-3. Choose a subdomain: Create a subdomain that is suitable for your use case and select the closest region (e.g. in our case, “integrationguide” and “EU” make the most sense, resulting in the domain: **integrationguide.app.100ms.live**)
+3. Choose a subdomain: Create a subdomain that is suitable for your use case and select the closest region (for example in our case, “integrationguide” and “EU” make the most sense, resulting in the domain: **integrationguide.app.100ms.live**)
 4. Your app is ready: You can join the room if you want to see a sample (not necessary)
 
-From here, click the **Go to Dashboard** button at the bottom. After completing the quick introductory tour, your account and app will be ready to continue. Nice job!
+From here, click the **Go to Dashboard** button at the bottom. After completing the quick introductory tour, your account and app will be ready to continue. Nice job.
 
 You will come back to the Dashboard later, but we will move on to other steps next.
 
@@ -304,10 +304,10 @@ class VideoCallViewModel constructor(
 
 Let’s break down each method one by one:
 
-- **createVideoCallOrJoin**: This method requests an authentication token to the Stream server and joins a call with a specific `callId` parameter. If the `callId` is null, it will request creating a new call dynamically.
-- **createVideoCall**: This method creates a new call dynamically with a unique UUID for the call id.
-- **getVideoCallToken**: This method requests an authentication token to the Stream server.
-- **joinRoom**: Join a room and connect to a video call with the specific name of the room and an authentication token. You can join the room by invoking the `join` method of the `HMSSDK` and `HMSConfig`.
+- **`createVideoCallOrJoin`**: This method requests an authentication token to the Stream server and joins a call with a specific `callId` parameter. If the `callId` is null, it will request creating a new call dynamically.
+- **`createVideoCall`**: This method creates a new call dynamically with a unique UUID for the call id.
+- **`getVideoCallToken`**: This method requests an authentication token to the Stream server.
+- **`joinRoom`**: Join a room and connect to a video call with the specific name of the room and an authentication token. You can join the room by invoking the `join` method of the `HMSSDK` and `HMSConfig`.
 
 For more details and to learn about override methods like `HMSUpdateListener`, check out the [100ms official Join Room guideline](https://www.100ms.live/docs/android/v2/features/Join).
 
@@ -325,7 +325,7 @@ You’ll implement the call screen with [RecyclerView](https://developer.android
 
 ### Create PeerViewHolder and PeerAdapter
 
-First, you need to build a single video track layout, which renders a single video call for each different user. To implement this, you need to implement a [RecyclerView.ViewHolder](https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.ViewHolder) and [RecyclerView.Adapter](https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.Adapter) to implement the list of participants.
+First, you need to build a single video track layout, which renders a single video call for each different user. To implement this, you need to implement a [`RecyclerView.ViewHolder`](https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.ViewHolder) and [`RecyclerView.Adapter`](https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.Adapter) to implement the list of participants.
 
 To implement a single video track layout, you can use `SurfaceViewRenderer`, which allows you to render a video stream on your layout. So you can build your single video track XML layout called `layout_single_video_track.xml` like the below:
 
@@ -721,7 +721,7 @@ Now, let’s integrate the video call into your chat screen with the custom atta
 
 ### Create Video Call Custom Attachments
 
-First, you should define the `CallType` enum class as shown below to distinguish call type:
+First, you should define the `CallType` `enum` class as shown below to distinguish call type:
 
 ```kotlin
 enum class CallType(val type: String) {

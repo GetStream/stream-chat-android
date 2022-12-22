@@ -29,7 +29,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -51,7 +51,7 @@ internal class ChatNotificationsImpl constructor(
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ) : ChatNotifications {
-    private val logger = StreamLog.getLogger("Chat:Notifications")
+    private val logger by taggedLogger("Chat:Notifications")
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context)
     private val showedMessages = mutableSetOf<String>()

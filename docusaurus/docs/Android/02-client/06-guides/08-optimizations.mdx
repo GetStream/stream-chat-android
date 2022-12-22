@@ -7,7 +7,7 @@ The SDK is optimized to avoid waste of resources and improve performance. You ca
 
 ## Multiple Calls to API
 
-The SDK prevents the user from making multiple calls to the backend. If a call is already running, the SDK merges a new request into the current one and the data is propagated to both requesters of the `Call`.
+The SDK prevents the user from making multiple calls to the backend. If a call is already running, the SDK merges a new request into the current one and the data is propagated to both request origins of the `Call`.
 
 You can change the default behavior and force calls to always make new requests to API and never merge two requests into one by using:
 
@@ -78,7 +78,7 @@ To sort your object and present then in a desired order, it is possible to choos
 `QuerySortByField` is the default implementation used by the SDK.
 :::
 
-`QuerySort` uses reflection to find the fields used for comparison. This helps you avoid creating an extra comparator implementation to support your's use case.
+`QuerySort` uses reflection to find the fields used for comparison. This helps you avoid creating an extra comparator implementation to support your use case.
 
 The drawback is that reflection is an expensive operation and this implementation will have lower performance compared to `QuerySortByField`.
 
@@ -117,5 +117,5 @@ public data class Channel(
 ```
 
 :::note
-Models included in the SDK already implement the `ComparableFieldProvider` interface and include all the fields together with `extraData`!
+Models included in the SDK already implement the `ComparableFieldProvider` interface and include all the fields together with `extraData`.
 :::

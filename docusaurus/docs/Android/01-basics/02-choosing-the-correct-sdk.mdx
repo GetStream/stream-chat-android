@@ -7,7 +7,7 @@ uses Jetpack Compose.
 In this guide we will present a detailed explanation of the practical differences between the two.
 
 :::note
-If you're just interested in a TL;DR / our final overview of the SDKs, [scroll to the bottom](#the-right-sdk-for-you).
+If you're just interested in our final overview of the SDKs, [scroll to the bottom](#the-right-sdk-for-you).
 :::
 
 ## Customizability
@@ -30,7 +30,7 @@ First, let's take a look into a high level overview of the differences between t
 |      Ease of Theming            |                                     ✅ Good                                    | ✅ Excellent. Supported runtime theme changes.      |
 |  Runtime Customizability   |  ✅ As a custom feature                                  | ✅ As idiomatic Compose code                   |
 |      Development Cost      | ⚠️ Noticeable <br/> (Requires more boilerplate, more files generated or changed)       | ✅ Low impact with fewer files generated or changed |
-|    Stateless Components*    | ⛔️ Main components support only ViewModel driven state.                                | ✅ Fully-independent variants that don't use ViewModels.                               |
+|    Stateless Components*    | ⛔️ Main components support only ViewModel driven state.                                | ✅ Fully independent variants that don't use ViewModels.                               |
 |  Extensive Layout Changes  | ⛔️No out-of-the-box support for replacing whole views.*                                 | ✅ Using slot APIs*                                       |
 
 - **Main building blocks**: Large elements crucial to a chat experience such as lists, headers and the message composer.
@@ -87,9 +87,9 @@ If you want to check out how to build those, take a look at the [UI Components](
 
 - Development Cost: Changes in Gradle and Manifest files were not counted, only the code changes directly contributing to chat implementation were counted.
 
-You are able to extract a full chat experience with rich multimedia support in under 200 lines of code for UI Components and under 100 for Compose!
+You are able to extract a full chat experience with rich multimedia support in under 200 lines of code for UI Components and under 100 for Compose.
 
-Notice how Compose Compose generates fewer new files and has fewer lines of code changed, due to a lack of XML layouts?
+Notice how Compose generates fewer new files and has fewer lines of code changed, due to a lack of XML layouts?
 Also all the code you write is Kotlin, so it's much easier to context shift, which makes the development experience faster and more smooth.
 
 As you naturally move toward a more customized chat experience, this difference will only grow.
@@ -127,22 +127,22 @@ the app has connected to the server, logged the user in, fetched a set of channe
 This type of startup means that the app's process is not alive and has to be started. Once the process has been
 started the app will be launched and the Activity created.
 
-The average time that it takes for UI Components to complete the startup procedure is 397.5ms while it takes Compose
-455.5ms to do the same.
+The average time that it takes for UI Components to complete the startup procedure is 397.5 ms while it takes Compose
+455.5 ms to do the same.
 UI Components achieve around 13% better performance in this aspect.
 
 #### Warm Startup
 
 In this scenario the app's process is alive and a new Activity will be created and displayed in it.
 
-On average, UI Components finish the startup procedure in 398.5ms while Compose finishes it in 476.3.
+On average, UI Components finish the startup procedure in 398.5 ms while Compose finishes it in 476.3.
 UI components hold the lead here as well at 16% faster startup time than Compose.
 
 #### Hot Startup
 
 Both the process and Activity exist from previous launch and are brought into foreground
 
-UI components manage to complete the startup in an average of 400.9ms while Compose does it in 459.1ms.
+UI components manage to complete the startup in an average of 400.9 ms while Compose does it in 459.1 ms.
 The situation seen in previous startup is repeated here with UI Components achieving a 13% faster startup time.
 
 ### Channel List Scrolling UI Performance
@@ -266,4 +266,4 @@ the **Compose SDK is the way to go**. It offers deep customization through sever
 If, instead, you're looking for a simpler, less customizable SDK which currently offers slightly better performance in some scenarios or your project is limited by technology, then
 the **UI Components SDK is a great option**. It still offers a fair amount of customization through the theme and its attributes and some programmatic ways to customize the UI.
 
-Whichever SDK you choose, **we guarantee you'll be happy and we'll provide amazing support** with your integration, through detailed documentation, guides and direct support!
+Whichever SDK you choose, **we guarantee you'll be happy and we'll provide amazing support** with your integration, through detailed documentation, guides and direct support.

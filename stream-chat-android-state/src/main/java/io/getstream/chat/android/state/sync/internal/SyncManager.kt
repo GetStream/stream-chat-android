@@ -48,7 +48,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserEntity
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -84,7 +84,7 @@ internal class SyncManager(
     private val events: Tube<List<ChatEvent>> = Tube(),
 ) : SyncHistoryManager {
 
-    private val logger = StreamLog.getLogger("SyncManager")
+    private val logger by taggedLogger("SyncManager")
 
     private val syncScope = scope + SupervisorJob(scope.coroutineContext.job) +
         CoroutineExceptionHandler { context, throwable ->

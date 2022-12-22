@@ -24,13 +24,13 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import java.io.File
 
 @InternalStreamChatApi
 public class AttachmentUploader(private val client: ChatClient = ChatClient.instance()) {
 
-    private val logger = StreamLog.getLogger("Chat:AttachmentUploader")
+    private val logger by taggedLogger("Chat:AttachmentUploader")
 
     /**
      * Uploads the given attachment.

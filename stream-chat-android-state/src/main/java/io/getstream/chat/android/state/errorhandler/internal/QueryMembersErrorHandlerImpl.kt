@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -43,7 +43,7 @@ internal class QueryMembersErrorHandlerImpl(
     private val channelRepository: ChannelRepository,
 ) : QueryMembersErrorHandler {
 
-    private val logger = StreamLog.getLogger("QueryMembersError")
+    private val logger by taggedLogger("QueryMembersError")
 
     override fun onQueryMembersError(
         originalCall: Call<List<Member>>,

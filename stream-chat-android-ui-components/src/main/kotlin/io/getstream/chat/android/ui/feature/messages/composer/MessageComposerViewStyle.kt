@@ -26,9 +26,11 @@ import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.use
 
@@ -65,6 +67,8 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param messageInputVideoAttachmentIconDrawableTint Sets the tint of the drawable overlaid above video attachments.
  * @param messageInputVideoAttachmentIconBackgroundColor Sets the background color of the icon overlaid above video
  * attachments.
+ * @param messageInputVideoAttachmentIconCornerRadius Sets the corner radius of the parent card containing the video
+ * attachment icon.
  * @param messageInputVideoAttachmentIconElevation Sets the elevation of the icon overlaid above video attachments.
  * @param messageInputVideoAttachmentIconDrawablePaddingTop Sets the top padding between the video attachment drawable
  * and its parent card.
@@ -126,6 +130,7 @@ public data class MessageComposerViewStyle(
     public val messageInputVideoAttachmentIconDrawable: Drawable,
     @ColorInt public val messageInputVideoAttachmentIconDrawableTint: Int?,
     @ColorInt public val messageInputVideoAttachmentIconBackgroundColor: Int?,
+    public val messageInputVideoAttachmentIconCornerRadius: Float,
     public val messageInputVideoAttachmentIconElevation: Float,
     public val messageInputVideoAttachmentIconDrawablePaddingTop: Int,
     public val messageInputVideoAttachmentIconDrawablePaddingBottom: Int,
@@ -514,6 +519,12 @@ public data class MessageComposerViewStyle(
                 val messageInputVideoAttachmentIconBackgroundColor =
                     a.getColorOrNull(R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor)
 
+                val messageInputVideoAttachmentIconCornerRadius =
+                    a.getDimension(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoCornerRadius,
+                        20.dpToPxPrecise()
+                    )
+
                 val messageInputVideoAttachmentIconElevation =
                     a.getDimension(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconElevation,
@@ -528,21 +539,26 @@ public data class MessageComposerViewStyle(
 
                 val messageInputVideoAttachmentIconDrawablePaddingBottom =
                     a.getDimensionPixelSize(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom,
                         0
                     )
 
                 val messageInputVideoAttachmentIconDrawablePaddingStart =
                     a.getDimensionPixelSize(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart,
                         0
                     )
 
                 val messageInputVideoAttachmentIconDrawablePaddingEnd =
                     a.getDimensionPixelSize(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd,
                         0
                     )
+
+                val messageInputVideoAttachmentIconDrawablePadding =
+                    a.getDimensionOrNull(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding,
+                    )?.toInt()
 
                 return MessageComposerViewStyle(
                     backgroundColor = backgroundColor,
@@ -576,11 +592,16 @@ public data class MessageComposerViewStyle(
                     messageInputVideoAttachmentIconDrawable = messageInputVideoAttachmentIconDrawable,
                     messageInputVideoAttachmentIconDrawableTint = messageInputVideoAttachmentIconDrawableTint,
                     messageInputVideoAttachmentIconBackgroundColor = messageInputVideoAttachmentIconBackgroundColor,
+                    messageInputVideoAttachmentIconCornerRadius = messageInputVideoAttachmentIconCornerRadius,
                     messageInputVideoAttachmentIconElevation = messageInputVideoAttachmentIconElevation,
-                    messageInputVideoAttachmentIconDrawablePaddingTop = messageInputVideoAttachmentIconDrawablePaddingTop,
-                    messageInputVideoAttachmentIconDrawablePaddingBottom = messageInputVideoAttachmentIconDrawablePaddingBottom,
-                    messageInputVideoAttachmentIconDrawablePaddingStart = messageInputVideoAttachmentIconDrawablePaddingStart,
-                    messageInputVideoAttachmentIconDrawablePaddingEnd = messageInputVideoAttachmentIconDrawablePaddingEnd,
+                    messageInputVideoAttachmentIconDrawablePaddingTop = messageInputVideoAttachmentIconDrawablePadding
+                        ?: messageInputVideoAttachmentIconDrawablePaddingTop,
+                    messageInputVideoAttachmentIconDrawablePaddingBottom = messageInputVideoAttachmentIconDrawablePadding
+                        ?: messageInputVideoAttachmentIconDrawablePaddingBottom,
+                    messageInputVideoAttachmentIconDrawablePaddingStart = messageInputVideoAttachmentIconDrawablePadding
+                        ?: messageInputVideoAttachmentIconDrawablePaddingStart,
+                    messageInputVideoAttachmentIconDrawablePaddingEnd = messageInputVideoAttachmentIconDrawablePadding
+                        ?: messageInputVideoAttachmentIconDrawablePaddingEnd,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,

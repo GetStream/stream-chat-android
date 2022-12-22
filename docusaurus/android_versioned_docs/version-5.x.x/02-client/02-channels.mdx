@@ -7,7 +7,7 @@ hide_from_search: true
 Channels are where conversations take place between two or more chat users. They contain a list of messages and have a list of the member users that are participating in the conversation.
 
 A channel is identified by its `type` and `id`. Some APIs use a `cid` to identify a channel with a single string - this is the combination of the two pieces of information, as `type:id`.
-Almost all API requests are specific to a channel (e.g. add a message to channel “livestream:rockets”) and as we saw already, channels are organized in groups called channel types. You can read more about channel types [here](https://getstream.io/chat/docs/android/channel_features/?language=kotlin).
+Almost all API requests are specific to a channel (for example add a message to channel “livestream:rockets”) and as we saw already, channels are organized in groups called channel types. You can read more about channel types [here](https://getstream.io/chat/docs/android/channel_features/?language=kotlin).
 Channels are unique either by the specified channel id or by the list of members.
 
 ## Querying Channel List
@@ -51,7 +51,7 @@ On messaging and team applications you normally have users added to channels as 
 val filter = Filters.`in`("members", listOf("thierry"))
 ```
 
-On a support chat, you probably want to attach additional information to channels such as the support agent handling the case and other information regarding the status of the support case (ie. open, pending, solved).
+On a support chat, you probably want to attach additional information to channels such as the support agent handling the case and other information regarding the status of the support case (for example open, pending, solved).
 
 ```kotlin
 val filter = Filters.and(
@@ -371,7 +371,7 @@ channelClient.update(
 Sometimes channels will have many hundreds (or thousands) of members and it is important to be able to access ID's and information on all of these members. The `queryMembers` endpoint queries the channel members and allows the user to paginate through a full list of users in channels with very large member counts. The endpoint supports filtering on numerous criteria to efficiently return member information.
 
 :::note
-The members are sorted by _created_at_ in ascending order.
+The members are sorted by _`created_at`_ in ascending order.
 :::
 
 :::note
@@ -644,7 +644,7 @@ client.queryChannels(QueryChannelsRequest(
 }
 ```
 
-### Unmuting a Channel
+### Un-muting a Channel
 
 ```kotlin
 // Unmute channel for current user

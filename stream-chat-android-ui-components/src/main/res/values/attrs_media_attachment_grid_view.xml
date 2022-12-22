@@ -45,8 +45,12 @@
         <!-- Sets the end padding of the play video icon in the media
         overview segment of the gallery. -->
         <attr name="streamUiMediaAttachmentGridViewPlayVideoIconPaddingEnd" format="dimension" />
+        <!-- Sets the padding of the play video icon in the media
+        overview segment of the gallery. Using this attribute overrides other padding attributes
+        such as adding top, bottom, start and end. -->
+        <attr name="streamUiMediaAttachmentGridViewPlayVideoIconPadding" format="dimension" />
         <!-- A placeholder drawable used before the image is loaded. -->
-        <attr name="streamUiMediaAttachmentGridViewImagePlaceholder" format="reference"/>
+        <attr name="streamUiMediaAttachmentGridViewImagePlaceholder" format="reference" />
 
     </declare-styleable>
 </resources>

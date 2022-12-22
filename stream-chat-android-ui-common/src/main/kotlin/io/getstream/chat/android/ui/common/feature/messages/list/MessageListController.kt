@@ -89,8 +89,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
-import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -153,7 +153,7 @@ public class MessageListController(
     /**
      * The logger used to print to errors, warnings, information and other things to log.
      */
-    private val logger: TaggedLogger = StreamLog.getLogger("MessageListController")
+    private val logger: TaggedLogger by taggedLogger("MessageListController")
 
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent ViewModel is disposed.

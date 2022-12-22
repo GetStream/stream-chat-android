@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import java.util.Date
 
 private const val TAG = "Chat:ChannelTools"
@@ -207,7 +208,7 @@ public fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDa
 
 @InternalStreamChatApi
 public fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
-    val logger = StreamLog.getLogger("ChannelSort")
+    val logger by taggedLogger("ChannelSort")
 
     return asSequence()
         .also { channelSequence ->

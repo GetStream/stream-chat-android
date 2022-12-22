@@ -34,7 +34,7 @@ val factory by lazy {
 val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 ```
 
-Then add it to the rest of your UI, e.g. within `setContent()`:
+Then add it to the rest of your UI, for example within `setContent()`:
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +66,7 @@ The snippet above will produce the following UI.
 
  ![The Default MessageList component with a MessageListHeader](../../assets/compose_default_message_list_component.png)
 
-Notice how easy it was to integrate this component with other composable functions, like our `MessageListHeader`. You can see that the component shows different types of messages, such as link and image previews.  It also handles pagination and various other events when scrolling or receiving new messages.
+Notice how easy it was to integrate this component with other composable functions, like our `MessageListHeader`. You can see that the component shows different types of messages, such as link and image previews. It also handles pagination and various other events when scrolling or receiving new messages.
 
 Let's see how to handle the actions within the list.
 
