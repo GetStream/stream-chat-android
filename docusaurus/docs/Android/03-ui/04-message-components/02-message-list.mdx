@@ -8,8 +8,8 @@ import TabItem from '@theme/TabItem';
 - Plain text message
 - Text message with attachments (media or file)
 - Deleted message (depending on the set `DeletedMessageVisibility` value)
-- Error message (e.g. inappropriate messages blocked by moderation)
-- System message (e.g. when a user joins the channel)
+- Error message (for example inappropriate messages blocked by moderation)
+- System message (for example when a user joins the channel)
 - Giphy preview
 - Date separator
 - Loading more indicator
@@ -90,7 +90,7 @@ Learn more about permissions [here](https://getstream.io/chat/docs/other-rest/ch
 
 | Light Mode | Dark Mode |
 | --- | --- |
-|![Message_options_in light mode](../../assets/message_options_light.png)|![Message options in dark mode](../../assets/message_options_dark.png)|
+|![Message options in light mode](../../assets/message_options_light.png)|![Message options in dark mode](../../assets/message_options_dark.png)|
 
 Default action handlers are set up when binding the ViewModel to the View.<br/>
 You can customize the default behavior by overriding each of the following handlers:
@@ -284,7 +284,7 @@ You can change the appearance of this component to fit your app's design require
 
 ### Using XML Attributes
 
-`MessageListView` provides a large set of xml attributes available for customization. The complete list is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
+`MessageListView` provides a large set of XML attributes available for customization. The complete list is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_list_view.xml).
 
 Let's consider an example in which we want to change the style of messages sent by the current user.
 
@@ -390,7 +390,7 @@ TransformStyle.setMessageListStyleTransformer(source -> {
 
 ## Channel Feature Flags
 
-Certain xml attributes let you to enable/disable features in `MessageListView`.
+Certain XML attributes let you to enable/disable features in `MessageListView`.
 - `streamUiScrollButtonEnabled` - Show/hide the scroll-to-bottom button.
 - `streamUiScrollButtonUnreadEnabled` - Show/hide the unread count badge on the scroll-to-bottom button.
 - `streamUiReactionsEnabled` - Whether users can react to messages.
@@ -405,7 +405,7 @@ Certain xml attributes let you to enable/disable features in `MessageListView`.
 - `streamUiThreadsEnabled` - Whether users can create thread replies.
 - `streamUiPinMessageEnabled` - Whether users can pin messages.
 
-These attributes let you enable/disable configuration for channel features. E.g. if a channel's configuration supports message replies, but you disabled it via xml attributes, then members of this channel won't see such an option.
+These attributes let you enable/disable configuration for channel features. for example if a channel's configuration supports message replies, but you disabled it via XML attributes, then members of this channel won't see such an option.
 
 `MessageListView` provides you the possibility to enable/disable these channel features at runtime as well:
 
@@ -448,7 +448,7 @@ The start position does not affect the orientation. The default is from bottom t
 ## Filtering Messages
 
 You can filter out certain messages if you don't want to show them in the `MessageListView`.
-Imagine you want to hide all messages which contain the word "secret". This can be achieved using the following code:
+Imagine you want to hide all messages which contain the word 'secret'. This can be achieved using the following code:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -735,7 +735,7 @@ This code will display the following empty state:
 ## Configure When the User Avatar Appears
 By default, user avatars will appear next to messages that are either the last message in a group of messages, or the only one within it.
 
-| ![message_list_show_avatar_predicate_default](../../assets/message_list_show_avatar_predicate_default.png) |
+| ![](../../assets/message_list_show_avatar_predicate_default.png) |
 |---|
 
 You can configure when the user avatar will appear by setting your own predicate using `MessageListView.setShowAvatarPredicate()`.<br/>
@@ -763,7 +763,7 @@ messageListView.setShowAvatarPredicate((messageItem) ->
 
 The result looks like this:
 
-| ![message_list_show_avatar_predicate_custom](../../assets/message_list_show_avatar_predicate_custom.png) |
+| ![](../../assets/message_list_show_avatar_predicate_custom.png) |
 |---|
 
 :::note

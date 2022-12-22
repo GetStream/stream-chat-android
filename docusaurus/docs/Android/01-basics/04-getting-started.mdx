@@ -109,7 +109,7 @@ new ChatClient.Builder(apiKey, context)
 
 #### Adding State
 
-Our UI Components rely on reading the state in order to render the UI. Information such as the currently active user, list of muted users, online status, etc. is saved as state inside various state holders (e.g. `GlobalState`, and others). The state is managed by `StatePlugin` and adding it to `ChatClient` **is mandatory if you want to use our UI Components**.
+Our UI Components rely on reading the state in order to render the UI. Information such as the currently active user, list of muted users, online status, etc. is saved as state inside various state holders (for example`GlobalState`, and others). The state is managed by `StatePlugin` and adding it to `ChatClient` **is mandatory if you want to use our UI Components**.
 
 Let's see how we can add the plugin:
 
@@ -300,10 +300,10 @@ if (ChatClient.instance().getCurrentUser() == null) {
 To learn more about how to create a token and different user types, see [Tokens & Authentication](https://getstream.io/chat/docs/android/tokens_and_authentication/?language=kotlin).
 :::
 
-If the `connectUser()` call was successful, you are now ready to use the SDK! 🎉
+If the `connectUser()` call was successful, you are now ready to use the SDK. 🎉
 
 :::warning
-You shouldn't call `connectUser` if the user is already set! You can use `ChatClient.instance().getCurrentUser()` to verify if the user is already connected.
+You shouldn't call `connectUser` if the user is already set. You can use `ChatClient.instance().getCurrentUser()` to verify if the user is already connected.
 :::
 
 The methods of the `ChatClient` class allow you to create channels, send messages, add reactions, and perform many more low-level operations. You can also use the SDK's pre-built UI Components that will perform data fetching and sending for you, as described below.
