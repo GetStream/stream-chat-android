@@ -23,6 +23,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnOriginalImageDimensions
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
+import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageQueryParameterKeys
 import io.getstream.log.StreamLog
 
 private val snakeRegex = "_[a-zA-Z]".toRegex()
@@ -136,10 +137,22 @@ public fun String.createResizedStreamCdnImageUrl(
 
         val resizedImageUrl = imageLinkUri
             .buildUpon()
-            .appendValueAsQueryParameterIfNotNull(key = "w", value = resizedWidth)
-            .appendValueAsQueryParameterIfNotNull(key = "h", value = resizedHeight)
-            .appendValueAsQueryParameterIfNotNull(key = "resize", value = resizeMode?.queryParameterName)
-            .appendValueAsQueryParameterIfNotNull(key = "crop", value = cropMode?.queryParameterName)
+            .appendValueAsQueryParameterIfNotNull(
+                key = StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH,
+                value = resizedWidth
+            )
+            .appendValueAsQueryParameterIfNotNull(
+                key = StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT,
+                value = resizedHeight
+            )
+            .appendValueAsQueryParameterIfNotNull(
+                key = StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE,
+                value = resizeMode?.queryParameterName
+            )
+            .appendValueAsQueryParameterIfNotNull(
+                key = StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE,
+                value = cropMode?.queryParameterName
+            )
             .build()
             .toString()
 
@@ -149,9 +162,9 @@ public fun String.createResizedStreamCdnImageUrl(
 
         resizedImageUrl
     } else {
-        logger.w {
-            "Only images hosted by Stream's CDN containing original width and height query parameters " +
-                "can be resized"
+        logger.i {
+            "Image not hosted by Stream's CDN or not containing original width and height query parameters " +
+                "was not resized"
         }
         this
     }
@@ -164,7 +177,10 @@ public fun String.createResizedStreamCdnImageUrl(
  */
 private fun Uri.wasImagePreviouslyResized(): Boolean =
     queryParameterNames.run {
-        contains("w") || contains("h") || contains("resize") || contains("crop")
+        contains(StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH) ||
+            contains(StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT) ||
+            contains(StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE) ||
+            contains(StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE)
     }
 
 /**
