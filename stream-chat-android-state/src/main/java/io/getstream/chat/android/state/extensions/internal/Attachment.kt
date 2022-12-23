@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.extensions.internal
+package io.getstream.chat.android.state.extensions.internal
 
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 
 /**
  * Uses substrings to extract the file name from the attachment URL.
