@@ -74,14 +74,12 @@ public fun String.cidToTypeAndId(): Pair<String, String> {
  */
 public fun String.getStreamCdnHostedImageDimensions(): StreamCdnOriginalImageDimensions? {
     return try {
-        val width = this.substringAfter(delimiter = "ow=", missingDelimiterValue = "")
-            .takeIf { it.isNotBlank() }
-            ?.substringBefore("&")
+        val imageUri = this.toUri()
+
+        val width = imageUri.getQueryParameter("ow")
             ?.toInt()
 
-        val height = this.substringAfter(delimiter = "oh=", missingDelimiterValue = "")
-            .takeIf { it.isNotBlank() }
-            ?.substringBefore("&")
+        val height = imageUri.getQueryParameter("oh")
             ?.toInt()
 
         if (height != null && width != null) {
