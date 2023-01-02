@@ -176,12 +176,14 @@ public fun String.createResizedStreamCdnImageUrl(
  * @return true if the URL contains resizing parameters, false otherwise.
  */
 private fun Uri.wasImagePreviouslyResized(): Boolean =
-    queryParameterNames.any { queryParam ->
-        queryParam == StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH ||
-            queryParam == StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT ||
-            queryParam == StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE ||
-            queryParam == StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE
-    }
+    queryParameterNames.intersect(
+        listOf(
+            StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH,
+            StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT,
+            StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE,
+            StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE,
+        )
+    ).isNotEmpty()
 
 /**
  * A convenience method which evaluates if [value] is null or not and appends
