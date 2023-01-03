@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
@@ -96,7 +97,9 @@ internal class MediaAttachmentAdapter(
 
             binding.mediaImageView.load(
                 data = if (shouldLoadImage) {
-                    attachmentGalleryItem.attachment.imagePreviewUrl
+                    attachmentGalleryItem.attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(
+                        streamCdnImageResizing = ChatUI.streamCdnImageResizing
+                    )
                 } else {
                     null
                 },

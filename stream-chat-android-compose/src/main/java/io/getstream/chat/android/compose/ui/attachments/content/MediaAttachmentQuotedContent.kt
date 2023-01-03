@@ -40,6 +40,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
@@ -66,10 +67,11 @@ public fun MediaAttachmentQuotedContent(
         }
 
     val data =
-        if (isImageContent || isGiphy || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
-            attachment.imagePreviewUrl
-        } else {
-            null
+        when {
+            isGiphy -> attachment.imagePreviewUrl
+            isImageContent || (isVideo && ChatTheme.videoThumbnailsEnabled) ->
+                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+            else -> null
         }
 
     val imagePainter = rememberStreamImagePainter(data = data)

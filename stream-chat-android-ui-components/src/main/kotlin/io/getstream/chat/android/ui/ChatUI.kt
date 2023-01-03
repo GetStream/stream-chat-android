@@ -20,6 +20,7 @@ import android.content.Context
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
@@ -152,4 +153,13 @@ public object ChatUI {
      */
     @JvmStatic
     public var videoThumbnailsEnabled: Boolean = true
+
+    /**
+     * Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
+     * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that
+     * resizing applies only to images hosted on Stream's CDN which contain the original width (ow) and height (oh)
+     * query parameters.
+     */
+    @JvmStatic
+    public var streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing()
 }
