@@ -339,6 +339,11 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
+# December 22nd, 2022 - 5.11.10
+## stream-chat-android-offline
+### 🐞 Fixed
+- Allowed downloading `Attachment`s with missing `title` and `name` properties by ensuring a fallback name is present. Please note that the properties should be populated, this is only used to guard against edge cases. [#4599](https://github.com/GetStream/stream-chat-android/pull/4599)
+
 # December 5th, 2022 - 5.11.9
 ## stream-chat-android-ui-common
 ### ✅ Added
