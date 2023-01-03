@@ -16,12 +16,9 @@
 
 package io.getstream.chat.android.client.streamcdn
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-
 /**
  * Contains query parameter keys used to resize Stream CDN hosted images.
  */
-@InternalStreamChatApi
 internal object StreamCdnResizeImageQueryParameterKeys {
 
     /**
