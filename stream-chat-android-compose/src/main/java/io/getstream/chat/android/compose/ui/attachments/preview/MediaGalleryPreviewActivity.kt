@@ -1547,8 +1547,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     private fun Intent.createStreamCdnImageResizing(): StreamCdnImageResizing {
         val imageResizingEnabled = getBooleanExtra(KeyImageResizingEnabled, false)
 
-        val resizedWidthPercentage = getFloatExtra(KeyStreamCdnResizeImagedWidthPercentage, 0.5f)
-        val resizedHeightPercentage = getFloatExtra(KeyStreamCdnResizeImagedHeightPercentage, 0.5f)
+        val resizedWidthPercentage = getFloatExtra(KeyStreamCdnResizeImagedWidthPercentage, 1f)
+        val resizedHeightPercentage = getFloatExtra(KeyStreamCdnResizeImagedHeightPercentage, 1f)
 
         val resizeModeEnumValue = getStringExtra(KeyStreamCdnResizeImageMode)
         val resizeMode =
