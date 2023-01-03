@@ -19,11 +19,11 @@ package io.getstream.chat.android.client.extensions
 import android.net.Uri
 import androidx.annotation.FloatRange
 import androidx.core.net.toUri
+import io.getstream.chat.android.client.streamcdn.StreamCdnResizeImageQueryParameterKeys
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnOriginalImageDimensions
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
-import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageQueryParameterKeys
 import io.getstream.log.StreamLog
 
 private val snakeRegex = "_[a-zA-Z]".toRegex()

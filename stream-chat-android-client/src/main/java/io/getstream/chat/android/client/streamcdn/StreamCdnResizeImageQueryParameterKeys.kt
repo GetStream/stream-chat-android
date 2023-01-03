@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.models.streamcdn.image
+package io.getstream.chat.android.client.streamcdn
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
@@ -22,25 +22,25 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * Contains query parameter keys used to resize Stream CDN hosted images.
  */
 @InternalStreamChatApi
-public object StreamCdnResizeImageQueryParameterKeys {
+internal object StreamCdnResizeImageQueryParameterKeys {
 
     /**
      * Query parameter key used to append the resized width value.
      */
-    public const val QUERY_PARAMETER_KEY_RESIZED_WIDTH: String = "w"
+    const val QUERY_PARAMETER_KEY_RESIZED_WIDTH: String = "w"
 
     /**
      * Query parameter key used to append the resized height value.
      */
-    public const val QUERY_PARAMETER_KEY_RESIZED_HEIGHT: String = "h"
+    const val QUERY_PARAMETER_KEY_RESIZED_HEIGHT: String = "h"
 
     /**
      * Query parameter key used to append the resize mode value.
      */
-    public const val QUERY_PARAMETER_KEY_RESIZE_MODE: String = "resize"
+    const val QUERY_PARAMETER_KEY_RESIZE_MODE: String = "resize"
 
     /**
      * Query parameter key used to append the crop mode value.
      */
-    public const val QUERY_PARAMETER_KEY_CROP_MODE: String = "crop"
+    const val QUERY_PARAMETER_KEY_CROP_MODE: String = "crop"
 }

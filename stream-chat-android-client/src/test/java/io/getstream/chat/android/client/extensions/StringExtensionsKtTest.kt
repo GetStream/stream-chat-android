@@ -18,12 +18,12 @@ package io.getstream.chat.android.client.extensions
 
 import android.net.Uri
 import androidx.core.net.toUri
+import io.getstream.chat.android.client.streamcdn.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE
+import io.getstream.chat.android.client.streamcdn.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT
+import io.getstream.chat.android.client.streamcdn.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH
+import io.getstream.chat.android.client.streamcdn.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
-import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE
-import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT
-import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH
-import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
