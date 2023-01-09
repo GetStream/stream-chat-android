@@ -82,7 +82,7 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.
  */
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 public class MessageListViewModel(
     private val cid: String,
     private val messageId: String? = null,
