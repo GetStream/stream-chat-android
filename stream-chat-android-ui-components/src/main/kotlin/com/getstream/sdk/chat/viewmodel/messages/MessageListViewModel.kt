@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
+import io.getstream.chat.android.offline.extensions.getMessageWithCache
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadNewerMessages
@@ -607,28 +608,15 @@ public class MessageListViewModel(
                 )
             }
             is Event.ShowMessage -> {
-                val message = messageListData?.value
-                    ?.items
-                    ?.asSequence()
-                    ?.filterIsInstance<MessageListItem.MessageItem>()
-                    ?.find { messageItem -> messageItem.message.id == event.messageId }
-                    ?.message
-
-                if (message != null) {
-                    _targetMessage.value = message!!
-                } else {
-                    chatClient.loadMessageById(
-                        cid,
-                        event.messageId
-                    ).enqueue { result ->
+                ChatClient.instance().getMessageWithCache(event.messageId)
+                    .enqueue { result ->
                         if (result.isSuccess) {
-                            _targetMessage.value = result.data()
+                            focusMessage(result.data())
                         } else {
                             val error = result.error()
                             logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
                         }
                     }
-                }
             }
             is Event.RemoveAttachment -> {
                 val attachmentToBeDeleted = event.attachment
@@ -943,6 +931,70 @@ public class MessageListViewModel(
      */
     public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
         this.messageFooterVisibility.value = messageFooterVisibility
+    }
+
+    /**
+     * Loads the message and puts it in focus.
+     * Capable of loading both channel and thread messages.
+     *
+     * Will try to fetch the message from cache before attempting an API call.
+     *
+     * @param message The message that should be put in focus.
+     */
+    private fun focusMessage(message: Message) {
+        if (message.parentId != null) {
+            focusThreadMessage(message)
+        } else {
+            focusChannelMessage(message.id)
+        }
+    }
+
+    /**
+     * Loads the channel message with the surrounding messages and puts it in focus.
+     * Will try to fetch the messages from cache before attempting an API call.
+     *
+     * Use this method for channel messages only, for focusing thread messages see [focusThreadMessage].
+     *
+     * @param messageId The ID of the message that should be put in focus.
+     */
+    private fun focusChannelMessage(messageId: String) {
+        chatClient.loadMessageById(
+            cid,
+            messageId
+        ).enqueue { result ->
+            if (result.isSuccess) {
+                _targetMessage.value = result.data()
+            } else {
+                val error = result.error()
+                logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
+            }
+        }
+    }
+
+    /**
+     * Loads the thread message with its parent thread and puts the message in focus.
+     * Will try to fetch the message and thread from cache before attempting an API call.
+     *
+     * Use this method for thread messages only, for focusing channel messages see [focusChannelMessage].
+     *
+     * @param threadMessage The thread message that should be put in focus.
+     */
+    private fun focusThreadMessage(threadMessage: Message) {
+        val parentId = threadMessage.parentId
+
+        if (parentId != null) {
+            chatClient.getMessageWithCache(parentId).enqueue { result ->
+                if (result.isSuccess) {
+                    loadThreadWithOfflinePlugin(result.data())
+
+                    // TODO - focus on the message properly
+                    // TODO - Loaded using live data, no callback informing when loading is done making it difficult
+                } else {
+                    val error = result.error()
+                    logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
+                }
+            }
+        }
     }
 
     /**

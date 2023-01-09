@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.toResultError
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.extensions.internal.logic
@@ -287,6 +288,27 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
             cidValidationResult.error().toResultError()
         }
     }
+}
+
+/**
+ * Attempts to fetch the message from offline cache before making an API call.
+ *
+ * @param messageId The id of the message we are fetching.
+ *
+ * @return The message with the corresponding iID wrapped inside a [Call].
+ */
+@InternalStreamChatApi
+@CheckResult
+public fun ChatClient.getMessageWithCache(
+    messageId: String,
+): Call<Message> {
+    val message = logic.getMessageById(messageId)
+
+    return if (message != null) {
+        CoroutineCall(state.scope) {
+            Result(data = message)
+        }
+    } else getMessage(messageId)
 }
 
 /**
