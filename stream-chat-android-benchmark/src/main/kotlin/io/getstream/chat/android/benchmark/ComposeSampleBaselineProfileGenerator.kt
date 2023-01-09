@@ -22,7 +22,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalBaselineProfilesApi
-internal class BaselineProfileGenerator {
+internal class ComposeSampleBaselineProfileGenerator {
     @get:Rule
     internal val baselineProfileRule = BaselineProfileRule()
 
