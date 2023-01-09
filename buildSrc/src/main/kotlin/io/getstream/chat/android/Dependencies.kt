@@ -76,6 +76,10 @@ object Versions {
     internal const val TIMBER = "5.0.1"
     internal const val TURBINE = "0.12.1"
     internal const val WORK = "2.7.1"
+    internal const val ANDROIDX_TEST = "1.4.0"
+    internal const val BASE_PROFILE = "1.2.0"
+    internal const val MACRO_BENCHMARK = "1.1.0"
+    internal const val ANDROIDX_UI_AUTOMATOR = "2.2.0"
 }
 
 object Dependencies {
@@ -211,7 +215,13 @@ object Dependencies {
     const val turbine = "app.cash.turbine:turbine:${Versions.TURBINE}"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:${Versions.WORK}"
     const val workTesting = "androidx.work:work-testing:${Versions.WORK}"
-
+    const val baseProfile =
+        "androidx.profileinstaller:profileinstaller:${Versions.BASE_PROFILE}"
+    const val macroBenchmark =
+        "androidx.benchmark:benchmark-macro-junit4:${Versions.MACRO_BENCHMARK}"
+    const val uiAutomator =
+        "androidx.test.uiautomator:uiautomator:${Versions.ANDROIDX_UI_AUTOMATOR}"
+    const val testRunner = "androidx.test:runner:${Versions.ANDROIDX_TEST}"
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()
 
