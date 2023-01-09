@@ -22,14 +22,27 @@ import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalBaselineProfilesApi
-internal class ComposeSampleBaselineProfileGenerator {
+internal class BaselineProfileGenerator {
     @get:Rule
     internal val baselineProfileRule = BaselineProfileRule()
 
     @Test
-    fun startup() =
+    fun startupComposeSample() =
         baselineProfileRule.collectBaselineProfile(
             packageName = composeSamplePackageName
+        ) {
+            pressHome()
+            // This block defines the app's critical user journey. Here we are interested in
+            // optimizing for app startup. But you can also navigate and scroll
+            // through your most important UI.
+            startActivityAndWait()
+            device.waitForIdle()
+        }
+
+    @Test
+    fun startupUiComponentsSample() =
+        baselineProfileRule.collectBaselineProfile(
+            packageName = uiComponentsSamplePackageName
         ) {
             pressHome()
             // This block defines the app's critical user journey. Here we are interested in
