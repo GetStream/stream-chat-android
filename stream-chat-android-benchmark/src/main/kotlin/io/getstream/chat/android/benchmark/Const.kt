@@ -16,5 +16,5 @@
 
 package io.getstream.chat.android.benchmark
 
-internal const val composeSamplePackageName = "io.getstream.chat.android.compose.sample"
-internal const val uiComponentsSamplePackageName = "io.getstream.chat.ui.sample"
+internal const val COMPOSE_SAMPLE_PACKAGE_NAME = "io.getstream.chat.android.compose.sample"
+internal const val UI_COMPONENTS_PACKAGE_NAME = "io.getstream.chat.ui.sample"
