@@ -23,6 +23,9 @@ object Versions {
     internal const val ANDROIDX_TEST_CORE = "1.5.0"
     internal const val ANDROIDX_TEST_JUNIT = "1.1.4"
     internal const val ANDROIDX_VIEW_PAGER_2 = "1.0.0"
+    internal const val ANDROIDX_UI_AUTOMATOR = "2.2.0"
+    internal const val ANDROIDX_TEST = "1.4.0"
+    internal const val BASE_PROFILE = "1.2.0"
     internal const val COIL = "2.2.2"
     internal const val COMPOSE_ACCOMPANIST = "0.27.1"
     internal const val CONSTRAINT_LAYOUT = "2.1.4"
@@ -54,6 +57,7 @@ object Versions {
     internal const val KSP = "1.7.20-1.0.7"
     internal const val LEAK_CANARY = "2.4"
     internal const val MATERIAL_COMPONENTS = "1.7.0"
+    internal const val MACRO_BENCHMARK = "1.1.0"
     internal const val MARKWON = "4.6.2"
     internal const val MOCKITO_KOTLIN = "4.0.0"
     internal const val MOCKITO = "4.9.0"
@@ -76,10 +80,6 @@ object Versions {
     internal const val TIMBER = "5.0.1"
     internal const val TURBINE = "0.12.1"
     internal const val WORK = "2.7.1"
-    internal const val ANDROIDX_TEST = "1.4.0"
-    internal const val BASE_PROFILE = "1.2.0"
-    internal const val MACRO_BENCHMARK = "1.1.0"
-    internal const val ANDROIDX_UI_AUTOMATOR = "2.2.0"
 }
 
 object Dependencies {
@@ -100,11 +100,14 @@ object Dependencies {
     const val androidxRecyclerview = "androidx.recyclerview:recyclerview:${Versions.ANDROIDX_RECYCLERVIEW}"
     const val androidxStartup = "androidx.startup:startup-runtime:${Versions.ANDROIDX_STARTUP}"
     const val androidxTest = "androidx.test:core:${Versions.ANDROIDX_TEST_CORE}"
+    const val androidxTestRunner = "androidx.test:runner:${Versions.ANDROIDX_TEST}"
+    const val androidxUiAutomator = "androidx.test.uiautomator:uiautomator:${Versions.ANDROIDX_UI_AUTOMATOR}"
     const val androidxTestKtx = "androidx.test:core-ktx:${Versions.ANDROIDX_TEST_CORE}"
     const val androidxLifecycleTesting = "androidx.lifecycle:lifecycle-runtime-testing:${Versions.ANDROIDX_LIFECYCLE}"
     const val androidxTestJunit = "androidx.test.ext:junit:${Versions.ANDROIDX_TEST_JUNIT}"
     const val androidxTestJunitKtx = "androidx.test.ext:junit-ktx:${Versions.ANDROIDX_TEST_JUNIT}"
     const val androidxViewPager2 = "androidx.viewpager2:viewpager2:${Versions.ANDROIDX_VIEW_PAGER_2}"
+    const val baseProfile = "androidx.profileinstaller:profileinstaller:${Versions.BASE_PROFILE}"
     const val coil = "io.coil-kt:coil:${Versions.COIL}"
     const val coilGif = "io.coil-kt:coil-gif:${Versions.COIL}"
     const val coilVideo = "io.coil-kt:coil-video:${Versions.COIL}"
@@ -166,6 +169,7 @@ object Dependencies {
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.KOTLIN}"
     const val ksp = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:${Versions.KSP}"
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${Versions.LEAK_CANARY}"
+    const val macroBenchmark = "androidx.benchmark:benchmark-macro-junit4:${Versions.MACRO_BENCHMARK}"
     const val materialComponents = "com.google.android.material:material:${Versions.MATERIAL_COMPONENTS}"
     const val markwonCore = "io.noties.markwon:core:${Versions.MARKWON}"
     const val markwonLinkify = "io.noties.markwon:linkify:${Versions.MARKWON}"
@@ -215,13 +219,7 @@ object Dependencies {
     const val turbine = "app.cash.turbine:turbine:${Versions.TURBINE}"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:${Versions.WORK}"
     const val workTesting = "androidx.work:work-testing:${Versions.WORK}"
-    const val baseProfile =
-        "androidx.profileinstaller:profileinstaller:${Versions.BASE_PROFILE}"
-    const val macroBenchmark =
-        "androidx.benchmark:benchmark-macro-junit4:${Versions.MACRO_BENCHMARK}"
-    const val uiAutomator =
-        "androidx.test.uiautomator:uiautomator:${Versions.ANDROIDX_UI_AUTOMATOR}"
-    const val testRunner = "androidx.test:runner:${Versions.ANDROIDX_TEST}"
+
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()
 
