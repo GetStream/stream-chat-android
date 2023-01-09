@@ -51,7 +51,7 @@ internal class HotStartupBenchmarkUiComponentsSample : AbstractStartupBenchmarkU
  * Base class for benchmarks with different startup modes.
  * Enables app startups from various states of baseline profile or [CompilationMode]s.
  */
-internal abstract class AbstractStartupBenchmarkUiComponentsSample(private val startupMode: StartupMode) {
+internal open class AbstractStartupBenchmarkUiComponentsSample(private val startupMode: StartupMode) {
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
@@ -74,7 +74,7 @@ internal abstract class AbstractStartupBenchmarkUiComponentsSample(private val s
     fun startupFullCompilation() = startup(CompilationMode.Full())
 
     private fun startup(compilationMode: CompilationMode) = benchmarkRule.measureRepeated(
-        packageName = uiComponentsSamplePackageName,
+        packageName = UI_COMPONENTS_PACKAGE_NAME,
         metrics = listOf(StartupTimingMetric()),
         compilationMode = compilationMode,
         iterations = 10,

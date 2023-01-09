@@ -31,27 +31,27 @@ import org.junit.runner.RunWith
  * for investigating your app's performance from a cold state.
  */
 @RunWith(AndroidJUnit4ClassRunner::class)
-internal class ColdStartupBenchmarkComposeSample : AbstractStartupBenchmarkUiComponentsSample(StartupMode.COLD)
+internal class ColdStartupBenchmarkComposeSample : AbstractStartupBenchmarkComposeSample(StartupMode.COLD)
 
 /**
  * Run this benchmark from Studio to see startup measurements, and captured system traces
  * for investigating your app's performance from a warm state.
  */
 @RunWith(AndroidJUnit4ClassRunner::class)
-internal class WarmStartupBenchmarkComposeSample : AbstractStartupBenchmarkUiComponentsSample(StartupMode.WARM)
+internal class WarmStartupBenchmarkComposeSample : AbstractStartupBenchmarkComposeSample(StartupMode.WARM)
 
 /**
  * Run this benchmark from Studio to see startup measurements, and captured system traces
  * for investigating your app's performance from a hot state.
  */
 @RunWith(AndroidJUnit4ClassRunner::class)
-internal class HotStartupBenchmarkComposeSample : AbstractStartupBenchmarkUiComponentsSample(StartupMode.HOT)
+internal class HotStartupBenchmarkComposeSample : AbstractStartupBenchmarkComposeSample(StartupMode.HOT)
 
 /**
  * Base class for benchmarks with different startup modes.
  * Enables app startups from various states of baseline profile or [CompilationMode]s.
  */
-internal abstract class AbstractStartupBenchmarkComposeSample(private val startupMode: StartupMode) {
+internal open class AbstractStartupBenchmarkComposeSample(private val startupMode: StartupMode) {
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
@@ -74,7 +74,7 @@ internal abstract class AbstractStartupBenchmarkComposeSample(private val startu
     fun startupFullCompilation() = startup(CompilationMode.Full())
 
     private fun startup(compilationMode: CompilationMode) = benchmarkRule.measureRepeated(
-        packageName = composeSamplePackageName,
+        packageName = COMPOSE_SAMPLE_PACKAGE_NAME,
         metrics = listOf(StartupTimingMetric()),
         compilationMode = compilationMode,
         iterations = 10,

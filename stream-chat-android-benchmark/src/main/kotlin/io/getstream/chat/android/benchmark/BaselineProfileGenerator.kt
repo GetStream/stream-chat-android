@@ -29,7 +29,7 @@ internal class BaselineProfileGenerator {
     @Test
     fun startupComposeSample() =
         baselineProfileRule.collectBaselineProfile(
-            packageName = composeSamplePackageName
+            packageName = COMPOSE_SAMPLE_PACKAGE_NAME
         ) {
             pressHome()
             // This block defines the app's critical user journey. Here we are interested in
@@ -42,7 +42,7 @@ internal class BaselineProfileGenerator {
     @Test
     fun startupUiComponentsSample() =
         baselineProfileRule.collectBaselineProfile(
-            packageName = uiComponentsSamplePackageName
+            packageName = UI_COMPONENTS_PACKAGE_NAME
         ) {
             pressHome()
             // This block defines the app's critical user journey. Here we are interested in
