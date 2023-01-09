@@ -41,10 +41,10 @@ android {
 }
 
 dependencies {
-    implementation(Dependencies.testRunner)
+    implementation(Dependencies.androidxTestRunner)
     implementation(Dependencies.baseProfile)
     implementation(Dependencies.macroBenchmark)
-    implementation(Dependencies.uiAutomator)
+    implementation(Dependencies.androidxUiAutomator)
     detektPlugins(Dependencies.detektFormatting)
 }
 
