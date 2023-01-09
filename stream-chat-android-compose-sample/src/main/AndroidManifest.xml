@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
     limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="io.getstream.chat.android.compose.sample"
     >
 
@@ -28,6 +29,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Streamchatcompose"
         >
+        <profileable
+            android:shell="true"
+            tools:targetApi="29"
+            />
+
         <activity
             android:name=".ui.StartupActivity"
             android:exported="true"
@@ -38,29 +44,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.login.UserLoginActivity"
             android:exported="false"
             />
-
         <activity
             android:name=".ui.login.CustomLoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
-
         <activity
             android:name=".ui.ChannelsActivity"
             android:exported="false"
             />
-
         <activity
             android:name=".ui.MessagesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
-
     </application>
 
 </manifest>
