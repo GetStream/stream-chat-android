@@ -19,5 +19,6 @@
 
     <queries>
         <package android:name="io.getstream.chat.android.compose.sample" />
+        <package android:name="io.getstream.chat.ui.sample" />
     </queries>
 </manifest>
