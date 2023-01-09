@@ -45,6 +45,7 @@ dependencies {
     implementation(Dependencies.baseProfile)
     implementation(Dependencies.macroBenchmark)
     implementation(Dependencies.uiAutomator)
+    detektPlugins(Dependencies.detektFormatting)
 }
 
 androidComponents {
