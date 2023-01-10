@@ -797,7 +797,7 @@ public class MessageListController(
     private fun threadLoadMore(threadMode: MessageMode.MessageThread, messageLimit: Int = this.messageLimit) {
         if (_threadListState.value.endOfOldMessagesReached) return
 
-        if (threadMode.threadState != null) {
+        if (threadMode.threadState != null && !threadMode.threadState.endOfOlderMessages.value) {
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
