@@ -23,7 +23,6 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Allowed downloading `Attachment`s with missing `title` and `name` properties by ensuring a fallback name is present. Please note that the properties should be populated, this is only used to guard against edge cases. [#4599](https://github.com/GetStream/stream-chat-android/pull/4599)
 
 ### ⬆️ Improved
 
@@ -120,6 +119,11 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# December 22nd, 2022 - 5.11.10
+## stream-chat-android-offline
+### 🐞 Fixed
+- Allowed downloading `Attachment`s with missing `title` and `name` properties by ensuring a fallback name is present. Please note that the properties should be populated, this is only used to guard against edge cases. [#4599](https://github.com/GetStream/stream-chat-android/pull/4599)
 
 # December 5th, 2022 - 5.11.9
 ## stream-chat-android-ui-common
