@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEventHandler
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.isEphemeral
 import io.getstream.chat.android.client.models.Attachment
@@ -143,6 +144,30 @@ public fun ChatClient.getRepliesAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): ThreadState {
     return requestsAsState(coroutineScope).getReplies(messageId, messageLimit)
+}
+
+/**
+ * Returns thread replies in the form of [ThreadState], however, unlike [getRepliesAsState]
+ * it will return it only after the API call made to get replies has ended. Thread state
+ * will be returned regardless if the API call has succeeded or failed, the only difference is
+ * in how up to date the replies in the thread state are.
+ *
+ * @param messageId The ID of the original message the replies were made to.
+ * @param messageLimit The number of messages that will be initially loaded.
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
+ *
+ * @return [ThreadState] wrapped inside a [Call].
+ */
+@InternalStreamChatApi
+@JvmOverloads
+public fun ChatClient.getRepliesAsStateCall(
+    messageId: String,
+    messageLimit: Int,
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): Call<ThreadState> {
+    return CoroutineCall(scope = state.scope) {
+        Result(requestsAsState(coroutineScope).getRepliesAsStateCall(messageId, messageLimit))
+    }
 }
 
 /**
@@ -299,16 +324,17 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
  */
 @InternalStreamChatApi
 @CheckResult
-public fun ChatClient.getMessageWithCache(
+public fun ChatClient.getMessageUsingCache(
     messageId: String,
 ): Call<Message> {
-    val message = logic.getMessageById(messageId)
-
-    return if (message != null) {
-        CoroutineCall(state.scope) {
+    return CoroutineCall(state.scope) {
+        val message = logic.getMessageById(messageId)
+        if (message != null) {
             Result(data = message)
+        } else {
+            getMessage(messageId).await()
         }
-    } else getMessage(messageId)
+    }
 }
 
 /**

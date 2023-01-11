@@ -124,7 +124,7 @@ internal class LogicRegistry internal constructor(
         }
     }
 
-    fun getMessageById(messageId: String): Message? {
+    suspend fun getMessageById(messageId: String): Message? {
         return channelFromMessageId(messageId)?.getMessage(messageId)
             ?: threadFromMessageId(messageId)?.getMessage(messageId)
     }
@@ -152,7 +152,7 @@ internal class LogicRegistry internal constructor(
      *
      * @param messageId String
      */
-    fun threadFromMessageId(messageId: String): ThreadLogic? {
+    suspend fun threadFromMessageId(messageId: String): ThreadLogic? {
         return threads.values.find { threadLogic ->
             threadLogic.getMessage(messageId) != null
         }
@@ -177,7 +177,11 @@ internal class LogicRegistry internal constructor(
         return threads.getOrPut(messageId) {
             val mutableState = stateRegistry.mutableThread(messageId)
             val stateLogic = ThreadStateLogic(mutableState)
-            ThreadLogic(stateLogic)
+
+            ThreadLogic(
+                threadStateLogic = stateLogic,
+                repositoryFacade = repos
+            )
         }
     }
 

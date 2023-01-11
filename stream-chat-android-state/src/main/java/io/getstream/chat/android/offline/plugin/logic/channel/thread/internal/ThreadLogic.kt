@@ -25,11 +25,15 @@ import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
-internal class ThreadLogic(private val threadStateLogic: ThreadStateLogic) {
+internal class ThreadLogic(
+    private val threadStateLogic: ThreadStateLogic,
+    private val repositoryFacade: RepositoryFacade,
+) {
 
     private val mutableState: ThreadMutableState = threadStateLogic.writeThreadState()
 
@@ -52,8 +56,8 @@ internal class ThreadLogic(private val threadStateLogic: ThreadStateLogic) {
      *
      * @return [Message] if exists, null otherwise.
      */
-    internal fun getMessage(messageId: String): Message? {
-        return mutableState.rawMessage.value[messageId]?.copy()
+    internal suspend fun getMessage(messageId: String): Message? {
+        return (mutableState.rawMessage.value[messageId] ?: repositoryFacade.selectMessage(messageId))?.copy()
     }
 
     internal fun stateLogic(): ThreadStateLogic {
