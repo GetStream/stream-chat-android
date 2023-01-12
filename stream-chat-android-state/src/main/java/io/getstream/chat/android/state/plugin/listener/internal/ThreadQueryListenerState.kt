@@ -55,10 +55,14 @@ internal class ThreadQueryListenerState(
         val threadLogic = logic.thread(messageId)
 
         threadLogic.setLoading(true)
-        val messages = messageRepository.selectMessagesForThread(messageId, limit)
-        val parentMessage = threadLogic.getMessage(messageId) ?: messages.firstOrNull { it.id == messageId }
+        val messages = messageRepository.selectMessagesForThread(messageId, limit).toMutableList()
 
-        if (parentMessage != null && messages.isNotEmpty()) {
+        // If the parent message is not inside the thread, it is necessary to add it.
+        if (threadLogic.getMessage(messageId) == null) {
+            messageRepository.selectMessage(messageId)?.let(messages::add)
+        }
+
+        if (messages.isNotEmpty()) {
             threadLogic.upsertMessages(messages)
         }
     }
