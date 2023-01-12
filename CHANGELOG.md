@@ -17,6 +17,9 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the string extension function `createResizedStreamCdnImageUrl()` which resizes images hosted on Stream's CDN by adding the necessary query parameters to the URL. [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
+- Added the string extension function `getStreamCdnHostedImageDimensions()` used to extract original image dimensions from URLs of images hosted on Stream's CDN which contain the original width and height parameters. Added a new class called `StreamCdnOriginalImageDimensions` which stores the original height and width data. [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
+- Added classes `StreamCdnCropImageMode` and `StreamCdnResizeImageMode` used for modifying Stream CDN image resize requests. [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
 
 ### ⚠️ Changed
 
@@ -61,6 +64,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatUI.streamCdnImageResizing` which allows resizing images where they appear as previews, such as the message list, attachment gallery overview or user and channel avatars. Only images hosted by Stream's CDN which contain original width and height query parameters can be resized. Image resizing is a paid feature and is disabled by default, you can enable it by overriding the aforementioned `ChatUI.streamCdnImageResizing` property with with an instance that has `StreamCdnImageResizing.imageResizingEnabled` set to true. Pricing can be found [here](https://getstream.io/chat/pricing/). [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
 
 ### ⚠️ Changed
 
@@ -72,8 +76,13 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
+- Added `ChatTheme.streamCdnImageResizing` which allows resizing images where they appear as previews, such as the message list, attachment gallery overview or user and channel avatars. Only images hosted by Stream's CDN which contain original width and height query parameters can be resized. Image resizing is a paid feature and is disabled by default, you can enable it by overriding the aforementioned `ChatTheme.streamCdnImageResizing` property with an instance that has `StreamCdnImageResizing.imageResizingEnabled` set to true.. Pricing can be found [here](https://getstream.io/chat/pricing/). [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: Renamed `onHeaderActionClick` to `onHeaderTitleClick` in `MessagesScreen`. Change made in order to better reflect the handler's behavior. [#4535](https://github.com/GetStream/stream-chat-android/pull/4535)
+- 🚨 Breaking change: Renamed `onHeaderActionClick` to `onHeaderTitleClick` in `MessageListHeader`. Change made in order to better reflect the handler's behavior. [#4535](https://github.com/GetStream/stream-chat-android/pull/4535)
+- Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
 
 ### ❌ Removed
 
@@ -329,6 +338,16 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: Removed compose `MessageMode` indicating whether the list is in thread mode or normal mode in favor of ui-common `MessageMode`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+
+# December 22nd, 2022 - 5.11.10
+## stream-chat-android-offline
+### 🐞 Fixed
+- Allowed downloading `Attachment`s with missing `title` and `name` properties by ensuring a fallback name is present. Please note that the properties should be populated, this is only used to guard against edge cases. [#4599](https://github.com/GetStream/stream-chat-android/pull/4599)
+
+# December 5th, 2022 - 5.11.9
+## stream-chat-android-ui-common
+### ✅ Added
+- Exposed a way to allow you to include the current user avatar in the Channel avatar [#4561](https://github.com/GetStream/stream-chat-android/pull/4561)
 
 # November 23th, 2022 - 5.11.8
 ## stream-chat-android-client

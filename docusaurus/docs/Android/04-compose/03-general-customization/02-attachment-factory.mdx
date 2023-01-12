@@ -16,26 +16,36 @@ public open class AttachmentFactory constructor(
         modifier: Modifier,
         attachmentState: AttachmentState,
     ) -> Unit,
-    public val textFormatter: (attachments: Attachment) -> String = Attachment::previewText,
+    public val textFormatter: (attachments: Attachment) -> String = {
+        it.title ?: it.name ?: ""
+    },
 )
 ```
 
-* `canHandle`: Lambda function that accepts a `List` of attachments in a message and returns `true` if a given factory can consume the attachments and show some UI.
+* `canHandle`: Lambda function that accepts a `List` of attachments in a message and returns `true` if the given factory can consume the attachments and render the UI.
 * `previewContent`: Lambda function that accepts a `Modifier`, `List` of `Attachment`s  and an `onAttachmentRemoved` handler. It's used to render selected attachments in the `MessageComposer` or the `MessageInput` before sending the message.
-* `content`: Defines the composable function that accepts a `Modifier` and an `AttachmentState` and shows a given attachment component in the message list.
+* `content`: Defines the composable function that accepts a `Modifier` and an `AttachmentState` and shows the given attachment component in the message list.
 * `textFormatter`: Lambda function that accepts an attachment and returns a string representation for it.
 
-There are a few examples of default attachment factory implementations, in the [`StreamAttachmentFactories.kt` file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories.kt):
+There are a few examples of default attachment factory implementations, in the [StreamAttachmentFactories.kt file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories.kt):
 
 ```kotlin
 public fun defaultFactories(
     linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
+    giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
+    giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
+    contentScale: ContentScale = ContentScale.Crop,
 ): List<AttachmentFactory> = listOf(
     UploadAttachmentFactory(),
     LinkAttachmentFactory(linkDescriptionMaxLines),
-    GiphyAttachmentFactory(),
-    ImageAttachmentFactory(),
+    GiphyAttachmentFactory(
+        giphyInfoType = giphyInfoType,
+        giphySizingMode = giphySizingMode,
+        contentScale = contentScale,
+    ),
+    MediaAttachmentFactory(),
     FileAttachmentFactory(),
+    UnsupportedAttachmentFactory(),
 )
 ```
 
@@ -53,16 +63,41 @@ override fun onCreate(savedInstanceState: Bundle?) {
     setContent {
         // override the default factories by adding your own
         ChatTheme(attachmentFactories = myAttachmentFactories + defaultFactories) {
-            ChannelsScreen(...)
+            // Chat components
         }
     }
 }
 ```
 
-That way, you can build any type of factories you want, to show things like the user location within a Google Maps component, audio files, videos and more.
+That way, you can build any type of factory you want, to show things like the user location within a Google Maps component, audio files, videos and more.
 
 :::note
 Because we pick the first factory that can handle the attachments, the order of the factories matters when rendering the UI.
 
-Make sure to always put the higher priority Attachment factories first!
+Make sure to always put the higher priority Attachment factories first.
 :::
+
+### Quoted Attachments
+
+You can also customize the way attachments are displayed inside quoted messages. The approach used is nearly identical to the one shown in the previous example, with only the last step of the process being different.
+
+After creating new attachment factories which display custom attachments inside quoted messages, you override `ChatTheme.quotedAttachmentFactories` like so:
+
+```
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    val myQuotedAttachmentFactories = listOf<AttachmentFactory>()
+    val defaultFactories = StreamAttachmentFactories.defaultQuotedFactories()
+
+    setContent {
+        // override the default factories by adding your own
+        ChatTheme(quotedAttachmentFactories = myQuotedAttachmentFactories + defaultFactories) {
+            // Chat components
+        }
+    }
+}
+```
+
+### In-Depth Guide
+
+If you want to see a real world example of creating custom attachments, check out our [detailed guide on creating custom attachments](../07-guides/01-adding-custom-attachments.mdx).

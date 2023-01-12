@@ -6,7 +6,7 @@ hide_from_search: true
 
 Message represents single communication inside a channel. Besides typical communication-related fields like text, created date, or message sender, it also contains other useful components like:
 - Attachments - list of files inside the message
-- Reactions - users' reactions for the message. Common examples are: "like", "love", etc.
+- Reactions - users' reactions for the message. Common examples are: `"like"`, `"love"`, etc.
 
 ## Sending Messages
 
@@ -279,7 +279,7 @@ channelClient.getReactions(
 
 You can use the Reactions API to build something similar to Medium's clap reactions. If you are not familiar with this, Medium allows you to clap articles more than once and shows the sum of all claps from all users.
 
-To do this, you only need to include a score for the reaction (ie. user X clapped 25 times) and the API will return the sum of all reaction scores as well as each user individual scores (ie. clapped 475 times, user Y clapped 14 times).
+To do this, you only need to include a score for the reaction (for example: user X clapped 25 times) and the API will return the sum of all reaction scores as well as each user individual scores (for example: clapped 475 times, user Y clapped 14 times).
 
 ```kotlin
 val reaction = Reaction(messageId = "message-id", type = "clap", score = 5) 
@@ -433,8 +433,8 @@ channelClient.getMessagesWithAttachments(
     type = "image", 
 ).enqueue { result -> 
     if (result.isSuccess) { 
-        // These messages will contain at least one of the desired  
-        // type of attachment, but not necessarily all of their  
+        // These messages will contain at least one of the desired
+        // type of attachment, but not necessarily all of their
         // attachments will have the specified type 
         val messages: List<Message> = result.data() 
     } 
@@ -444,7 +444,11 @@ channelClient.getMessagesWithAttachments(
 
 ## Silent Messages
 
-Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread. They can be used to send system or transactional messages to channels such as: "your ride is waiting for you", "James updated the information for the trip", "You and Jane are now matched" and so on.
+Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread. They can be used to send system or transactional messages to channels such as:
+- "your ride is waiting for you"
+- "James updated the information for the trip"
+- "You and Jane are now matched"
+- Etc…
 
 ### Sending a Silent Message
 
@@ -504,9 +508,9 @@ channelClient.pinMessage(message, expirationDate = null).enqueue { /* ... */ }
 
 | Name | Type | Description | Default | Optional |
 | :--- | :--- | :--- | :--- | :--- |
-| pinned | Boolean | Indicates whether the message is pinned or not | false | &check; |
-| pinnedAt | Date | Date when the message got pinned | - | &check; |
-| pinExpires | Date | Date when the message pin expires. An empty value means that message does not expire | null | &check; |
+| `pinned` | `Boolean` | Indicates whether the message is pinned or not | false | &check; |
+| `pinnedAt` | `Date` | Date when the message got pinned | - | &check; |
+| `pinExpires` | `Date` | Date when the message pin expires. An empty value means that message does not expire | null | &check; |
 
 ### Retrieving Pinned Messages
 

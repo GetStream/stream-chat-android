@@ -49,6 +49,11 @@
         area of the gallery. -->
         <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd"
             format="dimension" />
+        <!-- Sets the padding of the play video icon in the main viewing
+        area of the gallery. Using this attribute overrides other padding attributes such as
+        padding top, bottom, start and end.-->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPadding"
+            format="dimension" />
         <!-- Sets the width of the play video button in the main viewing area of the gallery. -->
         <attr name="streamUiAttachmentGalleryViewMediaPlayIconWidth" format="dimension">
             <!-- The view should be as big as its parent (minus padding).

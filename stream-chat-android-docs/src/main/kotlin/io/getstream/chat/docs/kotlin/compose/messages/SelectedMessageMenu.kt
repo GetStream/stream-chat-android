@@ -203,7 +203,7 @@ private object SelectedMessageMenuCustomizationSnippet {
                                 headerContent = {
                                     Text(
                                         modifier = Modifier
-                                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                                            .padding(16.dp)
                                             .background(
                                                 shape = ChatTheme.shapes.avatar,
                                                 color = ChatTheme.colors.infoAccent

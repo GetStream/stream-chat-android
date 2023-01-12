@@ -1,16 +1,20 @@
 # Overview
 
-The **Compose UI Components** library includes pre-built Jetpack Compose components that let you easily load and display data from the Stream Chat API, without much code!
+The **Compose UI Components** library includes pre-built Jetpack Compose components that let you easily load and display data from the Stream Chat API, without much code.
 
 > Not using Compose yet? Check out our XML-based [UI Components](../03-ui/01-overview.mdx).
 
-|||
+| Channels Screen (Light Theme) | Messages Screen (Light Theme)|
 | --- | --- |
 | ![Channels](../assets/compose_channels_screen_example.png) | ![Messages](../assets/compose_messages_screen_example.png) |
 
+| Channels Screen (Dark Theme) | Messages Screen (Dark Theme)|
+| --- | --- |
+| ![Channels](../assets/compose_channels_screen_example_dark.png) | ![Messages](../assets/compose_messages_screen_example_dark.png) |
+
 This library builds on top of the offline library and provides three types of components:
 
-* **Screen components**: Fully built screens that work out-of-the-box, but offer limited much customization.
+* **Screen components**: Fully built screens that work out-of-the-box, but offer much more limited customization.
 * **Bound components**: Fully built components that represent a part of the screen and are **bound** to `ViewModel`s we provide, for business logic, events, and state handling. These provide extensive behavior and UI customization.
 * **Stateless components**: Simple components that rely on pure state and know nothing about our `ViewModel`s. Fully customizable.
 
@@ -48,7 +52,7 @@ To use the Compose UI Components, you have to set up your project to work with J
 
 Once you're done, add the necessary dependencies, as described on the [Dependencies](../01-basics/03-dependencies.mdx#ui-components) page.
 
-And that's it! You should be able to use our Compose UI Components in your app to start building a rich chat experience!
+And that's it. You should be able to use our Compose UI Components in your app to start building a rich chat experience.
 
 :::note
 If you're looking to explore the setup and our components in a step-by-step way, check out our [Compose In-App Messaging Tutorial](https://getstream.io/chat/compose/tutorial/).
@@ -107,11 +111,6 @@ You can learn more about each component's setup and usages on their individual p
 The [Compose UI Components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-compose-sample) is an open-source and fully functional messaging application that lets you explore and test our API. It features channels, threads, reactions, various attachments, UI updates and offline storage.
 
 All built using our Compose UI Components and the offline library.
-
-|||
-| --- | --- |
-| ![Channels](../assets/compose_channels_screen_example_dark.png) | ![Messages](../assets/compose_messages_screen_example_dark.png) |
-
 
 ## Customization
 

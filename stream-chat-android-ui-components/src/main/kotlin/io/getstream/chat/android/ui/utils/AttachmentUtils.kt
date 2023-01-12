@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.disposable.Disposable
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader.ImageTransformation.RoundedCorners
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
@@ -36,9 +37,15 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
     return with(attachment) {
         when {
             isVideo() && ChatUI.videoThumbnailsEnabled && !thumbUrl.isNullOrBlank() ->
-                load(data = thumbUrl, transformation = FILE_THUMB_TRANSFORMATION)
+                load(
+                    data = thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
+                    transformation = FILE_THUMB_TRANSFORMATION
+                )
             isImage() && !imageUrl.isNullOrBlank() ->
-                load(data = imageUrl, transformation = FILE_THUMB_TRANSFORMATION)
+                load(
+                    data = imageUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
+                    transformation = FILE_THUMB_TRANSFORMATION
+                )
             else -> {
                 // The mime type, or a best guess based on the extension
                 val actualMimeType = mimeType ?: MimeTypeMap.getSingleton()

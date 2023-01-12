@@ -278,6 +278,34 @@ public final class io/getstream/chat/android/ui/common/images/internal/StreamIma
 	public final fun getRadius ()F
 }
 
+public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing$Companion;
+	public fun <init> (ZFFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;)V
+	public final fun component1 ()Z
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
+	public final fun component5 ()Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+	public final fun copy (ZFFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;)Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZFFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCropMode ()Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+	public final fun getImageResizingEnabled ()Z
+	public final fun getResizeMode ()Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
+	public final fun getResizedHeightPercentage ()F
+	public final fun getResizedWidthPercentage ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing$Companion {
+	public final fun defaultStreamCdnImageResizing ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
+}
+
+public final class io/getstream/chat/android/ui/common/images/resizing/StringExtensionsKt {
+}
+
 public final class io/getstream/chat/android/ui/common/notifications/StreamCoilUserIconBuilder : io/getstream/chat/android/client/notifications/handler/UserIconBuilder {
 	public static final field $stable I
 	public fun <init> (Landroid/content/Context;)V

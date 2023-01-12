@@ -34,7 +34,7 @@ import io.getstream.chat.android.ui.feature.gallery.AttachmentActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentMediaActivity
 import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.uiutils.model.MimeType
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 public open class AttachmentDestination(
     public var message: Message,
@@ -42,7 +42,7 @@ public open class AttachmentDestination(
     context: Context,
 ) : ChatDestination(context) {
 
-    private val logger = StreamLog.getLogger("Chat:AttachmentDestination")
+    private val logger by taggedLogger("Chat:AttachmentDestination")
 
     override fun navigate() {
         showAttachment(message, attachment)

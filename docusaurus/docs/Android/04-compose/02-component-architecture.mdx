@@ -7,7 +7,7 @@ The Jetpack Compose SDK exposes three types of components:
 * **Stateless components**: low-level, stateless `Composable`s for full customizability.
 
 :::note
-All components from the SDK have to be wrapped in a [`ChatTheme`](03-general-customization/01-chat-theme.mdx) which provides theming and other customization options. You don't have to individually wrap components in [`ChatTheme`](03-general-customization/01-chat-theme.mdx), but it has to be present somewhere above the Chat components in the hierarchy.
+All components from the SDK have to be wrapped in [`ChatTheme`](03-general-customization/01-chat-theme.mdx) which provides theming and other customization options. You don't have to individually wrap components in [`ChatTheme`](03-general-customization/01-chat-theme.mdx), but it has to be present somewhere above the Chat components in the hierarchy.
 :::
 
 Let's go through each type to see what the difference is and how to use them.
@@ -51,9 +51,15 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-This will give you a fully-working screen:
+This will give you a fully working screen:
 
-![The ChannelsScreen Component](../assets/compose_default_channels_screen_component.png)
+| Channel List (Light Theme) | Channel List with Open Channel Menu (Light Theme) |
+|---|---|
+| ![Default ChannelsScreen Component Light](../assets/compose_default_channels_screen_component.png) | ![ChannelsScreen Component with SelectedChannelMenu open Light](../assets/compose_default_channels_screen_component_open_selected_channel_menu.png) |
+
+| Channel List (Dark Theme) | Channel List with Open Channel Menu (Dark Theme) |
+|---|---|
+|  ![Default ChannelsScreen Component Dark](../assets/compose_default_channels_screen_component_dark.png) | ![ChannelsScreen Component with SelectedChannelMenu open Dark](../assets/compose_default_channels_screen_component_open_selected_channel_menu_dark.png) |
 
 You can learn more about [`ChannelsScreen`](./04-channel-components/01-channels-screen.mdx) and [`MessagesScreen`](./05-message-components/01-messages-screen.mdx) on their respective pages.
 
@@ -95,14 +101,16 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-You can go build these components in two ways:
+You can build these components in two ways:
 
 * Providing an instance of our `ViewModel` yourself - this lets you control the lifecycle of the VM or customize the behavior of your UI, by calling functions directly on the VM.
 * Using the default argument for the `ViewModel` - this is less work, but you can't control the lifecycle of the VM, nor can you call functions on it to support custom behavior.
 
 Either way, these components connect all the required operations related to them and they expose more customization as you can override both behavior and UI, like the items in the list. The snippet above will produce the following screen:
 
-![The ChannelList Component](../assets/compose_default_channel_list_component.png)
+| Light Theme | Dark Theme |
+|---|---|
+| ![The ChannelList Component](../assets/compose_default_channel_list_component.png) | ![The ChannelList Component](../assets/compose_default_channel_list_component_dark.png) |
 
 You can combine this component with your custom UI, with other components from the SDK or use it on its own. You can learn more about each of these components in the **Channel Components** and **Message Components** sections.
 
@@ -143,7 +151,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 As you can see, these components are still fairly easy to use, but do require instructions on what state they show and how they look. This snippet will produce the following UI:
 
-![The SearchInput](../assets/compose_default_search_input_component.png)
+| Search Input (Light Theme) |
+|---|
+| ![SearchInput Light](../assets/compose_default_search_input_component.png) |
+
+| Search Input (Dark Theme) |
+|---|
+| ![SearchInput Dark](../assets/compose_default_search_input_component_dark.png) |
 
 You can customize the component to add a background, touch event handlers, elevation and more. 
 

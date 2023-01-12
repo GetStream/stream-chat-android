@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process
@@ -60,7 +61,7 @@ internal class EventBatchUpdate private constructor(
     private val userMap: MutableMap<String, User>,
 ) {
 
-    private val logger = StreamLog.getLogger(TAG)
+    private val logger by taggedLogger(TAG)
 
     /**
      * Adds the message and updates the last message for the given channel.

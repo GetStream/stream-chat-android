@@ -19,7 +19,7 @@ package io.getstream.chat.android.test
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -36,7 +36,7 @@ public class MockRetrofitCall<T : Any>(
     public val doWork: suspend () -> Unit,
 ) : Call<T> {
 
-    private val logger = StreamLog.getLogger("Chat:MockRetrofitCall")
+    private val logger by taggedLogger("Chat:MockRetrofitCall")
 
     private val executed = AtomicBoolean(false)
     private val job = AtomicReference<Job>()

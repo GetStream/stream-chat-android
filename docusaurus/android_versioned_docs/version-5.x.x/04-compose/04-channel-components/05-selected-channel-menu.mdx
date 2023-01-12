@@ -1,9 +1,9 @@
 # SelectedChannelMenu
 
-The `SelectedChannelMenu` component is used to show information about a `Channel` while providing various actions that the user can take.
+The `SelectedChannelMenu` component is used to show information about the selected `Channel` while providing various actions that the user can take.
 
 This includes the following:
-- **Channel information**: The name and member counts of the channel.
+- **Channel information**: The name and the member count of the selected channel.
 - **Channel members**: The list of members with their avatars and names.
 - **Channel options**: A list of actions the user can take with the selected channel.
 
@@ -77,7 +77,7 @@ fun SelectedChannelMenu(
 * `onChannelOptionClick`: Handler when the user taps on any channel option in the list.
 * `onDismiss`: Handler when the dialog is dismissed.
 
-By providing an `onChannelOptionClick` handler, you can choose what happens when the user selects options like "Leave Group", "Delete Conversation", "Mute channel", "Cancel" and more. You can react to these actions, update your UI state and show new UI if needed.
+By providing an `onChannelOptionClick` handler, you can choose what happens when the user selects options like 'Leave Group', 'Delete Conversation', 'Mute channel', 'Cancel' and more. You can react to these actions, update your UI state and show new UI if needed.
 
 If you want to customize the actions, you can do the following:
 
@@ -137,4 +137,5 @@ This code will produce the following UI:
 
 ![The SelectedChannelMenu Component](../../assets/compose_custom_selected_channel_menu_component.png)
 
-The `SelectedChannelMenu` component now looks more like a dialog that displays over other elements. This is just an example of how easy it is to apply UI customization to our components!
+The `SelectedChannelMenu` component now looks more like a dialog that displays over other elements. This is just an example of how easy it is to apply UI customization to our components.
+ 

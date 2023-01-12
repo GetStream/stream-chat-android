@@ -21,7 +21,9 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.feature.messages.list.DefaultQuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
@@ -79,7 +81,9 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
         this.attachment = attachment
         when (attachment.type) {
             AttachmentType.FILE, AttachmentType.VIDEO -> loadAttachmentThumb(attachment)
-            AttachmentType.IMAGE -> showAttachmentThumb(attachment.imagePreviewUrl)
+            AttachmentType.IMAGE -> showAttachmentThumb(
+                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
+            )
             AttachmentType.GIPHY -> showAttachmentThumb(attachment.thumbUrl)
             else -> showAttachmentThumb(attachment.image)
         }

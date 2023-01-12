@@ -2,7 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexCondition:MediaAttachmentQuotedContent.kt$isImageContent || isGiphy || (isVideo &amp;&amp; ChatTheme.videoThumbnailsEnabled)</ID>
     <ID>ComplexCondition:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$data != null &amp;&amp; page == pagerState.currentPage &amp;&amp; mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &amp;&amp; painter.state is AsyncImagePainter.State.Error</ID>
     <ID>ComplexCondition:MessageItem.kt$!messageItem.isMine &amp;&amp; ( messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(MessagePosition.NONE) )</ID>
     <ID>ComplexCondition:MessageOptions.kt$((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; !selectedMessage.isGiphy()</ID>

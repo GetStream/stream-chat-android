@@ -21,6 +21,7 @@ import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 
 /**
  * The contract used to start the [MediaGalleryPreviewActivity]
@@ -40,7 +41,8 @@ public class MediaGalleryPreviewContract :
             context,
             message = input.message,
             attachmentPosition = input.initialPosition,
-            videoThumbnailsEnabled = input.videoThumbnailsEnabled
+            videoThumbnailsEnabled = input.videoThumbnailsEnabled,
+            streamCdnImageResizing = input.streamCdnImageResizing,
         )
     }
 
@@ -64,5 +66,6 @@ public class MediaGalleryPreviewContract :
         public val message: Message,
         public val initialPosition: Int = 0,
         public val videoThumbnailsEnabled: Boolean,
+        public val streamCdnImageResizing: StreamCdnImageResizing,
     )
 }

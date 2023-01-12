@@ -39,7 +39,7 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import java.util.concurrent.ConcurrentHashMap
@@ -226,7 +226,7 @@ internal class LogicRegistry internal constructor(
     internal companion object {
         private var instance: LogicRegistry? = null
 
-        private val logger = StreamLog.getLogger("Chat:LogicRegistry")
+        private val logger by taggedLogger("Chat:LogicRegistry")
 
         /**
          * Creates and returns new instance of LogicRegistry.

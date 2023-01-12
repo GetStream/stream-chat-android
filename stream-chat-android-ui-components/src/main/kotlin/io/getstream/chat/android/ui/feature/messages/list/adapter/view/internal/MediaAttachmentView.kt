@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.MediaAttachmentViewStyle
@@ -134,7 +135,8 @@ internal class MediaAttachmentView : ConstraintLayout {
             if (attachment.isImage() ||
                 (attachment.isVideo() && ChatUI.videoThumbnailsEnabled)
             ) {
-                attachment.imagePreviewUrl ?: attachment.titleLink ?: attachment.ogUrl ?: attachment.upload ?: return
+                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
+                    ?: attachment.titleLink ?: attachment.ogUrl ?: attachment.upload ?: return
             } else {
                 null
             }

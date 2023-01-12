@@ -20,13 +20,13 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class StreamLifecycleObserver(private val lifecycle: Lifecycle) : DefaultLifecycleObserver {
 
-    private val logger = StreamLog.getLogger("Chat:LifecycleObserver")
+    private val logger by taggedLogger("Chat:LifecycleObserver")
     private var recurringResumeEvent = false
     private var handlers = setOf<LifecycleHandler>()
 

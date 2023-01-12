@@ -72,7 +72,7 @@ dependencies {
     implementation Dependencies.retrofit
     implementation Dependencies.streamLog
     implementation Dependencies.streamLogAndroid
-    debugImplementation Dependencies.streamLogAndroidInit
+    debugImplementation Dependencies.streamLogAndroidFile
     implementation Dependencies.streamPushDelegate
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter

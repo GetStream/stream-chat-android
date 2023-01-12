@@ -53,7 +53,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
  * Builds a file attachment message which shows a list of files.
@@ -204,12 +206,15 @@ public fun FileAttachmentImage(attachment: Attachment) {
 
     val painter = when {
         isImage -> {
-            val dataToLoad = attachment.imageUrl ?: attachment.upload
+            val dataToLoad =
+                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+                    ?: attachment.upload
 
             rememberStreamImagePainter(dataToLoad)
         }
         isVideoWithThumbnails -> {
-            val dataToLoad = attachment.thumbUrl ?: attachment.upload
+            val dataToLoad = attachment.thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+                ?: attachment.upload
 
             rememberStreamImagePainter(dataToLoad)
         }

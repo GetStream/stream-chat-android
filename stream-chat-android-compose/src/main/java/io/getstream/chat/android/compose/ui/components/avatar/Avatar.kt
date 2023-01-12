@@ -31,6 +31,7 @@ import coil.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 
 /**
  * An avatar that renders an image from the provided image URL. In case the image URL
@@ -82,7 +83,7 @@ public fun Avatar(
     }
 
     val painter = rememberStreamImagePainter(
-        data = imageUrl,
+        data = imageUrl.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing),
         placeholderPainter = painterResource(id = R.drawable.stream_compose_preview_avatar)
     )
 

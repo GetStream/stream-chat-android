@@ -30,7 +30,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 /**
  * An Activity playing attachments such as audio and video.
@@ -43,7 +43,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     private val type: String? by lazy { intent.getStringExtra(KEY_TYPE) }
     private val mimeType: String? by lazy { intent.getStringExtra(KEY_MIME_TYPE) }
 
-    private val logger = StreamLog.getLogger("Chat:AttachmentMediaActivity")
+    private val logger by taggedLogger("Chat:AttachmentMediaActivity")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

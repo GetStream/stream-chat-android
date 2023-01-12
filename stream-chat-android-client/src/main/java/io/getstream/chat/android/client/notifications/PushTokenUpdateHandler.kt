@@ -24,10 +24,10 @@ import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 internal class PushTokenUpdateHandler(context: Context) {
-    private val logger = StreamLog.getLogger("Chat:Notifications")
+    private val logger by taggedLogger("Chat:Notifications")
 
     private val prefs: SharedPreferences = context.applicationContext.getSharedPreferences(
         PREFS_NAME,

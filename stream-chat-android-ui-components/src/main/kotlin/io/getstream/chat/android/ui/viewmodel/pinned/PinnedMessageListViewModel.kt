@@ -26,7 +26,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.utils.Event
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -94,7 +94,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
      */
     public val errorEvents: LiveData<Event<Unit>> = _errorEvents
 
-    private val logger = StreamLog.getLogger("Chat:PinnedMessageListViewModel")
+    private val logger by taggedLogger("Chat:PinnedMessageListViewModel")
 
     init {
         scope.launch {

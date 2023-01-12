@@ -79,6 +79,7 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.Q
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import java.util.Date
 
 /**
@@ -97,7 +98,7 @@ internal class ChannelLogic(
 ) {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
-    private val logger = StreamLog.getLogger("Chat:ChannelLogic")
+    private val logger by taggedLogger("Chat:ChannelLogic")
 
     val cid: String
         get() = mutableState.cid

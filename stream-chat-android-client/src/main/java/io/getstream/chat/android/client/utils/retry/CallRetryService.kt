@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.utils.retry
 
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.delay
 
 /**
@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
  */
 internal class CallRetryService(private val retryPolicy: RetryPolicy) {
 
-    private val logger = StreamLog.getLogger("Chat:CallRetryService")
+    private val logger by taggedLogger("Chat:CallRetryService")
 
     /**
      * Runs the task and retries based on [RetryPolicy].

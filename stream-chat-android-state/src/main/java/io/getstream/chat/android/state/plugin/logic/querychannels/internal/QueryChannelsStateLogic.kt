@@ -30,7 +30,7 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 
 internal class QueryChannelsStateLogic(
     private val mutableState: QueryChannelsMutableState,
@@ -38,7 +38,7 @@ internal class QueryChannelsStateLogic(
     private val logicRegistry: LogicRegistry,
 ) {
 
-    private val logger = StreamLog.getLogger("QueryChannelsStateLogic")
+    private val logger by taggedLogger("QueryChannelsStateLogic")
 
     internal fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
         return mutableState.handleChatEvent(event, cachedChannel)

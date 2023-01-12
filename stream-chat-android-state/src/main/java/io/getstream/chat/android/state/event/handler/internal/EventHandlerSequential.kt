@@ -92,6 +92,7 @@ import io.getstream.chat.android.state.plugin.logic.querychannels.internal.Query
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -129,7 +130,7 @@ internal class EventHandlerSequential(
     scope: CoroutineScope,
 ) : EventHandler {
 
-    private val logger = StreamLog.getLogger(TAG)
+    private val logger by taggedLogger(TAG)
     private val scope = scope + SupervisorJob() + CoroutineExceptionHandler { context, throwable ->
         logger.e(throwable) { "[uncaughtCoroutineException] throwable: $throwable, context: $context" }
     }
