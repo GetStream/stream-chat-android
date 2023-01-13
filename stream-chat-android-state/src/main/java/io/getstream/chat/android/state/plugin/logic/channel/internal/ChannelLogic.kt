@@ -167,19 +167,19 @@ internal class ChannelLogic(
      */
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
         mutableState.setLoadingOlderMessages(true)
-        return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId), skipOnRequest = false)
+        return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
     }
 
     internal suspend fun loadMessagesAroundId(aroundMessageId: String): Result<Channel> {
         return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
     }
 
-    private suspend fun runChannelQuery(request: WatchChannelRequest, skipOnRequest: Boolean = true): Result<Channel> {
+    private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult =
             ChatClient.instance()
-                .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = skipOnRequest)
+                .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
                 .await()
 
         return when {
