@@ -775,6 +775,8 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadOlderMessages(messageLimit: Int = this.messageLimit) {
+        if (clientState.isOffline) return
+
         _mode.value.run {
             when (this) {
                 is MessageMode.Normal -> {
