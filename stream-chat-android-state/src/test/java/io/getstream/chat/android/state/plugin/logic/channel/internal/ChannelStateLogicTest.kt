@@ -280,12 +280,13 @@ internal class ChannelStateLogicTest {
 
         val message = randomMessage()
 
-        channelStateLogic.updateDataFromChannel(
+        channelStateLogic.updateDataForChannel(
             randomChannel(messages = listOf(message)),
             shouldRefreshMessages = false,
             scrollUpdate = false,
             isNotificationUpdate = false,
-            messageLimit = 30
+            messageLimit = 30,
+            isDatabaseSync = false
         )
 
         verify(mutableState, times(0)).upsertMessages(any(), any())

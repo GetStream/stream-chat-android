@@ -252,7 +252,7 @@ internal class ChannelLogic(
         isNotificationUpdate: Boolean = false,
         isDatabaseSync: Boolean = false
     ) {
-        channelStateLogic.updateDataFromChannel(
+        channelStateLogic.updateDataForChannel(
             channel,
             messageLimit,
             shouldRefreshMessages,

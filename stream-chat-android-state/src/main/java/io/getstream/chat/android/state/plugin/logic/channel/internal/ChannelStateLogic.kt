@@ -337,7 +337,7 @@ internal class ChannelStateLogic(
      * @param isChannelsStateUpdate Whether the state update comes from querying the channels list.
      * @param isDatabaseSync Whether the state comes from a database sync.
      */
-    fun updateDataFromChannel(
+    fun updateDataForChannel(
         channel: Channel,
         messageLimit: Int,
         shouldRefreshMessages: Boolean = false,
@@ -460,7 +460,7 @@ internal class ChannelStateLogic(
             determinePaginationEnd(request, noMoreMessages)
         }
 
-        updateDataFromChannel(
+        updateDataForChannel(
             channel = channel,
             shouldRefreshMessages = request.shouldRefresh,
             scrollUpdate = request.isFilteringMessages(),
