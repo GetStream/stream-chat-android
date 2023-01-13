@@ -121,7 +121,7 @@ internal class QueryChannelsStateLogicTest {
 
         whenever(mutableState.queryChannelsSpec) doReturn queryChannelsSpec
 
-        queryChannelsStateLogic.addChannelsState(channels)
+        queryChannelsStateLogic.addChannelsState(channels, false)
 
         queryChannelsSpec.cids `should contain same` setOf(testCid, channel1.cid, channel2.cid)
         verify(mutableState).setChannels(channels.associateBy { it.cid })
