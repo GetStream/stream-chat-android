@@ -335,6 +335,7 @@ internal class ChannelStateLogic(
      * when the user is searching in the channel.
      * @param isNotificationUpdate Whether the message list update is due to a new notification.
      * @param isChannelsStateUpdate Whether the state update comes from querying the channels list.
+     * @param isDatabaseSync Whether the state comes from a database sync.
      */
     fun updateDataFromChannel(
         channel: Channel,
@@ -344,6 +345,7 @@ internal class ChannelStateLogic(
         isNotificationUpdate: Boolean = false,
         isChannelsStateUpdate: Boolean = false,
         isWatchChannel: Boolean = false,
+        isDatabaseSync: Boolean
     ) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
@@ -364,7 +366,8 @@ internal class ChannelStateLogic(
                     isScrollUpdate = scrollUpdate,
                     shouldRefreshMessages = shouldRefreshMessages,
                     isChannelsStateUpdate = isChannelsStateUpdate,
-                    isWatchChannel = isWatchChannel
+                    isWatchChannel = isWatchChannel,
+                    isDatabaseSync = isDatabaseSync
                 )
             ) {
                 upsertMessages(channel.messages, shouldRefreshMessages)
@@ -406,11 +409,12 @@ internal class ChannelStateLogic(
         isScrollUpdate: Boolean,
         shouldRefreshMessages: Boolean,
         isChannelsStateUpdate: Boolean,
-        isWatchChannel: Boolean
+        isWatchChannel: Boolean,
+        isDatabaseSync: Boolean
     ): Boolean {
         // upsert message if refresh is requested, on scroll updates and on notification updates when outside search
         // not to create gaps in message history
-        return isWatchChannel || shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch) ||
+        return isDatabaseSync || isWatchChannel || shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch) ||
             // upsert the messages that come from the QueryChannelsStateLogic only if there are no messages in the list
             (isChannelsStateUpdate && (mutableState.messages.value.isEmpty() || !isInsideSearch))
     }
@@ -432,6 +436,7 @@ internal class ChannelStateLogic(
         // this means that if the offline sync went out of sync things go wrong
         upsertMembers(c.members)
         upsertWatchers(c.watchers, c.watcherCount)
+        upsertMessages(c.messages, false)
     }
 
     /**
@@ -457,7 +462,8 @@ internal class ChannelStateLogic(
             scrollUpdate = request.isFilteringMessages(),
             isNotificationUpdate = request.isNotificationUpdate,
             messageLimit = request.messagesLimit(),
-            isWatchChannel = request.isWatchChannel
+            isWatchChannel = request.isWatchChannel,
+            isDatabaseSync = false
         )
     }
 

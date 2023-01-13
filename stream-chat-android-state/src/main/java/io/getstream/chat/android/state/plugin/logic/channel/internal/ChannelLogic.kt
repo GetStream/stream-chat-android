@@ -167,19 +167,19 @@ internal class ChannelLogic(
      */
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
         mutableState.setLoadingOlderMessages(true)
-        return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
+        return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId), skipOnRequest = false)
     }
 
     internal suspend fun loadMessagesAroundId(aroundMessageId: String): Result<Channel> {
         return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
     }
 
-    private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
+    private suspend fun runChannelQuery(request: WatchChannelRequest, skipOnRequest: Boolean = true): Result<Channel> {
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult =
             ChatClient.instance()
-                .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
+                .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = skipOnRequest)
                 .await()
 
         return when {
@@ -219,12 +219,13 @@ internal class ChannelLogic(
     ) {
         localChannel.hidden?.let(channelStateLogic::toggleHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateDataFromChannel(
+        updateDataForChannel(
             localChannel,
+            messageLimit = messageLimit,
+            shouldRefreshMessages = shouldRefreshMessages,
             scrollUpdate = scrollUpdate,
             isNotificationUpdate = isNotificationUpdate,
-            messageLimit = messageLimit,
-            shouldRefreshMessages = shouldRefreshMessages
+            isDatabaseSync = true
         )
     }
 
@@ -243,12 +244,13 @@ internal class ChannelLogic(
         pagination: AnyChannelPaginationRequest,
     ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
-    internal fun updateDataFromChannel(
+    internal fun updateDataForChannel(
         channel: Channel,
         messageLimit: Int,
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
+        isDatabaseSync: Boolean = false
     ) {
         channelStateLogic.updateDataFromChannel(
             channel,
@@ -256,6 +258,7 @@ internal class ChannelLogic(
             shouldRefreshMessages,
             scrollUpdate,
             isNotificationUpdate,
+            isDatabaseSync = isDatabaseSync
         )
     }
 
