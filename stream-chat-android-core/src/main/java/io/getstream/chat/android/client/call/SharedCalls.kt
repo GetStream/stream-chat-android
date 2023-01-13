@@ -42,6 +42,8 @@ internal fun <T : Any> SharedCall(
 
 /**
  * The [CoroutineContext.Element] which holds ongoing calls until those get finished.
+ *
+ * The purpose of shared calls is to stop side effects for the same request type executing multiple times.
  */
 @InternalStreamChatApi
 public class SharedCalls : CoroutineContext.Element {
