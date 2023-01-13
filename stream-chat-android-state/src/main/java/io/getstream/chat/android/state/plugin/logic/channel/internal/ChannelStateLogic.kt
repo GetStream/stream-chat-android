@@ -414,7 +414,11 @@ internal class ChannelStateLogic(
     ): Boolean {
         // upsert message if refresh is requested, on scroll updates and on notification updates when outside search
         // not to create gaps in message history
-        return isDatabaseSync || isWatchChannel || shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch) ||
+        return isDatabaseSync ||
+            isWatchChannel ||
+            shouldRefreshMessages ||
+            isScrollUpdate ||
+            (isNotificationUpdate && !isInsideSearch) ||
             // upsert the messages that come from the QueryChannelsStateLogic only if there are no messages in the list
             (isChannelsStateUpdate && (mutableState.messages.value.isEmpty() || !isInsideSearch))
     }
