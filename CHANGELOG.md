@@ -38,7 +38,6 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Fixing first message for long threads. [#4620](https://github.com/GetStream/stream-chat-android/pull/4620)
 
 ### ⬆️ Improved
 
