@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.identifier.DeleteMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteReactionIdentifier
+import io.getstream.chat.android.client.api.models.identifier.GetMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.GetRepliesIdentifier
 import io.getstream.chat.android.client.api.models.identifier.GetRepliesMoreIdentifier
 import io.getstream.chat.android.client.api.models.identifier.HideChannelIdentifier
@@ -140,6 +141,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
@@ -1545,8 +1547,28 @@ internal constructor(
     }
 
     @CheckResult
+    /**
+     * Fetches a single message from the backend.
+     *
+     * @param messageId The ID of the message we are fetching from the backend.
+     *
+     * @return The message wrapped inside [Result] if the call was successful,
+     * otherwise returns a [ChatError] instance wrapped inside [Result].
+     */
     public fun getMessage(messageId: String): Call<Message> {
+        logger.d { "[getMessage] messageId: $messageId" }
+        val relevantPlugins = plugins.filterIsInstance<GetMessageListener>().also(::logPlugins)
+
         return api.getMessage(messageId)
+            .doOnResult(
+                userScope
+            ) { result ->
+                relevantPlugins.forEach { listener ->
+                    logger.v { "[getMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                    listener.onGetMessageResult(messageId, result)
+                }
+            }
+            .share(userScope) { GetMessageIdentifier(messageId) }
     }
 
     /**

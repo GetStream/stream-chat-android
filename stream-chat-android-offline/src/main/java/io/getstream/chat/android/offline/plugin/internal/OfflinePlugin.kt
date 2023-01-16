@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
@@ -60,6 +61,7 @@ import kotlin.reflect.KClass
  * @param queryMembersListener [QueryMembersListener]
  * @param typingEventListener [TypingEventListener]
  * @param createChannelListener [CreateChannelListener]
+ * @param getMessageListener [GetMessageListener]
  * @param activeUser User associated with [OfflinePlugin] instance.
  * @param provideDependency Resolves dependency within [OfflinePlugin].
  * @param childResolver Resolves dependency within [StatePlugin]. Will be removed when [StatePlugin]
@@ -84,6 +86,7 @@ internal class OfflinePlugin(
     private val queryMembersListener: QueryMembersListener,
     private val typingEventListener: TypingEventListener,
     private val createChannelListener: CreateChannelListener,
+    private val getMessageListener: GetMessageListener,
     @Deprecated("Delete this when StatePlugin will be separated from OfflinePlugin")
     private val childResolver: DependencyResolver,
     private val provideDependency: (KClass<*>) -> Any? = { null },
@@ -104,7 +107,8 @@ internal class OfflinePlugin(
     SendMessageListener by sendMessageListener,
     QueryMembersListener by queryMembersListener,
     TypingEventListener by typingEventListener,
-    CreateChannelListener by createChannelListener {
+    CreateChannelListener by createChannelListener,
+    GetMessageListener by getMessageListener {
 
     override val name: String = MODULE_NAME
 
