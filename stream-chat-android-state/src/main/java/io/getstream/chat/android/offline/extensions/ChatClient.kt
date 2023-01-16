@@ -328,7 +328,8 @@ public fun ChatClient.getMessageUsingCache(
     messageId: String,
 ): Call<Message> {
     return CoroutineCall(state.scope) {
-        val message = logic.getMessageById(messageId)
+        val message = logic.getMessageById(messageId) ?: logic.getMessageByIdFromDb(messageId)
+
         if (message != null) {
             Result(data = message)
         } else {
