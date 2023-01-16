@@ -258,7 +258,7 @@ public fun MessageList(
 
     when {
         isLoading -> loadingContent()
-        !isLoading && messages.isNotEmpty() -> Messages(
+        messages.isNotEmpty() -> Messages(
             modifier = modifier,
             contentPadding = contentPadding,
             messagesState = currentState,

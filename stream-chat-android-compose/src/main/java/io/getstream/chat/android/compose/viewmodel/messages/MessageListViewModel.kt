@@ -548,8 +548,10 @@ public class MessageListViewModel(
      * @param threadMode Current thread mode.
      */
     private fun threadLoadMore(threadMode: MessageMode.MessageThread) {
-        threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
-        if (threadMode.threadState != null) {
+        val threadState = threadMode.threadState
+        if (threadState != null && !threadState.endOfOlderMessages.value) {
+            threadMessagesState = threadMessagesState.copy(isLoadingMore = true)
+
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState?.oldestInThread?.value?.id ?: threadMode.parentMessage.id,
@@ -1026,7 +1028,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Removes the shaddow ban for the given user inside
+     * Removes the shadow ban for the given user inside
      * this channel.
      *
      * @param userId The ID of the user for which the shadow

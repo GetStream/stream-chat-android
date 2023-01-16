@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added offline plugin integration to the `ChatCliet.getCall()` method. If you use the offline plugin, any message fetched using this method will be stored inside the database upon successful completion of the API call. [#4623](https://github.com/GetStream/stream-chat-android/pull/4623)
 
 ### ✅ Added
 
@@ -27,6 +28,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `GetMessageListener` interface used to perform actions as side effects when the `ChatCliet.getCall()` method is used to fetch a single message from the backend. [#4623](https://github.com/GetStream/stream-chat-android/pull/4623)
 
 ### ⚠️ Changed
 
