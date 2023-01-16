@@ -1550,7 +1550,7 @@ internal constructor(
     /**
      * Fetches a single message from the backend.
      *
-     * @param messageId The id of the message we are fetching from the backend.
+     * @param messageId The ID of the message we are fetching from the backend.
      *
      * @return The message wrapped inside [Result] if the call was successful,
      * otherwise returns a [ChatError] instance wrapped inside [Result].

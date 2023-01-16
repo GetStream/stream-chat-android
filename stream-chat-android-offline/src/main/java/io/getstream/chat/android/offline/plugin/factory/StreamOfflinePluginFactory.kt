@@ -321,7 +321,7 @@ public class StreamOfflinePluginFactory(
      * @param repositoryFacade A class that holds a collection of repositories used by the SDK and exposes
      * various repository operations as methods.
      *
-     * @return An instance of [getGetMessageListenerDatabase]
+     * @return An instance of [getGetMessageListenerDatabase].
      */
     private fun getGetMessageListenerDatabase(repositoryFacade: RepositoryFacade): GetMessageListener =
         GetMessageListenerDatabase(repositoryFacade = repositoryFacade)
