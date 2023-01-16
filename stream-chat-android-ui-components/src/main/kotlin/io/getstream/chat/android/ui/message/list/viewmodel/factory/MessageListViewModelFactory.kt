@@ -29,6 +29,9 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  *
  * @param cid The channel id in the format messaging:123.
  * @param messageId The id of the target message to displayed.
+ * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
+ * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
+ * navigate to the channel containing the thread but will not navigate to the thread itself.
  *
  * @see MessageListViewModel
  * @see MessageListHeaderViewModel
@@ -37,12 +40,19 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 public class MessageListViewModelFactory @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
+    private val navigateToThreadViaNotification: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid) },
         MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
-        MessageListViewModel::class.java to { MessageListViewModel(cid, messageId) },
+        MessageListViewModel::class.java to {
+            MessageListViewModel(
+                cid = cid,
+                messageId = messageId,
+                navigateToThreadViaNotification = navigateToThreadViaNotification
+            )
+        },
         MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid)) },
     )
 
@@ -58,6 +68,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     public class Builder @SinceKotlin("99999.9") constructor() {
         private var cid: String? = null
         private var messageId: String? = null
+        private var navigateToThreadViaNotification: Boolean = false
 
         /**
          * Sets the channel id in the format messaging:123.
@@ -74,12 +85,22 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         }
 
         /**
+         * Changes the setting dictating whether the SDK should navigate to threads when
+         * a thread message push notification hsa been clicked.
+         */
+        public fun navigateToThreadViaNotification(navigateToThreadViaNotification: Boolean): Builder =
+            apply {
+                this.navigateToThreadViaNotification = navigateToThreadViaNotification
+            }
+
+        /**
          * Builds [MessageListViewModelFactory] instance.
          */
         public fun build(): ViewModelProvider.Factory {
             return MessageListViewModelFactory(
                 cid = cid ?: error("Channel cid should not be null"),
-                messageId = messageId
+                messageId = messageId,
+                navigateToThreadViaNotification = navigateToThreadViaNotification
             )
         }
     }

@@ -82,6 +82,9 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * @param chatClient Entry point for all low-level operations.
  * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.
+ * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
+ * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
+ * navigate to the channel containing the thread but will not navigate to the thread itself.
  */
 @Suppress("TooManyFunctions", "LargeClass")
 public class MessageListViewModel(
@@ -89,6 +92,7 @@ public class MessageListViewModel(
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    private val navigateToThreadViaNotification: Boolean = false,
 ) : ViewModel() {
 
     /**
@@ -567,7 +571,7 @@ public class MessageListViewModel(
                 ).enqueue(
                     onError = { chatError ->
                         val errorMessage = chatError.message ?: chatError.cause?.message
-                            ?: "Unable to shadow ban the user"
+                        ?: "Unable to shadow ban the user"
                         logger.e { errorMessage }
 
                         _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
@@ -973,7 +977,7 @@ public class MessageListViewModel(
      * @param message The message that should be put in focus.
      */
     private fun focusMessage(message: Message) {
-        if (message.parentId != null) {
+        if (message.parentId != null && navigateToThreadViaNotification) {
             focusThreadMessage(message)
         } else {
             focusChannelMessage(message.id)
