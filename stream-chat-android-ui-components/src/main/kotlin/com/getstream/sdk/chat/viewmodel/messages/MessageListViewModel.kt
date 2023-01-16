@@ -571,7 +571,7 @@ public class MessageListViewModel(
                 ).enqueue(
                     onError = { chatError ->
                         val errorMessage = chatError.message ?: chatError.cause?.message
-                        ?: "Unable to shadow ban the user"
+                            ?: "Unable to shadow ban the user"
                         logger.e { errorMessage }
 
                         _errorEvents.postValue(EventWrapper(ErrorEvent.BlockUserError(chatError)))
