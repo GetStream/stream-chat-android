@@ -627,8 +627,10 @@ public class MessageListViewModel(
                                 logger.e { "Function -> getMessageUsingCache" }
                             } else {
                                 val error = result.error()
-                                logger.e { "[Event.ShowMessage] Could not load message: ${error.message}." +
-                                    " Cause: ${error.cause?.message}" }
+                                logger.e {
+                                    "[Event.ShowMessage] Could not load message: ${error.message}." +
+                                        " Cause: ${error.cause?.message}"
+                                }
                             }
                         }
                 }
@@ -995,8 +997,10 @@ public class MessageListViewModel(
                 _targetMessage.value = result.data()
             } else {
                 val error = result.error()
-                logger.e { "[focusChannelMessage] Could not load message: ${error.message}." +
-                    " Cause: ${error.cause?.message}" }
+                logger.e {
+                    "[focusChannelMessage] Could not load message: ${error.message}." +
+                        " Cause: ${error.cause?.message}"
+                }
             }
         }
     }
@@ -1022,8 +1026,10 @@ public class MessageListViewModel(
                     }
                 } else {
                     val error = result.error()
-                    logger.e { "[focusThreadMessage] Could not load message: ${error.message}." +
-                        " Cause: ${error.cause?.message}" }
+                    logger.e {
+                        "[focusThreadMessage] Could not load message: ${error.message}." +
+                            " Cause: ${error.cause?.message}"
+                    }
                 }
             }
         }
