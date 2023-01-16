@@ -55,7 +55,7 @@ internal class GetMessageListenerDatabase(
                 message = result.data(),
                 cache = true
             )
-        } else if (result.isError) {
+        } else {
             val error = result.error()
             logger.e {
                 "[onGetMessageResult] Could not insert the message into the database. The API call " +
