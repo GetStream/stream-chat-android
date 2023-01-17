@@ -118,5 +118,5 @@ public interface MessageRepository {
      */
     public suspend fun clear()
 
-    public suspend fun getLastMessageForChannel(cid: String): Message?
+    public suspend fun selectLastMessageForChannel(cid: String): Message?
 }

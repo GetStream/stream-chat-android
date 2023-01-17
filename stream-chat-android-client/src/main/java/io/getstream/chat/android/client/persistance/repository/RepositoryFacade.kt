@@ -190,7 +190,7 @@ public class RepositoryFacade private constructor(
                 configsRepository = factory.createChannelConfigRepository(),
                 channelsRepository = factory.createChannelRepository(
                     getUser,
-                    messageRepository::getLastMessageForChannel
+                    messageRepository::selectLastMessageForChannel
                 ),
                 queryChannelsRepository = factory.createQueryChannelsRepository(),
                 messageRepository = messageRepository,
