@@ -65,7 +65,7 @@ internal fun Channel.toEntity(): ChannelEntity {
 
 internal suspend fun ChannelEntity.toModel(
     getUser: suspend (userId: String) -> User,
-    getLastMessageForChannel: suspend (String) -> Message?,
+    getLastMessageForChannel: suspend (cid: String) -> Message?,
 ): Channel = Channel(
     cooldown = cooldown,
     type = type,
