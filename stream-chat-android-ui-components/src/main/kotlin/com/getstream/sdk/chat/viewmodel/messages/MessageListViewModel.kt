@@ -621,14 +621,12 @@ public class MessageListViewModel(
                     ?.message
 
                 if (message != null) {
-                    logger.e { "Function -> LocalMessage" }
                     focusMessage(message)
                 } else {
                     chatClient.getMessageUsingCache(event.messageId)
                         .enqueue { result ->
                             if (result.isSuccess) {
                                 focusMessage(result.data())
-                                logger.e { "Function -> getMessageUsingCache" }
                             } else {
                                 val error = result.error()
                                 logger.e {
