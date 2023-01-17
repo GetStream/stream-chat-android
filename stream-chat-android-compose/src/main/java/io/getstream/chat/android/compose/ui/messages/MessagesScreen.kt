@@ -575,6 +575,7 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
  * @param messageId The ID of the message which we wish to focus on, if such exists.
  */
 @ExperimentalCoroutinesApi
+@Suppress("LongParameterList")
 private fun buildViewModelFactory(
     context: Context,
     channelId: String,

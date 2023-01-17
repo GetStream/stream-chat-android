@@ -315,8 +315,7 @@ public class MessageListViewModel(
                 }.catch {
                     it.cause?.printStackTrace()
                     showEmptyState()
-                }
-                    .onEach { newState ->
+                }.onEach { newState ->
                         val newLastMessage =
                             (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
 
