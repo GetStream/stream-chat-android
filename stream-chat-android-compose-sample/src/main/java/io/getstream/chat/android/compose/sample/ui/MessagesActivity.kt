@@ -80,6 +80,7 @@ class MessagesActivity : BaseConnectedActivity() {
             context = this,
             channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+            messageId = intent.getStringExtra(KEY_MESSAGE_ID)
         )
     }
 
@@ -91,13 +92,15 @@ class MessagesActivity : BaseConnectedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
+        val messageId = intent.getStringExtra(KEY_MESSAGE_ID)
 
         setContent {
             ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 MessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },
-                    onHeaderActionClick = {}
+                    onHeaderActionClick = {},
+                    messageId = messageId
                 )
 
                 // MyCustomUi()
@@ -299,10 +302,18 @@ class MessagesActivity : BaseConnectedActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
+        private const val KEY_MESSAGE_ID = "messageId"
 
-        fun createIntent(context: Context, channelId: String): Intent {
+        fun createIntent(
+            context: Context,
+            channelId: String,
+            messageId: String?,
+        ): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
+                if (messageId != null) {
+                    putExtra(KEY_MESSAGE_ID, messageId)
+                }
             }
         }
     }

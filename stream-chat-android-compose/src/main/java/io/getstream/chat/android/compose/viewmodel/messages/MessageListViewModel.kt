@@ -74,7 +74,9 @@ import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
+import io.getstream.chat.android.offline.extensions.getMessageUsingCache
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
+import io.getstream.chat.android.offline.extensions.getRepliesAsStateCall
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
@@ -83,17 +85,21 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -111,6 +117,7 @@ import java.util.concurrent.TimeUnit
  * @param showSystemMessages Enables or disables system messages in the list.
  * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param messageId The ID of the message which we wish to focus on, if such exists.
  */
 @Suppress("TooManyFunctions", "LargeClass", "TooManyFunctions")
 public class MessageListViewModel(
@@ -124,6 +131,7 @@ public class MessageListViewModel(
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    private val messageId: String? = null,
 ) : ViewModel() {
 
     /**
@@ -142,6 +150,7 @@ public class MessageListViewModel(
      * e.g. send messages, delete messages, etc...
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val ownCapabilities: StateFlow<Set<String>> =
         channelState.filterNotNull()
             .flatMapLatest { it.channelData }
@@ -303,12 +312,11 @@ public class MessageListViewModel(
                             )
                         }
                     }
+                }.catch {
+                    it.cause?.printStackTrace()
+                    showEmptyState()
                 }
-                    .catch {
-                        it.cause?.printStackTrace()
-                        showEmptyState()
-                    }
-                    .collect { newState ->
+                    .onEach { newState ->
                         val newLastMessage =
                             (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
 
@@ -334,7 +342,11 @@ public class MessageListViewModel(
                         }
 
                         lastLoadedMessage = newLastMessage
-                    }
+                    }.onStart {
+                        if (messageId != null) {
+                            scrollToSelectedMessage(messageId)
+                        }
+                    }.collect()
             }
         }
     }
@@ -342,11 +354,15 @@ public class MessageListViewModel(
     /**
      * Starts observing the list of typing users.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeTypingUsers() {
         viewModelScope.launch {
-            channelState.filterNotNull().flatMapLatest { it.typing }.collect {
-                typingUsers = it.users
-            }
+            channelState.filterNotNull()
+                .flatMapLatest {
+                    it.typing
+                }.collect {
+                    typingUsers = it.users
+                }
         }
     }
 
@@ -354,6 +370,7 @@ public class MessageListViewModel(
      * Starts observing the current [Channel] created from [ChannelState]. It emits new data when either
      * channel data, member count or online member count updates.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeChannel() {
         viewModelScope.launch {
             channelState.filterNotNull().flatMapLatest { state ->
@@ -718,6 +735,40 @@ public class MessageListViewModel(
             endOfOlderMessages = threadState.endOfOlderMessages,
             reads = channelState.reads
         )
+    }
+
+    /**
+     *  Changes the current [messageMode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
+     *  directly. The data is observed by using [ThreadState].
+     *
+     *  The difference between [loadThread] and [loadThreadSequential] is that the latter makes a call to a [ChatClient]
+     *  extension function which will return a [ThreadState] instance only once the API call had finished, while the
+     *  former calls a different function which returns  a [ThreadState] instance immediately after the API request has
+     *  fired, regardless of its completion state.
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
+    private suspend fun loadThreadSequential(parentMessage: Message) {
+        val result = chatClient.getRepliesAsStateCall(parentMessage.id, DefaultMessageLimit).await()
+        val channelState = channelState.value ?: return
+
+        if (result.isSuccess) {
+            val threadState = result.data()
+
+            messageMode = MessageMode.MessageThread(parentMessage, threadState)
+            observeThreadMessages(
+                threadId = threadState.parentId,
+                messages = threadState.messages,
+                endOfOlderMessages = threadState.endOfOlderMessages,
+                reads = channelState.reads
+            )
+        } else {
+            val error = result.error()
+
+            logger.e {
+                "[loadThread] -> Could not load thread: ${error.message}. Cause: ${error.cause?.message}"
+            }
+        }
     }
 
     /**
@@ -1201,9 +1252,51 @@ public class MessageListViewModel(
     /**
      * Scrolls to message if in list otherwise get the message from backend.
      *
+     * @param messageId The Id of the message we wish to scroll to.
+     */
+    public suspend fun scrollToSelectedMessage(messageId: String) {
+        val result = chatClient.getMessageUsingCache(messageId).await()
+
+        if (result.isSuccess) {
+            val message = result.data()
+            val parentId = message.parentId
+
+            if (parentId == null) {
+                scrollToChannelMessage(message)
+            } else {
+                scrollToThreadMessage(message)
+            }
+        } else {
+            val error = result.error()
+
+            logger.e {
+                "[scrollToSelectedMessage] -> Could not scroll to selected message: ${error.message}." +
+                    " Cause: ${error.cause?.message}"
+            }
+        }
+    }
+
+    /**
+     * Scrolls to message if in list otherwise get the message from backend.
+     *
      * @param message The message we wish to scroll to.
      */
     public fun scrollToSelectedMessage(message: Message) {
+        val parentId = message.parentId
+
+        if (parentId == null) {
+            scrollToChannelMessage(message)
+        } else {
+            scrollToThreadMessage(message)
+        }
+    }
+
+    /**
+     * Scrolls to the message given that it is not a thread message.
+     *
+     * @param message The message we wish to scroll to.
+     */
+    private fun scrollToChannelMessage(message: Message) {
         val isMessageInList = currentMessagesState.messageItems.firstOrNull {
             it is MessageItemState && it.message.id == message.id
         } != null
@@ -1213,6 +1306,38 @@ public class MessageListViewModel(
         } else {
             scrollToMessage = message
             loadMessage(message = message)
+        }
+    }
+
+    /**
+     * Scrolls to the message given that it is a thread message.
+     *
+     * @param message The message we wish to scroll to.
+     */
+    private fun scrollToThreadMessage(message: Message) {
+        val parentId = message.parentId ?: return
+
+        viewModelScope.launch {
+            val result = chatClient.getMessageUsingCache(parentId).await()
+
+            if (result.isSuccess) {
+                loadThreadSequential(result.data())
+
+                val isMessageInList = currentMessagesState.messageItems.any {
+                    it is MessageItemState && it.message.id == message.id
+                }
+
+                if (isMessageInList) {
+                    focusMessage(message.id)
+                }
+            } else {
+                val error = result.error()
+
+                logger.e {
+                    "[scrollToThreadMessage] -> Could not scroll to selected thread message: ${error.message}." +
+                        " Cause: ${error.cause?.message}"
+                }
+            }
         }
     }
 

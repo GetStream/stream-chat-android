@@ -108,6 +108,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
+ * @param messageId The ID of the message which we wish to focus on, if such exists.
  */
 @Suppress("LongMethod")
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -123,6 +124,7 @@ public fun MessagesScreen(
     messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
+    messageId: String? = null,
 ) {
     val factory = buildViewModelFactory(
         context = LocalContext.current,
@@ -132,7 +134,8 @@ public fun MessagesScreen(
         showSystemMessages = showSystemMessages,
         showDateSeparators = showDateSeparators,
         deletedMessageVisibility = deletedMessageVisibility,
-        messageFooterVisibility = messageFooterVisibility
+        messageFooterVisibility = messageFooterVisibility,
+        messageId = messageId
     )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -569,6 +572,7 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
  * @param showSystemMessages If we should show system messages or not. * @param deletedMessageVisibility The behavior of deleted messages in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
+ * @param messageId The ID of the message which we wish to focus on, if such exists.
  */
 @ExperimentalCoroutinesApi
 private fun buildViewModelFactory(
@@ -580,6 +584,7 @@ private fun buildViewModelFactory(
     showSystemMessages: Boolean,
     deletedMessageVisibility: DeletedMessageVisibility,
     messageFooterVisibility: MessageFooterVisibility,
+    messageId: String? = null,
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
@@ -589,6 +594,7 @@ private fun buildViewModelFactory(
         showDateSeparators = showDateSeparators,
         showSystemMessages = showSystemMessages,
         deletedMessageVisibility = deletedMessageVisibility,
-        messageFooterVisibility = messageFooterVisibility
+        messageFooterVisibility = messageFooterVisibility,
+        messageId = messageId
     )
 }
