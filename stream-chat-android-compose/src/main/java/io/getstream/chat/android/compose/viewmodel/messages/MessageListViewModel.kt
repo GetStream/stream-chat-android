@@ -316,36 +316,36 @@ public class MessageListViewModel(
                     it.cause?.printStackTrace()
                     showEmptyState()
                 }.onEach { newState ->
-                        val newLastMessage =
-                            (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
+                    val newLastMessage =
+                        (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
 
-                        val hasNewMessage = lastLoadedMessage != null &&
-                            messagesState.messageItems.isNotEmpty() &&
-                            newLastMessage?.id != lastLoadedMessage?.id
+                    val hasNewMessage = lastLoadedMessage != null &&
+                        messagesState.messageItems.isNotEmpty() &&
+                        newLastMessage?.id != lastLoadedMessage?.id
 
-                        messagesState = if (hasNewMessage) {
-                            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+                    messagesState = if (hasNewMessage) {
+                        val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
 
-                            newState.copy(
-                                newMessageState = newMessageState,
-                                unreadCount = getUnreadMessageCount(newMessageState)
-                            )
-                        } else {
-                            newState
-                        }
+                        newState.copy(
+                            newMessageState = newMessageState,
+                            unreadCount = getUnreadMessageCount(newMessageState)
+                        )
+                    } else {
+                        newState
+                    }
 
-                        messagesState.messageItems.firstOrNull {
-                            it is MessageItemState && it.message.id == scrollToMessage?.id
-                        }?.let {
-                            focusMessage((it as MessageItemState).message.id)
-                        }
+                    messagesState.messageItems.firstOrNull {
+                        it is MessageItemState && it.message.id == scrollToMessage?.id
+                    }?.let {
+                        focusMessage((it as MessageItemState).message.id)
+                    }
 
-                        lastLoadedMessage = newLastMessage
-                    }.onStart {
-                        if (messageId != null) {
-                            scrollToSelectedMessage(messageId)
-                        }
-                    }.collect()
+                    lastLoadedMessage = newLastMessage
+                }.onStart {
+                    if (messageId != null) {
+                        scrollToSelectedMessage(messageId)
+                    }
+                }.collect()
             }
         }
     }
