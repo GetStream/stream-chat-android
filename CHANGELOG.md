@@ -27,6 +27,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed message gaps in message list view when using offline support. [#4626](https://github.com/GetStream/stream-chat-android/pull/4626)
 
 ### ⬆️ Improved
 
