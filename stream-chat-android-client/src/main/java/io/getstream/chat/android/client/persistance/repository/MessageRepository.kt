@@ -114,9 +114,14 @@ public interface MessageRepository {
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
 
     /**
+     * Gets the last message of a channel
+     *
+     * @param cid String. Identifier of a [Channel]
+     */
+    public suspend fun selectLastMessageForChannel(cid: String): Message?
+
+    /**
      * Clear messages of this repository.
      */
     public suspend fun clear()
-
-    public suspend fun selectLastMessageForChannel(cid: String): Message?
 }
