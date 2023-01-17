@@ -204,7 +204,8 @@ internal class ChannelLogic(
                     isNotificationUpdate = request.isNotificationUpdate,
                     messageLimit = request.messagesLimit(),
                     scrollUpdate = request.isFilteringMessages() && !request.isFilteringAroundIdMessages(),
-                    shouldRefreshMessages = request.shouldRefresh
+                    shouldRefreshMessages = request.shouldRefresh,
+                    isChannelsStateUpdate = true
                 )
             }
         }
@@ -216,6 +217,7 @@ internal class ChannelLogic(
         messageLimit: Int,
         scrollUpdate: Boolean,
         shouldRefreshMessages: Boolean,
+        isChannelsStateUpdate: Boolean = false,
     ) {
         localChannel.hidden?.let(channelStateLogic::toggleHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
@@ -225,7 +227,7 @@ internal class ChannelLogic(
             shouldRefreshMessages = shouldRefreshMessages,
             scrollUpdate = scrollUpdate,
             isNotificationUpdate = isNotificationUpdate,
-            isDatabaseSync = true
+            isChannelsStateUpdate = isChannelsStateUpdate
         )
     }
 
@@ -250,7 +252,7 @@ internal class ChannelLogic(
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
-        isDatabaseSync: Boolean = false
+        isChannelsStateUpdate: Boolean = false,
     ) {
         channelStateLogic.updateDataForChannel(
             channel,
@@ -258,7 +260,7 @@ internal class ChannelLogic(
             shouldRefreshMessages,
             scrollUpdate,
             isNotificationUpdate,
-            isDatabaseSync = isDatabaseSync
+            isChannelsStateUpdate = isChannelsStateUpdate
         )
     }
 

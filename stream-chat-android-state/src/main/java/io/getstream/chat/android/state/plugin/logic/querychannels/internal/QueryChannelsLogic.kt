@@ -66,7 +66,7 @@ internal class QueryChannelsLogic(
             fetchChannelsFromCache(pagination, dbLogic)
                 .also { channels ->
                     if (channels.isNotEmpty()) {
-                        addChannels(channels, isDatabaseSync = true)
+                        addChannels(channels)
                         loadingPerPage(false, hasOffset,)
                     }
                 }
@@ -123,11 +123,11 @@ internal class QueryChannelsLogic(
         }
     }
 
-    private suspend fun addChannels(channels: List<Channel>, isDatabaseSync: Boolean = false) {
+    private suspend fun addChannels(channels: List<Channel>) {
         var cids = queryChannelsStateLogic.getQuerySpecs().cids
         cids += channels.map { it.cid }
 
-        queryChannelsStateLogic.addChannelsState(channels, isDatabaseSync = isDatabaseSync)
+        queryChannelsStateLogic.addChannelsState(channels)
         queryChannelsStateLogic.getQuerySpecs().let { specs ->
             queryChannelsDatabaseLogic.insertQueryChannels(specs)
         }

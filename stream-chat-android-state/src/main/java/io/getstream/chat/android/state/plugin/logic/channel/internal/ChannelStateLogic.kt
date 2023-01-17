@@ -345,7 +345,6 @@ internal class ChannelStateLogic(
         isNotificationUpdate: Boolean = false,
         isChannelsStateUpdate: Boolean = false,
         isWatchChannel: Boolean = false,
-        isDatabaseSync: Boolean
     ) {
         // Update all the flow objects based on the channel
         updateChannelData(channel)
@@ -367,7 +366,6 @@ internal class ChannelStateLogic(
                     shouldRefreshMessages = shouldRefreshMessages,
                     isChannelsStateUpdate = isChannelsStateUpdate,
                     isWatchChannel = isWatchChannel,
-                    isDatabaseSync = isDatabaseSync
                 )
             ) {
                 upsertMessages(channel.messages, shouldRefreshMessages)
@@ -411,12 +409,10 @@ internal class ChannelStateLogic(
         shouldRefreshMessages: Boolean,
         isChannelsStateUpdate: Boolean,
         isWatchChannel: Boolean,
-        isDatabaseSync: Boolean
     ): Boolean {
         // upsert message if refresh is requested, on scroll updates and on notification updates when outside search
         // not to create gaps in message history
-        return isDatabaseSync ||
-            isWatchChannel ||
+        return isWatchChannel ||
             shouldRefreshMessages ||
             isScrollUpdate ||
             (isNotificationUpdate && !isInsideSearch) ||
@@ -468,7 +464,6 @@ internal class ChannelStateLogic(
             isNotificationUpdate = request.isNotificationUpdate,
             messageLimit = request.messagesLimit(),
             isWatchChannel = request.isWatchChannel,
-            isDatabaseSync = false
         )
     }
 

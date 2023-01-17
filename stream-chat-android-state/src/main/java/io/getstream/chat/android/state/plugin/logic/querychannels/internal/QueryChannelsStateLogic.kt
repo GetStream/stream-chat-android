@@ -137,7 +137,7 @@ internal class QueryChannelsStateLogic(
      *
      * @param channels List<Channel>.
      */
-    internal fun addChannelsState(channels: List<Channel>, isDatabaseSync: Boolean) {
+    internal fun addChannelsState(channels: List<Channel>) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
         val existingChannels = mutableState.rawChannels
         mutableState.setChannels((existingChannels ?: emptyMap()) + channels.map { it.cid to it })
@@ -146,7 +146,6 @@ internal class QueryChannelsStateLogic(
                 channel = channel,
                 messageLimit = channel.messages.size,
                 isChannelsStateUpdate = true,
-                isDatabaseSync = isDatabaseSync
             )
         }
     }
