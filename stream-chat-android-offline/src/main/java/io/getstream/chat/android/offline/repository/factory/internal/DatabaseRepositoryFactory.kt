@@ -69,7 +69,7 @@ internal class DatabaseRepositoryFactory(
 
     override fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
-        getLastMessageForChannel: suspend (String) -> Message?,
+        getLastMessageForChannel: suspend (cid: String) -> Message?,
     ): ChannelRepository {
         val databaseChannelRepository = repositoriesCache[ChannelRepository::class.java] as? DatabaseChannelRepository?
 
