@@ -23,7 +23,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.offline.repository.domain.channel.lastMessageInfo
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
 import io.getstream.log.taggedLogger
@@ -36,7 +35,7 @@ import java.util.Date
 internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
-    private val getMessage: suspend (messageId: String) -> Message?,
+    private val getLastMessageForChannel: suspend (String) -> Message?,
     cacheSize: Int = 100,
 ) : ChannelRepository {
 
@@ -88,7 +87,7 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         val entity = channelDao.select(cid = cid)
-        return entity?.toModel(getUser, getMessage)
+        return entity?.toModel(getUser, getLastMessageForChannel)
     }
 
     /**
@@ -126,14 +125,14 @@ internal class DatabaseChannelRepository(
      * Reads channel using specified [cid].
      */
     override suspend fun selectChannelByCid(cid: String): Channel? {
-        return channelDao.select(cid = cid)?.toModel(getUser, getMessage)
+        return channelDao.select(cid = cid)?.toModel(getUser, getLastMessageForChannel)
     }
 
     /**
      * Reads list of channels using specified [cids].
      */
     override suspend fun selectChannelsByCids(cids: List<String>): List<Channel> {
-        return channelDao.select(cids = cids).map { it.toModel(getUser, getMessage) }
+        return channelDao.select(cids = cids).map { it.toModel(getUser, getLastMessageForChannel) }
     }
 
     /**
@@ -147,7 +146,7 @@ internal class DatabaseChannelRepository(
      * Read which channels need sync.
      */
     override suspend fun selectChannelsSyncNeeded(limit: Int): List<Channel> {
-        return channelDao.selectSyncNeeded(limit = limit).map { it.toModel(getUser, getMessage) }
+        return channelDao.selectSyncNeeded(limit = limit).map { it.toModel(getUser, getLastMessageForChannel) }
     }
 
     /**
@@ -222,7 +221,7 @@ internal class DatabaseChannelRepository(
     }
 
     private suspend fun fetchChannels(channelCIDs: List<String>): List<Channel> {
-        return channelDao.select(channelCIDs).map { it.toModel(getUser, getMessage) }.also(::updateCache)
+        return channelDao.select(channelCIDs).map { it.toModel(getUser, getLastMessageForChannel) }.also(::updateCache)
     }
 
     private fun updateCache(channels: Collection<Channel>) {

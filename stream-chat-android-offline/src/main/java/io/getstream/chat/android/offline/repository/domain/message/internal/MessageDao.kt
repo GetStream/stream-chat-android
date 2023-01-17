@@ -220,6 +220,16 @@ internal interface MessageDao {
     @Query("DELETE FROM $MESSAGE_ENTITY_TABLE_NAME")
     suspend fun deleteAll()
 
+    @Query(
+        "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
+            "WHERE cid = :cid " +
+            "ORDER BY CASE WHEN createdAt " +
+            "IS NULL THEN createdLocallyAt " +
+            "ELSE createdAt " +
+            "END DESC LIMIT 1"
+    )
+    suspend fun selectLastMessageForChannel(cid: String): List<MessageEntity>
+
     private companion object {
         private const val SQLITE_MAX_VARIABLE_NUMBER: Int = 999
         private const val NO_LIMIT: Int = -1

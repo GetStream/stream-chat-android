@@ -48,7 +48,7 @@ internal object NoOpRepositoryFactory : RepositoryFactory {
 
     override fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
-        getMessage: suspend (messageId: String) -> Message?,
+        getLastMessageForChannel: suspend (String) -> Message?,
     ): ChannelRepository = NoOpChannelRepository
 
     object Provider : RepositoryFactory.Provider {

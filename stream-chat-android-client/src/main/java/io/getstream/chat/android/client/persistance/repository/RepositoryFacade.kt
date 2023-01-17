@@ -184,12 +184,14 @@ public class RepositoryFacade private constructor(
             }
 
             val messageRepository = factory.createMessageRepository(getUser)
-            val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
 
             return RepositoryFacade(
                 userRepository = userRepository,
                 configsRepository = factory.createChannelConfigRepository(),
-                channelsRepository = factory.createChannelRepository(getUser, getMessage),
+                channelsRepository = factory.createChannelRepository(
+                    getUser,
+                    messageRepository::getLastMessageForChannel
+                ),
                 queryChannelsRepository = factory.createQueryChannelsRepository(),
                 messageRepository = messageRepository,
                 reactionsRepository = factory.createReactionRepository(getUser),

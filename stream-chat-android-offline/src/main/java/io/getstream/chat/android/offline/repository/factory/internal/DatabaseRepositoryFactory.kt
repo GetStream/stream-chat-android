@@ -69,12 +69,12 @@ internal class DatabaseRepositoryFactory(
 
     override fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
-        getMessage: suspend (messageId: String) -> Message?,
+        getLastMessageForChannel: suspend (String) -> Message?,
     ): ChannelRepository {
         val databaseChannelRepository = repositoriesCache[ChannelRepository::class.java] as? DatabaseChannelRepository?
 
         return databaseChannelRepository ?: run {
-            DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, DEFAULT_CACHE_SIZE)
+            DatabaseChannelRepository(database.channelStateDao(), getUser, getLastMessageForChannel, DEFAULT_CACHE_SIZE)
                 .also { repository ->
                     repositoriesCache[ChannelRepository::class.java] = repository
                 }

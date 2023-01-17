@@ -170,6 +170,10 @@ internal class DatabaseMessageRepository(
         messageDao.deleteAll()
     }
 
+    override suspend fun getLastMessageForChannel(cid: String): Message? {
+        return  messageDao.selectLastMessageForChannel(cid).firstOrNull()?.toModel(getUser, ::selectMessage)
+    }
+
     private suspend fun selectMessagesEntitiesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,

@@ -46,11 +46,11 @@ public interface RepositoryFactory {
      * Creates [ChannelRepository]
      *
      * @param getUser function that provides userId.
-     * @param getMessage function that provides messageId.
+     * @param getLastMessage function that provides messageId.
      */
     public fun createChannelRepository(
         getUser: suspend (userId: String) -> User,
-        getMessage: suspend (messageId: String) -> Message?,
+        getLastMessageForChannel: suspend (String) -> Message?,
     ): ChannelRepository
 
     /**

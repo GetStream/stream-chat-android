@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.repository.domain.channel
-
-import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelEntity
+package io.getstream.chat.android.offline.repository.domain.channel.internal
 
 /**
  * Composes a short version of [ChannelEntity.toString] with the last message information only.

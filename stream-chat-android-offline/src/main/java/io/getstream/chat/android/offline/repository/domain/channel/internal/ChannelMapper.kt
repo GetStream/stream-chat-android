@@ -65,7 +65,7 @@ internal fun Channel.toEntity(): ChannelEntity {
 
 internal suspend fun ChannelEntity.toModel(
     getUser: suspend (userId: String) -> User,
-    getMessage: suspend (messageId: String) -> Message?,
+    getLastMessageForChannel: suspend (String) -> Message?,
 ): Channel = Channel(
     cooldown = cooldown,
     type = type,
@@ -83,7 +83,7 @@ internal suspend fun ChannelEntity.toModel(
     hiddenMessagesBefore = hideMessagesBefore,
     members = members.values.map { it.toModel(getUser) },
     memberCount = memberCount,
-    messages = listOfNotNull(lastMessageId?.let { getMessage(it) }),
+    messages = listOfNotNull(getLastMessageForChannel(cid)),
     read = reads.values.map { it.toModel(getUser) },
     createdBy = getUser(createdByUserId),
     watchers = watcherIds.map { getUser(it) },
