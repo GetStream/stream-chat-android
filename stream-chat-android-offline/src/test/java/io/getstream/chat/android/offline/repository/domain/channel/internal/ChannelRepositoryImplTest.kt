@@ -58,8 +58,7 @@ internal class ChannelRepositoryImplTest {
 
         verify(channelDao).insert(
             argThat { channelEntity ->
-                channelEntity.lastMessageAt == lastMessage.createdAt &&
-                    channelEntity.lastMessageId == lastMessage.id
+                channelEntity.lastMessageAt == lastMessage.createdAt
             }
         )
     }
@@ -77,8 +76,7 @@ internal class ChannelRepositoryImplTest {
 
         verify(channelDao).insert(
             argThat { channelEntity ->
-                channelEntity.lastMessageAt == after &&
-                    channelEntity.lastMessageId == newLastMessage.id
+                channelEntity.lastMessageAt == after
             }
         )
     }

@@ -20,5 +20,5 @@ package io.getstream.chat.android.offline.repository.domain.channel.internal
  * Composes a short version of [ChannelEntity.toString] with the last message information only.
  */
 internal fun ChannelEntity.lastMessageInfo(): String {
-    return "ChannelEntity(lastMessageId: $lastMessageId, lastMessageAt: $lastMessageAt, cid: $cid)"
+    return "ChannelEntity(lastMessageAt: $lastMessageAt, cid: $cid)"
 }
