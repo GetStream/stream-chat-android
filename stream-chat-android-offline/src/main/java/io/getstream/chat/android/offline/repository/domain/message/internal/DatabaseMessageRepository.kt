@@ -171,7 +171,7 @@ internal class DatabaseMessageRepository(
     }
 
     override suspend fun getLastMessageForChannel(cid: String): Message? {
-        return  messageDao.selectLastMessageForChannel(cid).firstOrNull()?.toModel(getUser, ::selectMessage)
+        return messageDao.selectLastMessageForChannel(cid).firstOrNull()?.toModel(getUser, ::selectMessage)
     }
 
     private suspend fun selectMessagesEntitiesForChannel(
