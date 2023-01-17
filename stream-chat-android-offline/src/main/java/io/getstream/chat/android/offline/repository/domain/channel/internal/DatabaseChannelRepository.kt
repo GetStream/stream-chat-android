@@ -35,7 +35,7 @@ import java.util.Date
 internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
-    private val getLastMessageForChannel: suspend (String) -> Message?,
+    private val getLastMessageForChannel: suspend (cid: String) -> Message?,
     cacheSize: Int = 100,
 ) : ChannelRepository {
 
