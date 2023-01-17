@@ -260,6 +260,10 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun selectLastMessageForChannel(cid: String): Message? {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun clear() {
         messages.clear()
     }
