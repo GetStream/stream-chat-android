@@ -228,7 +228,7 @@ internal interface MessageDao {
             "ELSE createdAt " +
             "END DESC LIMIT 1"
     )
-    suspend fun selectLastMessageForChannel(cid: String): List<MessageEntity>
+    suspend fun selectLastMessageForChannel(cid: String): MessageEntity?
 
     private companion object {
         private const val SQLITE_MAX_VARIABLE_NUMBER: Int = 999
