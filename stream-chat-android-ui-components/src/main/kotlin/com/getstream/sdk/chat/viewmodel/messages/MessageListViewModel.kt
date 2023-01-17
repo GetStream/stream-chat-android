@@ -624,7 +624,7 @@ public class MessageListViewModel(
                     logger.e { "Function -> LocalMessage" }
                     focusMessage(message)
                 } else {
-                    ChatClient.instance().getMessageUsingCache(event.messageId)
+                    chatClient.getMessageUsingCache(event.messageId)
                         .enqueue { result ->
                             if (result.isSuccess) {
                                 focusMessage(result.data())
