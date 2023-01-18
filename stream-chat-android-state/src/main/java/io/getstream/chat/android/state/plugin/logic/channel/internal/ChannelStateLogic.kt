@@ -397,7 +397,6 @@ internal class ChannelStateLogic(
      * @param isScrollUpdate Whether the update is due to a scroll update, meaning pagination.
      * @param shouldRefreshMessages Whether the message list should get refreshed.
      * @param isWatchChannel Whether the request came to watch a channel.
-     * @param isDatabaseSync Whether the request come to sync the data with the database.
      *
      * @return Whether we need to upsert the messages or not.
      */
