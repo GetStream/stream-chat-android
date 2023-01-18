@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -33,14 +32,14 @@ public interface ChannelRepository {
      *
      * @param channel [Channel]
      */
-    public suspend fun insertChannel(channel: Channel)
+    public suspend fun insertChannel(channel: Channel, updateLastMessage: Boolean)
 
     /**
      * Inserts many [Channel]s.
      *
      * @param channels collection of [Channel]
      */
-    public suspend fun insertChannels(channels: Collection<Channel>)
+    public suspend fun insertChannels(channels: Collection<Channel>, updateLastMessage: Boolean)
 
     /**
      * Deletes a [Channel] by the cid.
@@ -67,12 +66,10 @@ public interface ChannelRepository {
      * Select channels by full channel IDs [Channel.cid]
      *
      * @param channelCIDs A list of [Channel.cid] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
      *
      * @return A list of channels found in repository.
      */
-    public suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean = false): List<Channel>
+    public suspend fun selectChannels(channelCIDs: List<String>): List<Channel>
 
     /**
      * Select channel by full channel ID [Channel.cid]
@@ -156,9 +153,6 @@ public interface ChannelRepository {
      * Clear Channels of this repository.
      */
     public suspend fun clear()
-
-    @VisibleForTesting
-    public fun clearChannelCache()
 
     private companion object {
         private const val NO_LIMIT: Int = -1

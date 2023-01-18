@@ -95,14 +95,14 @@ public class RepositoryFacade private constructor(
         }
     }
 
-    override suspend fun insertChannel(channel: Channel) {
+    override suspend fun insertChannel(channel: Channel, updateLastMessage: Boolean) {
         insertUsers(channel.let(Channel::users))
-        channelsRepository.insertChannel(channel)
+        channelsRepository.insertChannel(channel, updateLastMessage)
     }
 
-    override suspend fun insertChannels(channels: Collection<Channel>) {
+    override suspend fun insertChannels(channels: Collection<Channel>, updateLastMessage: Boolean) {
         insertUsers(channels.flatMap(Channel::users))
-        channelsRepository.insertChannels(channels)
+        channelsRepository.insertChannels(channels, updateLastMessage)
     }
 
     override suspend fun insertMessage(message: Message, cache: Boolean) {
@@ -140,11 +140,12 @@ public class RepositoryFacade private constructor(
         users: List<User>,
         channels: Collection<Channel>,
         messages: List<Message>,
+        isFirstPage: Boolean,
         cacheForMessages: Boolean = false,
     ) {
         configs?.let { insertChannelConfigs(it) }
         insertUsers(users)
-        insertChannels(channels)
+        insertChannels(channels, isFirstPage)
         insertMessages(messages, cacheForMessages)
     }
 

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
-import androidx.collection.LruCache
 import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.models.Channel
@@ -37,23 +36,24 @@ internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
-    cacheSize: Int = 100,
 ) : ChannelRepository {
 
     private val logger by taggedLogger("Chat:ChannelRepository")
-
-    // the channel cache is simple, just keeps the last several users in memory
-    private val channelCache = LruCache<String, Channel>(cacheSize)
 
     /**
      * Inserts a [Channel]
      *
      * @param channel [Channel]
      */
-    override suspend fun insertChannel(channel: Channel) {
-        val entity = channel.toEntity()
+    override suspend fun insertChannel(channel: Channel, updateLastMessage: Boolean) {
+        val entity = if (updateLastMessage) {
+            channel.toEntity(channel.lastMessage)
+        } else {
+            val lastMessage = selectChannelByCid(channel.cid)?.lastMessage
+            channel.toEntity(lastMessage)
+        }
+
         logger.v { "[insertChannel] entity: ${entity.lastMessageInfo()}" }
-        updateCache(listOf(channel))
         channelDao.insert(entity)
     }
 
@@ -62,11 +62,23 @@ internal class DatabaseChannelRepository(
      *
      * @param channels collection of [Channel]
      */
-    override suspend fun insertChannels(channels: Collection<Channel>) {
+    override suspend fun insertChannels(channels: Collection<Channel>, updateLastMessage: Boolean) {
         if (channels.isEmpty()) return
-        val entities = channels.map(Channel::toEntity)
+
+        val entities = if (updateLastMessage) {
+            channels.map { channel ->
+                channel.toEntity(channel.lastMessage)
+            }
+        } else {
+            val dbChannels = selectChannels(channels.map { channel -> channel.cid })
+
+            channels.map { channel ->
+                val dbChannel = dbChannels.find { dbChannel -> dbChannel.cid == channel.cid }
+                channel.toEntity(dbChannel?.lastMessage)
+            }
+        }
+
         logger.v { "[insertChannels] entities.size: ${entities.size}" }
-        updateCache(channels)
         channelDao.insertMany(entities)
     }
 
@@ -77,7 +89,6 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun deleteChannel(cid: String) {
         logger.v { "[deleteChannel] cid: $cid" }
-        channelCache.remove(cid)
         channelDao.delete(cid)
     }
 
@@ -102,24 +113,11 @@ internal class DatabaseChannelRepository(
      * Select channels by full channel IDs [Channel.cid]
      *
      * @param channelCIDs A list of [Channel.cid] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
      *
      * @return A list of channels found in repository.
      */
-    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> {
-        if (channelCIDs.isEmpty()) {
-            return emptyList()
-        }
-        return if (forceCache) {
-            fetchChannels(channelCIDs)
-        } else {
-            val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf(), channelCache::get)
-            val missingChannelIds = channelCIDs.filter { channelCache.get(it) == null }
-            val dbChannels = fetchChannels(missingChannelIds).toMutableList()
-            dbChannels.addAll(cachedChannels)
-            dbChannels
-        }
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> {
+        return if (channelCIDs.isEmpty()) emptyList() else fetchChannels(channelCIDs)
     }
 
     /**
@@ -157,7 +155,6 @@ internal class DatabaseChannelRepository(
      * @param deletedAt Date.
      */
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) {
-        channelCache.remove(cid)
         channelDao.setDeletedAt(cid, deletedAt)
     }
 
@@ -169,7 +166,6 @@ internal class DatabaseChannelRepository(
      * @param hideMessagesBefore Date.
      */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
-        channelCache.remove(cid)
         channelDao.setHidden(cid, hidden, hideMessagesBefore)
     }
 
@@ -180,7 +176,6 @@ internal class DatabaseChannelRepository(
      * @param hidden Date.
      */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
-        channelCache.remove(cid)
         channelDao.setHidden(cid, hidden)
     }
 
@@ -213,23 +208,10 @@ internal class DatabaseChannelRepository(
 
     override suspend fun evictChannel(cid: String) {
         logger.v { "[evictChannel] cid: $cid" }
-        channelCache.remove(cid)
-    }
-
-    override fun clearChannelCache() {
-        logger.v { "[clearChannelCache] no args" }
-        channelCache.evictAll()
     }
 
     private suspend fun fetchChannels(channelCIDs: List<String>): List<Channel> {
-        return channelDao.select(channelCIDs).map { it.toModel(getUser, getMessage) }.also(::updateCache)
-    }
-
-    private fun updateCache(channels: Collection<Channel>) {
-        logger.v { "[updateCache] channels.size: ${channels.size}" }
-        for (channel in channels) {
-            channelCache.put(channel.cid, channel)
-        }
+        return channelDao.select(channelCIDs).map { it.toModel(getUser, getMessage) }
     }
 
     /**
@@ -258,7 +240,7 @@ internal class DatabaseChannelRepository(
                 channel.apply {
                     lastMessageAt = messageCreatedAt
                     messages = listOf(lastMessage)
-                }.also { insertChannel(it) }
+                }.also { insertChannel(it, updateLastMessage = false) }
             }
         }
     }

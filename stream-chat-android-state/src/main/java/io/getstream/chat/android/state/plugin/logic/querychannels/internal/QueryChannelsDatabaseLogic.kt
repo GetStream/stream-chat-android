@@ -49,7 +49,7 @@ internal class QueryChannelsDatabaseLogic(
     ) {
         configs?.let { channelConfigRepository.insertChannelConfigs(it) }
         userRepository.insertUsers(users)
-        channelRepository.insertChannels(channels)
+        channelRepository.insertChannels(channels, updateLastMessage = false)
         messageRepository.insertMessages(messages, cacheForMessages)
     }
 

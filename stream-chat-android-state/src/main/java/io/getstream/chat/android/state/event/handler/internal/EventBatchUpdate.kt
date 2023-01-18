@@ -132,7 +132,8 @@ internal class EventBatchUpdate private constructor(
             users = userMap.values.toList(),
             channels = channelMap.values.updateUsers(userMap),
             messages = messageMap.values.toList().updateUsers(userMap),
-            cacheForMessages = true
+            cacheForMessages = true,
+            isFirstPage = false
         )
     }
 

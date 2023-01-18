@@ -78,7 +78,7 @@ internal class CreateChannelListenerDatabase(
             image = getExtraValue("image", "")
         }
 
-        channelRepository.insertChannel(channel)
+        channelRepository.insertChannel(channel, updateLastMessage = true)
     }
 
     /**
@@ -121,7 +121,7 @@ internal class CreateChannelListenerDatabase(
                 if (channel.cid != generatedCid) {
                     channelRepository.deleteChannel(generatedCid)
                 }
-                channelRepository.insertChannel(channel)
+                channelRepository.insertChannel(channel, updateLastMessage = true)
             }
             is Result.Failure -> {
                 channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
@@ -130,7 +130,7 @@ internal class CreateChannelListenerDatabase(
                     } else {
                         SyncStatus.SYNC_NEEDED
                     }
-                    channelRepository.insertChannel(cachedChannel)
+                    channelRepository.insertChannel(cachedChannel, updateLastMessage = true)
                 }
             }
         }
