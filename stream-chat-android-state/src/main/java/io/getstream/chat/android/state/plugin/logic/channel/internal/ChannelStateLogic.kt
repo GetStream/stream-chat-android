@@ -335,7 +335,6 @@ internal class ChannelStateLogic(
      * when the user is searching in the channel.
      * @param isNotificationUpdate Whether the message list update is due to a new notification.
      * @param isChannelsStateUpdate Whether the state update comes from querying the channels list.
-     * @param isDatabaseSync Whether the state comes from a database sync.
      */
     fun updateDataForChannel(
         channel: Channel,
