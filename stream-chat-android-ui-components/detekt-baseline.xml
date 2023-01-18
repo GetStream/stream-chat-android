@@ -38,6 +38,7 @@
     <ID>LongMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
     <ID>LongMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>LongMethod:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListHeaderViewStyle</ID>
+    <ID>LongMethod:MessageListItemLiveData.kt$MessageListItemLiveData$@Suppress("ComplexMethod") private fun groupMessages(messages: List&lt;Message>?, currentUserId: String): List&lt;MessageListItem></ID>
     <ID>LongMethod:MessageListItemStyle.kt$MessageListItemStyle.Builder$fun build(): MessageListItemStyle</ID>
     <ID>LongMethod:MessageListViewModelBinding.kt$@JvmName("bind") public fun MessageListViewModel.bindView( view: MessageListView, lifecycleOwner: LifecycleOwner, enforceUniqueReactions: Boolean = true, )</ID>
     <ID>LongMethod:MessageListViewStyle.kt$MessageListViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageListViewStyle</ID>
@@ -73,7 +74,6 @@
     <ID>MagicNumber:TypingIndicatorAnimationView.kt$TypingDrawable$255</ID>
     <ID>MaxLineLength:AttachmentActivity.kt$AttachmentActivity$Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()</ID>
     <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) }</ID>
-    <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$showInChatOptionHandler = { setResultAndFinish(AttachmentOptionResult.ShowInChat(attachmentGalleryResultItem)) }</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToCameraIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!</ID>
     <ID>MaxLineLength:AttachmentSelectionDialogStyle.kt$AttachmentSelectionDialogStyle.Companion$allowAccessToGalleryIcon = context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!</ID>
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle$*</ID>
