@@ -311,7 +311,7 @@ internal class MessageListItemLiveData(
             previousMessage = message
         }
 
-        // thread placeholder and a date separator when a message has zero replies
+        // thread placeholder and a date separator (if enabled) when a message has zero replies
         if (isThread && items.size == 1) {
             if (ChatUI.showDateSeparatorInEmptyThread) {
                 val message = messages?.firstOrNull()
