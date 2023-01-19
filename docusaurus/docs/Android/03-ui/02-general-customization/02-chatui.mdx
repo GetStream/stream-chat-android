@@ -27,6 +27,7 @@ The full list of `ChatUI` properties you can override include:
 * `channelNameFormatter`: Allows customizing the way channel names are formatted.
 * `messagePreviewFormatter`: Allows to generate a preview text for the given message.
 * `dateFormatter`: Allows changing the way dates are formatted.
+* `showDateSeparatorInEmptyThread`: Allows showing the DateSeparator item in the MessageListView, when opening an empty thread. This helps implement more complex use cases for empty threads and `ThreadPlaceholderItem`s.
 
 :::note
 `ChatUI` is initialized out-of-the-box with default implementations - no initialization is required on app startup.
@@ -519,3 +520,29 @@ ChatUI.setDateFormatter(new DateFormatter() {
 ```
 </TabItem>
 </Tabs>
+
+### Showing DateSeparator item in empty threads
+
+Overriding the `showDateSeparatorInEmptyThread` allows you to show the separator in empty threads:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.showDateSeparatorInEmptyThread = true
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setShowDateSeparatorInEmptyThread(true);
+```
+</TabItem>
+</Tabs>
+
+Using this feature, you get the following behavior in empty threads.
+
+![Empty thread date separator](../../assets/empty_thread_date_separator.png)
+
+On its own, it might not look like much, but when customizing the `ThreadPlaceholderItem`, you can achieve powerful expanded behavior of threads, where you denote to the user when the parent message was created and that they're in an empty thread where they can leave replies.
