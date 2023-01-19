@@ -31,6 +31,8 @@ public interface ChannelRepository {
      * Inserts a [Channel]
      *
      * @param channel [Channel]
+     * @param updateLastMessage Whether it should or should not update the last message of the channel. Use this when
+     * updating the first page of the messages of a channel.
      */
     public suspend fun insertChannel(channel: Channel, updateLastMessage: Boolean)
 
@@ -38,6 +40,8 @@ public interface ChannelRepository {
      * Inserts many [Channel]s.
      *
      * @param channels collection of [Channel]
+     * @param updateLastMessage Whether it should or should not update the last message of the channel. Use this when
+     * updating the first page of the messages of a channel.
      */
     public suspend fun insertChannels(channels: Collection<Channel>, updateLastMessage: Boolean)
 
