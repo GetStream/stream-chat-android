@@ -133,7 +133,7 @@ internal class EventBatchUpdate private constructor(
             channels = channelMap.values.updateUsers(userMap),
             messages = messageMap.values.toList().updateUsers(userMap),
             cacheForMessages = true,
-            isFirstPage = false
+            updateFirstMessage = false
         )
     }
 
@@ -188,7 +188,7 @@ internal class EventBatchUpdate private constructor(
             val messageMap: Map<String, Message> =
                 repos.selectMessages(messagesToFetch.toList(), forceCache = true).associateBy(Message::id)
             val channelMap: Map<String, Channel> =
-                repos.selectChannels(channelsToFetch.toList(), forceCache = true).associateBy(Channel::cid)
+                repos.selectChannels(channelsToFetch.toList()).associateBy(Channel::cid)
             StreamLog.v(TAG) {
                 "[builder.build] id: $id, messageMap.size: ${messageMap.size}" +
                     ", channelMap.size: ${channelMap.size}"

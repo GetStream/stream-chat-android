@@ -532,7 +532,7 @@ internal class SyncManager(
             users = users.values.toList(),
             channels = channelsResponse,
             messages = messages,
-            isFirstPage = false
+            updateFirstMessage = true
         )
 
         logger.i {
