@@ -32,7 +32,7 @@ internal object NoOpChannelRepository : ChannelRepository {
     override suspend fun deleteChannel(cid: String) { /* No-Op */ }
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? = null
     override suspend fun selectAllCids(): List<String> = emptyList()
-    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> = emptyList()
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = emptyList()
     override suspend fun selectChannelByCid(cid: String): Channel? = null
     override suspend fun selectChannelsByCids(cids: List<String>): List<Channel> = emptyList()
     override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> = emptyList()
@@ -44,6 +44,5 @@ internal object NoOpChannelRepository : ChannelRepository {
     override suspend fun updateMembersForChannel(cid: String, members: List<Member>) { /* No-Op */ }
     override suspend fun evictChannel(cid: String) { /* No-Op */ }
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) { /* No-Op */ }
-    override fun clearChannelCache() { /* No-Op */ }
     override suspend fun clear() { /* No-Op */ }
 }

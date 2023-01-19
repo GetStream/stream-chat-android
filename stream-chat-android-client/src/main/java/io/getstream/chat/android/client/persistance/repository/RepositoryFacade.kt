@@ -56,16 +56,15 @@ public class RepositoryFacade private constructor(
     SyncStateRepository by syncStateRepository,
     AttachmentRepository by attachmentRepository {
 
-    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> =
-        selectChannels(channelCIDs, null, forceCache)
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> =
+        selectChannels(channelCIDs, null)
 
     public suspend fun selectChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest?,
-        forceCache: Boolean = false,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.selectChannels(channelIds, forceCache)
+        val channels = channelsRepository.selectChannels(channelIds)
         // TODO why it is not compared this way?
         //  pagination?.isRequestingMoreThanLastMessage() == true
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
@@ -140,12 +139,12 @@ public class RepositoryFacade private constructor(
         users: List<User>,
         channels: Collection<Channel>,
         messages: List<Message>,
-        isFirstPage: Boolean,
+        updateFirstMessage: Boolean,
         cacheForMessages: Boolean = false,
     ) {
         configs?.let { insertChannelConfigs(it) }
         insertUsers(users)
-        insertChannels(channels, isFirstPage)
+        insertChannels(channels, updateFirstMessage)
         insertMessages(messages, cacheForMessages)
     }
 

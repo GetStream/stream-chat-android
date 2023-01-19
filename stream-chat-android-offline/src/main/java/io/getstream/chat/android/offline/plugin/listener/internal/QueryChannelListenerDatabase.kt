@@ -77,7 +77,7 @@ internal class QueryChannelListenerDatabase(private val repos: RepositoryFacade)
             configs = configs,
             users = users.values.toList(),
             channels = listOf(channel),
-            isFirstPage = isFirstPage,
+            updateFirstMessage = isFirstPage,
             messages = channel.messages,
         )
     }
