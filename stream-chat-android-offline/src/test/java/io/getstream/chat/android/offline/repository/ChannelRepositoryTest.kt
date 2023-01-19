@@ -30,8 +30,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `inserting a channel and reading it should be equal`(): Unit = runTest {
-        helper.insertChannels(listOf(data.channel1))
-        helper.clearChannelCache()
+        helper.insertChannels(listOf(data.channel1), false)
         val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
         channel.config = data.channel1.config
 
@@ -40,7 +39,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `deleting a channel should work`(): Unit = runTest {
-        helper.insertChannels(listOf(data.channel1))
+        helper.insertChannels(listOf(data.channel1), false)
         helper.deleteChannel(data.channel1.cid)
         val entity = helper.selectChannelWithoutMessages(data.channel1.cid)
 
@@ -49,7 +48,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
     @Test
     fun `updating a channel should work as intended`(): Unit = runTest {
-        helper.insertChannels(listOf(data.channel1, data.channel1Updated))
+        helper.insertChannels(listOf(data.channel1, data.channel1Updated), false)
         val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
 
         // ignore these 4 fields

@@ -117,7 +117,7 @@ internal class SyncManagerTest {
 
         val syncManager = buildSyncManager()
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
-        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
 
         val connectingEvent = HealthEvent(
             type = "type",
@@ -158,7 +158,7 @@ internal class SyncManagerTest {
         }
 
         whenever(repositoryFacade.selectMessages(any(), any())) doReturn listOf(randomMessage())
-        whenever(repositoryFacade.selectChannels(any(), any<Boolean>())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
         whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
 
         whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(

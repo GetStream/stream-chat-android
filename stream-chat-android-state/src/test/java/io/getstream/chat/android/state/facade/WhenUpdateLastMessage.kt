@@ -38,7 +38,7 @@ internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
 
         sut.updateLastMessageForChannel("cid", randomMessage())
 
-        verify(channels, never()).insertChannel(any())
+        verify(channels, never()).insertChannel(any(), any())
     }
 
     @Test
@@ -52,6 +52,6 @@ internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
 
         sut.updateLastMessageForChannel("cid", outdatedMessage)
 
-        verify(channels, never()).insertChannel(any())
+        verify(channels, never()).insertChannel(any(), any())
     }
 }

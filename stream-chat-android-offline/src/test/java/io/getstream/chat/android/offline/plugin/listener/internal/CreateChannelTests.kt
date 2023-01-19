@@ -29,8 +29,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -69,7 +71,8 @@ internal class CreateChannelTests {
                         this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.SYNC_NEEDED
-                }
+                },
+                any()
             )
         }
 
@@ -104,7 +107,8 @@ internal class CreateChannelTests {
                         this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.IN_PROGRESS
-                }
+                },
+                any()
             )
         }
 
@@ -129,7 +133,7 @@ internal class CreateChannelTests {
                 result = result,
             )
 
-            verify(repos).insertChannel((result as Result.Success).value)
+            verify(repos).insertChannel(eq(result.value), any())
         }
 
     @Test
@@ -186,7 +190,8 @@ internal class CreateChannelTests {
                         this.id == channelId &&
                         this.cid == cid &&
                         syncStatus == SyncStatus.SYNC_NEEDED
-                }
+                },
+                any()
             )
         }
 
@@ -220,7 +225,8 @@ internal class CreateChannelTests {
                         this.id == channelId &&
                         this.cid == cid &&
                         syncStatus == SyncStatus.FAILED_PERMANENTLY
-                }
+                },
+                any()
             )
         }
 
