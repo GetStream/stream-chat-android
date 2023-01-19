@@ -27,7 +27,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -143,6 +142,7 @@ public fun MessagesScreen(
     val attachmentsPickerViewModel =
         viewModel(AttachmentsPickerViewModel::class.java, factory = factory)
 
+    // TODO make composer ViewModel follow list ViewModel's thread state when it changes internally
     val backAction = {
         val isInThread = listViewModel.isInThread
         val isShowingOverlay = listViewModel.isShowingOverlay
@@ -396,7 +396,7 @@ private fun BoxScope.MessagesScreenMenus(
  * @param selectedMessageState The state of the currently selected message.
  * @param selectedMessage The currently selected message.
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.MessagesScreenReactionsPicker(
     listViewModel: MessageListViewModel,

@@ -85,21 +85,17 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -131,7 +127,7 @@ public class MessageListViewModel(
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    private val messageId: String? = null,
+    messageId: String? = null,
 ) : ViewModel() {
 
     /**
@@ -150,7 +146,6 @@ public class MessageListViewModel(
      * e.g. send messages, delete messages, etc...
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
      */
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val ownCapabilities: StateFlow<Set<String>> =
         channelState.filterNotNull()
             .flatMapLatest { it.channelData }
@@ -278,6 +273,10 @@ public class MessageListViewModel(
         observeTypingUsers()
         observeMessages()
         observeChannel()
+
+        if (messageId != null) {
+            onOpenedFromPushNotification(messageId)
+        }
     }
 
     /**
@@ -312,40 +311,38 @@ public class MessageListViewModel(
                             )
                         }
                     }
-                }.catch {
-                    it.cause?.printStackTrace()
-                    showEmptyState()
-                }.onEach { newState ->
-                    val newLastMessage =
-                        (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
-
-                    val hasNewMessage = lastLoadedMessage != null &&
-                        messagesState.messageItems.isNotEmpty() &&
-                        newLastMessage?.id != lastLoadedMessage?.id
-
-                    messagesState = if (hasNewMessage) {
-                        val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
-
-                        newState.copy(
-                            newMessageState = newMessageState,
-                            unreadCount = getUnreadMessageCount(newMessageState)
-                        )
-                    } else {
-                        newState
+                }
+                    .catch {
+                        it.cause?.printStackTrace()
+                        showEmptyState()
                     }
+                    .collect { newState ->
+                        val newLastMessage =
+                            (newState.messageItems.firstOrNull { it is MessageItemState } as? MessageItemState)?.message
 
-                    messagesState.messageItems.firstOrNull {
-                        it is MessageItemState && it.message.id == scrollToMessage?.id
-                    }?.let {
-                        focusMessage((it as MessageItemState).message.id)
-                    }
+                        val hasNewMessage = lastLoadedMessage != null &&
+                            messagesState.messageItems.isNotEmpty() &&
+                            newLastMessage?.id != lastLoadedMessage?.id
 
-                    lastLoadedMessage = newLastMessage
-                }.onStart {
-                    if (messageId != null) {
-                        scrollToSelectedMessage(messageId)
+                        messagesState = if (hasNewMessage) {
+                            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+
+                            newState.copy(
+                                newMessageState = newMessageState,
+                                unreadCount = getUnreadMessageCount(newMessageState)
+                            )
+                        } else {
+                            newState
+                        }
+
+                        messagesState.messageItems.firstOrNull {
+                            it is MessageItemState && it.message.id == scrollToMessage?.id
+                        }?.let {
+                            focusMessage((it as MessageItemState).message.id)
+                        }
+
+                        lastLoadedMessage = newLastMessage
                     }
-                }.collect()
             }
         }
     }
@@ -353,15 +350,11 @@ public class MessageListViewModel(
     /**
      * Starts observing the list of typing users.
      */
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeTypingUsers() {
         viewModelScope.launch {
-            channelState.filterNotNull()
-                .flatMapLatest {
-                    it.typing
-                }.collect {
-                    typingUsers = it.users
-                }
+            channelState.filterNotNull().flatMapLatest { it.typing }.collect {
+                typingUsers = it.users
+            }
         }
     }
 
@@ -369,7 +362,6 @@ public class MessageListViewModel(
      * Starts observing the current [Channel] created from [ChannelState]. It emits new data when either
      * channel data, member count or online member count updates.
      */
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeChannel() {
         viewModelScope.launch {
             channelState.filterNotNull().flatMapLatest { state ->
@@ -1249,28 +1241,50 @@ public class MessageListViewModel(
     }
 
     /**
-     * Scrolls to message if in list otherwise get the message from backend.
+     * Fetches the message with the according message ID. If the given message is in a thread it will set the
+     * mode to thread mode, otherwise the ViewModel will stay in normal mode.
      *
-     * @param messageId The Id of the message we wish to scroll to.
+     * @param messageId The ID of the message received via push notification.
      */
-    public suspend fun scrollToSelectedMessage(messageId: String) {
-        val result = chatClient.getMessageUsingCache(messageId).await()
+    private fun onOpenedFromPushNotification(messageId: String) {
+        viewModelScope.launch {
+            val result = chatClient.getMessageUsingCache(messageId = messageId).await()
+            val parentMessageId = result.data().parentId
 
-        if (result.isSuccess) {
-            val message = result.data()
-            val parentId = message.parentId
+            // The channel will be automatically loaded given so we only need to
+            // account for opening threads when thread messages arrive via PNs
+            if (result.isSuccess && parentMessageId != null) {
+                openThreadFromPushNotification(parentMessageId)
+            } else if (result.isError) {
+                val error = result.error()
 
-            if (parentId == null) {
-                scrollToChannelMessage(message)
-            } else {
-                scrollToThreadMessage(message)
+                logger.e {
+                    "[onOpenedFromPushNotification] -> Could not load message: ${error.message}. " +
+                        "Cause: ${error.cause?.message}"
+                }
             }
-        } else {
-            val error = result.error()
+        }
+    }
 
-            logger.e {
-                "[scrollToSelectedMessage] -> Could not scroll to selected message: ${error.message}." +
-                    " Cause: ${error.cause?.message}"
+    /**
+     * Fetches the message with the according message ID. If the given message is in a thread it will set the
+     * mode to thread mode, otherwise the ViewModel will stay in normal mode.
+     *
+     * @param parentMessageId The ID of the parent message hosting the thread message received via push notification.
+     */
+    private fun openThreadFromPushNotification(parentMessageId: String) {
+        viewModelScope.launch {
+            val result = chatClient.getMessageUsingCache(parentMessageId).await()
+
+            if (result.isSuccess) {
+                loadThreadSequential(result.data())
+            } else {
+                val error = result.error()
+
+                logger.e {
+                    "[openThreadFromPushNotification] -> Could not load thread parent message: ${error.message}. " +
+                        "Cause: ${error.cause?.message}"
+                }
             }
         }
     }
@@ -1281,21 +1295,6 @@ public class MessageListViewModel(
      * @param message The message we wish to scroll to.
      */
     public fun scrollToSelectedMessage(message: Message) {
-        val parentId = message.parentId
-
-        if (parentId == null) {
-            scrollToChannelMessage(message)
-        } else {
-            scrollToThreadMessage(message)
-        }
-    }
-
-    /**
-     * Scrolls to the message given that it is not a thread message.
-     *
-     * @param message The message we wish to scroll to.
-     */
-    private fun scrollToChannelMessage(message: Message) {
         val isMessageInList = currentMessagesState.messageItems.firstOrNull {
             it is MessageItemState && it.message.id == message.id
         } != null
@@ -1305,38 +1304,6 @@ public class MessageListViewModel(
         } else {
             scrollToMessage = message
             loadMessage(message = message)
-        }
-    }
-
-    /**
-     * Scrolls to the message given that it is a thread message.
-     *
-     * @param message The message we wish to scroll to.
-     */
-    private fun scrollToThreadMessage(message: Message) {
-        val parentId = message.parentId ?: return
-
-        viewModelScope.launch {
-            val result = chatClient.getMessageUsingCache(parentId).await()
-
-            if (result.isSuccess) {
-                loadThreadSequential(result.data())
-
-                val isMessageInList = currentMessagesState.messageItems.any {
-                    it is MessageItemState && it.message.id == message.id
-                }
-
-                if (isMessageInList) {
-                    focusMessage(message.id)
-                }
-            } else {
-                val error = result.error()
-
-                logger.e {
-                    "[scrollToThreadMessage] -> Could not scroll to selected thread message: ${error.message}." +
-                        " Cause: ${error.cause?.message}"
-                }
-            }
         }
     }
 

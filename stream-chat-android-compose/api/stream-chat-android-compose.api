@@ -1995,7 +1995,6 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun removeOverlay ()V
 	public final fun removeShadowBanFromUser (Ljava/lang/String;)V
 	public final fun scrollToSelectedMessage (Lio/getstream/chat/android/client/models/Message;)V
-	public final fun scrollToSelectedMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun selectExtendedReactions (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun selectMessage (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun selectReactions (Lio/getstream/chat/android/client/models/Message;)V
