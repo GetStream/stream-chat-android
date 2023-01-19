@@ -125,7 +125,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         sut.insertChannel(channel, false)
 
-        verify(channels).insertChannel(eq(channel), false)
+        verify(channels).insertChannel(eq(channel), any())
         verify(users).insertUsers(
             check { listUser ->
                 listUser.size `should be equal to` 5
@@ -192,9 +192,9 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                     ) to acc.second + channel
                 }
 
-            sut.insertChannels(listOfChannels, false)
+            sut.insertChannels(listOfChannels, any())
 
-            verify(channels).insertChannels(eq(listOfChannels), false)
+            verify(channels).insertChannels(eq(listOfChannels), any())
             verify(users).insertUsers(
                 check { listUser ->
                     listUser `should contain same` listOfUser

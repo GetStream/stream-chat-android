@@ -240,7 +240,7 @@ internal class DatabaseChannelRepository(
                 channel.apply {
                     lastMessageAt = messageCreatedAt
                     messages = listOf(lastMessage)
-                }.also { insertChannel(it, updateLastMessage = false) }
+                }.also { insertChannel(it, updateLastMessage = true) }
             }
         }
     }
