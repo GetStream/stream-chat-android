@@ -204,7 +204,8 @@ internal class ChannelLogic(
                     isNotificationUpdate = request.isNotificationUpdate,
                     messageLimit = request.messagesLimit(),
                     scrollUpdate = request.isFilteringMessages() && !request.isFilteringAroundIdMessages(),
-                    shouldRefreshMessages = request.shouldRefresh
+                    shouldRefreshMessages = request.shouldRefresh,
+                    isChannelsStateUpdate = true
                 )
             }
         }
@@ -216,15 +217,17 @@ internal class ChannelLogic(
         messageLimit: Int,
         scrollUpdate: Boolean,
         shouldRefreshMessages: Boolean,
+        isChannelsStateUpdate: Boolean = false,
     ) {
         localChannel.hidden?.let(channelStateLogic::toggleHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
-        updateDataFromChannel(
+        updateDataForChannel(
             localChannel,
+            messageLimit = messageLimit,
+            shouldRefreshMessages = shouldRefreshMessages,
             scrollUpdate = scrollUpdate,
             isNotificationUpdate = isNotificationUpdate,
-            messageLimit = messageLimit,
-            shouldRefreshMessages = shouldRefreshMessages
+            isChannelsStateUpdate = isChannelsStateUpdate
         )
     }
 
@@ -243,19 +246,21 @@ internal class ChannelLogic(
         pagination: AnyChannelPaginationRequest,
     ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
-    internal fun updateDataFromChannel(
+    internal fun updateDataForChannel(
         channel: Channel,
         messageLimit: Int,
         shouldRefreshMessages: Boolean = false,
         scrollUpdate: Boolean = false,
         isNotificationUpdate: Boolean = false,
+        isChannelsStateUpdate: Boolean = false,
     ) {
-        channelStateLogic.updateDataFromChannel(
+        channelStateLogic.updateDataForChannel(
             channel,
             messageLimit,
             shouldRefreshMessages,
             scrollUpdate,
             isNotificationUpdate,
+            isChannelsStateUpdate = isChannelsStateUpdate
         )
     }
 

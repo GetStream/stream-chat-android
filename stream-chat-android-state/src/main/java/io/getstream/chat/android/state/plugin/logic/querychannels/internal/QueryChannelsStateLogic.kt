@@ -142,10 +142,10 @@ internal class QueryChannelsStateLogic(
         val existingChannels = mutableState.rawChannels
         mutableState.setChannels((existingChannels ?: emptyMap()) + channels.map { it.cid to it })
         channels.forEach { channel ->
-            logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
+            logicRegistry.channelState(channel.type, channel.id).updateDataForChannel(
                 channel = channel,
                 messageLimit = channel.messages.size,
-                isChannelsStateUpdate = true
+                isChannelsStateUpdate = true,
             )
         }
     }

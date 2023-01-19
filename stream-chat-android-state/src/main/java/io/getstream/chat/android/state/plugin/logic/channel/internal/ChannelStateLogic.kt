@@ -336,7 +336,7 @@ internal class ChannelStateLogic(
      * @param isNotificationUpdate Whether the message list update is due to a new notification.
      * @param isChannelsStateUpdate Whether the state update comes from querying the channels list.
      */
-    fun updateDataFromChannel(
+    fun updateDataForChannel(
         channel: Channel,
         messageLimit: Int,
         shouldRefreshMessages: Boolean = false,
@@ -364,7 +364,7 @@ internal class ChannelStateLogic(
                     isScrollUpdate = scrollUpdate,
                     shouldRefreshMessages = shouldRefreshMessages,
                     isChannelsStateUpdate = isChannelsStateUpdate,
-                    isWatchChannel = isWatchChannel
+                    isWatchChannel = isWatchChannel,
                 )
             ) {
                 upsertMessages(channel.messages, shouldRefreshMessages)
@@ -406,11 +406,14 @@ internal class ChannelStateLogic(
         isScrollUpdate: Boolean,
         shouldRefreshMessages: Boolean,
         isChannelsStateUpdate: Boolean,
-        isWatchChannel: Boolean
+        isWatchChannel: Boolean,
     ): Boolean {
         // upsert message if refresh is requested, on scroll updates and on notification updates when outside search
         // not to create gaps in message history
-        return isWatchChannel || shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch) ||
+        return isWatchChannel ||
+            shouldRefreshMessages ||
+            isScrollUpdate ||
+            (isNotificationUpdate && !isInsideSearch) ||
             // upsert the messages that come from the QueryChannelsStateLogic only if there are no messages in the list
             (isChannelsStateUpdate && (mutableState.messages.value.isEmpty() || !isInsideSearch))
     }
@@ -432,6 +435,7 @@ internal class ChannelStateLogic(
         // this means that if the offline sync went out of sync things go wrong
         upsertMembers(c.members)
         upsertWatchers(c.watchers, c.watcherCount)
+        upsertMessages(c.messages, false)
     }
 
     /**
@@ -451,13 +455,13 @@ internal class ChannelStateLogic(
             determinePaginationEnd(request, noMoreMessages)
         }
 
-        updateDataFromChannel(
+        updateDataForChannel(
             channel = channel,
             shouldRefreshMessages = request.shouldRefresh,
             scrollUpdate = request.isFilteringMessages(),
             isNotificationUpdate = request.isNotificationUpdate,
             messageLimit = request.messagesLimit(),
-            isWatchChannel = request.isWatchChannel
+            isWatchChannel = request.isWatchChannel,
         )
     }
 
