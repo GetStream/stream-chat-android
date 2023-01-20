@@ -3,7 +3,7 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>LongMethod:CustomLoginActivity.kt$CustomLoginActivity$@Composable fun CustomLoginScreen( onBackButtonClick: () -> Unit, onLoginButtonClick: (UserCredentials) -> Unit, )</ID>
-    <ID>LongMethod:MessagesActivity.kt$MessagesActivity$@OptIn(ExperimentalFoundationApi::class) @Composable fun MyCustomUi()</ID>
+    <ID>LongMethod:MessagesActivity.kt$MessagesActivity$@Composable fun MyCustomUi()</ID>
     <ID>MagicNumber:ChannelsActivity.kt$ChannelsActivity$0.5f</ID>
     <ID>MagicNumber:MessagesActivity.kt$MessagesActivity$7f</ID>
     <ID>MaxLineLength:MessagesActivity.kt$MessagesActivity$lazyListState = if (listViewModel.currentMessagesState.parentMessageId != null) rememberLazyListState() else lazyListState</ID>
