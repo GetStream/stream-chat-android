@@ -227,7 +227,7 @@ internal class DatabaseChannelRepository(
     private suspend fun Channel.parseEntity(): ChannelEntity {
         val dbChannel = channelDao.select(this.cid)
 
-        return if (dbChannel?.lastMessageAt?.after(this.lastMessageAt) == true) {
+        return if (dbChannel?.lastMessageAt?.after(this.createdAt) == true) {
             this.lastMessageAt = dbChannel.lastMessageAt
             this.toEntity(dbChannel.lastMessageId, dbChannel.lastMessageAt)
         } else {
