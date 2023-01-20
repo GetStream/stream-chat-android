@@ -29,10 +29,10 @@ internal class DatabaseChannelRepositoryTest {
         val type = randomString()
 
         val dbLastMessageId = randomString()
-        //Old last message
+        // Old last message
         val dbLastMessageAt = Date(0)
 
-        //New last message
+        // New last message
         val backendMessage = randomMessage(createdAt = Date())
 
         val backendChannel =
@@ -54,10 +54,10 @@ internal class DatabaseChannelRepositoryTest {
         val type = randomString()
 
         val dbLastMessageId = randomString()
-        //New last message
+        // New last message
         val dbLastMessageAt = Date()
 
-        //Old last message
+        // Old last message
         val backendMessage = randomMessage(createdAt = Date(0))
 
         val backendChannel =
@@ -65,7 +65,6 @@ internal class DatabaseChannelRepositoryTest {
         val dbChannel = randomChannel(id = id, type = type)
 
         whenever(channelDao.select(dbChannel.cid)) doReturn dbChannel.toEntity(dbLastMessageId, dbLastMessageAt)
-
 
         channelRepository.upsertChannel(backendChannel)
 
@@ -80,10 +79,10 @@ internal class DatabaseChannelRepositoryTest {
         val type = randomString()
 
         val dbLastMessageId = randomString()
-        //New last message
+        // New last message
         val dbLastMessageAt = Date()
 
-        //Null createdAt last message
+        // Null createdAt last message
         val backendMessage = randomMessage(createdAt = null)
 
         val backendChannel =
