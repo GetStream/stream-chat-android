@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  *
  * @param cid The channel id in the format messaging:123.
  * @param messageId The id of the target message to displayed.
+ * @param messageLimit The message limit when loading a new page.
  *
  * @see MessageListViewModel
  * @see MessageListHeaderViewModel
@@ -37,12 +38,19 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 public class MessageListViewModelFactory @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
+    private val messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGES_LIMIT,
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid) },
         MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
-        MessageListViewModel::class.java to { MessageListViewModel(cid, messageId) },
+        MessageListViewModel::class.java to {
+            MessageListViewModel(
+                cid = cid,
+                messageId = messageId,
+                messageLimit = messageLimit
+            )
+        },
         MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid)) },
     )
 
@@ -58,6 +66,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     public class Builder @SinceKotlin("99999.9") constructor() {
         private var cid: String? = null
         private var messageId: String? = null
+        private var messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGES_LIMIT
 
         /**
          * Sets the channel id in the format messaging:123.
@@ -74,12 +83,20 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         }
 
         /**
+         * Sets the number of messages that are loaded when loading a new page.
+         */
+        public fun messageLimit(messageLimit: Int): Builder = apply {
+            this.messageLimit = messageLimit
+        }
+
+        /**
          * Builds [MessageListViewModelFactory] instance.
          */
         public fun build(): ViewModelProvider.Factory {
             return MessageListViewModelFactory(
                 cid = cid ?: error("Channel cid should not be null"),
-                messageId = messageId
+                messageId = messageId,
+                messageLimit = messageLimit
             )
         }
     }
