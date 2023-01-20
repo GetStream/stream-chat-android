@@ -66,8 +66,6 @@ public interface ChannelRepository {
      * Select channels by full channel IDs [Channel.cid]
      *
      * @param channelCIDs A list of [Channel.cid] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
      *
      * @return A list of channels found in repository.
      */
@@ -81,15 +79,6 @@ public interface ChannelRepository {
      * @return A channel found in repository.
      */
     public suspend fun selectChannelByCid(cid: String): Channel?
-
-    /**
-     * Select channels by full channel IDs [Channel.cid]
-     *
-     * @param cids A list of [Channel.cid] as query specification.
-     *
-     * @return A list of channels found in repository.
-     */
-    public suspend fun selectChannelsByCids(cids: List<String>): List<Channel>
 
     /**
      * Read which channel cids need sync.

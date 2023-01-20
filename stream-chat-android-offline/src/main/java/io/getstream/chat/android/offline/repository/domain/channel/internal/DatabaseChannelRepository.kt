@@ -94,8 +94,6 @@ internal class DatabaseChannelRepository(
      * Select channels by full channel IDs [Channel.cid]
      *
      * @param channelCIDs A list of [Channel.cid] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
      *
      * @return A list of channels found in repository.
      */
@@ -108,13 +106,6 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun selectChannelByCid(cid: String): Channel? {
         return channelDao.select(cid = cid)?.toModel(getUser, getMessage)
-    }
-
-    /**
-     * Reads list of channels using specified [cids].
-     */
-    override suspend fun selectChannelsByCids(cids: List<String>): List<Channel> {
-        return channelDao.select(cids = cids).map { it.toModel(getUser, getMessage) }
     }
 
     /**
