@@ -85,6 +85,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -114,6 +115,9 @@ import java.util.concurrent.TimeUnit
  * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageId The ID of the message which we wish to focus on, if such exists.
+ * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
+ * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
+ * navigate to the channel containing the thread but will not navigate to the thread itself.
  */
 @Suppress("TooManyFunctions", "LargeClass", "TooManyFunctions")
 public class MessageListViewModel(
@@ -127,7 +131,8 @@ public class MessageListViewModel(
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
-    messageId: String? = null,
+    private val messageId: String? = null,
+    private val navigateToThreadViaNotification: Boolean = false,
 ) : ViewModel() {
 
     /**
@@ -146,6 +151,7 @@ public class MessageListViewModel(
      * e.g. send messages, delete messages, etc...
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val ownCapabilities: StateFlow<Set<String>> =
         channelState.filterNotNull()
             .flatMapLatest { it.channelData }
@@ -350,11 +356,13 @@ public class MessageListViewModel(
     /**
      * Starts observing the list of typing users.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeTypingUsers() {
         viewModelScope.launch {
-            channelState.filterNotNull().flatMapLatest { it.typing }.collect {
-                typingUsers = it.users
-            }
+            channelState.filterNotNull()
+                .flatMapLatest { it.typing }.collect {
+                    typingUsers = it.users
+                }
         }
     }
 
@@ -362,23 +370,25 @@ public class MessageListViewModel(
      * Starts observing the current [Channel] created from [ChannelState]. It emits new data when either
      * channel data, member count or online member count updates.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeChannel() {
         viewModelScope.launch {
-            channelState.filterNotNull().flatMapLatest { state ->
-                combine(
-                    state.channelData,
-                    state.membersCount,
-                    state.watcherCount,
-                ) { _, _, _ ->
-                    state.toChannel()
+            channelState.filterNotNull()
+                .flatMapLatest { state ->
+                    combine(
+                        state.channelData,
+                        state.membersCount,
+                        state.watcherCount,
+                    ) { _, _, _ ->
+                        state.toChannel()
+                    }
+                }.collect { channel ->
+                    chatClient.notifications.dismissChannelNotifications(
+                        channelType = channel.type,
+                        channelId = channel.id
+                    )
+                    setCurrentChannel(channel)
                 }
-            }.collect { channel ->
-                chatClient.notifications.dismissChannelNotifications(
-                    channelType = channel.type,
-                    channelId = channel.id
-                )
-                setCurrentChannel(channel)
-            }
         }
     }
 
@@ -1253,7 +1263,7 @@ public class MessageListViewModel(
 
             // The channel will be automatically loaded given so we only need to
             // account for opening threads when thread messages arrive via PNs
-            if (result.isSuccess && parentMessageId != null) {
+            if (result.isSuccess && parentMessageId != null && navigateToThreadViaNotification) {
                 openThreadFromPushNotification(parentMessageId)
             } else if (result.isError) {
                 val error = result.error()

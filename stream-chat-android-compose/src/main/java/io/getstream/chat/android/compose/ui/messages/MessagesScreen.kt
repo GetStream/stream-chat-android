@@ -108,6 +108,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * back button.
  * @param onHeaderActionClick Handler for when the user taps on the header action.
  * @param messageId The ID of the message which we wish to focus on, if such exists.
+ * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
+ * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
+ * navigate to the channel containing the thread but will not navigate to the thread itself.
  */
 @Suppress("LongMethod")
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -124,6 +127,7 @@ public fun MessagesScreen(
     onBackPressed: () -> Unit = {},
     onHeaderActionClick: (channel: Channel) -> Unit = {},
     messageId: String? = null,
+    navigateToThreadViaNotification: Boolean = false,
 ) {
     val factory = buildViewModelFactory(
         context = LocalContext.current,
@@ -134,7 +138,8 @@ public fun MessagesScreen(
         showDateSeparators = showDateSeparators,
         deletedMessageVisibility = deletedMessageVisibility,
         messageFooterVisibility = messageFooterVisibility,
-        messageId = messageId
+        messageId = messageId,
+        navigateToThreadViaNotification = navigateToThreadViaNotification,
     )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -142,7 +147,12 @@ public fun MessagesScreen(
     val attachmentsPickerViewModel =
         viewModel(AttachmentsPickerViewModel::class.java, factory = factory)
 
-    // TODO make composer ViewModel follow list ViewModel's thread state when it changes internally
+    val messageMode = listViewModel.messageMode
+
+    if (messageMode is MessageMode.MessageThread) {
+        composerViewModel.setMessageMode(messageMode)
+    }
+
     val backAction = {
         val isInThread = listViewModel.isInThread
         val isShowingOverlay = listViewModel.isShowingOverlay
@@ -166,7 +176,6 @@ public fun MessagesScreen(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (showHeader) {
-                    val messageMode = listViewModel.messageMode
                     val connectionState by listViewModel.connectionState.collectAsState()
                     val user by listViewModel.user.collectAsState()
 
@@ -573,6 +582,9 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  * @param messageId The ID of the message which we wish to focus on, if such exists.
+ * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
+ * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
+ * navigate to the channel containing the thread but will not navigate to the thread itself.
  */
 @ExperimentalCoroutinesApi
 @Suppress("LongParameterList")
@@ -586,6 +598,7 @@ private fun buildViewModelFactory(
     deletedMessageVisibility: DeletedMessageVisibility,
     messageFooterVisibility: MessageFooterVisibility,
     messageId: String? = null,
+    navigateToThreadViaNotification: Boolean = false,
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
@@ -596,6 +609,7 @@ private fun buildViewModelFactory(
         showSystemMessages = showSystemMessages,
         deletedMessageVisibility = deletedMessageVisibility,
         messageFooterVisibility = messageFooterVisibility,
-        messageId = messageId
+        messageId = messageId,
+        navigateToThreadViaNotification = navigateToThreadViaNotification,
     )
 }

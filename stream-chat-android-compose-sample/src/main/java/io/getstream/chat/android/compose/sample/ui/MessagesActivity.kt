@@ -100,7 +100,8 @@ class MessagesActivity : BaseConnectedActivity() {
                     channelId = channelId,
                     onBackPressed = { finish() },
                     onHeaderActionClick = {},
-                    messageId = messageId
+                    messageId = messageId,
+                    navigateToThreadViaNotification = true
                 )
 
                 // MyCustomUi()
