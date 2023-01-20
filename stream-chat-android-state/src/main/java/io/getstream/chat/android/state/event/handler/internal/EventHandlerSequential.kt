@@ -594,7 +594,6 @@ internal class EventHandlerSequential(
                 is MessageDeletedEvent -> {
                     if (event.hardDelete) {
                         repos.deleteChannelMessage(event.message)
-                        repos.evictChannel(event.cid)
                     }
                 }
                 else -> Unit // Ignore other events
