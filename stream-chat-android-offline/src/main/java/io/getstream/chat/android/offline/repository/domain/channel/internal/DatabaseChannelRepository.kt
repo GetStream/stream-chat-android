@@ -59,7 +59,7 @@ internal class DatabaseChannelRepository(
     override suspend fun upsertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
         val entities = channels.map { channel -> channel.parseEntity() }
-        logger.v { "[insertChannels] entities.size: ${entities.size}" }
+        logger.v { "[upsertChannels] entities.size: ${entities.size}" }
         channelDao.insertMany(entities)
     }
 
