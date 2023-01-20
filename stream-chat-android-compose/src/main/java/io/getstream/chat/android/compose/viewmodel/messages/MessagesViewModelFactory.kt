@@ -65,7 +65,7 @@ public class MessagesViewModelFactory(
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold),
     private val messageId: String? = null,
-    navigateToThreadViaNotification: Boolean = false,
+    private val navigateToThreadViaNotification: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     /**
