@@ -47,7 +47,7 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun upsertChannel(channel: Channel) {
         val entity = channel.parseEntity()
-        logger.v { "[insertChannel] entity: ${entity.lastMessageInfo()}" }
+        logger.v { "[upsertChannel] entity: ${entity.lastMessageInfo()}" }
         channelDao.insert(entity)
     }
 
