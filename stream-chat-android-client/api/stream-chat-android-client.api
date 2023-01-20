@@ -2052,7 +2052,6 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun selectChannelCidsBySyncNeeded (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectChannelWithoutMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectChannels (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun selectChannelsByCids (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectChannelsSyncNeeded (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectMembersForChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun setChannelDeletedAt (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
