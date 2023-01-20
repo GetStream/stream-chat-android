@@ -2143,7 +2143,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun createRepositoryFactory (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
 }
 
-public abstract interface class io/getstream/chat/android/client/plugin/Plugin : io/getstream/chat/android/client/plugin/listeners/ChannelMarkReadListener, io/getstream/chat/android/client/plugin/listeners/CreateChannelListener, io/getstream/chat/android/client/plugin/listeners/DeleteMessageListener, io/getstream/chat/android/client/plugin/listeners/DeleteReactionListener, io/getstream/chat/android/client/plugin/listeners/EditMessageListener, io/getstream/chat/android/client/plugin/listeners/HideChannelListener, io/getstream/chat/android/client/plugin/listeners/MarkAllReadListener, io/getstream/chat/android/client/plugin/listeners/QueryChannelListener, io/getstream/chat/android/client/plugin/listeners/QueryChannelsListener, io/getstream/chat/android/client/plugin/listeners/QueryMembersListener, io/getstream/chat/android/client/plugin/listeners/SendAttachmentListener, io/getstream/chat/android/client/plugin/listeners/SendGiphyListener, io/getstream/chat/android/client/plugin/listeners/SendMessageListener, io/getstream/chat/android/client/plugin/listeners/SendReactionListener, io/getstream/chat/android/client/plugin/listeners/ShuffleGiphyListener, io/getstream/chat/android/client/plugin/listeners/ThreadQueryListener, io/getstream/chat/android/client/plugin/listeners/TypingEventListener {
+public abstract interface class io/getstream/chat/android/client/plugin/Plugin : io/getstream/chat/android/client/plugin/listeners/ChannelMarkReadListener, io/getstream/chat/android/client/plugin/listeners/CreateChannelListener, io/getstream/chat/android/client/plugin/listeners/DeleteMessageListener, io/getstream/chat/android/client/plugin/listeners/DeleteReactionListener, io/getstream/chat/android/client/plugin/listeners/EditMessageListener, io/getstream/chat/android/client/plugin/listeners/GetMessageListener, io/getstream/chat/android/client/plugin/listeners/HideChannelListener, io/getstream/chat/android/client/plugin/listeners/MarkAllReadListener, io/getstream/chat/android/client/plugin/listeners/QueryChannelListener, io/getstream/chat/android/client/plugin/listeners/QueryChannelsListener, io/getstream/chat/android/client/plugin/listeners/QueryMembersListener, io/getstream/chat/android/client/plugin/listeners/SendAttachmentListener, io/getstream/chat/android/client/plugin/listeners/SendGiphyListener, io/getstream/chat/android/client/plugin/listeners/SendMessageListener, io/getstream/chat/android/client/plugin/listeners/SendReactionListener, io/getstream/chat/android/client/plugin/listeners/ShuffleGiphyListener, io/getstream/chat/android/client/plugin/listeners/ThreadQueryListener, io/getstream/chat/android/client/plugin/listeners/TypingEventListener {
 	public abstract fun getErrorHandler ()Lio/getstream/chat/android/client/errorhandler/ErrorHandler;
 	public abstract fun onAttachmentSendRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onChannelMarkReadPrecondition (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2153,6 +2153,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 	public abstract fun onDeleteReactionPrecondition (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/utils/Result;
 	public abstract fun onDeleteReactionRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onDeleteReactionResult (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onGetMessageResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesMorePrecondition (Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesMoreRequest (Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesMoreResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2197,6 +2198,7 @@ public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
 	public static fun onDeleteReactionPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/utils/Result;
 	public static fun onDeleteReactionRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onDeleteReactionResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGetMessageResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onGetRepliesMorePrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onGetRepliesMoreRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onGetRepliesMoreResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2259,6 +2261,10 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/EditMessageListener {
 	public abstract fun onMessageEditRequest (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMessageEditResult (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/client/plugin/listeners/GetMessageListener {
+	public abstract fun onGetMessageResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/HideChannelListener {
