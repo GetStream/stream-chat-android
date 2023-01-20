@@ -62,6 +62,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
 
 ### ⚠️ Changed
 
