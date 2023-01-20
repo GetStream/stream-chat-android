@@ -283,13 +283,13 @@ internal fun Channel.lastMessage(): Message? = messages.lastOrNull()
 
 The exceptions to the Entity classes is `QueryChannelsEntityRealm` and `QuerySorterInfoEntityRealm`. 
 
-`QueryChannelsEntityRealm` has the information about the filters used in the queries. The filters are can stored as graph where each node represents a filter that may or may not be composed by one or more filters. Example: The `And` filter is composed by many other filters and the `Equals` filter is composed by two values and an operation. We discuss in detail how to store this data in the next section. 
+`QueryChannelsEntityRealm` has the information about the filters used in the queries. The filters can stored as graph where each node represents a filter that may or may not be composed by one or more filters. Example: The `And` filter is composed by many other filters and the `Equals` filter is composed by two values and an operation. We discuss in detail how to store this data in the next section. 
 
-`QuerySorterInfoEntityRealm` [Write this section later.]
+`QuerySorterInfoEntityRealm` 
 
 ## Storing QueryChannelsEntityRealm
 
-To define the `QueryChannelsEntityRealm`, we define the filters as a string that will be parsed using moshi. Filters of search should not be a very complex graph will hundreds of node, so keeping the filter as string should not be a problem for most cases. It is advisable to review the filter logic, if the the filter become very big. `QueryChannelsEntityRealm` can be defined in the following way:
+To define the `QueryChannelsEntityRealm`, we define the filters as a String that will be parsed using moshi. Filters of search should not be a very complex graph will hundreds of node, so keeping the filter as string should not be a problem for most cases. It is advisable to review the filter logic, if the the filter become very big. `QueryChannelsEntityRealm` can be defined in the following way:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -463,6 +463,9 @@ As you can see. There are two types of nodes **Composite Nodes** and **Filter No
 
 Those can be created in a simple way:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```
 private fun createCompositeFilterNode(filterType: String, value: Any): FilterNode =
     FilterNode(filterType = filterType).apply {
@@ -476,11 +479,29 @@ private fun createFilterNode(filterType: String, field: String?, value: Any?): F
     }
 ```
 
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+
+</Tabs>
+
 Composite nodes won't have any field, but must always contain a value and Filter nodes may contain fields and values. 
 
 Now that defiened the function `FilterObject.toFilterNode` we already know how to convert any `FilterObject` into a composition of `FilterNodes`. Now we can serialize our nodes.
 
 ## Serializing FilterNode
+
+Using `Moshi`, you can create a JsonAdapter to be able to serialize the `FilterNode` to a `String`.
+
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```
 internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
@@ -558,4 +579,74 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
 
 ```
 
-We write ...
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+
+</Tabs>
+
+Each node should be created accondingly if it is a node made of **other nodes**, a composite node, a node with many values like `IN` and `NOT_INT` or a simple node like **EQUALS**. 
+
+
+## Deserializing FilterNode
+In the oposite way, it is possible to create a `FilterNode` from a `String`. 
+
+```
+override fun fromJson(reader: JsonReader): FilterNode {
+    reader.beginObject()
+    reader.skipName()
+
+    val type = reader.nextString()
+
+    reader.skipName()
+    val node = when {
+        (isCompositeNode(type)) -> readCompositeNode(reader, type)
+
+        isMultipleValueNode(type) -> readMultipleNode(reader, type)
+
+        else -> readSimpleNode(reader, type)
+    }
+
+    reader.endObject()
+    return node
+}
+
+val nodeList: Set<FilterNode> = reader.readArray { this.fromJson(reader) }
+    return FilterNode(filterType = type, field = null, value = nodeList)
+}
+
+private fun readMultipleNode(reader: JsonReader, type: String): FilterNode {
+    val field = reader.nextString()
+    reader.skipName()
+    val values = reader.readArray(reader::nextString)
+
+    return FilterNode(filterType = type, field = field, value = values)
+}
+
+private fun readSimpleNode(reader: JsonReader, type: String): FilterNode {
+    val field = reader.nextString()
+    var value: Any? = null
+    if (reader.hasNext()) {
+        reader.skipName()
+
+        value = when (reader.peek()) {
+            JsonReader.Token.STRING -> reader.nextString()
+            JsonReader.Token.NUMBER -> reader.nextDouble()
+            JsonReader.Token.BOOLEAN -> reader.nextBoolean()
+            JsonReader.Token.NULL -> reader.nextNull()
+            else -> null
+        }
+    }
+
+    return FilterNode(filterType = type, field = field, value = value)
+}
+
+```
+
+This follows the same approach of the write, but in a reverse order. 
