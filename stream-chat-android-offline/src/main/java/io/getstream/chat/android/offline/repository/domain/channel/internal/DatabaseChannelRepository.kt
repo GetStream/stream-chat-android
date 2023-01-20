@@ -222,8 +222,8 @@ internal class DatabaseChannelRepository(
             this.lastMessageAt = dbChannel.lastMessageAt
             this.toEntity(dbChannel.lastMessageId, dbChannel.lastMessageAt)
         } else {
-            val lasMessage = this.lastMessage
-            this.toEntity(lasMessage?.id, lasMessage?.createdAt ?: lasMessage?.createdLocallyAt)
+            val lastMessage = this.lastMessage
+            this.toEntity(lastMessage?.id, lastMessage?.createdAt ?: lastMessage?.createdLocallyAt)
         }
     }
 
