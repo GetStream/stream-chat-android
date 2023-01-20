@@ -285,7 +285,101 @@ The exceptions to the Entity classes is `QueryChannelsEntityRealm` and `QuerySor
 
 `QueryChannelsEntityRealm` has the information about the filters used in the queries. The filters can stored as graph where each node represents a filter that may or may not be composed by one or more filters. Example: The `And` filter is composed by many other filters and the `Equals` filter is composed by two values and an operation. We discuss in detail how to store this data in the next section. 
 
-`QuerySorterInfoEntityRealm` 
+`QuerySorterInfoEntityRealm` has the information about how the query was sorted. We can transform the classes primary values to make it easier to save the information about this class. 
+
+## Storing QuerySorterInfoEntityRealm
+
+First we create the base of the class to be kept inside Realm database:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```
+internal class QuerySorterInfoEntityRealm : RealmObject {
+    var query_specs: RealmList<SortSpecificationEntityRealm> = realmListOf()
+
+    @PrimaryKey
+    var id: Int = query_specs.hashCode()
+
+    override fun toString(): String {
+        return "[QuerySorterInfoEntityRealm] id: $id " +
+            "${query_specs.joinToString { "name: ${it.sort_attribute_name} direction: ${it.sort_direction}" }}}"
+    }
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+
+</Tabs>
+
+And the functions to parse it to entity and to the domain values.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+
+```
+
+@Suppress("VariableNaming")
+internal class SortSpecificationEntityRealm : RealmObject {
+    var sort_attribute_name: String = ""
+    var sort_direction: Int = 0
+}
+
+internal fun <T : ComparableFieldProvider> QuerySorterInfoEntityRealm.toDomain(): QuerySorter<T> {
+    return QuerySortParser<T>().fromSpecifications(this.query_specs.map { it.toDomain() })
+}
+
+internal fun <T : ComparableFieldProvider> QuerySorter<T>.toRealm(): QuerySorterInfoEntityRealm {
+    val thisQuerySorter = this
+
+    return QuerySorterInfoEntityRealm().apply {
+        query_specs = thisQuerySorter.sortSpecifications
+            .map { spec -> spec.toRealm() }
+            .toRealmList()
+
+        id = query_specs.hashCode()
+    }
+}
+
+internal fun <T> SortSpecificationEntityRealm.toDomain(): SortSpecification<T> {
+    return SortSpecification(
+        sortAttribute = SortAttribute.FieldNameSortAttribute(this.sort_attribute_name),
+        sortDirection = SortDirection.fromNumber(sort_direction),
+    )
+}
+
+private fun SortSpecification<*>.toRealm(): SortSpecificationEntityRealm {
+    val thisSortSpec = this
+
+    return SortSpecificationEntityRealm().apply {
+        sort_attribute_name = thisSortSpec.sortAttribute.name
+        sort_direction = thisSortSpec.sortDirection.value
+    }
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```
+// Todo!
+```
+
+</TabItem>
+
+</Tabs>
+
+We store only the basic information about the sorting and allow the SDK to convert between entity and model classes. The SDK provides some methods to make it easiert, like `SortDirection.fromNumber(int)`.
 
 ## Storing QueryChannelsEntityRealm
 
@@ -650,3 +744,6 @@ private fun readSimpleNode(reader: JsonReader, type: String): FilterNode {
 ```
 
 This follows the same approach of the write, but in a reverse order. 
+
+## Conclusion
+Implementing correctly all the repositories, it will be possible to change the database to Realm. Following this same approach, it is possible to change to any type of database.
