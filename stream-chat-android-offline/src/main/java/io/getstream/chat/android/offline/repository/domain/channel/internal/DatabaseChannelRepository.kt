@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.channel.lastMessageInfo
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
+import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import java.util.Date
 
@@ -46,7 +47,7 @@ internal class DatabaseChannelRepository(
      * @param channel [Channel]
      */
     override suspend fun upsertChannel(channel: Channel) {
-        val entity = channel.parseEntity()
+        val entity = channel.convertToEntity()
         logger.v { "[upsertChannel] entity: ${entity.lastMessageInfo()}" }
         channelDao.insert(entity)
     }
@@ -58,7 +59,7 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun upsertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
-        val entities = channels.map { channel -> channel.parseEntity() }
+        val entities = channels.map { channel -> channel.convertToEntity() }
         logger.v { "[upsertChannels] entities.size: ${entities.size}" }
         channelDao.insertMany(entities)
     }
@@ -215,13 +216,19 @@ internal class DatabaseChannelRepository(
         }
     }
 
-    private suspend fun Channel.parseEntity(): ChannelEntity {
+    private suspend fun Channel.convertToEntity(): ChannelEntity {
         val dbChannel = channelDao.select(this.cid)
 
-        return if (dbChannel?.lastMessageAt?.after(this.lastMessageAt) == true) {
+        return if (dbChannel?.lastMessageAt?.after(this.lastMessage?.createdAt ?: Date(Long.MIN_VALUE)) == true) {
+            StreamLog.d("LastMessageDebug") {
+                "Keeping last message at. dbChannel?.lastMessageAt: ${dbChannel.lastMessageAt}. backend lastMessageAt: $lastMessageAt"
+            }
             this.lastMessageAt = dbChannel.lastMessageAt
             this.toEntity(dbChannel.lastMessageId, dbChannel.lastMessageAt)
         } else {
+            StreamLog.d("LastMessageDebug") {
+                "Updating last message at. dbChannel?.lastMessageAt: ${dbChannel?.lastMessageAt}. backend lastMessageAt: $lastMessageAt"
+            }
             val lastMessage = this.lastMessage
             this.toEntity(lastMessage?.id, lastMessage?.createdAt ?: lastMessage?.createdLocallyAt)
         }
