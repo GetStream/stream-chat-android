@@ -106,7 +106,7 @@ internal class DatabaseChannelRepositoryTest {
         val backendMessage = randomMessage(createdAt = null)
 
         val backendChannel =
-            randomChannel(id = id, type = type, messages = listOf(backendMessage))
+            randomChannel(id = id, type = type, messages = listOf(backendMessage), lastMessageAt = null)
         val dbChannel = randomChannel(id = id, type = type)
 
         whenever(channelDao.select(dbChannel.cid)) doReturn dbChannel.toEntity(dbLastMessageId, dbLastMessageAt)
