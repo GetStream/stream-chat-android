@@ -150,9 +150,9 @@ public object ChatUI {
     public var currentUserProvider: CurrentUserProvider = CurrentUserProvider.defaultCurrentUserProvider()
 
     /**
-     * Configures if we show a date separator when threads are empty or not. Adds the
+     * Configures if we show a thread separator when threads are empty or not. Adds the
      * separator item when value is `true`.
      */
     @JvmStatic
-    public var showDateSeparatorInEmptyThread: Boolean = false
+    public var showThreadSeparatorInEmptyThread: Boolean = false
 }

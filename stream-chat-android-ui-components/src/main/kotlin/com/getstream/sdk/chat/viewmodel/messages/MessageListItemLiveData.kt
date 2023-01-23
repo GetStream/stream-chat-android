@@ -311,13 +311,13 @@ internal class MessageListItemLiveData(
             previousMessage = message
         }
 
-        // thread placeholder and a date separator (if enabled) when a message has zero replies
+        // thread placeholder and a thread separator (if enabled) when a message has zero replies
         if (isThread && items.size == 1) {
-            if (ChatUI.showDateSeparatorInEmptyThread) {
+            if (ChatUI.showThreadSeparatorInEmptyThread) {
                 val message = messages?.firstOrNull()
 
                 if (message != null) {
-                    items.add(MessageListItem.DateSeparatorItem(message.getCreatedAtOrThrow()))
+                    items.add(MessageListItem.ThreadSeparatorItem(message.getCreatedAtOrThrow(), 0))
                 }
             }
             items.add(MessageListItem.ThreadPlaceholderItem)
