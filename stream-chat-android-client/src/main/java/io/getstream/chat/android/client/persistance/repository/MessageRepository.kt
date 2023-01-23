@@ -50,6 +50,8 @@ public interface MessageRepository {
         limit: Int,
     ): List<Message>
 
+    public suspend fun selectRepliedMessage(messageId: String): Message?
+
     /**
      * Selects messages by IDs.
      *
