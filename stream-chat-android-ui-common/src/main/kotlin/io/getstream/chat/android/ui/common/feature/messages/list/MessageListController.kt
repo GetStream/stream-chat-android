@@ -501,7 +501,7 @@ public class MessageListController(
      * @param endOfOlderMessages State flow which signals when end of older messages is reached.
      * @param reads State flow source of read states.
      */
-    @Suppress("MagicNumber")
+    @Suppress("MagicNumber", "LongMethod")
     private fun observeThreadMessagesState(
         threadId: String,
         messages: StateFlow<List<Message>>,
@@ -861,10 +861,10 @@ public class MessageListController(
      *  Changes the current [_mode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
      *  directly. The data is observed by using [ThreadState].
      *
-     *  The difference between [enterThreadMode] and [enterThreadSequential] is that the latter makes a call to a [ChatClient]
-     *  extension function which will return a [ThreadState] instance only once the API call had finished, while the
-     *  former calls a different function which returns  a [ThreadState] instance immediately after the API request has
-     *  fired, regardless of its completion state.
+     *  The difference between [enterThreadMode] and [enterThreadSequential] is that the latter makes a call to a
+     *  [ChatClient] extension function which will return a [ThreadState] instance only once the API call had finished,
+     *  while the former calls a different function which returns  a [ThreadState] instance immediately after the API
+     *  request has fired, regardless of its completion state.
      *
      * @param parentMessage The message with the thread we want to observe.
      */
