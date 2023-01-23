@@ -9,7 +9,7 @@ To show how to substitute Room for another ORM we elaborated a tutorial showing 
 
 ## Using a custom RepositoryFactoryProvider
 
-`ChatClient.Builder` allows the user to substitute the `Repository` classes in the SDK. These classes are used by the entire SDK to access data from the database, so by changing then you will be able to use the database of your preference. You can call a `withRepositoryFactoryProvider` with a custom implementation of `RepositoryFactory.Provider`. This is a functional interface that only provides 
+`ChatClient.Builder` allows the user to substitute the `Repository` classes in the SDK. These classes are used by the entire SDK to access data from the database, so by changing then you will be able to use the database of your preference. You can call a `ChatClient.Builder.withRepositoryFactoryProvider` with a custom implementation of `RepositoryFactory.Provider`. This is a functional interface that only provides 
 [RepositoryFactory](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory.kt):
 
 <Tabs>
@@ -43,7 +43,7 @@ public fun configureRealm(): Realm =
 We will cover realmSchema() later in this documentation.
 ::: 
 
-`RepositoryFactory` in the access point for all the `Repositories` of the SDK, so they must be provided by this interface:
+`RepositoryFactory` is the access point for all the `Repositories` of the SDK, so they must be provided by this interface:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -147,7 +147,7 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
 
 This is the key of changing the database in the Stream Android SDK. All you need to do is implement the `Repository` interfaces handling the database of choice.
 
-As you can, see in order to Realm understand how to save your data, you must create a scheme. So the model classes you the SDK logic must be represented as `Entity` classes. Those are: 
+As you can see, in order to Realm understand how to save your data, you must create a `Scheme`. The model classes of the SDK must be represented as `Entity` classes. Those are: 
 
 - AttachmentEntity
 - ChannelEntity
@@ -167,7 +167,7 @@ As you can, see in order to Realm understand how to save your data, you must cre
 - UserEntity
 
 
-Most of the entities creation is trivial and based in the model class. All is needed is to create the class and functions to convert Entity to Model and Model to Entity. Like the following example: 
+Most of the entities are trivial and based in the model class. All is needed is to create the class and functions to convert Entity to Model and Model to Entity. Like the following example: 
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -277,9 +277,9 @@ internal fun Channel.lastMessage(): Message? = messages.lastOrNull()
 
 </Tabs>
 
-The exceptions to the Entity classes is `QueryChannelsEntityRealm` and `QuerySorterInfoEntityRealm`. 
+The exceptions to the Entity classes are `QueryChannelsEntityRealm` and `QuerySorterInfoEntityRealm`. 
 
-`QueryChannelsEntityRealm` has the information about the filters used in the queries. The filters can stored as graph where each node represents a filter that may or may not be composed by one or more filters. Example: The `And` filter is composed by many other filters and the `Equals` filter is composed by two values and an operation. We discuss in detail how to store this data in the next section. 
+`QueryChannelsEntityRealm` has the information about the filters used in the queries. The filters can stored as graph where each node represents a filter that may or may not be composed by one or more filters. Example: The `And` filter is composed by many other filters and the `Equals` filter is composed by two values and an operation. We discuss in detail how to store this data in a later section. 
 
 `QuerySorterInfoEntityRealm` has the information about how the query was sorted. We can transform the classes primary values to make it easier to save the information about this class. 
 
@@ -379,7 +379,7 @@ We store only the basic information about the sorting and allow the SDK to conve
 
 ## Storing QueryChannelsEntityRealm
 
-To define the `QueryChannelsEntityRealm`, we define filters as a String that will be parsed using `Moshi`. Filters of search should not be a very complex graph will hundreds of node, so keeping the filter as string should not be a problem for most cases. It is advisable to review the filter logic, if the the filter become very big. `QueryChannelsEntityRealm` can be defined in the following way:
+To define the `QueryChannelsEntityRealm`, we define filters as a String to be parsed using `Moshi`. Filters of search should not be a very complex graph will hundreds of nodes, so keeping the filter as String should not be a problem for most cases. It is advisable to review the filter logic, if the the filter becomes big. `QueryChannelsEntityRealm` can be defined in the following way:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
