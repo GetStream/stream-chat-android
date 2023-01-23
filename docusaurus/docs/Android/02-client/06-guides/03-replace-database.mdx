@@ -3,17 +3,13 @@ import TabItem from '@theme/TabItem';
 
 # Replace Database
 
-The offline support module uses Room as the ORM to handle persistence in the Stream Chat SDK, but it is possible to use a custom 
-persistence library by injecting custom Repositories in the SDK. 
+The offline support module uses Room as the ORM to handle persistence in the Stream Chat SDK, but it is possible to use a custom persistence library by injecting custom Repositories in the SDK. 
 
-To show how to substitute Room to another ORM we elaborated a tutorial showing how to use Realm with Stream's SDK. With some modifications
-in the code of this tutorial, you will able to use any other database.
+To show how to substitute Room for another ORM we elaborated a tutorial showing how to use Realm with Stream's SDK. With some modifications in the code of this tutorial, you will able to use any other database.
 
 ## Using a custom RepositoryFactoryProvider
 
-`ChatClient.Builder` allows the user to substitute the Repositories classes in the SDK. These classes are used by the entire 
-SDK to access data from the database, so by changing then you will be able to use the database of your preference. You can call a 
-`withRepositoryFactoryProvider`  with a custom implementation of `RepositoryFactory.Provider`. This is a functional interface that only provides 
+`ChatClient.Builder` allows the user to substitute the `Repository` classes in the SDK. These classes are used by the entire SDK to access data from the database, so by changing then you will be able to use the database of your preference. You can call a `withRepositoryFactoryProvider` with a custom implementation of `RepositoryFactory.Provider`. This is a functional interface that only provides 
 [RepositoryFactory](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory.kt):
 
 <Tabs>
