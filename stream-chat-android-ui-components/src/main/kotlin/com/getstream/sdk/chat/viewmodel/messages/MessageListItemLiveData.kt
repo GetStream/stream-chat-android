@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
+import io.getstream.chat.android.ui.ChatUI
 
 /**
  * It's common for messaging UIs to interleave and group messages
@@ -310,8 +311,15 @@ internal class MessageListItemLiveData(
             previousMessage = message
         }
 
-        // thread placeholder when a message has zero replies
+        // thread placeholder and a thread separator (if enabled) when a message has zero replies
         if (isThread && items.size == 1) {
+            if (ChatUI.showThreadSeparatorInEmptyThread) {
+                val message = messages?.firstOrNull()
+
+                if (message != null) {
+                    items.add(MessageListItem.ThreadSeparatorItem(message.getCreatedAtOrThrow(), 0))
+                }
+            }
             items.add(MessageListItem.ThreadPlaceholderItem)
         }
 
