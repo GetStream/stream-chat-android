@@ -46,7 +46,7 @@ import java.util.Date
 @Suppress("TooManyFunctions")
 internal class MessagingStyleNotificationHandler(
     private val context: Context,
-    private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
+    private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
     private val userIconBuilder: UserIconBuilder,
     private val permissionHandler: NotificationPermissionHandler?
@@ -83,7 +83,7 @@ internal class MessagingStyleNotificationHandler(
         val contentPendingIntent = PendingIntent.getActivity(
             context,
             notificationId,
-            newMessageIntent(message.id, channel.type, channel.id),
+            newMessageIntent(message, channel),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         ChatClient.instance().launch {

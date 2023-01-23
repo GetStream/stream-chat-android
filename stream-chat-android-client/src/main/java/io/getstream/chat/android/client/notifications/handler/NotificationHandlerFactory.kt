@@ -27,6 +27,8 @@ import androidx.core.graphics.drawable.IconCompat
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.notifications.permissions.DefaultNotificationPermissionHandler
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import kotlin.reflect.full.primaryConstructor
 
 /**
@@ -50,7 +52,7 @@ public object NotificationHandlerFactory {
     @JvmStatic
     public fun createNotificationHandler(
         context: Context,
-        newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null,
+        newMessageIntent: ((message: Message, channel: Channel) -> Intent)? = null,
         notificationChannel: (() -> NotificationChannel)? = null,
         userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
         permissionHandler: NotificationPermissionHandler? = provideDefaultNotificationPermissionHandler(context),
@@ -73,8 +75,8 @@ public object NotificationHandlerFactory {
 
     private fun getDefaultNewMessageIntentFun(
         context: Context,
-    ): (messageId: String, channelType: String, channelId: String) -> Intent {
-        return { _, _, _ -> createDefaultNewMessageIntent(context) }
+    ): (message: Message, channel: Channel) -> Intent {
+        return { _, _ -> createDefaultNewMessageIntent(context) }
     }
 
     private fun createDefaultNewMessageIntent(context: Context): Intent =
