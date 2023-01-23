@@ -9,9 +9,9 @@ import androidx.room.Update
 @Dao
 internal interface ReplyMessageDao {
 
-    @Query("SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME WHERE id = :id")
+    @Query("SELECT * FROM $REPLY_MESSAGE_ENTITY_TABLE_NAME WHERE id = :id")
     @Transaction
-    fun selectById(id: String): ReplyMessageEntity
+    fun selectById(id: String): ReplyMessageEntity?
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun insert(replyMessageEntity: ReplyMessageEntity)

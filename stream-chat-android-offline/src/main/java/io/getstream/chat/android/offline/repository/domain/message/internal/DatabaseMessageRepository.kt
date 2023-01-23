@@ -63,8 +63,8 @@ internal class DatabaseMessageRepository(
             .filterReactions()
     }
 
-    override suspend fun selectRepliedMessage(messageId: String): Message {
-        return replyMessageDao.selectById(messageId).toModel(getUser)
+    override suspend fun selectRepliedMessage(messageId: String): Message? {
+        return replyMessageDao.selectById(messageId)?.toModel(getUser)
     }
 
     /**
@@ -92,7 +92,7 @@ internal class DatabaseMessageRepository(
      * @param messageId String.
      */
     override suspend fun selectMessage(messageId: String): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)
+        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectRepliedMessage)
             ?.filterReactions()
             ?.also { messageCache.put(it.id, it) }
     }
@@ -171,7 +171,7 @@ internal class DatabaseMessageRepository(
      * @param syncStatus [SyncStatus]
      */
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
-        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectMessage) }
+        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectRepliedMessage) }
     }
 
     override suspend fun clear() {
@@ -215,7 +215,7 @@ internal class DatabaseMessageRepository(
     private suspend fun fetchMessages(messageIds: List<String>): List<Message> {
         return messageDao.select(messageIds)
             .map { entity ->
-                entity.toModel(getUser, ::selectMessage).filterReactions().also { messageCache.put(it.id, it) }
+                entity.toModel(getUser, ::selectRepliedMessage).filterReactions().also { messageCache.put(it.id, it) }
             }
     }
 

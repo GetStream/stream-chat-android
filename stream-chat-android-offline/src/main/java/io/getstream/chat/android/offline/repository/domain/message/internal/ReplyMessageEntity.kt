@@ -62,8 +62,6 @@ internal data class ReplyMessageEntity(
     val silent: Boolean = false,
     /** all the custom data provided for this message */
     val extraData: Map<String, Any> = emptyMap(),
-    /** the ID of the quoted message **/
-    val replyToId: String?,
     /** whether message is pinned or not **/
     val pinned: Boolean,
     /** date when the message got pinned **/
