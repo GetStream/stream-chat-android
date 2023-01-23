@@ -43,7 +43,9 @@ import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.cancelEphemeralMessage
+import io.getstream.chat.android.state.extensions.getMessageUsingCache
 import io.getstream.chat.android.state.extensions.getRepliesAsState
+import io.getstream.chat.android.state.extensions.getRepliesAsStateCall
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.loadMessageById
 import io.getstream.chat.android.state.extensions.loadNewerMessages
@@ -360,9 +362,31 @@ public class MessageListController(
 
         messageId?.takeUnless { it.isBlank() }?.let { messageId ->
             scope.launch {
-                _messageListState
-                    .onCompletion { scrollToMessage(messageId) }
-                    .first { it.messageItems.isNotEmpty() }
+                // we need to fetch the message and check if it is a channel or a thread message
+                val result = chatClient.getMessageUsingCache(messageId).await()
+
+                if (result is Result.Success) {
+                    val parentId = result.value.parentId
+
+                    if (parentId != null) enterThreadSequential(parentId)
+
+                    listState
+                        .onCompletion {
+                            when {
+                                _mode.value is MessageMode.Normal -> {
+                                    focusChannelMessage(messageId)
+                                }
+                                _mode.value is MessageMode.MessageThread && parentId != null -> {
+                                    focusThreadMessage(
+                                        result.value
+                                    )
+                                }
+                            }
+                        }
+                        .first {
+                            it.messageItems.isNotEmpty()
+                        }
+                }
             }
         }
     }
@@ -504,6 +528,7 @@ public class MessageListController(
                 val messageFooterVisibility = data[5] as MessageFooterVisibility
                 val messagePositionHandler = data[6] as MessagePositionHandler
                 val typingUsers = data[7] as List<User>
+                val focusedMessage = data[8] as Message?
 
                 _threadListState.value.copy(
                     isLoading = false,
@@ -520,7 +545,7 @@ public class MessageListController(
                         messageFooterVisibility = messageFooterVisibility,
                         messagePositionHandler = messagePositionHandler,
                         typingUsers = typingUsers,
-                        focusedMessage = null
+                        focusedMessage = focusedMessage
                     ),
                     parentMessageId = threadId,
                     endOfNewMessagesReached = true
@@ -822,6 +847,7 @@ public class MessageListController(
         val channelState = channelState.value ?: return
         _messageActions.value = _messageActions.value + Reply(parentMessage)
         val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit)
+
         _mode.value = MessageMode.MessageThread(parentMessage, state)
         observeThreadMessagesState(
             threadId = state.parentId,
@@ -829,6 +855,67 @@ public class MessageListController(
             endOfOlderMessages = state.endOfOlderMessages,
             reads = channelState.reads
         )
+    }
+
+    /**
+     *  Changes the current [_mode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
+     *  directly. The data is observed by using [ThreadState].
+     *
+     *  The difference between [enterThreadMode] and [enterThreadSequential] is that the latter makes a call to a [ChatClient]
+     *  extension function which will return a [ThreadState] instance only once the API call had finished, while the
+     *  former calls a different function which returns  a [ThreadState] instance immediately after the API request has
+     *  fired, regardless of its completion state.
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
+    private suspend fun enterThreadSequential(parentMessage: Message) {
+        val result = chatClient.getRepliesAsStateCall(parentMessage.id, DEFAULT_MESSAGES_LIMIT).await()
+        val channelState = channelState.value ?: return
+
+        when (result) {
+            is Result.Success -> {
+                val threadState = result.value
+
+                _messageActions.value = _messageActions.value + Reply(parentMessage)
+                _mode.value = MessageMode.MessageThread(parentMessage, threadState)
+
+                observeThreadMessagesState(
+                    threadId = threadState.parentId,
+                    messages = threadState.messages,
+                    endOfOlderMessages = threadState.endOfOlderMessages,
+                    reads = channelState.reads
+                )
+            }
+            is Result.Failure -> {
+                val error = result.value
+
+                logger.e {
+                    "[enterThreadSequential] -> Could not load thread: ${error.message}."
+                }
+            }
+        }
+    }
+
+    /**
+     * Fetches the message with the given ID internally and then calls [lastLoadedThreadMessage].
+     *
+     * @param parentMessageId The ID of the message we are trying to fetch.
+     */
+    private suspend fun enterThreadSequential(parentMessageId: String) {
+        val result = chatClient.getMessageUsingCache(parentMessageId).await()
+
+        when (result) {
+            is Result.Success -> {
+                enterThreadSequential(result.value)
+            }
+            is Result.Failure -> {
+                val error = result.value
+
+                logger.e {
+                    "[enterThreadSequential] -> Could not get message: ${error.message}."
+                }
+            }
+        }
     }
 
     /**
@@ -867,7 +954,6 @@ public class MessageListController(
      * @param messageId The id of the [Message] we wish to scroll to.
      */
     public fun scrollToMessage(messageId: String) {
-        if (isInThread) return
         focusMessage(messageId)
     }
 
@@ -878,7 +964,26 @@ public class MessageListController(
      * @param messageId The ID of the message.
      */
     private fun focusMessage(messageId: String) {
-        val message = getMessageById(messageId)
+        scope.launch {
+            val result = chatClient.getMessageUsingCache(messageId = messageId).await()
+
+            when (result) {
+                is Result.Success -> {
+                    val parentId = result.value.id
+
+                    if (parentId.isBlank()) {
+                        focusChannelMessage(result.value.id)
+                    } else {
+                        focusThreadMessage(result.value)
+                    }
+                }
+                is Result.Failure -> {}
+            }
+        }
+    }
+
+    private fun focusChannelMessage(messageId: String) {
+        val message = getMessageFromListStateById(messageId)
 
         if (message != null) {
             focusedMessage.value = message
@@ -887,6 +992,32 @@ public class MessageListController(
                 focusedMessage.value = when (result) {
                     is Result.Success -> result.value
                     is Result.Failure -> null
+                }
+            }
+        }
+    }
+
+    /**
+     * Enters the thread if it has not already been entered and focuses on the given message.
+     *
+     * @param threadMessage The thread message to be focused.
+     */
+    private fun focusThreadMessage(threadMessage: Message) {
+        scope.launch {
+            val parentId = threadMessage.parentId ?: return@launch
+
+            val result = chatClient.getMessageUsingCache(messageId = parentId).await()
+
+            when (result) {
+                is Result.Success -> {
+                    val mode = _mode.value
+                    if (mode is MessageMode.MessageThread && mode.parentMessage == result.value) {
+                        enterThreadSequential(result.value)
+                    }
+                    focusedMessage.value = threadMessage
+                }
+                is Result.Failure -> {
+                    focusedMessage.value = null
                 }
             }
         }
@@ -1274,12 +1405,31 @@ public class MessageListController(
      *
      * @return The [Message] with the given id or null if the message is not in the list.
      */
-    public fun getMessageById(messageId: String): Message? {
+    public fun getMessageFromListStateById(messageId: String): Message? {
         return (
-            _messageListState.value.messageItems.firstOrNull {
+            listState.value.messageItems.firstOrNull {
                 it is MessageItemState && it.message.id == messageId
             } as? MessageItemState
             )?.message
+    }
+
+    /**
+     * Fetches the message with the given ID. Spares unnecessary API calls by first trying to load
+     * the message from the database and only if that fails will it then initiate an API call.
+     *
+     * @param messageId The ID of the message we are fetching.
+     *
+     * @return The message with the given ID if it was successfully fetched, null otherwise.
+     */
+    public suspend fun getMessageById(messageId: String): Message? {
+        val result = chatClient.getMessageUsingCache(messageId).await()
+
+        return when (result) {
+            is Result.Success -> result.value
+            is Result.Failure -> {
+                null
+            }
+        }
     }
 
     /**

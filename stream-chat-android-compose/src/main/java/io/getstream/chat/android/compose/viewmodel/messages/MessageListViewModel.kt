@@ -359,7 +359,7 @@ public class MessageListViewModel(
      * @return The [Message] with the ID, if it exists.
      */
     public fun getMessageById(messageId: String): Message? {
-        return messageListController.getMessageById(messageId)
+        return messageListController.getMessageFromListStateById(messageId)
     }
 
     /**

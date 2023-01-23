@@ -66,8 +66,9 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun getErrorEvents ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getListState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMessageActions ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getMessageById (Ljava/lang/String;)Lio/getstream/chat/android/models/Message;
+	public final fun getMessageById (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getMessageFooterVisibilityState ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getMessageFromListStateById (Ljava/lang/String;)Lio/getstream/chat/android/models/Message;
 	public final fun getMessageLimit ()I
 	public final fun getMessageListState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMode ()Lkotlinx/coroutines/flow/StateFlow;

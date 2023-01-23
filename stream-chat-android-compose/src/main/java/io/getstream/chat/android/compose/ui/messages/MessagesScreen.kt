@@ -113,6 +113,12 @@ public fun MessagesScreen(
     val attachmentsPickerViewModel =
         viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
 
+    val messageMode = listViewModel.messageMode
+
+    if (messageMode is MessageMode.MessageThread) {
+        composerViewModel.setMessageMode(messageMode)
+    }
+
     val backAction = {
         val isInThread = listViewModel.isInThread
         val isShowingOverlay = listViewModel.isShowingOverlay
@@ -136,7 +142,6 @@ public fun MessagesScreen(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (showHeader) {
-                    val messageMode = listViewModel.messageMode
                     val connectionState by listViewModel.connectionState.collectAsState()
                     val user by listViewModel.user.collectAsState()
 

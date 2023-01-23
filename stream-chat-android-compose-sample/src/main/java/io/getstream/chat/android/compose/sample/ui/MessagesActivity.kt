@@ -80,6 +80,7 @@ class MessagesActivity : BaseConnectedActivity() {
             context = this,
             channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+            messageId = intent.getStringExtra(KEY_MESSAGE_ID),
         )
     }
 
@@ -300,10 +301,16 @@ class MessagesActivity : BaseConnectedActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
+        private const val KEY_MESSAGE_ID = "messageId"
 
-        fun createIntent(context: Context, channelId: String): Intent {
+        fun createIntent(
+            context: Context,
+            channelId: String,
+            messageId: String? = null
+        ): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
+                putExtra(KEY_MESSAGE_ID, messageId)
             }
         }
     }
