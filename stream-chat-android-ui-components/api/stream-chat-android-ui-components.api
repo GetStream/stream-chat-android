@@ -206,8 +206,8 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
 	public static final field DEFAULT_MESSAGES_LIMIT I
 	public static final field SEPARATOR_TIME I
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;I)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getChannelState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getDeletedMessageVisibility ()Landroidx/lifecycle/LiveData;
@@ -3771,7 +3771,8 @@ public final class io/getstream/chat/android/ui/message/list/viewmodel/MessageLi
 public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;I)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
@@ -3780,6 +3781,7 @@ public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/M
 	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
 	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
 	public final fun messageId (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
+	public final fun messageLimit (I)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
 }
 
 public final class io/getstream/chat/android/ui/message/preview/MessagePreviewStyle {
