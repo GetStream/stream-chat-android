@@ -62,7 +62,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added a feature flag to `ChatUi` called `showDateSeparatorInEmptyThread`. You can use this to enable a date separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
+- Added a feature flag to `ChatUI` called `showDateSeparatorInEmptyThread`. You can use this to enable a date separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
 
 ### ⚠️ Changed
 
