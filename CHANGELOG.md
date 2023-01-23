@@ -22,6 +22,7 @@
 - Added classes `StreamCdnCropImageMode` and `StreamCdnResizeImageMode` used for modifying Stream CDN image resize requests. [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
 
 ### ⚠️ Changed
+- Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
 
 ### ❌ Removed
 
