@@ -653,7 +653,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
 	public static final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
 	public static final fun getQuotedAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;
-	public static final fun getShowDateSeparatorInEmptyThread ()Z
+	public static final fun getShowThreadSeparatorInEmptyThread ()Z
 	public static final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public static final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
 	public static final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
@@ -669,7 +669,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
 	public static final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
 	public static final fun setQuotedAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;)V
-	public static final fun setShowDateSeparatorInEmptyThread (Z)V
+	public static final fun setShowThreadSeparatorInEmptyThread (Z)V
 	public static final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public static final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
 }
