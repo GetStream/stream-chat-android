@@ -1,13 +1,10 @@
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
 import java.util.Date
-
 
 @Entity(tableName = REPLY_MESSAGE_ENTITY_TABLE_NAME)
 internal data class ReplyMessageEntity(
@@ -26,7 +23,7 @@ internal data class ReplyMessageEntity(
 
     val syncType: MessageSyncType? = null,
 
-    val syncContent: MessageSyncContentEntity? = null,
+    // val syncContent: MessageSyncContentEntity? = null,
 
     /** the number of replies */
     val replyCount: Int = 0,
@@ -44,10 +41,6 @@ internal data class ReplyMessageEntity(
     val remoteMentionedUserIds: List<String> = emptyList(),
     /** the users to be mentioned in this message */
     val mentionedUsersId: List<String> = emptyList(),
-    /** a mapping between reaction type and the count, ie like:10, heart:4 */
-    val reactionCounts: Map<String, Int> = emptyMap(),
-    /** a mapping between reaction type and the reaction score, ie like:10, heart:4 */
-    val reactionScores: Map<String, Int> = emptyMap(),
     /** parent id, used for threads */
     val parentId: String? = null,
     /** slash command like /giphy etc */
@@ -56,12 +49,12 @@ internal data class ReplyMessageEntity(
     val shadowed: Boolean = false,
     /** if the message is also shown in the channel **/
     val showInChannel: Boolean = false,
-    @Embedded(prefix = "channel_info")
-    val channelInfo: ChannelInfoEntity? = null,
+    // @Embedded(prefix = "channel_info")
+    // val channelInfo: ChannelInfoEntity? = null,
     /** if the message is silent  **/
     val silent: Boolean = false,
-    /** all the custom data provided for this message */
-    val extraData: Map<String, Any> = emptyMap(),
+    // /** all the custom data provided for this message */
+    // val extraData: Map<String, Any> = emptyMap(),
     /** whether message is pinned or not **/
     val pinned: Boolean,
     /** date when the message got pinned **/

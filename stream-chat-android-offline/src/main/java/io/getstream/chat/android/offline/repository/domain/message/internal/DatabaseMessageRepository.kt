@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.log.StreamLog
 import java.util.Date
 
 internal class DatabaseMessageRepository(
@@ -100,6 +101,8 @@ internal class DatabaseMessageRepository(
     override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
         if (messages.isEmpty()) return
 
+        StreamLog.d("GapDebug") { "message insertion" }
+
         val validMessages = messages.filter { message -> message.cid.isNotEmpty() }
 
         //Insert messages.
@@ -115,6 +118,9 @@ internal class DatabaseMessageRepository(
         //Insert all replies
         validMessages.mapNotNull { message -> message.replyTo }
             .map { message -> message.toReplyEntity() }
+            .also { entityList ->
+                StreamLog.d("GapDebug") { "size of messages to be inserted: ${entityList.size}" }
+            }
             .let(replyMessageDao::insert)
     }
 
@@ -172,6 +178,7 @@ internal class DatabaseMessageRepository(
     override suspend fun clear() {
         // messageCache.evictAll()
         messageDao.deleteAll()
+        replyMessageDao.deleteAll()
     }
 
     private suspend fun selectMessagesEntitiesForChannel(
