@@ -664,8 +664,8 @@ public class MessageListViewModel(
          * Usually triggered by clicking on pinned messages and replied messages.
          *
          * @param messageId The id of the message we need to navigate to.
-         * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
-         * message we want to scroll to is not in a thread, you can pass in a null value.
+         * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread.
+         * If the message we want to scroll to is not in a thread, you can pass in a null value.
          */
         public data class ShowMessage(
             val messageId: String,
