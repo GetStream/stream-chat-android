@@ -108,7 +108,7 @@ internal class DatabaseMessageRepository(
 
         val validMessages = messages.filter { message -> message.cid.isNotEmpty() }
 
-        //Insert messages.
+        // Insert messages.
         validMessages
             .onEach { message ->
                 if (messageCache.get(message.id) != null || cache) {
@@ -118,7 +118,7 @@ internal class DatabaseMessageRepository(
             .map { message -> message.toEntity() }
             .let { entityMessages -> messageDao.insert(entityMessages) }
 
-        //Insert all replies
+        // Insert all replies
         validMessages.mapNotNull { message -> message.replyTo }
             .map { message -> message.toReplyEntity() }
             .let { replyMessages ->

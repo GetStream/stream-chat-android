@@ -113,7 +113,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
 
 internal suspend fun ReplyMessageEntity.toModel(
     getUser: suspend (userId: String) -> User,
-): Message  {
+): Message {
     val entity = this
     return this.replyMessageInnerEntity.run {
         Message(
@@ -150,7 +150,6 @@ internal suspend fun ReplyMessageEntity.toModel(
         )
     }
 }
-
 
 internal fun Message.toReplyEntity(): ReplyMessageEntity =
     ReplyMessageEntity(
