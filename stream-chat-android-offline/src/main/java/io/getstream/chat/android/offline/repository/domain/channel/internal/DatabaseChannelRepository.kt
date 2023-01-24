@@ -220,7 +220,6 @@ internal class DatabaseChannelRepository(
 
         val thisLastMessageAt = this.lastMessage?.createdAt ?: this.lastMessageAt ?: Date(0)
         return if (dbChannel?.lastMessageAt?.after(thisLastMessageAt) == true) {
-            this.lastMessageAt = dbChannel.lastMessageAt
             this.toEntity(dbChannel.lastMessageId, dbChannel.lastMessageAt)
         } else {
             val lastMessage = this.lastMessage
