@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
-import io.getstream.log.StreamLog
 import java.util.Date
 
 internal class DatabaseMessageRepository(
@@ -106,8 +105,6 @@ internal class DatabaseMessageRepository(
      */
     override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
         if (messages.isEmpty()) return
-
-        StreamLog.d("GapDebug") { "message insertion" }
 
         val validMessages = messages.filter { message -> message.cid.isNotEmpty() }
 
