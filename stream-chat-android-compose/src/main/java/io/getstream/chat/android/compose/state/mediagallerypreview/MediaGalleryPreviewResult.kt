@@ -17,17 +17,21 @@
 package io.getstream.chat.android.compose.state.mediagallerypreview
 
 import android.os.Parcelable
+import io.getstream.chat.android.models.Message
 import kotlinx.parcelize.Parcelize
 
 /**
  * Represents the Media Gallery Preview screen result that we propagate to the Messages screen.
  *
  * @param messageId The ID of the message that we've selected.
+ * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
+ * message we want to scroll to is not in a thread, you can pass in a null value.
  * @param resultType The action that will be executed on the message list screen.
  */
 @Parcelize
 public class MediaGalleryPreviewResult(
     public val messageId: String,
+    public val parentMessageId: String?,
     public val resultType: MediaGalleryPreviewResultType,
 ) : Parcelable
 

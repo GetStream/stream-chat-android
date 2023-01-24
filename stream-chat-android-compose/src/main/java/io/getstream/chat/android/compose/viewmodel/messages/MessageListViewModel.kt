@@ -375,9 +375,17 @@ public class MessageListViewModel(
      * Scrolls to message if in list otherwise get the message from backend. Does not work for threads.
      *
      * @param messageId The [Message] id we wish to scroll to.
+     * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
+     * message we want to scroll to is not in a thread, you can pass in a null value.
      */
-    public fun scrollToMessage(messageId: String) {
-        messageListController.scrollToMessage(messageId = messageId)
+    public fun scrollToMessage(
+        messageId: String,
+        parentMessageId: String?
+    ) {
+        messageListController.scrollToMessage(
+            messageId = messageId,
+            parentMessageId = parentMessageId
+        )
     }
 
     /**

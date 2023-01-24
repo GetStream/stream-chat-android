@@ -138,6 +138,7 @@ public class MessageListController(
     private val cid: String,
     private val clipboardHandler: ClipboardHandler,
     private val messageId: String? = null,
+    private val parentMessageId: String? = null,
     public val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
@@ -362,31 +363,27 @@ public class MessageListController(
 
         messageId?.takeUnless { it.isBlank() }?.let { messageId ->
             scope.launch {
-                // we need to fetch the message and check if it is a channel or a thread message
-                val result = chatClient.getMessageUsingCache(messageId).await()
+                if (parentMessageId != null) {
+                    enterThreadSequential(parentMessageId)
+                }
 
-                if (result is Result.Success) {
-                    val parentId = result.value.parentId
-
-                    if (parentId != null) enterThreadSequential(parentId)
-
-                    listState
-                        .onCompletion {
-                            when {
-                                _mode.value is MessageMode.Normal -> {
-                                    focusChannelMessage(messageId)
-                                }
-                                _mode.value is MessageMode.MessageThread && parentId != null -> {
-                                    focusThreadMessage(
-                                        result.value
-                                    )
-                                }
+                listState
+                    .onCompletion {
+                        when {
+                            _mode.value is MessageMode.Normal -> {
+                                focusChannelMessage(messageId)
+                            }
+                            _mode.value is MessageMode.MessageThread && parentMessageId != null -> {
+                                focusThreadMessage(
+                                    threadMessageId = messageId,
+                                    parentMessageId = parentMessageId
+                                )
                             }
                         }
-                        .first {
-                            it.messageItems.isNotEmpty()
-                        }
-                }
+                    }
+                    .first {
+                        it.messageItems.isNotEmpty()
+                    }
             }
         }
     }
@@ -951,10 +948,15 @@ public class MessageListController(
      * Scrolls to the selected message. If the message is not currently in the list it will first load a page with the
      * message in the middle of it, add it to the list and then notify to scroll to the message.
      *
-     * @param messageId The id of the [Message] we wish to scroll to.
+     * @param messageId The ID of the [Message] we wish to scroll to.
+     * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
+     * message we want to scroll to is not in a thread, you can pass in a null value.
      */
-    public fun scrollToMessage(messageId: String) {
-        focusMessage(messageId)
+    public fun scrollToMessage(
+        messageId: String,
+        parentMessageId: String?,
+    ) {
+        focusMessage(messageId, parentMessageId)
     }
 
     /**
@@ -962,26 +964,28 @@ public class MessageListController(
      * focus with a delay.
      *
      * @param messageId The ID of the message.
+     * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
+     * message we want to scroll to is not in a thread, you can pass in a null value.
      */
-    private fun focusMessage(messageId: String) {
-        scope.launch {
-            val result = chatClient.getMessageUsingCache(messageId = messageId).await()
-
-            when (result) {
-                is Result.Success -> {
-                    val parentId = result.value.id
-
-                    if (parentId.isBlank()) {
-                        focusChannelMessage(result.value.id)
-                    } else {
-                        focusThreadMessage(result.value)
-                    }
-                }
-                is Result.Failure -> {}
-            }
+    private fun focusMessage(
+        messageId: String,
+        parentMessageId: String?,
+    ) {
+        if (parentMessageId == null) {
+            focusChannelMessage(messageId)
+        } else {
+            focusThreadMessage(
+                threadMessageId = messageId,
+                parentMessageId = parentMessageId
+            )
         }
     }
 
+    /**
+     * Loads the messages surrounding the target message we want to focus on and puts the target message in focus.
+     *
+     * @param messageId The ID of the message we want to focus
+     */
     private fun focusChannelMessage(messageId: String) {
         val message = getMessageFromListStateById(messageId)
 
@@ -991,7 +995,14 @@ public class MessageListController(
             loadMessageById(messageId) { result ->
                 focusedMessage.value = when (result) {
                     is Result.Success -> result.value
-                    is Result.Failure -> null
+                    is Result.Failure -> {
+                        val error = result.value
+
+                        logger.e {
+                            "[focusChannelMessage] -> Could not load message: ${error.message}."
+                        }
+                        null
+                    }
                 }
             }
         }
@@ -1000,24 +1011,31 @@ public class MessageListController(
     /**
      * Enters the thread if it has not already been entered and focuses on the given message.
      *
-     * @param threadMessage The thread message to be focused.
+     * @param threadMessageId The ID of the thread message to be focused.
+     * @param parentMessageId The ID of the parent message of the thread.
      */
-    private fun focusThreadMessage(threadMessage: Message) {
+    private fun focusThreadMessage(
+        threadMessageId: String,
+        parentMessageId: String
+    ) {
         scope.launch {
-            val parentId = threadMessage.parentId ?: return@launch
 
-            val result = chatClient.getMessageUsingCache(messageId = parentId).await()
+            val mode = _mode.value
+            if (mode !is MessageMode.MessageThread || mode.parentMessage.id != parentMessageId) {
+                enterThreadSequential(parentMessageId)
+            }
 
-            when (result) {
-                is Result.Success -> {
-                    val mode = _mode.value
-                    if (mode is MessageMode.MessageThread && mode.parentMessage == result.value) {
-                        enterThreadSequential(result.value)
-                    }
-                    focusedMessage.value = threadMessage
-                }
+            val threadMessageResult = chatClient.getMessageUsingCache(messageId = threadMessageId).await()
+
+            focusedMessage.value = when (threadMessageResult) {
+                is Result.Success -> threadMessageResult.value
                 is Result.Failure -> {
-                    focusedMessage.value = null
+                    val error = threadMessageResult.value
+
+                    logger.e {
+                        "[focusThreadMessage] -> Could not focus thread parent: ${error.message}."
+                    }
+                    null
                 }
             }
         }
@@ -1246,7 +1264,8 @@ public class MessageListController(
      * @param message Message to delete.
      */
     public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
-        _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
+        _messageActions.value =
+            _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
         chatClient.flagMessage(message.id).enqueue { response ->
             onResult(response)
             if (response is Result.Failure) {

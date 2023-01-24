@@ -202,7 +202,7 @@ public class MessageListView : ConstraintLayout {
     private var threadStartHandler = ThreadStartHandler {
         throw IllegalStateException("onStartThreadHandler must be set.")
     }
-    private var replyMessageClickListener = ReplyMessageClickListener {
+    private var replyMessageClickListener = ReplyMessageClickListener { replyMessageId, replyParentMessageId ->
         // no-op
     }
     private var messageFlagHandler = MessageFlagHandler {
@@ -336,7 +336,7 @@ public class MessageListView : ConstraintLayout {
                 }
 
                 message.replyMessageId != null -> {
-                    replyMessageClickListener.onReplyClick(message.replyMessageId!!)
+                    replyMessageClickListener.onReplyClick(message.replyMessageId!!, message.replyTo?.parentId)
                 }
             }
         }
@@ -1632,7 +1632,12 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface ReplyMessageClickListener {
-        public fun onReplyClick(replyMessageId: String)
+
+        // TODO write kdocs
+        public fun onReplyClick(
+            replyMessageId: String,
+            replyParentMessageId: String?
+        )
     }
 
     public fun interface MessageRetryListener {

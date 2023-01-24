@@ -199,7 +199,10 @@ public fun MessagesScreen(
                         }
 
                         MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
-                            listViewModel.scrollToMessage(result.messageId)
+                            listViewModel.scrollToMessage(
+                                messageId = result.messageId,
+                                parentMessageId = result.parentMessageId
+                            )
                         }
                         null -> Unit
                     }
