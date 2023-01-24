@@ -31,8 +31,8 @@ internal class DatabaseMessageRepository(
     private val replyMessageDao: ReplyMessageDao,
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User?,
-    // private val cacheSize: Int = 100,
-    // private var messageCache: LruCache<String, Message> = LruCache(cacheSize),
+    private val cacheSize: Int = 100,
+    private var messageCache: LruCache<String, Message> = LruCache(cacheSize),
 ) : MessageRepository {
     // the message cache, specifically caches messages on which we're receiving events
     // (saving a few trips to the db when you get 10 likes on 1 message)
@@ -78,7 +78,13 @@ internal class DatabaseMessageRepository(
      * @return A list of messages found in repository.
      */
     override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
-        return fetchMessages(messageIds)
+        return if (forceCache) {
+            fetchMessages(messageIds)
+        } else {
+            val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
+            val cachedIds = messageIds - missingMessageIds.toSet()
+            cachedIds.mapNotNull { messageCache[it] } + fetchMessages(missingMessageIds)
+        }
     }
 
     /**
@@ -87,9 +93,9 @@ internal class DatabaseMessageRepository(
      * @param messageId String.
      */
     override suspend fun selectMessage(messageId: String): Message? {
-        return messageDao.select(messageId)?.toModel(getUser, ::selectRepliedMessage)
+        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectRepliedMessage)
             ?.filterReactions()
-
+            ?.also { messageCache.put(it.id, it) }
     }
 
     /**
@@ -107,21 +113,20 @@ internal class DatabaseMessageRepository(
 
         //Insert messages.
         validMessages
-        //     .onEach { message ->
-        //     if (messageCache.get(message.id) != null || cache) {
-        //         messageCache.put(message.id, message)
-        //     }
-        // }
+            .onEach { message ->
+                if (messageCache.get(message.id) != null || cache) {
+                    messageCache.put(message.id, message)
+                }
+            }
             .map { message -> message.toEntity() }
             .let { entityMessages -> messageDao.insert(entityMessages) }
 
         //Insert all replies
         validMessages.mapNotNull { message -> message.replyTo }
             .map { message -> message.toReplyEntity() }
-            .also { entityList ->
-                StreamLog.d("GapDebug") { "size of messages to be inserted: ${entityList.size}" }
+            .let { replyMessages ->
+                replyMessageDao.insert(replyMessages)
             }
-            .let(replyMessageDao::insert)
     }
 
     /**
@@ -144,7 +149,7 @@ internal class DatabaseMessageRepository(
         // delete the messages
         messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
         // wipe the cache
-        // messageCache = LruCache(cacheSize)
+        messageCache = LruCache(cacheSize)
     }
 
     /**
@@ -154,7 +159,7 @@ internal class DatabaseMessageRepository(
      */
     override suspend fun deleteChannelMessage(message: Message) {
         messageDao.deleteMessage(message.cid, message.id)
-        // messageCache.remove(message.id)
+        messageCache.remove(message.id)
     }
 
     /**
@@ -176,7 +181,7 @@ internal class DatabaseMessageRepository(
     }
 
     override suspend fun clear() {
-        // messageCache.evictAll()
+        messageCache.evictAll()
         messageDao.deleteAll()
         replyMessageDao.deleteAll()
     }
@@ -218,7 +223,7 @@ internal class DatabaseMessageRepository(
         return messageDao.select(messageIds)
             .map { entity ->
                 entity.toModel(getUser, ::selectRepliedMessage).filterReactions()
-                    // .also { messageCache.put(it.id, it) }
+                    .also { messageCache.put(it.id, it) }
             }
     }
 
