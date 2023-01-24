@@ -43,7 +43,7 @@ import io.getstream.chat.android.offline.repository.domain.message.attachment.in
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageDao
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.ReplyMessageDao
-import io.getstream.chat.android.offline.repository.domain.message.internal.ReplyMessageEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.ReplyMessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsDao
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionDao
@@ -57,7 +57,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
     entities = [
         QueryChannelsEntity::class,
         MessageInnerEntity::class,
-        ReplyMessageEntity::class,
+        ReplyMessageInnerEntity::class,
         AttachmentEntity::class,
         UserEntity::class,
         ReactionEntity::class,

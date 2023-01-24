@@ -1,13 +1,23 @@
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import java.util.Date
 
-@Entity(tableName = REPLY_MESSAGE_ENTITY_TABLE_NAME)
 internal data class ReplyMessageEntity(
+    @Embedded val replyMessageInnerEntity: ReplyMessageInnerEntity,
+    @Relation(entity = AttachmentEntity::class, parentColumn = "id", entityColumn = "messageId")
+    val attachments: List<AttachmentEntity>,
+)
+
+
+@Entity(tableName = REPLY_MESSAGE_ENTITY_TABLE_NAME)
+internal data class ReplyMessageInnerEntity(
     @PrimaryKey
     val id: String,
     val cid: String,
