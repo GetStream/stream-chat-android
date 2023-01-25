@@ -64,6 +64,7 @@
 ### ✅ Added
 - Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
 - Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
+- Added the method `showModeratedMessageDialog()` to `MessageListView`. It is used to display a dialog when long clicking on a message that has failed a moderation check. [#4645](https://github.com/GetStream/stream-chat-android/pull/4645)
 
 ### ⚠️ Changed
 
