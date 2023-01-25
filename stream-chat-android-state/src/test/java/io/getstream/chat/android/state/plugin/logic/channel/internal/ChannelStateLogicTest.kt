@@ -97,6 +97,7 @@ internal class ChannelStateLogicTest {
     private val channelId = "channelId"
     private val _endOfNewerMessages = MutableStateFlow(true)
     private val _cachedMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
+    private val _quotedMessagesMap = MutableStateFlow<Map<String, List<String>>>(emptyMap())
 
     @Suppress("UNCHECKED_CAST")
     private val mutableState: ChannelMutableState = mock { mock ->
@@ -112,6 +113,7 @@ internal class ChannelStateLogicTest {
         on(mock.messageList) doReturn MutableStateFlow(emptyList())
         on(mock.endOfNewerMessages) doReturn _endOfNewerMessages
         on(mock.cachedLatestMessages) doReturn _cachedMessages
+        on(mock.quotedMessagesMap) doReturn _quotedMessagesMap
     }
     private val globalMutableState: GlobalMutableState = mock {
         on(it.channelMutes) doReturn MutableStateFlow(emptyList())
