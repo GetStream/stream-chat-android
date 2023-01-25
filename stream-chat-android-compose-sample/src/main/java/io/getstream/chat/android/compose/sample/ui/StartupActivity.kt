@@ -47,10 +47,11 @@ class StartupActivity : AppCompatActivity() {
                 // Navigating from push, route to the messages screen
                 val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
                 val messageId = intent.getStringExtra(KEY_MESSAGE_ID)
+                val parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID)
 
                 TaskStackBuilder.create(this)
                     .addNextIntent(ChannelsActivity.createIntent(this))
-                    .addNextIntent(MessagesActivity.createIntent(this, channelId, messageId))
+                    .addNextIntent(MessagesActivity.createIntent(this, channelId, messageId, parentMessageId))
                     .startActivities()
             } else {
                 // Logged in, navigate to the channels screen
@@ -66,15 +67,18 @@ class StartupActivity : AppCompatActivity() {
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
         private const val KEY_MESSAGE_ID = "messageId"
+        private const val KEY_PARENT_MESSAGE_ID = "parentMessageId"
 
         fun createIntent(
             context: Context,
             channelId: String,
-            messageId: String?
+            messageId: String?,
+            parentMessageId: String?
         ): Intent {
             return Intent(context, StartupActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
                 putExtra(KEY_MESSAGE_ID, messageId)
+                putExtra(KEY_PARENT_MESSAGE_ID, parentMessageId)
             }
         }
     }

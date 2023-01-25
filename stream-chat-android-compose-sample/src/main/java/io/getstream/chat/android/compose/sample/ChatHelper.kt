@@ -54,10 +54,12 @@ object ChatHelper {
         )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
-            newMessageIntent = { _: Message, channel: Channel ->
+            newMessageIntent = { message: Message, channel: Channel ->
                 StartupActivity.createIntent(
                     context = context,
-                    channelId = "${channel.type}:${channel.id}"
+                    channelId = "${channel.type}:${channel.id}",
+                    messageId = message.id,
+                    parentMessageId = message.parentId,
                 )
             }
         )

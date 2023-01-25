@@ -122,6 +122,8 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  * @param cid The channel id in the format messaging:123.
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param messageId The message id to which we want to scroll to when opening the message list.
+ * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
+ * message we want to scroll to is not in a thread, you can pass in a null value.
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param chatClient The client used to communicate with the API.
  * @param clientState The current state of the SDK.
