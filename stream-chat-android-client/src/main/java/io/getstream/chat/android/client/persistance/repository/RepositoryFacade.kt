@@ -56,16 +56,15 @@ public class RepositoryFacade private constructor(
     SyncStateRepository by syncStateRepository,
     AttachmentRepository by attachmentRepository {
 
-    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> =
-        selectChannels(channelCIDs, null, forceCache)
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> =
+        selectChannels(channelCIDs, null)
 
     public suspend fun selectChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest?,
-        forceCache: Boolean = false,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.selectChannels(channelIds, forceCache)
+        val channels = channelsRepository.selectChannels(channelIds)
         // TODO why it is not compared this way?
         //  pagination?.isRequestingMoreThanLastMessage() == true
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
@@ -95,14 +94,14 @@ public class RepositoryFacade private constructor(
         }
     }
 
-    override suspend fun insertChannel(channel: Channel) {
+    override suspend fun upsertChannel(channel: Channel) {
         insertUsers(channel.let(Channel::users))
-        channelsRepository.insertChannel(channel)
+        channelsRepository.upsertChannel(channel)
     }
 
-    override suspend fun insertChannels(channels: Collection<Channel>) {
+    override suspend fun upsertChannels(channels: Collection<Channel>) {
         insertUsers(channels.flatMap(Channel::users))
-        channelsRepository.insertChannels(channels)
+        channelsRepository.upsertChannels(channels)
     }
 
     override suspend fun insertMessage(message: Message, cache: Boolean) {
@@ -119,7 +118,6 @@ public class RepositoryFacade private constructor(
      * Deletes channel messages before [hideMessagesBefore] and removes channel from the cache.
      */
     override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
-        evictChannel(cid)
         messageRepository.deleteChannelMessagesBefore(cid, hideMessagesBefore)
     }
 
@@ -144,7 +142,7 @@ public class RepositoryFacade private constructor(
     ) {
         configs?.let { insertChannelConfigs(it) }
         insertUsers(users)
-        insertChannels(channels)
+        upsertChannels(channels)
         insertMessages(messages, cacheForMessages)
     }
 

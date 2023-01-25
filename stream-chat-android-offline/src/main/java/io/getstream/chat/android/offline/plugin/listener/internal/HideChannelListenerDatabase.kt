@@ -81,7 +81,6 @@ internal class HideChannelListenerDatabase(
 
             if (clearHistory) {
                 val now = Date()
-                channelRepository.evictChannel(cid)
                 channelRepository.setHiddenForChannel(cid, true, now)
                 messageRepository.deleteChannelMessagesBefore(cid, now)
             } else {

@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
-import io.getstream.chat.android.client.utils.message.latestOrNull
-import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
@@ -29,12 +27,9 @@ import io.getstream.chat.android.offline.repository.domain.channel.member.intern
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toModel
+import java.util.Date
 
-internal fun Channel.toEntity(): ChannelEntity {
-    val latestMessage = messages.latestOrNull()
-    val latestMessageId = latestMessage?.id
-    val latestMessageAt = latestMessage?.let { it.createdAt ?: it.createdLocallyAt }
-    val finalLatestMessageAt = max(lastMessageAt, latestMessageAt)
+internal fun Channel.toEntity(lastMessageId: String?, lastMessageAt: Date?): ChannelEntity {
     return ChannelEntity(
         type = type,
         channelId = id,
@@ -52,8 +47,8 @@ internal fun Channel.toEntity(): ChannelEntity {
         members = members.map(Member::toEntity).associateBy(MemberEntity::userId).toMutableMap(),
         memberCount = memberCount,
         reads = read.map(ChannelUserRead::toEntity).associateBy(ChannelUserReadEntity::userId).toMutableMap(),
-        lastMessageId = latestMessageId,
-        lastMessageAt = finalLatestMessageAt,
+        lastMessageId = lastMessageId,
+        lastMessageAt = lastMessageAt,
         createdByUserId = createdBy.id,
         watcherIds = watchers.map(User::id),
         watcherCount = watcherCount,

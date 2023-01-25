@@ -62,7 +62,7 @@ internal class CreateChannelTests {
                 currentUser = currentUser,
             )
 
-            verify(repos).insertChannel(
+            verify(repos).upsertChannel(
                 argThat {
                     this.type == channelType &&
                         this.id == channelId &&
@@ -97,7 +97,7 @@ internal class CreateChannelTests {
                 currentUser = currentUser,
             )
 
-            verify(repos).insertChannel(
+            verify(repos).upsertChannel(
                 argThat {
                     this.type == channelType &&
                         this.id == channelId &&
@@ -129,7 +129,7 @@ internal class CreateChannelTests {
                 result = result,
             )
 
-            verify(repos).insertChannel((result as Result.Success).value)
+            verify(repos).upsertChannel((result as Result.Success).value)
         }
 
     @Test
@@ -180,7 +180,7 @@ internal class CreateChannelTests {
                 result = result,
             )
 
-            verify(repos).insertChannel(
+            verify(repos).upsertChannel(
                 argThat {
                     this.type == channelType &&
                         this.id == channelId &&
@@ -214,7 +214,7 @@ internal class CreateChannelTests {
                 result = result,
             )
 
-            verify(repos).insertChannel(
+            verify(repos).upsertChannel(
                 argThat {
                     this.type == channelType &&
                         this.id == channelId &&
