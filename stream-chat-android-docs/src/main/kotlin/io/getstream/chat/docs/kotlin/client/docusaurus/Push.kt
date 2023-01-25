@@ -61,9 +61,8 @@ class Push {
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
             newMessageIntent = {
-                    messageId: String,
-                    channelType: String,
-                    channelId: String,
+                    message: Message,
+                    channel: Channel,
                 ->
                 // Return the intent you want to be triggered when the notification is clicked
                 val intent = Intent()

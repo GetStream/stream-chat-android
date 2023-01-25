@@ -58,7 +58,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             whenever(users.selectUser("userId")) doReturn user
             val channel1 = randomChannel(messages = emptyList(), id = "id1", type = "type", createdBy = user)
             val channel2 = randomChannel(messages = emptyList(), id = "id2", type = "type", createdBy = user)
-            whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")), any())) doReturn listOf(channel1, channel2)
+            whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")))) doReturn listOf(channel1, channel2)
 
             val result = sut.selectChannels(listOf("type:id1", "type:id2"), paginationRequest)
 
@@ -83,7 +83,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             )
             val channel1 = randomChannel(messages = emptyList(), id = "id1", type = "type", createdBy = user)
             val channelEntity2 = randomChannel(messages = emptyList(), id = "id2", type = "type", createdBy = user)
-            whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")), any())) doReturn listOf(
+            whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")))) doReturn listOf(
                 channel1,
                 channelEntity2
             )
@@ -123,9 +123,9 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             messages = listOf(randomMessage(user = messageUser, pinnedBy = pinnedByUser)),
         )
 
-        sut.insertChannel(channel)
+        sut.upsertChannel(channel)
 
-        verify(channels).insertChannel(eq(channel))
+        verify(channels).upsertChannel(eq(channel))
         verify(users).insertUsers(
             check { listUser ->
                 listUser.size `should be equal to` 5
@@ -192,9 +192,9 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                     ) to acc.second + channel
                 }
 
-            sut.insertChannels(listOfChannels)
+            sut.upsertChannels(listOfChannels)
 
-            verify(channels).insertChannels(eq(listOfChannels))
+            verify(channels).upsertChannels(eq(listOfChannels))
             verify(users).insertUsers(
                 check { listUser ->
                     listUser `should contain same` listOfUser
@@ -280,7 +280,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
             verify(configs).insertChannelConfigs(configList)
             verify(users).insertUsers(userList)
-            verify(channels).insertChannels(channelList)
+            verify(channels).upsertChannels(channelList)
             verify(messages).insertMessages(messageList, false)
         }
     }
@@ -301,7 +301,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         verifyNoInteractions(configs)
         verify(users).insertUsers(userList)
-        verify(channels).insertChannels(channelList)
+        verify(channels).upsertChannels(channelList)
         verify(messages).insertMessages(messageList, false)
     }
 }

@@ -52,7 +52,7 @@ internal class ChannelRepositoryImplTest {
     fun `Given channel without messages in DB, Should insert channel with updated last message`() = runTest {
         val channel = randomChannel(messages = emptyList())
         val lastMessage = randomMessage(createdAt = Date())
-        whenever(channelDao.select(listOf("cid"))) doReturn listOf(channel.toEntity())
+        whenever(channelDao.select(listOf("cid"))) doReturn listOf(channel.toEntity(null, null))
 
         channelRepository.updateLastMessageForChannel("cid", lastMessage)
 
@@ -71,7 +71,7 @@ internal class ChannelRepositoryImplTest {
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
         val channel = randomChannel(messages = listOf(outdatedMessage), lastMessageAt = before)
-        whenever(channelDao.select(cid = "cid")) doReturn channel.toEntity()
+        whenever(channelDao.select(cid = "cid")) doReturn channel.toEntity(null, null)
 
         channelRepository.updateLastMessageForChannel("cid", newLastMessage)
 
@@ -92,7 +92,7 @@ internal class ChannelRepositoryImplTest {
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
         val channel = randomChannel(messages = listOf(newLastMessage), lastMessageAt = after)
-        whenever(channelDao.select(cid = "cid")) doReturn channel.toEntity()
+        whenever(channelDao.select(cid = "cid")) doReturn channel.toEntity(newLastMessage.id, newLastMessage.createdAt)
 
         channelRepository.updateLastMessageForChannel("cid", outdatedMessage)
 

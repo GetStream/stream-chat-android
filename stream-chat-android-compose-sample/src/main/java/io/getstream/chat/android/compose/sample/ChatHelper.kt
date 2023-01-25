@@ -27,6 +27,8 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.extensions.globalState
@@ -52,11 +54,10 @@ object ChatHelper {
         )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
-            newMessageIntent = { messageId: String, channelType: String, channelId: String ->
+            newMessageIntent = { _: Message, channel: Channel ->
                 StartupActivity.createIntent(
                     context = context,
-                    channelId = "$channelType:$channelId",
-                    messageId = messageId
+                    channelId = "${channel.type}:${channel.id}"
                 )
             }
         )

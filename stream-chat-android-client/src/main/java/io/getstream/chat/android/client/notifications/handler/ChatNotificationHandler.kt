@@ -40,7 +40,7 @@ import io.getstream.chat.android.models.Message
 @Suppress("TooManyFunctions")
 internal class ChatNotificationHandler(
     private val context: Context,
-    private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
+    private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
 ) : NotificationHandler {
 
@@ -85,7 +85,7 @@ internal class ChatNotificationHandler(
             contentTitle = channel.getNotificationContentTitle(),
             contentText = message.text,
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
-            intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
+            intent = getNewMessageIntent(message = message, channel = channel),
         ).apply {
             addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
             addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
@@ -98,7 +98,7 @@ internal class ChatNotificationHandler(
             contentTitle = channel.getNotificationContentTitle(),
             contentText = context.getString(R.string.stream_chat_notification_group_summary_content_text),
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
-            intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
+            intent = getNewMessageIntent(message = message, channel = channel),
         ).apply {
             setGroupSummary(true)
         }
@@ -116,11 +116,7 @@ internal class ChatNotificationHandler(
         return System.currentTimeMillis().toInt()
     }
 
-    private fun getNewMessageIntent(
-        messageId: String,
-        channelType: String,
-        channelId: String,
-    ): Intent = newMessageIntent(messageId, channelType, channelId)
+    private fun getNewMessageIntent(message: Message, channel: Channel): Intent = newMessageIntent(message, channel)
 
     /**
      * Dismiss notifications from a given [channelType] and [channelId].
