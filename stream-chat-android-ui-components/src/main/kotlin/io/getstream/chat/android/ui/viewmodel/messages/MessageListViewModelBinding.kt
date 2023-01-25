@@ -79,11 +79,11 @@ public fun MessageListViewModel.bindView(
             onEvent(DownloadAttachment(downloadAttachmentCall))
         }
     }
-    view.setReplyMessageClickListener { messageId, parentMessageId ->
+    view.setReplyMessageClickListener { replyTo ->
         onEvent(
             MessageListViewModel.Event.ShowMessage(
-                messageId = messageId,
-                parentMessageId = parentMessageId
+                messageId = replyTo.id,
+                parentMessageId = replyTo.parentId
             )
         )
     }
