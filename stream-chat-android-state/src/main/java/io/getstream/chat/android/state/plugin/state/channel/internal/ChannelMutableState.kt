@@ -73,6 +73,7 @@ internal class ChannelMutableState(
     private val _muted = MutableStateFlow(false)
     private val _channelData = MutableStateFlow<ChannelData?>(null)
     private val _repliedMessage = MutableStateFlow<Message?>(null)
+    private val _quotedMessagesMap = MutableStateFlow<MutableMap<String, List<String>>>(mutableMapOf())
     private val _membersCount = MutableStateFlow(0)
     private val _insideSearch = MutableStateFlow(false)
     private val _loadingOlderMessages = MutableStateFlow(false)
@@ -134,6 +135,8 @@ internal class ChannelMutableState(
     }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     override val repliedMessage: StateFlow<Message?> = _repliedMessage
+
+    override val quotedMessagesMap: StateFlow<Map<String, List<String>>> = _quotedMessagesMap
 
     /** Channel config data */
     override val channelConfig: StateFlow<Config> = _channelConfig
@@ -343,6 +346,14 @@ internal class ChannelMutableState(
      */
     fun setChannelConfig(channelConfig: Config) {
         _channelConfig.value = channelConfig
+    }
+
+    fun addQuotedMessage(quotedMessageId: String, quotingMessageId: String) {
+        val quotesMap = _quotedMessagesMap.value
+
+        quotesMap[quotedMessageId] = quotesMap[quotedMessageId]?.plus(quotingMessageId) ?: listOf(quotingMessageId)
+
+        _quotedMessagesMap.value = quotesMap
     }
 
     /**
