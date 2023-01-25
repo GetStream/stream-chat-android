@@ -225,7 +225,7 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * This method updates the quoted messages
+     * Updates the messages quoting a messages with the new content of the quoted message.
      */
     private fun normalizeReplyMessages(quotedMessage: Message): List<Message>? {
         return getAllReplies(quotedMessage)?.map { replyMessage ->
@@ -236,6 +236,9 @@ internal class ChannelStateLogic(
         }
     }
 
+    /**
+     * Returns all the replies of a quoted message.
+     */
     public fun getAllReplies(message: Message): List<Message>? {
         return mutableState.quotedMessagesMap
             .value[message.id]

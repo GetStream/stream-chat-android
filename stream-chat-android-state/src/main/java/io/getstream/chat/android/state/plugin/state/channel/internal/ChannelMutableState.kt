@@ -348,6 +348,9 @@ internal class ChannelMutableState(
         _channelConfig.value = channelConfig
     }
 
+    /**
+     * Adds a quoted message to the state. 
+     */
     fun addQuotedMessage(quotedMessageId: String, quotingMessageId: String) {
         val quotesMap = _quotedMessagesMap.value
 
