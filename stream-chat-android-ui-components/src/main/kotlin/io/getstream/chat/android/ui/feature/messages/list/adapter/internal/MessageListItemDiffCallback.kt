@@ -23,7 +23,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 
 internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListItem>() {
     override fun areItemsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean {
-        return oldItem == newItem
+        return oldItem.getStableId() == newItem.getStableId()
     }
 
     override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean {
@@ -34,7 +34,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 val newMessage = newItem.message
 
                 oldMessage.text == newMessage.text &&
-                    oldMessage.replyTo?.text == newMessage.replyTo?.text
+                    oldMessage.replyTo?.text == newMessage.replyTo?.text &&
                     oldMessage.reactionScores == newMessage.reactionScores &&
                     oldMessage.reactionCounts == newMessage.reactionCounts &&
                     oldMessage.attachments == newMessage.attachments &&
