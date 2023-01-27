@@ -133,6 +133,7 @@
 ## stream-chat-android-ui-common
 ### ✅ Added
 - Exposed a way to allow you to include the current user avatar in the Channel avatar [#4561](https://github.com/GetStream/stream-chat-android/pull/4561)
+- `MessageComposerController` will now query the server for a list of channel members if the input contains a mention symbol (@) and no user name matching the expression after the symbol @ was found in the local state containing a list of channel members. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
 
 # November 23th, 2022 - 5.11.8
 ## stream-chat-android-client
