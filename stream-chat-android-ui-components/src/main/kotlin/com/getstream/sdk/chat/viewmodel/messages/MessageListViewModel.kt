@@ -82,6 +82,7 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * @param chatClient Entry point for all low-level operations.
  * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.
+ * @param messageLimit The message limit when loading a new page.
  * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
  * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
  * navigate to the channel containing the thread but will not navigate to the thread itself.
@@ -92,6 +93,7 @@ public class MessageListViewModel(
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    private val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
     private val navigateToThreadViaNotification: Boolean = false,
 ) : ViewModel() {
 
@@ -101,7 +103,7 @@ public class MessageListViewModel(
     public val channelState: StateFlow<ChannelState?> =
         chatClient.watchChannelAsState(
             cid = cid,
-            messageLimit = DEFAULT_MESSAGES_LIMIT,
+            messageLimit = messageLimit,
             coroutineScope = viewModelScope
         )
 
@@ -300,7 +302,7 @@ public class MessageListViewModel(
         initialJob = viewModelScope.launch {
             chatClient.watchChannelAsState(
                 cid = cid,
-                messageLimit = DEFAULT_MESSAGES_LIMIT,
+                messageLimit = messageLimit,
                 coroutineScope = viewModelScope
             ).collect { channelState ->
                 if (channelState != null) {
@@ -621,14 +623,12 @@ public class MessageListViewModel(
                     ?.message
 
                 if (message != null) {
-                    logger.e { "Function -> LocalMessage" }
                     focusMessage(message)
                 } else {
                     chatClient.getMessageUsingCache(event.messageId)
                         .enqueue { result ->
                             if (result.isSuccess) {
                                 focusMessage(result.data())
-                                logger.e { "Function -> getMessageUsingCache" }
                             } else {
                                 val error = result.error()
                                 logger.e {
@@ -800,7 +800,7 @@ public class MessageListViewModel(
             when (this) {
                 is Mode.Normal -> {
                     messageListData?.loadingMoreChanged(true)
-                    chatClient.loadOlderMessages(cid, DEFAULT_MESSAGES_LIMIT).enqueue {
+                    chatClient.loadOlderMessages(cid, messageLimit).enqueue {
                         messageListData?.loadingMoreChanged(false)
                     }
                 }
@@ -815,7 +815,7 @@ public class MessageListViewModel(
     private fun onBottomEndRegionReached(baseMessageId: String?) {
         if (baseMessageId != null) {
             messageListData?.loadingMoreChanged(true)
-            chatClient.loadNewerMessages(cid, baseMessageId, DEFAULT_MESSAGES_LIMIT)
+            chatClient.loadNewerMessages(cid, baseMessageId, messageLimit)
                 .enqueue { result ->
                     messageListData?.loadingMoreChanged(false)
                 }
@@ -835,7 +835,7 @@ public class MessageListViewModel(
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
-                limit = DEFAULT_MESSAGES_LIMIT,
+                limit = messageLimit,
             ).enqueue {
                 threadListData?.loadingMoreChanged(false)
             }
@@ -879,7 +879,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun loadThread(parentMessage: Message) {
-        val state = chatClient.getRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
+        val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit)
         currentMode = Mode.Thread(parentMessage, state)
         setThreadMessages(state.messages.asLiveData())
     }
