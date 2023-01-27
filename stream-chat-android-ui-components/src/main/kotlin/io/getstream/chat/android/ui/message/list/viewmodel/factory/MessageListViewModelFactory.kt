@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
  *
  * @param cid The channel id in the format messaging:123.
  * @param messageId The id of the target message to displayed.
+ * @param messageLimit The message limit when loading a new page.
  * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
  * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
  * navigate to the channel containing the thread but will not navigate to the thread itself.
@@ -40,6 +41,7 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 public class MessageListViewModelFactory @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
+    private val messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGES_LIMIT,
     private val navigateToThreadViaNotification: Boolean = false,
 ) : ViewModelProvider.Factory {
 
@@ -50,7 +52,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             MessageListViewModel(
                 cid = cid,
                 messageId = messageId,
-                navigateToThreadViaNotification = navigateToThreadViaNotification
+                messageLimit = messageLimit,
+                navigateToThreadViaNotification = navigateToThreadViaNotification,
             )
         },
         MessageComposerViewModel::class.java to { MessageComposerViewModel(MessageComposerController(cid)) },
@@ -68,6 +71,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     public class Builder @SinceKotlin("99999.9") constructor() {
         private var cid: String? = null
         private var messageId: String? = null
+        private var messageLimit: Int = MessageListViewModel.DEFAULT_MESSAGES_LIMIT
         private var navigateToThreadViaNotification: Boolean = false
 
         /**
@@ -82,6 +86,13 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
          */
         public fun messageId(messageId: String): Builder = apply {
             this.messageId = messageId
+        }
+
+        /**
+         * Sets the number of messages that are loaded when loading a new page.
+         */
+        public fun messageLimit(messageLimit: Int): Builder = apply {
+            this.messageLimit = messageLimit
         }
 
         /**
@@ -100,7 +111,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             return MessageListViewModelFactory(
                 cid = cid ?: error("Channel cid should not be null"),
                 messageId = messageId,
-                navigateToThreadViaNotification = navigateToThreadViaNotification
+                messageLimit = messageLimit,
+                navigateToThreadViaNotification = navigateToThreadViaNotification,
             )
         }
     }

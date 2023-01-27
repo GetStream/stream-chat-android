@@ -206,8 +206,8 @@ public final class com/getstream/sdk/chat/viewmodel/MessageInputViewModel : andr
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
 	public static final field DEFAULT_MESSAGES_LIMIT I
 	public static final field SEPARATOR_TIME I
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Z)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;IZ)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;IZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getChannelState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getDeletedMessageVisibility ()Landroidx/lifecycle/LiveData;
@@ -653,6 +653,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getMimeTypeIconProvider ()Lio/getstream/chat/android/ui/MimeTypeIconProvider;
 	public static final fun getNavigator ()Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;
 	public static final fun getQuotedAttachmentFactoryManager ()Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;
+	public static final fun getShowThreadSeparatorInEmptyThread ()Z
 	public static final fun getStyle ()Lio/getstream/chat/android/ui/common/style/ChatStyle;
 	public static final fun getSupportedReactions ()Lio/getstream/chat/android/ui/SupportedReactions;
 	public static final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
@@ -668,6 +669,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setMimeTypeIconProvider (Lio/getstream/chat/android/ui/MimeTypeIconProvider;)V
 	public static final fun setNavigator (Lio/getstream/chat/android/ui/common/navigation/ChatNavigator;)V
 	public static final fun setQuotedAttachmentFactoryManager (Lio/getstream/chat/android/ui/message/list/adapter/viewholder/attachment/QuotedAttachmentFactoryManager;)V
+	public static final fun setShowThreadSeparatorInEmptyThread (Z)V
 	public static final fun setStyle (Lio/getstream/chat/android/ui/common/style/ChatStyle;)V
 	public static final fun setSupportedReactions (Lio/getstream/chat/android/ui/SupportedReactions;)V
 }
@@ -3769,8 +3771,9 @@ public final class io/getstream/chat/android/ui/message/list/viewmodel/MessageLi
 public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Z)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;IZ)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;IZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
@@ -3779,6 +3782,7 @@ public final class io/getstream/chat/android/ui/message/list/viewmodel/factory/M
 	public final fun build ()Landroidx/lifecycle/ViewModelProvider$Factory;
 	public final fun cid (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
 	public final fun messageId (Ljava/lang/String;)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
+	public final fun messageLimit (I)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
 	public final fun navigateToThreadViaNotification (Z)Lio/getstream/chat/android/ui/message/list/viewmodel/factory/MessageListViewModelFactory$Builder;
 }
 
