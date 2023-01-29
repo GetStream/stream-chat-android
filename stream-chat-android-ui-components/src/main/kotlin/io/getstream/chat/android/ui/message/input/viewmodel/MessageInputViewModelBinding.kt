@@ -43,7 +43,9 @@ public fun MessageInputViewModel.bindView(
     view: MessageInputView,
     lifecycleOwner: LifecycleOwner,
 ) {
-    val handler = MessageInputView.DefaultUserLookupHandler(emptyList())
+    val handler = MessageInputView.DefaultUserLookupHandler(emptyList()) { query ->
+        queryMembersByUserNameContains(query)
+    }
     view.setUserLookupHandler(handler)
     members.observe(lifecycleOwner) { members ->
         handler.users = members.map(Member::user)

@@ -60,10 +60,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- The default implementation of `MessageInputView` will now query channel members from the server if a mention lookup fails to find the matching channel member using the data available in the local state. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
 
 ### ✅ Added
 - Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
 - Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
+- Added lambda parameter `queryMembersOnline` to `DefaultUserLookupHandler`. The lambda parameter is used internally by `DefaultUserLookupHandler.handleUserLookup()` when no matches could be found inside the list of users contained by `DefaultUserLookupHandler.users`. It should be used to query members from the server and return the results. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
 
 ### ⚠️ Changed
 
