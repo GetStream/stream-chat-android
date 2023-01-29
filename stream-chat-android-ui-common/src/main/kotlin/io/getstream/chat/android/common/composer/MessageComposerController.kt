@@ -698,23 +698,27 @@ public class MessageComposerController(
         val containsMention = MentionPattern.matcher(messageText).find()
 
         mentionSuggestions.value = if (containsMention) {
+            logger.v { "[handleMentionSuggestions] Input contains the mention prefix @." }
             val userNameContains = messageText.substringAfterLast("@")
-
-            logger.v { "[handleMentionSuggestions] Searching the local list of users for mention matches." }
 
             val localMentions = users.filter { it.name.contains(userNameContains, true) }
 
-            if (localMentions.isEmpty() && userNameContains.count() > 1) {
-                logger.v { "[handleMentionSuggestions] Querying the server for members who match the mention." }
-                val (channelType, channelId) = channelId.cidToTypeAndId()
+            when {
+                localMentions.isNotEmpty() -> {
+                    logger.v { "[handleMentionSuggestions] Mention found in the local state.." }
+                    localMentions
+                }
+                userNameContains.count() > 1 -> {
+                    logger.v { "[handleMentionSuggestions] Querying the server for members who match the mention." }
+                    val (channelType, channelId) = channelId.cidToTypeAndId()
 
-                queryMembersByUserNameContains(
-                    channelType = channelType,
-                    channelId = channelId,
-                    contains = userNameContains
-                )
-            } else {
-                emptyList()
+                    queryMembersByUserNameContains(
+                        channelType = channelType,
+                        channelId = channelId,
+                        contains = userNameContains
+                    )
+                }
+                else -> emptyList()
             }
         } else {
             emptyList()
@@ -743,9 +747,8 @@ public class MessageComposerController(
         val result = chatClient.queryMembers(
             channelType = channelType,
             channelId = channelId,
-            // TODO adjust offset and limit
-            offset = 1,
-            limit = 100,
+            offset = queryMembersRequestOffset,
+            limit = queryMembersMemberLimit,
             filter = Filters.autocomplete(
                 fieldName = "name",
                 value = contains
@@ -864,5 +867,15 @@ public class MessageComposerController(
          * the BE for members.
          */
         private const val ComputeMentionSuggestionsDebounceTime = 150L
+
+        /**
+         * Pagination offset for the member query.
+         */
+        private const val queryMembersRequestOffset: Int = 0
+
+        /**
+         * The upper limit of members the query is allowed to return.
+         */
+        private const val queryMembersMemberLimit: Int = 30
     }
 }
