@@ -2306,6 +2306,8 @@ public abstract interface class io/getstream/chat/android/ui/message/input/Messa
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView$DefaultUserLookupHandler : io/getstream/chat/android/ui/message/input/MessageInputView$UserLookupHandler {
+	public fun <init> (Ljava/util/List;)V
+	public fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/message/input/transliteration/StreamTransliterator;)V
 	public fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/message/input/transliteration/StreamTransliterator;Lkotlin/jvm/functions/Function2;)V
 	public synthetic fun <init> (Ljava/util/List;Lio/getstream/chat/android/ui/message/input/transliteration/StreamTransliterator;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getUsers ()Ljava/util/List;

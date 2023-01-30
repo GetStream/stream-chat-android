@@ -1310,7 +1310,7 @@ public class MessageInputView : ConstraintLayout {
      * @param queryMembersOnline This method is invoked internally within the body of [handleUserLookup]] if no
      * matches were found within [users]. Use it to query the server for members and return a result.
      */
-    public class DefaultUserLookupHandler(
+    public class DefaultUserLookupHandler @JvmOverloads constructor(
         public var users: List<User>,
         private var streamTransliterator: StreamTransliterator = DefaultStreamTransliterator(),
         private val queryMembersOnline: suspend (query: String) -> List<User> = { emptyList() },
