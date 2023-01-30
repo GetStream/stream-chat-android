@@ -64,6 +64,7 @@
 ### ✅ Added
 - Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
 - Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
+- Added the feature flag boolean `navigateToThreadViaNotification` to `MessageListViewModel` and `MessageListViewModelFactory`. If it is set to true and a thread message has been received via push notification, clicking on the notification will make the SDK automatically navigate to the thread. If set to false, the SDK will always navigate to the channel containing the thread without navigating to the thread itself. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
 
 ### ⚠️ Changed
 

@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEventHandler
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.isEphemeral
 import io.getstream.chat.android.client.models.Attachment
@@ -37,6 +38,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.map
 import io.getstream.chat.android.client.utils.toResultError
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.offline.extensions.internal.logic
@@ -142,6 +144,30 @@ public fun ChatClient.getRepliesAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): ThreadState {
     return requestsAsState(coroutineScope).getReplies(messageId, messageLimit)
+}
+
+/**
+ * Returns thread replies in the form of [ThreadState], however, unlike [getRepliesAsState]
+ * it will return it only after the API call made to get replies has ended. Thread state
+ * will be returned regardless if the API call has succeeded or failed, the only difference is
+ * in how up to date the replies in the thread state are.
+ *
+ * @param messageId The ID of the original message the replies were made to.
+ * @param messageLimit The number of messages that will be initially loaded.
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
+ *
+ * @return [ThreadState] wrapped inside a [Call].
+ */
+@InternalStreamChatApi
+@JvmOverloads
+public fun ChatClient.getRepliesAsStateCall(
+    messageId: String,
+    messageLimit: Int,
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): Call<ThreadState> {
+    return CoroutineCall(scope = state.scope) {
+        Result(requestsAsState(coroutineScope).getRepliesAsStateCall(messageId, messageLimit))
+    }
 }
 
 /**
@@ -285,6 +311,29 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
             }
         } else {
             cidValidationResult.error().toResultError()
+        }
+    }
+}
+
+/**
+ * Attempts to fetch the message from offline cache before making an API call.
+ *
+ * @param messageId The id of the message we are fetching.
+ *
+ * @return The message with the corresponding iID wrapped inside a [Call].
+ */
+@InternalStreamChatApi
+@CheckResult
+public fun ChatClient.getMessageUsingCache(
+    messageId: String,
+): Call<Message> {
+    return CoroutineCall(state.scope) {
+        val message = logic.getMessageById(messageId) ?: logic.getMessageByIdFromDb(messageId)
+
+        if (message != null) {
+            Result(data = message)
+        } else {
+            getMessage(messageId).await()
         }
     }
 }

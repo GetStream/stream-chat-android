@@ -29,7 +29,9 @@ import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.offline.plugin.state.channel.thread.internal.ThreadMutableState
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
-internal class ThreadLogic(private val threadStateLogic: ThreadStateLogic) {
+internal class ThreadLogic(
+    private val threadStateLogic: ThreadStateLogic,
+) {
 
     private val mutableState: ThreadMutableState = threadStateLogic.writeThreadState()
 

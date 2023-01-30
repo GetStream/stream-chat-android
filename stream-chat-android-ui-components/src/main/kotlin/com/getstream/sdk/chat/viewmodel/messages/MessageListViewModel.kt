@@ -49,7 +49,9 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
+import io.getstream.chat.android.offline.extensions.getMessageUsingCache
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
+import io.getstream.chat.android.offline.extensions.getRepliesAsStateCall
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadNewerMessages
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
@@ -81,14 +83,18 @@ import io.getstream.chat.android.livedata.utils.Event as EventWrapper
  * @param clientState Client state of SDK that contains information such as the current user and connection state.
  * such as the current user, connection state, unread counts etc.
  * @param messageLimit The message limit when loading a new page.
+ * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
+ * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
+ * navigate to the channel containing the thread but will not navigate to the thread itself.
  */
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 public class MessageListViewModel(
     private val cid: String,
     private val messageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
-    private val messageLimit: Int = DEFAULT_MESSAGES_LIMIT
+    private val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
+    private val navigateToThreadViaNotification: Boolean = false,
 ) : ViewModel() {
 
     /**
@@ -617,19 +623,20 @@ public class MessageListViewModel(
                     ?.message
 
                 if (message != null) {
-                    _targetMessage.value = message!!
+                    focusMessage(message)
                 } else {
-                    chatClient.loadMessageById(
-                        cid,
-                        event.messageId
-                    ).enqueue { result ->
-                        if (result.isSuccess) {
-                            _targetMessage.value = result.data()
-                        } else {
-                            val error = result.error()
-                            logger.e { "Could not load message: ${error.message}. Cause: ${error.cause?.message}" }
+                    chatClient.getMessageUsingCache(event.messageId)
+                        .enqueue { result ->
+                            if (result.isSuccess) {
+                                focusMessage(result.data())
+                            } else {
+                                val error = result.error()
+                                logger.e {
+                                    "[Event.ShowMessage] Could not load message: ${error.message}." +
+                                        " Cause: ${error.cause?.message}"
+                                }
+                            }
                         }
-                    }
                 }
             }
             is Event.RemoveAttachment -> {
@@ -862,7 +869,7 @@ public class MessageListViewModel(
      * @param parentMessage The message with the thread we want to observe.
      */
     private fun onThreadModeEntered(parentMessage: Message) {
-        loadThreadWithOfflinePlugin(parentMessage)
+        loadThread(parentMessage)
     }
 
     /**
@@ -871,10 +878,24 @@ public class MessageListViewModel(
      *
      * @param parentMessage The message with the thread we want to observe.
      */
-    private fun loadThreadWithOfflinePlugin(parentMessage: Message) {
+    private fun loadThread(parentMessage: Message) {
         val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit)
         currentMode = Mode.Thread(parentMessage, state)
         setThreadMessages(state.messages.asLiveData())
+    }
+
+    // TODO better naming and write kdocs
+    private suspend fun loadThreadSuspending(parentMessage: Message) {
+        val result = chatClient.getRepliesAsStateCall(parentMessage.id, DEFAULT_MESSAGES_LIMIT).await()
+        val isSuccess = result.isSuccess
+
+        if (isSuccess) {
+            currentMode = Mode.Thread(parentMessage, result.data())
+            setThreadMessages(result.data().messages.asLiveData())
+        } else {
+            val error = result.error()
+            logger.e { "Could not load thread: ${error.message}. Cause: ${error.cause?.message}" }
+        }
     }
 
     /**
@@ -945,6 +966,77 @@ public class MessageListViewModel(
      */
     public fun setMessageFooterVisibility(messageFooterVisibility: MessageFooterVisibility) {
         this.messageFooterVisibility.value = messageFooterVisibility
+    }
+
+    /**
+     * Loads the message and puts it in focus.
+     * Capable of loading both channel and thread messages.
+     *
+     * Will try to fetch the message from cache before attempting an API call.
+     *
+     * @param message The message that should be put in focus.
+     */
+    private fun focusMessage(message: Message) {
+        if (message.parentId != null && navigateToThreadViaNotification) {
+            focusThreadMessage(message)
+        } else {
+            focusChannelMessage(message.id)
+        }
+    }
+
+    /**
+     * Loads the channel message with the surrounding messages and puts it in focus.
+     * Will try to fetch the messages from cache before attempting an API call.
+     *
+     * Use this method for channel messages only, for focusing thread messages see [focusThreadMessage].
+     *
+     * @param messageId The ID of the message that should be put in focus.
+     */
+    private fun focusChannelMessage(messageId: String) {
+        chatClient.loadMessageById(
+            cid,
+            messageId
+        ).enqueue { result ->
+            if (result.isSuccess) {
+                _targetMessage.value = result.data()
+            } else {
+                val error = result.error()
+                logger.e {
+                    "[focusChannelMessage] Could not load message: ${error.message}." +
+                        " Cause: ${error.cause?.message}"
+                }
+            }
+        }
+    }
+
+    /**
+     * Loads the thread message with its parent thread and puts the message in focus.
+     * Will try to fetch the message and thread from cache before attempting an API call.
+     *
+     * Use this method for thread messages only, for focusing channel messages see [focusChannelMessage].
+     *
+     * @param threadMessage The thread message that should be put in focus.
+     */
+    private fun focusThreadMessage(threadMessage: Message) {
+        val parentId = threadMessage.parentId
+
+        if (parentId != null) {
+            chatClient.getMessageUsingCache(parentId).enqueue { result ->
+                if (result.isSuccess) {
+                    viewModelScope.launch {
+                        loadThreadSuspending(result.data())
+
+                        _targetMessage.value = threadMessage
+                    }
+                } else {
+                    val error = result.error()
+                    logger.e {
+                        "[focusThreadMessage] Could not load message: ${error.message}." +
+                            " Cause: ${error.cause?.message}"
+                    }
+                }
+            }
+        }
     }
 
     /**
