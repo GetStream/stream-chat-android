@@ -866,7 +866,7 @@ public class MessageComposerController(
          * We debounce those computations in the case of being unable to find mentions from local data, we will query
          * the BE for members.
          */
-        private const val ComputeMentionSuggestionsDebounceTime = 150L
+        private const val ComputeMentionSuggestionsDebounceTime = 300L
 
         /**
          * Pagination offset for the member query.
