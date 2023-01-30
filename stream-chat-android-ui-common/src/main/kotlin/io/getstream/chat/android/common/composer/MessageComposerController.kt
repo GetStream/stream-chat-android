@@ -705,7 +705,7 @@ public class MessageComposerController(
 
             when {
                 localMentions.isNotEmpty() -> {
-                    logger.v { "[handleMentionSuggestions] Mention found in the local state.." }
+                    logger.v { "[handleMentionSuggestions] Mention found in the local state." }
                     localMentions
                 }
                 userNameContains.count() > 1 -> {
@@ -758,7 +758,9 @@ public class MessageComposerController(
         ).await()
 
         return if (result.isSuccess) {
-            result.data().map { it.user }.filter { it.name.contains(contains, true) }
+            result.data()
+                .filter { it.user.name.contains(contains, true) }
+                .map { it.user }
         } else {
             val error = result.error()
 
