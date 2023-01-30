@@ -76,6 +76,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the parameter `messageId: String?` to `MessageListViewModel` and `MessageListViewModelFactory`. If `navigateToThreadViaNotification` is set to true (see the changelog entry below), it will enable navigating to threads upon clicking a push notification triggered by a thread message. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
+- Added the feature flag boolean `navigateToThreadViaNotification: Boolean` to `MessageListViewModel` and `MessageListViewModelFactory`. If it is set to true and a thread message has been received via push notification, clicking on the notification will make the SDK automatically navigate to the thread. If set to false, the SDK will always navigate to the channel containing the thread without navigating to the thread itself. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
 
 ### ⚠️ Changed
 

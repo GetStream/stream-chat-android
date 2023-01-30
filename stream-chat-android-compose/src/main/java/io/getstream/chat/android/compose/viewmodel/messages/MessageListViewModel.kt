@@ -1277,8 +1277,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Fetches the message with the according message ID. If the given message is in a thread it will set the
-     * mode to thread mode, otherwise the ViewModel will stay in normal mode.
+     * Opens the thread the belonging to the parent message given by [parentMessageId].
      *
      * @param parentMessageId The ID of the parent message hosting the thread message received via push notification.
      */
