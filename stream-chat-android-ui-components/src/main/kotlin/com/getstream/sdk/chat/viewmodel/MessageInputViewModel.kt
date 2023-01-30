@@ -438,7 +438,9 @@ public class MessageInputViewModel @JvmOverloads constructor(
         ).await()
 
         return if (result.isSuccess) {
-            result.data().map { it.user }.filter { it.name.contains(contains, true) }
+            result.data()
+                .filter { it.user.name.contains(contains, true) }
+                .map { it.user }
         } else {
             val error = result.error()
 
