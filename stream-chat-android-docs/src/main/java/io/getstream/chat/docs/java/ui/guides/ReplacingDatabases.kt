@@ -14,6 +14,9 @@ import io.getstream.chat.android.client.persistance.repository.factory.Repositor
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.docs.java.ui.guides.realm.entities.ChannelEntityRealm
+import io.getstream.chat.docs.java.ui.guides.realm.entities.toDomain
+import io.getstream.chat.docs.java.ui.guides.realm.entities.toRealm
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.UpdatePolicy
