@@ -17,31 +17,20 @@
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.Command
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.state.Edit
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.MessageMode
-import io.getstream.chat.android.common.state.Reply
-import io.getstream.chat.android.common.state.ThreadReply
-import io.getstream.chat.android.common.state.ValidationError
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -55,8 +44,8 @@ import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.ui.common.utils.typing.internal.DefaultTypingUpdatesBuffer
 import io.getstream.chat.android.uiutils.extension.containsLinks
-import io.getstream.logging.StreamLog
-import io.getstream.logging.TaggedLogger
+import io.getstream.log.StreamLog
+import io.getstream.log.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -67,8 +56,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -773,19 +762,20 @@ public class MessageComposerController(
             members = listOf()
         ).await()
 
-        return if (result.isSuccess) {
-            result.data()
-                .filter { it.user.name.contains(contains, true) }
-                .map { it.user }
-        } else {
-            val error = result.error()
-
-            logger.e {
-                "[queryMembersByUserNameContains] Could not query members: " +
-                    "${error.message}"
+        return when (result) {
+            is Result.Success -> {
+                result.value
+                    .filter { it.user.name.contains(contains, true) }
+                    .map { it.user }
             }
+            is Result.Failure -> {
+                logger.e {
+                    "[queryMembersByUserNameContains] Could not query members: " +
+                        result.value.message
+                }
 
-            emptyList()
+                emptyList()
+            }
         }
     }
 
