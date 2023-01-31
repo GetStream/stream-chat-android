@@ -106,7 +106,6 @@ class MessagesActivity : BaseConnectedActivity() {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun MyCustomUi() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
