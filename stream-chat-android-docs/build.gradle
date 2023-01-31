@@ -5,6 +5,7 @@ plugins {
     id 'com.android.application'
     id 'io.realm.kotlin' version '1.8.0'
     id 'kotlin-android'
+    id 'com.google.devtools.ksp'
 }
 
 apply from: "${rootDir}/scripts/android.gradle"
@@ -119,4 +120,10 @@ dependencies {
     implementation Dependencies.huaweiPush
     compileOnly files('../libraries/external/MiPush_SDK_Client_5_1_1-G_3rd.aar')
     implementation Dependencies.coil
+
+    // Serialization
+    implementation Dependencies.moshi
+    implementation Dependencies.moshiKotlin
+    implementation Dependencies.moshiAdapters
+    ksp Dependencies.moshiCodegen
 }

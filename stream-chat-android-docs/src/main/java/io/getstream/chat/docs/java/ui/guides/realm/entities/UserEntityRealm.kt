@@ -21,6 +21,8 @@ import io.getstream.chat.docs.java.ui.guides.realm.utils.toDate
 import io.getstream.chat.docs.java.ui.guides.realm.utils.toRealmInstant
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
+import io.getstream.chat.docs.java.ui.guides.realm.utils.toDate
+import io.getstream.chat.docs.java.ui.guides.realm.utils.toRealmInstant
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
