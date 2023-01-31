@@ -87,7 +87,7 @@ public interface RepositoryFactory {
     /**
      * Interface to delegate creation of [RepositoryFactory].
      */
-    public interface Provider {
+    public fun interface Provider {
 
         /**
          * Create a [RepositoryFactory] for the given [User].
