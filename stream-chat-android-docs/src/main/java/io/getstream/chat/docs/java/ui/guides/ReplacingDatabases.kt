@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.persistance.repository.factory.Repositor
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.docs.java.ui.guides.realm.entities.AttachmentEntityRealm
+import io.getstream.chat.docs.java.ui.guides.realm.entities.ChannelEntityRealm
 import io.getstream.chat.docs.java.ui.guides.realm.entities.ChannelUserReadEntityRealm
 import io.getstream.chat.docs.java.ui.guides.realm.entities.CommandEntityRealm
 import io.getstream.chat.docs.java.ui.guides.realm.entities.ConfigEntityRealm
@@ -49,34 +50,34 @@ class ReplacingDatabases {
     /**
      * [Using a custom RepositoryFactoryProvider ](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#using-a-custom-repositoryfactoryprovider)
      */
-    class UsingACustomRepositoryFactoryProvider: Fragment() {
+    class UsingACustomRepositoryFactoryProvider : Fragment() {
 
-private fun configureRealm(): Realm =
-    RealmConfiguration.Builder(schema = realmSchema())
-        .schemaVersion(1)
-        .deleteRealmIfMigrationNeeded()
-        .build()
-        .let(Realm::open)
+        private fun configureRealm(): Realm =
+            RealmConfiguration.Builder(schema = realmSchema())
+                .schemaVersion(1)
+                .deleteRealmIfMigrationNeeded()
+                .build()
+                .let(Realm::open)
 
-private fun realmSchema(): Set<KClass<out RealmObject>> =
-    setOf(
-        MessageEntityRealm::class,
-        ChannelEntityRealm::class,
-        UserEntityRealm::class,
-        QueryChannelsEntityRealm::class,
-        MemberEntityRealm::class,
-        ChannelUserReadEntityRealm::class,
-        ReactionEntityRealm::class,
-        ReactionCountEntityRealm::class,
-        ReactionScoreEntityRealm::class,
-        ConfigEntityRealm::class,
-        CommandEntityRealm::class,
-        QuerySorterInfoEntityRealm::class,
-        SortSpecificationEntityRealm::class,
-        SyncStateEntityRealm::class,
-        AttachmentEntityRealm::class,
-        UploadStateEntityRealm::class,
-    )
+        private fun realmSchema(): Set<KClass<out RealmObject>> =
+            setOf(
+                MessageEntityRealm::class,
+                ChannelEntityRealm::class,
+                UserEntityRealm::class,
+                QueryChannelsEntityRealm::class,
+                MemberEntityRealm::class,
+                ChannelUserReadEntityRealm::class,
+                ReactionEntityRealm::class,
+                ReactionCountEntityRealm::class,
+                ReactionScoreEntityRealm::class,
+                ConfigEntityRealm::class,
+                CommandEntityRealm::class,
+                QuerySorterInfoEntityRealm::class,
+                SortSpecificationEntityRealm::class,
+                SyncStateEntityRealm::class,
+                AttachmentEntityRealm::class,
+                UploadStateEntityRealm::class,
+            )
 
         val client = ChatClient.Builder("api_key_here", requireContext())
             .withRepositoryFactoryProvider { RealmRepositoryFactory(configureRealm()) }

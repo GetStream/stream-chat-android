@@ -42,10 +42,6 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
         }
     }
 
-    override fun clearChannelCache() {
-        // Nothing do to. There's no cache
-    }
-
     override suspend fun deleteChannel(cid: String) {
         val channel = realm.query<ChannelEntityRealm>("cid == '$cid'")
             .first()
@@ -56,18 +52,14 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
         }
     }
 
-    override suspend fun evictChannel(cid: String) {
-        // Nothing to do. There's no cache.
-    }
-
-    override suspend fun insertChannel(channel: Channel) {
+    override suspend fun upsertChannel(channel: Channel) {
         realm.writeBlocking {
             this.copyToRealm(channel.toRealm(), updatePolicy = UpdatePolicy.ALL)
         }
     }
 
-    override suspend fun insertChannels(channels: Collection<Channel>) {
-        channels.forEach { channel -> insertChannel(channel) }
+    override suspend fun upsertChannels(channels: Collection<Channel>) {
+        channels.forEach { channel -> upsertChannel(channel) }
     }
 
     override suspend fun selectAllCids(): List<String> =
@@ -87,10 +79,7 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? =
         selectChannelByCidRealm(cid)?.toDomain()
 
-    override suspend fun selectChannels(
-        channelCIDs: List<String>,
-        forceCache: Boolean,
-    ): List<Channel> {
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> {
         val channelsString = channelCIDs.joinToString(
             prefix = "{ ",
             postfix = " }",
@@ -105,9 +94,6 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
             .find()
             .map { entity -> entity.toDomain() }
     }
-
-    override suspend fun selectChannelsByCids(cids: List<String>): List<Channel> =
-        selectChannels(cids, false)
 
     override suspend fun selectChannelsSyncNeeded(limit: Int): List<Channel> {
         return realm.query<ChannelEntityRealm>("sync_status == $0", SyncStatus.SYNC_NEEDED.status)
