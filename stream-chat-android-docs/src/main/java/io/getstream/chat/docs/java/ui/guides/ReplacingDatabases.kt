@@ -51,37 +51,36 @@ class ReplacingDatabases {
      */
     class UsingACustomRepositoryFactoryProvider: Fragment() {
 
-        private fun configureRealm(): Realm =
-            RealmConfiguration.Builder(schema = realmSchema())
-                .schemaVersion(1)
-                .deleteRealmIfMigrationNeeded()
-                .build()
-                .let(Realm::open)
+private fun configureRealm(): Realm =
+    RealmConfiguration.Builder(schema = realmSchema())
+        .schemaVersion(1)
+        .deleteRealmIfMigrationNeeded()
+        .build()
+        .let(Realm::open)
 
-        private fun realmSchema(): Set<KClass<out RealmObject>> =
-            setOf(
-                MessageEntityRealm::class,
-                ChannelEntityRealm::class,
-                UserEntityRealm::class,
-                QueryChannelsEntityRealm::class,
-                MemberEntityRealm::class,
-                ChannelUserReadEntityRealm::class,
-                ReactionEntityRealm::class,
-                ReactionCountEntityRealm::class,
-                ReactionScoreEntityRealm::class,
-                ConfigEntityRealm::class,
-                CommandEntityRealm::class,
-                QuerySorterInfoEntityRealm::class,
-                SortSpecificationEntityRealm::class,
-                SyncStateEntityRealm::class,
-                AttachmentEntityRealm::class,
-                UploadStateEntityRealm::class,
-            )
+private fun realmSchema(): Set<KClass<out RealmObject>> =
+    setOf(
+        MessageEntityRealm::class,
+        ChannelEntityRealm::class,
+        UserEntityRealm::class,
+        QueryChannelsEntityRealm::class,
+        MemberEntityRealm::class,
+        ChannelUserReadEntityRealm::class,
+        ReactionEntityRealm::class,
+        ReactionCountEntityRealm::class,
+        ReactionScoreEntityRealm::class,
+        ConfigEntityRealm::class,
+        CommandEntityRealm::class,
+        QuerySorterInfoEntityRealm::class,
+        SortSpecificationEntityRealm::class,
+        SyncStateEntityRealm::class,
+        AttachmentEntityRealm::class,
+        UploadStateEntityRealm::class,
+    )
 
         val client = ChatClient.Builder("api_key_here", requireContext())
             .withRepositoryFactoryProvider { RealmRepositoryFactory(configureRealm()) }
             .build()
-
 
         public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactory {
             override fun createUserRepository(): UserRepository = RealmUserRepository(realm)

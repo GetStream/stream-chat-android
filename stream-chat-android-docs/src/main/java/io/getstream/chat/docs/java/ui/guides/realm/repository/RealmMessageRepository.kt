@@ -113,4 +113,11 @@ public class RealmMessageRepository(private val realm: Realm) : MessageRepositor
             .find()
             .map { entity -> entity.toDomain() }
     }
+
+    override suspend fun selectRepliedMessage(messageId: String): Message? {
+        return realm.query<MessageEntityRealm>("id == '$messageId'")
+            .first()
+            .find()
+            ?.toDomain()
+    }
 }

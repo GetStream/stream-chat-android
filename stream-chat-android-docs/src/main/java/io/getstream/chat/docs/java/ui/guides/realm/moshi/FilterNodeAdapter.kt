@@ -20,6 +20,11 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.docs.java.ui.guides.realm.entities.FilterNode
+import io.getstream.chat.docs.java.ui.guides.realm.filter.KEY_AND
+import io.getstream.chat.docs.java.ui.guides.realm.filter.KEY_IN
+import io.getstream.chat.docs.java.ui.guides.realm.filter.KEY_NOR
+import io.getstream.chat.docs.java.ui.guides.realm.filter.KEY_NOT_IN
+import io.getstream.chat.docs.java.ui.guides.realm.filter.KEY_OR
 
 internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
 

@@ -17,7 +17,7 @@ To show how to substitute Room for another ORM we elaborated a tutorial showing 
 
 ```
 val client = ChatClient.Builder(apiKey, context)
-    .withRepositoryFactoryProvider { RealmRepositoryFactory(provideRealm()) }
+    .withRepositoryFactoryProvider { RealmRepositoryFactory(configureRealm()) }
     .build()
     
 public fun configureRealm(): Realm =
@@ -25,7 +25,27 @@ public fun configureRealm(): Realm =
         .schemaVersion(SCHEMA_VERSION)
         .deleteRealmIfMigrationNeeded()
         .build()
-        .let(Realm::open)    
+        .let(Realm::open)           
+
+private fun realmSchema(): Set<KClass<out RealmObject>> =
+    setOf(
+        MessageEntityRealm::class,
+        ChannelEntityRealm::class,
+        UserEntityRealm::class,
+        QueryChannelsEntityRealm::class,
+        MemberEntityRealm::class,
+        ChannelUserReadEntityRealm::class,
+        ReactionEntityRealm::class,
+        ReactionCountEntityRealm::class,
+        ReactionScoreEntityRealm::class,
+        ConfigEntityRealm::class,
+        CommandEntityRealm::class,
+        QuerySorterInfoEntityRealm::class,
+        SortSpecificationEntityRealm::class,
+        SyncStateEntityRealm::class,
+        AttachmentEntityRealm::class,
+        UploadStateEntityRealm::class,
+    )    
 ```
 
 </TabItem>
@@ -40,7 +60,7 @@ public fun configureRealm(): Realm =
 </Tabs>
 
 :::note
-We will cover realmSchema() later in this documentation.
+The implementation of the entities of realmSchema() will be covered later in this document.
 ::: 
 
 `RepositoryFactory` is the access point for all the `Repositories` of the SDK, so they must be provided by this interface:
