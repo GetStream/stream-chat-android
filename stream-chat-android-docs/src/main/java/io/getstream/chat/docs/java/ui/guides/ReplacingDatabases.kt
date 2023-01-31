@@ -11,10 +11,12 @@ import io.getstream.chat.android.client.persistance.repository.ReactionRepositor
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
+import io.realm.kotlin.UpdatePolicy
 
 /**
  * [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/)
@@ -24,9 +26,9 @@ class ReplacingDatabases {
     /**
      * [Using a custom RepositoryFactoryProvider ](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#using-a-custom-repositoryfactoryprovider)
      */
-    class UsingACustomRepositoryFactoryProvider: Fragment {
+    class UsingACustomRepositoryFactoryProvider: Fragment() {
 
-        val client = ChatClient.Builder("api_key_here", context)
+        val client = ChatClient.Builder("api_key_here", requireContext())
             .withRepositoryFactoryProvider { RealmRepositoryFactory(provideRealm()) }
             .build()
 
@@ -62,5 +64,39 @@ class ReplacingDatabases {
                 getMessage: suspend (messageId: String) -> Message?,
             ): ChannelRepository = RealmChannelRepository(realm)
         }
+    }
+
+    public class RealmChannelRepository(private val realm: Realm) : ChannelRepository {
+        override suspend fun clear() {
+            realm.writeBlocking {
+                query<ChannelEntityRealm>().find().let(this::delete)
+            }
+        }
+
+        override suspend fun deleteChannel(cid: String) {
+            val channel = realm.query<ChannelEntityRealm>("cid == '$cid'")
+                .first()
+                .find()
+
+            realm.writeBlocking {
+                channel?.let(::findLatest)?.let(::delete)
+            }
+        }
+
+        override suspend fun insertChannel(channel: Channel) {
+            realm.writeBlocking {
+                this.copyToRealm(channel.toRealm(), updatePolicy = UpdatePolicy.ALL)
+            }
+        }
+
+        override suspend fun selectChannelByCid(cid: String): Channel? =
+            selectChannelByCidRealm(cid)?.toDomain()
+
+        private fun selectChannelByCidRealm(cid: String): ChannelEntityRealm? =
+            realm.query<ChannelEntityRealm>("cid == '$cid'")
+                .first()
+                .find()
+
+        // All the other methods must be implemented, following this same approach.
     }
 }
