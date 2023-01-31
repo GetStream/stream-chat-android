@@ -1,8 +1,11 @@
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.Versions
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.application'
+    id 'io.realm.kotlin' version '1.8.0'
+    id 'kotlin-android'
+}
 
 apply from: "${rootDir}/scripts/android.gradle"
 apply from: "${rootDir}/scripts/detekt-disabled.gradle"
@@ -90,6 +93,8 @@ dependencies {
     implementation project(":stream-chat-android-ui-components")
     implementation project(":stream-chat-android-compose")
     implementation project(":stream-chat-android-markdown-transformer")
+
+    implementation 'io.realm.kotlin:library-base:1.8.0'
 
     // Compose
     implementation Dependencies.composeCompiler

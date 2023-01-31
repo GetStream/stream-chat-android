@@ -7,20 +7,6 @@ import io.getstream.chat.android.command.version.plugin.MinorBumpPlugin
 import io.getstream.chat.android.command.version.plugin.VersionPrintPlugin
 import io.getstream.chat.android.command.changelog.plugin.ChangelogAddModelSectionPlugin
 
-apply plugin: "com.github.ben-manes.versions"
-apply plugin: 'io.github.gradle-nexus.publish-plugin'
-apply plugin: 'binary-compatibility-validator'
-apply plugin: 'org.jetbrains.dokka'
-apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
-apply plugin: UnitTestsPlugin
-apply plugin: ReleasePlugin
-apply plugin: ChangelogReleaseSectionPlugin
-apply plugin: VersionBumpPlugin
-apply plugin: MinorBumpPlugin
-apply plugin: VersionPrintPlugin
-apply plugin: ChangelogAddModelSectionPlugin
-
-
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
@@ -46,6 +32,19 @@ buildscript {
         classpath Dependencies.detektPlugin
     }
 }
+
+apply plugin: "com.github.ben-manes.versions"
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
+apply plugin: 'binary-compatibility-validator'
+apply plugin: 'org.jetbrains.dokka'
+apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
+apply plugin: UnitTestsPlugin
+apply plugin: ReleasePlugin
+apply plugin: ChangelogReleaseSectionPlugin
+apply plugin: VersionBumpPlugin
+apply plugin: MinorBumpPlugin
+apply plugin: VersionPrintPlugin
+apply plugin: ChangelogAddModelSectionPlugin
 
 subprojects {
     if (it.name != 'stream-chat-android-docs'
