@@ -37,6 +37,10 @@ import io.getstream.chat.android.models.NotInFilterObject
 import io.getstream.chat.android.models.OrFilterObject
 import io.getstream.chat.docs.java.ui.guides.realm.entities.FilterNode
 
+/**
+ * [Representing Filters as a graph](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#representing-filters-as-a-graph)
+ */
+
 @Suppress("ComplexMethod")
 internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
     is AndFilterObject -> createCompositeFilterNode(KEY_AND, this.filterObjects.map(FilterObject::toFilterNode))

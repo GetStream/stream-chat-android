@@ -30,6 +30,9 @@ import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
 @Suppress("VariableNaming")
+/**
+ * [Implementing ChannelRepository](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#implementing-channelrepository)
+ */
 internal class ChannelEntityRealm : RealmObject {
     @PrimaryKey
     var cid: String = ""

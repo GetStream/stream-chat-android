@@ -48,7 +48,7 @@ import kotlin.reflect.KClass
 class ReplacingDatabases {
 
     /**
-     * [Using a custom RepositoryFactoryProvider ](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#using-a-custom-repositoryfactoryprovider)
+     * [Using a custom RepositoryFactoryProvider](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#using-a-custom-repositoryfactoryprovider)
      */
     class UsingACustomRepositoryFactoryProvider : Fragment() {
 
@@ -83,7 +83,7 @@ class ReplacingDatabases {
             .withRepositoryFactoryProvider { RealmRepositoryFactory(configureRealm()) }
             .build()
 
-        public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactory {
+        class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactory {
             override fun createUserRepository(): UserRepository = RealmUserRepository(realm)
 
             override fun createChannelConfigRepository(): ChannelConfigRepository = RealmChannelConfigRepository(realm)
@@ -108,4 +108,6 @@ class ReplacingDatabases {
             ): ChannelRepository = RealmChannelRepository(realm)
         }
     }
+
+
 }

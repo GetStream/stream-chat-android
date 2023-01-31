@@ -26,6 +26,11 @@ import io.getstream.chat.docs.java.ui.guides.realm.filter.KEY_NOR
 import io.getstream.chat.docs.java.ui.guides.realm.filter.KEY_NOT_IN
 import io.getstream.chat.docs.java.ui.guides.realm.filter.KEY_OR
 
+/**
+ * [Serializing FilterNode](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#serializing-filternode)
+ *
+ * [Deserializing FilterNode](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#deserializing-filternode)
+ */
 internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
 
     override fun fromJson(reader: JsonReader): FilterNode {

@@ -33,6 +33,9 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
+/**
+ * [Storing QueryChannelsEntityRealm](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#storing-querychannelsentityrealm)
+ */
 @Suppress("VariableNaming")
 internal class QueryChannelsEntityRealm : RealmObject {
     @PrimaryKey

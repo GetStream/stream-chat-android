@@ -28,6 +28,10 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
+
+/**
+ * [Storing QuerySorterInfoEntityRealm](https://getstream.io/chat/docs/sdk/android/client/guides/replace-database/#storing-querysorterinfoentityrealm)
+ */
 @Suppress("VariableNaming")
 internal class QuerySorterInfoEntityRealm : RealmObject {
     var query_specs: RealmList<SortSpecificationEntityRealm> = realmListOf()
