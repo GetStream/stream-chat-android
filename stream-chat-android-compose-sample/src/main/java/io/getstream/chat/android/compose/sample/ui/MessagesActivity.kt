@@ -21,7 +21,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -80,6 +79,7 @@ class MessagesActivity : BaseConnectedActivity() {
             context = this,
             channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+            messageId = intent.getStringExtra(KEY_MESSAGE_ID)
         )
     }
 
@@ -91,13 +91,16 @@ class MessagesActivity : BaseConnectedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: return
+        val messageId = intent.getStringExtra(KEY_MESSAGE_ID)
 
         setContent {
             ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 MessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },
-                    onHeaderActionClick = {}
+                    onHeaderActionClick = {},
+                    messageId = messageId,
+                    navigateToThreadViaNotification = true
                 )
 
                 // MyCustomUi()
@@ -105,7 +108,6 @@ class MessagesActivity : BaseConnectedActivity() {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun MyCustomUi() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
@@ -299,10 +301,18 @@ class MessagesActivity : BaseConnectedActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
+        private const val KEY_MESSAGE_ID = "messageId"
 
-        fun createIntent(context: Context, channelId: String): Intent {
+        fun createIntent(
+            context: Context,
+            channelId: String,
+            messageId: String?,
+        ): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
+                if (messageId != null) {
+                    putExtra(KEY_MESSAGE_ID, messageId)
+                }
             }
         }
     }

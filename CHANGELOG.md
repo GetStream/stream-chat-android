@@ -66,6 +66,7 @@
 - Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
 - Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
 - Added lambda parameter `queryMembersOnline` to `DefaultUserLookupHandler`. The lambda parameter is used internally by `DefaultUserLookupHandler.handleUserLookup()` when no matches could be found inside the list of users contained by `DefaultUserLookupHandler.users`. It should be used to query members from the server and return the results. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
+- Added the feature flag boolean `navigateToThreadViaNotification` to `MessageListViewModel` and `MessageListViewModelFactory`. If it is set to true and a thread message has been received via push notification, clicking on the notification will make the SDK automatically navigate to the thread. If set to false, the SDK will always navigate to the channel containing the thread without navigating to the thread itself. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
 
 ### ⚠️ Changed
 
@@ -77,6 +78,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the parameter `messageId: String?` to `MessageListViewModel` and `MessageListViewModelFactory`. If `navigateToThreadViaNotification` is set to true (see the changelog entry below), it will enable navigating to threads upon clicking a push notification triggered by a thread message. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
+- Added the feature flag boolean `navigateToThreadViaNotification: Boolean` to `MessageListViewModel` and `MessageListViewModelFactory`. If it is set to true and a thread message has been received via push notification, clicking on the notification will make the SDK automatically navigate to the thread. If set to false, the SDK will always navigate to the channel containing the thread without navigating to the thread itself. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
 
 ### ⚠️ Changed
 

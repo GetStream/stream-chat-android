@@ -46,6 +46,10 @@ import java.util.concurrent.TimeUnit
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
  * @param dateSeparatorThresholdMillis The millisecond amount that represents the threshold for adding date separators.
+ * @param messageId The ID of the message which we wish to focus on, if such exists.
+ * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
+ * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
+ * navigate to the channel containing the thread but will not navigate to the thread itself.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
@@ -60,6 +64,8 @@ public class MessagesViewModelFactory(
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold),
+    private val messageId: String? = null,
+    private val navigateToThreadViaNotification: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -88,7 +94,9 @@ public class MessagesViewModelFactory(
                 showSystemMessages = showSystemMessages,
                 deletedMessageVisibility = deletedMessageVisibility,
                 messageFooterVisibility = messageFooterVisibility,
-                dateSeparatorThresholdMillis = dateSeparatorThresholdMillis
+                dateSeparatorThresholdMillis = dateSeparatorThresholdMillis,
+                messageId = messageId,
+                navigateToThreadViaNotification = navigateToThreadViaNotification
             )
         },
         AttachmentsPickerViewModel::class.java to {

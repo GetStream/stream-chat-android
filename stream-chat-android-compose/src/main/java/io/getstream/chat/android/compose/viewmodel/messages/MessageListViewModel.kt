@@ -74,7 +74,9 @@ import io.getstream.chat.android.compose.ui.util.isError
 import io.getstream.chat.android.compose.ui.util.isSystem
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.offline.extensions.cancelEphemeralMessage
+import io.getstream.chat.android.offline.extensions.getMessageUsingCache
 import io.getstream.chat.android.offline.extensions.getRepliesAsState
+import io.getstream.chat.android.offline.extensions.getRepliesAsStateCall
 import io.getstream.chat.android.offline.extensions.globalState
 import io.getstream.chat.android.offline.extensions.loadMessageById
 import io.getstream.chat.android.offline.extensions.loadOlderMessages
@@ -83,6 +85,7 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.thread.ThreadState
 import io.getstream.logging.StreamLog
 import io.getstream.logging.TaggedLogger
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -111,6 +114,10 @@ import java.util.concurrent.TimeUnit
  * @param showSystemMessages Enables or disables system messages in the list.
  * @param dateSeparatorThresholdMillis The threshold in millis used to generate date separator items, if enabled.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
+ * @param messageId The ID of the message which we wish to focus on, if such exists.
+ * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
+ * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
+ * navigate to the channel containing the thread but will not navigate to the thread itself.
  */
 @Suppress("TooManyFunctions", "LargeClass", "TooManyFunctions")
 public class MessageListViewModel(
@@ -124,6 +131,8 @@ public class MessageListViewModel(
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(DateSeparatorDefaultHourThreshold),
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
+    private val messageId: String? = null,
+    private val navigateToThreadViaNotification: Boolean = false,
 ) : ViewModel() {
 
     /**
@@ -142,6 +151,7 @@ public class MessageListViewModel(
      * e.g. send messages, delete messages, etc...
      * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val ownCapabilities: StateFlow<Set<String>> =
         channelState.filterNotNull()
             .flatMapLatest { it.channelData }
@@ -269,6 +279,10 @@ public class MessageListViewModel(
         observeTypingUsers()
         observeMessages()
         observeChannel()
+
+        if (messageId != null) {
+            onOpenedFromPushNotification(messageId)
+        }
     }
 
     /**
@@ -342,11 +356,13 @@ public class MessageListViewModel(
     /**
      * Starts observing the list of typing users.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeTypingUsers() {
         viewModelScope.launch {
-            channelState.filterNotNull().flatMapLatest { it.typing }.collect {
-                typingUsers = it.users
-            }
+            channelState.filterNotNull()
+                .flatMapLatest { it.typing }.collect {
+                    typingUsers = it.users
+                }
         }
     }
 
@@ -354,23 +370,25 @@ public class MessageListViewModel(
      * Starts observing the current [Channel] created from [ChannelState]. It emits new data when either
      * channel data, member count or online member count updates.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeChannel() {
         viewModelScope.launch {
-            channelState.filterNotNull().flatMapLatest { state ->
-                combine(
-                    state.channelData,
-                    state.membersCount,
-                    state.watcherCount,
-                ) { _, _, _ ->
-                    state.toChannel()
+            channelState.filterNotNull()
+                .flatMapLatest { state ->
+                    combine(
+                        state.channelData,
+                        state.membersCount,
+                        state.watcherCount,
+                    ) { _, _, _ ->
+                        state.toChannel()
+                    }
+                }.collect { channel ->
+                    chatClient.notifications.dismissChannelNotifications(
+                        channelType = channel.type,
+                        channelId = channel.id
+                    )
+                    setCurrentChannel(channel)
                 }
-            }.collect { channel ->
-                chatClient.notifications.dismissChannelNotifications(
-                    channelType = channel.type,
-                    channelId = channel.id
-                )
-                setCurrentChannel(channel)
-            }
         }
     }
 
@@ -718,6 +736,40 @@ public class MessageListViewModel(
             endOfOlderMessages = threadState.endOfOlderMessages,
             reads = channelState.reads
         )
+    }
+
+    /**
+     *  Changes the current [messageMode] to be [Thread] with [ThreadState] and Loads thread data using ChatClient
+     *  directly. The data is observed by using [ThreadState].
+     *
+     *  The difference between [loadThread] and [loadThreadSequential] is that the latter makes a call to a [ChatClient]
+     *  extension function which will return a [ThreadState] instance only once the API call had finished, while the
+     *  former calls a different function which returns  a [ThreadState] instance immediately after the API request has
+     *  fired, regardless of its completion state.
+     *
+     * @param parentMessage The message with the thread we want to observe.
+     */
+    private suspend fun loadThreadSequential(parentMessage: Message) {
+        val result = chatClient.getRepliesAsStateCall(parentMessage.id, DefaultMessageLimit).await()
+        val channelState = channelState.value ?: return
+
+        if (result.isSuccess) {
+            val threadState = result.data()
+
+            messageMode = MessageMode.MessageThread(parentMessage, threadState)
+            observeThreadMessages(
+                threadId = threadState.parentId,
+                messages = threadState.messages,
+                endOfOlderMessages = threadState.endOfOlderMessages,
+                reads = channelState.reads
+            )
+        } else {
+            val error = result.error()
+
+            logger.e {
+                "[loadThread] -> Could not load thread: ${error.message}. Cause: ${error.cause?.message}"
+            }
+        }
     }
 
     /**
@@ -1196,6 +1248,54 @@ public class MessageListViewModel(
             is ShuffleGiphy -> chatClient.shuffleGiphy(message)
             is CancelGiphy -> chatClient.cancelEphemeralMessage(message)
         }.exhaustive.enqueue()
+    }
+
+    /**
+     * Fetches the message with the according message ID. If the given message is in a thread it will set the
+     * mode to thread mode, otherwise the ViewModel will stay in normal mode.
+     *
+     * @param messageId The ID of the message received via push notification.
+     */
+    private fun onOpenedFromPushNotification(messageId: String) {
+        viewModelScope.launch {
+            val result = chatClient.getMessageUsingCache(messageId = messageId).await()
+            val parentMessageId = result.data().parentId
+
+            // The channel will be automatically loaded given so we only need to
+            // account for opening threads when thread messages arrive via PNs
+            if (result.isSuccess && parentMessageId != null && navigateToThreadViaNotification) {
+                openThreadFromPushNotification(parentMessageId)
+            } else if (result.isError) {
+                val error = result.error()
+
+                logger.e {
+                    "[onOpenedFromPushNotification] -> Could not load message: ${error.message}. " +
+                        "Cause: ${error.cause?.message}"
+                }
+            }
+        }
+    }
+
+    /**
+     * Opens the thread the belonging to the parent message given by [parentMessageId].
+     *
+     * @param parentMessageId The ID of the parent message hosting the thread message received via push notification.
+     */
+    private fun openThreadFromPushNotification(parentMessageId: String) {
+        viewModelScope.launch {
+            val result = chatClient.getMessageUsingCache(parentMessageId).await()
+
+            if (result.isSuccess) {
+                loadThreadSequential(result.data())
+            } else {
+                val error = result.error()
+
+                logger.e {
+                    "[openThreadFromPushNotification] -> Could not load thread parent message: ${error.message}. " +
+                        "Cause: ${error.cause?.message}"
+                }
+            }
+        }
     }
 
     /**
