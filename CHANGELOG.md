@@ -349,6 +349,10 @@ If you want to learn more about these changes and our decisions, check out our [
 ### ✅ Added
 - Added the `GetMessageListener` interface used to perform actions as side effects when the `ChatCliet.getMessage()` method is used to fetch a single message from the backend. [#4623](https://github.com/GetStream/stream-chat-android/pull/4623)
 
+## stream-chat-android-ui-common
+### ⬆️ Improved
+- `MessageComposerController` will now query the server for a list of channel members if the input contains a mention symbol (@) and no user name matching the expression after the symbol @ was found in the local state containing a list of channel members. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
+
 ## stream-chat-android-ui-components
 ### ⬆️ Improved
 - The default implementation of `MessageInputView` will now query channel members from the server if a mention lookup fails to find the matching channel member using the data available in the local state. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
@@ -373,7 +377,6 @@ If you want to learn more about these changes and our decisions, check out our [
 ## stream-chat-android-ui-common
 ### ✅ Added
 - Exposed a way to allow you to include the current user avatar in the Channel avatar [#4561](https://github.com/GetStream/stream-chat-android/pull/4561)
-- `MessageComposerController` will now query the server for a list of channel members if the input contains a mention symbol (@) and no user name matching the expression after the symbol @ was found in the local state containing a list of channel members. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
 
 # November 23th, 2022 - 5.11.8
 ## stream-chat-android-client
