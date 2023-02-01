@@ -1,6 +1,6 @@
 # Replace Database
 
-In some cases, uses may want to add their own database/ORM to Stream Android SDK instead of using the default one. This can be useful to add side effects when a certain data is used to controll the flow of information in a spefic way, use it to debug the SDK or support an existing database that already exists in the app without adding a new one. 
+In some cases, uses may want to add their own database/ORM to Stream Android SDK instead of using the default one. This can be useful to add side effects when a certain data is used to control the flow of information in a specific way, use it to debug the SDK or support an existing database that already exists in the app without adding a new one. 
 
 There are 2 ways to replace the default offline support of the SDK. It is possible to implement your own Plugin that handles persistence in the SDK. The best way for this would be to extend `io.getstream.chat.android.client.plugin.Plugin` interface and override all the methods and substitute `io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory.Provider` providing the repository that should handle the data. Another option would be to just substitute `RepositoryFactory.Provider` inside OfflinePlugin, which we will cover in this document.
 
@@ -354,7 +354,7 @@ internal fun generateQuerySpecId(filter: FilterObject, querySort: QuerySorter<ou
 }
 ```
 
-We need to define the adapter for the serialization and deserialization. So let's start defining the structure of our `Filters`. 
+We need to define the adapter for the serialization and de-serialization. So let's start defining the structure of our `Filters`. 
 
 ## Representing Filters as a graph
 
@@ -390,7 +390,7 @@ Every filter must have a type and the properties `field` and `value` and they sh
 
 `Filters` that are compositions of other filters like `AND` and `OR` won't have any `field` and the value will be other `filters`. `Filters` that are an operation, like `EQUALS` should have both `field` and `value`. The `Filter` `EXISTS` only contains the value that it should look for, there isn't any value in this case. 
 
-By converting `Filters` to `FilterNode` we have an structure that contains only one class and then we can create a serialization adapter for this class making the process of serializing and deserializing `Filters` easy.
+By converting `Filters` to `FilterNode` we have an structure that contains only one class and then we can create a serialization adapter for this class making the process of serializing and de-serializing `Filters` easy.
 
  
 Let's create an extension function that converts a `FilterObject` to a `FilterNode`: 
@@ -528,7 +528,7 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
 Each node should be created accordingly if it is a node made of **other nodes**, a composite node, a node with many values like `IN` and `NOT_INT` or a simple node like **EQUALS**. 
 
 
-## Deserializing FilterNode
+## De-serializing FilterNode
 In the opposite way, it is possible to create a `FilterNode` from a `String`. 
 
 ```
