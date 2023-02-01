@@ -40,6 +40,7 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
@@ -297,6 +298,7 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState(config = Config(commands = listOf(giphyCommand)))
                 .get()
 
+
             viewModel.toggleCommandsVisibility()
             viewModel.selectCommand(viewModel.commandSuggestions.value.first())
 
@@ -315,7 +317,10 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
                 .get()
 
+            // Handling mentions on input changes is debounced so we advance time until idle to make sure
+            // all operations have finished before checking state.
             viewModel.setMessageInput("@")
+            advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 2
             viewModel.mentionSuggestions.value.size `should be equal to` 2
@@ -330,8 +335,13 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
                 .get()
 
+            // Handling mentions on input changes is debounced so we advance time until idle to make sure
+            // all operations have finished before checking state.
             viewModel.setMessageInput("@")
+            advanceUntilIdle()
+
             viewModel.selectMention(viewModel.mentionSuggestions.value.first())
+            advanceUntilIdle()
 
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
             viewModel.mentionSuggestions.value.size `should be equal to` 0
