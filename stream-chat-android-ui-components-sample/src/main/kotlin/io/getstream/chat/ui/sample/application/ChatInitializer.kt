@@ -26,6 +26,8 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
@@ -42,11 +44,10 @@ class ChatInitializer(private val context: Context) {
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
             newMessageIntent = {
-                    messageId: String,
-                    channelType: String,
-                    channelId: String,
+                    message: Message,
+                    channel: Channel,
                 ->
-                HostActivity.createLaunchIntent(context, messageId, channelType, channelId)
+                HostActivity.createLaunchIntent(context, message.id, channel.type, channel.id)
             }
         )
         val notificationConfig =

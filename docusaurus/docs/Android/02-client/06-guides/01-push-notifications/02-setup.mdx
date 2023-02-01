@@ -77,13 +77,12 @@ This function lets you provide a custom `Intent` that can point to any `Activity
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
-```kotlin {1-12,15}
+```kotlin {1-11,14}
 val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
     context = context,
     newMessageIntent = {
-        messageId: String,
-        channelType: String,
-        channelId: String,
+        message: Message,
+        channel: Channel,
          ->
         // Return the intent you want to be triggered when the notification is clicked
         val intent: Intent = [....]

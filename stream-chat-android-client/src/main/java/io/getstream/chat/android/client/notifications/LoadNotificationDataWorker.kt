@@ -127,7 +127,7 @@ internal class LoadNotificationDataWorker(
             context: Context,
             channelId: String,
             channelType: String,
-            messageId: String,
+            messageId: String
         ) {
             val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
                 .setInputData(

@@ -65,7 +65,7 @@ public class Push {
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
         NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
 
-        NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, (messageId, channelType, channelId) -> {
+        NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, (message, channel) -> {
             // Return the intent you want to be triggered when the notification is clicked
             Intent intent = new Intent();
 

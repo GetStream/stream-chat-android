@@ -320,7 +320,7 @@ public class MessageListViewModel(
     }
 
     /**
-     * Removes the shaddow ban for the given user inside
+     * Removes the shadow ban for the given user inside
      * this channel.
      *
      * @param userId The ID of the user for which the shadow

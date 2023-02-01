@@ -81,4 +81,23 @@ internal class ChatClientStateCalls(
         chatClient.getReplies(messageId, messageLimit).launch(scope)
         return state.thread(messageId)
     }
+
+    /**
+     * Fetches replies from the backend and returns them in the form of a [ThreadState].
+     * Unlike [getReplies] which makes an API call and instantly returns [ThreadState], this function
+     * will wait for the API call completion and then return [ThreadState].
+     *
+     * This is useful in situations such as when we want to focus on the last message in a thread after a PN
+     * has been received, avoiding multiple [ThreadState] emissions simplifies handling it in the UI.
+     *
+     * @param messageId The id of the message we want to get replies for.
+     * @param messageLimit The upper limit of how many replies should be fetched.
+     *
+     * @return The replies in the form of [ThreadState].
+     */
+    internal suspend fun getRepliesAsStateCall(messageId: String, messageLimit: Int): ThreadState {
+        logger.d { "getting replied for message with id: $messageId" }
+        chatClient.getReplies(messageId, messageLimit).await()
+        return state.thread(messageId)
+    }
 }
