@@ -1,6 +1,3 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # Replace Database
 
 In some cases, uses may want to add their own database/ORM to Stream Android SDK instead of using the default one. This can be useful to add side effects when a certain data is used to controll the flow of information in a spefic way, use it to debug the SDK or support an existing database that already exists in the app without adding a new one. 
@@ -16,8 +13,6 @@ To show how to substitute Room for another ORM we elaborated a tutorial showing 
 `ChatClient.Builder` allows the user to substitute the `Repository` classes in the SDK. These classes are used by the entire SDK to access data from the database, so by changing then you will be able to use the database of your preference. You can call a `ChatClient.Builder.withRepositoryFactoryProvider` with a custom implementation of `RepositoryFactory.Provider`. This is a functional interface that only provides 
 [RepositoryFactory](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/java/io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory.kt):
 
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 ```
 val client = ChatClient.Builder(apiKey, context)
@@ -52,25 +47,11 @@ private fun realmSchema(): Set<KClass<out RealmObject>> =
     )    
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-</Tabs>
-
 :::note
 The implementation of the entities of realmSchema() will be covered later in this document.
 ::: 
 
 `RepositoryFactory` is the access point for all the `Repositories` of the SDK, so they must be provided by this interface:
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin 
 public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactory {
@@ -99,17 +80,6 @@ public class RealmRepositoryFactory(private val realm: Realm) : RepositoryFactor
 }
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-</Tabs>
-
 :::caution 
 All the Repositories should be provided with real implementations. Using a `Repository` that doesn't provide real data may create unpredicted states because all the repositories are connected to SDK and are essential to it. Mocking one or more repositories may prevent the SDK to work correctly.
 :::
@@ -117,9 +87,6 @@ All the Repositories should be provided with real implementations. Using a `Repo
 ## Implementing ChannelRepository
 
 To save to and fetch channels from Realm, it is necessary to implement a version of ChannelRepository interface that handles Realm. You can find the following implementation with some of the methods: 
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 public class RealmChannelRepository(private val realm: Realm) : ChannelRepository {
@@ -157,18 +124,6 @@ public class RealmChannelRepository(private val realm: Realm) : ChannelRepositor
 }
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
-
 This is the key of changing the database in the Stream Android SDK. All you need to do is implement the `Repository` interfaces handling the database of choice.
 
 As you can see, in order to Realm understand how to save your data, you must create a `Scheme`. The model classes of the SDK must be represented as `Entity` classes. Those are: 
@@ -192,9 +147,6 @@ As you can see, in order to Realm understand how to save your data, you must cre
 
 
 Most of the entities are trivial and based in the model class. All is needed is to create the class and functions to convert Entity to Model and Model to Entity. Like the following example: 
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 ```
 internal class ChannelEntityRealm : RealmObject {
@@ -289,18 +241,6 @@ internal fun Channel.lastMessage(): Message? = messages.lastOrNull()
 
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
-
 The exceptions to the Entity classes are `QueryChannelsEntityRealm` and `QuerySorterInfoEntityRealm`. 
 
 `QueryChannelsEntityRealm` has the information about the filters used in the queries. The filters can stored as graph where each node represents a filter that may or may not be composed by one or more filters. Example: The `And` filter is composed by many other filters and the `Equals` filter is composed by two values and an operation. We discuss in detail how to store this data in a later section. 
@@ -311,8 +251,6 @@ The exceptions to the Entity classes are `QueryChannelsEntityRealm` and `QuerySo
 
 First we create the base of the class to be kept inside Realm database:
 
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 ```
 internal class QuerySorterInfoEntityRealm : RealmObject {
@@ -328,22 +266,7 @@ internal class QuerySorterInfoEntityRealm : RealmObject {
 }
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
-
 And the functions to parse it to entity and to the domain values.
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 
 ```
@@ -387,26 +310,11 @@ private fun SortSpecification<*>.toRealm(): SortSpecificationEntityRealm {
 }
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
-
 We store only the basic information about the sorting and allow the SDK to convert between entity and model classes. The SDK provides some methods to make it easier, like `SortDirection.fromNumber(int)`.
 
 ## Storing QueryChannelsEntityRealm
 
 To define the `QueryChannelsEntityRealm`, we define filters as a String to be parsed using `Moshi`. Filters of search should not be a very complex graph will hundreds of nodes, so keeping the filter as String should not be a problem for most cases. It is advisable to review the filter logic, if the filter becomes big. `QueryChannelsEntityRealm` can be defined in the following way:
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 
 ```kotlin
@@ -419,23 +327,7 @@ internal class QueryChannelsEntityRealm : RealmObject {
 }
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
-
 The conversion of `QueryChannelsEntityRealm` can be done by converting the Filter in and out to String using an adapter of `Moshi`:
-
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 ```
 internal fun QueryChannelsSpec.toRealm(): QueryChannelsEntityRealm {
@@ -462,18 +354,6 @@ internal fun generateQuerySpecId(filter: FilterObject, querySort: QuerySorter<ou
 }
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
-
 We need to define the adapter for the serialization and deserialization. So let's start defining the structure of our `Filters`. 
 
 ## Representing Filters as a graph
@@ -498,9 +378,6 @@ Now that we defined the structure of the composition of filters, we need to defi
 
 Each node can be represented by the class `FilterNode`:
 
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
-
 ```
 internal data class FilterNode(
     var filterType: String? = null,
@@ -508,19 +385,6 @@ internal data class FilterNode(
     var value: Any? = null,
 )
 ```
-
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
-
 
 Every filter must have a type and the properties `field` and `value` and they should be populated accordingly with its type.
 
@@ -531,8 +395,6 @@ By converting `Filters` to `FilterNode` we have an structure that contains only 
  
 Let's create an extension function that converts a `FilterObject` to a `FilterNode`: 
 
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 ``` kotlin
 internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
@@ -557,18 +419,6 @@ internal fun FilterObject.toFilterNode(): FilterNode = when (this) {
 }
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
-
 As you can see. There are two types of nodes **Composite Nodes** and **Filter Nodes**. 
 
 **Composite nodes** are nodes that point to one of more nodes, like `AND`, `OR` and `NOR` they apply a boolean logic to the results of the nodes they point to. 
@@ -576,9 +426,6 @@ As you can see. There are two types of nodes **Composite Nodes** and **Filter No
 **Filter nodes** are nodes that realize and operation like comparing if a field is **equal** to a value, if a field is **bigger than** a value, etc. 
 
 Those can be created in a simple way:
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 ```
 private fun createCompositeFilterNode(filterType: String, value: Any): FilterNode =
@@ -593,18 +440,6 @@ private fun createFilterNode(filterType: String, field: String?, value: Any?): F
     }
 ```
 
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
-
 **Composite nodes** won't have any field, but must always contain a **value** and `Filter` nodes may contain **fields** and **values**. 
 
 Now that we defined the function `FilterObject.toFilterNode` we already know how to convert any `FilterObject` into a composition of `FilterNodes`. Now we can serialize our nodes.
@@ -613,9 +448,6 @@ Now that we defined the function `FilterObject.toFilterNode` we already know how
 
 Using `Moshi`, you can create a JsonAdapter to be able to serialize the `FilterNode` to a `String`.
 
-
-<Tabs>
-<TabItem value="kotlin" label="Kotlin">
 
 ```
 internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
@@ -692,18 +524,6 @@ internal class FilterNodeAdapter : JsonAdapter<FilterNode>() {
     }
 
 ```
-
-</TabItem>
-
-<TabItem value="java" label="Java">
-
-```
-// Todo!
-```
-
-</TabItem>
-
-</Tabs>
 
 Each node should be created accordingly if it is a node made of **other nodes**, a composite node, a node with many values like `IN` and `NOT_INT` or a simple node like **EQUALS**. 
 
