@@ -298,7 +298,6 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState(config = Config(commands = listOf(giphyCommand)))
                 .get()
 
-
             viewModel.toggleCommandsVisibility()
             viewModel.selectCommand(viewModel.commandSuggestions.value.first())
 
