@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
@@ -69,7 +70,8 @@ public interface Plugin :
     HideChannelListener,
     MarkAllReadListener,
     ChannelMarkReadListener,
-    CreateChannelListener {
+    CreateChannelListener,
+    GetMessageListener {
 
     public val errorHandler: ErrorHandler?
 
@@ -315,4 +317,10 @@ public interface Plugin :
     public fun onUserSet(user: User)
 
     public fun onUserDisconnected()
+
+    public override suspend fun onGetMessageResult(
+        messageId: String,
+        result: Result<Message>,
+    ) { /* No-Op */
+    }
 }
