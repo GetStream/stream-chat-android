@@ -66,6 +66,7 @@ dependencies {
     implementation project(":stream-chat-android-ui-utils")
 
     implementation Dependencies.streamLog
+    implementation Dependencies.streamResult
     implementation Dependencies.composeCompiler
     implementation Dependencies.composeRuntime
 
