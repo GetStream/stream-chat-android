@@ -3,7 +3,7 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>LongMethod:CustomLoginActivity.kt$CustomLoginActivity$@Composable fun CustomLoginScreen( onBackButtonClick: () -> Unit, onLoginButtonClick: (UserCredentials) -> Unit, )</ID>
-    <ID>LongMethod:MessagesActivity.kt$MessagesActivity$@OptIn(ExperimentalFoundationApi::class) @Composable fun MyCustomUi()</ID>
+    <ID>LongMethod:MessagesActivity.kt$MessagesActivity$@Composable fun MyCustomUi()</ID>
     <ID>MagicNumber:ChannelsActivity.kt$ChannelsActivity$0.5f</ID>
     <ID>MagicNumber:MessagesActivity.kt$MessagesActivity$7f</ID>
     <ID>MaxLineLength:PredefinedUserCredentials.kt$PredefinedUserCredentials$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.MNfrDsGkFINEZ3kCQ9hAqI38lZ6S-miHINAuH3kQy2o"</ID>
