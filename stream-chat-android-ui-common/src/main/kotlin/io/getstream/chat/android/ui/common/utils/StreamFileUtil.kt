@@ -28,6 +28,9 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.StreamFileProvider
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.Result.Failure
+import io.getstream.result.Result.Success
+import io.getstream.result.flatMap
 import java.io.File
 import java.io.IOException
 
@@ -80,9 +83,9 @@ public object StreamFileUtil {
                 streamCacheDir.mkdirs()
             }
 
-            Result.Success(file)
+            Success(file)
         } catch (e: Exception) {
-            Result.Failure(
+            Failure(
                 Error.ThrowableError(
                     message = "Could not get or create the Stream cache directory",
                     cause = e,
@@ -90,6 +93,28 @@ public object StreamFileUtil {
             )
         }
     }
+
+    /**
+     * Creates a file with the given [fileName] inside the Stream cache directory.
+     *
+     * @param context The [Context] necessary to perform file operations.
+     * @param fileName The name of the file to be created.
+     *
+     * @return The newly [File] wrapped inside [Result] if the operation was successful, otherwise returns a
+     * [ChatError] wrapped inside [Result].
+     */
+    private fun createFileInCacheDir(context: Context, fileName: String): Result<File> =
+        try {
+            getOrCreateStreamCacheDir(context)
+                .flatMap { Success(File(it, fileName)) }
+        } catch (e: Exception) {
+            Failure(
+                Error.ThrowableError(
+                    message = "Could not get or create the file.",
+                    cause = e,
+                ),
+            )
+        }
 
     /**
      * Deletes all the content contained within the
@@ -110,9 +135,9 @@ public object StreamFileUtil {
             val directory = File(context.cacheDir, STREAM_CACHE_DIR_NAME)
             directory.deleteRecursively()
 
-            Result.Success(Unit)
+            Success(Unit)
         } catch (e: Exception) {
-            Result.Failure(
+            Failure(
                 Error.ThrowableError(
                     message = "Could clear the Stream cache directory",
                     cause = e,
@@ -139,8 +164,8 @@ public object StreamFileUtil {
     ): Result<Uri> {
         return try {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
-                is Result.Failure -> getOrCreateCacheDirResult
-                is Result.Success -> {
+                is Failure -> getOrCreateCacheDirResult
+                is Success -> {
                     val streamCacheDir = getOrCreateCacheDirResult.value
 
                     val attachmentHashCode = (attachment.url ?: attachment.assetUrl)?.hashCode()
@@ -156,14 +181,14 @@ public object StreamFileUtil {
                         file.length() == attachment.fileSize.toLong()
 
                     if (isFileCached) {
-                        Result.Success(getUriForFile(context, file))
+                        Success(getUriForFile(context, file))
                     } else {
-                        Result.Failure(Error.GenericError(message = "No such file in cache."))
+                        Failure(Error.GenericError(message = "No such file in cache."))
                     }
                 }
             }
         } catch (e: Exception) {
-            Result.Failure(
+            Failure(
                 Error.ThrowableError(
                     message = "Cannot determine if the file has been cached.",
                     cause = e,
@@ -192,8 +217,8 @@ public object StreamFileUtil {
     ): Result<Uri> {
         val runCatching = kotlin.runCatching {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
-                is Result.Failure -> getOrCreateCacheDirResult
-                is Result.Success -> {
+                is Failure -> getOrCreateCacheDirResult
+                is Success -> {
                     val streamCacheDir = getOrCreateCacheDirResult.value
 
                     val attachmentHashCode = (attachment.url ?: attachment.assetUrl)?.hashCode()
@@ -205,14 +230,14 @@ public object StreamFileUtil {
                         attachmentHashCode != null &&
                         file.length() == attachment.fileSize.toLong()
                     ) {
-                        Result.Success(getUriForFile(context, file))
+                        Success(getUriForFile(context, file))
                     } else {
-                        val fileUrl = attachment.assetUrl ?: attachment.url ?: return Result.Failure(
+                        val fileUrl = attachment.assetUrl ?: attachment.url ?: return Failure(
                             Error.GenericError(message = "File URL cannot be null.")
                         )
 
                         when (val response = ChatClient.instance().downloadFile(fileUrl).await()) {
-                            is Result.Success -> {
+                            is Success -> {
                                 // write the response to a file
                                 response.value.byteStream().use { inputStream ->
                                     file.outputStream().use { outputStream ->
@@ -220,9 +245,9 @@ public object StreamFileUtil {
                                     }
                                 }
 
-                                Result.Success(getUriForFile(context, file))
+                                Success(getUriForFile(context, file))
                             }
-                            is Result.Failure -> response
+                            is Failure -> response
                         }
                     }
                 }
@@ -232,8 +257,8 @@ public object StreamFileUtil {
         return runCatching.getOrNull() ?: createFailureResultFromException(runCatching.exceptionOrNull())
     }
 
-    private fun createFailureResultFromException(throwable: Throwable?): Result.Failure {
-        return Result.Failure(
+    private fun createFailureResultFromException(throwable: Throwable?): Failure {
+        return Failure(
             throwable?.let { exception ->
                 Error.ThrowableError(message = "Could not write to file.", cause = exception)
             } ?: Error.GenericError(message = "Could not write to file.")
