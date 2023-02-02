@@ -72,6 +72,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOp
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
 
+// Committing a comment so PR procedures can be tested.
+// Neither this comment nor the branch containing it hold any developmental value
 class MessagesActivity : BaseConnectedActivity() {
 
     private val factory by lazy {
