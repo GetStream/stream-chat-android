@@ -8,7 +8,14 @@
     <ID>LongMethod:MessageListController.kt$MessageListController$@Suppress("MagicNumber") private fun observeMessagesListState()</ID>
     <ID>LongMethod:MessageListController.kt$MessageListController$private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, ): List&lt;MessageListItemState></ID>
     <ID>LongParameterList:MessageListController.kt$MessageListController$( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, )</ID>
+    <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$31</ID>
     <ID>MaxLineLength:MessageComposerController.kt$MessageComposerController$val</ID>
+    <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$exception: Exception</ID>
+    <ID>TooGenericExceptionCaught:StreamFileUtil.kt$StreamFileUtil$e: Exception</ID>
     <ID>TooManyFunctions:MessageListController.kt$MessageListController</ID>
+    <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val extra: Int</ID>
+    <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val streamMediaRecorder: StreamMediaRecorder</ID>
+    <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val what: Int</ID>
+    <ID>UnusedPrivateMember:StreamMediaRecorderStateHolder.kt$StreamMediaRecorderStateHolder$/** * Represents the latest error state of the [MediaRecorder] used by [StreamMediaRecorder]. */ private val onErrorStateFlow: StateFlow&lt;StreamMediaRecorderState?> = MutableStateFlow(null)</ID>
   </CurrentIssues>
 </SmellBaseline>
