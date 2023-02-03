@@ -103,7 +103,7 @@ public object StreamFileUtil {
      * @return The newly [File] wrapped inside [Result] if the operation was successful, otherwise returns a
      * [ChatError] wrapped inside [Result].
      */
-    private fun createFileInCacheDir(context: Context, fileName: String): Result<File> =
+    internal fun createFileInCacheDir(context: Context, fileName: String): Result<File> =
         try {
             getOrCreateStreamCacheDir(context)
                 .flatMap { Success(File(it, fileName)) }

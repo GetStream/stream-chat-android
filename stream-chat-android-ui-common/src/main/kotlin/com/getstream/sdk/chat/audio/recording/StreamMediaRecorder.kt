@@ -18,12 +18,13 @@ package com.getstream.sdk.chat.audio.recording
 
 import android.content.Context
 import android.media.MediaRecorder
-import android.media.MediaRecorder.OnInfoListener
+import io.getstream.result.Result
 import java.io.File
 
 /**
  * A media recording interface, designed to simplify using [MediaRecorder].
  */
+// TODO update kdocs with result class returns
 public interface StreamMediaRecorder {
 
     /**
@@ -34,15 +35,15 @@ public interface StreamMediaRecorder {
      * @param recordingName The file name the recording will be stored under.
      * @param override Determines if the new recording file should override one with the same name, if it exists.
      *
-     * @return The [File] the audio will be saved to once the recording stops, if the file was created and recording
-     * started successfully. Throws an exception otherwise.
+     * @return The [File] to which the recording will be stored wrapped inside a [Result] if recording has
+     * started successfully. Returns a [ChatError] wrapped inside a [Result] if the action had failed.
      */
     @Throws
-    public fun startRecording(
+    public fun startAudioRecording(
         context: Context,
         recordingName: String,
         override: Boolean = true,
-    ): File
+    ): Result<File>
 
     /**
      * Prepares the given [recordingFile] and starts recording.
@@ -51,45 +52,88 @@ public interface StreamMediaRecorder {
      * @param context The [Context] necessary to prepare for recording.
      * @param recordingFile The [File] the audio will be saved to once the recording stops.
      *
-     * @return Unit if the recording was started successfully, throws an exception otherwise.
+     * @return A Unit wrapped inside a [Result] if recording has started successfully. Returns a [ChatError] wrapped
+     * inside [Result] if the action had failed.
      */
     @Throws
-    public fun startRecording(
+    public fun startAudioRecording(
         context: Context,
-        recordingFile: File
-    )
+        recordingFile: File,
+    ): Result<Unit>
 
     /**
-     * Stops recording and saves the recording to the file provided by [startRecording].
+     * Stops recording and saves the recording to the file provided by [startAudioRecording].
      *
-     * @return Unit if the recording was stopped successfully, throws an exception otherwise.
+     * @return A Unit wrapped inside a [Result] if recording has been stopped successfully. Returns a [ChatError]
+     * wrapped inside [Result] if the action had failed.
      */
     @Throws
-    public fun stopRecording()
+    public fun stopRecording(): Result<Unit>
 
     /**
      * Deleted the recording to the file provided by [recordingFile].
      *
      * @param recordingFile The [File] to be deleted.
      *
-     * @return Unit if the recording was deleted successfully, throws an exception otherwise.
+     * @return A Unit wrapped inside a [Result] if recording has been deleted successfully. Returns a [ChatError]
+     * wrapped inside [Result] if the action had failed.
      */
     @Throws
-    public fun deleteRecording(recordingFile: File)
+    public fun deleteRecording(recordingFile: File): Result<Unit>
 
     /**
      * Sets an error listener.
      *
-     * @param onError [MediaRecorder.OnErrorListener] SAM used to notify the user about any underlying [MediaRecorder]
-     * errors.
+     * @param onErrorListener [StreamMediaRecorder.OnErrorListener] SAM used to notify the user about any underlying
+     * [MediaRecorder] errors.
      */
-    public fun setonErrorListener(onError: MediaRecorder.OnErrorListener)
+    public fun setOnErrorListener(onErrorListener: OnErrorListener)
 
     /**
      * Sets an info listener.
      *
-     * @param onInfoListener [MediaRecorder.OnInfoListener] SAM used to notify the user about any underlying
+     * @param onInfoListener [StreamMediaRecorder.OnInfoListener] SAM used to notify the user about any underlying
      * [MediaRecorder] information and warnings.
      */
     public fun setOnInfoListener(onInfoListener: OnInfoListener)
+
+    /**
+     * A functional interface used for listening to info events dispatched by the [MediaRecorder] internally
+     * used by [StreamMediaRecorder].
+     */
+    public fun interface OnInfoListener {
+
+        /**
+         * Called when the [MediaRecorder] used internally by [StreamMediaRecorder] emits an info event.
+         *
+         * @param streamMediaRecorder The [StreamMediaRecorder] instance this event is tied to.
+         * @param what Error or info type.
+         * @param extra An extra code, specific to the error or info type.
+         */
+        public fun onInfo(
+            streamMediaRecorder: StreamMediaRecorder,
+            what: Int,
+            extra: Int,
+        )
+    }
+
+    /**
+     * A functional interface used for listening to error events dispatched by the [MediaRecorder] internally
+     * used by [StreamMediaRecorder].
+     */
+    public fun interface OnErrorListener {
+
+        /**
+         * Called when the [MediaRecorder] used internally by [StreamMediaRecorder] emits an error event.
+         *
+         * @param streamMediaRecorder The [StreamMediaRecorder] instance this event is tied to.
+         * @param what Error or info type.
+         * @param extra An extra code, specific to the error or info type.
+         */
+        public fun onError(
+            streamMediaRecorder: StreamMediaRecorder,
+            what: Int,
+            extra: Int,
+        )
+    }
 }

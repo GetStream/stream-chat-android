@@ -1,14 +1,44 @@
+public final class com/getstream/sdk/chat/audio/recording/DefaultStreamMediaRecorder : com/getstream/sdk/chat/audio/recording/StreamMediaRecorder {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun deleteRecording (Ljava/io/File;)Lio/getstream/result/Result;
+	public fun setOnErrorListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnErrorListener;)V
+	public fun setOnInfoListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnInfoListener;)V
+	public fun startAudioRecording (Landroid/content/Context;Ljava/io/File;)Lio/getstream/result/Result;
+	public fun startAudioRecording (Landroid/content/Context;Ljava/lang/String;Z)Lio/getstream/result/Result;
+	public fun stopRecording ()Lio/getstream/result/Result;
+}
+
 public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder {
-	public abstract fun deleteRecording (Ljava/io/File;)V
-	public abstract fun setOnInfoListener (Landroid/media/MediaRecorder$OnInfoListener;)V
-	public abstract fun setonErrorListener (Landroid/media/MediaRecorder$OnErrorListener;)V
-	public abstract fun startRecording (Landroid/content/Context;Ljava/io/File;)V
-	public abstract fun startRecording (Landroid/content/Context;Ljava/lang/String;Z)Ljava/io/File;
-	public abstract fun stopRecording ()V
+	public abstract fun deleteRecording (Ljava/io/File;)Lio/getstream/result/Result;
+	public abstract fun setOnErrorListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnErrorListener;)V
+	public abstract fun setOnInfoListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnInfoListener;)V
+	public abstract fun startAudioRecording (Landroid/content/Context;Ljava/io/File;)Lio/getstream/result/Result;
+	public abstract fun startAudioRecording (Landroid/content/Context;Ljava/lang/String;Z)Lio/getstream/result/Result;
+	public abstract fun stopRecording ()Lio/getstream/result/Result;
 }
 
 public final class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder$DefaultImpls {
-	public static synthetic fun startRecording$default (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Landroid/content/Context;Ljava/lang/String;ZILjava/lang/Object;)Ljava/io/File;
+	public static synthetic fun startAudioRecording$default (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Landroid/content/Context;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/result/Result;
+}
+
+public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnErrorListener {
+	public abstract fun onError (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;II)V
+}
+
+public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnInfoListener {
+	public abstract fun onInfo (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;II)V
+}
+
+public final class com/getstream/sdk/chat/audio/recording/StreamMediaRecorderState {
+	public static final field $stable I
+	public fun <init> (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;II)V
+}
+
+public final class com/getstream/sdk/chat/audio/recording/StreamMediaRecorderStateHolder {
+	public static final field $stable I
+	public fun <init> (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;)V
+	public final fun getOnInfoStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
 }
 
 public final class io/getstream/chat/android/ui/common/BuildConfig {
