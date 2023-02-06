@@ -19,6 +19,7 @@ package com.getstream.sdk.chat.audio.recording
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -41,6 +42,8 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
             field = value
         }
 
+    private var recordingFile: File? = null
+
     /**
      * Used for listening to the error events emitted by [mediaRecorder].
      */
@@ -50,6 +53,16 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
      * Used for listening to the info events emitted by [mediaRecorder].
      */
     private var onInfoListener: MediaRecorder.OnInfoListener? = null
+
+    /**
+     * Listens to when the recorder starts recording.
+     */
+    private var onStartRecordingListener: StreamMediaRecorder.OnRecordingStarted? = null
+
+    /**
+     * Listens to when the recorder stops recording.
+     */
+    private var onStopRecordingListener: StreamMediaRecorder.OnRecordingStopped? = null
 
     /**
      * Initializes the media recorder and sets it to record audio using the device's microphone.
@@ -62,21 +75,21 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
         context: Context,
         recordingFile: File,
     ) {
+        mediaRecorder?.release()
+
         mediaRecorder = if (Build.VERSION.SDK_INT < 31) {
             MediaRecorder()
         } else {
             MediaRecorder(context)
         }.apply {
-            val fileUri = StreamFileUtil.getUriForFile(
-                context = context,
-                file = recordingFile
-            )
+
             setAudioSource(MediaRecorder.AudioSource.MIC)
             // TODO - consult with the SDK teams to see the best
             // TODO - format for this
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setOutputFile(fileUri.path)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setOutputFile(recordingFile.path)
+            prepare()
         }
     }
 
@@ -99,14 +112,14 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
         return try {
             StreamFileUtil.createFileInCacheDir(context, recordingName)
                 .onSuccess {
+                    recordingFile = it
                     initializeMediaRecorderForAudio(
                         context = context,
                         recordingFile = it
                     )
-
                     requireNotNull(mediaRecorder)
-
                     mediaRecorder?.start()
+                    onStartRecordingListener?.onStarted()
 
                     Result.Success(it)
                 }
@@ -135,6 +148,8 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
         recordingFile: File,
     ): Result<Unit> {
         return try {
+            this.recordingFile = recordingFile
+
             initializeMediaRecorderForAudio(
                 context = context,
                 recordingFile = recordingFile
@@ -143,6 +158,7 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
             requireNotNull(mediaRecorder)
 
             mediaRecorder?.start()
+            onStartRecordingListener?.onStarted()
 
             Result.Success(Unit)
         } catch (exception: Exception) {
@@ -161,14 +177,21 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
      * @return A Unit wrapped inside a [Result] if recording has been stopped successfully. Returns a [ChatError]
      * wrapped inside [Result] if the action had failed.
      */
-    override fun stopRecording(): Result<Unit> {
+    override fun stopRecording(): Result<Attachment> {
         return try {
             requireNotNull(mediaRecorder)
-
             mediaRecorder?.stop()
             mediaRecorder?.release()
+            onStopRecordingListener?.onStopped()
 
-            Result.Success(Unit)
+            val attachment = Attachment(
+                title = recordingFile?.name ?: "recording",
+                upload = recordingFile,
+                type = "audio",
+                mimeType = "audio/mp3"
+            )
+
+            Result.Success(attachment)
         } catch (exception: Exception) {
             Result.Failure(
                 Error.ThrowableError(
@@ -203,6 +226,13 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
     }
 
     /**
+     * Releases the [MediaRecorder] used by [StreamMediaRecorder].
+     */
+    override fun release() {
+        mediaRecorder?.release()
+    }
+
+    /**
      * Sets an error listener.
      *
      * @param onErrorListener [StreamMediaRecorder.OnErrorListener] SAM used to notify the user about any underlying
@@ -219,8 +249,10 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
     }
 
     /**
-     * A functional interface used for listening to info events dispatched by the [MediaRecorder] internally
-     * used by [StreamMediaRecorder].
+     * Sets an info listener.
+     *
+     * @param onInfoListener [StreamMediaRecorder.OnInfoListener] SAM used to notify the user about any underlying
+     * [MediaRecorder] information events.
      */
     override fun setOnInfoListener(onInfoListener: StreamMediaRecorder.OnInfoListener) {
         mediaRecorder?.setOnInfoListener { _, what, extra ->
@@ -230,5 +262,25 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
                 extra = extra
             )
         }
+    }
+
+    /**
+     * Sets an [StreamMediaRecorder.OnRecordingStarted] listener on this instance of [StreamMediaRecorder].
+     *
+     * @param onRecordingStarted [StreamMediaRecorder.OnRecordingStarted] SAM used for notifying after the recording
+     * has started successfully.
+     */
+    override fun setOnRecordingStartedListener(onRecordingStarted: StreamMediaRecorder.OnRecordingStarted) {
+        onStartRecordingListener = onRecordingStarted
+    }
+
+    /**
+     * Sets an [StreamMediaRecorder.OnRecordingStopped] listener on this instance of [StreamMediaRecorder].
+     *
+     * @param onRecordingStopped [StreamMediaRecorder.OnRecordingStarted] SAM used to notify the user after the
+     * recording has stopped.
+     */
+    override fun setOnRecordingStoppedListener(onRecordingStopped: StreamMediaRecorder.OnRecordingStopped) {
+        onStopRecordingListener = onRecordingStopped
     }
 }
