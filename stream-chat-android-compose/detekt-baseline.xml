@@ -17,6 +17,7 @@
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun MediaGalleryItem( index: Int, attachment: Attachment, user: User, pagerState: PagerState, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun VideoPreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, onPlaybackError: () -> Unit, )</ID>
     <ID>LongMethod:MessageComposer.kt$@Composable internal fun DefaultComposerIntegrations( messageInputState: MessageComposerState, onAttachmentsClick: () -> Unit, onCommandsClick: () -> Unit, ownCapabilities: Set&lt;String>, )</ID>
+    <ID>LongMethod:MessageComposer.kt$@OptIn(ExperimentalPermissionsApi::class) @Composable internal fun DefaultMessageComposerTrailingContent( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, onRecordingSaved: (Attachment) -> Unit, )</ID>
     <ID>LongMethod:MessageItem.kt$@Composable internal fun RegularMessageContent( messageItem: MessageItemState, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit = {}, onGiphyActionClick: (GiphyAction) -> Unit = {}, onQuotedMessageClick: (Message) -> Unit = {}, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {}, )</ID>
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:StreamTypography.kt$StreamTypography.Companion$public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography</ID>
@@ -24,7 +25,7 @@
     <ID>LongParameterList:MediaAttachmentContent.kt$( mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>, message: Message, attachmentPosition: Int, videoThumbnailsEnabled: Boolean, streamCdnImageResizing: StreamCdnImageResizing, skipEnrichUrl: Boolean, )</ID>
     <ID>LongParameterList:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$( context: Context, mediaGalleryPreviewAction: MediaGalleryPreviewAction, currentPage: Int, attachments: List&lt;Attachment>, writePermissionState: PermissionState, downloadPayload: MutableState&lt;Attachment?>, )</ID>
     <ID>LongParameterList:MediaGalleryPreviewActivityAttachmentState.kt$MediaGalleryPreviewActivityAttachmentState$( val name: String?, val url: String?, val thumbUrl: String?, val imageUrl: String?, val assetUrl: String?, val originalWidth: Int?, val originalHeight: Int?, val type: String?, )</ID>
-    <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, )</ID>
+    <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, onRecordingSaved: (Attachment) -> Unit, )</ID>
     <ID>LongParameterList:MessagesScreen.kt$( listViewModel: MessageListViewModel, composerViewModel: MessageComposerViewModel, selectedMessageState: SelectedMessageState?, selectedMessage: Message, skipPushNotification: Boolean, skipEnrichUrl: Boolean, )</ID>
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
     <ID>MagicNumber:FileAttachmentContent.kt$0.85f</ID>
@@ -48,5 +49,6 @@
     <ID>MaxLineLength:StreamAttachmentFactories.kt$StreamAttachmentFactories$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
+    <ID>UnusedPrivateMember:StreamMediaRecorderStateHolder.kt$StreamMediaRecorderStateHolder$/** * Represents the latest error state of the [MediaRecorder] used by [StreamMediaRecorder]. */ private val onErrorState: State&lt;StreamMediaRecorderState?> = mutableStateOf(null)</ID>
   </CurrentIssues>
 </SmellBaseline>
