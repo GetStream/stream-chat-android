@@ -64,8 +64,8 @@ public class StreamMediaRecorderStateHolder(
     /**
      * Indicated if the [MediaRecorder] is currently recording.
      */
-    //TODO possibly refactor this using an enum or a sealed class representing multiple states
-    //TODO such as prepared, idle, recording, released, etc.
+    // TODO possibly refactor this using an enum or a sealed class representing multiple states
+    // TODO such as prepared, idle, recording, released, etc.
     private val _isRecording: MutableState<Boolean> = mutableStateOf(false)
 
     /**
