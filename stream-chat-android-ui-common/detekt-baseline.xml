@@ -16,6 +16,5 @@
     <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val extra: Int</ID>
     <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val streamMediaRecorder: StreamMediaRecorder</ID>
     <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val what: Int</ID>
-    <ID>UnusedPrivateMember:StreamMediaRecorderStateHolder.kt$StreamMediaRecorderStateHolder$/** * Represents the latest error state of the [MediaRecorder] used by [StreamMediaRecorder]. */ private val onErrorStateFlow: StateFlow&lt;StreamMediaRecorderState?> = MutableStateFlow(null)</ID>
   </CurrentIssues>
 </SmellBaseline>
