@@ -27,6 +27,8 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
@@ -93,6 +95,7 @@ private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<Messag
 private val LocalAttachmentsPickerTabFactories = compositionLocalOf<List<AttachmentsPickerTabFactory>> {
     error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+
 private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
     error(
         "No videoThumbnailsEnabled Boolean provided! " +
@@ -116,6 +119,10 @@ private val LocalOwnMessageTheme = compositionLocalOf<MessageTheme> {
 }
 private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
     error("No OtherMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+
+private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
+    error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
 /**
@@ -143,8 +150,12 @@ private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
+<<<<<<< HEAD
  * @param ownMessageTheme Theme of the current user messages.
  * @param otherMessageTheme Theme of the other users messages.
+=======
+ * @param streamMediaRecorder Used for recording audio messages.
+>>>>>>> 8ffce3200e (- [4654] Further evolve `StreamMediaRecorder` and create a preliminary proof of concept integration with `MessageComposer`)
  * @param content The content shown within the theme wrapper.
  */
 @Composable
@@ -182,6 +193,7 @@ public fun ChatTheme(
         typography = typography,
         colors = colors,
     ),
+    streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -209,7 +221,8 @@ public fun ChatTheme(
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
-        LocalReadCountEnabled provides readCountEnabled
+        LocalReadCountEnabled provides readCountEnabled,
+        LocalStreamMediaRecorder provides streamMediaRecorder,
     ) {
         content()
     }
@@ -325,7 +338,6 @@ public object ChatTheme {
         get() = LocalMessageOptionsUserReactionAlignment.current
 
     /**
-     *
      * Retrieves the current list of [AttachmentsPickerTabFactory] at the call site's position in the hierarchy.
      */
     public val attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>
@@ -370,4 +382,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalOtherMessageTheme.current
+
+    /**
+     * Retrieves the current list of [StreamMediaRecorder] at the call site's position in the hierarchy.
+     */
+    public val streamMediaRecorder: StreamMediaRecorder
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalStreamMediaRecorder.current
 }
