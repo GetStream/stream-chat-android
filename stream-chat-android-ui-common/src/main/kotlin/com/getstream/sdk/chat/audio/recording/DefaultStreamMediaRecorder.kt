@@ -21,18 +21,27 @@ import android.media.MediaRecorder
 import android.os.Build
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import java.io.File
 
+/**
+ * The default implementation of [StreamMediaRecorder], used as a wrapper around [MediaRecorder] simplifying
+ * working with it.
+ */
 public class DefaultStreamMediaRecorder : StreamMediaRecorder {
+
+    /**
+     * Used for logging errors, warnings and various information.
+     */
+    private val logger by taggedLogger("Chat:DefaultStreamMediaRecorder")
 
     /**
      * An instance of [MediaRecorder] used primarily for recording audio.
      * This class is single instance per single use, so it will often get cycled and reset.  [MediaRecorder.release]
      * should be called after every use, as well as whenever the activity hosting the recording class gets paused.
      */
-    // TODO this should be synchronized
     private var mediaRecorder: MediaRecorder? = null
         set(value) {
             if (value != null) {
@@ -82,7 +91,6 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
         } else {
             MediaRecorder(context)
         }.apply {
-
             setAudioSource(MediaRecorder.AudioSource.MIC)
             // TODO - consult with the SDK teams to see the best
             // TODO - format for this
@@ -124,6 +132,7 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
                     Result.Success(it)
                 }
         } catch (exception: Exception) {
+            logger.e(exception) { "Could not start recording audio" }
             Result.Failure(
                 Error.ThrowableError(
                     message = "Could not start audio recording.",
@@ -162,6 +171,7 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
 
             Result.Success(Unit)
         } catch (exception: Exception) {
+            logger.e(exception) { "Could not start recording audio" }
             Result.Failure(
                 Error.ThrowableError(
                     message = "Could not start audio recording.",
@@ -193,6 +203,7 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
 
             Result.Success(attachment)
         } catch (exception: Exception) {
+            logger.e(exception) { "Could not stop the recording" }
             Result.Failure(
                 Error.ThrowableError(
                     message = "Could not Stop audio recording.",
@@ -216,6 +227,7 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
 
             Result.Success(Unit)
         } catch (exception: Exception) {
+            logger.e(exception) { "Could not delete audio recording" }
             Result.Failure(
                 Error.ThrowableError(
                     message = "Could not delete audio recording.",
