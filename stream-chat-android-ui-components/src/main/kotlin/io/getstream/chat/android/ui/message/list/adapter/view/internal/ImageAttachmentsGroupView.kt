@@ -21,6 +21,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -109,7 +110,13 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
             if (imageWidth != null && imageHeight != null) {
                 val ratio = (imageWidth / imageHeight).toString()
                 this.setDimensionRatio(imageAttachmentView.id, ratio)
+                imageAttachmentView.binding.imageView.scaleType = if (imageWidth > imageHeight) {
+                    ImageView.ScaleType.FIT_XY
+                } else {
+                    ImageView.ScaleType.CENTER_CROP
+                }
             } else {
+                imageAttachmentView.binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
                 constrainHeight(imageAttachmentView.id, LayoutParams.WRAP_CONTENT)
             }
 
