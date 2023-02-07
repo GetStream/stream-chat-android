@@ -242,7 +242,7 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/MediaCapture;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/attachments/StreamMediaRecorderStateHolder {
+public final class io/getstream/chat/android/compose/state/messages/attachments/StreamMediaRecorderStateManager {
 	public static final field $stable I
 	public fun <init> (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;)V
 	public final fun getOnInfoState ()Landroidx/compose/runtime/State;
