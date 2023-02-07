@@ -56,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed image scaling when width is bigger than height. [#4659](https://github.com/GetStream/stream-chat-android/pull/4659)
 
 ### ⬆️ Improved
 
