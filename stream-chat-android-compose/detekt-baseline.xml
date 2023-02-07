@@ -50,6 +50,6 @@
     <ID>MaxLineLength:StreamAttachmentFactories.kt$StreamAttachmentFactories$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
-    <ID>UnusedPrivateMember:StreamMediaRecorderStateHolder.kt$StreamMediaRecorderStateHolder$/** * Represents the latest error state of the [MediaRecorder] used by [StreamMediaRecorder]. */ private val onErrorState: State&lt;StreamMediaRecorderState?> = mutableStateOf(null)</ID>
+    <ID>UnusedPrivateMember:StreamMediaRecorderStateManager.kt$StreamMediaRecorderStateManager$/** * Represents the latest error state of the [MediaRecorder] used by [StreamMediaRecorder]. */ private val onErrorState: State&lt;StreamMediaRecorderState?> = mutableStateOf(null)</ID>
   </CurrentIssues>
 </SmellBaseline>
