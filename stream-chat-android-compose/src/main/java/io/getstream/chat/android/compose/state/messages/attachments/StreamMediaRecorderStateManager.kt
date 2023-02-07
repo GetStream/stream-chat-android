@@ -24,15 +24,17 @@ import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorderState
 import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
-import kotlinx.coroutines.flow.StateFlow
 
 /**
- * A wrapper class that wraps around [StreamMediaRecorder] and tracks the internal [MediaRecorder] state using
- * [StateFlow]s.
+ * A wrapper class that wraps around [StreamMediaRecorder] manages and tracks the internal state of the [MediaRecorder]
+ * used by [StreamMediaRecorder].
+ *
+ * For instance, this class helps automatically recover from [MediaRecorder.MEDIA_ERROR_SERVER_DIED] by releasing the
+ * current instance of [streamMediaRecorder].
  *
  * @param streamMediaRecorder The media recorder whose state this class is tracking.
  */
-public class StreamMediaRecorderStateHolder(
+public class StreamMediaRecorderStateManager(
     private val streamMediaRecorder: StreamMediaRecorder,
 ) {
 
@@ -86,6 +88,10 @@ public class StreamMediaRecorderStateHolder(
 
         streamMediaRecorder.setOnErrorListener { streamMediaRecorder, what, extra ->
             logger.v { "[onError] -> what: $what , extra: $extra" }
+
+            if (what == MediaRecorder.MEDIA_ERROR_SERVER_DIED) {
+                streamMediaRecorder.release()
+            }
 
             _onErrorState.value = StreamMediaRecorderState(
                 streamMediaRecorder = streamMediaRecorder,

@@ -242,6 +242,7 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
      */
     override fun release() {
         mediaRecorder?.release()
+        onStopRecordingListener?.onStopped()
     }
 
     /**
