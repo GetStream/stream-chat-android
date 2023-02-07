@@ -70,7 +70,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.StreamMediaRecorderStateHolder
+import io.getstream.chat.android.compose.state.messages.attachments.StreamMediaRecorderStateManager
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
@@ -634,11 +634,11 @@ internal fun DefaultMessageComposerTrailingContent(
     val recordAudioButtonDescription = stringResource(id = R.string.stream_compose_cd_record_audio_message)
     var permissionsRequested by rememberSaveable { mutableStateOf(false) }
 
-    val mediaRecorderState = remember {
-        StreamMediaRecorderStateHolder(streamMediaRecorder = streamMediaRecorder)
+    val mediaRecorderStateManager = remember {
+        StreamMediaRecorderStateManager(streamMediaRecorder = streamMediaRecorder)
     }
 
-    val isRecording = mediaRecorderState.isRecording.value
+    val isRecording = mediaRecorderStateManager.isRecording.value
 
     // TODO test permissions on lower APIs etc
     val storageAndRecordingPermissionState = rememberMultiplePermissionsState(
