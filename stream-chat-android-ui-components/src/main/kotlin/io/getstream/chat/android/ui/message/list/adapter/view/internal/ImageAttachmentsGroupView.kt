@@ -137,7 +137,6 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
             imageAttachmentView.binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
         }
 
-
         imageAttachmentView.showAttachment(first)
     }
 
