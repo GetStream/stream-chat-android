@@ -94,6 +94,11 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
         val imageAttachmentView = createImageAttachmentView()
         addView(imageAttachmentView)
         state = State.OneView(imageAttachmentView)
+
+        val imageWidth = first.originalWidth?.toFloat()
+        val imageHeight = first.originalHeight?.toFloat()
+        val imageAspectRatio = (imageWidth ?: 0f) / (imageHeight ?: 0f)
+
         ConstraintSet().apply {
             constrainMaxHeight(imageAttachmentView.id, maxImageAttachmentHeight)
             constrainWidth(imageAttachmentView.id, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -102,26 +107,36 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.TOP)
             constrainViewToParentBySide(imageAttachmentView, ConstraintSet.BOTTOM)
 
-            val imageWidth = first.originalWidth?.toFloat()
-            val imageHeight = first.originalHeight?.toFloat()
-
             // Used to set a dimension ratio before we load an image
             // so that message positions don't jump after we load it.
-            if (imageWidth != null && imageHeight != null) {
-                val ratio = (imageWidth / imageHeight).toString()
-                this.setDimensionRatio(imageAttachmentView.id, ratio)
-                imageAttachmentView.binding.imageView.scaleType = if (imageWidth > imageHeight) {
-                    ImageView.ScaleType.FIT_XY
-                } else {
-                    ImageView.ScaleType.CENTER_CROP
-                }
+            if (imageAspectRatio != 0f) {
+                this.setDimensionRatio(imageAttachmentView.id, imageAspectRatio.toString())
             } else {
-                imageAttachmentView.binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
                 constrainHeight(imageAttachmentView.id, LayoutParams.WRAP_CONTENT)
             }
 
             applyTo(this@ImageAttachmentsGroupView)
         }
+
+        if (imageAspectRatio != 0f) {
+            imageAttachmentView.post {
+                imageAttachmentView.binding.imageView.scaleType =
+                    if (imageAttachmentView.measuredHeight < maxImageAttachmentHeight) {
+                        ImageView.ScaleType.FIT_XY
+                    } else {
+                        val scaleFactor = imageAttachmentView.measuredWidth.toFloat() / imageWidth!!
+                        val onScreenImageHeight = imageHeight!! * scaleFactor
+                        if (onScreenImageHeight <= maxImageAttachmentHeight) {
+                            ImageView.ScaleType.FIT_XY
+                        } else {
+                            ImageView.ScaleType.CENTER_CROP
+                        }
+                    }
+            }
+        } else {
+            imageAttachmentView.binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+        }
+
 
         imageAttachmentView.showAttachment(first)
     }
