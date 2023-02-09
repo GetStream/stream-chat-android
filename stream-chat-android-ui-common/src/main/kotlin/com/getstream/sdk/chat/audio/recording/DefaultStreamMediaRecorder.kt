@@ -24,13 +24,39 @@ import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
 
 /**
  * The default implementation of [StreamMediaRecorder], used as a wrapper around [MediaRecorder] simplifying
  * working with it.
+ *
+ * @param amplitudePollingInterval Dictates how often the recorder is polled for the latest max amplitude and
+ * how often [onMaxAmplitudeSampledListener] emits a new value.
  */
-public class DefaultStreamMediaRecorder : StreamMediaRecorder {
+public class DefaultStreamMediaRecorder(
+    private var amplitudePollingInterval: Long = 33L,
+) : StreamMediaRecorder {
+
+    /**
+     * Holds the current state of the [MediaRecorder] instance.
+     */
+    private var mediaRecorderState: MediaRecorderState = MediaRecorderState.UNINITIALIZED
+
+    /**
+     * Coroutine Scope used for performing various jobs.
+     */
+    private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO)
+
+    /**
+     * The job used to poll for max amplitude.
+     * @see pollMaxAmplitude
+     */
+    private var pollingJob: Job? = null
 
     /**
      * Used for logging errors, warnings and various information.
@@ -64,14 +90,24 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
     private var onInfoListener: MediaRecorder.OnInfoListener? = null
 
     /**
-     * Listens to when the recorder starts recording.
+     * Updated when the media recorder starts recording.
      */
     private var onStartRecordingListener: StreamMediaRecorder.OnRecordingStarted? = null
 
     /**
-     * Listens to when the recorder stops recording.
+     * Updated when the media recorder stops recording.
      */
     private var onStopRecordingListener: StreamMediaRecorder.OnRecordingStopped? = null
+
+    /**
+     * Updated when a new max amplitude value is emitted.
+     */
+    private var onMaxAmplitudeSampledListener: StreamMediaRecorder.OnMaxAmplitudeSampled? = null
+
+    /**
+     * Updated when the media recorder state changes.
+     */
+    private var onStreamMediaRecorderStateChanged: StreamMediaRecorder.OnMediaRecorderStateChange? = null
 
     /**
      * Initializes the media recorder and sets it to record audio using the device's microphone.
@@ -84,7 +120,7 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
         context: Context,
         recordingFile: File,
     ) {
-        mediaRecorder?.release()
+        release()
 
         mediaRecorder = if (Build.VERSION.SDK_INT < 31) {
             MediaRecorder()
@@ -98,6 +134,7 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             setOutputFile(recordingFile.path)
             prepare()
+            mediaRecorderState = MediaRecorderState.PREPARED
         }
     }
 
@@ -128,6 +165,9 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
                     requireNotNull(mediaRecorder)
                     mediaRecorder?.start()
                     onStartRecordingListener?.onStarted()
+
+                    mediaRecorderState = MediaRecorderState.RECORDING
+                    pollMaxAmplitude()
 
                     Result.Success(it)
                 }
@@ -168,7 +208,8 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
 
             mediaRecorder?.start()
             onStartRecordingListener?.onStarted()
-
+            mediaRecorderState = MediaRecorderState.RECORDING
+            pollMaxAmplitude()
             Result.Success(Unit)
         } catch (exception: Exception) {
             logger.e(exception) { "Could not start recording audio" }
@@ -191,7 +232,7 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
         return try {
             requireNotNull(mediaRecorder)
             mediaRecorder?.stop()
-            mediaRecorder?.release()
+            release()
             onStopRecordingListener?.onStopped()
 
             val attachment = Attachment(
@@ -242,7 +283,30 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
      */
     override fun release() {
         mediaRecorder?.release()
+        mediaRecorderState = MediaRecorderState.UNINITIALIZED
         onStopRecordingListener?.onStopped()
+    }
+
+    /**
+     * Polls the latest maximum amplitude value and updates [onMaxAmplitudeSampledListener] listener with the new value.
+     */
+    private fun pollMaxAmplitude() {
+        pollingJob?.cancel()
+
+        pollingJob = coroutineScope.launch {
+            try {
+                while (mediaRecorderState == MediaRecorderState.RECORDING) {
+                    val maxAmplitude = mediaRecorder?.maxAmplitude
+
+                    if (maxAmplitude != null) {
+                        onMaxAmplitudeSampledListener?.onSampled(maxAmplitude)
+                    }
+                    delay(amplitudePollingInterval)
+                }
+            } catch (e: Exception) {
+                // TODO update error
+            }
+        }
     }
 
     /**
@@ -283,8 +347,9 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
      * @param onRecordingStarted [StreamMediaRecorder.OnRecordingStarted] SAM used for notifying after the recording
      * has started successfully.
      */
+    // TODO evaluate for removal due to new state updater
     override fun setOnRecordingStartedListener(onRecordingStarted: StreamMediaRecorder.OnRecordingStarted) {
-        onStartRecordingListener = onRecordingStarted
+        this.onStartRecordingListener = onRecordingStarted
     }
 
     /**
@@ -293,7 +358,30 @@ public class DefaultStreamMediaRecorder : StreamMediaRecorder {
      * @param onRecordingStopped [StreamMediaRecorder.OnRecordingStarted] SAM used to notify the user after the
      * recording has stopped.
      */
+    // TODO evaluate for removal due to new state updater
     override fun setOnRecordingStoppedListener(onRecordingStopped: StreamMediaRecorder.OnRecordingStopped) {
-        onStopRecordingListener = onRecordingStopped
+        this.onStopRecordingListener = onRecordingStopped
+    }
+
+    /**
+     * Sets a [StreamMediaRecorder.setOnMaxAmplitudeSampledListener] listener on this instance of [StreamMediaRecorder].
+     *
+     * @param onMaxAmplitudeSampled [StreamMediaRecorder.setOnMaxAmplitudeSampledListener] SAM used to notify when a new
+     * maximum amplitude value has been sampled.
+     */
+    override fun setOnMaxAmplitudeSampledListener(onMaxAmplitudeSampled: StreamMediaRecorder.OnMaxAmplitudeSampled) {
+        this.onMaxAmplitudeSampledListener = onMaxAmplitudeSampled
+    }
+
+    /**
+     * Sets a [StreamMediaRecorder.OnMediaRecorderStateChange] listener on this instance of [StreamMediaRecorder].
+     *
+     * @param onMediaRecorderStateChange [StreamMediaRecorder.OnMediaRecorderStateChange] SAM used to notify when the
+     * media recorder state has changed.
+     */
+    override fun setOnMediaRecorderStateChangedListener(
+        onMediaRecorderStateChange: StreamMediaRecorder.OnMediaRecorderStateChange
+    ) {
+        this.onStreamMediaRecorderStateChanged = onMediaRecorderStateChange
     }
 }

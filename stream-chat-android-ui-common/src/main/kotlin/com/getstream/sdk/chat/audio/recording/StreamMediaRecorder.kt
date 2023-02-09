@@ -82,6 +82,8 @@ public interface StreamMediaRecorder {
      */
     public fun release()
 
+    // TODO add an onDestroy method, should kill the coroutine scope inside DefaultStreamMediaRecorder
+
     /**
      * Sets an error listener.
      *
@@ -99,7 +101,7 @@ public interface StreamMediaRecorder {
     public fun setOnInfoListener(onInfoListener: OnInfoListener)
 
     /**
-     * Sets an [StreamMediaRecorder.OnRecordingStarted] listener on this instance of [StreamMediaRecorder].
+     * Sets a [StreamMediaRecorder.OnRecordingStarted] listener on this instance of [StreamMediaRecorder].
      *
      * @param onRecordingStarted [StreamMediaRecorder.OnRecordingStarted] SAM used for notifying after the recording
      * has started successfully.
@@ -107,12 +109,28 @@ public interface StreamMediaRecorder {
     public fun setOnRecordingStartedListener(onRecordingStarted: OnRecordingStarted)
 
     /**
-     * Sets an [StreamMediaRecorder.OnRecordingStopped] listener on this instance of [StreamMediaRecorder].
+     * Sets a [StreamMediaRecorder.OnRecordingStopped] listener on this instance of [StreamMediaRecorder].
      *
      * @param onRecordingStopped [StreamMediaRecorder.OnRecordingStarted] SAM used to notify the user after the
      * recording has stopped.
      */
     public fun setOnRecordingStoppedListener(onRecordingStopped: OnRecordingStopped)
+
+    /**
+     * Sets a [StreamMediaRecorder.setOnMaxAmplitudeSampledListener] listener on this instance of [StreamMediaRecorder].
+     *
+     * @param onMaxAmplitudeSampled [StreamMediaRecorder.setOnMaxAmplitudeSampledListener] SAM used to notify when a new
+     * maximum amplitude value has been sampled.
+     */
+    public fun setOnMaxAmplitudeSampledListener(onMaxAmplitudeSampled: OnMaxAmplitudeSampled)
+
+    /**
+     * Sets a [StreamMediaRecorder.OnMediaRecorderStateChange] listener on this instance of [StreamMediaRecorder].
+     *
+     * @param onMediaRecorderStateChange [StreamMediaRecorder.OnMediaRecorderStateChange] SAM used to notify when the
+     * media recorder state has changed.
+     */
+    public fun setOnMediaRecorderStateChangedListener(onMediaRecorderStateChange: OnMediaRecorderStateChange)
 
     /**
      * A functional interface used for listening to info events dispatched by the [MediaRecorder] internally
@@ -174,5 +192,32 @@ public interface StreamMediaRecorder {
          * Called after the recording has stopped.
          */
         public fun onStopped()
+    }
+
+    /**
+     * A functional interface used for emitting max amplitude readings during recording.
+     */
+    public fun interface OnMaxAmplitudeSampled {
+
+        /**
+         * Called after the recording has stopped.
+         *
+         * @param maxAmplitude The maximum amplitude value sampled since the previous sample.
+         * @see [MediaRecorder.getMaxAmplitude]
+         */
+        public fun onSampled(maxAmplitude: Int)
+    }
+
+    /**
+     * A functional interface used for listening to [StreamMediaRecorder] state changes.
+     */
+    public fun interface OnMediaRecorderStateChange {
+
+        /**
+         * Called after the recording has stopped.
+         *
+         * @param recorderState The current state of the media recorder
+         */
+        public fun onStateChanged(recorderState: MediaRecorderState)
     }
 }

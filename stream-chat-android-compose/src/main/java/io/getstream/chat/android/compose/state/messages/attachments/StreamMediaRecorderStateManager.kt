@@ -20,6 +20,7 @@ import android.media.MediaRecorder
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import com.getstream.sdk.chat.audio.recording.MediaRecorderState
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorderState
 import io.getstream.log.StreamLog
@@ -64,20 +65,29 @@ public class StreamMediaRecorderStateManager(
     private val onErrorState: State<StreamMediaRecorderState?> = mutableStateOf(null)
 
     /**
-     * Indicated if the [MediaRecorder] is currently recording.
+     * Emits the latest [MediaRecorder] max amplitude reading.
      */
-    // TODO possibly refactor this using an enum or a sealed class representing multiple states
-    // TODO such as prepared, idle, recording, released, etc.
-    private val _isRecording: MutableState<Boolean> = mutableStateOf(false)
+    private val _latestMaxAmplitude: MutableState<Int> = mutableStateOf(0)
 
     /**
-     * Indicated if the [MediaRecorder] is currently recording.
+     * Emits the latest [MediaRecorder] max amplitude reading.
      */
-    public val isRecording: State<Boolean> = _isRecording
+    public val latestMaxAmplitude: State<Int> = _latestMaxAmplitude
+
+    /**
+     * Represents the current state of the [MediaRecorder].
+     */
+    private val _mediaRecorderState: MutableState<MediaRecorderState> =
+        mutableStateOf(MediaRecorderState.UNINITIALIZED)
+
+    /**
+     * Represents the current state of the [MediaRecorder].
+     */
+    public val mediaRecorderState: State<MediaRecorderState> = _mediaRecorderState
 
     init {
         streamMediaRecorder.setOnInfoListener { streamMediaRecorder, what, extra ->
-            logger.v { "[onInfo] -> what: $what , extra: $extra" }
+            logger.v { "[setOnInfoListener] -> what: $what , extra: $extra" }
 
             _onInfoState.value = StreamMediaRecorderState(
                 streamMediaRecorder = streamMediaRecorder,
@@ -87,7 +97,7 @@ public class StreamMediaRecorderStateManager(
         }
 
         streamMediaRecorder.setOnErrorListener { streamMediaRecorder, what, extra ->
-            logger.v { "[onError] -> what: $what , extra: $extra" }
+            logger.v { "[setOnErrorListener] -> what: $what , extra: $extra" }
 
             if (what == MediaRecorder.MEDIA_ERROR_SERVER_DIED) {
                 streamMediaRecorder.release()
@@ -100,16 +110,16 @@ public class StreamMediaRecorderStateManager(
             )
         }
 
-        streamMediaRecorder.setOnRecordingStartedListener {
-            logger.v { "[onStarted] -> started" }
+        streamMediaRecorder.setOnMaxAmplitudeSampledListener {
+            logger.v { "[setOnMaxAmplitudeSampledListener] -> $it" }
 
-            _isRecording.value = true
+            _latestMaxAmplitude.value = it
         }
 
-        streamMediaRecorder.setOnRecordingStoppedListener {
-            logger.v { "[onStopped] -> stopped" }
+        streamMediaRecorder.setOnMediaRecorderStateChangedListener {
+            logger.v { "[setOnMediaRecorderStateChangedListener] -> ${it.name}" }
 
-            _isRecording.value = false
+            _mediaRecorderState.value = it
         }
     }
 }
