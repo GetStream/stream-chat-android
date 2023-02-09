@@ -11,7 +11,7 @@
     <ID>ComplexMethod:QuotedMessageText.kt$@Composable public fun QuotedMessageText( message: Message, currentUser: User?, modifier: Modifier = Modifier, replyMessage: Message? = null, quoteMaxLines: Int = DefaultQuoteMaxLines, )</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
-    <ID>Indentation:io.getstream.chat.android.compose.ui.messages.composer.MessageComposer.kt:704</ID>
+    <ID>Indentation:io.getstream.chat.android.compose.ui.messages.composer.MessageComposer.kt:705</ID>
     <ID>LargeClass:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
     <ID>LongMethod:GiphyMessageContent.kt$@Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:GroupAvatar.kt$@Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
@@ -29,6 +29,8 @@
     <ID>LongParameterList:MediaGalleryPreviewActivityAttachmentState.kt$MediaGalleryPreviewActivityAttachmentState$( val name: String?, val url: String?, val thumbUrl: String?, val imageUrl: String?, val assetUrl: String?, val originalWidth: Int?, val originalHeight: Int?, val type: String?, )</ID>
     <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, onRecordingSaved: (Attachment) -> Unit, streamMediaRecorder: StreamMediaRecorder, )</ID>
     <ID>LongParameterList:MessagesScreen.kt$( listViewModel: MessageListViewModel, composerViewModel: MessageComposerViewModel, selectedMessageState: SelectedMessageState?, selectedMessage: Message, skipPushNotification: Boolean, skipEnrichUrl: Boolean, )</ID>
+    <ID>MagicNumber:AudioRecording.kt$0.1f</ID>
+    <ID>MagicNumber:AudioRecording.kt$2.5f</ID>
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
     <ID>MagicNumber:FileAttachmentContent.kt$0.85f</ID>
     <ID>MagicNumber:FilesPicker.kt$6f</ID>
