@@ -245,8 +245,9 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 public final class io/getstream/chat/android/compose/state/messages/attachments/StreamMediaRecorderStateManager {
 	public static final field $stable I
 	public fun <init> (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;)V
+	public final fun getLatestMaxAmplitude ()Landroidx/compose/runtime/State;
+	public final fun getMediaRecorderState ()Landroidx/compose/runtime/State;
 	public final fun getOnInfoState ()Landroidx/compose/runtime/State;
-	public final fun isRecording ()Landroidx/compose/runtime/State;
 }
 
 public final class io/getstream/chat/android/compose/state/reactionoptions/ReactionOptionItemState {
@@ -295,6 +296,10 @@ public final class io/getstream/chat/android/compose/ui/attachments/StreamAttach
 	public final fun defaultFactories (ILio/getstream/chat/android/ui/common/utils/GiphyInfoType;Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function6;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static synthetic fun defaultFactories$default (Lio/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories;ILio/getstream/chat/android/ui/common/utils/GiphyInfoType;Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function6;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Ljava/util/List;
 	public final fun defaultQuotedFactories ()Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/audio/AudioRecordingKt {
+	public static final fun RunningWaveForm-rJsmZDw (Ljava/lang/Object;ILjava/lang/Integer;Landroidx/compose/ui/Modifier;IFFFJLandroidx/compose/ui/graphics/Brush;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$MediaAttachmentContentKt {
