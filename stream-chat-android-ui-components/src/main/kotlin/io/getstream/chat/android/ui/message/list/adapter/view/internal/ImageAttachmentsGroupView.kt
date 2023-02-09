@@ -109,7 +109,7 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
 
             // Used to set a dimension ratio before we load an image
             // so that message positions don't jump after we load it.
-            if (imageAspectRatio != 0f) {
+            if (imageAspectRatio != 0f && !imageAspectRatio.isNaN()) {
                 this.setDimensionRatio(imageAttachmentView.id, imageAspectRatio.toString())
             } else {
                 constrainHeight(imageAttachmentView.id, LayoutParams.WRAP_CONTENT)
@@ -118,26 +118,51 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
             applyTo(this@ImageAttachmentsGroupView)
         }
 
-        if (imageAspectRatio != 0f) {
-            imageAttachmentView.post {
-                imageAttachmentView.binding.imageView.scaleType =
-                    if (imageAttachmentView.measuredHeight < maxImageAttachmentHeight) {
-                        ImageView.ScaleType.FIT_XY
-                    } else {
-                        val scaleFactor = imageAttachmentView.measuredWidth.toFloat() / imageWidth!!
-                        val onScreenImageHeight = imageHeight!! * scaleFactor
-                        if (onScreenImageHeight <= maxImageAttachmentHeight) {
-                            ImageView.ScaleType.FIT_XY
-                        } else {
-                            ImageView.ScaleType.CENTER_CROP
-                        }
-                    }
-            }
-        } else {
-            imageAttachmentView.binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-        }
+        determineImageScaling(imageWidth, imageHeight, imageAttachmentView)
 
         imageAttachmentView.showAttachment(first)
+    }
+
+    /**
+     * Determines the image scale type depending on the image and container dimensions to properly scale and crop the
+     * image. If the scaled image height is smaller than the container the aspect will always be respected and scale is
+     * [ImageView.ScaleType.FIT_XY] or if the scaled image height is larger than the container then we crop the image
+     * using [ImageView.ScaleType.CENTER_CROP]. Also if the image dimensions are unknown we use
+     * [ImageView.ScaleType.CENTER_CROP] to be sure that the image will be scaled and cropped correctly.
+     *
+     * @param imageWidth The width of the image.
+     * @param imageHeight The height of the image.
+     * @param imageAttachmentView The view in which we are showing the image.
+     */
+    private fun determineImageScaling(
+        imageWidth: Float?,
+        imageHeight: Float?,
+        imageAttachmentView: ImageAttachmentView,
+    ) {
+        val imageAspectRatio = (imageWidth ?: 0f) / (imageHeight ?: 0f)
+        when {
+            imageWidth == null || imageHeight == null ->
+                imageAttachmentView.binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+
+            imageAspectRatio != 0f || !imageAspectRatio.isNaN() -> {
+                imageAttachmentView.post {
+                    imageAttachmentView.binding.imageView.scaleType =
+                        if (imageAttachmentView.measuredHeight < maxImageAttachmentHeight) {
+                            ImageView.ScaleType.FIT_XY
+                        } else {
+                            val scaleFactor = imageAttachmentView.measuredWidth.toFloat() / imageWidth
+                            val scaledImageHeight = imageHeight * scaleFactor
+                            if (scaledImageHeight <= maxImageAttachmentHeight) {
+                                ImageView.ScaleType.FIT_XY
+                            } else {
+                                ImageView.ScaleType.CENTER_CROP
+                            }
+                        }
+                }
+            }
+
+            else -> imageAttachmentView.binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+        }
     }
 
     private fun showTwo(first: Attachment, second: Attachment) {
