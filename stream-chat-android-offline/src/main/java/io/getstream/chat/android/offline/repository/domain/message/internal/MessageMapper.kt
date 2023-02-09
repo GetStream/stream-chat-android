@@ -30,7 +30,7 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.toM
 
 internal suspend fun MessageEntity.toModel(
     getUser: suspend (userId: String) -> User,
-    getMessage: suspend (messageId: String) -> Message?,
+    getReply: suspend (messageId: String) -> Message?,
 ): Message = with(messageInnerEntity) {
     Message(
         id = id,
@@ -58,7 +58,7 @@ internal suspend fun MessageEntity.toModel(
         ownReactions = (ownReactions.map { it.toModel(getUser) }).toMutableList(),
         mentionedUsers = remoteMentionedUserIds.map { getUser(it) }.toMutableList(),
         mentionedUsersIds = mentionedUsersId.toMutableList(),
-        replyTo = replyToId?.let { getMessage(it) },
+        replyTo = replyToId?.let { getReply(it) },
         replyMessageId = replyToId,
         threadParticipants = threadParticipantsIds.map { getUser(it) },
         showInChannel = showInChannel,
@@ -110,6 +110,79 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
     latestReactions = latestReactions.map(Reaction::toEntity),
     ownReactions = ownReactions.map(Reaction::toEntity),
 )
+
+internal suspend fun ReplyMessageEntity.toModel(
+    getUser: suspend (userId: String) -> User,
+): Message {
+    val entity = this
+    return this.replyMessageInnerEntity.run {
+        Message(
+            id = id,
+            cid = cid,
+            user = getUser(userId),
+            text = text,
+            html = html,
+            attachments = entity.attachments.map { it.toModel() }.toMutableList(),
+            type = type,
+            replyCount = replyCount,
+            createdAt = createdAt,
+            createdLocallyAt = createdLocallyAt,
+            updatedAt = updatedAt,
+            updatedLocallyAt = updatedLocallyAt,
+            deletedAt = deletedAt,
+            parentId = parentId,
+            command = command,
+            syncStatus = syncStatus,
+            shadowed = shadowed,
+            latestReactions = mutableListOf(),
+            ownReactions = mutableListOf(),
+            mentionedUsers = remoteMentionedUserIds.map { getUser(it) }.toMutableList(),
+            mentionedUsersIds = mentionedUsersId.toMutableList(),
+            replyTo = null,
+            replyMessageId = null,
+            threadParticipants = threadParticipantsIds.map { getUser(it) },
+            showInChannel = showInChannel,
+            silent = silent,
+            pinned = pinned,
+            pinnedAt = pinnedAt,
+            pinExpires = pinExpires,
+            pinnedBy = pinnedByUserId?.let { getUser(it) }
+        )
+    }
+}
+
+internal fun Message.toReplyEntity(): ReplyMessageEntity =
+    ReplyMessageEntity(
+        replyMessageInnerEntity = ReplyMessageInnerEntity(
+            id = id,
+            cid = cid,
+            userId = user.id,
+            text = text,
+            html = html,
+            syncStatus = syncStatus,
+            syncType = syncDescription?.type,
+            type = type,
+            replyCount = replyCount,
+            createdAt = createdAt,
+            createdLocallyAt = createdLocallyAt,
+            updatedAt = updatedAt,
+            updatedLocallyAt = updatedLocallyAt,
+            deletedAt = deletedAt,
+            parentId = parentId,
+            command = command,
+            shadowed = shadowed,
+            remoteMentionedUserIds = mentionedUsers.map(User::id),
+            mentionedUsersId = mentionedUsersIds,
+            threadParticipantsIds = threadParticipants.map(User::id),
+            showInChannel = showInChannel,
+            silent = silent,
+            pinned = pinned,
+            pinnedAt = pinnedAt,
+            pinExpires = pinExpires,
+            pinnedByUserId = pinnedBy?.id,
+        ),
+        attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
+    )
 
 private fun MessageEntity.buildMessageSyncDescription(): MessageSyncDescription? = with(messageInnerEntity) {
     if (syncType == null || syncContent == null) {

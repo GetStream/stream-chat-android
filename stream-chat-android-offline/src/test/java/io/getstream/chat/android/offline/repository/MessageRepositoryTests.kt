@@ -26,6 +26,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.offline.randomMessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageDao
+import io.getstream.chat.android.offline.repository.domain.message.internal.ReplyMessageDao
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -48,6 +49,7 @@ import java.util.Date
 internal class MessageRepositoryTests {
 
     private lateinit var messageDao: MessageDao
+    private val replyMessageDao: ReplyMessageDao = mock()
     private lateinit var sut: MessageRepository
     private lateinit var cache: LruCache<String, Message>
 
@@ -55,7 +57,7 @@ internal class MessageRepositoryTests {
     fun setup() {
         messageDao = mock()
         cache = mock()
-        sut = DatabaseMessageRepository(messageDao, ::randomUser, null, 100, cache)
+        sut = DatabaseMessageRepository(messageDao, replyMessageDao, ::randomUser, null, 100, cache)
     }
 
     @Test

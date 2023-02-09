@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -18,38 +18,22 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
-import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
 import java.util.Date
 
-internal data class MessageEntity(
-    @Embedded val messageInnerEntity: MessageInnerEntity,
+internal data class ReplyMessageEntity(
+    @Embedded val replyMessageInnerEntity: ReplyMessageInnerEntity,
     @Relation(entity = AttachmentEntity::class, parentColumn = "id", entityColumn = "messageId")
     val attachments: List<AttachmentEntity>,
-    /** the reactions from the current user */
-    @Relation(entity = ReactionEntity::class, parentColumn = "id", entityColumn = "messageId")
-    val ownReactions: List<ReactionEntity> = emptyList(),
-    /** the last 5 reactions on this message */
-    @Relation(entity = ReactionEntity::class, parentColumn = "id", entityColumn = "messageId")
-    val latestReactions: List<ReactionEntity> = emptyList(),
 )
 
-@Entity(
-    tableName = MESSAGE_ENTITY_TABLE_NAME,
-    indices = [
-        Index(value = ["cid", "createdAt"]),
-        Index(value = ["syncStatus"]),
-        Index(value = ["syncType"]),
-        Index(value = ["syncStatus", "syncType"])
-    ]
-)
-internal data class MessageInnerEntity(
+@Entity(tableName = REPLY_MESSAGE_ENTITY_TABLE_NAME)
+internal data class ReplyMessageInnerEntity(
     @PrimaryKey
     val id: String,
     val cid: String,
@@ -65,7 +49,7 @@ internal data class MessageInnerEntity(
 
     val syncType: MessageSyncType? = null,
 
-    val syncContent: MessageSyncContentEntity? = null,
+    // val syncContent: MessageSyncContentEntity? = null,
 
     /** the number of replies */
     val replyCount: Int = 0,
@@ -83,10 +67,6 @@ internal data class MessageInnerEntity(
     val remoteMentionedUserIds: List<String> = emptyList(),
     /** the users to be mentioned in this message */
     val mentionedUsersId: List<String> = emptyList(),
-    /** a mapping between reaction type and the count, ie like:10, heart:4 */
-    val reactionCounts: Map<String, Int> = emptyMap(),
-    /** a mapping between reaction type and the reaction score, ie like:10, heart:4 */
-    val reactionScores: Map<String, Int> = emptyMap(),
     /** parent id, used for threads */
     val parentId: String? = null,
     /** slash command like /giphy etc */
@@ -101,8 +81,6 @@ internal data class MessageInnerEntity(
     val silent: Boolean = false,
     /** all the custom data provided for this message */
     val extraData: Map<String, Any> = emptyMap(),
-    /** the ID of the quoted message **/
-    val replyToId: String?,
     /** whether message is pinned or not **/
     val pinned: Boolean,
     /** date when the message got pinned **/
@@ -115,4 +93,4 @@ internal data class MessageInnerEntity(
     val threadParticipantsIds: List<String> = emptyList(),
 )
 
-internal const val MESSAGE_ENTITY_TABLE_NAME = "stream_chat_message"
+internal const val REPLY_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_reply_message"

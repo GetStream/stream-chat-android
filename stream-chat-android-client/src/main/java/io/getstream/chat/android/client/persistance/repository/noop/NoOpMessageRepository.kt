@@ -30,6 +30,7 @@ import java.util.Date
 internal object NoOpMessageRepository : MessageRepository {
     override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> = emptyList()
     override suspend fun selectMessage(messageId: String): Message? = null
+    override suspend fun selectRepliedMessage(messageId: String): Message? = null
     override suspend fun insertMessages(messages: List<Message>, cache: Boolean) { /* No-Op */ }
     override suspend fun insertMessage(message: Message, cache: Boolean) { /* No-Op */ }
     override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) { /* No-Op */ }
