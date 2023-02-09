@@ -97,6 +97,8 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
 
         val imageWidth = first.originalWidth?.toFloat()
         val imageHeight = first.originalHeight?.toFloat()
+        // Beware, floating point division by 0f results in NaN,
+        // division by 0 using types such as Int would result in an exception.
         val imageAspectRatio = (imageWidth ?: 0f) / (imageHeight ?: 0f)
 
         ConstraintSet().apply {
@@ -139,6 +141,8 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
         imageHeight: Float?,
         imageAttachmentView: ImageAttachmentView,
     ) {
+        // Beware, floating point division by 0f results in NaN,
+        // division by 0 using types such as Int would result in an exception.
         val imageAspectRatio = (imageWidth ?: 0f) / (imageHeight ?: 0f)
         when {
             imageWidth == null || imageHeight == null ->
