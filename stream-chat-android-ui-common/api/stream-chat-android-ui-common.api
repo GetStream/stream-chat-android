@@ -1,10 +1,14 @@
 public final class com/getstream/sdk/chat/audio/recording/DefaultStreamMediaRecorder : com/getstream/sdk/chat/audio/recording/StreamMediaRecorder {
 	public static final field $stable I
 	public fun <init> ()V
+	public fun <init> (J)V
+	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun deleteRecording (Ljava/io/File;)Lio/getstream/result/Result;
 	public fun release ()V
 	public fun setOnErrorListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnErrorListener;)V
 	public fun setOnInfoListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnInfoListener;)V
+	public fun setOnMaxAmplitudeSampledListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnMaxAmplitudeSampled;)V
+	public fun setOnMediaRecorderStateChangedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnMediaRecorderStateChange;)V
 	public fun setOnRecordingStartedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStarted;)V
 	public fun setOnRecordingStoppedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStopped;)V
 	public fun startAudioRecording (Landroid/content/Context;Ljava/io/File;)Lio/getstream/result/Result;
@@ -12,11 +16,21 @@ public final class com/getstream/sdk/chat/audio/recording/DefaultStreamMediaReco
 	public fun stopRecording ()Lio/getstream/result/Result;
 }
 
+public final class com/getstream/sdk/chat/audio/recording/MediaRecorderState : java/lang/Enum {
+	public static final field PREPARED Lcom/getstream/sdk/chat/audio/recording/MediaRecorderState;
+	public static final field RECORDING Lcom/getstream/sdk/chat/audio/recording/MediaRecorderState;
+	public static final field UNINITIALIZED Lcom/getstream/sdk/chat/audio/recording/MediaRecorderState;
+	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/audio/recording/MediaRecorderState;
+	public static fun values ()[Lcom/getstream/sdk/chat/audio/recording/MediaRecorderState;
+}
+
 public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder {
 	public abstract fun deleteRecording (Ljava/io/File;)Lio/getstream/result/Result;
 	public abstract fun release ()V
 	public abstract fun setOnErrorListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnErrorListener;)V
 	public abstract fun setOnInfoListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnInfoListener;)V
+	public abstract fun setOnMaxAmplitudeSampledListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnMaxAmplitudeSampled;)V
+	public abstract fun setOnMediaRecorderStateChangedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnMediaRecorderStateChange;)V
 	public abstract fun setOnRecordingStartedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStarted;)V
 	public abstract fun setOnRecordingStoppedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStopped;)V
 	public abstract fun startAudioRecording (Landroid/content/Context;Ljava/io/File;)Lio/getstream/result/Result;
@@ -34,6 +48,14 @@ public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMed
 
 public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnInfoListener {
 	public abstract fun onInfo (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;II)V
+}
+
+public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnMaxAmplitudeSampled {
+	public abstract fun onSampled (I)V
+}
+
+public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnMediaRecorderStateChange {
+	public abstract fun onStateChanged (Lcom/getstream/sdk/chat/audio/recording/MediaRecorderState;)V
 }
 
 public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStarted {

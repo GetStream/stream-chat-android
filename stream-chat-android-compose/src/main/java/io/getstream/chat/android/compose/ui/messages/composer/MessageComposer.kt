@@ -65,6 +65,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import com.getstream.sdk.chat.audio.recording.MediaRecorderState
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -638,7 +639,7 @@ internal fun DefaultMessageComposerTrailingContent(
         StreamMediaRecorderStateManager(streamMediaRecorder = streamMediaRecorder)
     }
 
-    val isRecording = mediaRecorderStateManager.isRecording.value
+    val isRecording = mediaRecorderStateManager.mediaRecorderState.value
 
     // TODO test permissions on lower APIs etc
     val storageAndRecordingPermissionState = rememberMultiplePermissionsState(
@@ -680,7 +681,7 @@ internal fun DefaultMessageComposerTrailingContent(
                                     !allPermissionsGranted -> {
                                         storageAndRecordingPermissionState.launchMultiplePermissionRequest()
                                     }
-                                    !isRecording -> {
+                                    isRecording == MediaRecorderState.UNINITIALIZED -> {
                                         streamMediaRecorder.startAudioRecording(
                                             context = context,
                                             recordingName = "audio_recording_${Date()}"
@@ -718,7 +719,11 @@ internal fun DefaultMessageComposerTrailingContent(
                     modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
                     painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
                     contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
-                    tint = if (isRecording) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+                    tint = if (isRecording == MediaRecorderState.RECORDING) {
+                        ChatTheme.colors.primaryAccent
+                    } else {
+                        ChatTheme.colors.textLowEmphasis
+                    }
                 )
             }
         }
