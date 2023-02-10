@@ -19,12 +19,12 @@ package com.getstream.sdk.chat.audio.recording
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -46,6 +46,10 @@ public class DefaultStreamMediaRecorder(
      * Holds the current state of the [MediaRecorder] instance.
      */
     private var mediaRecorderState: MediaRecorderState = MediaRecorderState.UNINITIALIZED
+        set(value) {
+            field = value
+            onStreamMediaRecorderStateChanged?.onStateChanged(field)
+        }
 
     /**
      * Coroutine Scope used for performing various jobs.
@@ -380,7 +384,7 @@ public class DefaultStreamMediaRecorder(
      * media recorder state has changed.
      */
     override fun setOnMediaRecorderStateChangedListener(
-        onMediaRecorderStateChange: StreamMediaRecorder.OnMediaRecorderStateChange
+        onMediaRecorderStateChange: StreamMediaRecorder.OnMediaRecorderStateChange,
     ) {
         this.onStreamMediaRecorderStateChanged = onMediaRecorderStateChange
     }

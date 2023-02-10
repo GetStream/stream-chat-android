@@ -21,6 +21,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
@@ -30,6 +33,10 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  * taken from Compose SDK.
  */
 class ComposeMessagesActivity : AppCompatActivity() {
+
+    // TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +50,8 @@ class ComposeMessagesActivity : AppCompatActivity() {
                         channelId = channelId
                     ),
                     onBackPressed = ::finish,
+                    // TODO add this and related entries to docs when documentation effort occurs
+                    statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                 )
             }
         }

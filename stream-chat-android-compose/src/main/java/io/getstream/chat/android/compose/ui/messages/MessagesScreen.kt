@@ -50,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
@@ -97,7 +98,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
  * @param showHeader If we're showing the header or not.
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
- * @param onHeaderTitleClick Handler for when the user taps on the header title section.
+ * @param onHeaderTitleClick Handler for when the user taps on the header section.
  * @param onChannelAvatarClick Handler called when the user taps on the channel avatar.
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
@@ -116,6 +117,7 @@ public fun MessagesScreen(
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
+    statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
@@ -189,6 +191,7 @@ public fun MessagesScreen(
                             }
                         )
                     },
+                    statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                 )
             }
         ) {
