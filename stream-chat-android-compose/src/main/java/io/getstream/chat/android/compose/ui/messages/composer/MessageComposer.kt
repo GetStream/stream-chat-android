@@ -21,6 +21,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -44,6 +45,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
@@ -631,6 +634,7 @@ internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
     statefulStreamMediaRecorder: StatefulStreamMediaRecorder,
 ) {
     Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
             .align(Alignment.CenterVertically)
             .fillMaxWidth()
@@ -639,13 +643,48 @@ internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
     ) {
 
         val amplitudeSample = statefulStreamMediaRecorder.latestMaxAmplitude.value
+        val recordingDuration = statefulStreamMediaRecorder.activeRecordingDuration.value
+
+        val recordingDurationFormatted by remember(recordingDuration) {
+            derivedStateOf {
+                // TODO consider moving to common
+                val remainder = recordingDuration % 60_000
+                val seconds = String.format("%02d", remainder / 1000)
+                val minutes = String.format("%02d", (recordingDuration - remainder) / 60_000)
+
+                "$minutes:$seconds"
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+        ) {
+            Icon(
+                modifier = Modifier
+                    .size(12.dp)
+                    .align(Alignment.CenterVertically),
+                painter = painterResource(id = R.drawable.stream_compose_ic_circle),
+                tint = Color.Red,
+                // TODO add later
+                contentDescription = null
+            )
+
+            Text(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                text = recordingDurationFormatted,
+                style = ChatTheme.typography.body,
+                color = ChatTheme.colors.textHighEmphasis
+            )
+        }
 
         RunningWaveForm(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .fillMaxWidth()
                 .height(20.dp),
-            maxInputValue = 2500,
+            maxInputValue = 20_000,
             barWidth = 8.dp,
             barGap = 2.dp,
             restartKey = true,

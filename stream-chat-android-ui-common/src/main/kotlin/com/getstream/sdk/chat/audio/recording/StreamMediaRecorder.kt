@@ -133,6 +133,14 @@ public interface StreamMediaRecorder {
     public fun setOnMediaRecorderStateChangedListener(onMediaRecorderStateChange: OnMediaRecorderStateChange)
 
     /**
+     * Sets a [StreamMediaRecorder.OnCurrentRecordingDurationChanged] listener on this instance of [StreamMediaRecorder].
+     *
+     * @param onCurrentRecordingDurationChanged [StreamMediaRecorder.OnCurrentRecordingDurationChanged] SAM updated
+     * when the duration of the currently active recording has changed.
+     */
+    public fun setOnCurrentRecordingDurationChangedListener(onCurrentRecordingDurationChanged: OnCurrentRecordingDurationChanged)
+
+    /**
      * A functional interface used for listening to info events dispatched by the [MediaRecorder] internally
      * used by [StreamMediaRecorder].
      */
@@ -219,5 +227,18 @@ public interface StreamMediaRecorder {
          * @param recorderState The current state of the media recorder
          */
         public fun onStateChanged(recorderState: MediaRecorderState)
+    }
+
+    /**
+     * A functional interface used for listening to updated in the duration of the currently active recording.
+     */
+    public fun interface OnCurrentRecordingDurationChanged {
+
+        /**
+         * Called after the recording has stopped.
+         *
+         * @param durationMs The duration of the currently active recording expressed in milliseconds.
+         */
+        public fun onDurationChanged(durationMs: Long)
     }
 }

@@ -98,6 +98,17 @@ public class StatefulStreamMediaRecorder(
      */
     public val mediaRecorderState: State<MediaRecorderState> = _mediaRecorderState
 
+    /**
+     * Represents the duration of the currently active recording.
+     */
+    private val _activeRecordingDuration: MutableState<Long> =
+        mutableStateOf(0L)
+
+    /**
+     * Represents the duration of the currently active recording.
+     */
+    public val activeRecordingDuration: State<Long> = _activeRecordingDuration
+
     init {
         streamMediaRecorder.setOnInfoListener { streamMediaRecorder, what, extra ->
             logger.v { "[setOnInfoListener] -> what: $what , extra: $extra" }
@@ -135,6 +146,12 @@ public class StatefulStreamMediaRecorder(
 
             maxAmplitudeSampleKey = 0
             _mediaRecorderState.value = it
+        }
+
+        streamMediaRecorder.setOnCurrentRecordingDurationChangedListener {
+            logger.v { "[setOnCurrentRecordingDurationChangedListener] -> $it" }
+
+            _activeRecordingDuration.value = it
         }
     }
 
