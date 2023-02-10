@@ -66,7 +66,7 @@ public fun RunningWaveForm(
     modifier: Modifier = Modifier,
     maxInputValue: Int = 20,
     barMinHeight: Float = 0.1f,
-    barWidth: Dp = 100.dp,
+    barWidth: Dp = 8.dp,
     barGap: Dp = 2.dp,
     barCornerRadius: CornerRadius = CornerRadius(barWidth.value / 2.5f, barWidth.value / 2.5f),
     barBrush: Brush = Brush.linearGradient(

@@ -48,7 +48,15 @@ public class DefaultStreamMediaRecorder(
     private var mediaRecorderState: MediaRecorderState = MediaRecorderState.UNINITIALIZED
         set(value) {
             field = value
-            onStreamMediaRecorderStateChanged?.onStateChanged(field)
+            onStreamMediaRecorderStateChangedListener?.onStateChanged(field)
+
+            when (field) {
+                MediaRecorderState.RECORDING -> {
+                    activeRecordingStartedAt = System.currentTimeMillis()
+                    trackMaxDuration()
+                }
+                else -> activeRecordingStartedAt = 0L
+            }
         }
 
     /**
@@ -61,6 +69,12 @@ public class DefaultStreamMediaRecorder(
      * @see pollMaxAmplitude
      */
     private var pollingJob: Job? = null
+
+    /**
+     * The job used to keep track of the current recording duration.
+     * @see currentRecordingDurationJob
+     */
+    private var currentRecordingDurationJob: Job? = null
 
     /**
      * Used for logging errors, warnings and various information.
@@ -81,7 +95,16 @@ public class DefaultStreamMediaRecorder(
             field = value
         }
 
+    /**
+     * The file used to store the recording.
+     */
     private var recordingFile: File? = null
+
+    /**
+     * The time at which the active recording has started.
+     * Reset to null when a recording has been stopped.
+     */
+    private var activeRecordingStartedAt: Long? = null
 
     /**
      * Used for listening to the error events emitted by [mediaRecorder].
@@ -111,7 +134,12 @@ public class DefaultStreamMediaRecorder(
     /**
      * Updated when the media recorder state changes.
      */
-    private var onStreamMediaRecorderStateChanged: StreamMediaRecorder.OnMediaRecorderStateChange? = null
+    private var onStreamMediaRecorderStateChangedListener: StreamMediaRecorder.OnMediaRecorderStateChange? = null
+
+    /**
+     * Updated when the duration of the currently active recording changes.
+     */
+    private var onCurrentRecordingDurationChangedListener: StreamMediaRecorder.OnCurrentRecordingDurationChanged? = null
 
     /**
      * Initializes the media recorder and sets it to record audio using the device's microphone.
@@ -176,6 +204,7 @@ public class DefaultStreamMediaRecorder(
                     Result.Success(it)
                 }
         } catch (exception: Exception) {
+            release()
             logger.e(exception) { "Could not start recording audio" }
             Result.Failure(
                 Error.ThrowableError(
@@ -216,6 +245,7 @@ public class DefaultStreamMediaRecorder(
             pollMaxAmplitude()
             Result.Success(Unit)
         } catch (exception: Exception) {
+            release()
             logger.e(exception) { "Could not start recording audio" }
             Result.Failure(
                 Error.ThrowableError(
@@ -248,6 +278,7 @@ public class DefaultStreamMediaRecorder(
 
             Result.Success(attachment)
         } catch (exception: Exception) {
+            release()
             logger.e(exception) { "Could not stop the recording" }
             Result.Failure(
                 Error.ThrowableError(
@@ -309,6 +340,28 @@ public class DefaultStreamMediaRecorder(
                 }
             } catch (e: Exception) {
                 // TODO update error
+            }
+        }
+    }
+
+    /**
+     * Keeps track of the duration of the currently active recording and updates [onCurrentRecordingDurationChangedListener]
+     * accordingly
+     */
+    private fun trackMaxDuration() {
+        currentRecordingDurationJob?.cancel()
+
+        currentRecordingDurationJob = coroutineScope.launch {
+            while (mediaRecorderState == MediaRecorderState.RECORDING) {
+                val activeRecordingStartedAt = this@DefaultStreamMediaRecorder.activeRecordingStartedAt
+                val currentDuration =
+                    if (activeRecordingStartedAt != null) System.currentTimeMillis() - activeRecordingStartedAt else {
+                        0L
+                    }
+
+                onCurrentRecordingDurationChangedListener?.onDurationChanged(currentDuration)
+
+                delay(1000)
             }
         }
     }
@@ -386,6 +439,18 @@ public class DefaultStreamMediaRecorder(
     override fun setOnMediaRecorderStateChangedListener(
         onMediaRecorderStateChange: StreamMediaRecorder.OnMediaRecorderStateChange,
     ) {
-        this.onStreamMediaRecorderStateChanged = onMediaRecorderStateChange
+        this.onStreamMediaRecorderStateChangedListener = onMediaRecorderStateChange
+    }
+
+    /**
+     * Sets a [StreamMediaRecorder.OnCurrentRecordingDurationChanged] listener on this instance of [StreamMediaRecorder].
+     *
+     * @param onCurrentRecordingDurationChanged [StreamMediaRecorder.OnCurrentRecordingDurationChanged] SAM updated
+     * when the duration of the currently active recording has changed.
+     */
+    override fun setOnCurrentRecordingDurationChangedListener(
+        onCurrentRecordingDurationChanged: StreamMediaRecorder.OnCurrentRecordingDurationChanged,
+    ) {
+        this.onCurrentRecordingDurationChangedListener = onCurrentRecordingDurationChanged
     }
 }
