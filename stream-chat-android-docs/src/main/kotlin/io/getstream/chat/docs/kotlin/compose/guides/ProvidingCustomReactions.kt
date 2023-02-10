@@ -9,6 +9,9 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
@@ -20,6 +23,10 @@ import io.getstream.chat.docs.R
  * [Providing Custom Reactions](https://getstream.io/chat/docs/sdk/android/compose/guides/providing-custom-reactions/)
  */
 private object ProvidingCustomReactionsSnippet {
+
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     class MessagesActivity : AppCompatActivity() {
 
@@ -36,7 +43,9 @@ private object ProvidingCustomReactionsSnippet {
                             channelId = channelId,
                         ),
                         onBackPressed = { finish() },
-                        onHeaderTitleClick = {}
+                        onHeaderTitleClick = {},
+                        //TODO add this and related entries to docs when documentation effort occurs
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }

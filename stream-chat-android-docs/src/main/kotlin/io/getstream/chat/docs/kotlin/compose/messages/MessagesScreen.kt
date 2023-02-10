@@ -7,6 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -18,6 +21,10 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#usage)
  */
 private object MessagesScreenUsageSnippet {
+
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     class MyActivity : AppCompatActivity() {
 
@@ -32,7 +39,9 @@ private object MessagesScreenUsageSnippet {
                         viewModelFactory = MessagesViewModelFactory(
                             context = this,
                             channelId = channelId
-                        )
+                        ),
+                        //TODO add this and related entries to docs when documentation effort occurs
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -44,6 +53,10 @@ private object MessagesScreenUsageSnippet {
  * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#handling-actions)
  */
 private object MessagesScreenHandlingActionsSnippet {
+
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     class MyActivity : AppCompatActivity() {
 
@@ -63,6 +76,8 @@ private object MessagesScreenHandlingActionsSnippet {
                         onHeaderTitleClick = { channel ->
                             // Show channel info
                         },
+                        //TODO add this and related entries to docs when documentation effort occurs
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -74,6 +89,10 @@ private object MessagesScreenHandlingActionsSnippet {
  * [Customization](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#customization)
  */
 private object MessagesScreenCustomizationSnippet {
+
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     class MyActivity : AppCompatActivity() {
 
@@ -90,8 +109,11 @@ private object MessagesScreenCustomizationSnippet {
                             channelId = channelId,
                             messageLimit = 30,
                             enforceUniqueReactions = true,
-                            showSystemMessages = true),
+                            showSystemMessages = true
+                        ),
                         showHeader = true,
+                        //TODO add this and related entries to docs when documentation effort occurs
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }

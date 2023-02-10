@@ -47,9 +47,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
@@ -74,6 +77,9 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageRe
 
 class MessagesActivity : BaseConnectedActivity() {
 
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+
     private val factory by lazy {
         MessagesViewModelFactory(
             context = this,
@@ -97,12 +103,18 @@ class MessagesActivity : BaseConnectedActivity() {
                 MessagesScreen(
                     viewModelFactory = factory,
                     onBackPressed = { finish() },
-                    onHeaderTitleClick = {}
+                    onHeaderTitleClick = {},
+                    statefulStreamMediaRecorder = statefulStreamMediaRecorder
                 )
 
                 // MyCustomUi()
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        streamMediaRecorder.release()
     }
 
     @Composable
@@ -241,6 +253,7 @@ class MessagesActivity : BaseConnectedActivity() {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = composerViewModel,
+            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
             integrations = {},
             input = { inputState ->
                 MessageInput(

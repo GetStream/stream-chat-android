@@ -29,6 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -42,6 +45,10 @@ import io.getstream.chat.docs.R
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-composer/#usage)
  */
 private object MessageComposerUsageSnippet {
+
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -74,6 +81,8 @@ private object MessageComposerUsageSnippet {
                         modifier = Modifier // 2 - customize the component
                             .fillMaxWidth()
                             .wrapContentHeight(),
+                        //TODO add this and related entries to docs when documentation effort occurs
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                         viewModel = composerViewModel, // 3 - provide ViewModel
                         // 4 - customize actions
                         onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(true) },
@@ -95,6 +104,10 @@ private object MessageComposerUsageSnippet {
  * [Handling Actions](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-composer/#handling-actions)
  */
 private object MessageComposerHandlingActionsSnippet {
+
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
@@ -122,6 +135,8 @@ private object MessageComposerHandlingActionsSnippet {
                         onMentionSelected = { viewModel.selectMention(it) },
                         onCommandSelected = { viewModel.selectCommand(it) },
                         onAlsoSendToChannelSelected = { viewModel.setAlsoSendToChannel(it) },
+                        //TODO add this and related entries to docs when documentation effort occurs
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -162,6 +177,10 @@ private object HandlingTypingUpdatesSnippet {
  */
 private object MessageComposerCustomizationSnippet {
 
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+
     class MyActivity : AppCompatActivity() {
         val factory by lazy {
             MessagesViewModelFactory(
@@ -189,6 +208,8 @@ private object MessageComposerCustomizationSnippet {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 viewModel = composerViewModel,
+                //TODO add this and related entries to docs when documentation effort occurs
+                statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                 integrations = {},
                 input = { inputState ->
                     MessageInput(
