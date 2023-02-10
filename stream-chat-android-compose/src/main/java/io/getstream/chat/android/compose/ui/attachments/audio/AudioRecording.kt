@@ -69,7 +69,10 @@ public fun RunningWaveForm(
     barWidth: Dp = 100.dp,
     barGap: Dp = 2.dp,
     barCornerRadius: CornerRadius = CornerRadius(barWidth.value / 2.5f, barWidth.value / 2.5f),
-    barBrush: Brush = Brush.verticalGradient(Pair(0.1f, ChatTheme.colors.primaryAccent)),
+    barBrush: Brush = Brush.linearGradient(
+        Pair(0f, ChatTheme.colors.primaryAccent),
+        Pair(1f, ChatTheme.colors.primaryAccent)
+    ),
 ) {
     val values = remember(restartKey) {
         mutableStateListOf<Int>()
@@ -107,8 +110,11 @@ public fun RunningWaveForm(
             canvasHeight = this.size.height
 
             values.forEachIndexed { index, value ->
-                val barHeight = (size.height * (value.toFloat() / maxInputValue)).coerceAtMost(this.size.height)
-                    .coerceAtLeast(minBarHeightFloat)
+                val barHeight = (size.height * (value.toFloat() / maxInputValue))
+                    .coerceIn(
+                        minimumValue = minBarHeightFloat,
+                        maximumValue = this.size.height
+                    )
 
                 val xOffset = (barGap.value + barWidth.value) * index.toFloat()
                 val yOffset = (this.size.height - barHeight) / 2

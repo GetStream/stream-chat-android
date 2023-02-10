@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
@@ -17,6 +20,10 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/general-customization/chat-theme/#usage)
  */
 private object ChatThemeUsageSnippet {
+
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     class MessageListActivity : AppCompatActivity() {
 
@@ -32,7 +39,9 @@ private object ChatThemeUsageSnippet {
                             messageLimit = 30
                         ),
                         onBackPressed = { finish() },
-                        onHeaderTitleClick = {}
+                        onHeaderTitleClick = {},
+                        //TODO add this and related entries to docs when documentation effort occurs
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -44,6 +53,10 @@ private object ChatThemeUsageSnippet {
  * [Customization](https://getstream.io/chat/docs/sdk/android/compose/general-customization/chat-theme/#customization)
  */
 private object ChatThemeCustomizationSnippet {
+
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     class MyActivity : AppCompatActivity() {
 
@@ -67,7 +80,9 @@ private object ChatThemeCustomizationSnippet {
                             channelId = "messaging:123",
                         ),
                         onBackPressed = { finish() },
-                        onHeaderTitleClick = {}
+                        onHeaderTitleClick = {},
+                        //TODO add this and related entries to docs when documentation effort occurs
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }

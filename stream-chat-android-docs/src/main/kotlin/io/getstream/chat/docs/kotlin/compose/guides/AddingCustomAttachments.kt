@@ -31,8 +31,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.components.CancelIcon
@@ -49,6 +52,10 @@ import java.util.Date
  * [Adding Custom Attachments](https://getstream.io/chat/docs/sdk/android/compose/guides/adding-custom-attachments/)
  */
 private object AddingCustomAttachmentsSnippet {
+
+    //TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     class MessagesActivity : AppCompatActivity() {
 
@@ -136,6 +143,8 @@ private object AddingCustomAttachmentsSnippet {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = viewModel,
+            //TODO add this and related entries to docs when documentation effort occurs
+            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
             integrations = { // here
                 IconButton(
                     modifier = Modifier

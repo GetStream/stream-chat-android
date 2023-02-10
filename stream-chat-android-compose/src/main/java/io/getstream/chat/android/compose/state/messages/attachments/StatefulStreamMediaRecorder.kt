@@ -16,15 +16,22 @@
 
 package io.getstream.chat.android.compose.state.messages.attachments
 
+import android.content.Context
 import android.media.MediaRecorder
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.getstream.sdk.chat.audio.recording.MediaRecorderState
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorderState
+import io.getstream.chat.android.compose.util.KeyValuePair
+import io.getstream.chat.android.models.Attachment
 import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
+import io.getstream.result.Result
+import java.io.File
 
 /**
  * A wrapper class that wraps around [StreamMediaRecorder] manages and tracks the internal state of the [MediaRecorder]
@@ -35,9 +42,15 @@ import io.getstream.log.TaggedLogger
  *
  * @param streamMediaRecorder The media recorder whose state this class is tracking.
  */
-public class StreamMediaRecorderStateManager(
+public class StatefulStreamMediaRecorder(
     private val streamMediaRecorder: StreamMediaRecorder,
 ) {
+
+    /**
+     * The ordinal number of a max amplitude sample.
+     * Used to update composition when the same value is emitted twice.
+     */
+    private var maxAmplitudeSampleKey by mutableStateOf(0)
 
     /**
      * The logger used to print information, warnings, errors, etc. to log.
@@ -67,12 +80,12 @@ public class StreamMediaRecorderStateManager(
     /**
      * Emits the latest [MediaRecorder] max amplitude reading.
      */
-    private val _latestMaxAmplitude: MutableState<Int> = mutableStateOf(0)
+    private val _latestMaxAmplitude: MutableState<KeyValuePair<Int, Int>> = mutableStateOf(KeyValuePair(0, 0))
 
     /**
      * Emits the latest [MediaRecorder] max amplitude reading.
      */
-    public val latestMaxAmplitude: State<Int> = _latestMaxAmplitude
+    public val latestMaxAmplitude: State<KeyValuePair<Int, Int>> = _latestMaxAmplitude
 
     /**
      * Represents the current state of the [MediaRecorder].
@@ -113,13 +126,82 @@ public class StreamMediaRecorderStateManager(
         streamMediaRecorder.setOnMaxAmplitudeSampledListener {
             logger.v { "[setOnMaxAmplitudeSampledListener] -> $it" }
 
-            _latestMaxAmplitude.value = it
+            _latestMaxAmplitude.value = KeyValuePair(maxAmplitudeSampleKey, it)
+            maxAmplitudeSampleKey += 1
         }
 
         streamMediaRecorder.setOnMediaRecorderStateChangedListener {
             logger.v { "[setOnMediaRecorderStateChangedListener] -> ${it.name}" }
 
+            maxAmplitudeSampleKey = 0
             _mediaRecorderState.value = it
         }
+    }
+
+    /**
+     * Creates a [File] internally and starts recording.
+     * Calling the function again after a recording has already been started will reset the recording process.
+     *
+     * @param context The [Context] necessary to prepare for recording.
+     * @param recordingName The file name the recording will be stored under.
+     * @param override Determines if the new recording file should override one with the same name, if it exists.
+     *
+     * @return The [File] to which the recording will be stored wrapped inside a [Result] if recording has
+     * started successfully. Returns a [ChatError] wrapped inside a [Result] if the action had failed.
+     */
+    public fun startAudioRecording(
+        context: Context,
+        recordingName: String,
+        override: Boolean = true,
+    ): Result<File> =
+        streamMediaRecorder.startAudioRecording(
+            context = context,
+            recordingName = recordingName,
+            override = override
+        )
+
+    /**
+     * Prepares the given [recordingFile] and starts recording.
+     * Calling the function again after a recording has already been started will reset the recording process.
+     *
+     * @param context The [Context] necessary to prepare for recording.
+     * @param recordingFile The [File] the audio will be saved to once the recording stops.
+     *
+     * @return A Unit wrapped inside a [Result] if recording has started successfully. Returns a [ChatError] wrapped
+     * inside [Result] if the action had failed.
+     */
+    public fun startAudioRecording(
+        context: Context,
+        recordingFile: File,
+    ): Result<Unit> = streamMediaRecorder.startAudioRecording(
+        context = context,
+        recordingFile = recordingFile
+    )
+
+    /**
+     * Stops recording and saves the recording to the file provided by [startAudioRecording].
+     *
+     * @return A Unit wrapped inside a [Result] if recording has been stopped successfully. Returns a [ChatError]
+     * wrapped inside [Result] if the action had failed.
+     */
+    public fun stopRecording(): Result<Attachment> =
+        streamMediaRecorder.stopRecording()
+
+    /**
+     * Deleted the recording to the file provided by [recordingFile].
+     *
+     * @param recordingFile The [File] to be deleted.
+     *
+     * @return A Unit wrapped inside a [Result] if recording has been deleted successfully. Returns a [ChatError]
+     * wrapped inside [Result] if the action had failed.
+     */
+    public fun deleteRecording(recordingFile: File): Result<Unit> =
+        streamMediaRecorder.deleteRecording(recordingFile)
+
+    /**
+     * Releases the [MediaRecorder] used by [StreamMediaRecorder].
+     */
+    public fun release() {
+        streamMediaRecorder.release()
     }
 }

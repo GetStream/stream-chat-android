@@ -66,12 +66,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.getstream.sdk.chat.audio.recording.MediaRecorderState
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.StreamMediaRecorderStateManager
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
+import io.getstream.chat.android.compose.ui.attachments.audio.RunningWaveForm
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
@@ -103,7 +103,7 @@ import java.util.Date
  * @param viewModel The ViewModel that provides pieces of data to show in the composer, like the
  * currently selected integration data or the user input. It also handles sending messages.
  * @param modifier Modifier for styling.
- * @param streamMediaRecorder Used for recording audio messages.
+ * @param statefulStreamMediaRecorder Used for recording audio messages. Passing in null will disable audio recording.
  * @param onSendMessage Handler when the user sends a message. By default it delegates this to the
  * ViewModel, but the user can override if they want more custom behavior.
  * @param onAttachmentsClick Handler for the default Attachments integration.
@@ -123,6 +123,8 @@ import java.util.Date
  * their own integrations, which they need to hook up to their own data providers and UI.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
+ * @param audioRecordingContent Customizable composable used for displaying audio recording information
+ * while audio recording is in progress.
  * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
  * by default.
  */
@@ -130,7 +132,7 @@ import java.util.Date
 public fun MessageComposer(
     viewModel: MessageComposerViewModel,
     modifier: Modifier = Modifier,
-    streamMediaRecorder: StreamMediaRecorder = ChatTheme.streamMediaRecorder,
+    statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
     onSendMessage: (Message) -> Unit = { viewModel.sendMessage(it) },
     onAttachmentsClick: () -> Unit = {},
     onCommandsClick: () -> Unit = {},
@@ -182,6 +184,9 @@ public fun MessageComposer(
             label = label,
         )
     },
+    audioRecordingContent: @Composable RowScope.(StatefulStreamMediaRecorder) -> Unit = {
+        DefaultMessageComposerAudioRecordingContent(it)
+    },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
             value = it.inputValue,
@@ -196,7 +201,7 @@ public fun MessageComposer(
                 onSendMessage(message)
             },
             onRecordingSaved = onRecordingSaved,
-            streamMediaRecorder = streamMediaRecorder,
+            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
         )
     },
 ) {
@@ -218,9 +223,11 @@ public fun MessageComposer(
         commandPopupContent = commandPopupContent,
         integrations = integrations,
         input = input,
+        audioRecordingContent = audioRecordingContent,
         trailingContent = trailingContent,
         messageComposerState = messageComposerState,
-        onCancelAction = onCancelAction
+        onCancelAction = onCancelAction,
+        statefulStreamMediaRecorder = statefulStreamMediaRecorder
     )
 }
 
@@ -231,7 +238,7 @@ public fun MessageComposer(
  * @param messageComposerState The state of the message input.
  * @param onSendMessage Handler when the user wants to send a message.
  * @param modifier Modifier for styling.
- * @param streamMediaRecorder Used for recording audio messages.
+ * @param statefulStreamMediaRecorder Used for recording audio messages. Passing in null will disable audio recording.
  * @param onAttachmentsClick Handler for the default Attachments integration.
  * @param onCommandsClick Handler for the default Commands integration.
  * @param onValueChange Handler when the input field value changes.
@@ -249,6 +256,8 @@ public fun MessageComposer(
  * their own integrations, which they need to hook up to their own data providers and UI.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
+ * @param audioRecordingContent Customizable composable used for displaying audio recording information
+ * while audio recording is in progress.
  * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
  * by default.
  */
@@ -257,7 +266,7 @@ public fun MessageComposer(
     messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     modifier: Modifier = Modifier,
-    streamMediaRecorder: StreamMediaRecorder = ChatTheme.streamMediaRecorder,
+    statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
     onAttachmentsClick: () -> Unit = {},
     onCommandsClick: () -> Unit = {},
     onValueChange: (String) -> Unit = {},
@@ -308,6 +317,9 @@ public fun MessageComposer(
             label = label,
         )
     },
+    audioRecordingContent: @Composable RowScope.(StatefulStreamMediaRecorder) -> Unit = {
+        DefaultMessageComposerAudioRecordingContent(it)
+    },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
             value = it.inputValue,
@@ -318,12 +330,14 @@ public fun MessageComposer(
             ownCapabilities = messageComposerState.ownCapabilities,
             isInEditMode = it.action is Edit,
             onRecordingSaved = onRecordingSaved,
-            streamMediaRecorder = streamMediaRecorder,
+            statefulStreamMediaRecorder = statefulStreamMediaRecorder
         )
     },
 ) {
     val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val isRecording = statefulStreamMediaRecorder?.mediaRecorderState?.value
 
     MessageInputValidationError(
         validationErrors = validationErrors,
@@ -351,7 +365,11 @@ public fun MessageComposer(
                     )
                 }
 
-                input(messageComposerState)
+                if (isRecording == MediaRecorderState.RECORDING) {
+                    audioRecordingContent(statefulStreamMediaRecorder)
+                } else {
+                    input(messageComposerState)
+                }
 
                 trailingContent(messageComposerState)
             }
@@ -604,6 +622,40 @@ private fun RowScope.DefaultComposerInputContent(
 }
 
 /**
+ * Used to display audio recording information while audio recording is in progress.
+ *
+ * @param statefulStreamMediaRecorder Used for recording audio messages.
+ */
+@Composable
+internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
+    statefulStreamMediaRecorder: StatefulStreamMediaRecorder,
+) {
+    Row(
+        modifier = Modifier
+            .align(Alignment.CenterVertically)
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .weight(1f),
+    ) {
+
+        val amplitudeSample = statefulStreamMediaRecorder.latestMaxAmplitude.value
+
+        RunningWaveForm(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .fillMaxWidth()
+                .height(20.dp),
+            maxInputValue = 2500,
+            barWidth = 8.dp,
+            barGap = 2.dp,
+            restartKey = true,
+            newValueKey = amplitudeSample.key,
+            latestValue = amplitudeSample.value
+        )
+    }
+}
+
+/**
  * Represents the default trailing content for the Composer, which represent a send button or a cooldown timer.
  *
  * @param value The input value.
@@ -614,6 +666,8 @@ private fun RowScope.DefaultComposerInputContent(
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
  * For a full list @see [ChannelCapabilities].
  * @param streamMediaRecorder Used for recording audio messages.
+ * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * @param statefulStreamMediaRecorder Used for recording audio messages. Passing in null will disable audio recording.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -626,7 +680,7 @@ internal fun DefaultMessageComposerTrailingContent(
     isInEditMode: Boolean,
     onSendMessage: (String, List<Attachment>) -> Unit,
     onRecordingSaved: (Attachment) -> Unit,
-    streamMediaRecorder: StreamMediaRecorder,
+    statefulStreamMediaRecorder: StatefulStreamMediaRecorder?,
 ) {
 
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
@@ -635,11 +689,7 @@ internal fun DefaultMessageComposerTrailingContent(
     val recordAudioButtonDescription = stringResource(id = R.string.stream_compose_cd_record_audio_message)
     var permissionsRequested by rememberSaveable { mutableStateOf(false) }
 
-    val mediaRecorderStateManager = remember {
-        StreamMediaRecorderStateManager(streamMediaRecorder = streamMediaRecorder)
-    }
-
-    val isRecording = mediaRecorderStateManager.mediaRecorderState.value
+    val isRecording = statefulStreamMediaRecorder?.mediaRecorderState?.value
 
     // TODO test permissions on lower APIs etc
     val storageAndRecordingPermissionState = rememberMultiplePermissionsState(
@@ -669,62 +719,65 @@ internal fun DefaultMessageComposerTrailingContent(
                 .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Box(
-                modifier = Modifier
-                    .semantics { contentDescription = recordAudioButtonDescription }
-                    .size(32.dp)
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onLongPress = {
-                                when {
-                                    !allPermissionsGranted -> {
-                                        storageAndRecordingPermissionState.launchMultiplePermissionRequest()
+            // TODO don't show if the own ability to send attachments isn't given
+            if (statefulStreamMediaRecorder != null) {
+                Box(
+                    modifier = Modifier
+                        .semantics { contentDescription = recordAudioButtonDescription }
+                        .size(32.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onLongPress = {
+                                    when {
+                                        !allPermissionsGranted -> {
+                                            storageAndRecordingPermissionState.launchMultiplePermissionRequest()
+                                        }
+                                        isRecording == MediaRecorderState.UNINITIALIZED -> {
+                                            statefulStreamMediaRecorder.startAudioRecording(
+                                                context = context,
+                                                recordingName = "audio_recording_${Date()}"
+                                            )
+                                        }
+                                        else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
                                     }
-                                    isRecording == MediaRecorderState.UNINITIALIZED -> {
-                                        streamMediaRecorder.startAudioRecording(
-                                            context = context,
-                                            recordingName = "audio_recording_${Date()}"
-                                        )
-                                    }
-                                    else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
-                                }
 
-                                coroutineScope.launch {
-                                    awaitPointerEventScope {
-                                        while (true) {
-                                            val event = awaitPointerEvent(PointerEventPass.Main)
+                                    coroutineScope.launch {
+                                        awaitPointerEventScope {
+                                            while (true) {
+                                                val event = awaitPointerEvent(PointerEventPass.Main)
 
-                                            if (event.changes.all { it.changedToUp() }) {
-                                                streamMediaRecorder.stopRecording()
-                                                    .onSuccess(onRecordingSaved)
-                                                    .onError {
-                                                        streamLog(throwable = it.extractCause()) {
-                                                            "Could not save audio recording: ${it.message}"
+                                                if (event.changes.all { it.changedToUp() }) {
+                                                    statefulStreamMediaRecorder.stopRecording()
+                                                        .onSuccess(onRecordingSaved)
+                                                        .onError {
+                                                            streamLog(throwable = it.extractCause()) {
+                                                                "Could not save audio recording: ${it.message}"
+                                                            }
                                                         }
+                                                    break
                                                 }
-                                                break
                                             }
                                         }
                                     }
                                 }
-                            }
-                        )
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                val layoutDirection = LocalLayoutDirection.current
+                            )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    val layoutDirection = LocalLayoutDirection.current
 
-                Icon(
-                    modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
-                    contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
-                    tint = if (isRecording == MediaRecorderState.RECORDING) {
-                        ChatTheme.colors.primaryAccent
-                    } else {
-                        ChatTheme.colors.textLowEmphasis
-                    }
-                )
+                    Icon(
+                        modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
+                        painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
+                        contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
+                        // TODO disable if max attachments are reached
+                        tint = if (isRecording == MediaRecorderState.RECORDING) {
+                            ChatTheme.colors.primaryAccent
+                        } else {
+                            ChatTheme.colors.textLowEmphasis
+                        }
+                    )
+                }
             }
         }
 
