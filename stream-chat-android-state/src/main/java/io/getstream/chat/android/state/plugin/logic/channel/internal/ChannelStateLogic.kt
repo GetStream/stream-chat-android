@@ -187,10 +187,7 @@ internal class ChannelStateLogic(
     override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, updateCount: Boolean) {
         when (shouldRefreshMessages) {
             true -> {
-                messages.filter { message -> message.isReply() }
-                    .forEach { message ->
-                        mutableState.addQuotedMessage((message.replyTo?.id ?: message.replyMessageId)!!, message.id)
-                    }
+                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
                 mutableState.setMessages(messages)
 
                 if (updateCount) {
@@ -203,11 +200,8 @@ internal class ChannelStateLogic(
                 val newMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
                     .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
 
-                val replyMessages = messages.filter { message -> message.isReply() }
-                replyMessages.forEach { message ->
-                    mutableState.addQuotedMessage((message.replyTo?.id ?: message.replyMessageId)!!, message.id)
-                }
-
+                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
+                
                 val normalizedMessages =
                     newMessages.flatMap { message -> normalizeReplyMessages(message) ?: emptyList() }
                 mutableState.upsertMessages(newMessages + normalizedMessages, updateCount)
@@ -577,6 +571,12 @@ internal class ChannelStateLogic(
 
     fun addMember(member: Member) {
         mutableState.addMember(member)
+    }
+
+    private fun addQuotedMessage(message: Message) {
+        (message.replyTo?.id ?: message.replyMessageId)?.let { replyId ->
+            mutableState.addQuotedMessage(replyId, message.id)
+        }
     }
 
     private companion object {
