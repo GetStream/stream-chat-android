@@ -15,6 +15,7 @@
 - Fixing unread messages count for channels. [#4499](https://github.com/GetStream/stream-chat-android/pull/4499)
 
 ### ⬆️ Improved
+- Changes in messages that are quoted now reflect in all messages, not only the original message.[#4646](https://github.com/GetStream/stream-chat-android/pull/4646)
 
 ### ✅ Added
 - Added the string extension function `createResizedStreamCdnImageUrl()` which resizes images hosted on Stream's CDN by adding the necessary query parameters to the URL. [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)

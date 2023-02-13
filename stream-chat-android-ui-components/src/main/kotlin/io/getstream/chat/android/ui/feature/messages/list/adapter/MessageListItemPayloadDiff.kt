@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter
 
 public data class MessageListItemPayloadDiff(
     val text: Boolean,
+    val replyText: Boolean,
     val reactions: Boolean,
     val attachments: Boolean,
     val replies: Boolean,
@@ -27,11 +28,12 @@ public data class MessageListItemPayloadDiff(
     val pinned: Boolean,
     val user: Boolean,
     val mentions: Boolean,
-    val footer: Boolean
+    val footer: Boolean,
 ) {
     public operator fun plus(other: MessageListItemPayloadDiff): MessageListItemPayloadDiff {
         return MessageListItemPayloadDiff(
             text = text || other.text,
+            replyText = replyText || other.replyText,
             reactions = reactions || other.reactions,
             attachments = attachments || other.attachments,
             replies = replies || other.replies,

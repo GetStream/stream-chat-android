@@ -94,6 +94,7 @@ internal class MessageListItemAdapter(
     companion object {
         private val FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
             text = true,
+            replyText = true,
             reactions = true,
             attachments = true,
             replies = true,
@@ -107,6 +108,7 @@ internal class MessageListItemAdapter(
         )
         private val EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
             text = false,
+            replyText = false,
             reactions = false,
             attachments = false,
             replies = false,

@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.utils.message.isReply
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -186,6 +187,7 @@ internal class ChannelStateLogic(
     override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, updateCount: Boolean) {
         when (shouldRefreshMessages) {
             true -> {
+                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
                 mutableState.setMessages(messages)
 
                 if (updateCount) {
@@ -195,9 +197,14 @@ internal class ChannelStateLogic(
             }
             false -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)
-                val updatedMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
+                val newMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
                     .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
-                mutableState.upsertMessages(updatedMessages, updateCount)
+
+                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
+
+                val normalizedMessages =
+                    newMessages.flatMap { message -> normalizeReplyMessages(message) ?: emptyList() }
+                mutableState.upsertMessages(newMessages + normalizedMessages, updateCount)
             }
         }
     }
@@ -209,6 +216,27 @@ internal class ChannelStateLogic(
      */
     fun setLastSentMessageDate(lastSentMessageDate: Date?) {
         mutableState.setLastSentMessageDate(lastSentMessageDate)
+    }
+
+    /**
+     * Updates the messages quoting a messages with the new content of the quoted message.
+     */
+    private fun normalizeReplyMessages(quotedMessage: Message): List<Message>? {
+        return getAllReplies(quotedMessage)?.map { replyMessage ->
+            replyMessage.apply {
+                replyTo = quotedMessage
+                replyMessageId = quotedMessage.id
+            }
+        }
+    }
+
+    /**
+     * Returns all the replies of a quoted message.
+     */
+    public fun getAllReplies(message: Message): List<Message>? {
+        return mutableState.quotedMessagesMap
+            .value[message.id]
+            ?.mapNotNull(mutableState::getMessageById)
     }
 
     /**
@@ -543,6 +571,12 @@ internal class ChannelStateLogic(
 
     fun addMember(member: Member) {
         mutableState.addMember(member)
+    }
+
+    private fun addQuotedMessage(message: Message) {
+        (message.replyTo?.id ?: message.replyMessageId)?.let { replyId ->
+            mutableState.addQuotedMessage(replyId, message.id)
+        }
     }
 
     private companion object {

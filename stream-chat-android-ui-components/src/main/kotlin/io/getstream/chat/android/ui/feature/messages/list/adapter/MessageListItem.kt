@@ -43,7 +43,7 @@ public sealed class MessageListItem {
         return when (this) {
             is TypingItem -> TYPING_ITEM_STABLE_ID
             is ThreadSeparatorItem -> THREAD_SEPARATOR_ITEM_STABLE_ID
-            is MessageItem -> message.id.hashCode().toLong()
+            is MessageItem -> message.id.hashCode().toLong().plus(message.replyTo?.id.hashCode().toLong())
             is DateSeparatorItem -> date.time
             is LoadingMoreIndicatorItem -> LOADING_MORE_INDICATOR_STABLE_ID
             is ThreadPlaceholderItem -> THREAD_PLACEHOLDER_STABLE_ID
