@@ -201,7 +201,7 @@ internal class ChannelStateLogic(
                     .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
 
                 messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
-                
+
                 val normalizedMessages =
                     newMessages.flatMap { message -> normalizeReplyMessages(message) ?: emptyList() }
                 mutableState.upsertMessages(newMessages + normalizedMessages, updateCount)
