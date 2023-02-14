@@ -20,8 +20,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.getstream.sdk.chat.utils.extensions.isMine
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.attachments.content.QuotedMessageAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -39,6 +39,7 @@ public fun QuotedMessageContent(
     message: Message,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
+    currentUser: User? = null,
     attachmentContent: @Composable (Message) -> Unit = { DefaultQuotedMessageAttachmentContent(it) },
     textContent: @Composable (Message) -> Unit = {
         DefaultQuotedMessageTextContent(
@@ -47,14 +48,14 @@ public fun QuotedMessageContent(
         )
     },
 ) {
-    val messageBubbleShape = if (message.isMine(ChatClient.instance())) {
+    val messageBubbleShape = if (message.isMine(currentUser)) {
         ChatTheme.shapes.myMessageBubble
     } else {
         ChatTheme.shapes.otherMessageBubble
     }
 
     // The quoted section color depends on the author of the reply.
-    val messageBubbleColor = if (replyMessage?.isMine(ChatClient.instance()) != false) {
+    val messageBubbleColor = if (replyMessage?.isMine(currentUser) != false) {
         ChatTheme.colors.ownMessageQuotedBackground
     } else {
         ChatTheme.colors.otherMessageQuotedBackground

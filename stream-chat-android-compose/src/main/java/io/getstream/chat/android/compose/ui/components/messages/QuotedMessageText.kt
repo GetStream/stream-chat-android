@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.isMine
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
@@ -47,6 +47,7 @@ public fun QuotedMessageText(
     message: Message,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
+    currentUser: User? = null,
     quoteMaxLines: Int = DefaultQuoteMaxLines,
 ) {
     val attachment = message.attachments.firstOrNull()
@@ -85,7 +86,7 @@ public fun QuotedMessageText(
         "quotedMessageText is null. Cannot display invalid message title."
     }
 
-    val textColor = if (replyMessage?.isMine(ChatClient.instance()) != false) {
+    val textColor = if (replyMessage?.isMine(currentUser) != false) {
         ChatTheme.colors.ownMessageQuotedText
     } else {
         ChatTheme.colors.otherMessageQuotedText

@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -51,6 +52,7 @@ import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
 public fun MessageContent(
     message: Message,
     modifier: Modifier = Modifier,
+    currentUser: User? = null,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -67,6 +69,7 @@ public fun MessageContent(
     regularMessageContent: @Composable () -> Unit = {
         DefaultMessageContent(
             message = message,
+            currentUser = currentUser,
             onLongItemClick = onLongItemClick,
             onImagePreviewResult = onImagePreviewResult,
             onQuotedMessageClick = onQuotedMessageClick
@@ -131,6 +134,7 @@ internal fun DefaultMessageDeletedContent(
 @Composable
 internal fun DefaultMessageContent(
     message: Message,
+    currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
@@ -145,6 +149,7 @@ internal fun DefaultMessageContent(
         if (message.text.isNotEmpty()) {
             DefaultMessageTextContent(
                 message = message,
+                currentUser = currentUser,
                 onLongItemClick = onLongItemClick,
                 onQuotedMessageClick = onQuotedMessageClick
             )

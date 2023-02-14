@@ -509,13 +509,13 @@ public class MessageComposerController(
     public fun sendMessage(message: Message) {
         val activeMessage = activeAction?.message ?: message
 
-        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(chatClient)) {
+        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(currentUser = chatClient.getCurrentUser())) {
             getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             val (channelType, channelId) = message.cid.cidToTypeAndId()
 
-            if (activeMessage.isModerationFailed(chatClient)) {
+            if (activeMessage.isModerationFailed(chatClient.getCurrentUser())) {
                 chatClient.deleteMessage(activeMessage.id, true).enqueue()
             }
 
@@ -550,7 +550,7 @@ public class MessageComposerController(
         val replyMessageId = (activeAction as? Reply)?.message?.id
         val mentions = filterMentions(selectedMentions, trimmedMessage)
 
-        return if (isInEditMode && !activeMessage.isModerationFailed(chatClient)) {
+        return if (isInEditMode && !activeMessage.isModerationFailed(chatClient.getCurrentUser())) {
             activeMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),
