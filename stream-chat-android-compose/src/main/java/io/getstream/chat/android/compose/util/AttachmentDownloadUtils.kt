@@ -56,9 +56,11 @@ internal fun attachmentDownloadState(): Pair<PermissionState, MutableState<Attac
     val context = LocalContext.current
 
     LaunchedEffect(writePermissionState.status.isGranted) {
-        if (writePermissionState.status.isGranted) downloadPayload.value?.let {
-            onDownloadPermissionGranted(context, it)
-            downloadPayload.value = null
+        if (writePermissionState.status.isGranted) {
+            downloadPayload.value?.let {
+                onDownloadPermissionGranted(context, it)
+                downloadPayload.value = null
+            }
         }
     }
 

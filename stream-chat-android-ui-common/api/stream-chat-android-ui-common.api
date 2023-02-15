@@ -187,11 +187,12 @@ public final class io/getstream/chat/android/common/MessageOptionsUserReactionAl
 
 public final class io/getstream/chat/android/common/composer/MessageComposerState {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;Z)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/client/models/User;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/client/models/User;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/Set;
 	public final fun component11 ()Z
+	public final fun component12 ()Lio/getstream/chat/android/client/models/User;
 	public final fun component2 ()Ljava/util/List;
 	public final fun component3 ()Lio/getstream/chat/android/common/state/MessageAction;
 	public final fun component4 ()Ljava/util/List;
@@ -200,14 +201,15 @@ public final class io/getstream/chat/android/common/composer/MessageComposerStat
 	public final fun component7 ()I
 	public final fun component8 ()Lio/getstream/chat/android/common/state/MessageMode;
 	public final fun component9 ()Z
-	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;Z)Lio/getstream/chat/android/common/composer/MessageComposerState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/common/composer/MessageComposerState;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ZILjava/lang/Object;)Lio/getstream/chat/android/common/composer/MessageComposerState;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/common/composer/MessageComposerState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/common/composer/MessageComposerState;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/common/state/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/common/state/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/client/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/common/composer/MessageComposerState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAction ()Lio/getstream/chat/android/common/state/MessageAction;
 	public final fun getAlsoSendToChannel ()Z
 	public final fun getAttachments ()Ljava/util/List;
 	public final fun getCommandSuggestions ()Ljava/util/List;
 	public final fun getCoolDownTime ()I
+	public final fun getCurrentUser ()Lio/getstream/chat/android/client/models/User;
 	public final fun getHasCommands ()Z
 	public final fun getInputValue ()Ljava/lang/String;
 	public final fun getMentionSuggestions ()Ljava/util/List;

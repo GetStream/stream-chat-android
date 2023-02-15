@@ -1032,7 +1032,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Mess
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageContentKt {
-	public static final fun MessageContent (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageContent (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageFooterKt {
@@ -1054,7 +1054,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Mess
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageTextKt {
-	public static final fun MessageText (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageText (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageThreadFooterKt {
@@ -1066,16 +1066,16 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Owne
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/QuotedMessageContentKt {
-	public static final fun QuotedMessageContent (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun QuotedMessageContent (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/QuotedMessageKt {
-	public static final fun DefaultQuotedMessageCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/Message;Landroidx/compose/runtime/Composer;II)V
-	public static final fun QuotedMessage (Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultQuotedMessageCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lio/getstream/chat/android/client/models/Message;Landroidx/compose/runtime/Composer;II)V
+	public static final fun QuotedMessage (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/client/models/Message;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/QuotedMessageTextKt {
-	public static final fun QuotedMessageText (Lio/getstream/chat/android/client/models/Message;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;ILandroidx/compose/runtime/Composer;II)V
+	public static final fun QuotedMessageText (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/client/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/client/models/Message;ILandroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/ThreadParticipantsKt {

@@ -224,8 +224,9 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 @CheckResult
 public fun ChatClient.downloadAttachment(context: Context, attachment: Attachment): Call<Unit> {
     return CoroutineCall(state.scope) {
+        val logger = StreamLog.getLogger("Chat:DownloadAttachment")
+
         try {
-            val logger = StreamLog.getLogger("Chat:DownloadAttachment")
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val url = attachment.assetUrl ?: attachment.imageUrl
             val subPath = attachment.name ?: attachment.title ?: attachment.parseAttachmentNameFromUrl()
@@ -241,6 +242,7 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
             )
             Result.success(Unit)
         } catch (exception: Exception) {
+            logger.d { "Downloading attachment failed. Error: ${exception.message}" }
             Result.error(exception)
         }
     }

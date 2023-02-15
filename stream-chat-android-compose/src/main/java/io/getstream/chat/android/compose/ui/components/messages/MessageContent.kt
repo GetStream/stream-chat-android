@@ -38,6 +38,7 @@ import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
  * Represents the default message content within the bubble that can show different UI based on the message state.
  *
  * @param message The message to show.
+ * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onGiphyActionClick Handler for Giphy actions.
@@ -51,8 +52,8 @@ import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
 @Composable
 public fun MessageContent(
     message: Message,
+    currentUser: User?,
     modifier: Modifier = Modifier,
-    currentUser: User? = null,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},

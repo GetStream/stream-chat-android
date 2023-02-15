@@ -382,6 +382,10 @@ public class MessageComposerController(
         ownCapabilities.onEach { ownCapabilities ->
             state.value = state.value.copy(ownCapabilities = ownCapabilities)
         }.launchIn(scope)
+
+        chatClient.clientState.user.onEach { currentUser ->
+            state.value = state.value.copy(currentUser = currentUser)
+        }.launchIn(scope)
     }
 
     /**

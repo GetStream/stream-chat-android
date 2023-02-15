@@ -53,15 +53,15 @@ import io.getstream.chat.android.compose.ui.util.isSingleEmoji
  * Alternatively, it just shows a basic [Text] element.
  *
  * @param message Message to show.
- * @param modifier Modifier for styling.
  * @param currentUser The currently logged in user.
+ * @param modifier Modifier for styling.
  * @param onLongItemClick Handler used for long pressing on the message text.
  */
 @Composable
 public fun MessageText(
     message: Message,
+    currentUser: User?,
     modifier: Modifier = Modifier,
-    currentUser: User? = null,
     onLongItemClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
@@ -175,6 +175,7 @@ private fun MessageTextPreview() {
     ChatTheme {
         MessageText(
             message = Message(text = "Hello World!"),
+            currentUser = null,
             onLongItemClick = {}
         )
     }

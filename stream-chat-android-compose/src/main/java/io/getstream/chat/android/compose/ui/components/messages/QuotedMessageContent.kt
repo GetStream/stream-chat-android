@@ -29,6 +29,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Represents the default quoted message content that shows an attachment preview, if available, and the message text.
  *
  * @param message The quoted message to show.
+ * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
  * @param replyMessage The message that contains the reply.
  * @param attachmentContent The content for the attachment preview, if available.
@@ -37,14 +38,15 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun QuotedMessageContent(
     message: Message,
+    currentUser: User?,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
-    currentUser: User? = null,
     attachmentContent: @Composable (Message) -> Unit = { DefaultQuotedMessageAttachmentContent(it) },
     textContent: @Composable (Message) -> Unit = {
         DefaultQuotedMessageTextContent(
             message = it,
             replyMessage = replyMessage,
+            currentUser = currentUser
         )
     },
 ) {
@@ -104,9 +106,11 @@ internal fun DefaultQuotedMessageAttachmentContent(message: Message) {
 internal fun DefaultQuotedMessageTextContent(
     message: Message,
     replyMessage: Message? = null,
+    currentUser: User?,
 ) {
     QuotedMessageText(
         message = message,
         replyMessage = replyMessage,
+        currentUser = currentUser
     )
 }

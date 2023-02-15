@@ -38,6 +38,7 @@ import io.getstream.chat.android.uiutils.extension.isFile
  * Default text element for quoted messages, with extra styling and padding for the chat bubble.
  *
  * @param message Message to show.
+ * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
  * @param replyMessage The message that contains the reply.
  * @param quoteMaxLines Max number of lines quoted text can have.
@@ -45,9 +46,9 @@ import io.getstream.chat.android.uiutils.extension.isFile
 @Composable
 public fun QuotedMessageText(
     message: Message,
+    currentUser: User?,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
-    currentUser: User? = null,
     quoteMaxLines: Int = DefaultQuoteMaxLines,
 ) {
     val attachment = message.attachments.firstOrNull()

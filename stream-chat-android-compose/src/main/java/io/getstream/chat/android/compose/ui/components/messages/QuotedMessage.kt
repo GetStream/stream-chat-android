@@ -39,6 +39,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Wraps the quoted message into a component that shows only the sender avatar, text and single attachment preview.
  *
  * @param message The quoted message to show.
+ * @param currentUser The currently logged in user.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param modifier Modifier for styling.
@@ -54,11 +55,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun QuotedMessage(
     message: Message,
+    currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
-    currentUser: User? = null,
     leadingContent: @Composable (Message) -> Unit = {
         DefaultQuotedMessageLeadingContent(
             message = it,
@@ -69,6 +70,7 @@ public fun QuotedMessage(
         DefaultQuotedMessageCenterContent(
             message = it,
             replyMessage = replyMessage,
+            currentUser = currentUser
         )
     },
     trailingContent: @Composable (Message) -> Unit = {
@@ -156,11 +158,13 @@ internal fun DefaultQuotedMessageTrailingContent(
 @Composable
 public fun RowScope.DefaultQuotedMessageCenterContent(
     message: Message,
+    currentUser: User?,
     replyMessage: Message? = null,
 ) {
     QuotedMessageContent(
         message = message,
         replyMessage = replyMessage,
-        modifier = Modifier.weight(1f, fill = false)
+        modifier = Modifier.weight(1f, fill = false),
+        currentUser = currentUser
     )
 }
