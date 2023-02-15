@@ -153,6 +153,7 @@ internal fun DefaultQuotedMessageTrailingContent(
  * Represents the default content shown in the center of the quoted message wrapped inside a message bubble.
  *
  * @param message The quoted message.
+ * @param currentUser The currently logged in user.
  * @param replyMessage The message that contains the reply.
  */
 @Composable

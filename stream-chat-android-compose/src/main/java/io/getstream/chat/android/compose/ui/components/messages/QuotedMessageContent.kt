@@ -101,12 +101,13 @@ internal fun DefaultQuotedMessageAttachmentContent(message: Message) {
  *
  * @param message The quoted message.
  * @param replyMessage The message that contains the reply.
+ * @param currentUser The currently logged in user.
  */
 @Composable
 internal fun DefaultQuotedMessageTextContent(
     message: Message,
-    replyMessage: Message? = null,
     currentUser: User?,
+    replyMessage: Message? = null,
 ) {
     QuotedMessageText(
         message = message,
