@@ -17,6 +17,7 @@
 package io.getstream.chat.android.common.composer
 
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageAction
@@ -36,8 +37,9 @@ import io.getstream.chat.android.common.state.ValidationError
  * @param messageMode The message mode that's currently active.
  * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  * @param hasCommands Whether there are any commands available.
+ * @param currentUser The currently logged in user.
  */
 public data class MessageComposerState(
     val inputValue: String = "",
@@ -51,4 +53,5 @@ public data class MessageComposerState(
     val alsoSendToChannel: Boolean = false,
     val ownCapabilities: Set<String> = setOf(),
     val hasCommands: Boolean = false,
+    val currentUser: User? = null,
 )

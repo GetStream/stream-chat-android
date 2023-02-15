@@ -364,7 +364,7 @@ public class MessageListView : ConstraintLayout {
     private val defaultMessageLongClickListener =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                if (message.isModerationFailed(ChatClient.instance())) {
+                if (message.isModerationFailed(currentUser = ChatClient.instance().getCurrentUser())) {
                     moderatedMessageLongClickListener?.onModeratedMessageLongClick(message)
                 } else {
                     val style = requireStyle()
@@ -403,7 +403,7 @@ public class MessageListView : ConstraintLayout {
         },
         optionClickListener: (MessageAction) -> Unit = { messageAction: MessageAction ->
             handleMessageAction(messageAction)
-        }
+        },
     ) {
         MessageOptionsDialogFragment.newInstance(
             context = context,
@@ -1562,7 +1562,7 @@ public class MessageListView : ConstraintLayout {
      * @param handler The handler to use.
      */
     public fun setAttachmentShowInChatOptionClickHandler(
-        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler
+        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler,
     ) {
         this._attachmentShowInChatOptionClickHandler = handler
     }
