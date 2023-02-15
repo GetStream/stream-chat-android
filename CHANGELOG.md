@@ -68,14 +68,22 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed Compose Previews for ChatTheme and other minor components like `MessageText`. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Added `currentUser` as a parameter to `MessageContent` and `MessageText`. These are non-optional, but nullable, parameters that define the behavior and looks of these components. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Similarly, added `currentUser` as a parameter to `QuotedMessage`, `QuotedMessageContent` and `QuotedMessageText`.
 
 ### ❌ Removed
+The following items are breaking changes, since it was very important to improve/fix the behavior. The items described were used to expose customizable permission handlers which can be reused. However, this API is experimental and breaking for Previews, so we chose to go down a different path.
+- Removed PermissionHandler and its API. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed DownloadPermissionHandler. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed StreamPermissionHandlers. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed `permissionHandlers` parameter from `ChatTheme`, this should make it easier to preview components within Android Studio. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
