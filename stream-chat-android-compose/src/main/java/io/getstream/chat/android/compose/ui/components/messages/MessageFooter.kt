@@ -79,7 +79,8 @@ public fun MessageFooter(
                 MessageReadStatusIcon(
                     modifier = Modifier.padding(end = 4.dp),
                     message = messageItem.message,
-                    isMessageRead = messageItem.isMessageRead
+                    isMessageRead = messageItem.isMessageRead,
+                    readCount = messageItem.messageReadBy.size
                 )
             }
 

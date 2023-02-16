@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.components.channels
 
 import androidx.compose.material.Icon
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -54,6 +55,7 @@ public fun MessageReadStatusIcon(
         message = message,
         isMessageRead = isMessageRead,
         modifier = modifier,
+        readCount = readCount
     )
 }
 
@@ -69,11 +71,21 @@ public fun MessageReadStatusIcon(
     message: Message,
     isMessageRead: Boolean,
     modifier: Modifier = Modifier,
+    readCount: Int = 0,
 ) {
     val syncStatus = message.syncStatus
 
     when {
         isMessageRead -> {
+            if (readCount > 1) {
+                TextField(
+                    value = readCount.toString(),
+                    onValueChange = { },
+                    singleLine = true,
+                    modifier = modifier
+                )
+            }
+
             Icon(
                 modifier = modifier,
                 painter = painterResource(id = R.drawable.stream_compose_message_seen),
@@ -112,6 +124,7 @@ private fun SeenMessageReadStatusIcon() {
         MessageReadStatusIcon(
             message = PreviewMessageData.message2,
             isMessageRead = true,
+            readCount = 3
         )
     }
 }
