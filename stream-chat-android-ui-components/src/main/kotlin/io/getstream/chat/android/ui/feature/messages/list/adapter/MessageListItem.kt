@@ -67,8 +67,8 @@ public sealed class MessageListItem {
             get() = !isMine
 
         /**
-         * Identifier of message. This should be used instead of hashCode to compare in DiffUtil.ItemCallback to correctly
-         * update the message in the MessageListView when, and only when, updates are necessary.
+         * Identifier of message. This should be used instead of hashCode to compare in DiffUtil.ItemCallback to
+         * correctly update the message in the MessageListView when, and only when, updates are necessary.
          */
         internal fun identifierHash(): Long = message.identifierHash() * messageReadBy.size.hashCode()
     }
