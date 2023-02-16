@@ -256,4 +256,18 @@ public data class Message(
     private fun <A, B> Map<A, B>.get(key: A, default: B): B {
         return get(key) ?: default
     }
+
+    /**
+     * Identifier of message. The message can't be considered the same if the id of the message AND the id of a
+     * quoted message are not the same.
+     */
+    public fun identifierHash(): Long {
+        var result = id.hashCode()
+
+        replyTo?.id.hashCode().takeIf { it != 0 }?.let { replyHash ->
+            result = 31 * result + replyHash
+        }
+
+        return result.toLong();
+    }
 }

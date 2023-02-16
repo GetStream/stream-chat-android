@@ -43,7 +43,7 @@ public sealed class MessageListItem {
         return when (this) {
             is TypingItem -> TYPING_ITEM_STABLE_ID
             is ThreadSeparatorItem -> THREAD_SEPARATOR_ITEM_STABLE_ID
-            is MessageItem -> message.id.hashCode().toLong().plus(message.replyTo?.id.hashCode().toLong())
+            is MessageItem -> identifierHash()
             is DateSeparatorItem -> date.time
             is LoadingMoreIndicatorItem -> LOADING_MORE_INDICATOR_STABLE_ID
             is ThreadPlaceholderItem -> THREAD_PLACEHOLDER_STABLE_ID
@@ -65,6 +65,12 @@ public sealed class MessageListItem {
     ) : MessageListItem() {
         public val isTheirs: Boolean
             get() = !isMine
+
+        /**
+         * Identifier of message. This should be used instead of hashCode to compare in DiffUtil.ItemCallback to correctly
+         * update the message in the MessageListView when, and only when, updates are necessary.
+         */
+        internal fun identifierHash(): Long = message.identifierHash() * messageReadBy.size.hashCode()
     }
 
     public data class TypingItem(
