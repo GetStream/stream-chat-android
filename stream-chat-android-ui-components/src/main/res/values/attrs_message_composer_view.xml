@@ -150,5 +150,34 @@
         </attr>
 
         <attr name="streamUiMessageComposerCooldownTimerBackgroundDrawable" format="reference" />
+
+        <!-- Sets the background color of the quoted message bubble visible in the composer when
+         replying to a message. -->
+        <attr name="streamUiMessageComposerMessageReplyBackgroundColor" format="color"/>
+        <!-- Sets the size of the text inside the quoted message bubble visible in the composer
+         when replying to a message. -->
+        <attr name="streamUiMessageComposerMessageReplyTextSize" format="dimension|reference" />
+        <!-- Sets the color of the text inside the quoted message bubble visible in the composer
+        when replying to a message. -->
+        <attr name="streamUiMessageComposerMessageReplyTextColor" format="color" />
+        <!-- Sets the font of the text inside the quoted message bubble visible in the composer
+        when replying to a message. -->
+        <attr name="streamUiMessageComposerMessageReplyTextFont" format="reference" />
+        <!-- Sets the font assets of the text inside the quoted message bubble visible in the
+        composer when replying to a message. -->
+        <attr name="streamUiMessageComposerMessageReplyTextFontAssets" format="string" />
+        <!-- Sets the style of the text inside the quoted message bubble visible in the composer
+        when replying to a message. -->
+        <attr name="streamUiMessageComposerMessageReplyTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!-- Sets the color of the stroke of the quoted message bubble visible in the composer when
+         replying to a message. -->
+        <attr name="streamUiMessageComposerMessageReplyStrokeColor" format="color" />
+        <!-- Sets the width of the stroke of the quoted message bubble visible in the composer when
+        replying to a message. -->
+        <attr name="streamUiMessageComposerMessageReplyStrokeWidth" format="dimension|reference" />
     </declare-styleable>
 </resources>

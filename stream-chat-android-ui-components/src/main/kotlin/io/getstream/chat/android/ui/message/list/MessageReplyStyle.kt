@@ -172,9 +172,9 @@ public data class MessageReplyStyle(
 
         private val MESSAGE_STROKE_WIDTH_THEIRS: Float = 1.dpToPxPrecise()
         private const val VALUE_NOT_SET = Integer.MAX_VALUE
-        private val DEFAULT_TEXT_COLOR = R.color.stream_ui_text_color_primary
-        private val DEFAULT_TEXT_SIZE = R.dimen.stream_ui_text_medium
-        private const val DEFAULT_TEXT_STYLE = Typeface.NORMAL
+        internal val DEFAULT_TEXT_COLOR = R.color.stream_ui_text_color_primary
+        internal val DEFAULT_TEXT_SIZE = R.dimen.stream_ui_text_medium
+        internal const val DEFAULT_TEXT_STYLE = Typeface.NORMAL
         internal val MESSAGE_STROKE_COLOR_MINE = R.color.stream_ui_literal_transparent
         internal const val MESSAGE_STROKE_WIDTH_MINE: Float = 0f
         internal val MESSAGE_STROKE_COLOR_THEIRS = R.color.stream_ui_grey_whisper
