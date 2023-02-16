@@ -78,11 +78,11 @@ internal fun Channel.diff(other: Channel): ChannelListPayloadDiff {
     )
 }
 
-internal fun Channel.isMessageRead(message: Message): Boolean {
+internal fun Channel.readCount(message: Message): Int {
     val currentUser = ChatClient.instance().globalState.user.value
     return read.filter { it.user.id != currentUser?.id }
         .mapNotNull { it.lastRead }
-        .any { it.time >= message.getCreatedAtOrThrow().time }
+        .count { it.time >= message.getCreatedAtOrThrow().time }
 }
 
 internal const val EXTRA_DATA_MUTED: String = "mutedChannel"

@@ -42,7 +42,7 @@ import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
-import io.getstream.chat.android.ui.utils.extensions.isMessageRead
+import io.getstream.chat.android.ui.utils.extensions.readCount
 import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -296,12 +296,21 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             SyncStatus.AWAITING_ATTACHMENTS
         )
 
+        val readCount = channel.readCount(lastMessage)
+
         val messageStatusIndicatorIcon = if (messageRequiresSync) {
             style.indicatorPendingSyncIcon
         } else {
-            val lastMessageWasRead = channel.isMessageRead(lastMessage)
+            val lastMessageWasRead = readCount > 0
 
             if (lastMessageWasRead) style.indicatorReadIcon else style.indicatorSentIcon
+        }
+
+        if (readCount > 1) {
+            readCountView.isVisible = true
+            readCountView.text = readCount.toString()
+        } else {
+            readCountView.isVisible = false
         }
 
         messageStatusImageView.setImageDrawable(messageStatusIndicatorIcon)

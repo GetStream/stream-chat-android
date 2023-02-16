@@ -92,6 +92,17 @@
         tools:src="@drawable/stream_ui_ic_check_double"
         />
 
+    <TextView
+        android:id="@+id/readCountView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/stream_ui_text_small"
+        app:layout_constraintBottom_toBottomOf="@+id/lastMessageLabel"
+        app:layout_constraintEnd_toStartOf="@+id/messageStatusImageView"
+        app:layout_constraintTop_toTopOf="@+id/lastMessageLabel"
+        tools:text="3"
+        />
+
     <ImageView
         android:id="@+id/muteIcon"
         android:layout_width="wrap_content"
