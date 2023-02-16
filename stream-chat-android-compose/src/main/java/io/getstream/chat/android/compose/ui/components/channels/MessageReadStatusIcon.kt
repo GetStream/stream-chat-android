@@ -82,7 +82,7 @@ public fun MessageReadStatusIcon(
     when {
         isMessageRead -> {
             Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-                if (readCount > 1) {
+                if (readCount > 1 && ChatTheme.readCountEnabled) {
                     Text(
                         text = readCount.toString(),
                         modifier = Modifier.padding(horizontal = 2.dp),
