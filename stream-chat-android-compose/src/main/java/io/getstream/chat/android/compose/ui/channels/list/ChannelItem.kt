@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -53,8 +54,10 @@ import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatu
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
+import io.getstream.chat.android.compose.ui.util.getReadStatuses
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 
 /**
  * The basic channel item, that shows the channel in a list and exposes single and long click actions.
@@ -265,7 +268,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                         currentUser = currentUser,
                         modifier = Modifier
                             .padding(end = 8.dp)
-                            .size(16.dp)
+                            .heightIn(16.dp),
                     )
                 }
 
