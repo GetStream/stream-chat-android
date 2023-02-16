@@ -48,6 +48,8 @@ import io.getstream.chat.android.ui.utils.extensions.isNotBottomPosition
 import io.getstream.chat.android.ui.utils.extensions.setStartDrawable
 import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 
+private const val NO_READS = 0
+
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
     private val isDirectMessage: () -> Boolean,
@@ -328,11 +330,14 @@ internal class FootnoteDecorator(
             else -> when (status) {
                 SyncStatus.FAILED_PERMANENTLY -> footnoteView.hideStatusIndicator()
                 SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> footnoteView.showStatusIndicator(
-                    listViewStyle.itemStyle.iconIndicatorPendingSync
+                    listViewStyle.itemStyle.iconIndicatorPendingSync, NO_READS
                 )
                 SyncStatus.COMPLETED -> {
-                    if (data.isMessageRead) footnoteView.showStatusIndicator(listViewStyle.itemStyle.iconIndicatorRead)
-                    else footnoteView.showStatusIndicator(listViewStyle.itemStyle.iconIndicatorSent)
+                    if (data.isMessageRead) footnoteView.showStatusIndicator(
+                        listViewStyle.itemStyle.iconIndicatorRead,
+                        data.messageReadBy.size
+                    )
+                    else footnoteView.showStatusIndicator(listViewStyle.itemStyle.iconIndicatorSent, NO_READS)
                 }
             }
         }
