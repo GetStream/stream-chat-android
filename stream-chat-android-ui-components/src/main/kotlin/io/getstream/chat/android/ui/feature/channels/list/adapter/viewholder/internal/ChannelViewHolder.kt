@@ -306,7 +306,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             if (lastMessageWasRead) style.indicatorReadIcon else style.indicatorSentIcon
         }
 
-        if (readCount > 1) {
+        if (readCount > 1 && style.readCountEnabled) {
             readCountView.isVisible = true
             readCountView.text = readCount.toString()
         } else {

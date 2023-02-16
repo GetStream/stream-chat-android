@@ -632,6 +632,7 @@
         <item name="streamUiChannelOptionsEnabled">false</item>
         <item name="streamUiChannelDeleteEnabled">true</item>
         <item name="streamUiSwipeEnabled">true</item>
+        <item name="streamUiReadCountEnabled">true</item>
         <item name="streamUiBackgroundLayoutColor">@color/stream_ui_white_smoke</item>
 
         <!--Foreground layout-->
