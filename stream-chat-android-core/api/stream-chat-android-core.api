@@ -1027,6 +1027,7 @@ public final class io/getstream/chat/android/models/Message : io/getstream/chat/
 	public final fun getUpdatedLocallyAt ()Ljava/util/Date;
 	public final fun getUser ()Lio/getstream/chat/android/models/User;
 	public fun hashCode ()I
+	public final fun identifierHash ()J
 	public fun putExtraValue (Ljava/lang/String;Ljava/lang/Object;)V
 	public final fun setAttachments (Ljava/util/List;)V
 	public final fun setCid (Ljava/lang/String;)V
