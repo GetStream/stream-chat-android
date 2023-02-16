@@ -16,12 +16,16 @@
 
 package io.getstream.chat.android.compose.ui.components.channels
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
-import androidx.compose.material.TextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -77,21 +81,22 @@ public fun MessageReadStatusIcon(
 
     when {
         isMessageRead -> {
-            if (readCount > 1) {
-                TextField(
-                    value = readCount.toString(),
-                    onValueChange = { },
-                    singleLine = true,
-                    modifier = modifier
+            Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                if (readCount > 1) {
+                    Text(
+                        text = readCount.toString(),
+                        modifier = Modifier.padding(horizontal = 2.dp),
+                        style = ChatTheme.typography.footnote,
+                        color = ChatTheme.colors.textLowEmphasis
+                    )
+                }
+
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_message_seen),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.primaryAccent,
                 )
             }
-
-            Icon(
-                modifier = modifier,
-                painter = painterResource(id = R.drawable.stream_compose_message_seen),
-                contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
-            )
         }
         syncStatus == SyncStatus.SYNC_NEEDED || syncStatus == SyncStatus.AWAITING_ATTACHMENTS -> {
             Icon(
