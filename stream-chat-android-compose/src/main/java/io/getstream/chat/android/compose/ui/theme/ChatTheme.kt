@@ -105,6 +105,12 @@ private val LocalStreamCdnImageResizing = compositionLocalOf<StreamCdnImageResiz
             "Make sure to wrap all usages of Stream components in a ChatTheme."
     )
 }
+private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
+    error(
+        "No readCountEnabled Boolean provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme."
+    )
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -159,6 +165,7 @@ public fun ChatTheme(
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
+    readCountEnabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -184,6 +191,7 @@ public fun ChatTheme(
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
+        LocalReadCountEnabled provides readCountEnabled
     ) {
         content()
     }
@@ -323,4 +331,9 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamCdnImageResizing.current
+
+    public val readCountEnabled: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalReadCountEnabled.current
 }
