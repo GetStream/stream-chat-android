@@ -54,10 +54,8 @@ import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatu
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
-import io.getstream.chat.android.compose.ui.util.getReadStatuses
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 
 /**
  * The basic channel item, that shows the channel in a list and exposes single and long click actions.
