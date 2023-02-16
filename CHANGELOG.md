@@ -6,6 +6,7 @@
 - Added baseline profiles to compose and clients modules for improving performance [#4610](https://github.com/GetStream/stream-chat-android/pull/4610)
 
 ### ✅ Added
+- Count for read messages. [#4678](https://github.com/GetStream/stream-chat-android/pull/4678)
 
 ### ⚠️ Changed
 
