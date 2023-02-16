@@ -42,9 +42,9 @@ import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
-import io.getstream.chat.android.ui.utils.extensions.readCount
 import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
+import io.getstream.chat.android.ui.utils.extensions.readCount
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlin.math.absoluteValue
 
