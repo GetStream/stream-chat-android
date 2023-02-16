@@ -42,6 +42,18 @@
         tools:text="Visible only for you"
         />
 
+    <TextView
+        android:id="@+id/readCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_message_footnote_spacing"
+        android:textColor="@color/stream_ui_text_color_secondary"
+        android:textSize="@dimen/stream_ui_text_small"
+        android:visibility="gone"
+        android:textDirection="locale"
+        tools:text="3"
+        />
+
     <ImageView
         android:id="@+id/deliveryStatusIcon"
         android:layout_width="16dp"

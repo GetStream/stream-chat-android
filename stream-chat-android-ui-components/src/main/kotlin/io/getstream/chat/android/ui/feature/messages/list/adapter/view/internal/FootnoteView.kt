@@ -152,11 +152,17 @@ internal class FootnoteView : ConstraintLayout {
 
     fun hideStatusIndicator() {
         footnote.deliveryStatusIcon.isVisible = false
+        footnote.readCount.isVisible = false
     }
 
-    internal fun showStatusIndicator(drawableRes: Drawable) {
+    internal fun showStatusIndicator(drawableRes: Drawable, readCount: Int) {
         footnote.deliveryStatusIcon.isVisible = true
         footnote.deliveryStatusIcon.setImageDrawable(drawableRes)
+
+        if (readCount > 1) {
+            footnote.readCount.isVisible = true
+            footnote.readCount.text = readCount.toString()
+        }
     }
 
     fun showTime(time: String, style: MessageListItemStyle) {
