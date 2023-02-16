@@ -261,6 +261,7 @@ public data class Message(
      * Identifier of message. The message can't be considered the same if the id of the message AND the id of a
      * quoted message are not the same.
      */
+    @Suppress("MagicNumber")
     public fun identifierHash(): Long {
         var result = id.hashCode()
 
@@ -268,6 +269,6 @@ public data class Message(
             result = 31 * result + replyHash
         }
 
-        return result.toLong();
+        return result.toLong()
     }
 }
