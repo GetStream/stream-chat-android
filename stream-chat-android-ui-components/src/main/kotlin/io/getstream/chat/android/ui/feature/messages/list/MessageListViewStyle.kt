@@ -147,6 +147,7 @@ public data class MessageListViewStyle(
     public val optionsOverlayMessageOptionsMarginStart: Int,
     public val optionsOverlayMessageOptionsMarginEnd: Int,
     public val showReactionsForUnsentMessages: Boolean,
+    public val readCountEnabled: Boolean,
 ) {
     public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
@@ -516,6 +517,11 @@ public data class MessageListViewStyle(
                     false
                 )
 
+                val readCount = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiReadCount,
+                    true
+                )
+
                 return MessageListViewStyle(
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
@@ -570,6 +576,7 @@ public data class MessageListViewStyle(
                     optionsOverlayMessageOptionsMarginStart = optionsOverlayMessageOptionsMarginStart,
                     optionsOverlayMessageOptionsMarginEnd = optionsOverlayMessageOptionsMarginEnd,
                     showReactionsForUnsentMessages = showReactionsForUnsentMessages,
+                    readCountEnabled = readCount,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

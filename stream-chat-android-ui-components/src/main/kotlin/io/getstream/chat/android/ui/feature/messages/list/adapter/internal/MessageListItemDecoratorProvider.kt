@@ -71,7 +71,8 @@ internal class MessageListItemDecoratorProvider(
             dateFormatter,
             isDirectMessage,
             messageListViewStyle,
-            deletedMessageVisibility
+            deletedMessageVisibility,
+            messageListViewStyle.readCountEnabled
         ),
         PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
     )

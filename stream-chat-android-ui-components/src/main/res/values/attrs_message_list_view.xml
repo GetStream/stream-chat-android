@@ -522,5 +522,7 @@
 
         <!-- Show the edit reactions bubble for unsent messages on the options overlay. -->
         <attr name="streamUiShowReactionsForUnsentMessages" format="boolean" />
+        <!-- Shows a counter next to the read status of a message. -->
+        <attr name="streamUiReadCount" format="boolean" />
     </declare-styleable>
 </resources>

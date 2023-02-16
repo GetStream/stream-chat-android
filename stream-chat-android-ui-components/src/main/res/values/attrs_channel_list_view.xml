@@ -31,6 +31,8 @@
         <attr name="streamUiChannelDeleteEnabled" format="boolean" />
         <!-- Enables or disables channel item swiping -->
         <attr name="streamUiSwipeEnabled" format="boolean" />
+        <!-- Enabled count of reads of message of the current user. -->
+        <attr name="streamUiReadCountEnabled" format="boolean" />
         <attr name="streamUiChannelListBackgroundColor" format="color|reference" />
         <!-- Background color of channel item layout -->
         <attr name="streamUiBackgroundLayoutColor" format="color|reference" />

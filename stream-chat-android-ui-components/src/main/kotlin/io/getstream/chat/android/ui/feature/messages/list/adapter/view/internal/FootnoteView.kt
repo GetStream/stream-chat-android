@@ -155,13 +155,15 @@ internal class FootnoteView : ConstraintLayout {
         footnote.readCount.isVisible = false
     }
 
-    internal fun showStatusIndicator(drawableRes: Drawable, readCount: Int) {
+    internal fun showStatusIndicator(drawableRes: Drawable, readCount: Int, readCountEnabled: Boolean) {
         footnote.deliveryStatusIcon.isVisible = true
         footnote.deliveryStatusIcon.setImageDrawable(drawableRes)
 
-        if (readCount > 1) {
+        if (readCount > 1 && readCountEnabled) {
             footnote.readCount.isVisible = true
             footnote.readCount.text = readCount.toString()
+        } else {
+            footnote.readCount.isVisible = false
         }
     }
 

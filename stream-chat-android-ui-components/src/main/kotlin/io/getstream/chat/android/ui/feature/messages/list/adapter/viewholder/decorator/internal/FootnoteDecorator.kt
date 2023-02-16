@@ -55,6 +55,7 @@ internal class FootnoteDecorator(
     private val isDirectMessage: () -> Boolean,
     private val listViewStyle: MessageListViewStyle,
     private val deletedMessageVisibilityHandler: () -> DeletedMessageVisibility,
+    private val readCountEnabled: Boolean,
 ) : BaseDecorator() {
 
     /**
@@ -330,14 +331,18 @@ internal class FootnoteDecorator(
             else -> when (status) {
                 SyncStatus.FAILED_PERMANENTLY -> footnoteView.hideStatusIndicator()
                 SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> footnoteView.showStatusIndicator(
-                    listViewStyle.itemStyle.iconIndicatorPendingSync, NO_READS
+                    listViewStyle.itemStyle.iconIndicatorPendingSync, NO_READS, readCountEnabled
                 )
                 SyncStatus.COMPLETED -> {
                     if (data.isMessageRead) footnoteView.showStatusIndicator(
                         listViewStyle.itemStyle.iconIndicatorRead,
-                        data.messageReadBy.size
+                        data.messageReadBy.size,
+                        readCountEnabled
+                    ) else footnoteView.showStatusIndicator(
+                        listViewStyle.itemStyle.iconIndicatorSent,
+                        NO_READS,
+                        readCountEnabled
                     )
-                    else footnoteView.showStatusIndicator(listViewStyle.itemStyle.iconIndicatorSent, NO_READS)
                 }
             }
         }
