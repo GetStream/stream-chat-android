@@ -252,33 +252,74 @@
         <attr name="android:inputType" />
 
         <!-- Sets the background color of the quoted message bubble visible in the input when
-         replying to a message. -->
+         replying to a message. Applied both when replying to messages owned by the currently
+         logged-in user and messages owned by other users. -->
         <attr name="streamUiMessageInputMessageReplyBackgroundColor" format="color" />
         <!-- Sets the size of the text inside the quoted message bubble visible in the input
-         when replying to a message. -->
-        <attr name="streamUiMessageInputMessageReplyTextSize" format="dimension|reference" />
+         when replying to a message. Applied when replying to messages owned by the currently logged-in
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextSizeMine" format="dimension|reference" />
         <!-- Sets the color of the text inside the quoted message bubble visible in the input
-        when replying to a message. -->
-        <attr name="streamUiMessageInputMessageReplyTextColor" format="color" />
+        when replying to a message. Applied when replying to messages owned by the currently logged-in
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextColorMine" format="color" />
         <!-- Sets the font of the text inside the quoted message bubble visible in the input
-        when replying to a message. -->
-        <attr name="streamUiMessageInputMessageReplyTextFont" format="reference" />
+        when replying to a message. Applied when replying to messages owned by the currently logged-in
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextFontMine" format="reference" />
         <!-- Sets the font assets of the text inside the quoted message bubble visible in the
-        input when replying to a message. -->
-        <attr name="streamUiMessageInputMessageReplyTextFontAssets" format="string" />
+        input when replying to a message. Applied when replying to messages owned by the currently logged-in
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextFontAssetsMine" format="string" />
         <!-- Sets the style of the text inside the quoted message bubble visible in the input
-        when replying to a message. -->
-        <attr name="streamUiMessageInputMessageReplyTextStyle">
+        when replying to a message. Applied when replying to messages owned by the currently logged-in
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextStyleMine">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
         <!-- Sets the color of the stroke of the quoted message bubble visible in the input when
-         replying to a message. -->
-        <attr name="streamUiMessageInputMessageReplyStrokeColor" format="color" />
+         replying to a message. Applied when replying to messages owned by the currently logged-in
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyStrokeColorMine" format="color" />
         <!-- Sets the width of the stroke of the quoted message bubble visible in the input when
-        replying to a message. -->
-        <attr name="streamUiMessageInputMessageReplyStrokeWidth" format="dimension|reference" />
+        replying to a message. Applied when replying to messages owned by the currently logged-in
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyStrokeWidthMine" format="dimension|reference" />
+
+        <!-- Sets the size of the text inside the quoted message bubble visible in the input
+         when replying to a message. Applied when replying to messages owned by other users
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextSizeTheirs" format="dimension|reference" />
+        <!-- Sets the color of the text inside the quoted message bubble visible in the input
+        when replying to a message. Applied when replying to messages owned by other users
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextColorTheirs" format="color" />
+        <!-- Sets the font of the text inside the quoted message bubble visible in the input
+        when replying to a message. Applied when replying to messages owned by other users
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextFontTheirs" format="reference" />
+        <!-- Sets the font assets of the text inside the quoted message bubble visible in the
+        input when replying to a message. Applied when replying to messages owned by other users
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextFontAssetsTheirs" format="string" />
+        <!-- Sets the style of the text inside the quoted message bubble visible in the input
+        when replying to a message. Applied when replying to messages owned by other users
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!-- Sets the color of the stroke of the quoted message bubble visible in the input when
+         replying to a message. Applied when replying to messages owned by other users
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyStrokeColorTheirs" format="color" />
+        <!-- Sets the width of the stroke of the quoted message bubble visible in the input when
+        replying to a message. Applied when replying to messages owned by other users
+         user. -->
+        <attr name="streamUiMessageInputMessageReplyStrokeWidthTheirs" format="dimension|reference" />
     </declare-styleable>
 
 </resources>
