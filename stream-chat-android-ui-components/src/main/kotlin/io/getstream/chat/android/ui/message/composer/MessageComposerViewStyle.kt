@@ -147,14 +147,16 @@ public data class MessageComposerViewStyle(
     public val cooldownTimerBackgroundDrawable: Drawable,
     // Message reply customization, by default belongs to center content as well
     @ColorInt public val messageReplyBackgroundColor: Int,
-    public val messageReplyTextStyle: TextStyle,
-    @ColorInt public val messageReplyMessageBackgroundStrokeColor: Int,
-    @Px public val messageReplyMessageBackgroundStrokeWidth: Float,
+    public val messageReplyTextStyleMine: TextStyle,
+    @ColorInt public val messageReplyMessageBackgroundStrokeColorMine: Int,
+    @Px public val messageReplyMessageBackgroundStrokeWidthMine: Float,
+    public val messageReplyTextStyleTheirs: TextStyle,
+    @ColorInt public val messageReplyMessageBackgroundStrokeColorTheirs: Int,
+    @Px public val messageReplyMessageBackgroundStrokeWidthTheirs: Float,
 ) {
 
     /**
-     * Creates a [MessageReplyStyle] instance from the [messageReplyBackgroundColor], [messageReplyTextStyle],
-     * [messageReplyMessageBackgroundStrokeColor] and [messageReplyMessageBackgroundStrokeWidth] parameters.
+     * Creates an instance of [MessageReplyStyle] from the parameters provided by [MessageComposerViewStyle].
      *
      * @return an instance of [MessageReplyStyle].
      */
@@ -163,14 +165,14 @@ public data class MessageComposerViewStyle(
         messageBackgroundColorTheirs = messageReplyBackgroundColor,
         linkBackgroundColorMine = messageReplyBackgroundColor,
         linkBackgroundColorTheirs = messageReplyBackgroundColor,
-        textStyleMine = messageReplyTextStyle,
-        textStyleTheirs = messageReplyTextStyle,
-        linkStyleMine = messageReplyTextStyle,
-        linkStyleTheirs = messageReplyTextStyle,
-        messageStrokeColorMine = messageReplyMessageBackgroundStrokeColor,
-        messageStrokeColorTheirs = messageReplyMessageBackgroundStrokeColor,
-        messageStrokeWidthMine = messageReplyMessageBackgroundStrokeWidth,
-        messageStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidth,
+        textStyleMine = messageReplyTextStyleMine,
+        textStyleTheirs = messageReplyTextStyleTheirs,
+        linkStyleMine = messageReplyTextStyleMine,
+        linkStyleTheirs = messageReplyTextStyleTheirs,
+        messageStrokeColorMine = messageReplyMessageBackgroundStrokeColorMine,
+        messageStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
+        messageStrokeWidthMine = messageReplyMessageBackgroundStrokeWidthMine,
+        messageStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
     )
 
     public companion object {
@@ -522,43 +524,75 @@ public data class MessageComposerViewStyle(
                         InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
                 )
 
+                val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+
                 val messageReplyBackgroundColor: Int =
                     a.getColor(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyBackgroundColor,
-                        context.getColorCompat(R.color.stream_ui_grey_whisper)
+                        context.getColorCompat(R.color.stream_ui_white)
                     )
 
-                val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
-
-                val messageReplyTextStyle: TextStyle = TextStyle.Builder(a)
+                val messageReplyTextStyleMine: TextStyle = TextStyle.Builder(a)
                     .size(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextSize,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextSizeMine,
                         context.getDimension(MessageReplyStyle.DEFAULT_TEXT_SIZE)
                     )
                     .color(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextColor,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextColorMine,
                         context.getColorCompat(MessageReplyStyle.DEFAULT_TEXT_COLOR)
                     )
                     .font(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyle,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextFontAssetsMine,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyleMine,
                         mediumTypeface
                     )
                     .style(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyle,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyleMine,
                         MessageReplyStyle.DEFAULT_TEXT_STYLE
                     )
                     .build()
 
-                val messageReplyMessageBackgroundStrokeColor: Int =
+                val messageReplyMessageBackgroundStrokeColorMine: Int =
                     a.getColor(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeColor,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeColorMine,
                         context.getColorCompat(R.color.stream_ui_grey_gainsboro)
                     )
 
-                val messageReplyMessageBackgroundStrokeWidth: Float =
+                val messageReplyMessageBackgroundStrokeWidthMine: Float =
                     a.getDimension(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeWidth,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeWidthMine,
+                        DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH
+                    )
+
+                val messageReplyTextStyleTheirs: TextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextSizeTheirs,
+                        context.getDimension(MessageReplyStyle.DEFAULT_TEXT_SIZE)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextColorTheirs,
+                        context.getColorCompat(MessageReplyStyle.DEFAULT_TEXT_COLOR)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextFontAssetsTheirs,
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyleTheirs,
+                        mediumTypeface
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyleTheirs,
+                        MessageReplyStyle.DEFAULT_TEXT_STYLE
+                    )
+                    .build()
+
+                val messageReplyMessageBackgroundStrokeColorTheirs: Int =
+                    a.getColor(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeColorTheirs,
+                        context.getColorCompat(R.color.stream_ui_grey_gainsboro)
+                    )
+
+                val messageReplyMessageBackgroundStrokeWidthTheirs: Float =
+                    a.getDimension(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeWidthTheirs,
                         DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH
                     )
 
@@ -615,9 +649,12 @@ public data class MessageComposerViewStyle(
                     cooldownTimerTextStyle = cooldownTimerTextStyle,
                     cooldownTimerBackgroundDrawable = cooldownTimerBackgroundDrawable,
                     messageReplyBackgroundColor = messageReplyBackgroundColor,
-                    messageReplyTextStyle = messageReplyTextStyle,
-                    messageReplyMessageBackgroundStrokeColor = messageReplyMessageBackgroundStrokeColor,
-                    messageReplyMessageBackgroundStrokeWidth = messageReplyMessageBackgroundStrokeWidth,
+                    messageReplyTextStyleMine = messageReplyTextStyleMine,
+                    messageReplyMessageBackgroundStrokeColorMine = messageReplyMessageBackgroundStrokeColorMine,
+                    messageReplyMessageBackgroundStrokeWidthMine = messageReplyMessageBackgroundStrokeWidthMine,
+                    messageReplyTextStyleTheirs = messageReplyTextStyleTheirs,
+                    messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
+                    messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
 
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
             }

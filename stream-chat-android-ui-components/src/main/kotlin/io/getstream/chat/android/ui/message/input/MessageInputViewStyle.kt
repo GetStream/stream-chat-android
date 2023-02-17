@@ -152,8 +152,8 @@ public data class MessageInputViewStyle(
 ) {
 
     /**
-     * Creates a [MessageReplyStyle] instance from the [messageReplyBackgroundColor], [messageReplyTextStyleMine],
-     * [messageReplyMessageBackgroundStrokeColorMine] and [messageReplyMessageBackgroundStrokeWidthMine] parameters.
+     * Creates an instance of [MessageReplyStyle] from the parameters provided by [MessageInputViewStyle].
+
      *
      * @return an instance of [MessageReplyStyle].
      */
