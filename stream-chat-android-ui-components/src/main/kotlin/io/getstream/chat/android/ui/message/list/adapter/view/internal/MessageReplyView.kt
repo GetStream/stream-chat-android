@@ -133,7 +133,7 @@ internal class MessageReplyView : FrameLayout {
             context,
             REPLY_CORNER_RADIUS,
             0f,
-            message.isMine(ChatClient.instance().getCurrentUser()),
+            quotedMessage.isMine(ChatClient.instance().getCurrentUser()),
             true
         )
 
@@ -148,7 +148,7 @@ internal class MessageReplyView : FrameLayout {
                     }
                     setTint(color)
                 }
-                message.isMine(ChatClient.instance().getCurrentUser()) -> {
+                quotedMessage.isMine(ChatClient.instance().getCurrentUser()) -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     val color = if (isMine) {
                         style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
