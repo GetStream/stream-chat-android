@@ -28,6 +28,7 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.isMine
 import com.getstream.sdk.chat.utils.extensions.updateConstraints
 import com.google.android.material.shape.MaterialShapeDrawable
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -76,7 +77,7 @@ internal class MessageReplyView : FrameLayout {
      */
     fun setMessage(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         setUserAvatar(message)
-        setAvatarPosition(message.isMine())
+        setAvatarPosition(message.isMine(ChatClient.instance().getCurrentUser()))
         setReplyBackground(message, isMine, style)
         setAttachmentImage(message)
         setReplyText(message, isMine, style)
@@ -132,7 +133,7 @@ internal class MessageReplyView : FrameLayout {
             context,
             REPLY_CORNER_RADIUS,
             0f,
-            quotedMessage.isMine(),
+            message.isMine(ChatClient.instance().getCurrentUser()),
             true
         )
 
@@ -147,7 +148,7 @@ internal class MessageReplyView : FrameLayout {
                     }
                     setTint(color)
                 }
-                quotedMessage.isMine() -> {
+                message.isMine(ChatClient.instance().getCurrentUser()) -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     val color = if (isMine) {
                         style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
@@ -160,9 +161,12 @@ internal class MessageReplyView : FrameLayout {
                 }
                 else -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
-                    setStrokeTint(style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper))
+                    setStrokeTint(
+                        style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    )
                     strokeWidth = style?.messageStrokeWidthTheirs ?: DEFAULT_STROKE_WIDTH
-                    val tintColor = style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
+                    val tintColor =
+                        style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
                     setTint(tintColor)
                 }
             }

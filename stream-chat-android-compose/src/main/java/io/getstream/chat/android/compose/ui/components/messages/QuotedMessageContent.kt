@@ -20,8 +20,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.getstream.sdk.chat.utils.extensions.isMine
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.attachments.content.QuotedMessageAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -29,6 +29,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Represents the default quoted message content that shows an attachment preview, if available, and the message text.
  *
  * @param message The quoted message to show.
+ * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
  * @param replyMessage The message that contains the reply.
  * @param attachmentContent The content for the attachment preview, if available.
@@ -37,6 +38,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun QuotedMessageContent(
     message: Message,
+    currentUser: User?,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
     attachmentContent: @Composable (Message) -> Unit = { DefaultQuotedMessageAttachmentContent(it) },
@@ -44,17 +46,18 @@ public fun QuotedMessageContent(
         DefaultQuotedMessageTextContent(
             message = it,
             replyMessage = replyMessage,
+            currentUser = currentUser
         )
     },
 ) {
-    val messageBubbleShape = if (message.isMine(ChatClient.instance())) {
+    val messageBubbleShape = if (message.isMine(currentUser)) {
         ChatTheme.shapes.myMessageBubble
     } else {
         ChatTheme.shapes.otherMessageBubble
     }
 
     // The quoted section color depends on the author of the reply.
-    val messageBubbleColor = if (replyMessage?.isMine(ChatClient.instance()) != false) {
+    val messageBubbleColor = if (replyMessage?.isMine(currentUser) != false) {
         ChatTheme.colors.ownMessageQuotedBackground
     } else {
         ChatTheme.colors.otherMessageQuotedBackground
@@ -98,14 +101,17 @@ internal fun DefaultQuotedMessageAttachmentContent(message: Message) {
  *
  * @param message The quoted message.
  * @param replyMessage The message that contains the reply.
+ * @param currentUser The currently logged in user.
  */
 @Composable
 internal fun DefaultQuotedMessageTextContent(
     message: Message,
+    currentUser: User?,
     replyMessage: Message? = null,
 ) {
     QuotedMessageText(
         message = message,
         replyMessage = replyMessage,
+        currentUser = currentUser
     )
 }

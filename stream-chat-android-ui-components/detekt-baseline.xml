@@ -146,8 +146,6 @@
     <ID>MaxLineLength:MessageListViewModelFactory.kt$MessageListViewModelFactory$?:</ID>
     <ID>MaxLineLength:MessageListViewStyle.kt$MessageListViewStyle$*</ID>
     <ID>MaxLineLength:MessageReplyStyle.kt$MessageReplyStyle$*</ID>
-    <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$setStrokeTint(style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper))</ID>
-    <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$val tintColor = style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)</ID>
     <ID>MaxLineLength:ReactionsDecorator.kt$ReactionsDecorator$expectedReactionsAndOffsetWidth > rootConstraintLayout.measuredWidth -> expectedReactionsAndOffsetWidth - rootWidth</ID>
     <ID>MaxLineLength:ScrollButtonViewStyle.kt$ScrollButtonViewStyle$*</ID>
     <ID>MaxLineLength:SearchResultListViewStyle.kt$SearchResultListViewStyle$*</ID>

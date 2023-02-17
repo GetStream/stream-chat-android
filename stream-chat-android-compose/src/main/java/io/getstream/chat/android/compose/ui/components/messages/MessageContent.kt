@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
@@ -37,6 +38,7 @@ import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
  * Represents the default message content within the bubble that can show different UI based on the message state.
  *
  * @param message The message to show.
+ * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onGiphyActionClick Handler for Giphy actions.
@@ -50,6 +52,7 @@ import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
 @Composable
 public fun MessageContent(
     message: Message,
+    currentUser: User?,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
@@ -67,6 +70,7 @@ public fun MessageContent(
     regularMessageContent: @Composable () -> Unit = {
         DefaultMessageContent(
             message = message,
+            currentUser = currentUser,
             onLongItemClick = onLongItemClick,
             onImagePreviewResult = onImagePreviewResult,
             onQuotedMessageClick = onQuotedMessageClick
@@ -131,6 +135,7 @@ internal fun DefaultMessageDeletedContent(
 @Composable
 internal fun DefaultMessageContent(
     message: Message,
+    currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
@@ -145,6 +150,7 @@ internal fun DefaultMessageContent(
         if (message.text.isNotEmpty()) {
             DefaultMessageTextContent(
                 message = message,
+                currentUser = currentUser,
                 onLongItemClick = onLongItemClick,
                 onQuotedMessageClick = onQuotedMessageClick
             )
