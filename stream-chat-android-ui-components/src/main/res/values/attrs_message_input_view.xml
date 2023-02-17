@@ -250,6 +250,35 @@
         </attr>
         <attr name="streamUiCooldownTimerBackgroundDrawable" format="reference" />
         <attr name="android:inputType" />
+
+        <!-- Sets the background color of the quoted message bubble visible in the input when
+         replying to a message. -->
+        <attr name="streamUiMessageInputMessageReplyBackgroundColor" format="color" />
+        <!-- Sets the size of the text inside the quoted message bubble visible in the input
+         when replying to a message. -->
+        <attr name="streamUiMessageInputMessageReplyTextSize" format="dimension|reference" />
+        <!-- Sets the color of the text inside the quoted message bubble visible in the input
+        when replying to a message. -->
+        <attr name="streamUiMessageInputMessageReplyTextColor" format="color" />
+        <!-- Sets the font of the text inside the quoted message bubble visible in the input
+        when replying to a message. -->
+        <attr name="streamUiMessageInputMessageReplyTextFont" format="reference" />
+        <!-- Sets the font assets of the text inside the quoted message bubble visible in the
+        input when replying to a message. -->
+        <attr name="streamUiMessageInputMessageReplyTextFontAssets" format="string" />
+        <!-- Sets the style of the text inside the quoted message bubble visible in the input
+        when replying to a message. -->
+        <attr name="streamUiMessageInputMessageReplyTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!-- Sets the color of the stroke of the quoted message bubble visible in the input when
+         replying to a message. -->
+        <attr name="streamUiMessageInputMessageReplyStrokeColor" format="color" />
+        <!-- Sets the width of the stroke of the quoted message bubble visible in the input when
+        replying to a message. -->
+        <attr name="streamUiMessageInputMessageReplyStrokeWidth" format="dimension|reference" />
     </declare-styleable>
 
 </resources>

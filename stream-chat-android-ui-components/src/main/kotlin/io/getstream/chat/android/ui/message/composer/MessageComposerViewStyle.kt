@@ -151,6 +151,7 @@ public data class MessageComposerViewStyle(
     @ColorInt public val messageReplyMessageBackgroundStrokeColor: Int,
     @Px public val messageReplyMessageBackgroundStrokeWidth: Float,
 ) {
+
     /**
      * Creates a [MessageReplyStyle] instance from the [messageReplyBackgroundColor], [messageReplyTextStyle],
      * [messageReplyMessageBackgroundStrokeColor] and [messageReplyMessageBackgroundStrokeWidth] parameters.

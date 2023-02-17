@@ -448,6 +448,7 @@ public class MessageInputView : ConstraintLayout {
         binding = StreamUiMessageInputBinding.inflate(streamThemeInflater, this)
         messageInputViewStyle = MessageInputViewStyle(context, attr)
         suggestionListViewStyle = SuggestionListViewStyle(context, attr)
+        binding.messageInputFieldView.messageReplyStyle = messageInputViewStyle.toMessageReplyStyle()
 
         setBackgroundColor(messageInputViewStyle.backgroundColor)
         configAttachmentButton()
