@@ -62,33 +62,53 @@
 
 ### ✅ Added
 - Added the ability to style the way message reply bubbles are displayed in `MessageComposerView` via xml attributes. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
-    * `streamUiMessageComposerMessageReplyBackgroundColor`
-    * `streamUiMessageComposerMessageReplyTextSize`
-    * `streamUiMessageComposerMessageReplyTextColor`
-    * `streamUiMessageComposerMessageReplyTextFont`
-    * `treamUiMessageComposerMessageReplyTextFontAssets`
-    * `streamUiMessageComposerMessageReplyTextStyle`
-    * `streamUiMessageComposerMessageReplyStrokeColor`
-    * `streamUiMessageComposerMessageReplyStrokeWidth`
+  * `streamUiMessageComposerMessageReplyBackgroundColor`
+  * `streamUiMessageComposerMessageReplyTextSizeMine`
+  * `streamUiMessageComposerMessageReplyTextColorMine`
+  * `streamUiMessageComposerMessageReplyTextFontMine`
+  * `streamUiMessageComposerMessageReplyTextFontAssetsMine`
+  * `streamUiMessageComposerMessageReplyTextStyleMine`
+  * `streamUiMessageComposerMessageReplyStrokeColorMine`
+  * `streamUiMessageComposerMessageReplyStrokeWidthMine`
+  * `streamUiMessageComposerMessageReplyTextSizeTheirs`
+  * `streamUiMessageComposerMessageReplyTextColorTheirs`
+  * `streamUiMessageComposerMessageReplyTextFontTheirs`
+  * `streamUiMessageComposerMessageReplyTextFontAssetsTheirs`
+  * `streamUiMessageComposerMessageReplyTextStyleTheirs`
+  * `streamUiMessageComposerMessageReplyStrokeColorTheirs`
+  * `streamUiMessageComposerMessageReplyStrokeWidthTheirs`
 - Added new properties to `MessageComposerViewStyle` which allow styling the way message reply bubbles are displayed in `MessageComposerView`. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
-    * `messageReplyBackgroundColor`
-    * `TextStyle`
-    * `messageReplyMessageBackgroundStrokeColor`
-    * `messageReplyMessageBackgroundStrokeWidth`
+  * `messageReplyBackgroundColor`
+  * `messageReplyTextStyleMine`
+  * `messageReplyMessageBackgroundStrokeColorMine`
+  * `messageReplyMessageBackgroundStrokeWidthMine`
+  * `messageReplyTextStyleTheirs`
+  * `messageReplyMessageBackgroundStrokeColorTheirs`
+  * `messageReplyMessageBackgroundStrokeWidthTheirs`
 - Added the ability to style the way message reply bubbles are displayed in `MessageInputView` via xml attributes. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
-    * `streamUiMessageInputMessageReplyBackgroundColor`
-    * `streamUiMessageInputMessageReplyTextSize`
-    * `streamUiMessageInputMessageReplyTextColor`
-    * `streamUiMessageInputMessageReplyTextFont`
-    * `streamUiMessageInputMessageReplyTextFontAssets`
-    * `streamUiMessageInputMessageReplyTextStyle`
-    * `streamUiMessageInputMessageReplyStrokeColor`
-    * `streamUiMessageInputMessageReplyStrokeWidth`
+  * `streamUiMessageInputMessageReplyBackgroundColor`
+  * `streamUiMessageInputMessageReplyTextSizeMine`
+  * `streamUiMessageInputMessageReplyTextColorMine`
+  * `streamUiMessageInputMessageReplyTextFontMine`
+  * `streamUiMessageInputMessageReplyTextFontAssetsMine`
+  * `streamUiMessageInputMessageReplyTextStyleMine`
+  * `streamUiMessageInputMessageReplyStrokeColorMine`
+  * `streamUiMessageInputMessageReplyStrokeWidthMine`
+  * `streamUiMessageInputMessageReplyTextSizeTheirs`
+  * `streamUiMessageInputMessageReplyTextColorTheirs`
+  * `streamUiMessageInputMessageReplyTextFontTheirs`
+  * `streamUiMessageInputMessageReplyTextFontAssetsTheirs`
+  * `streamUiMessageInputMessageReplyTextStyleTheirs`
+  * `streamUiMessageInputMessageReplyStrokeColorTheirs`
+  * `streamUiMessageInputMessageReplyStrokeWidthTheirs`
 - Added new properties to `MessageComposerViewStyle` which allow styling the way message reply bubbles are displayed in `MessageInputView`. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
-    * `messageReplyBackgroundColor`
-    * `TextStyle`
-    * `messageReplyMessageBackgroundStrokeColor`
-    * `messageReplyMessageBackgroundStrokeWidth`
+  * `messageReplyBackgroundColor`
+  * `messageReplyTextStyleMine`
+  * `messageReplyMessageBackgroundStrokeColorMine`
+  * `messageReplyMessageBackgroundStrokeWidthMine`
+  * `messageReplyTextStyleTheirs`
+  * `messageReplyMessageBackgroundStrokeColorTheirs`
+  * `messageReplyMessageBackgroundStrokeWidthTheirs`
 
 ### ⚠️ Changed
 - The styling for the reply message bubbles visible inside `MessageInputView` and `MessageComposerView` when replying to messages has changed slightly and is now the same for both messages sent by the currently logged-in user and those sent by other users. However, you are now able to style the bubbles. For more information check the added section for `stream-chat-android-ui-components`. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
