@@ -730,6 +730,7 @@ public class MessageListViewModel(
      */
     public fun setDateSeparatorHandler(dateSeparatorHandler: DateSeparatorHandler?) {
         this.dateSeparatorHandler = dateSeparatorHandler
+        this.messageListData?.updateDateSeparatorHandlers(this.dateSeparatorHandler)
     }
 
     /**
@@ -740,6 +741,7 @@ public class MessageListViewModel(
      */
     public fun setThreadDateSeparatorHandler(threadDateSeparatorHandler: DateSeparatorHandler?) {
         this.threadDateSeparatorHandler = threadDateSeparatorHandler
+        this.threadListData?.updateDateSeparatorHandlers(this.dateSeparatorHandler)
     }
 
     /**
