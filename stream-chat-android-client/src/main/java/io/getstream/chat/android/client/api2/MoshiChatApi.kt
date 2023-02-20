@@ -206,7 +206,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
             messageId = message.id,
             message = UpdateMessageRequest(
                 message = message.toDto(),
-                skip_enrich_url = false
+                skip_enrich_url = skipEnrichUrl
             ),
         ).map { response -> response.message.toDomain() }
     }
