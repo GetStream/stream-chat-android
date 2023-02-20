@@ -30,6 +30,7 @@ import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -67,7 +68,7 @@ internal class ImagePreviewViewModelTest {
             viewModel.deleteCurrentImage(attachment1)
             viewModel.deleteCurrentImage(attachment2)
 
-            verify(chatClient).updateMessage(any())
+            verify(chatClient).updateMessage(any(), eq(false))
             verify(chatClient).deleteMessage(MESSAGE_ID, false)
         }
 
@@ -94,7 +95,7 @@ internal class ImagePreviewViewModelTest {
         }
 
         fun givenUpdateMessage() = apply {
-            whenever(chatClient.updateMessage(any())) doReturn Message().asCall()
+            whenever(chatClient.updateMessage(any(), eq(false))) doReturn Message().asCall()
         }
 
         fun givenDeleteMessage() = apply {

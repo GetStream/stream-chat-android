@@ -88,6 +88,9 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun muteUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun muteUser (Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun muteUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun partialUpdateMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
+	public final fun partialUpdateMessage (Ljava/lang/String;Ljava/util/Map;)Lio/getstream/chat/android/client/call/Call;
+	public final fun partialUpdateMessage (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public final fun partialUpdateMessage (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun partialUpdateMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun partialUpdateUser (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
@@ -175,6 +178,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun updateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateChannelPartial (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun updateChannelPartial$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun updateMessage (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateMessage (Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun updateMessage$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun updateUser (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/call/Call;

@@ -1642,6 +1642,7 @@ internal constructor(
      * displayed as a link attachment. False by default.
      */
     @CheckResult
+    @JvmOverloads
     public fun updateMessage(
         message: Message,
         skipEnrichUrl: Boolean = false,
@@ -1679,6 +1680,7 @@ internal constructor(
      * @return Executable async [Call] responsible for partially updating the message.
      */
     @CheckResult
+    @JvmOverloads
     public fun partialUpdateMessage(
         messageId: String,
         set: Map<String, Any> = emptyMap(),
