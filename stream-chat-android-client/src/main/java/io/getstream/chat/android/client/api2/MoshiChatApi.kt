@@ -64,6 +64,7 @@ import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
+import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
@@ -177,11 +178,23 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         return configApi.getAppSettings().map(AppSettingsResponse::toDomain)
     }
 
-    override fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message> {
+    override fun sendMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        skipPushNotification: Boolean,
+        skipEnrichUrl: Boolean,
+        isPendingMessage: Boolean
+    ): Call<Message> {
         return messageApi.sendMessage(
             channelType = channelType,
             channelId = channelId,
-            message = MessageRequest(message.toDto()),
+            message = SendMessageRequest(
+                message = message.toDto(),
+                skip_push = skipPushNotification,
+                skip_enrich_url = skipEnrichUrl,
+                is_pending_message = isPendingMessage
+            ),
         ).map { response -> response.message.toDomain() }
     }
 

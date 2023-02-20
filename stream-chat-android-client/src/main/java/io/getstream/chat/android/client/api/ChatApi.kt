@@ -153,6 +153,9 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         message: Message,
+        skipPushNotification: Boolean = false,
+        skipEnrichUrl: Boolean = false,
+        isPendingMessage: Boolean = false,
     ): Call<Message>
 
     @CheckResult
