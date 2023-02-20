@@ -18,11 +18,11 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
-import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
@@ -52,10 +52,11 @@ internal interface MessageApi {
     @GET("/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>
 
+    // REST documentation: https://getstream.io/chat/docs/rest/#messages-updatemessage
     @POST("/messages/{id}")
     fun updateMessage(
         @Path("id") messageId: String,
-        @Body message: MessageRequest,
+        @Body message: UpdateMessageRequest,
     ): RetrofitCall<MessageResponse>
 
     @PUT("/messages/{id}")

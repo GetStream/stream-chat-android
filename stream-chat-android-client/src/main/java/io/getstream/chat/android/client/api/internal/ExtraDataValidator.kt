@@ -56,8 +56,11 @@ internal class ExtraDataValidator(
             .withExtraDataValidation(set)
     }
 
-    override fun updateMessage(message: Message): Call<Message> {
-        return delegate.updateMessage(message)
+    override fun updateMessage(message: Message, skipEnrichUrl: Boolean): Call<Message> {
+        return delegate.updateMessage(
+            message = message,
+            skipEnrichUrl = skipEnrichUrl
+        )
             .withExtraDataValidation(message.extraData)
     }
 
@@ -77,7 +80,7 @@ internal class ExtraDataValidator(
     }
 
     private fun <T : CustomObject> Call<List<T>>.withExtraDataValidation(
-        objects: List<T>
+        objects: List<T>,
     ): Call<List<T>> {
         val (obj, reserved) = objects.findReserved()
         return when (obj == null || reserved == null) {
@@ -105,7 +108,7 @@ internal class ExtraDataValidator(
     }
 
     private inline fun <reified T : CustomObject> Call<T>.withExtraDataValidation(
-        extraData: Map<String, Any>
+        extraData: Map<String, Any>,
     ): Call<T> {
         val reserved = extraData.findReserved<T>()
         return when (reserved.isEmpty()) {

@@ -1638,12 +1638,20 @@ internal constructor(
      * to store the updated message locally.
      *
      * @param message [Message] The message to be updated.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
      */
     @CheckResult
-    public fun updateMessage(message: Message): Call<Message> {
+    public fun updateMessage(
+        message: Message,
+        skipEnrichUrl: Boolean = false,
+    ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<EditMessageListener>().also(::logPlugins)
 
-        return api.updateMessage(message)
+        return api.updateMessage(
+            message = message,
+            skipEnrichUrl = skipEnrichUrl
+        )
             .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[updateMessage] #doOnStart; plugin: ${plugin::class.qualifiedName}" }

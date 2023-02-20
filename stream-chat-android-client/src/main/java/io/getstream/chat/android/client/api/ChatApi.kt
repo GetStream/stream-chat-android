@@ -174,6 +174,7 @@ internal interface ChatApi {
     @CheckResult
     fun updateMessage(
         message: Message,
+        skipEnrichUrl: Boolean = false,
     ): Call<Message>
 
     @CheckResult

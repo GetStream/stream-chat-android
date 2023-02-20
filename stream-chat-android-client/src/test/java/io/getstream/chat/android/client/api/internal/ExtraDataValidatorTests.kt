@@ -108,7 +108,7 @@ internal class ExtraDataValidatorTests {
         whenever(chatApi.updateMessage(message)) doReturn message.asCall()
 
         /* When */
-        val result: Result<Message> = validator.updateMessage(message).await()
+        val result: Result<Message> = validator.updateMessage(message,).await()
 
         /* Then */
         println("[testUpdateMessage] error.message: \"${result.error().message}\"")

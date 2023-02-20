@@ -52,7 +52,6 @@ import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
-import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
@@ -70,6 +69,7 @@ import io.getstream.chat.android.client.api2.model.requests.TruncateChannelReque
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
@@ -131,7 +131,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     private val callApi: VideoCallApi,
     private val fileDownloadApi: FileDownloadApi,
     private val coroutineScope: CoroutineScope,
-    private val userScope: UserScope
+    private val userScope: UserScope,
 ) : ChatApi {
 
     private val logger = StreamLog.getLogger("Chat:MoshiChatApi")
@@ -184,7 +184,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         message: Message,
         skipPushNotification: Boolean,
         skipEnrichUrl: Boolean,
-        isPendingMessage: Boolean
+        isPendingMessage: Boolean,
     ): Call<Message> {
         return messageApi.sendMessage(
             channelType = channelType,
@@ -198,10 +198,16 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         ).map { response -> response.message.toDomain() }
     }
 
-    override fun updateMessage(message: Message): Call<Message> {
+    override fun updateMessage(
+        message: Message,
+        skipEnrichUrl: Boolean
+    ): Call<Message> {
         return messageApi.updateMessage(
             messageId = message.id,
-            message = MessageRequest(message.toDto()),
+            message = UpdateMessageRequest(
+                message = message.toDto(),
+                skip_enrich_url = false
+            ),
         ).map { response -> response.message.toDomain() }
     }
 
