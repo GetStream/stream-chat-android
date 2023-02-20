@@ -60,13 +60,21 @@ internal class ExtraDataValidator(
         return delegate.updateMessage(
             message = message,
             skipEnrichUrl = skipEnrichUrl
-        )
-            .withExtraDataValidation(message.extraData)
+        ).withExtraDataValidation(message.extraData)
     }
 
-    override fun partialUpdateMessage(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Message> {
-        return delegate.partialUpdateMessage(messageId, set, unset)
-            .withExtraDataValidation(set)
+    override fun partialUpdateMessage(
+        messageId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+        skipEnrichUrl: Boolean,
+    ): Call<Message> {
+        return delegate.partialUpdateMessage(
+            messageId = messageId,
+            set = set,
+            unset = unset,
+            skipEnrichUrl = skipEnrichUrl
+        ).withExtraDataValidation(set)
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {

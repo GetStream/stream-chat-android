@@ -200,7 +200,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
 
     override fun updateMessage(
         message: Message,
-        skipEnrichUrl: Boolean
+        skipEnrichUrl: Boolean,
     ): Call<Message> {
         return messageApi.updateMessage(
             messageId = message.id,
@@ -211,10 +211,19 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         ).map { response -> response.message.toDomain() }
     }
 
-    override fun partialUpdateMessage(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Message> {
+    override fun partialUpdateMessage(
+        messageId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+        skipEnrichUrl: Boolean,
+    ): Call<Message> {
         return messageApi.partialUpdateMessage(
             messageId = messageId,
-            body = PartialUpdateMessageRequest(set, unset)
+            body = PartialUpdateMessageRequest(
+                set = set,
+                unset = unset,
+                skip_enrich_url = skipEnrichUrl,
+            )
         ).map { response -> response.message.toDomain() }
     }
 

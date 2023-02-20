@@ -59,6 +59,7 @@ internal interface MessageApi {
         @Body message: UpdateMessageRequest,
     ): RetrofitCall<MessageResponse>
 
+    // Rest documentation: https://getstream.io/chat/docs/rest/#messages-updatemessagepartial-request
     @PUT("/messages/{id}")
     fun partialUpdateMessage(
         @Path("id") messageId: String,
