@@ -16,8 +16,14 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added parameter `skipEnrichUrl` to `ChatClient.sendMessage()`, `ChatClient.updateMessage()` and `ChatClient.partialUpdateMessage()`. When set to `true` the URL contained inside the message will not be enriched as a link attachment. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+- Added parameter `skipPush` to `ChatClient.sendMessage()`. When set to `true` the newly sent message will not trigger a push notification. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+- Added parameter `isPendingMessage` to `ChatClient.sendMessage()`. If set to `true` the message will be sent as a pending message. Such messages are promoted to regular messages once they have been committed using the [commit message endpoint](https://getstream.io/chat/docs/rest/#other-commitmessage). [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
 
 ### ⚠️ Changed
+- Added parameter `skipEnrichUrl` to `ChatClient.sendMessage()`, `ChatClient.updateMessage()` and `ChatClient.partialUpdateMessage()`. When set to `true` the URL contained inside the message will not be enriched as a link attachment. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+- Added parameter `skipPush` to `ChatClient.sendMessage()`. When set to `true` the newly sent message will not trigger a push notification. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+- Added parameter `isPendingMessage` to `ChatClient.sendMessage()`. If set to `true` the message will be sent as a pending message. Such messages are promoted to regular messages once they have been committed using the [commit message endpoint](https://getstream.io/chat/docs/rest/#other-commitmessage). [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
 
 ### ❌ Removed
 
