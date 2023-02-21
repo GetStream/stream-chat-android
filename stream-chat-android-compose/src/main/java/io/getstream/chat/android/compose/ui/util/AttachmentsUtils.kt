@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.models.Attachment
  * Returns a string representation for the given attachment.
  */
 public val Attachment.previewText: String
-    get() = title ?: name ?: ""
+    get() = title ?: name ?: fallback ?: ""
 
 /**
  * Attachment types that represent media content.
