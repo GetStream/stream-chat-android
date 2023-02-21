@@ -59,6 +59,7 @@
 - Fixed image scaling when width is bigger than height. [#4659](https://github.com/GetStream/stream-chat-android/pull/4659)
 
 ### ⬆️ Improved
+- When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
 
 ### ✅ Added
 - Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
@@ -74,6 +75,7 @@
 - Fixed Compose Previews for ChatTheme and other minor components like `MessageText`. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 
 ### ⬆️ Improved
+- When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
 
 ### ✅ Added
 
