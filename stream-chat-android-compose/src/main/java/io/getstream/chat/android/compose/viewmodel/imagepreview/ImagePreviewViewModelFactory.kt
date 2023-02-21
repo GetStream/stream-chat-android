@@ -23,10 +23,16 @@ import io.getstream.chat.android.client.ChatClient
 /**
  * Holds the dependencies required for the Image Preview Screen.
  * Currently builds the [ImagePreviewViewModel] using those dependencies.
+ *
+ * @param chatClient The low level chat client used for API calls.
+ * @param messageId The ID of the message containing the attachments to be previewed.
+ * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+ * displayed as a link attachment. False by default.
  */
 public class ImagePreviewViewModelFactory(
     private val chatClient: ChatClient,
     private val messageId: String,
+    private val skipEnrichUrl: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -34,6 +40,10 @@ public class ImagePreviewViewModelFactory(
      */
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return ImagePreviewViewModel(chatClient, messageId) as T
+        return ImagePreviewViewModel(
+            chatClient = chatClient,
+            messageId = messageId,
+            skipEnrichUrl = skipEnrichUrl
+        ) as T
     }
 }

@@ -151,6 +151,8 @@
 - Added the following parameters to `MessageComposerViewModel.sendMessage()`. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
   * `skipPush`: when set to `true` a newly sent message will not trigger a push notification.
   * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link attachment.
+- Added the parameter `skipEnrichUrl` to `ImagePreviewViewModelFactory` and `ImagePreviewViewModel`. When set to `true` the URL contained inside the message will not be enriched as a link attachment upon deleting an attachment. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+- Added the parameter `skipEnrichUrl` to `ImagePreviewViewModel.deleteCurrentImage()`. When set to `true` the URL contained inside the message will not be enriched as a link attachment upon deleting an attachment. By default the parameter has a default argument of `ImagePreviewViewModel.skipEnrichUrl`. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
 
 ### ⚠️ Changed
 - Added the parameter `channelOptions: List<ChannelOptionState>` to `SelectedChannelMenu` allowing users to override the default channel options more easily. The parameter comes with a default argument of `buildDefaultChannelOptionsState()`. [#4671](https://github.com/GetStream/stream-chat-android/pull/4671)

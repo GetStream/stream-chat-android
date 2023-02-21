@@ -1850,8 +1850,10 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelV
 
 public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
-	public final fun deleteCurrentImage (Lio/getstream/chat/android/client/models/Attachment;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun deleteCurrentImage (Lio/getstream/chat/android/client/models/Attachment;Z)V
+	public static synthetic fun deleteCurrentImage$default (Lio/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModel;Lio/getstream/chat/android/client/models/Attachment;ZILjava/lang/Object;)V
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun isShowingGallery ()Z
@@ -1862,7 +1864,8 @@ public final class io/getstream/chat/android/compose/viewmodel/imagepreview/Imag
 
 public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
