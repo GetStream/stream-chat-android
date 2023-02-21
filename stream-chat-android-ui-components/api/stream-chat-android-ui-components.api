@@ -2900,6 +2900,7 @@ public final class io/getstream/chat/android/ui/message/list/MessageListView : a
 	public final fun showLoadingView ()V
 	public final fun showMessageOptionsDialog (Landroidx/fragment/app/FragmentManager;Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun showMessageOptionsDialog$default (Lio/getstream/chat/android/ui/message/list/MessageListView;Landroidx/fragment/app/FragmentManager;Lio/getstream/chat/android/client/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun showModeratedMessageDialog (Lio/getstream/chat/android/client/models/Message;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/list/MessageListView$AttachmentClickListener {
