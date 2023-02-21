@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
@@ -35,6 +36,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelL
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.GetMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
@@ -137,10 +139,15 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
         val queryMembersListener: QueryMembersListener = QueryMembersListenerDatabase(
             repositoryFacade, repositoryFacade
         )
+
         val createChannelListener: CreateChannelListener = CreateChannelListenerDatabase(
             clientState = clientState,
             channelRepository = repositoryFacade,
             userRepository = repositoryFacade
+        )
+
+        val getMessageListener: GetMessageListener = GetMessageListenerDatabase(
+            repositoryFacade = repositoryFacade
         )
 
         return OfflinePlugin(
@@ -157,6 +164,7 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
             shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = queryMembersListener,
             createChannelListener = createChannelListener,
+            getMessageListener = getMessageListener,
         )
     }
 

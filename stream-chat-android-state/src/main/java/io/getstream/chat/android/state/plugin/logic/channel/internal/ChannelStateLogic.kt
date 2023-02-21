@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.utils.message.isReply
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -186,6 +187,7 @@ internal class ChannelStateLogic(
     override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, updateCount: Boolean) {
         when (shouldRefreshMessages) {
             true -> {
+                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
                 mutableState.setMessages(messages)
 
                 if (updateCount) {
@@ -195,9 +197,14 @@ internal class ChannelStateLogic(
             }
             false -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)
-                val updatedMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
+                val newMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
                     .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
-                mutableState.upsertMessages(updatedMessages, updateCount)
+
+                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
+
+                val normalizedMessages =
+                    newMessages.flatMap { message -> normalizeReplyMessages(message) ?: emptyList() }
+                mutableState.upsertMessages(newMessages + normalizedMessages, updateCount)
             }
         }
     }
@@ -209,6 +216,27 @@ internal class ChannelStateLogic(
      */
     fun setLastSentMessageDate(lastSentMessageDate: Date?) {
         mutableState.setLastSentMessageDate(lastSentMessageDate)
+    }
+
+    /**
+     * Updates the messages quoting a messages with the new content of the quoted message.
+     */
+    private fun normalizeReplyMessages(quotedMessage: Message): List<Message>? {
+        return getAllReplies(quotedMessage)?.map { replyMessage ->
+            replyMessage.apply {
+                replyTo = quotedMessage
+                replyMessageId = quotedMessage.id
+            }
+        }
+    }
+
+    /**
+     * Returns all the replies of a quoted message.
+     */
+    public fun getAllReplies(message: Message): List<Message>? {
+        return mutableState.quotedMessagesMap
+            .value[message.id]
+            ?.mapNotNull(mutableState::getMessageById)
     }
 
     /**
@@ -336,7 +364,7 @@ internal class ChannelStateLogic(
      * @param isNotificationUpdate Whether the message list update is due to a new notification.
      * @param isChannelsStateUpdate Whether the state update comes from querying the channels list.
      */
-    fun updateDataFromChannel(
+    fun updateDataForChannel(
         channel: Channel,
         messageLimit: Int,
         shouldRefreshMessages: Boolean = false,
@@ -364,7 +392,7 @@ internal class ChannelStateLogic(
                     isScrollUpdate = scrollUpdate,
                     shouldRefreshMessages = shouldRefreshMessages,
                     isChannelsStateUpdate = isChannelsStateUpdate,
-                    isWatchChannel = isWatchChannel
+                    isWatchChannel = isWatchChannel,
                 )
             ) {
                 upsertMessages(channel.messages, shouldRefreshMessages)
@@ -406,11 +434,14 @@ internal class ChannelStateLogic(
         isScrollUpdate: Boolean,
         shouldRefreshMessages: Boolean,
         isChannelsStateUpdate: Boolean,
-        isWatchChannel: Boolean
+        isWatchChannel: Boolean,
     ): Boolean {
         // upsert message if refresh is requested, on scroll updates and on notification updates when outside search
         // not to create gaps in message history
-        return isWatchChannel || shouldRefreshMessages || isScrollUpdate || (isNotificationUpdate && !isInsideSearch) ||
+        return isWatchChannel ||
+            shouldRefreshMessages ||
+            isScrollUpdate ||
+            (isNotificationUpdate && !isInsideSearch) ||
             // upsert the messages that come from the QueryChannelsStateLogic only if there are no messages in the list
             (isChannelsStateUpdate && (mutableState.messages.value.isEmpty() || !isInsideSearch))
     }
@@ -432,6 +463,7 @@ internal class ChannelStateLogic(
         // this means that if the offline sync went out of sync things go wrong
         upsertMembers(c.members)
         upsertWatchers(c.watchers, c.watcherCount)
+        upsertMessages(c.messages, false)
     }
 
     /**
@@ -451,13 +483,13 @@ internal class ChannelStateLogic(
             determinePaginationEnd(request, noMoreMessages)
         }
 
-        updateDataFromChannel(
+        updateDataForChannel(
             channel = channel,
             shouldRefreshMessages = request.shouldRefresh,
             scrollUpdate = request.isFilteringMessages(),
             isNotificationUpdate = request.isNotificationUpdate,
             messageLimit = request.messagesLimit(),
-            isWatchChannel = request.isWatchChannel
+            isWatchChannel = request.isWatchChannel,
         )
     }
 
@@ -539,6 +571,12 @@ internal class ChannelStateLogic(
 
     fun addMember(member: Member) {
         mutableState.addMember(member)
+    }
+
+    private fun addQuotedMessage(message: Message) {
+        (message.replyTo?.id ?: message.replyMessageId)?.let { replyId ->
+            mutableState.addQuotedMessage(replyId, message.id)
+        }
     }
 
     private companion object {

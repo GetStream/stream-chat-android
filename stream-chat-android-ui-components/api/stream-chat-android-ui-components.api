@@ -2014,10 +2014,11 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff {
-	public fun <init> (ZZZZZZZZZZZ)V
+	public fun <init> (ZZZZZZZZZZZZ)V
 	public final fun component1 ()Z
 	public final fun component10 ()Z
 	public final fun component11 ()Z
+	public final fun component12 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
@@ -2026,8 +2027,8 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (ZZZZZZZZZZZ)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;
+	public final fun copy (ZZZZZZZZZZZZ)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachments ()Z
 	public final fun getDeleted ()Z
@@ -2037,6 +2038,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public final fun getPositions ()Z
 	public final fun getReactions ()Z
 	public final fun getReplies ()Z
+	public final fun getReplyText ()Z
 	public final fun getSyncStatus ()Z
 	public final fun getText ()Z
 	public final fun getUser ()Z

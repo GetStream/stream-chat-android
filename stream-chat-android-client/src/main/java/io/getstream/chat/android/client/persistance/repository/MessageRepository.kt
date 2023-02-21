@@ -51,6 +51,14 @@ public interface MessageRepository {
     ): List<Message>
 
     /**
+     * Selects a message based on its id, but the message must be a quoted message. This method should be used to
+     * populate the Message.replyTo.
+     *
+     * @param messageId String.
+     */
+    public suspend fun selectRepliedMessage(messageId: String): Message?
+
+    /**
      * Selects messages by IDs.
      *
      * @param messageIds A list of [Message.id] as query specification.

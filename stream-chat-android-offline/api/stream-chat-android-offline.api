@@ -28,6 +28,7 @@ public final class io/getstream/chat/android/offline/repository/database/interna
 	public fun messageDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageDao;
 	public fun queryChannelsDao ()Lio/getstream/chat/android/offline/repository/domain/queryChannels/internal/QueryChannelsDao;
 	public fun reactionDao ()Lio/getstream/chat/android/offline/repository/domain/reaction/internal/ReactionDao;
+	public fun replyMessageDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao;
 	public fun syncStateDao ()Lio/getstream/chat/android/offline/repository/domain/syncState/internal/SyncStateDao;
 	public fun userDao ()Lio/getstream/chat/android/offline/repository/domain/user/internal/UserDao;
 }
@@ -99,6 +100,17 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 	public fun updateMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageInnerEntity;)V
 	public fun upsertMessageInnerEntities (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun upsertMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageInnerEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao_Impl : io/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun delete (Lio/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageInnerEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun getRequiredConverters ()Ljava/util/List;
+	public fun insert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertAttachments (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertInnerEntity (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectById (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/offline/repository/domain/queryChannels/internal/QueryChannelsDao_Impl : io/getstream/chat/android/offline/repository/domain/queryChannels/internal/QueryChannelsDao {

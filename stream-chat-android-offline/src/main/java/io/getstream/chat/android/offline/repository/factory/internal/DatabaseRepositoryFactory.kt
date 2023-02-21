@@ -74,7 +74,7 @@ internal class DatabaseRepositoryFactory(
         val databaseChannelRepository = repositoriesCache[ChannelRepository::class.java] as? DatabaseChannelRepository?
 
         return databaseChannelRepository ?: run {
-            DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, DEFAULT_CACHE_SIZE)
+            DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage)
                 .also { repository ->
                     repositoriesCache[ChannelRepository::class.java] = repository
                 }
@@ -100,6 +100,7 @@ internal class DatabaseRepositoryFactory(
         return databaseMessageRepository ?: run {
             DatabaseMessageRepository(
                 database.messageDao(),
+                database.replyMessageDao(),
                 getUser,
                 currentUser,
                 DEFAULT_CACHE_SIZE

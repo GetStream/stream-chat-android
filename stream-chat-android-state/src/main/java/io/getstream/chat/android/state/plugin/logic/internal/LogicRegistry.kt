@@ -128,10 +128,28 @@ internal class LogicRegistry internal constructor(
         }
     }
 
+    /**
+     * Attempts to fetch the message with the given ID from the mutable state.
+     *
+     * @see [getMessageByIdFromDb] if you need to search the database for the message as well.
+     *
+     * @param messageId The ID of the message we are attempting to retrieve.
+     *
+     * @return The message with the given id, if such exists, null otherwise.
+     */
     fun getMessageById(messageId: String): Message? {
         return channelFromMessageId(messageId)?.getMessage(messageId)
             ?: threadFromMessageId(messageId)?.getMessage(messageId)
     }
+
+    /**
+     * Attempts to fetch the message with the given ID from the mutable database.
+     *
+     * @param messageId The ID of the message we are attempting to retrieve.
+     *
+     * @return The message with the given id, if such exists, null otherwise.
+     */
+    suspend fun getMessageByIdFromDb(messageId: String): Message? = repos.selectMessage(messageId)?.copy()
 
     /**
      * This method returns [ChannelLogic] if the messages passed is not only in a thread. Use this to avoid
@@ -181,6 +199,7 @@ internal class LogicRegistry internal constructor(
         return threads.getOrPut(messageId) {
             val mutableState = stateRegistry.mutableThread(messageId)
             val stateLogic = ThreadStateLogic(mutableState)
+
             ThreadLogic(stateLogic)
         }
     }

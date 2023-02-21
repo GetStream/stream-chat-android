@@ -67,7 +67,7 @@ internal class QueryChannelsLogic(
                 .also { channels ->
                     if (channels.isNotEmpty()) {
                         addChannels(channels)
-                        loadingPerPage(false, hasOffset)
+                        loadingPerPage(false, hasOffset,)
                     }
                 }
         }

@@ -85,7 +85,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND (createdAt > :dateFilter || createdLocallyAt > :dateFilter) " +
+            "AND (createdAt > :dateFilter OR createdLocallyAt > :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
@@ -101,7 +101,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) " +
+            "AND (createdAt >= :dateFilter OR createdLocallyAt >= :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
@@ -117,7 +117,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND (createdAt < :dateFilter || createdLocallyAt < :dateFilter) " +
+            "AND (createdAt < :dateFilter OR createdLocallyAt < :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
@@ -133,7 +133,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND (createdAt <= :dateFilter || createdLocallyAt <= :dateFilter) " +
+            "AND (createdAt <= :dateFilter OR createdLocallyAt <= :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
