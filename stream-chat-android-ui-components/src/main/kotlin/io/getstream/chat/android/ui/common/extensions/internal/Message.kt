@@ -54,7 +54,7 @@ internal fun Message.getAttachmentsText(): SpannableString? {
                 } else {
                     title
                 }
-            } ?: attachment.name
+            } ?: attachment.name ?: attachment.fallback
         }
         ?.joinToString()
         ?.italicize()
