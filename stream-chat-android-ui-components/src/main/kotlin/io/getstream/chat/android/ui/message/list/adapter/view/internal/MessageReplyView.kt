@@ -124,22 +124,22 @@ internal class MessageReplyView : FrameLayout {
     /**
      * Sets the background for message reply.
      *
-     * @param message [Message] The message replied message.
+     * @param quotedMessage [Message] The message contained in the reply bubble.
      * @param isMine Whether the message containing the reply is from the current user or not.
      * @param style [MessageReplyStyle] contains the styles of the background.
      */
-    private fun setReplyBackground(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
+    private fun setReplyBackground(quotedMessage: Message, isMine: Boolean, style: MessageReplyStyle?) {
         val shapeAppearanceModel = ShapeAppearanceModelFactory.create(
             context,
             REPLY_CORNER_RADIUS,
             0f,
-            message.isMine(ChatClient.instance().getCurrentUser()),
+            quotedMessage.isMine(ChatClient.instance().getCurrentUser()),
             true
         )
 
         binding.replyContainer.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
             when {
-                isLink(message) -> {
+                isLink(quotedMessage) -> {
                     paintStyle = Paint.Style.FILL
                     val color = if (isMine) {
                         style?.linkBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_blue_alice)
@@ -148,7 +148,7 @@ internal class MessageReplyView : FrameLayout {
                     }
                     setTint(color)
                 }
-                message.isMine(ChatClient.instance().getCurrentUser()) -> {
+                quotedMessage.isMine(ChatClient.instance().getCurrentUser()) -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     val color = if (isMine) {
                         style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
