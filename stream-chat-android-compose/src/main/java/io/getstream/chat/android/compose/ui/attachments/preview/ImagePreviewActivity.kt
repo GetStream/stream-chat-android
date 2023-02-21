@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -64,6 +63,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,6 +79,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -94,13 +95,13 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
-import io.getstream.chat.android.compose.handlers.PermissionHandler
 import io.getstream.chat.android.compose.state.imagepreview.Delete
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewAction
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewOption
@@ -113,6 +114,8 @@ import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.compose.util.attachmentDownloadState
+import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.imagepreview.ImagePreviewViewModelFactory
 import io.getstream.chat.android.uiutils.extension.hasLink
@@ -395,14 +398,15 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * @param pagerState The state of the pager, used to handle selected actions.
      * @param attachments The list of attachments for which we display options.
      */
+    @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     private fun ImagePreviewOptionItem(
         imagePreviewOption: ImagePreviewOption,
         pagerState: PagerState,
         attachments: List<Attachment>,
     ) {
-        val downloadPermissionHandler = ChatTheme.permissionHandlerProvider
-            .first { it.canHandle(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
+        val (writePermissionState, downloadPayload) = attachmentDownloadState()
+        val context = LocalContext.current
 
         Row(
             modifier = Modifier
@@ -414,9 +418,11 @@ public class ImagePreviewActivity : AppCompatActivity() {
                     onClick = {
                         imagePreviewViewModel.toggleImageOptions(isShowingOptions = false)
                         handleImageAction(
+                            context = context,
                             imagePreviewAction = imagePreviewOption.action,
                             currentPage = pagerState.currentPage,
-                            permissionHandler = downloadPermissionHandler,
+                            writePermissionState = writePermissionState,
+                            downloadPayload = downloadPayload,
                             attachments = attachments
                         )
                     }
@@ -452,11 +458,14 @@ public class ImagePreviewActivity : AppCompatActivity() {
      * @param currentPage The index of the current image.
      * @param attachments The list of attachments for which actions need to be handled.
      */
+    @OptIn(ExperimentalPermissionsApi::class)
     private fun handleImageAction(
+        context: Context,
         imagePreviewAction: ImagePreviewAction,
         currentPage: Int,
-        permissionHandler: PermissionHandler,
         attachments: List<Attachment>,
+        writePermissionState: PermissionState,
+        downloadPayload: MutableState<Attachment?>
     ) {
         val message = imagePreviewAction.message
 
@@ -474,10 +483,12 @@ public class ImagePreviewActivity : AppCompatActivity() {
             }
             is Delete -> imagePreviewViewModel.deleteCurrentImage(attachments[currentPage])
             is SaveImage -> {
-                permissionHandler
-                    .onHandleRequest(
-                        mapOf(DownloadPermissionHandler.PayloadAttachment to attachments[currentPage])
-                    )
+                onDownloadHandleRequest(
+                    context = context,
+                    payload = attachments[currentPage],
+                    permissionState = writePermissionState,
+                    downloadPayload = downloadPayload
+                )
             }
         }
     }

@@ -33,10 +33,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.extensions.isMine
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
@@ -52,18 +53,20 @@ import io.getstream.chat.android.compose.ui.util.isSingleEmoji
  * Alternatively, it just shows a basic [Text] element.
  *
  * @param message Message to show.
+ * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler used for long pressing on the message text.
  */
 @Composable
 public fun MessageText(
     message: Message,
+    currentUser: User?,
     modifier: Modifier = Modifier,
-    onLongItemClick: (Message) -> Unit
+    onLongItemClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
 
-    val textColor = if (message.isMine(ChatClient.instance())) {
+    val textColor = if (message.isMine(currentUser)) {
         ChatTheme.colors.ownMessageText
     } else {
         ChatTheme.colors.otherMessageText
@@ -164,4 +167,16 @@ private fun ClickableText(
             onTextLayout(it)
         }
     )
+}
+
+@Preview
+@Composable
+private fun MessageTextPreview() {
+    ChatTheme {
+        MessageText(
+            message = Message(text = "Hello World!"),
+            currentUser = null,
+            onLongItemClick = {}
+        )
+    }
 }

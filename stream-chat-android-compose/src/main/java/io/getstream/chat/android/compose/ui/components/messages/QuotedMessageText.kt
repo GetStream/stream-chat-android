@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.extensions.isMine
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
@@ -38,6 +38,7 @@ import io.getstream.chat.android.uiutils.extension.isFile
  * Default text element for quoted messages, with extra styling and padding for the chat bubble.
  *
  * @param message Message to show.
+ * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
  * @param replyMessage The message that contains the reply.
  * @param quoteMaxLines Max number of lines quoted text can have.
@@ -45,6 +46,7 @@ import io.getstream.chat.android.uiutils.extension.isFile
 @Composable
 public fun QuotedMessageText(
     message: Message,
+    currentUser: User?,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
     quoteMaxLines: Int = DefaultQuoteMaxLines,
@@ -85,7 +87,7 @@ public fun QuotedMessageText(
         "quotedMessageText is null. Cannot display invalid message title."
     }
 
-    val textColor = if (replyMessage?.isMine(ChatClient.instance()) != false) {
+    val textColor = if (replyMessage?.isMine(currentUser) != false) {
         ChatTheme.colors.ownMessageQuotedText
     } else {
         ChatTheme.colors.otherMessageQuotedText
