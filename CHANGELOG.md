@@ -118,9 +118,21 @@
   * `messageReplyTextStyleTheirs`
   * `messageReplyMessageBackgroundStrokeColorTheirs`
   * `messageReplyMessageBackgroundStrokeWidthTheirs`
+- Added the following parameters to `MessageComposerViewModel.sendMessage()`. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+  * `skipPush`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link attachment.
+- Added the following parameters to `MessageInputViewModel.sendMessage()`, `MessageInputViewModel.sendMessageWithAttachments()` and `MessageInputViewModel.sendMessageWithCustomAttachments()`. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+  * `skipPush`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link attachment.
+- Added the following parameters to `MessageInputViewModel.editMessage()`. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+  * `skipPush`: when set to `true` a newly sent message will not trigger a push notification. Editing and sending a moderated message results in it being treated as a new message when sent.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link attachment.
 
 ### ⚠️ Changed
 - The styling for the reply message bubbles visible inside `MessageInputView` and `MessageComposerView` when replying to messages has changed slightly and is now the same for both messages sent by the currently logged-in user and those sent by other users. However, you are now able to style the bubbles. For more information check the added section for `stream-chat-android-ui-components`. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+- Added the following parameters to `MessageInputViewModel.sendMessage()`, `MessageInputViewModel.sendMessageWithAttachments()` and `MessageInputViewModel.sendMessageWithCustomAttachments()`. The new parameters have been added positionally above the parameter `messageTransformer: Message.() -> Unit` in order to preserve the trailing lambda. In a few rare cases, this might end up in a small breaking change.[#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+  * `skipPush`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link attachment.
 
 ### ❌ Removed
 
@@ -133,6 +145,9 @@
 
 ### ✅ Added
 - Added the parameter `channelOptions: List<ChannelOptionState>` to `SelectedChannelMenu` allowing users to override the default channel options more easily. The parameter comes with a default argument of `buildDefaultChannelOptionsState()`. [#4671](https://github.com/GetStream/stream-chat-android/pull/4671)
+- Added the following parameters to `MessageComposerViewModel.sendMessage()`. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+  * `skipPush`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link attachment.
 
 ### ⚠️ Changed
 - Added the parameter `channelOptions: List<ChannelOptionState>` to `SelectedChannelMenu` allowing users to override the default channel options more easily. The parameter comes with a default argument of `buildDefaultChannelOptionsState()`. [#4671](https://github.com/GetStream/stream-chat-android/pull/4671)
