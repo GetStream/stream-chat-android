@@ -53,6 +53,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
@@ -438,6 +439,7 @@ internal fun EmojiMessageContent(
     if (!messageItem.isFailed()) {
         MessageContent(
             message = message,
+            currentUser = messageItem.currentUser,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
@@ -447,6 +449,7 @@ internal fun EmojiMessageContent(
         Box(modifier = modifier) {
             MessageContent(
                 message = message,
+                currentUser = messageItem.currentUser,
                 onLongItemClick = onLongItemClick,
                 onGiphyActionClick = onGiphyActionClick,
                 onImagePreviewResult = onImagePreviewResult,
@@ -509,6 +512,7 @@ internal fun RegularMessageContent(
             content = {
                 MessageContent(
                     message = message,
+                    currentUser = messageItem.currentUser,
                     onLongItemClick = onLongItemClick,
                     onGiphyActionClick = onGiphyActionClick,
                     onImagePreviewResult = onImagePreviewResult,
@@ -525,6 +529,7 @@ internal fun RegularMessageContent(
                 content = {
                     MessageContent(
                         message = message,
+                        currentUser = messageItem.currentUser,
                         onLongItemClick = onLongItemClick,
                         onGiphyActionClick = onGiphyActionClick,
                         onImagePreviewResult = onImagePreviewResult,
@@ -555,6 +560,7 @@ internal fun RegularMessageContent(
 @Composable
 internal fun DefaultMessageTextContent(
     message: Message,
+    currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
 ) {
@@ -565,6 +571,7 @@ internal fun DefaultMessageTextContent(
             QuotedMessage(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 message = quotedMessage,
+                currentUser = currentUser,
                 replyMessage = message,
                 onLongItemClick = { onLongItemClick(message) },
                 onQuotedMessageClick = onQuotedMessageClick
@@ -572,6 +579,7 @@ internal fun DefaultMessageTextContent(
         }
         MessageText(
             message = message,
+            currentUser = currentUser,
             onLongItemClick = onLongItemClick
         )
     }

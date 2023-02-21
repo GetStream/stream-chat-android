@@ -20,7 +20,7 @@
     <ID>ComplexMethod:MessageListView.kt$MessageListView$private fun handleMessageAction(messageAction: MessageAction)</ID>
     <ID>ComplexMethod:MessageListViewModel.kt$MessageListViewModel.MessagePositionHandler.Companion$internal fun defaultHandler(): MessagePositionHandler</ID>
     <ID>ComplexMethod:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$override fun createMessageOptionItems( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, style: MessageListViewStyle, ): List&lt;MessageOptionItem></ID>
-    <ID>ComplexMethod:MessageReplyView.kt$MessageReplyView$private fun setReplyBackground(message: Message, isMine: Boolean, style: MessageReplyStyle?)</ID>
+    <ID>ComplexMethod:MessageReplyView.kt$MessageReplyView$private fun setReplyBackground(quotedMessage: Message, isMine: Boolean, style: MessageReplyStyle?)</ID>
     <ID>EmptyFunctionBlock:SuggestionListControllerListener.kt$DefaultSuggestionListControllerListener${}</ID>
     <ID>ForbiddenComment:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$// TODO: leaves empty space after pagination</ID>
     <ID>ForbiddenComment:SearchViewModel.kt$SearchViewModel$// TODO: use the pagination based on "limit" nad "next" params here</ID>
@@ -146,8 +146,6 @@
     <ID>MaxLineLength:MessageListViewModelFactory.kt$MessageListViewModelFactory$?:</ID>
     <ID>MaxLineLength:MessageListViewStyle.kt$MessageListViewStyle$*</ID>
     <ID>MaxLineLength:MessageReplyStyle.kt$MessageReplyStyle$*</ID>
-    <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$setStrokeTint(style?.messageStrokeColorTheirs ?: context.getColorCompat(R.color.stream_ui_grey_whisper))</ID>
-    <ID>MaxLineLength:MessageReplyView.kt$MessageReplyView$val tintColor = style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)</ID>
     <ID>MaxLineLength:ReactionsDecorator.kt$ReactionsDecorator$expectedReactionsAndOffsetWidth > rootConstraintLayout.measuredWidth -> expectedReactionsAndOffsetWidth - rootWidth</ID>
     <ID>MaxLineLength:ScrollButtonViewStyle.kt$ScrollButtonViewStyle$*</ID>
     <ID>MaxLineLength:SearchResultListViewStyle.kt$SearchResultListViewStyle$*</ID>

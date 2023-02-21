@@ -364,7 +364,7 @@ public class MessageListView : ConstraintLayout {
     private val defaultMessageLongClickListener =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                if (message.isModerationFailed(ChatClient.instance())) {
+                if (message.isModerationFailed(currentUser = ChatClient.instance().getCurrentUser())) {
                     moderatedMessageLongClickListener?.onModeratedMessageLongClick(message)
                 } else {
                     val style = requireStyle()
@@ -403,7 +403,7 @@ public class MessageListView : ConstraintLayout {
         },
         optionClickListener: (MessageAction) -> Unit = { messageAction: MessageAction ->
             handleMessageAction(messageAction)
-        }
+        },
     ) {
         MessageOptionsDialogFragment.newInstance(
             context = context,
@@ -432,20 +432,14 @@ public class MessageListView : ConstraintLayout {
      */
     private var moderatedMessageLongClickListener: ModeratedMessageLongClickListener? =
         ModeratedMessageLongClickListener { message ->
-            context.getFragmentManager()?.let { fragmentManager ->
-                ModeratedMessageDialogFragment.newInstance(message).apply {
-                    setDialogSelectionHandler(object : ModeratedMessageDialogFragment.DialogSelectionHandler {
-                        override fun onModeratedOptionSelected(message: Message, action: ModeratedMessageOption) {
-                            moderatedMessageOptionHandler.onModeratedMessageOptionSelected(message, action)
-                        }
-                    })
-                }.show(fragmentManager, ModeratedMessageDialogFragment.TAG)
-            }
+            showModeratedMessageDialog(message)
         }
+
     private val defaultMessageRetryListener =
         MessageRetryListener { message ->
             messageRetryHandler.onMessageRetry(message)
         }
+
     private val defaultThreadClickListener =
         ThreadClickListener { message ->
             if (message.replyCount > 0) {
@@ -1562,7 +1556,7 @@ public class MessageListView : ConstraintLayout {
      * @param handler The handler to use.
      */
     public fun setAttachmentShowInChatOptionClickHandler(
-        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler
+        handler: AttachmentGalleryActivity.AttachmentShowInChatOptionHandler,
     ) {
         this._attachmentShowInChatOptionClickHandler = handler
     }
@@ -1623,6 +1617,30 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setModeratedMessageHandler(handler: ModeratedMessageOptionHandler) {
         this.moderatedMessageOptionHandler = handler
+    }
+
+    /**
+     * Used to display the moderated message dialog when you long click on a message that has failed the moderation
+     * check.
+     *
+     * Used by the default moderated message long click listener as well as the general default message long click
+     * listener which internally calls the moderated message long click listener if the message has failed the
+     * moderation check.
+     * @see moderatedMessageLongClickListener
+     * @see defaultMessageLongClickListener
+     *
+     * @param message The message that has failed moderation, used to show the moderation dialog.
+     */
+    public fun showModeratedMessageDialog(message: Message) {
+        context.getFragmentManager()?.let { fragmentManager ->
+            ModeratedMessageDialogFragment.newInstance(message).apply {
+                setDialogSelectionHandler(object : ModeratedMessageDialogFragment.DialogSelectionHandler {
+                    override fun onModeratedOptionSelected(message: Message, action: ModeratedMessageOption) {
+                        moderatedMessageOptionHandler.onModeratedMessageOptionSelected(message, action)
+                    }
+                })
+            }.show(fragmentManager, ModeratedMessageDialogFragment.TAG)
+        }
     }
 
     /**
