@@ -273,9 +273,24 @@ public class ChannelClient internal constructor(
         return client.getMessage(messageId)
     }
 
+    /**
+     * Updates the message in the API and calls the plugins that handle this request. [OfflinePlugin] can be used here
+     * to store the updated message locally.
+     *
+     * @param message [Message] The message to be updated.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
+     */
     @CheckResult
-    public fun updateMessage(message: Message): Call<Message> {
-        return client.updateMessage(message)
+    @JvmOverloads
+    public fun updateMessage(
+        message: Message,
+        skipEnrichUrl: Boolean = false,
+    ): Call<Message> {
+        return client.updateMessage(
+            message = message,
+            skipEnrichUrl = skipEnrichUrl,
+        )
     }
 
     @CheckResult
@@ -289,13 +304,28 @@ public class ChannelClient internal constructor(
      *
      * @param message Message to send.
      * @param isRetrying True if this message is being retried.
+     * @param skipPush If the message should skip triggering a push notification when sent. False by default.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
     @CheckResult
     @JvmOverloads
-    public fun sendMessage(message: Message, isRetrying: Boolean = false): Call<Message> {
-        return client.sendMessage(channelType, channelId, message, isRetrying)
+    public fun sendMessage(
+        message: Message,
+        isRetrying: Boolean = false,
+        skipPush: Boolean = false,
+        skipEnrichUrl: Boolean = false,
+    ): Call<Message> {
+        return client.sendMessage(
+            channelType = channelType,
+            channelId = channelId,
+            message = message,
+            isRetrying = isRetrying,
+            skipPush = skipPush,
+            skipEnrichUrl = skipEnrichUrl,
+        )
     }
 
     @CheckResult
