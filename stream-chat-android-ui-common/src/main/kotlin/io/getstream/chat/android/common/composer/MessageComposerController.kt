@@ -509,22 +509,40 @@ public class MessageComposerController(
      * It also dismisses any current message actions.
      *
      * @param message The message to send.
+     * @param skipPush If the message should skip triggering a push notification when sent. False by default. Note, only
+     * new messages trigger push notifications, updating edited messages does not.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
      */
-    public fun sendMessage(message: Message) {
+    public fun sendMessage(
+        message: Message,
+        skipPush: Boolean = false,
+        skipEnrichUrl: Boolean = false,
+    ) {
         val activeMessage = activeAction?.message ?: message
 
-        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(currentUser = chatClient.getCurrentUser())) {
-            getEditMessageCall(message)
-        } else {
-            message.showInChannel = isInThread && alsoSendToChannel.value
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
+        val sendMessageCall =
+            if (isInEditMode && !activeMessage.isModerationFailed(currentUser = chatClient.getCurrentUser())) {
+                getEditMessageCall(
+                    message = message,
+                    skipEnrichUrl = skipEnrichUrl,
+                )
+            } else {
+                message.showInChannel = isInThread && alsoSendToChannel.value
+                val (channelType, channelId) = message.cid.cidToTypeAndId()
 
-            if (activeMessage.isModerationFailed(chatClient.getCurrentUser())) {
-                chatClient.deleteMessage(activeMessage.id, true).enqueue()
+                if (activeMessage.isModerationFailed(chatClient.getCurrentUser())) {
+                    chatClient.deleteMessage(activeMessage.id, true).enqueue()
+                }
+
+                chatClient.sendMessage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    message = message,
+                    skipPush = skipPush,
+                    skipEnrichUrl = skipEnrichUrl
+                )
             }
-
-            chatClient.sendMessage(channelType, channelId, message)
-        }
 
         dismissMessageActions()
         clearData()
@@ -820,10 +838,18 @@ public class MessageComposerController(
     /**
      * Gets the edit message call using [ChatClient].
      *
-     * @param message [Message]
+     * @param message The message to send.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
      */
-    private fun getEditMessageCall(message: Message): Call<Message> {
-        return chatClient.updateMessage(message)
+    private fun getEditMessageCall(
+        message: Message,
+        skipEnrichUrl: Boolean,
+    ): Call<Message> {
+        return chatClient.updateMessage(
+            message = message,
+            skipEnrichUrl = skipEnrichUrl
+        )
     }
 
     /**
