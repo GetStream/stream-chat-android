@@ -84,7 +84,7 @@ internal class MessageListItemLiveData(
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
-    private val dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
+    private var dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler? = null,
     private val deletedMessageVisibility: LiveData<DeletedMessageVisibility>,
     private val messageFooterVisibility: LiveData<MessageFooterVisibility>,
     private val messagePositionHandlerProvider: () -> MessageListViewModel.MessagePositionHandler,
@@ -436,5 +436,15 @@ internal class MessageListItemLiveData(
                 func(type, user)
             }
         }
+    }
+
+    /**
+     * Updates [MessageListItemLiveData.dateSeparatorHandler].
+     *
+     * @param dateSeparatorHandler The new date separator handler which will be assigned to
+     * [MessageListItemLiveData.dateSeparatorHandler].
+     */
+    internal fun updateDateSeparatorHandlers(dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler?) {
+        this.dateSeparatorHandler = dateSeparatorHandler
     }
 }

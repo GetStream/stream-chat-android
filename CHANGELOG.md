@@ -57,10 +57,15 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed image scaling when width is bigger than height. [#4659](https://github.com/GetStream/stream-chat-android/pull/4659)
+- Fixed date separator handlers not being applied when calling `MessageListViewModel.setDateSeparatorHandler()` and  `MessageListViewModel.()`. [#4681](https://github.com/GetStream/stream-chat-android/pull/4681)
 
 ### ⬆️ Improved
+- When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
 
 ### ✅ Added
+- Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
+- Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
+- Added the method `showModeratedMessageDialog()` to `MessageListView`. It is used to display a dialog when long clicking on a message that has failed a moderation check. [#4645](https://github.com/GetStream/stream-chat-android/pull/4645)
 - Added the ability to style the way message reply bubbles are displayed in `MessageComposerView` via xml attributes. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
   * `streamUiMessageComposerMessageReplyBackgroundColor`
   * `streamUiMessageComposerMessageReplyTextSizeMine`
@@ -120,6 +125,7 @@
 - Fixed Compose Previews for ChatTheme and other minor components like `MessageText`. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 
 ### ⬆️ Improved
+- When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
 
 ### ✅ Added
 
