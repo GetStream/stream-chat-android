@@ -215,8 +215,17 @@ public class MessageInputViewModel @JvmOverloads constructor(
      *
      * @param messageText The current message text.
      * @param messageTransformer Transformer that applies custom changes to the message, before being sent.
+     * @param skipPush If the message should skip triggering a push notification when sent. False by default.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
      */
-    public fun sendMessage(messageText: String, messageTransformer: Message.() -> Unit = { }) {
+    @JvmOverloads
+    public fun sendMessage(
+        messageText: String,
+        skipPush: Boolean = false,
+        skipEnrichUrl: Boolean = false,
+        messageTransformer: Message.() -> Unit = { },
+    ) {
         val message = Message(
             cid = cid,
             text = messageText,
@@ -225,7 +234,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
         activeThread.value?.let { message.parentId = it.id }
         stopTyping()
 
-        sendMessageInternal(message.apply(messageTransformer))
+        sendMessageInternal(
+            message = message.apply(messageTransformer),
+            skipPush = skipPush,
+            skipEnrichUrl = skipEnrichUrl
+        )
     }
 
     /**
@@ -233,11 +246,17 @@ public class MessageInputViewModel @JvmOverloads constructor(
      *
      * @param messageText The current message text.
      * @param attachmentsWithMimeTypes Attachments that we support out of the box.
+     * @param skipPush If the message should skip triggering a push notification when sent. False by default.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
      * @param messageTransformer Transformer that applies custom changes to the message, before being sent.
      */
+    @JvmOverloads
     public fun sendMessageWithAttachments(
         messageText: String,
         attachmentsWithMimeTypes: List<Pair<File, String?>>,
+        skipPush: Boolean = false,
+        skipEnrichUrl: Boolean = false,
         messageTransformer: Message.() -> Unit = { },
     ) {
         // Send message should not be cancelled when viewModel.onCleared is called
@@ -251,20 +270,41 @@ public class MessageInputViewModel @JvmOverloads constructor(
             attachments = attachments,
             mentionedUsersIds = filterMentions(selectedMentions, messageText)
         ).apply(messageTransformer)
-        sendMessageInternal(message)
+        sendMessageInternal(
+            message = message,
+            skipPush = skipPush,
+            skipEnrichUrl = skipEnrichUrl
+        )
     }
 
-    private fun sendMessageInternal(message: Message) {
+    /**
+     * Sends a regular message to the channel.
+     *
+     * @param message The message to be sent.
+     * @param skipPush If the message should skip triggering a push notification when sent. False by default.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
+     */
+    private fun sendMessageInternal(
+        message: Message,
+        skipPush: Boolean = false,
+        skipEnrichUrl: Boolean = false
+    ) {
         val (channelType, channelId) = cid.cidToTypeAndId()
-        chatClient.sendMessage(channelType, channelId, message)
-            .enqueue(
-                onError = { chatError ->
-                    logger.e {
-                        "Could not send message with cid: ${message.cid}. " +
-                            "Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}"
-                    }
+        chatClient.sendMessage(
+            channelType = channelType,
+            channelId = channelId,
+            message = message,
+            skipPush = skipPush,
+            skipEnrichUrl = skipEnrichUrl
+        ).enqueue(
+            onError = { chatError ->
+                logger.e {
+                    "Could not send message with cid: ${message.cid}. " +
+                        "Error message: ${chatError.message}. Cause message: ${chatError.cause?.message}"
                 }
-            )
+            }
+        )
     }
 
     /**
@@ -272,12 +312,18 @@ public class MessageInputViewModel @JvmOverloads constructor(
      *
      * @param messageText The current message text.
      * @param customAttachments Attachments that are custom built by the user.
+     * @param skipPush If the message should skip triggering a push notification when sent. False by default.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
      * @param messageTransformer Transformer that applies custom changes to the message, before being sent.
      */
     @ExperimentalStreamChatApi
+    @JvmOverloads
     public fun sendMessageWithCustomAttachments(
         messageText: String,
         customAttachments: List<Attachment>,
+        skipPush: Boolean = false,
+        skipEnrichUrl: Boolean = false,
         messageTransformer: Message.() -> Unit = { },
     ) {
         val message = Message(
@@ -286,7 +332,11 @@ public class MessageInputViewModel @JvmOverloads constructor(
             attachments = customAttachments.toMutableList(),
             mentionedUsersIds = filterMentions(selectedMentions, messageText)
         ).apply(messageTransformer)
-        sendMessageInternal(message)
+        sendMessageInternal(
+            message = message,
+            skipPush = skipPush,
+            skipEnrichUrl = skipEnrichUrl
+        )
     }
 
     /**
@@ -314,15 +364,31 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * old message and send a new one.
      *
      * @param message The Message updated with the new information, that we need to send.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. False by default.
+     * @param skipPushForModeratedMessages Will not generate a push notifications for moderated messages that have been
+     * edited. Unlike regular edited messages, moderated messages are sent to the server as new messages.
      */
-    public fun editMessage(message: Message) {
+    @JvmOverloads
+    public fun editMessage(
+        message: Message,
+        skipEnrichUrl: Boolean = false,
+        skipPushForModeratedMessages: Boolean = false,
+    ) {
         val updatedMessage = message.copy(mentionedUsersIds = filterMentions(selectedMentions, message.text))
         stopTyping()
 
         if (message.isModerationFailed(chatClient.getCurrentUser())) {
-            onEditModeratedMessage(message)
+            onEditModeratedMessage(
+                message = message,
+                skipEnrichUrl = skipEnrichUrl,
+                skipPush = skipPushForModeratedMessages
+            )
         } else {
-            chatClient.updateMessage(updatedMessage).enqueue(
+            chatClient.updateMessage(
+                message = updatedMessage,
+                skipEnrichUrl = skipEnrichUrl
+            ).enqueue(
                 onError = { chatError ->
                     logger.e {
                         "Could not edit message with cid: ${updatedMessage.cid}. " +
@@ -340,16 +406,29 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * @param message The [Message] updated with the new information that we need to send.
      */
     @OptIn(ExperimentalStreamChatApi::class)
-    private fun onEditModeratedMessage(message: Message) {
+    private fun onEditModeratedMessage(
+        message: Message,
+        skipPush: Boolean = false,
+        skipEnrichUrl: Boolean = false,
+    ) {
         chatClient.deleteMessage(message.id, true).enqueue()
         if (message.attachments.isNotEmpty()) {
             // Works for both custom and default attachments, reason being that it doesn't do any parsing of the
             // attachments
-            sendMessageWithCustomAttachments(message.text, message.attachments) {
+            sendMessageWithCustomAttachments(
+                messageText = message.text,
+                customAttachments = message.attachments,
+                skipPush = skipPush,
+                skipEnrichUrl = skipEnrichUrl
+            ) {
                 parentId = message.parentId
             }
         } else {
-            sendMessage(message.text) {
+            sendMessage(
+                messageText = message.text,
+                skipPush = skipPush,
+                skipEnrichUrl = skipEnrichUrl
+            ) {
                 parentId = message.parentId
             }
         }
