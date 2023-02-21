@@ -1000,11 +1000,11 @@ public class ImagePreviewActivity : AppCompatActivity() {
             messageId: String,
             attachmentPosition: Int,
             skipEnrichUrl: Boolean = false,
-            ): Intent {
+        ): Intent {
             return Intent(context, ImagePreviewActivity::class.java).apply {
                 putExtra(KeyMessageId, messageId)
                 putExtra(KeyAttachmentPosition, attachmentPosition)
-                putExtra(KeySkipEnrichUrl,skipEnrichUrl)
+                putExtra(KeySkipEnrichUrl, skipEnrichUrl)
             }
         }
     }

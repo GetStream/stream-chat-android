@@ -616,7 +616,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Imag
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/ImagePreviewActivity$Companion {
-	public final fun getIntent (Landroid/content/Context;Ljava/lang/String;I)Landroid/content/Intent;
+	public final fun getIntent (Landroid/content/Context;Ljava/lang/String;IZ)Landroid/content/Intent;
+	public static synthetic fun getIntent$default (Lio/getstream/chat/android/compose/ui/attachments/preview/ImagePreviewActivity$Companion;Landroid/content/Context;Ljava/lang/String;IZILjava/lang/Object;)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/ImagePreviewContract : androidx/activity/result/contract/ActivityResultContract {
