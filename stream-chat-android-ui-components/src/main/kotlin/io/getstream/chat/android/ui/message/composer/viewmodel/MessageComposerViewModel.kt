@@ -176,6 +176,7 @@ public class MessageComposerViewModel(
      * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
      * displayed as a link attachment. False by default.
      */
+    @JvmOverloads
     public fun sendMessage(
         message: Message,
         skipPush: Boolean = false,

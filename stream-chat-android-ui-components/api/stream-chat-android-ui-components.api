@@ -2254,6 +2254,8 @@ public final class io/getstream/chat/android/ui/message/composer/viewmodel/Messa
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/client/models/Attachment;)V
 	public final fun selectCommand (Lio/getstream/chat/android/client/models/Command;)V
 	public final fun selectMention (Lio/getstream/chat/android/client/models/User;)V
+	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;)V
+	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;Z)V
 	public final fun sendMessage (Lio/getstream/chat/android/client/models/Message;ZZ)V
 	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/ui/message/composer/viewmodel/MessageComposerViewModel;Lio/getstream/chat/android/client/models/Message;ZZILjava/lang/Object;)V
 	public final fun setAlsoSendToChannel (Z)V
