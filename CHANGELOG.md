@@ -57,6 +57,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed image scaling when width is bigger than height. [#4659](https://github.com/GetStream/stream-chat-android/pull/4659)
+- Fixed date separator handlers not being applied when calling `MessageListViewModel.setDateSeparatorHandler()` and  `MessageListViewModel.()`. [#4681](https://github.com/GetStream/stream-chat-android/pull/4681)
 
 ### ⬆️ Improved
 - When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
