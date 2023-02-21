@@ -56,8 +56,16 @@ internal class LoadNotificationDataWorker(
             val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
 
             val result = getChannel.zipWith(getMessage).await()
+
             if (result.isSuccess) {
                 val (channel, message) = result.data()
+                val messageParentId = message.parentId
+
+                if (messageParentId != null) {
+                    logger.v { "[doWork] fetching thread parent message." }
+                    client.getMessage(messageParentId).await()
+                }
+
                 ChatClient.displayNotification(channel = channel, message = message)
                 Result.success()
             } else {
@@ -120,7 +128,7 @@ internal class LoadNotificationDataWorker(
             context: Context,
             channelId: String,
             channelType: String,
-            messageId: String
+            messageId: String,
         ) {
             val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
                 .setInputData(

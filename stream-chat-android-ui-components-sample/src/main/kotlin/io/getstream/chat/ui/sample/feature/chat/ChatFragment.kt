@@ -62,7 +62,13 @@ class ChatFragment : Fragment() {
 
     private val args: ChatFragmentArgs by navArgs()
 
-    private val factory: MessageListViewModelFactory by lazy { MessageListViewModelFactory(args.cid, args.messageId) }
+    private val factory: MessageListViewModelFactory by lazy {
+        MessageListViewModelFactory(
+            cid = args.cid,
+            messageId = args.messageId,
+            navigateToThreadViaNotification = true
+        )
+    }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
     private val headerViewModel: MessageListHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }

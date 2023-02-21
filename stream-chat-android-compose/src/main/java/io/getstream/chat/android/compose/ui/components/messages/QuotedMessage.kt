@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.extensions.isMine
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -38,6 +39,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * Wraps the quoted message into a component that shows only the sender avatar, text and single attachment preview.
  *
  * @param message The quoted message to show.
+ * @param currentUser The currently logged in user.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param modifier Modifier for styling.
@@ -53,18 +55,30 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun QuotedMessage(
     message: Message,
+    currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
-    leadingContent: @Composable (Message) -> Unit = { DefaultQuotedMessageLeadingContent(message = it) },
+    leadingContent: @Composable (Message) -> Unit = {
+        DefaultQuotedMessageLeadingContent(
+            message = it,
+            currentUser = currentUser
+        )
+    },
     centerContent: @Composable RowScope.(Message) -> Unit = {
         DefaultQuotedMessageCenterContent(
             message = it,
             replyMessage = replyMessage,
+            currentUser = currentUser
         )
     },
-    trailingContent: @Composable (Message) -> Unit = { DefaultQuotedMessageTrailingContent(message = it) },
+    trailingContent: @Composable (Message) -> Unit = {
+        DefaultQuotedMessageTrailingContent(
+            message = it,
+            currentUser = currentUser
+        )
+    },
 ) {
     Row(
         modifier = modifier.combinedClickable(
@@ -91,8 +105,11 @@ public fun QuotedMessage(
  * @param message The quoted message.
  */
 @Composable
-internal fun DefaultQuotedMessageLeadingContent(message: Message) {
-    if (!message.isMine()) {
+internal fun DefaultQuotedMessageLeadingContent(
+    message: Message,
+    currentUser: User?,
+) {
+    if (!message.isMine(currentUser)) {
         Avatar(
             modifier = Modifier
                 .padding(start = 2.dp)
@@ -114,8 +131,11 @@ internal fun DefaultQuotedMessageLeadingContent(message: Message) {
  * @param message The quoted message.
  */
 @Composable
-internal fun DefaultQuotedMessageTrailingContent(message: Message) {
-    if (message.isMine()) {
+internal fun DefaultQuotedMessageTrailingContent(
+    message: Message,
+    currentUser: User?,
+) {
+    if (message.isMine(currentUser)) {
         Spacer(modifier = Modifier.size(8.dp))
 
         Avatar(
@@ -133,16 +153,19 @@ internal fun DefaultQuotedMessageTrailingContent(message: Message) {
  * Represents the default content shown in the center of the quoted message wrapped inside a message bubble.
  *
  * @param message The quoted message.
+ * @param currentUser The currently logged in user.
  * @param replyMessage The message that contains the reply.
  */
 @Composable
 public fun RowScope.DefaultQuotedMessageCenterContent(
     message: Message,
+    currentUser: User?,
     replyMessage: Message? = null,
 ) {
     QuotedMessageContent(
         message = message,
         replyMessage = replyMessage,
-        modifier = Modifier.weight(1f, fill = false)
+        modifier = Modifier.weight(1f, fill = false),
+        currentUser = currentUser
     )
 }

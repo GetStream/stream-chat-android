@@ -14,7 +14,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Added offline plugin integration to the `ChatCliet.getCall()` method. If you use the offline plugin, any message fetched using this method will be stored inside the database upon successful completion of the API call. [#4623](https://github.com/GetStream/stream-chat-android/pull/4623)
 
 ### ✅ Added
 
@@ -28,7 +27,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added the `GetMessageListener` interface used to perform actions as side effects when the `ChatCliet.getCall()` method is used to fetch a single message from the backend. [#4623](https://github.com/GetStream/stream-chat-android/pull/4623)
 
 ### ⚠️ Changed
 
@@ -58,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed image scaling when width is bigger than height. [#4659](https://github.com/GetStream/stream-chat-android/pull/4659)
 
 ### ⬆️ Improved
 
@@ -72,14 +71,22 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed Compose Previews for ChatTheme and other minor components like `MessageText`. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- Added `currentUser` as a parameter to `MessageContent` and `MessageText`. These are non-optional, but nullable, parameters that define the behavior and looks of these components. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Similarly, added `currentUser` as a parameter to `QuotedMessage`, `QuotedMessageContent` and `QuotedMessageText`.
 
 ### ❌ Removed
+The following items are breaking changes, since it was very important to improve/fix the behavior. The items described were used to expose customizable permission handlers which can be reused. However, this API is experimental and breaking for Previews, so we chose to go down a different path.
+- Removed PermissionHandler and its API. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed DownloadPermissionHandler. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed StreamPermissionHandlers. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed `permissionHandlers` parameter from `ChatTheme`, this should make it easier to preview components within Android Studio. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
@@ -124,6 +131,34 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# January 31st, 2023 - 5.12.0
+## stream-chat-android-client
+### ⬆️ Improved
+- Added offline plugin integration to the `ChatCliet.getMessage()` method. If you use the offline plugin, any message fetched using this method will be stored inside the database upon successful completion of the API call. [#4623](https://github.com/GetStream/stream-chat-android/pull/4623)
+
+## stream-chat-android-offline
+### ✅ Added
+- Added the `GetMessageListener` interface used to perform actions as side effects when the `ChatCliet.getMessage()` method is used to fetch a single message from the backend. [#4623](https://github.com/GetStream/stream-chat-android/pull/4623)
+
+## stream-chat-android-ui-common
+### ⬆️ Improved
+- `MessageComposerController` will now query the server for a list of channel members if the input contains a mention symbol (@) and no user name matching the expression after the symbol @ was found in the local state containing a list of channel members. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- The default implementation of `MessageInputView` will now query channel members from the server if a mention lookup fails to find the matching channel member using the data available in the local state. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
+
+### ✅ Added
+- Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
+- Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
+- Added lambda parameter `queryMembersOnline` to `DefaultUserLookupHandler`. The lambda parameter is used internally by `DefaultUserLookupHandler.handleUserLookup()` when no matches could be found inside the list of users contained by `DefaultUserLookupHandler.users`. It should be used to query members from the server and return the results. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
+- Added the feature flag boolean `navigateToThreadViaNotification` to `MessageListViewModel` and `MessageListViewModelFactory`. If it is set to true and a thread message has been received via push notification, clicking on the notification will make the SDK automatically navigate to the thread. If set to false, the SDK will always navigate to the channel containing the thread without navigating to the thread itself. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
+
+## stream-chat-android-compose
+### ✅ Added
+- Added the parameter `messageId: String?` to `MessageListViewModel` and `MessageListViewModelFactory`. If `navigateToThreadViaNotification` is set to true (see the changelog entry below), it will enable navigating to threads upon clicking a push notification triggered by a thread message. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
+- Added the feature flag boolean `navigateToThreadViaNotification: Boolean` to `MessageListViewModel` and `MessageListViewModelFactory`. If it is set to true and a thread message has been received via push notification, clicking on the notification will make the SDK automatically navigate to the thread. If set to false, the SDK will always navigate to the channel containing the thread without navigating to the thread itself. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
 
 # December 22nd, 2022 - 5.11.10
 ## stream-chat-android-offline

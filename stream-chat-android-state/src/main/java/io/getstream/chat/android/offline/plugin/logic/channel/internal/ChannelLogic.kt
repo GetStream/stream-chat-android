@@ -153,7 +153,8 @@ internal class ChannelLogic(
             configs = configs,
             users = users.values.toList(),
             channels = listOf(channel),
-            messages = channel.messages
+            messages = channel.messages,
+            cacheForMessages = true
         )
     }
 

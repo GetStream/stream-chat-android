@@ -21,12 +21,14 @@ import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Command
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.Edit
@@ -40,8 +42,11 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.uiutils.extension.containsLinks
+import io.getstream.logging.StreamLog
+import io.getstream.logging.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -49,6 +54,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -80,6 +86,12 @@ public class MessageComposerController(
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
 ) {
+
+    /**
+     * The logger used to print to errors, warnings, information
+     * and other things to log.
+     */
+    private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageComposerController")
 
     /**
      * Creates a [CoroutineScope] that allows us to cancel the ongoing work when the parent
@@ -320,10 +332,20 @@ public class MessageComposerController(
     /**
      * Sets up the observing operations for various composer states.
      */
+    @OptIn(FlowPreview::class)
     private fun setupComposerState() {
         input.onEach { input ->
             state.value = state.value.copy(inputValue = input)
-        }.launchIn(scope)
+
+            if (canSendTypingUpdates.value) {
+                typingUpdatesBuffer.onKeystroke()
+            }
+            handleCommandSuggestions()
+            handleValidationErrors()
+        }.debounce(ComputeMentionSuggestionsDebounceTime)
+            .onEach {
+                handleMentionSuggestions()
+            }.launchIn(scope)
 
         selectedAttachments.onEach { selectedAttachments ->
             state.value = state.value.copy(attachments = selectedAttachments)
@@ -360,6 +382,10 @@ public class MessageComposerController(
         ownCapabilities.onEach { ownCapabilities ->
             state.value = state.value.copy(ownCapabilities = ownCapabilities)
         }.launchIn(scope)
+
+        chatClient.clientState.user.onEach { currentUser ->
+            state.value = state.value.copy(currentUser = currentUser)
+        }.launchIn(scope)
     }
 
     /**
@@ -369,13 +395,6 @@ public class MessageComposerController(
      */
     public fun setMessageInput(value: String) {
         this.input.value = value
-
-        if (canSendTypingUpdates.value) {
-            typingUpdatesBuffer.onKeystroke()
-        }
-        handleMentionSuggestions()
-        handleCommandSuggestions()
-        handleValidationErrors()
     }
 
     /**
@@ -494,13 +513,13 @@ public class MessageComposerController(
     public fun sendMessage(message: Message) {
         val activeMessage = activeAction?.message ?: message
 
-        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(chatClient)) {
+        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(currentUser = chatClient.getCurrentUser())) {
             getEditMessageCall(message)
         } else {
             message.showInChannel = isInThread && alsoSendToChannel.value
             val (channelType, channelId) = message.cid.cidToTypeAndId()
 
-            if (activeMessage.isModerationFailed(chatClient)) {
+            if (activeMessage.isModerationFailed(chatClient.getCurrentUser())) {
                 chatClient.deleteMessage(activeMessage.id, true).enqueue()
             }
 
@@ -535,7 +554,7 @@ public class MessageComposerController(
         val replyMessageId = (activeAction as? Reply)?.message?.id
         val mentions = filterMentions(selectedMentions, trimmedMessage)
 
-        return if (isInEditMode && !activeMessage.isModerationFailed(chatClient)) {
+        return if (isInEditMode && !activeMessage.isModerationFailed(chatClient.getCurrentUser())) {
             activeMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),
@@ -679,12 +698,81 @@ public class MessageComposerController(
     /**
      * Shows the mention suggestion list popup if necessary.
      */
-    private fun handleMentionSuggestions() {
+    private suspend fun handleMentionSuggestions() {
         val containsMention = MentionPattern.matcher(messageText).find()
 
         mentionSuggestions.value = if (containsMention) {
-            users.filter { it.name.contains(messageText.substringAfterLast("@"), true) }
+            logger.v { "[handleMentionSuggestions] Input contains the mention prefix @." }
+            val userNameContains = messageText.substringAfterLast("@")
+
+            val localMentions = users.filter { it.name.contains(userNameContains, true) }
+
+            when {
+                localMentions.isNotEmpty() -> {
+                    logger.v { "[handleMentionSuggestions] Mention found in the local state." }
+                    localMentions
+                }
+                userNameContains.count() > 1 -> {
+                    logger.v { "[handleMentionSuggestions] Querying the server for members who match the mention." }
+                    val (channelType, channelId) = channelId.cidToTypeAndId()
+
+                    queryMembersByUserNameContains(
+                        channelType = channelType,
+                        channelId = channelId,
+                        contains = userNameContains
+                    )
+                }
+                else -> emptyList()
+            }
         } else {
+            emptyList()
+        }
+    }
+
+    /**
+     * Queries the backend for channel members whose username contains the string represented by the argument
+     * [contains].
+     *
+     * @param channelType The type of channel we are querying for members.
+     * @param channelId The ID of the channel we are querying for members.
+     * @param contains The string for which we are querying the backend in order to see if it is contained
+     * within a member's username.
+     *
+     * @return A list of users whose username contains the string represented by [contains] or an empty list in case
+     * no usernames contain the given string.
+     */
+    private suspend fun queryMembersByUserNameContains(
+        channelType: String,
+        channelId: String,
+        contains: String,
+    ): List<User> {
+        logger.v { "[queryMembersByUserNameContains] Querying the backend for members." }
+
+        val result = chatClient.queryMembers(
+            channelType = channelType,
+            channelId = channelId,
+            offset = queryMembersRequestOffset,
+            limit = queryMembersMemberLimit,
+            filter = Filters.autocomplete(
+                fieldName = "name",
+                value = contains
+            ),
+            sort = QuerySortByField(),
+            members = listOf()
+        ).await()
+
+        return if (result.isSuccess) {
+            result.data()
+                .filter { it.user.name.contains(contains, true) }
+                .map { it.user }
+        } else {
+            val error = result.error()
+
+            logger.e {
+                "[queryMembersByUserNameContains] Could not query members: " +
+                    "${error.message}"
+            }
+
             emptyList()
         }
     }
@@ -778,5 +866,22 @@ public class MessageComposerController(
         private const val DefaultMessageLimit: Int = 30
 
         private const val OneSecond = 1000L
+
+        /**
+         * The amount of time we debounce computing mention suggestions.
+         * We debounce those computations in the case of being unable to find mentions from local data, we will query
+         * the BE for members.
+         */
+        private const val ComputeMentionSuggestionsDebounceTime = 300L
+
+        /**
+         * Pagination offset for the member query.
+         */
+        private const val queryMembersRequestOffset: Int = 0
+
+        /**
+         * The upper limit of members the query is allowed to return.
+         */
+        private const val queryMembersMemberLimit: Int = 30
     }
 }

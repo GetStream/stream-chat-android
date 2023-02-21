@@ -26,11 +26,13 @@ import com.getstream.sdk.chat.utils.extensions.isModerationFailed
 import com.getstream.sdk.chat.utils.typing.DefaultTypingUpdatesBuffer
 import com.getstream.sdk.chat.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -317,7 +319,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
         val updatedMessage = message.copy(mentionedUsersIds = filterMentions(selectedMentions, message.text))
         stopTyping()
 
-        if (message.isModerationFailed(chatClient)) {
+        if (message.isModerationFailed(chatClient.getCurrentUser())) {
             onEditModeratedMessage(message)
         } else {
             chatClient.updateMessage(updatedMessage).enqueue(
@@ -406,6 +408,52 @@ public class MessageInputViewModel @JvmOverloads constructor(
     }
 
     /**
+     * Queries the backend for channel members whose username contains the string represented by the argument
+     * [contains].
+     *
+     * @param contains The string for which we are querying the backend in order to see if it is contained
+     * within a member's username.
+     *
+     * @return A list of users whose username contains the string represented by [contains] or an empty list in case
+     * no usernames contain the given string.
+     */
+    internal suspend fun queryMembersByUserNameContains(
+        contains: String,
+    ): List<User> {
+        logger.v { "[queryMembersByUserNameContains] Querying the backend for members." }
+
+        val (channelType, channelId) = cid.cidToTypeAndId()
+
+        val result = chatClient.queryMembers(
+            channelType = channelType,
+            channelId = channelId,
+            offset = QUERY_MEMBERS_REQUEST_OFFSET,
+            limit = QUERY_MEMBERS_REQUEST_MEMBER_LIMIT,
+            filter = Filters.autocomplete(
+                fieldName = "name",
+                value = contains
+            ),
+            sort = QuerySortByField(),
+            members = listOf()
+        ).await()
+
+        return if (result.isSuccess) {
+            result.data()
+                .filter { it.user.name.contains(contains, true) }
+                .map { it.user }
+        } else {
+            val error = result.error()
+
+            logger.e {
+                "[queryMembersByUserNameContains] Could not query members: " +
+                    "${error.message}"
+            }
+
+            emptyList()
+        }
+    }
+
+    /**
      * Performs hygiene events such as clearing typing updates
      * when the used leaves the messages screen.
      */
@@ -420,5 +468,15 @@ public class MessageInputViewModel @JvmOverloads constructor(
          * The default limit for messages that will be requested.
          */
         private const val DEFAULT_MESSAGES_LIMIT: Int = 30
+
+        /**
+         * Pagination offset for the member query.
+         */
+        private const val QUERY_MEMBERS_REQUEST_OFFSET: Int = 0
+
+        /**
+         * The upper limit of members the query is allowed to return.
+         */
+        private const val QUERY_MEMBERS_REQUEST_MEMBER_LIMIT: Int = 30
     }
 }

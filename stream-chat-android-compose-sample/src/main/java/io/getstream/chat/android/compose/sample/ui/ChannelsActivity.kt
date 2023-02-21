@@ -230,7 +230,13 @@ class ChannelsActivity : BaseConnectedActivity() {
     }
 
     private fun openMessages(channel: Channel) {
-        startActivity(MessagesActivity.createIntent(this, channel.cid))
+        startActivity(
+            MessagesActivity.createIntent(
+                context = this,
+                channelId = channel.cid,
+                messageId = null
+            )
+        )
     }
 
     private fun openUserLogin() {

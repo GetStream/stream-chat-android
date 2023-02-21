@@ -1303,14 +1303,23 @@ public class MessageInputView : ConstraintLayout {
      * Tt uses levenshtein approximation so typos are included in the search. It is possible to choose a transliteration
      * in the class to conversions between languages are possible. It uses https://unicode-org.github.io/icu/userguide/icu4j/
      * for transliteration
+     *
+     * @param users The primary list of users used when searching for user metion matches. Usually this is populated
+     * by local state data.
+     * @param streamTransliterator Handles transliteration.
+     * @param queryMembersOnline This method is invoked internally within the body of [handleUserLookup]] if no
+     * matches were found within [users]. Use it to query the server for members and return a result.
      */
-    public class DefaultUserLookupHandler(
+    public class DefaultUserLookupHandler @JvmOverloads constructor(
         public var users: List<User>,
         private var streamTransliterator: StreamTransliterator = DefaultStreamTransliterator(),
+        private val queryMembersOnline: suspend (query: String) -> List<User> = { emptyList() },
     ) : UserLookupHandler {
 
         override suspend fun handleUserLookup(query: String): List<User> {
-            return searchUsers(users, query, streamTransliterator)
+            return searchUsers(users, query, streamTransliterator).ifEmpty {
+                queryMembersOnline(query)
+            }
         }
     }
 
