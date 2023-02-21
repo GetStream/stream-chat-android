@@ -53,6 +53,9 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the following parameters to `MessageComposerController.sendMessage()`. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+  * `skipPush`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link attachment.
 
 ### ⚠️ Changed
 
