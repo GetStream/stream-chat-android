@@ -100,7 +100,6 @@ internal class MessageComposerViewModelTest {
                 isRetrying = eq(false),
                 skipPush = any(),
                 skipEnrichUrl = any(),
-                isPendingMessage = any()
             )
             captor.firstValue.text `should be equal to` "Message text"
             viewModel.input.value `should be equal to` ""
@@ -139,7 +138,6 @@ internal class MessageComposerViewModelTest {
                 isRetrying = eq(false),
                 skipPush = any(),
                 skipEnrichUrl = any(),
-                isPendingMessage = any()
             )
             captor.firstValue.attachments.size `should be equal to` 2
             viewModel.selectedAttachments.value.size `should be equal to` 0
@@ -401,7 +399,6 @@ internal class MessageComposerViewModelTest {
                     isRetrying = any(),
                     skipPush = any(),
                     skipEnrichUrl = any(),
-                    isPendingMessage = any()
                 )
             ) doReturn message.asCall()
         }

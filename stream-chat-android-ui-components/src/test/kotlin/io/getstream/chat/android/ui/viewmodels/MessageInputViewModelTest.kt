@@ -196,7 +196,6 @@ internal class MessageInputViewModelTest {
                     isRetrying = any(),
                     skipPush = any(),
                     skipEnrichUrl = any(),
-                    isPendingMessage = any()
                 )
             ) doReturn Message().asCall()
         }
