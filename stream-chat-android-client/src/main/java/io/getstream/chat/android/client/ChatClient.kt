@@ -1579,7 +1579,7 @@ internal constructor(
      * @param message Message object
      * @param isRetrying True if this message is being retried.
      * @param skipPush If the message should skip triggering a push notification when sent. False by default.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      *
      * @return Executable async [Call] responsible for sending a message.
@@ -1634,7 +1634,7 @@ internal constructor(
      * to store the updated message locally.
      *
      * @param message [Message] The message to be updated.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      */
     @CheckResult
@@ -1670,7 +1670,7 @@ internal constructor(
      * @param messageId The message ID.
      * @param set The key-value data which will be added to the existing message object.
      * @param unset The list of fields which will be removed from the existing message object.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      *
      * @return Executable async [Call] responsible for partially updating the message.

@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
  *
  * @param message The upstream version of the message.
  * @param skip_push If the message should skip triggering a push notification when sent. False by default.
- * @param skip_enrich_url If the message should skip enriching the URL. If URl is not enriched, it will not be
+ * @param skip_enrich_url If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
 // REST documentation: https://getstream.io/chat/docs/rest/#messages-sendmessage

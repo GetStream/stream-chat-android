@@ -511,7 +511,7 @@ public class MessageComposerController(
      * @param message The message to send.
      * @param skipPush If the message should skip triggering a push notification when sent. False by default. Note, only
      * new messages trigger push notifications, updating edited messages does not.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      */
     public fun sendMessage(
@@ -839,7 +839,7 @@ public class MessageComposerController(
      * Gets the edit message call using [ChatClient].
      *
      * @param message The message to send.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      */
     private fun getEditMessageCall(

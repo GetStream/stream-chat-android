@@ -216,7 +216,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * @param messageText The current message text.
      * @param messageTransformer Transformer that applies custom changes to the message, before being sent.
      * @param skipPush If the message should skip triggering a push notification when sent. False by default.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URl+L is not enriched, it will not be
      * displayed as a link attachment. False by default.
      */
     @JvmOverloads
@@ -247,7 +247,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * @param messageText The current message text.
      * @param attachmentsWithMimeTypes Attachments that we support out of the box.
      * @param skipPush If the message should skip triggering a push notification when sent. False by default.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      * @param messageTransformer Transformer that applies custom changes to the message, before being sent.
      */
@@ -282,7 +282,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      *
      * @param message The message to be sent.
      * @param skipPush If the message should skip triggering a push notification when sent. False by default.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      */
     private fun sendMessageInternal(
@@ -313,7 +313,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * @param messageText The current message text.
      * @param customAttachments Attachments that are custom built by the user.
      * @param skipPush If the message should skip triggering a push notification when sent. False by default.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      * @param messageTransformer Transformer that applies custom changes to the message, before being sent.
      */
@@ -364,7 +364,7 @@ public class MessageInputViewModel @JvmOverloads constructor(
      * old message and send a new one.
      *
      * @param message The Message updated with the new information, that we need to send.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      * @param skipPushForModeratedMessages Will not generate a push notifications for moderated messages that have been
      * edited. Unlike regular edited messages, moderated messages are sent to the server as new messages.

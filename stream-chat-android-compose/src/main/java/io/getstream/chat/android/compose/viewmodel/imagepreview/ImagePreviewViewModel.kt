@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param chatClient The low level chat client used for API calls.
  * @param messageId The ID of the message containing the attachments to be previewed.
- * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+ * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
 public class ImagePreviewViewModel(
@@ -98,7 +98,7 @@ public class ImagePreviewViewModel(
      * This will in turn update the UI accordingly or finish this screen in case there are no more images to show.
      *
      * @param currentImage The image attachment to remove from the message we're updating.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      * displayed as a link attachment. False by default.
      */
     public fun deleteCurrentImage(

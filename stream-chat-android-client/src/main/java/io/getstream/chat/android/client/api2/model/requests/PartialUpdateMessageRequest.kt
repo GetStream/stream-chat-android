@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
  *
  * @param set Sets new field values.
  * @param unset Array of field names to unset.
- * @param skip_enrich_url If the message should skip enriching the URL. If URl is not enriched, it will not be
+ * @param skip_enrich_url If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
 @JsonClass(generateAdapter = true)

@@ -696,12 +696,22 @@ public class MessageListViewModel(
      * events and dialogs, copying the message, muting users and more.
      *
      * @param messageAction The action the user chose.
+     * @param skipPush If the message should skip triggering a push notification when sent. False by default.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      */
-    public fun performMessageAction(messageAction: MessageAction) {
+    public fun performMessageAction(
+        messageAction: MessageAction,
+        skipPush: Boolean = false,
+        skipEnrichUrl: Boolean = false,
+    ) {
         removeOverlay()
 
         when (messageAction) {
-            is Resend -> resendMessage(messageAction.message)
+            is Resend -> resendMessage(
+                message = messageAction.message,
+                skipPush = skipPush,
+                skipEnrichUrl = skipEnrichUrl
+            )
             is ThreadReply -> {
                 messageActions = messageActions + Reply(messageAction.message)
                 loadThread(messageAction.message)
@@ -955,11 +965,23 @@ public class MessageListViewModel(
      * Retries sending a message that has failed to send.
      *
      * @param message The message that will be re-sent.
+     * @param skipPush If the message should skip triggering a push notification when sent. False by default.
+     * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
      */
-    private fun resendMessage(message: Message) {
+    private fun resendMessage(
+        message: Message,
+        skipPush: Boolean = false,
+        skipEnrichUrl: Boolean = false,
+    ) {
         val (channelType, channelId) = message.cid.cidToTypeAndId()
 
-        chatClient.sendMessage(channelType, channelId, message).enqueue()
+        chatClient.sendMessage(
+            channelType = channelType,
+            channelId = channelId,
+            message = message,
+            skipPush = skipPush,
+            skipEnrichUrl = skipEnrichUrl
+        ).enqueue()
     }
 
     /**

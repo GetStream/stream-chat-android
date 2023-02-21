@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.ChatClient
  *
  * @param chatClient The low level chat client used for API calls.
  * @param messageId The ID of the message containing the attachments to be previewed.
- * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
+ * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
 public class ImagePreviewViewModelFactory(
