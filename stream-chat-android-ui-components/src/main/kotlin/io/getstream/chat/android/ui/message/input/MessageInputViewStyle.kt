@@ -22,6 +22,8 @@ import android.graphics.drawable.Drawable
 import android.text.InputType
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.Px
+import androidx.core.content.res.ResourcesCompat
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
@@ -33,6 +35,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 
 /**
  * Style for [MessageInputView].
@@ -76,6 +79,21 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
  * @property commandButtonRippleColor Ripple color of the command button. Default value is [colorControlHighlight]
  * @property attachmentButtonRippleColor Ripple color of the attachment button. Default value is [colorControlHighlight]
  * @property messageInputInputType The [InputType] to be applied to the message input edit text.
+ * @param messageReplyBackgroundColor Sets the background color of the quoted message bubble visible in the input
+ * when replying to a message. Applied both when replying to messages owned by the currently logged-in user and messages
+ * owned by other users.
+ * @param messageReplyTextStyleMine Sets the style of the text inside the quoted message bubble visible in the input
+ * when replying to a message.Applied when replying to messages owned by the currently logged-in user.
+ * @param messageReplyMessageBackgroundStrokeColorMine Sets the color of the stroke of the quoted message bubble visible
+ * in the input when replying to a message. Applied when replying to messages owned by the currently logged-in user.
+ * @param messageReplyMessageBackgroundStrokeWidthMine Sets the width of the stroke of the quoted message bubble visible
+ * in the input when replying to a message. Applied when replying to messages owned by the currently logged-in user.
+ * @param messageReplyTextStyleTheirs Sets the style of the text inside the quoted message bubble visible in the input
+ * when replying to a message.Applied when replying to messages owned by other users.
+ * @param messageReplyMessageBackgroundStrokeColorTheirs Sets the color of the stroke of the quoted message bubble
+ * visible in the input when replying to a message. Applied when replying to messages owned by other users.
+ * @param messageReplyMessageBackgroundStrokeWidthTheirs Sets the width of the stroke of the quoted message bubble
+ * visible in the input when replying to a message. Applied when replying to messages owned by other users.
  */
 public data class MessageInputViewStyle(
     public val attachButtonEnabled: Boolean,
@@ -123,7 +141,36 @@ public data class MessageInputViewStyle(
     @ColorInt public val commandButtonRippleColor: Int?,
     @ColorInt public val attachmentButtonRippleColor: Int?,
     public val messageInputInputType: Int,
+    // Message reply customization, by default belongs to center content as well
+    @ColorInt public val messageReplyBackgroundColor: Int,
+    public val messageReplyTextStyleMine: TextStyle,
+    @ColorInt public val messageReplyMessageBackgroundStrokeColorMine: Int,
+    @Px public val messageReplyMessageBackgroundStrokeWidthMine: Float,
+    public val messageReplyTextStyleTheirs: TextStyle,
+    @ColorInt public val messageReplyMessageBackgroundStrokeColorTheirs: Int,
+    @Px public val messageReplyMessageBackgroundStrokeWidthTheirs: Float,
 ) {
+
+    /**
+     * Creates an instance of [MessageReplyStyle] from the parameters provided by [MessageInputViewStyle].
+
+     *
+     * @return an instance of [MessageReplyStyle].
+     */
+    public fun toMessageReplyStyle(): MessageReplyStyle = MessageReplyStyle(
+        messageBackgroundColorMine = messageReplyBackgroundColor,
+        messageBackgroundColorTheirs = messageReplyBackgroundColor,
+        linkBackgroundColorMine = messageReplyBackgroundColor,
+        linkBackgroundColorTheirs = messageReplyBackgroundColor,
+        textStyleMine = messageReplyTextStyleMine,
+        textStyleTheirs = messageReplyTextStyleTheirs,
+        linkStyleMine = messageReplyTextStyleMine,
+        linkStyleTheirs = messageReplyTextStyleTheirs,
+        messageStrokeColorMine = messageReplyMessageBackgroundStrokeColorMine,
+        messageStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
+        messageStrokeWidthMine = messageReplyMessageBackgroundStrokeWidthMine,
+        messageStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
+    )
 
     public companion object {
         internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle {
@@ -599,6 +646,78 @@ public data class MessageInputViewStyle(
                         InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
                 )
 
+                val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+
+                val messageReplyBackgroundColor: Int =
+                    a.getColor(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyBackgroundColor,
+                        context.getColorCompat(R.color.stream_ui_white)
+                    )
+
+                val messageReplyTextStyleMine: TextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextSizeMine,
+                        context.getDimension(MessageReplyStyle.DEFAULT_TEXT_SIZE)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextColorMine,
+                        context.getColorCompat(MessageReplyStyle.DEFAULT_TEXT_COLOR)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextFontAssetsMine,
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextStyleMine,
+                        mediumTypeface
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextStyleMine,
+                        MessageReplyStyle.DEFAULT_TEXT_STYLE
+                    )
+                    .build()
+
+                val messageReplyMessageBackgroundStrokeColorMine: Int =
+                    a.getColor(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyStrokeColorMine,
+                        context.getColorCompat(R.color.stream_ui_grey_gainsboro)
+                    )
+
+                val messageReplyMessageBackgroundStrokeWidthMine: Float =
+                    a.getDimension(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyStrokeWidthMine,
+                        DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH
+                    )
+
+                val messageReplyTextStyleTheirs: TextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextSizeTheirs,
+                        context.getDimension(MessageReplyStyle.DEFAULT_TEXT_SIZE)
+                    )
+                    .color(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextColorTheirs,
+                        context.getColorCompat(MessageReplyStyle.DEFAULT_TEXT_COLOR)
+                    )
+                    .font(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextFontAssetsTheirs,
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextStyleTheirs,
+                        mediumTypeface
+                    )
+                    .style(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyTextStyleTheirs,
+                        MessageReplyStyle.DEFAULT_TEXT_STYLE
+                    )
+                    .build()
+
+                val messageReplyMessageBackgroundStrokeColorTheirs: Int =
+                    a.getColor(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyStrokeColorTheirs,
+                        context.getColorCompat(R.color.stream_ui_grey_gainsboro)
+                    )
+
+                val messageReplyMessageBackgroundStrokeWidthTheirs: Float =
+                    a.getDimension(
+                        R.styleable.MessageInputView_streamUiMessageInputMessageReplyStrokeWidthTheirs,
+                        DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH
+                    )
+
                 return MessageInputViewStyle(
                     attachButtonEnabled = attachButtonEnabled,
                     attachButtonIcon = attachButtonIcon,
@@ -644,7 +763,14 @@ public data class MessageInputViewStyle(
                     replyInputModeIcon = replyInputModeIcon,
                     attachmentButtonRippleColor = attachmentsButtonRippleColor,
                     commandButtonRippleColor = commandsButtonRippleColor,
-                    messageInputInputType = messageInputInputType
+                    messageInputInputType = messageInputInputType,
+                    messageReplyBackgroundColor = messageReplyBackgroundColor,
+                    messageReplyTextStyleMine = messageReplyTextStyleMine,
+                    messageReplyMessageBackgroundStrokeColorMine = messageReplyMessageBackgroundStrokeColorMine,
+                    messageReplyMessageBackgroundStrokeWidthMine = messageReplyMessageBackgroundStrokeWidthMine,
+                    messageReplyTextStyleTheirs = messageReplyTextStyleTheirs,
+                    messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
+                    messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
                 ).let(TransformStyle.messageInputStyleTransformer::transform)
                     .also { style -> style.checkMaxAttachmentsCountRange() }
             }
@@ -655,5 +781,7 @@ public data class MessageInputViewStyle(
         }
 
         public fun createDefault(context: Context): MessageInputViewStyle = invoke(context, null)
+
+        private const val DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH = 4F
     }
 }
