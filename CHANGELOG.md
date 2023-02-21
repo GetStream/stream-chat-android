@@ -128,8 +128,10 @@
 - When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
 
 ### ✅ Added
+- Added the parameter `channelOptions: List<ChannelOptionState>` to `SelectedChannelMenu` allowing users to override the default channel options more easily. The parameter comes with a default argument of `buildDefaultChannelOptionsState()`. [#4671](https://github.com/GetStream/stream-chat-android/pull/4671)
 
 ### ⚠️ Changed
+- Added the parameter `channelOptions: List<ChannelOptionState>` to `SelectedChannelMenu` allowing users to override the default channel options more easily. The parameter comes with a default argument of `buildDefaultChannelOptionsState()`. [#4671](https://github.com/GetStream/stream-chat-android/pull/4671)
 - Added `currentUser` as a parameter to `MessageContent` and `MessageText`. These are non-optional, but nullable, parameters that define the behavior and looks of these components. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 - Similarly, added `currentUser` as a parameter to `QuotedMessage`, `QuotedMessageContent` and `QuotedMessageText`.
 
