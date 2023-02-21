@@ -72,9 +72,33 @@ internal class ImagePreviewViewModelTest {
             verify(chatClient).deleteMessage(MESSAGE_ID, false)
         }
 
+    @Test
+    fun `Given skip enrich URL set to true Should not enrich the url when updating the message`() =
+        runTest {
+            val skipEnrichUrl = true
+
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(
+                chatClient = chatClient,
+                skipEnrichUrl = skipEnrichUrl
+            ).givenCurrentUser()
+                .givenAttachments(mutableListOf(attachment1, attachment2))
+                .givenUpdateMessage()
+                .givenDeleteMessage()
+                .get()
+
+            viewModel.toggleGallery(true)
+            viewModel.deleteCurrentImage(attachment1)
+            viewModel.deleteCurrentImage(attachment2)
+
+            verify(chatClient).updateMessage(any(), eq(skipEnrichUrl))
+            verify(chatClient).deleteMessage(MESSAGE_ID, false)
+        }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val messageId: String = MESSAGE_ID,
+        private val skipEnrichUrl: Boolean = false,
     ) {
 
         private val globalState: GlobalMutableState = mock()
@@ -95,7 +119,7 @@ internal class ImagePreviewViewModelTest {
         }
 
         fun givenUpdateMessage() = apply {
-            whenever(chatClient.updateMessage(any(), eq(false))) doReturn Message().asCall()
+            whenever(chatClient.updateMessage(any(), eq(skipEnrichUrl))) doReturn Message().asCall()
         }
 
         fun givenDeleteMessage() = apply {
@@ -106,6 +130,7 @@ internal class ImagePreviewViewModelTest {
             return ImagePreviewViewModel(
                 chatClient = chatClient,
                 messageId = messageId,
+                skipEnrichUrl = skipEnrichUrl,
             )
         }
     }
