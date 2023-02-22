@@ -494,15 +494,20 @@ public class MessageListViewModel(
             }
             is Event.RetryMessage -> {
                 val (channelType, channelId) = event.message.cid.cidToTypeAndId()
-                chatClient.sendMessage(channelType, channelId, event.message)
-                    .enqueue(
-                        onError = { chatError ->
-                            logger.e {
-                                "(Retry) Could not send message: ${chatError.message}. " +
-                                    "Cause: ${chatError.cause?.message}"
-                            }
+                chatClient.sendMessage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    message = event.message,
+                    skipEnrichUrl = event.skipEnrichUrl,
+                    skipPush = event.skipPush
+                ).enqueue(
+                    onError = { chatError ->
+                        logger.e {
+                            "(Retry) Could not send message: ${chatError.message}. " +
+                                "Cause: ${chatError.cause?.message}"
                         }
-                    )
+                    }
+                )
             }
             is Event.MessageReaction -> {
                 onMessageReaction(event.message, event.reactionType, event.enforceUnique)
@@ -675,7 +680,10 @@ public class MessageListViewModel(
                                 }
                             )
                         } else {
-                            chatClient.updateMessage(message).enqueue(
+                            chatClient.updateMessage(
+                                message = message,
+                                skipEnrichUrl = event.skipEnrichUrl
+                            ).enqueue(
                                 onError = { chatError ->
                                     logger.e {
                                         "Could not edit message to remove its attachments: ${chatError.message}. " +
@@ -1144,8 +1152,15 @@ public class MessageListViewModel(
          * Retry sending a message that has failed to send.
          *
          * @param message The message that will be re-sent.
+         * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
+         * displayed as a link attachment. False by default.
+         * @param skipPush If the message should skip triggering a push notification when sent. False by default.
          */
-        public data class RetryMessage(val message: Message) : Event()
+        public data class RetryMessage(
+            val message: Message,
+            val skipEnrichUrl: Boolean = false,
+            val skipPush: Boolean = false,
+        ) : Event()
 
         /**
          * When the user leaves a reaction to a message.
@@ -1274,8 +1289,14 @@ public class MessageListViewModel(
          *
          * @param messageId The message from which an attachment will be deleted.
          * @param attachment The attachment to be deleted.
+         * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
+         * displayed as a link attachment. False by default.
          */
-        public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
+        public data class RemoveAttachment(
+            val messageId: String,
+            val attachment: Attachment,
+            val skipEnrichUrl: Boolean = false,
+        ) : Event()
     }
 
     /**

@@ -130,6 +130,10 @@
 - Added the following parameters to `MessageInputViewModel.editMessage()`. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
   * `skipPush`: when set to `true` a newly sent message will not trigger a push notification. Editing and sending a moderated message results in it being treated as a new message when sent.
   * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link attachment.
+- Added the following parameters to `MessageListViewModel.RetryMessage`. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
+  * `skipPush`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link attachment.
+- Added the parameter `skipEnrichUrl` to `MessageListViewModel.RemoveAttachment`. "hen set to `true` the URL contained inside the message will not be enriched as a link attachment when deleting attachments from a message. [#4688](https://github.com/GetStream/stream-chat-android/pull/4688)
 
 ### ⚠️ Changed
 - The styling for the reply message bubbles visible inside `MessageInputView` and `MessageComposerView` when replying to messages has changed slightly and is now the same for both messages sent by the currently logged-in user and those sent by other users. However, you are now able to style the bubbles. For more information check the added section for `stream-chat-android-ui-components`. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
