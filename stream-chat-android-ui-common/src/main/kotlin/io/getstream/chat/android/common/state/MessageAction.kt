@@ -38,8 +38,16 @@ public class React(
 
 /**
  * Retry sending a message.
+ *
+ * @param message The message to be resent.
+ * @param skipPush If the message should skip triggering a push notification when sent. False by default.
+ * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  */
-public class Resend(message: Message) : MessageAction(message)
+public class Resend(
+    message: Message,
+    public val skipPush: Boolean = false,
+    public val skipEnrichUrl: Boolean = false,
+) : MessageAction(message)
 
 /**
  * Start a message reply.

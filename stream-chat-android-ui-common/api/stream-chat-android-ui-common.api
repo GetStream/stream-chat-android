@@ -356,7 +356,10 @@ public final class io/getstream/chat/android/common/state/Reply : io/getstream/c
 }
 
 public final class io/getstream/chat/android/common/state/Resend : io/getstream/chat/android/common/state/MessageAction {
-	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Message;ZZ)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getSkipEnrichUrl ()Z
+	public final fun getSkipPush ()Z
 }
 
 public final class io/getstream/chat/android/common/state/ThreadReply : io/getstream/chat/android/common/state/MessageAction {

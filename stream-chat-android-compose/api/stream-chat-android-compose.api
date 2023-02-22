@@ -1961,8 +1961,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public static synthetic fun muteUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public final fun openMessageThread (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun performGiphyAction (Lio/getstream/chat/android/compose/state/messages/list/GiphyAction;)V
-	public final fun performMessageAction (Lio/getstream/chat/android/common/state/MessageAction;ZZ)V
-	public static synthetic fun performMessageAction$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/common/state/MessageAction;ZZILjava/lang/Object;)V
+	public final fun performMessageAction (Lio/getstream/chat/android/common/state/MessageAction;)V
 	public final fun removeOverlay ()V
 	public final fun removeShadowBanFromUser (Ljava/lang/String;)V
 	public final fun scrollToSelectedMessage (Lio/getstream/chat/android/client/models/Message;)V
