@@ -26,6 +26,12 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushMessage
 private typealias DevicePushProvider = io.getstream.chat.android.models.PushProvider
 
+/**
+ * Internal class that handle PN stuff.
+ * It is declared in our Android Manifest and is used by reflection.
+ *
+ */
+@Suppress("Unused")
 internal class ChatPushDelegate(context: Context) : PushDelegate(context) {
     override fun handlePushMessage(payload: Map<String, Any?>): Boolean =
         payload.ifValid {
