@@ -25,8 +25,10 @@
 
 ### ⚠️ Changed
 - Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
+- Moved `ChatClient.dismissChannelNotifications()` into `ChatClient` class. [#4692](https://github.com/GetStream/stream-chat-android/pull/4692)
 
 ### ❌ Removed
+- Removed `ChatClient.setDevice()` method. [#4692](https://github.com/GetStream/stream-chat-android/pull/4692)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
