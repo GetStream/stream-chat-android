@@ -132,7 +132,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;Z)Lio/getstream/chat/android/client/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
-	public static final fun setDevice (Lio/getstream/chat/android/models/Device;)V
 	public final fun setLogicRegistry (Lio/getstream/chat/android/client/channel/state/ChannelStateLogicProvider;)V
 	public static final fun setOFFLINE_SUPPORT_ENABLED (Z)V
 	public final fun setPlugins (Ljava/util/List;)V
@@ -207,7 +206,6 @@ public final class io/getstream/chat/android/client/ChatClient$Companion {
 	public final fun handlePushMessage (Lio/getstream/chat/android/models/PushMessage;)V
 	public final fun instance ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun isInitialized ()Z
-	public final fun setDevice (Lio/getstream/chat/android/models/Device;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/ChatEventListener {
