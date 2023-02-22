@@ -202,7 +202,7 @@ public class MessageListController(
     public val channel: StateFlow<Channel> = channelState.filterNotNull()
         .map { it.toChannel() }
         .onEach { channel ->
-            chatClient.notifications.dismissChannelNotifications(
+            chatClient.dismissChannelNotifications(
                 channelType = channel.type,
                 channelId = channel.id
             )

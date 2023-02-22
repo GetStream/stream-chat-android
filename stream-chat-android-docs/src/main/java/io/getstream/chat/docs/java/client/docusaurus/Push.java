@@ -149,7 +149,7 @@ public class Push {
      * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#dismissing-notifications">Dismissing Notifications</a>
      */
     public void dismissingNotifications() {
-        ChatClient.dismissChannelNotifications("messaging", "general");
+        ChatClient.instance().dismissChannelNotifications("messaging", "general");
     }
 
     /**

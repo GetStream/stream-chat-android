@@ -1202,6 +1202,18 @@ internal constructor(
     }
 
     /**
+     * Dismiss notifications from a given [channelType] and [channelId].
+     * Be sure to initialize ChatClient before calling this method!
+     *
+     * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
+     * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
+     *
+     */
+    public fun dismissChannelNotifications(channelType: String, channelId: String) {
+        notifications.dismissChannelNotifications(channelType, channelId)
+    }
+
+    /**
      * Search messages across channels. There are two ways to paginate through search results:
      *
      * 1. Using [limit] and [offset] parameters
@@ -3058,21 +3070,6 @@ internal constructor(
                 channel = channel,
                 message = message,
             )
-        }
-
-        /**
-         * Dismiss notifications from a given [channelType] and [channelId].
-         * Be sure to initialize ChatClient before calling this method!
-         *
-         * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
-         * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
-         *
-         * @throws IllegalStateException if called before initializing ChatClient
-         */
-        @Throws(IllegalStateException::class)
-        @JvmStatic
-        public fun dismissChannelNotifications(channelType: String, channelId: String) {
-            ensureClientInitialized().notifications.dismissChannelNotifications(channelType, channelId)
         }
 
         /**

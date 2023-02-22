@@ -43,7 +43,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun disconnect (Z)Lio/getstream/chat/android/client/call/Call;
 	public final fun disconnectSocket ()V
-	public static final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -204,7 +204,6 @@ public abstract class io/getstream/chat/android/client/ChatClient$ChatClientBuil
 }
 
 public final class io/getstream/chat/android/client/ChatClient$Companion {
-	public final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun handlePushMessage (Lio/getstream/chat/android/models/PushMessage;)V
 	public final fun instance ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun isInitialized ()Z
