@@ -264,14 +264,14 @@ If you need to dismiss them manually (for example, if you are using a custom `Me
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-ChatClient.dismissChannelNotifications("messaging", "general")
+ChatClient.instance().dismissChannelNotifications("messaging", "general")
 ```
 </TabItem>
 
 <TabItem value="java" label="Java">
 
 ```java
-ChatClient.dismissChannelNotifications("messaging", "general");
+ChatClient.instance().dismissChannelNotifications("messaging", "general");
 ```
 </TabItem>
 </Tabs>

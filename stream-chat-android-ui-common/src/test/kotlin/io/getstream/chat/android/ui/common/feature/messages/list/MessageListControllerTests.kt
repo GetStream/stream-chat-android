@@ -59,7 +59,6 @@ internal class MessageListControllerTests {
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenNotifications()
             .givenChannelState(messageState = messageState)
             .get()
 
@@ -77,7 +76,6 @@ internal class MessageListControllerTests {
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenNotifications()
             .givenChannelState(
                 typingUsers = listOf(user2)
             )
@@ -100,7 +98,6 @@ internal class MessageListControllerTests {
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenNotifications()
             .givenChannelState(
                 messageState = messageState,
                 typingUsers = listOf(user2)
@@ -122,7 +119,6 @@ internal class MessageListControllerTests {
             val controller = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenNotifications()
                 .givenChannelState(messageState = messageState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
@@ -144,7 +140,6 @@ internal class MessageListControllerTests {
             val controller = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenNotifications()
                 .givenChannelState(messageState = messageState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
@@ -166,7 +161,6 @@ internal class MessageListControllerTests {
             val controller = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenNotifications()
                 .givenChannelState(messageState = messageState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
@@ -188,7 +182,6 @@ internal class MessageListControllerTests {
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenNotifications()
             .givenChannelState(messageState = messageState)
             .get()
 
@@ -208,7 +201,6 @@ internal class MessageListControllerTests {
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenNotifications()
             .givenChannelState(messageState = messageState)
             .get(dateSeparatorHandler = { _, _ -> false })
 
@@ -229,7 +221,6 @@ internal class MessageListControllerTests {
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenNotifications()
             .givenChannelState(messageState = messageState)
             .get(deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN)
 
@@ -248,7 +239,6 @@ internal class MessageListControllerTests {
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenNotifications()
             .givenChannelState(messageState = messageState)
             .get()
 
@@ -267,7 +257,6 @@ internal class MessageListControllerTests {
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenNotifications()
             .givenChannelState(messageState = messageState)
             .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
 
@@ -288,7 +277,6 @@ internal class MessageListControllerTests {
             val controller = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenNotifications()
                 .givenChannelState(messageState = messageState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
@@ -318,10 +306,6 @@ internal class MessageListControllerTests {
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
             whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
-        }
-
-        fun givenNotifications() = apply {
-            whenever(chatClient.notifications) doReturn mock()
         }
 
         fun givenChannelState(

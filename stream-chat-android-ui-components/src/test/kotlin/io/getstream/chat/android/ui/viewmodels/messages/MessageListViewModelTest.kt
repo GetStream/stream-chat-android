@@ -64,7 +64,6 @@ internal class MessageListViewModelTest {
         val viewModel = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenNotifications()
             .get()
 
         val state = viewModel.state.observeAll()
@@ -83,7 +82,6 @@ internal class MessageListViewModelTest {
             .givenCurrentUser()
             .givenChannelQuery()
             .givenChannelState(messageState = messageState, messages = messages)
-            .givenNotifications()
             .get()
 
         val state = viewModel.state.observeAll()
@@ -115,7 +113,6 @@ internal class MessageListViewModelTest {
             .givenChannelQuery()
             .givenChannelState(messageState = messageState, messages = messages)
             .givenDeleteMessage()
-            .givenNotifications()
             .get()
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message = messageToDelete, hard = true))
@@ -135,7 +132,6 @@ internal class MessageListViewModelTest {
             .givenChannelQuery()
             .givenChannelState(messageState = messageState, messages = messages)
             .givenDeleteMessage()
-            .givenNotifications()
             .get()
 
         viewModel.onEvent(MessageListViewModel.Event.DeleteMessage(message = messageToDelete))
@@ -155,7 +151,6 @@ internal class MessageListViewModelTest {
             .givenChannelQuery()
             .givenChannelState(messageState = messageState, messages = messages)
             .givenFlagMessage(message = messageToFlag)
-            .givenNotifications()
             .get()
 
         viewModel.onEvent(MessageListViewModel.Event.FlagMessage(messageToFlag))
@@ -174,7 +169,6 @@ internal class MessageListViewModelTest {
             .givenChannelQuery()
             .givenChannelState(messageState = messageState, messages = messages)
             .givenSendReaction()
-            .givenNotifications()
             .get()
 
         viewModel.onEvent(
@@ -200,7 +194,6 @@ internal class MessageListViewModelTest {
                 .givenChannelQuery()
                 .givenChannelState(messageState = messageState, messages = messages)
                 .givenDeleteReaction()
-                .givenNotifications()
                 .get()
 
             viewModel.onEvent(
@@ -238,10 +231,6 @@ internal class MessageListViewModelTest {
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
             whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
-        }
-
-        fun givenNotifications() = apply {
-            whenever(chatClient.notifications) doReturn mock()
         }
 
         fun givenFlagMessage(message: Message) = apply {
