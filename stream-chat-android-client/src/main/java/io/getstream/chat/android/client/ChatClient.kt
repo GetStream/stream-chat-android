@@ -3079,8 +3079,7 @@ internal constructor(
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
-        @JvmStatic
-        public fun setDevice(device: Device) {
+        internal fun setDevice(device: Device) {
             ensureClientInitialized().notifications.setDevice(device)
         }
 
