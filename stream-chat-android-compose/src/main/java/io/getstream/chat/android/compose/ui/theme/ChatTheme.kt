@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
-import android.Manifest
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.RippleTheme
@@ -28,13 +27,8 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
-import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
-import io.getstream.chat.android.compose.handlers.PermissionHandler
-import io.getstream.chat.android.compose.handlers.StreamPermissionHandlers
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
@@ -95,9 +89,7 @@ private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<Messag
             "in a ChatTheme."
     )
 }
-private val LocalPermissionManagerProvider = compositionLocalOf<List<PermissionHandler>> {
-    error("No PermissionHandlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
+
 private val LocalAttachmentsPickerTabFactories = compositionLocalOf<List<AttachmentsPickerTabFactory>> {
     error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -134,7 +126,6 @@ private val LocalStreamCdnImageResizing = compositionLocalOf<StreamCdnImageResiz
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
  * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
- * @param permissionHandlers Handlers for various permissions.
  * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
  * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed inside video previews.
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
@@ -142,7 +133,6 @@ private val LocalStreamCdnImageResizing = compositionLocalOf<StreamCdnImageResiz
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
  * @param content The content shown within the theme wrapper.
  */
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
@@ -166,10 +156,6 @@ public fun ChatTheme(
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
-    permissionHandlers: List<PermissionHandler> = StreamPermissionHandlers.defaultHandlers(
-        LocalContext.current,
-        listOf(rememberPermissionState(permission = Manifest.permission.WRITE_EXTERNAL_STORAGE))
-    ).onEach { if (it is DownloadPermissionHandler) it.ObservePermissionChanges() },
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
@@ -195,7 +181,6 @@ public fun ChatTheme(
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
-        LocalPermissionManagerProvider provides permissionHandlers,
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
@@ -314,14 +299,7 @@ public object ChatTheme {
         get() = LocalMessageOptionsUserReactionAlignment.current
 
     /**
-     * Retrieves the current [PermissionHandler]s at the call site's position in the hierarchy.
-     */
-    public val permissionHandlerProvider: List<PermissionHandler>
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalPermissionManagerProvider.current
-
-    /**
+     *
      * Retrieves the current list of [AttachmentsPickerTabFactory] at the call site's position in the hierarchy.
      */
     public val attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>

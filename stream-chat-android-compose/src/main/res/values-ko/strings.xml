@@ -35,7 +35,7 @@
   <string name="stream_compose_flag_message">"메세지 신고"</string>
   <string name="stream_compose_flag_message_text">"추가 조사를 위해 관리자에게 해당 메시지의 복사본을 전송하시겠습니까?"</string>
   <string name="stream_compose_flag_message_title">"메시지를 신고합니다"</string>
-  <string name="stream_compose_member_count_online">"%s, %d온라인"</string>
+  <string name="stream_compose_member_count_online">"%1$s, %2$d온라인"</string>
   <string name="stream_compose_message_composer_command_template">"/%1$s %2$s"</string>
   <string name="stream_compose_message_composer_error_attachment_count">"첨부파일 개수가 (%1$d) 개를 초과하였습니다."</string>
   <string name="stream_compose_message_composer_error_file_size">"파일이 너무 큽니다 - 최대 %1$s입니다"</string>

@@ -21,6 +21,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.globalState
 import java.util.Date
 
@@ -29,6 +30,9 @@ import java.util.Date
  */
 @InternalStreamChatApi
 public fun Message.isMine(chatClient: ChatClient): Boolean = chatClient.globalState.user.value?.id == user.id
+
+@InternalStreamChatApi
+public fun Message.isMine(currentUser: User?): Boolean = currentUser?.id == user.id
 
 /**
  * @return when the message was created or throw an exception.
@@ -48,6 +52,6 @@ public fun Message.getCreatedAtOrNull(): Date? {
 /**
  * @return if the message failed at moderation or not.
  */
-public fun Message.isModerationFailed(chatClient: ChatClient): Boolean = isMine(chatClient) &&
+public fun Message.isModerationFailed(currentUser: User?): Boolean = isMine(currentUser) &&
     syncStatus == SyncStatus.FAILED_PERMANENTLY &&
     syncDescription?.type == MessageSyncType.FAILED_MODERATION

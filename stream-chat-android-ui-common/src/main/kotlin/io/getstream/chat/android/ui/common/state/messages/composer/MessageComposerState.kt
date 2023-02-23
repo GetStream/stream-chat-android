@@ -38,8 +38,9 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
  * For a full list @see [ChannelCapabilities].
  * @param hasCommands Whether there are any commands available.
+ * @param currentUser The currently logged in user.
  */
-public data class MessageComposerState(
+public data class MessageComposerState @JvmOverloads constructor(
     val inputValue: String = "",
     val attachments: List<Attachment> = emptyList(),
     val action: MessageAction? = null,
@@ -51,4 +52,5 @@ public data class MessageComposerState(
     val alsoSendToChannel: Boolean = false,
     val ownCapabilities: Set<String> = setOf(),
     val hasCommands: Boolean = false,
+    val currentUser: User? = null,
 )

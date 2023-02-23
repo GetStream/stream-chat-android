@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
+import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.channels.ChannelMembers
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
@@ -56,6 +57,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
  * @param onChannelOptionClick Handler for when the user selects a channel option.
  * @param onDismiss Handler called when the dialog is dismissed.
  * @param modifier Modifier for styling.
+ * @param channelOptions The list of options to show in the UI, according to user permissions.
  * @param shape The shape of the component.
  * @param overlayColor The color applied to the overlay.
  * @param headerContent The content shown at the top of the dialog.
@@ -69,6 +71,11 @@ public fun SelectedChannelMenu(
     onChannelOptionClick: (ChannelAction) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    channelOptions: List<ChannelOptionState> = buildDefaultChannelOptionsState(
+        selectedChannel = selectedChannel,
+        isMuted = isMuted,
+        ownCapabilities = selectedChannel.ownCapabilities
+    ),
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     headerContent: @Composable ColumnScope.() -> Unit = {
@@ -79,10 +86,8 @@ public fun SelectedChannelMenu(
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedChannelMenuCenterContent(
-            selectedChannel = selectedChannel,
-            isMuted = isMuted,
             onChannelOptionClick = onChannelOptionClick,
-            ownCapabilities = selectedChannel.ownCapabilities
+            channelOptions = channelOptions,
         )
     },
 ) {
@@ -139,23 +144,14 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
 /**
  * Represents the default content shown at the center of [SelectedChannelMenu] dialog.
  *
- * @param selectedChannel The channel the user selected.
- * @param isMuted If the channel is muted for the current user.
  * @param onChannelOptionClick Handler for when the user selects a channel option.
+ * @param channelOptions The list of options to show in the UI, according to user permissions.
  */
 @Composable
 internal fun DefaultSelectedChannelMenuCenterContent(
-    selectedChannel: Channel,
-    isMuted: Boolean,
     onChannelOptionClick: (ChannelAction) -> Unit,
-    ownCapabilities: Set<String>,
+    channelOptions: List<ChannelOptionState>,
 ) {
-    val channelOptions = buildDefaultChannelOptionsState(
-        selectedChannel = selectedChannel,
-        isMuted = isMuted,
-        ownCapabilities = ownCapabilities
-    )
-
     ChannelOptions(channelOptions, onChannelOptionClick)
 }
 

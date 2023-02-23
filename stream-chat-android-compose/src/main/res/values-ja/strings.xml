@@ -32,7 +32,7 @@
   <string name="stream_compose_flag_message">"メッセージをフラグする"</string>
   <string name="stream_compose_flag_message_text">"このメッセージのコピーをモデレーターに送って、さらに調査してもらいますか？"</string>
   <string name="stream_compose_flag_message_title">"メッセージをフラグする"</string>
-  <string name="stream_compose_member_count_online">"%s, %d人がオンライン"</string>
+  <string name="stream_compose_member_count_online">"%1$s, %2$d人がオンライン"</string>
   <string name="stream_compose_message_composer_command_template">"/%1$s %2$s"</string>
   <string name="stream_compose_message_composer_error_attachment_count">"添付ファイルの制限を超えました：%1$d個のファイル以上を添付することはできません"</string>
   <string name="stream_compose_message_composer_error_file_size">"ファイルが大きすぎます- 最大%1$s。"</string>
