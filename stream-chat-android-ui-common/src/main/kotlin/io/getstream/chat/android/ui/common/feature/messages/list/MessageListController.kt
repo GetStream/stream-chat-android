@@ -927,7 +927,7 @@ public class MessageListController(
     public fun selectMessage(message: Message?) {
         if (message != null) {
             changeSelectMessageState(
-                if (message.isModerationFailed(chatClient)) {
+                if (message.isModerationFailed(chatClient.getCurrentUser())) {
                     SelectedMessageFailedModerationState(
                         message = message,
                         ownCapabilities = ownCapabilities.value

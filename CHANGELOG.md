@@ -374,6 +374,121 @@ If you want to learn more about these changes and our decisions, check out our [
 - Added the parameter `messageId: String?` to `MessageListViewModel` and `MessageListViewModelFactory`. If `navigateToThreadViaNotification` is set to true (see the changelog entry below), it will enable navigating to threads upon clicking a push notification triggered by a thread message. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
 - Added the feature flag boolean `navigateToThreadViaNotification: Boolean` to `MessageListViewModel` and `MessageListViewModelFactory`. If it is set to true and a thread message has been received via push notification, clicking on the notification will make the SDK automatically navigate to the thread. If set to false, the SDK will always navigate to the channel containing the thread without navigating to the thread itself. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
 
+# February 23rd, 2023 - 5.13.0
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed image scaling when width is bigger than height. [#4659](https://github.com/GetStream/stream-chat-android/pull/4659)
+- Fixed date separator handlers not being applied when calling `MessageListViewModel.setDateSeparatorHandler()` and  `MessageListViewModel.()`. [#4681](https://github.com/GetStream/stream-chat-android/pull/4681)
+
+### ⬆️ Improved
+- When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
+
+### ✅ Added
+- Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
+- Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
+- Added the method `showModeratedMessageDialog()` to `MessageListView`. It is used to display a dialog when long clicking on a message that has failed a moderation check. [#4645](https://github.com/GetStream/stream-chat-android/pull/4645)
+- Added the ability to style the way message reply bubbles are displayed in `MessageComposerView` via xml attributes. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+  * `streamUiMessageComposerMessageReplyBackgroundColor`
+  * `streamUiMessageComposerMessageReplyTextSizeMine`
+  * `streamUiMessageComposerMessageReplyTextColorMine`
+  * `streamUiMessageComposerMessageReplyTextFontMine`
+  * `streamUiMessageComposerMessageReplyTextFontAssetsMine`
+  * `streamUiMessageComposerMessageReplyTextStyleMine`
+  * `streamUiMessageComposerMessageReplyStrokeColorMine`
+  * `streamUiMessageComposerMessageReplyStrokeWidthMine`
+  * `streamUiMessageComposerMessageReplyTextSizeTheirs`
+  * `streamUiMessageComposerMessageReplyTextColorTheirs`
+  * `streamUiMessageComposerMessageReplyTextFontTheirs`
+  * `streamUiMessageComposerMessageReplyTextFontAssetsTheirs`
+  * `streamUiMessageComposerMessageReplyTextStyleTheirs`
+  * `streamUiMessageComposerMessageReplyStrokeColorTheirs`
+  * `streamUiMessageComposerMessageReplyStrokeWidthTheirs`
+- Added new properties to `MessageComposerViewStyle` which allow styling the way message reply bubbles are displayed in `MessageComposerView`. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+  * `messageReplyBackgroundColor`
+  * `messageReplyTextStyleMine`
+  * `messageReplyMessageBackgroundStrokeColorMine`
+  * `messageReplyMessageBackgroundStrokeWidthMine`
+  * `messageReplyTextStyleTheirs`
+  * `messageReplyMessageBackgroundStrokeColorTheirs`
+  * `messageReplyMessageBackgroundStrokeWidthTheirs`
+- Added the ability to style the way message reply bubbles are displayed in `MessageInputView` via xml attributes. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+  * `streamUiMessageInputMessageReplyBackgroundColor`
+  * `streamUiMessageInputMessageReplyTextSizeMine`
+  * `streamUiMessageInputMessageReplyTextColorMine`
+  * `streamUiMessageInputMessageReplyTextFontMine`
+  * `streamUiMessageInputMessageReplyTextFontAssetsMine`
+  * `streamUiMessageInputMessageReplyTextStyleMine`
+  * `streamUiMessageInputMessageReplyStrokeColorMine`
+  * `streamUiMessageInputMessageReplyStrokeWidthMine`
+  * `streamUiMessageInputMessageReplyTextSizeTheirs`
+  * `streamUiMessageInputMessageReplyTextColorTheirs`
+  * `streamUiMessageInputMessageReplyTextFontTheirs`
+  * `streamUiMessageInputMessageReplyTextFontAssetsTheirs`
+  * `streamUiMessageInputMessageReplyTextStyleTheirs`
+  * `streamUiMessageInputMessageReplyStrokeColorTheirs`
+  * `streamUiMessageInputMessageReplyStrokeWidthTheirs`
+- Added new properties to `MessageComposerViewStyle` which allow styling the way message reply bubbles are displayed in `MessageInputView`. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+  * `messageReplyBackgroundColor`
+  * `messageReplyTextStyleMine`
+  * `messageReplyMessageBackgroundStrokeColorMine`
+  * `messageReplyMessageBackgroundStrokeWidthMine`
+  * `messageReplyTextStyleTheirs`
+  * `messageReplyMessageBackgroundStrokeColorTheirs`
+  * `messageReplyMessageBackgroundStrokeWidthTheirs`
+
+### ⚠️ Changed
+- The styling for the reply message bubbles visible inside `MessageInputView` and `MessageComposerView` when replying to messages has changed slightly and is now the same for both messages sent by the currently logged-in user and those sent by other users. However, you are now able to style the bubbles. For more information check the added section for `stream-chat-android-ui-components`. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed Compose Previews for ChatTheme and other minor components like `MessageText`. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+
+### ⬆️ Improved
+- When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
+
+### ✅ Added
+- Added the parameter `channelOptions: List<ChannelOptionState>` to `SelectedChannelMenu` allowing users to override the default channel options more easily. The parameter comes with a default argument of `buildDefaultChannelOptionsState()`. [#4671](https://github.com/GetStream/stream-chat-android/pull/4671)
+
+### ⚠️ Changed
+- Added the parameter `channelOptions: List<ChannelOptionState>` to `SelectedChannelMenu` allowing users to override the default channel options more easily. The parameter comes with a default argument of `buildDefaultChannelOptionsState()`. [#4671](https://github.com/GetStream/stream-chat-android/pull/4671)
+- Added `currentUser` as a parameter to `MessageContent` and `MessageText`. These are non-optional, but nullable, parameters that define the behavior and looks of these components. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Similarly, added `currentUser` as a parameter to `QuotedMessage`, `QuotedMessageContent` and `QuotedMessageText`.
+
+### ❌ Removed
+The following items are breaking changes, since it was very important to improve/fix the behavior. The items described were used to expose customizable permission handlers which can be reused. However, this API is experimental and breaking for Previews, so we chose to go down a different path.
+- Removed PermissionHandler and its API. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed DownloadPermissionHandler. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed StreamPermissionHandlers. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed `permissionHandlers` parameter from `ChatTheme`, this should make it easier to preview components within Android Studio. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+
+# January 31st, 2023 - 5.12.0
+## stream-chat-android-client
+### ⬆️ Improved
+- Added offline plugin integration to the `ChatCliet.getMessage()` method. If you use the offline plugin, any message fetched using this method will be stored inside the database upon successful completion of the API call. [#4623](https://github.com/GetStream/stream-chat-android/pull/4623)
+
+## stream-chat-android-offline
+### ✅ Added
+- Added the `GetMessageListener` interface used to perform actions as side effects when the `ChatCliet.getMessage()` method is used to fetch a single message from the backend. [#4623](https://github.com/GetStream/stream-chat-android/pull/4623)
+
+## stream-chat-android-ui-common
+### ⬆️ Improved
+- `MessageComposerController` will now query the server for a list of channel members if the input contains a mention symbol (@) and no user name matching the expression after the symbol @ was found in the local state containing a list of channel members. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- The default implementation of `MessageInputView` will now query channel members from the server if a mention lookup fails to find the matching channel member using the data available in the local state. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
+
+### ✅ Added
+- Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
+- Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
+- Added lambda parameter `queryMembersOnline` to `DefaultUserLookupHandler`. The lambda parameter is used internally by `DefaultUserLookupHandler.handleUserLookup()` when no matches could be found inside the list of users contained by `DefaultUserLookupHandler.users`. It should be used to query members from the server and return the results. [#4647](https://github.com/GetStream/stream-chat-android/pull/4647)
+- Added the feature flag boolean `navigateToThreadViaNotification` to `MessageListViewModel` and `MessageListViewModelFactory`. If it is set to true and a thread message has been received via push notification, clicking on the notification will make the SDK automatically navigate to the thread. If set to false, the SDK will always navigate to the channel containing the thread without navigating to the thread itself. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
+
+## stream-chat-android-compose
+### ✅ Added
+- Added the parameter `messageId: String?` to `MessageListViewModel` and `MessageListViewModelFactory`. If `navigateToThreadViaNotification` is set to true (see the changelog entry below), it will enable navigating to threads upon clicking a push notification triggered by a thread message. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
+- Added the feature flag boolean `navigateToThreadViaNotification: Boolean` to `MessageListViewModel` and `MessageListViewModelFactory`. If it is set to true and a thread message has been received via push notification, clicking on the notification will make the SDK automatically navigate to the thread. If set to false, the SDK will always navigate to the channel containing the thread without navigating to the thread itself. [#4612](https://github.com/GetStream/stream-chat-android/pull/4612)
+
 # December 22nd, 2022 - 5.11.10
 ## stream-chat-android-offline
 ### 🐞 Fixed

@@ -73,6 +73,7 @@ import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -437,6 +438,7 @@ internal fun EmojiMessageContent(
     if (!messageItem.isFailed()) {
         MessageContent(
             message = message,
+            currentUser = messageItem.currentUser,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -446,6 +448,7 @@ internal fun EmojiMessageContent(
         Box(modifier = modifier) {
             MessageContent(
                 message = message,
+                currentUser = messageItem.currentUser,
                 onLongItemClick = onLongItemClick,
                 onGiphyActionClick = onGiphyActionClick,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -510,6 +513,7 @@ internal fun RegularMessageContent(
             content = {
                 MessageContent(
                     message = message,
+                    currentUser = messageItem.currentUser,
                     onLongItemClick = onLongItemClick,
                     onGiphyActionClick = onGiphyActionClick,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -526,6 +530,7 @@ internal fun RegularMessageContent(
                 content = {
                     MessageContent(
                         message = message,
+                        currentUser = messageItem.currentUser,
                         onLongItemClick = onLongItemClick,
                         onGiphyActionClick = onGiphyActionClick,
                         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -556,6 +561,7 @@ internal fun RegularMessageContent(
 @Composable
 internal fun DefaultMessageTextContent(
     message: Message,
+    currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
 ) {
@@ -566,6 +572,7 @@ internal fun DefaultMessageTextContent(
             QuotedMessage(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 message = quotedMessage,
+                currentUser = currentUser,
                 replyMessage = message,
                 onLongItemClick = { onLongItemClick(message) },
                 onQuotedMessageClick = onQuotedMessageClick
@@ -573,6 +580,7 @@ internal fun DefaultMessageTextContent(
         }
         MessageText(
             message = message,
+            currentUser = currentUser,
             onLongItemClick = onLongItemClick
         )
     }

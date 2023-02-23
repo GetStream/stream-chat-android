@@ -171,9 +171,9 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         if (action is Reply) {
             val quotedMessage = action.message
             binding.messageReplyView.setMessage(
-                quotedMessage,
-                ChatUI.currentUserProvider.getCurrentUser()?.id == quotedMessage.user.id,
-                null,
+                message = quotedMessage,
+                isMine = ChatUI.currentUserProvider.getCurrentUser()?.id == quotedMessage.user.id,
+                style = style.toMessageReplyStyle(),
             )
             binding.messageReplyView.isVisible = true
         } else {

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -550,8 +549,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         pagerState: PagerState,
         attachments: List<Attachment>,
     ) {
-        val downloadPermissionHandler = ChatTheme.permissionHandlerProvider
-            .first { it.canHandle(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
 
         Row(
             modifier = Modifier
@@ -563,12 +560,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     indication = rememberRipple(),
                     onClick = {
                         mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false)
-                        handleMediaAction(
-                            mediaGalleryPreviewAction = mediaGalleryPreviewOption.action,
-                            currentPage = pagerState.currentPage,
-                            permissionHandler = downloadPermissionHandler,
-                            attachments = attachments
-                        )
+                        // TODO: Marin
+                        // handleMediaAction(
+                        //     mediaGalleryPreviewAction = mediaGalleryPreviewOption.action,
+                        //     currentPage = pagerState.currentPage,
+                        //     permissionHandler = downloadPermissionHandler,
+                        //     attachments = attachments
+                        // )
                     },
                     enabled = mediaGalleryPreviewOption.isEnabled
                 ),
