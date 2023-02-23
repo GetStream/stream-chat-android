@@ -56,6 +56,73 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-firebase
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-huawei
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-pushprovider-xiaomi
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# February 23rd, 2023 - 5.13.0
+## stream-chat-android-ui-components
+### 🐞 Fixed
 - Fixed image scaling when width is bigger than height. [#4659](https://github.com/GetStream/stream-chat-android/pull/4659)
 - Fixed date separator handlers not being applied when calling `MessageListViewModel.setDateSeparatorHandler()` and  `MessageListViewModel.()`. [#4681](https://github.com/GetStream/stream-chat-android/pull/4681)
 
@@ -118,8 +185,6 @@
 ### ⚠️ Changed
 - The styling for the reply message bubbles visible inside `MessageInputView` and `MessageComposerView` when replying to messages has changed slightly and is now the same for both messages sent by the currently logged-in user and those sent by other users. However, you are now able to style the bubbles. For more information check the added section for `stream-chat-android-ui-components`. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
 
-### ❌ Removed
-
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed Compose Previews for ChatTheme and other minor components like `MessageText`. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
@@ -141,50 +206,6 @@ The following items are breaking changes, since it was very important to improve
 - Removed DownloadPermissionHandler. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 - Removed StreamPermissionHandlers. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 - Removed `permissionHandlers` parameter from `ChatTheme`, this should make it easier to preview components within Android Studio. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-firebase
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-huawei
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-pushprovider-xiaomi
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # January 31st, 2023 - 5.12.0
 ## stream-chat-android-client
