@@ -97,10 +97,7 @@ internal class MessageComposerViewModelTest {
                 channelType = eq("messaging"),
                 channelId = eq("123"),
                 message = captor.capture(),
-                isRetrying = eq(false),
-                skipPush = any(),
-                skipEnrichUrl = any(),
-                isPendingMessage = any()
+                isRetrying = eq(false)
             )
             captor.firstValue.text `should be equal to` "Message text"
             viewModel.input.value `should be equal to` ""
@@ -136,10 +133,7 @@ internal class MessageComposerViewModelTest {
                 channelType = eq("messaging"),
                 channelId = eq("123"),
                 message = captor.capture(),
-                isRetrying = eq(false),
-                skipPush = any(),
-                skipEnrichUrl = any(),
-                isPendingMessage = any()
+                isRetrying = eq(false)
             )
             captor.firstValue.attachments.size `should be equal to` 2
             viewModel.selectedAttachments.value.size `should be equal to` 0
@@ -393,17 +387,7 @@ internal class MessageComposerViewModelTest {
         }
 
         fun givenSendMessage(message: Message = Message()) = apply {
-            whenever(
-                chatClient.sendMessage(
-                    channelType = any(),
-                    channelId = any(),
-                    message = any(),
-                    isRetrying = any(),
-                    skipPush = any(),
-                    skipEnrichUrl = any(),
-                    isPendingMessage = any()
-                )
-            ) doReturn message.asCall()
+            whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
         }
 
         fun get(): MessageComposerViewModel {

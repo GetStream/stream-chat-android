@@ -188,17 +188,7 @@ internal class MessageInputViewModelTest {
         }
 
         fun givenSendMessage() = apply {
-            whenever(
-                chatClient.sendMessage(
-                    channelType = any(),
-                    channelId = any(),
-                    message = any(),
-                    isRetrying = any(),
-                    skipPush = any(),
-                    skipEnrichUrl = any(),
-                    isPendingMessage = any()
-                )
-            ) doReturn Message().asCall()
+            whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn Message().asCall()
         }
 
         fun givenStopTyping() = apply {
