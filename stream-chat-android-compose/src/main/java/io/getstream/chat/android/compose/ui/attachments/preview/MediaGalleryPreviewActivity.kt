@@ -75,6 +75,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -109,6 +110,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.Result
@@ -116,8 +119,6 @@ import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.handlers.DownloadPermissionHandler
-import io.getstream.chat.android.compose.handlers.PermissionHandler
 import io.getstream.chat.android.compose.state.mediagallerypreview.Delete
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewAction
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewActivityState
@@ -139,6 +140,8 @@ import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.compose.util.attachmentDownloadState
+import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -543,12 +546,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * @param pagerState The state of the pager, used to handle selected actions.
      * @param attachments The list of attachments for which we display options.
      */
+    @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     private fun MediaGalleryPreviewOptionItem(
         mediaGalleryPreviewOption: MediaGalleryPreviewOption,
         pagerState: PagerState,
         attachments: List<Attachment>,
     ) {
+
+        val (writePermissionState, downloadPayload) = attachmentDownloadState()
+        val context = LocalContext.current
 
         Row(
             modifier = Modifier
@@ -559,14 +566,14 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(),
                     onClick = {
-                        mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false)
-                        // TODO: Marin
-                        // handleMediaAction(
-                        //     mediaGalleryPreviewAction = mediaGalleryPreviewOption.action,
-                        //     currentPage = pagerState.currentPage,
-                        //     permissionHandler = downloadPermissionHandler,
-                        //     attachments = attachments
-                        // )
+                        handleMediaAction(
+                            context = context,
+                            mediaGalleryPreviewAction = mediaGalleryPreviewOption.action,
+                            currentPage = pagerState.currentPage,
+                            writePermissionState = writePermissionState,
+                            downloadPayload = downloadPayload,
+                            attachments = attachments
+                        )
                     },
                     enabled = mediaGalleryPreviewOption.isEnabled
                 ),
@@ -596,17 +603,21 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     /**
      * Consumes the action user selected to perform for the current media attachment.
      *
+     * @param context The [Context] used to ask for handling permissions.
      * @param mediaGalleryPreviewAction The action the user selected.
      * @param currentPage The index of the current media attachment.
-     * @param permissionHandler Checks if we have the necessary permissions
-     * to perform an action if the action needs a specific Android permission.
      * @param attachments The list of attachments for which actions need to be handled.
+     * @param writePermissionState The current state of permissions.
+     * @param downloadPayload The attachment to be downloaded.
      */
+    @OptIn(ExperimentalPermissionsApi::class)
     private fun handleMediaAction(
+        context: Context,
         mediaGalleryPreviewAction: MediaGalleryPreviewAction,
         currentPage: Int,
-        permissionHandler: PermissionHandler,
         attachments: List<Attachment>,
+        writePermissionState: PermissionState,
+        downloadPayload: MutableState<Attachment?>
     ) {
         val message = mediaGalleryPreviewAction.message
 
@@ -629,10 +640,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             }
             is Delete -> mediaGalleryPreviewViewModel.deleteCurrentMediaAttachment(attachments[currentPage])
             is SaveMedia -> {
-                permissionHandler
-                    .onHandleRequest(
-                        mapOf(DownloadPermissionHandler.PayloadAttachment to attachments[currentPage])
-                    )
+                onDownloadHandleRequest(
+                    context = context,
+                    payload = attachments[currentPage],
+                    permissionState = writePermissionState,
+                    downloadPayload = downloadPayload
+                )
             }
         }
     }
