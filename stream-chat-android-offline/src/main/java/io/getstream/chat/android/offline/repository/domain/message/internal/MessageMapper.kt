@@ -105,6 +105,8 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         pinnedAt = pinnedAt,
         pinExpires = pinExpires,
         pinnedByUserId = pinnedBy?.id,
+        skipPushNotification = skipPushNotification,
+        skipEnrichUrl = skipEnrichUrl,
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     latestReactions = latestReactions.map(Reaction::toEntity),

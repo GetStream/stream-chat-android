@@ -113,6 +113,18 @@ internal data class MessageInnerEntity(
     val pinnedByUserId: String?,
     /** participants of thread replies */
     val threadParticipantsIds: List<String> = emptyList(),
+    /**
+     * If the message should skip triggering a push notification when sent. Used when sending a new message.
+     * Note: This property is local only, it is not sent to the backend.
+     */
+    var skipPushNotification: Boolean = false,
+
+    /**
+     * If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. Used when sending or updating a message.
+     * Note: This property is local only, it is not sent to the backend.
+     */
+    var skipEnrichUrl: Boolean = false,
 )
 
 internal data class MessageSyncDescriptionEntity(

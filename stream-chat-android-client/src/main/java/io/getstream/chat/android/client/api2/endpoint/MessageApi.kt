@@ -41,7 +41,9 @@ import retrofit2.http.Query
 @AuthenticatedApi
 internal interface MessageApi {
 
-    // REST documentation: https://getstream.io/chat/docs/rest/#messages-sendmessage
+    /**
+     * [REST documentation](https://getstream.io/chat/docs/rest/#messages-sendmessage)
+     */
     @POST("/channels/{type}/{id}/message")
     fun sendMessage(
         @Path("type") channelType: String,
@@ -52,14 +54,18 @@ internal interface MessageApi {
     @GET("/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>
 
-    // REST documentation: https://getstream.io/chat/docs/rest/#messages-updatemessage
+    /**
+     * [REST documentation]()https://getstream.io/chat/docs/rest/#messages-updatemessage)
+     */
     @POST("/messages/{id}")
     fun updateMessage(
         @Path("id") messageId: String,
         @Body message: UpdateMessageRequest,
     ): RetrofitCall<MessageResponse>
 
-    // Rest documentation: https://getstream.io/chat/docs/rest/#messages-updatemessagepartial-request
+    /**
+     * [Rest documentation](https://getstream.io/chat/docs/rest/#messages-updatemessagepartial-request)
+     */
     @PUT("/messages/{id}")
     fun partialUpdateMessage(
         @Path("id") messageId: String,

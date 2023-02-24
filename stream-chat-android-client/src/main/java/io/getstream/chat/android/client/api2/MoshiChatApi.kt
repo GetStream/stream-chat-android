@@ -184,7 +184,6 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         message: Message,
         skipPushNotification: Boolean,
         skipEnrichUrl: Boolean,
-        isPendingMessage: Boolean,
     ): Call<Message> {
         return messageApi.sendMessage(
             channelType = channelType,
@@ -193,7 +192,6 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                 message = message.toDto(),
                 skip_push = skipPushNotification,
                 skip_enrich_url = skipEnrichUrl,
-                is_pending_message = isPendingMessage
             ),
         ).map { response -> response.message.toDomain() }
     }

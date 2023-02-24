@@ -1546,7 +1546,6 @@ internal constructor(
             .share(userScope) { DeleteMessageIdentifier(messageId, hard) }
     }
 
-    @CheckResult
     /**
      * Fetches a single message from the backend.
      *
@@ -1555,6 +1554,8 @@ internal constructor(
      * @return The message wrapped inside [Result] if the call was successful,
      * otherwise returns a [ChatError] instance wrapped inside [Result].
      */
+    @CheckResult
+
     public fun getMessage(messageId: String): Call<Message> {
         logger.d { "[getMessage] messageId: $messageId" }
         val relevantPlugins = plugins.filterIsInstance<GetMessageListener>().also(::logPlugins)
@@ -1578,11 +1579,6 @@ internal constructor(
      * @param channelId The channel id. ie 123.
      * @param message Message object
      * @param isRetrying True if this message is being retried.
-     * @param skipPush If the message should skip triggering a push notification when sent. False by default.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
-     * displayed as a link attachment. False by default.
-     * @param isPendingMessage If true, the message will not be visible until it has been committed using the
-     * [commit API call](https://getstream.io/chat/docs/rest/#other-commitmessage). False by default.
      *
      * @return Executable async [Call] responsible for sending a message.
      */
@@ -1593,9 +1589,6 @@ internal constructor(
         channelId: String,
         message: Message,
         isRetrying: Boolean = false,
-        skipPush: Boolean = false,
-        skipEnrichUrl: Boolean = false,
-        isPendingMessage: Boolean = false,
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
         val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
@@ -1612,9 +1605,8 @@ internal constructor(
                     channelType = channelType,
                     channelId = channelId,
                     message = newMessage,
-                    skipPushNotification = skipPush,
-                    skipEnrichUrl = skipEnrichUrl,
-                    isPendingMessage = isPendingMessage,
+                    skipPushNotification = message.skipPushNotification,
+                    skipEnrichUrl = message.skipEnrichUrl,
                 )
                     .retry(userScope, retryPolicy)
                     .doOnResult(userScope) { result ->
@@ -1638,20 +1630,16 @@ internal constructor(
      * to store the updated message locally.
      *
      * @param message [Message] The message to be updated.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
-     * displayed as a link attachment. False by default.
      */
     @CheckResult
-    @JvmOverloads
     public fun updateMessage(
         message: Message,
-        skipEnrichUrl: Boolean = false,
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<EditMessageListener>().also(::logPlugins)
 
         return api.updateMessage(
             message = message,
-            skipEnrichUrl = skipEnrichUrl
+            skipEnrichUrl = message.skipEnrichUrl
         )
             .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->

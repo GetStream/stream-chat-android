@@ -28,8 +28,6 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
  * @param skip_push If the message should skip triggering a push notification when sent. False by default.
  * @param skip_enrich_url If the message should skip enriching the URL. If URl is not enriched, it will not be
  * displayed as a link attachment. False by default.
- * @param is_pending_message If true, the message will not be visible until it has been committed using the
- * [commit API call](https://getstream.io/chat/docs/rest/#other-commitmessage). False by default.
  */
 // REST documentation: https://getstream.io/chat/docs/rest/#messages-sendmessage
 @JsonClass(generateAdapter = true)
@@ -37,5 +35,4 @@ internal data class SendMessageRequest(
     val message: UpstreamMessageDto,
     val skip_push: Boolean = false,
     val skip_enrich_url: Boolean = false,
-    val is_pending_message: Boolean = false,
 )
