@@ -50,6 +50,7 @@ import io.getstream.chat.android.ui.message.input.attachment.selected.internal.S
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedCustomAttachmentViewHolderFactory
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedFileAttachmentAdapter
 import io.getstream.chat.android.ui.message.input.attachment.selected.internal.SelectedMediaAttachmentAdapter
+import io.getstream.chat.android.ui.message.list.MessageReplyStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
@@ -77,6 +78,7 @@ internal class MessageInputFieldView : FrameLayout {
 
     private val _selectedAttachmentsCount = MutableStateFlow(0)
     internal val selectedAttachmentsCount: StateFlow<Int> = _selectedAttachmentsCount
+    internal var messageReplyStyle: MessageReplyStyle? = null
 
     var mode: Mode by Delegates.observable(Mode.MessageMode) { _, oldMode, newMode ->
         if (oldMode != newMode) {
@@ -349,7 +351,7 @@ internal class MessageInputFieldView : FrameLayout {
         binding.messageReplyView.setMessage(
             currentMode.repliedMessage,
             ChatClient.instance().getCurrentUser()?.id == currentMode.repliedMessage.user.id,
-            null,
+            messageReplyStyle,
         )
         binding.messageReplyView.isVisible = true
     }

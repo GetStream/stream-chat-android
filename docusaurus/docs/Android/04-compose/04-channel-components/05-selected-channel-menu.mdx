@@ -106,6 +106,11 @@ This component offers the following customization options:
 fun SelectedChannelMenu(
     ..., // State and actions
     modifier: Modifier = Modifier,
+    channelOptions: List<ChannelOptionState> = buildDefaultChannelOptionsState(
+        selectedChannel = selectedChannel,
+        isMuted = isMuted,
+        ownCapabilities = selectedChannel.ownCapabilities
+    ),
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     headerContent: @Composable ColumnScope.() -> Unit = { ... },
@@ -114,6 +119,7 @@ fun SelectedChannelMenu(
 ```
 
 * `modifier`: Used to style the root of the `SelectedChannelMenu`, which is a `Card` component. Useful for the component size and padding, background, alignment and more.
+* `channelOptions`: Allows you to customize which channel options are shown in the overlay. Uses the function `buildDefaultChannelOptionsState()` to build a list of the default channel options.
 * `shape`: Used for the `Card` shape. By default, we position the element at the bottom of the screen with the top corners being rounded, which imitates a bottom drawer component. If you want to use the `SelectedChannelMenu` as a dialog, you can change the shape to have all round corners or to be flat.
 * `overlayColor`: Used to customize the color of the component overlay.
 * `headerContent`: Customizable composable representing the header content with channel members.

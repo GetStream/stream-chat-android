@@ -56,7 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed image scaling when width is bigger than height. [#4659](https://github.com/GetStream/stream-chat-android/pull/4659)
 
 ### ⬆️ Improved
 
@@ -68,22 +67,14 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed Compose Previews for ChatTheme and other minor components like `MessageText`. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
-- Added `currentUser` as a parameter to `MessageContent` and `MessageText`. These are non-optional, but nullable, parameters that define the behavior and looks of these components. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
-- Similarly, added `currentUser` as a parameter to `QuotedMessage`, `QuotedMessageContent` and `QuotedMessageText`.
 
 ### ❌ Removed
-The following items are breaking changes, since it was very important to improve/fix the behavior. The items described were used to expose customizable permission handlers which can be reused. However, this API is experimental and breaking for Previews, so we chose to go down a different path.
-- Removed PermissionHandler and its API. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
-- Removed DownloadPermissionHandler. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
-- Removed StreamPermissionHandlers. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
-- Removed `permissionHandlers` parameter from `ChatTheme`, this should make it easier to preview components within Android Studio. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
@@ -128,6 +119,93 @@ The following items are breaking changes, since it was very important to improve
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# February 23rd, 2023 - 5.13.0
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed image scaling when width is bigger than height. [#4659](https://github.com/GetStream/stream-chat-android/pull/4659)
+- Fixed date separator handlers not being applied when calling `MessageListViewModel.setDateSeparatorHandler()` and  `MessageListViewModel.()`. [#4681](https://github.com/GetStream/stream-chat-android/pull/4681)
+
+### ⬆️ Improved
+- When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
+
+### ✅ Added
+- Added a feature flag to `ChatUI` called `showThreadSeparatorInEmptyThread`. You can use this to enable a thread separator if the thread is empty. [#4629](https://github.com/GetStream/stream-chat-android/pull/4629)
+- Added the `messageLimit` parameter to MessageListViewModel and MessageListViewModelFactory. [#4634](https://github.com/GetStream/stream-chat-android/pull/4634)
+- Added the method `showModeratedMessageDialog()` to `MessageListView`. It is used to display a dialog when long clicking on a message that has failed a moderation check. [#4645](https://github.com/GetStream/stream-chat-android/pull/4645)
+- Added the ability to style the way message reply bubbles are displayed in `MessageComposerView` via xml attributes. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+  * `streamUiMessageComposerMessageReplyBackgroundColor`
+  * `streamUiMessageComposerMessageReplyTextSizeMine`
+  * `streamUiMessageComposerMessageReplyTextColorMine`
+  * `streamUiMessageComposerMessageReplyTextFontMine`
+  * `streamUiMessageComposerMessageReplyTextFontAssetsMine`
+  * `streamUiMessageComposerMessageReplyTextStyleMine`
+  * `streamUiMessageComposerMessageReplyStrokeColorMine`
+  * `streamUiMessageComposerMessageReplyStrokeWidthMine`
+  * `streamUiMessageComposerMessageReplyTextSizeTheirs`
+  * `streamUiMessageComposerMessageReplyTextColorTheirs`
+  * `streamUiMessageComposerMessageReplyTextFontTheirs`
+  * `streamUiMessageComposerMessageReplyTextFontAssetsTheirs`
+  * `streamUiMessageComposerMessageReplyTextStyleTheirs`
+  * `streamUiMessageComposerMessageReplyStrokeColorTheirs`
+  * `streamUiMessageComposerMessageReplyStrokeWidthTheirs`
+- Added new properties to `MessageComposerViewStyle` which allow styling the way message reply bubbles are displayed in `MessageComposerView`. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+  * `messageReplyBackgroundColor`
+  * `messageReplyTextStyleMine`
+  * `messageReplyMessageBackgroundStrokeColorMine`
+  * `messageReplyMessageBackgroundStrokeWidthMine`
+  * `messageReplyTextStyleTheirs`
+  * `messageReplyMessageBackgroundStrokeColorTheirs`
+  * `messageReplyMessageBackgroundStrokeWidthTheirs`
+- Added the ability to style the way message reply bubbles are displayed in `MessageInputView` via xml attributes. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+  * `streamUiMessageInputMessageReplyBackgroundColor`
+  * `streamUiMessageInputMessageReplyTextSizeMine`
+  * `streamUiMessageInputMessageReplyTextColorMine`
+  * `streamUiMessageInputMessageReplyTextFontMine`
+  * `streamUiMessageInputMessageReplyTextFontAssetsMine`
+  * `streamUiMessageInputMessageReplyTextStyleMine`
+  * `streamUiMessageInputMessageReplyStrokeColorMine`
+  * `streamUiMessageInputMessageReplyStrokeWidthMine`
+  * `streamUiMessageInputMessageReplyTextSizeTheirs`
+  * `streamUiMessageInputMessageReplyTextColorTheirs`
+  * `streamUiMessageInputMessageReplyTextFontTheirs`
+  * `streamUiMessageInputMessageReplyTextFontAssetsTheirs`
+  * `streamUiMessageInputMessageReplyTextStyleTheirs`
+  * `streamUiMessageInputMessageReplyStrokeColorTheirs`
+  * `streamUiMessageInputMessageReplyStrokeWidthTheirs`
+- Added new properties to `MessageComposerViewStyle` which allow styling the way message reply bubbles are displayed in `MessageInputView`. The styling applies both when replying to messages sent by the currently logged-in user, and those sent by other users. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+  * `messageReplyBackgroundColor`
+  * `messageReplyTextStyleMine`
+  * `messageReplyMessageBackgroundStrokeColorMine`
+  * `messageReplyMessageBackgroundStrokeWidthMine`
+  * `messageReplyTextStyleTheirs`
+  * `messageReplyMessageBackgroundStrokeColorTheirs`
+  * `messageReplyMessageBackgroundStrokeWidthTheirs`
+
+### ⚠️ Changed
+- The styling for the reply message bubbles visible inside `MessageInputView` and `MessageComposerView` when replying to messages has changed slightly and is now the same for both messages sent by the currently logged-in user and those sent by other users. However, you are now able to style the bubbles. For more information check the added section for `stream-chat-android-ui-components`. [#4679](https://github.com/GetStream/stream-chat-android/pull/4679)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed Compose Previews for ChatTheme and other minor components like `MessageText`. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+
+### ⬆️ Improved
+- When creating message previews, `Attachment.fallback` is now included as a fallback option after `Attachment.title` and `Attachment.name`. [#4667](https://github.com/GetStream/stream-chat-android/pull/4667)
+
+### ✅ Added
+- Added the parameter `channelOptions: List<ChannelOptionState>` to `SelectedChannelMenu` allowing users to override the default channel options more easily. The parameter comes with a default argument of `buildDefaultChannelOptionsState()`. [#4671](https://github.com/GetStream/stream-chat-android/pull/4671)
+
+### ⚠️ Changed
+- Added the parameter `channelOptions: List<ChannelOptionState>` to `SelectedChannelMenu` allowing users to override the default channel options more easily. The parameter comes with a default argument of `buildDefaultChannelOptionsState()`. [#4671](https://github.com/GetStream/stream-chat-android/pull/4671)
+- Added `currentUser` as a parameter to `MessageContent` and `MessageText`. These are non-optional, but nullable, parameters that define the behavior and looks of these components. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Similarly, added `currentUser` as a parameter to `QuotedMessage`, `QuotedMessageContent` and `QuotedMessageText`.
+
+### ❌ Removed
+The following items are breaking changes, since it was very important to improve/fix the behavior. The items described were used to expose customizable permission handlers which can be reused. However, this API is experimental and breaking for Previews, so we chose to go down a different path.
+- Removed PermissionHandler and its API. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed DownloadPermissionHandler. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed StreamPermissionHandlers. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
+- Removed `permissionHandlers` parameter from `ChatTheme`, this should make it easier to preview components within Android Studio. [#4672](https://github.com/GetStream/stream-chat-android/pull/4672)
 
 # January 31st, 2023 - 5.12.0
 ## stream-chat-android-client
