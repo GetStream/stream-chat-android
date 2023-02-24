@@ -81,6 +81,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Updated Compose compiler version to `1.4.3`. [#4697](https://github.com/GetStream/stream-chat-android/pull/4697)
 
 ### ✅ Added
 - Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
