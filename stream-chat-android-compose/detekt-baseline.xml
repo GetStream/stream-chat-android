@@ -9,10 +9,8 @@
     <ID>ComplexCondition:Messages.kt$!startOfMessages &amp;&amp; index == 0 &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ComplexMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
     <ID>ComplexMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
-    <ID>ForbiddenComment:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$// TODO: Marin</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
-    <ID>ImportOrdering:io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent.kt:19</ID>
     <ID>LargeClass:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
     <ID>LongMethod:GiphyMessageContent.kt$@Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:GroupAvatar.kt$@Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
@@ -23,6 +21,7 @@
     <ID>LongMethod:MessageItem.kt$@Composable internal fun RegularMessageContent( messageItem: MessageItemState, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit = {}, onGiphyActionClick: (GiphyAction) -> Unit = {}, onQuotedMessageClick: (Message) -> Unit = {}, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {}, )</ID>
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:StreamTypography.kt$StreamTypography.Companion$public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography</ID>
+    <ID>LongParameterList:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$( context: Context, mediaGalleryPreviewAction: MediaGalleryPreviewAction, currentPage: Int, attachments: List&lt;Attachment>, writePermissionState: PermissionState, downloadPayload: MutableState&lt;Attachment?> )</ID>
     <ID>LongParameterList:MediaGalleryPreviewActivityAttachmentState.kt$MediaGalleryPreviewActivityAttachmentState$( val name: String?, val url: String?, val thumbUrl: String?, val imageUrl: String?, val assetUrl: String?, val originalWidth: Int?, val originalHeight: Int?, val type: String?, )</ID>
     <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, )</ID>
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
@@ -42,11 +41,6 @@
     <ID>MaxLineLength:MessageOptions.kt$iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message)</ID>
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewActivity.kt:19</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
-    <ID>UnusedImports:MediaGalleryPreviewActivity.kt$import android.Manifest</ID>
-    <ID>UnusedPrivateMember:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$attachments: List&lt;Attachment></ID>
-    <ID>UnusedPrivateMember:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$pagerState: PagerState</ID>
-    <ID>UnusedPrivateMember:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$private fun handleMediaAction( mediaGalleryPreviewAction: MediaGalleryPreviewAction, currentPage: Int, permissionHandler: PermissionHandler, attachments: List&lt;Attachment>, )</ID>
   </CurrentIssues>
 </SmellBaseline>
