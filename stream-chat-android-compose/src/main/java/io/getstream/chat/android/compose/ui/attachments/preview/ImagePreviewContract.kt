@@ -54,9 +54,12 @@ public class ImagePreviewContract : ActivityResultContract<ImagePreviewContract.
      *
      * @param messageId The ID of the message.
      * @param initialPosition The initial position of the Image gallery, based on the clicked item.
+     * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
+     * by deleting an attachment contained within it. Set to false by default.
      */
     public class Input(
         public val messageId: String,
         public val initialPosition: Int = 0,
+        public val skipEnrichUrl: Boolean = false,
     )
 }

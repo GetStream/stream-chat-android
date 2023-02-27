@@ -59,13 +59,15 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * currently uploading images.
  *
  * @param attachmentState The state of the attachment, holding the root modifier, the message
- * and the onLongItemClick handler.
+ * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ImageAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
+    skipEnrichUrl: Boolean = false,
 ) {
     val (message, onLongItemClick, onImagePreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentImageGridSpacing
@@ -110,7 +112,8 @@ public fun ImageAttachmentContent(
                 message = message,
                 attachmentPosition = 0,
                 onImagePreviewResult = onImagePreviewResult,
-                onLongItemClick = onLongItemClick
+                onLongItemClick = onLongItemClick,
+                skipEnrichUrl = skipEnrichUrl,
             )
         } else {
             Column(
@@ -184,6 +187,8 @@ public fun ImageAttachmentContent(
  *
  * @param attachment Image attachment data to show.
  * @param modifier Modifier for styling.
+ * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -194,6 +199,7 @@ internal fun ImageAttachmentContentItem(
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
+    skipEnrichUrl: Boolean = false,
 ) {
     val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
@@ -212,7 +218,8 @@ internal fun ImageAttachmentContentItem(
                     imagePreviewLauncher.launch(
                         ImagePreviewContract.Input(
                             messageId = message.id,
-                            initialPosition = attachmentPosition
+                            initialPosition = attachmentPosition,
+                            skipEnrichUrl = skipEnrichUrl,
                         )
                     )
                 },

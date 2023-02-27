@@ -67,7 +67,9 @@ internal suspend fun MessageEntity.toModel(
         pinned = pinned,
         pinnedAt = pinnedAt,
         pinExpires = pinExpires,
-        pinnedBy = pinnedByUserId?.let { getUser(it) }
+        pinnedBy = pinnedByUserId?.let { getUser(it) },
+        skipEnrichUrl = skipEnrichUrl,
+        skipPushNotification = skipPushNotification,
     )
 }
 

@@ -510,7 +510,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Giph
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/ImageAttachmentContentKt {
-	public static final fun ImageAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ImageAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/ImageAttachmentPreviewContentKt {
@@ -545,10 +545,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$ImageAttachmentFactoryKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$ImageAttachmentFactoryKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function5;
-	public static field lambda-2 Lkotlin/jvm/functions/Function4;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function5;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$QuotedAttachmentFactoryKt {
@@ -575,7 +573,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Giph
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ImageAttachmentFactoryKt {
-	public static final fun ImageAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+	public static final fun ImageAttachmentFactory (Z)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+	public static synthetic fun ImageAttachmentFactory$default (ZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/LinkAttachmentFactoryKt {
@@ -616,7 +615,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Imag
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/ImagePreviewActivity$Companion {
-	public final fun getIntent (Landroid/content/Context;Ljava/lang/String;I)Landroid/content/Intent;
+	public final fun getIntent (Landroid/content/Context;Ljava/lang/String;IZ)Landroid/content/Intent;
+	public static synthetic fun getIntent$default (Lio/getstream/chat/android/compose/ui/attachments/preview/ImagePreviewActivity$Companion;Landroid/content/Context;Ljava/lang/String;IZILjava/lang/Object;)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/ImagePreviewContract : androidx/activity/result/contract/ActivityResultContract {
@@ -630,10 +630,11 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Imag
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/ImagePreviewContract$Input {
 	public static final field $stable I
-	public fun <init> (Ljava/lang/String;I)V
-	public synthetic fun <init> (Ljava/lang/String;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;IZ)V
+	public synthetic fun <init> (Ljava/lang/String;IZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getInitialPosition ()I
 	public final fun getMessageId ()Ljava/lang/String;
+	public final fun getSkipEnrichUrl ()Z
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaPreviewActivity : androidx/appcompat/app/AppCompatActivity {
@@ -1266,7 +1267,7 @@ public final class io/getstream/chat/android/compose/ui/components/userreactions
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {
-	public static final fun MessagesScreen (Ljava/lang/String;IZZZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ZLandroidx/compose/runtime/Composer;III)V
+	public static final fun MessagesScreen (Ljava/lang/String;IZZZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Ljava/lang/String;ZZZLandroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {
@@ -1850,8 +1851,10 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelV
 
 public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
-	public final fun deleteCurrentImage (Lio/getstream/chat/android/client/models/Attachment;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun deleteCurrentImage (Lio/getstream/chat/android/client/models/Attachment;Z)V
+	public static synthetic fun deleteCurrentImage$default (Lio/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModel;Lio/getstream/chat/android/client/models/Attachment;ZILjava/lang/Object;)V
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun isShowingGallery ()Z
@@ -1862,7 +1865,8 @@ public final class io/getstream/chat/android/compose/viewmodel/imagepreview/Imag
 
 public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

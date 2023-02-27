@@ -29,9 +29,14 @@ import io.getstream.chat.android.compose.ui.util.isMedia
 /**
  * An [AttachmentFactory] that validates attachments as images and uses [ImageAttachmentContent] to
  * build the UI for the message.
+ *
+ * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  */
 @Suppress("FunctionName")
-public fun ImageAttachmentFactory(): AttachmentFactory = AttachmentFactory(
+public fun ImageAttachmentFactory(
+    skipEnrichUrl: Boolean = false,
+): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.all { it.isMedia() } },
     previewContent = { modifier, attachments, onAttachmentRemoved ->
         ImageAttachmentPreviewContent(
@@ -46,7 +51,8 @@ public fun ImageAttachmentFactory(): AttachmentFactory = AttachmentFactory(
                 .width(ChatTheme.dimens.attachmentsContentImageWidth)
                 .wrapContentHeight()
                 .heightIn(max = ChatTheme.dimens.attachmentsContentImageMaxHeight),
-            attachmentState = state
+            attachmentState = state,
+            skipEnrichUrl = skipEnrichUrl
         )
     },
 )

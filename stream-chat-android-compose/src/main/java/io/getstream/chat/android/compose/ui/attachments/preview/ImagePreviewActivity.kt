@@ -135,7 +135,8 @@ public class ImagePreviewActivity : AppCompatActivity() {
     private val factory by lazy {
         ImagePreviewViewModelFactory(
             chatClient = ChatClient.instance(),
-            messageId = intent?.getStringExtra(KeyMessageId) ?: ""
+            messageId = intent?.getStringExtra(KeyMessageId) ?: "",
+            skipEnrichUrl = intent.getBooleanExtra(KeySkipEnrichUrl, false)
         )
     }
 
@@ -952,6 +953,12 @@ public class ImagePreviewActivity : AppCompatActivity() {
         private const val KeyMessageId: String = "messageId"
 
         /**
+         * Represents the key for the boolean which dictates if we should skip enriching URLs when updating a
+         * message.
+         */
+        private const val KeySkipEnrichUrl: String = "skipEnrichUrl"
+
+        /**
          * Represents the key for the starting attachment position based on the clicked attachment.
          */
         private const val KeyAttachmentPosition: String = "attachmentPosition"
@@ -988,10 +995,16 @@ public class ImagePreviewActivity : AppCompatActivity() {
          * @param messageId The ID of the message to explore the images of.
          * @param attachmentPosition The initial position of the clicked image.
          */
-        public fun getIntent(context: Context, messageId: String, attachmentPosition: Int): Intent {
+        public fun getIntent(
+            context: Context,
+            messageId: String,
+            attachmentPosition: Int,
+            skipEnrichUrl: Boolean = false,
+        ): Intent {
             return Intent(context, ImagePreviewActivity::class.java).apply {
                 putExtra(KeyMessageId, messageId)
                 putExtra(KeyAttachmentPosition, attachmentPosition)
+                putExtra(KeySkipEnrichUrl, skipEnrichUrl)
             }
         }
     }
