@@ -1555,7 +1555,6 @@ internal constructor(
      * otherwise returns a [ChatError] instance wrapped inside [Result].
      */
     @CheckResult
-
     public fun getMessage(messageId: String): Call<Message> {
         logger.d { "[getMessage] messageId: $messageId" }
         val relevantPlugins = plugins.filterIsInstance<GetMessageListener>().also(::logPlugins)
