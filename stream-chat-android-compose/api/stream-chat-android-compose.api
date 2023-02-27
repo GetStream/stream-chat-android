@@ -481,8 +481,8 @@ public class io/getstream/chat/android/compose/ui/attachments/AttachmentFactory 
 public final class io/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories;
-	public final fun defaultFactories (ILio/getstream/chat/android/ui/utils/GiphyInfoType;Lio/getstream/chat/android/ui/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;)Ljava/util/List;
-	public static synthetic fun defaultFactories$default (Lio/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories;ILio/getstream/chat/android/ui/utils/GiphyInfoType;Lio/getstream/chat/android/ui/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;ILjava/lang/Object;)Ljava/util/List;
+	public final fun defaultFactories (ILio/getstream/chat/android/ui/utils/GiphyInfoType;Lio/getstream/chat/android/ui/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;Z)Ljava/util/List;
+	public static synthetic fun defaultFactories$default (Lio/getstream/chat/android/compose/ui/attachments/StreamAttachmentFactories;ILio/getstream/chat/android/ui/utils/GiphyInfoType;Lio/getstream/chat/android/ui/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;ZILjava/lang/Object;)Ljava/util/List;
 	public final fun defaultQuotedFactories ()Ljava/util/List;
 }
 
