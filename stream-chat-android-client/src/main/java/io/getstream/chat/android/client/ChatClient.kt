@@ -1632,9 +1632,7 @@ internal constructor(
      * @param message [Message] The message to be updated.
      */
     @CheckResult
-    public fun updateMessage(
-        message: Message,
-    ): Call<Message> {
+    public fun updateMessage(message: Message): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<EditMessageListener>().also(::logPlugins)
 
         return api.updateMessage(
@@ -1662,24 +1660,19 @@ internal constructor(
      * @param messageId The message ID.
      * @param set The key-value data which will be added to the existing message object.
      * @param unset The list of fields which will be removed from the existing message object.
-     * @param skipEnrichUrl If the message should skip enriching the URL. If URl is not enriched, it will not be
-     * displayed as a link attachment. False by default.
      *
      * @return Executable async [Call] responsible for partially updating the message.
      */
     @CheckResult
-    @JvmOverloads
     public fun partialUpdateMessage(
         messageId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-        skipEnrichUrl: Boolean = false,
     ): Call<Message> {
         return api.partialUpdateMessage(
             messageId = messageId,
             set = set,
             unset = unset,
-            skipEnrichUrl = skipEnrichUrl,
         )
     }
 
