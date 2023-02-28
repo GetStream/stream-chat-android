@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.MediaRecorderState
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
@@ -114,7 +115,16 @@ class MessagesActivity : BaseConnectedActivity() {
 
     override fun onPause() {
         super.onPause()
-        streamMediaRecorder.release()
+        if (statefulStreamMediaRecorder.mediaRecorderState.value == MediaRecorderState.RECORDING) {
+            streamMediaRecorder.stopRecording()
+        } else {
+            streamMediaRecorder.release()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        streamMediaRecorder.stopRecording()
     }
 
     @Composable
