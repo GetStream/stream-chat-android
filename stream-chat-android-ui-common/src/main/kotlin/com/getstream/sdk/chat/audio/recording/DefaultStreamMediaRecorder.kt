@@ -339,7 +339,9 @@ public class DefaultStreamMediaRecorder(
                     delay(amplitudePollingInterval)
                 }
             } catch (e: Exception) {
-                // TODO update error
+                logger.e {
+                    "Could not start poll max amplitude: ${e.message ?: e.cause}"
+                }
             }
         }
     }
