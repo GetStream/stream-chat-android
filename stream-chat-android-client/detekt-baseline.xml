@@ -8,40 +8,6 @@
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS"</ID>
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS&amp;oh=$originalHeight&amp;ow=$originalWidth"</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:106</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:107</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:108</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:109</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:110</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:111</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:112</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:113</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:114</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:115</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:116</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:117</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:118</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:119</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:120</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:121</ID>
-    <ID>NoUnusedImports:io.getstream.chat.android.client.ChatClient.kt:122</ID>
     <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.EditMessageListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.GetMessageListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.HideChannelListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.SendMessageListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.SendReactionListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener</ID>
-    <ID>UnusedImports:ChatClient.kt$import io.getstream.chat.android.client.plugin.listeners.TypingEventListener</ID>
   </CurrentIssues>
 </SmellBaseline>
