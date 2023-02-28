@@ -62,7 +62,6 @@
     <ID>MaxLineLength:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
     <ID>MaxLineLength:RepliedMessagesComponentBrowserFragment.kt$RepliedMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
     <ID>MaxLineLength:SharedAttachment.kt$SharedAttachment$AttachmentItem : SharedAttachment</ID>
-    <ID>NoUnusedImports:io.getstream.chat.ui.sample.feature.chat.ChatFragment.kt:39</ID>
     <ID>PackageNaming:AddGroupChannelSelectNameFragment.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
     <ID>PackageNaming:AddGroupChannelSelectNameMembersAdapter.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
     <ID>PackageNaming:AddGroupChannelSelectNameViewModel.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
@@ -93,7 +92,6 @@
     <ID>PackageNaming:UserLoginFragment.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
     <ID>PackageNaming:UserLoginViewModel.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
     <ID>SerialVersionUIDInSerializableClass:UserData.kt$UserData : Serializable</ID>
-    <ID>UnusedImports:ChatFragment.kt$import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
   </CurrentIssues>
 </SmellBaseline>
