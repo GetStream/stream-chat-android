@@ -744,7 +744,6 @@ internal fun DefaultMessageComposerTrailingContent(
         // TODO should we track this or always ask?
         permissionsRequested = true
     }
-    val allPermissionsGranted = storageAndRecordingPermissionState.allPermissionsGranted
     val coroutineScope = rememberCoroutineScope()
 
     val context = LocalContext.current
@@ -767,21 +766,18 @@ internal fun DefaultMessageComposerTrailingContent(
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onLongPress = {
-                                    when {
-                                        !allPermissionsGranted -> {
-                                            storageAndRecordingPermissionState.launchMultiplePermissionRequest()
-                                        }
-                                        isRecording == MediaRecorderState.UNINITIALIZED -> {
+
+                                    /**
+                                     * An internal function used to handle audio recording. It initiates the recording
+                                     * and stops and saves the file once the appropriate gesture has been completed.
+                                     */
+                                    fun handleAudioRecording() = coroutineScope.launch {
+                                        awaitPointerEventScope {
                                             statefulStreamMediaRecorder.startAudioRecording(
                                                 context = context,
                                                 recordingName = "audio_recording_${Date()}"
                                             )
-                                        }
-                                        else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
-                                    }
 
-                                    coroutineScope.launch {
-                                        awaitPointerEventScope {
                                             while (true) {
                                                 val event = awaitPointerEvent(PointerEventPass.Main)
 
@@ -797,6 +793,16 @@ internal fun DefaultMessageComposerTrailingContent(
                                                 }
                                             }
                                         }
+                                    }
+
+                                    when {
+                                        !storageAndRecordingPermissionState.allPermissionsGranted -> {
+                                            storageAndRecordingPermissionState.launchMultiplePermissionRequest()
+                                        }
+                                        isRecording == MediaRecorderState.UNINITIALIZED -> {
+                                            handleAudioRecording()
+                                        }
+                                        else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
                                     }
                                 }
                             )
