@@ -107,7 +107,11 @@ internal class ChannelLogic(
         if (request.isNotificationUpdate) return
         channelStateLogic.refreshMuteState()
 
-        runChannelQueryOffline(request)
+        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
+         * so we force the backend usage */
+        if (!request.isFilteringNewerMessages()) {
+            runChannelQueryOffline(request)
+        }
     }
 
     /**

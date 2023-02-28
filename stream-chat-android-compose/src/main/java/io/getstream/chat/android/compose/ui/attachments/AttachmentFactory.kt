@@ -45,6 +45,6 @@ public open class AttachmentFactory constructor(
         attachmentState: AttachmentState,
     ) -> Unit,
     public val textFormatter: (attachments: Attachment) -> String = {
-        it.title ?: it.name ?: ""
+        it.title ?: it.name ?: it.fallback ?: ""
     },
 )

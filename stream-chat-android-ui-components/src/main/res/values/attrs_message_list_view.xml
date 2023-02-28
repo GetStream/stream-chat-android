@@ -208,6 +208,7 @@
         <!-- Message Reply background color -->
         <attr name="streamUiMessageReplyBackgroundColorMine" format="color" />
         <attr name="streamUiMessageReplyBackgroundColorTheirs" format="color" />
+
         <!-- Message Reply text style mine -->
         <attr name="streamUiMessageReplyTextSizeMine" format="dimension|reference" />
         <attr name="streamUiMessageReplyTextColorMine" format="color" />
