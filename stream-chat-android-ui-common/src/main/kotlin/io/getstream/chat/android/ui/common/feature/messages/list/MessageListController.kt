@@ -1264,8 +1264,7 @@ public class MessageListController(
      * @param message Message to delete.
      */
     public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
-        _messageActions.value =
-            _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
+        _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
         chatClient.flagMessage(message.id).enqueue { response ->
             onResult(response)
             if (response is Result.Failure) {
