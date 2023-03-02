@@ -153,8 +153,6 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         message: Message,
-        skipPushNotification: Boolean = false,
-        skipEnrichUrl: Boolean = false,
     ): Call<Message>
 
     @CheckResult
@@ -173,7 +171,6 @@ internal interface ChatApi {
     @CheckResult
     fun updateMessage(
         message: Message,
-        skipEnrichUrl: Boolean = false,
     ): Call<Message>
 
     @CheckResult

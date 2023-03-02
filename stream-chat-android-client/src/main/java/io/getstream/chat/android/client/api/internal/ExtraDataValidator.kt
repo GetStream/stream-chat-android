@@ -56,10 +56,9 @@ internal class ExtraDataValidator(
             .withExtraDataValidation(set)
     }
 
-    override fun updateMessage(message: Message, skipEnrichUrl: Boolean): Call<Message> {
+    override fun updateMessage(message: Message): Call<Message> {
         return delegate.updateMessage(
-            message = message,
-            skipEnrichUrl = skipEnrichUrl
+            message = message
         ).withExtraDataValidation(message.extraData)
     }
 

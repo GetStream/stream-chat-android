@@ -182,29 +182,26 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         channelType: String,
         channelId: String,
         message: Message,
-        skipPushNotification: Boolean,
-        skipEnrichUrl: Boolean,
     ): Call<Message> {
         return messageApi.sendMessage(
             channelType = channelType,
             channelId = channelId,
             message = SendMessageRequest(
                 message = message.toDto(),
-                skip_push = skipPushNotification,
-                skip_enrich_url = skipEnrichUrl,
+                skip_push = message.skipPushNotification,
+                skip_enrich_url = message.skipEnrichUrl,
             ),
         ).map { response -> response.message.toDomain() }
     }
 
     override fun updateMessage(
         message: Message,
-        skipEnrichUrl: Boolean,
     ): Call<Message> {
         return messageApi.updateMessage(
             messageId = message.id,
             message = UpdateMessageRequest(
                 message = message.toDto(),
-                skip_enrich_url = skipEnrichUrl
+                skip_enrich_url = message.skipEnrichUrl
             ),
         ).map { response -> response.message.toDomain() }
     }

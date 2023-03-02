@@ -1604,8 +1604,6 @@ internal constructor(
                     channelType = channelType,
                     channelId = channelId,
                     message = newMessage,
-                    skipPushNotification = message.skipPushNotification,
-                    skipEnrichUrl = message.skipEnrichUrl,
                 )
                     .retry(userScope, retryPolicy)
                     .doOnResult(userScope) { result ->
@@ -1635,8 +1633,7 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<EditMessageListener>().also(::logPlugins)
 
         return api.updateMessage(
-            message = message,
-            skipEnrichUrl = message.skipEnrichUrl
+            message = message
         )
             .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
