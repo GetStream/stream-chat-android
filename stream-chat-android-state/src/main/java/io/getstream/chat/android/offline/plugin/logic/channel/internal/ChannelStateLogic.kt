@@ -458,6 +458,6 @@ internal class ChannelStateLogic(
     }
 
     private companion object {
-        private const val TAG = "ChannelStateLogicImpl"
+        private const val TAG = "Chat:ChannelStateLogicImpl"
     }
 }

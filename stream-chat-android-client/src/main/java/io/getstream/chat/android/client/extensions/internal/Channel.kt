@@ -207,7 +207,7 @@ public fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDa
 
 @InternalStreamChatApi
 public fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
-    val logger = StreamLog.getLogger("ChannelSort")
+    val logger = StreamLog.getLogger("Chat:ChannelSort")
 
     return asSequence()
         .also { channelSequence ->

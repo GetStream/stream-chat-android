@@ -85,7 +85,7 @@ internal class SyncManager(
     private val events: Tube<List<ChatEvent>> = Tube(),
 ) : SyncHistoryManager {
 
-    private val logger = StreamLog.getLogger("SyncManager")
+    private val logger = StreamLog.getLogger("Chat:SyncManager")
 
     private val syncScope = scope + SupervisorJob(scope.coroutineContext.job) +
         CoroutineExceptionHandler { context, throwable ->
