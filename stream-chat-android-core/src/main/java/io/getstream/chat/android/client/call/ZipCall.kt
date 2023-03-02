@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.async
@@ -55,11 +54,11 @@ internal class ZipCall<A : Any, B : Any>(
     }
 
     private fun <A : Any, B : Any> getErrorA(resultA: Result<A>): Result<Pair<A, B>> {
-        return Result(ChatError("Error executing callA", resultA.error().cause))
+        return Result(resultA.error())
     }
 
     private fun <A : Any, B : Any> getErrorB(resultB: Result<B>): Result<Pair<A, B>> {
-        return Result(ChatError("Error executing callB", resultB.error().cause))
+        return Result(resultB.error())
     }
 
     private fun <A : Any, B : Any> Result<A>.combine(result: Result<B>): Result<Pair<A, B>> =
