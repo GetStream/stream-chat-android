@@ -383,9 +383,7 @@ public class MessageListController(
                             }
                         }
                     }
-                    .first {
-                        it.messageItems.isNotEmpty()
-                    }
+                    .first { it.messageItems.isNotEmpty() }
             }
         }
     }
