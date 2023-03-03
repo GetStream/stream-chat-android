@@ -52,6 +52,7 @@ import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutabl
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -166,14 +167,12 @@ public fun ChatClient.getRepliesAsState(
  * @return [ThreadState] wrapped inside a [Call].
  */
 @InternalStreamChatApi
-@JvmOverloads
-public fun ChatClient.getRepliesAsStateCall(
+public suspend fun ChatClient.awaitRepliesAsState(
     messageId: String,
     messageLimit: Int,
-    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
-): Call<ThreadState> {
-    return CoroutineCall(scope = state.scope) {
-        Result.Success(requestsAsState(coroutineScope).getRepliesAsStateCall(messageId, messageLimit))
+): ThreadState {
+    return coroutineScope {
+        requestsAsState(scope = this).awaitReplies(messageId, messageLimit)
     }
 }
 

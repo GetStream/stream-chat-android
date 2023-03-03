@@ -42,10 +42,10 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.extensions.awaitRepliesAsState
 import io.getstream.chat.android.state.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.state.extensions.getMessageUsingCache
 import io.getstream.chat.android.state.extensions.getRepliesAsState
-import io.getstream.chat.android.state.extensions.getRepliesAsStateCall
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.loadMessageById
 import io.getstream.chat.android.state.extensions.loadNewerMessages
@@ -866,31 +866,18 @@ public class MessageListController(
      * @param parentMessage The message with the thread we want to observe.
      */
     private suspend fun enterThreadSequential(parentMessage: Message) {
-        val result = chatClient.getRepliesAsStateCall(parentMessage.id, DEFAULT_MESSAGES_LIMIT).await()
+        val threadState = chatClient.awaitRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
         val channelState = channelState.value ?: return
 
-        when (result) {
-            is Result.Success -> {
-                val threadState = result.value
+        _messageActions.value = _messageActions.value + Reply(parentMessage)
+        _mode.value = MessageMode.MessageThread(parentMessage, threadState)
 
-                _messageActions.value = _messageActions.value + Reply(parentMessage)
-                _mode.value = MessageMode.MessageThread(parentMessage, threadState)
-
-                observeThreadMessagesState(
-                    threadId = threadState.parentId,
-                    messages = threadState.messages,
-                    endOfOlderMessages = threadState.endOfOlderMessages,
-                    reads = channelState.reads
-                )
-            }
-            is Result.Failure -> {
-                val error = result.value
-
-                logger.e {
-                    "[enterThreadSequential] -> Could not load thread: ${error.message}."
-                }
-            }
-        }
+        observeThreadMessagesState(
+            threadId = threadState.parentId,
+            messages = threadState.messages,
+            endOfOlderMessages = threadState.endOfOlderMessages,
+            reads = channelState.reads
+        )
     }
 
     /**
@@ -1016,7 +1003,7 @@ public class MessageListController(
      */
     private fun focusThreadMessage(
         threadMessageId: String,
-        parentMessageId: String
+        parentMessageId: String,
     ) {
         scope.launch {
 
