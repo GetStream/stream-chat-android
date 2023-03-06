@@ -111,6 +111,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * @param navigateToThreadViaNotification If true, when a thread message arrives in a push notification,
  * clicking it will automatically open the thread in which the message is located. If false, the SDK will always
  * navigate to the channel containing the thread but will not navigate to the thread itself.
+ * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
+ * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
+ * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  */
 @Suppress("LongMethod")
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -128,6 +131,8 @@ public fun MessagesScreen(
     onHeaderActionClick: (channel: Channel) -> Unit = {},
     messageId: String? = null,
     navigateToThreadViaNotification: Boolean = false,
+    skipPushNotification: Boolean = false,
+    skipEnrichUrl: Boolean = false,
 ) {
     val factory = buildViewModelFactory(
         context = LocalContext.current,
@@ -204,7 +209,15 @@ public fun MessagesScreen(
                     onCancelAction = {
                         listViewModel.dismissAllMessageActions()
                         composerViewModel.dismissMessageActions()
-                    }
+                    },
+                    onSendMessage = { message ->
+                        composerViewModel.sendMessage(
+                            message.apply {
+                                this.skipPushNotification = skipPushNotification
+                                this.skipEnrichUrl = skipEnrichUrl
+                            }
+                        )
+                    },
                 )
             }
         ) {
@@ -227,7 +240,14 @@ public fun MessagesScreen(
                             val message = listViewModel.getMessageWithId(result.messageId)
 
                             if (message != null) {
-                                composerViewModel.performMessageAction(Reply(message))
+                                composerViewModel.performMessageAction(
+                                    Reply(
+                                        message.apply {
+                                            this.skipPushNotification = skipPushNotification
+                                            this.skipEnrichUrl = skipEnrichUrl
+                                        }
+                                    )
+                                )
                             }
                         }
 
@@ -242,7 +262,9 @@ public fun MessagesScreen(
 
         MessageMenus(
             listViewModel = listViewModel,
-            composerViewModel = composerViewModel
+            composerViewModel = composerViewModel,
+            skipPushNotification = skipPushNotification,
+            skipEnrichUrl = skipEnrichUrl,
         )
         AttachmentsPickerMenu(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
@@ -250,7 +272,9 @@ public fun MessagesScreen(
         )
         MessageModerationDialog(
             listViewModel = listViewModel,
-            composerViewModel = composerViewModel
+            composerViewModel = composerViewModel,
+            skipPushNotification = skipPushNotification,
+            skipEnrichUrl = skipEnrichUrl,
         )
         MessageDialogs(listViewModel = listViewModel)
     }
@@ -262,11 +286,17 @@ public fun MessagesScreen(
  *
  * @param listViewModel The [MessageListViewModel] used to read state from.
  * @param composerViewModel The [MessageComposerViewModel] used to read state from.
+ * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default. Note, only
+ * new messages trigger push notifications, updating edited messages does not.
+ * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
+ * displayed as a link attachment. False by default.
  */
 @Composable
 private fun BoxScope.MessageMenus(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
+    skipPushNotification: Boolean,
+    skipEnrichUrl: Boolean,
 ) {
     val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
 
@@ -276,7 +306,9 @@ private fun BoxScope.MessageMenus(
         listViewModel = listViewModel,
         composerViewModel = composerViewModel,
         selectedMessageState = selectedMessageState,
-        selectedMessage = selectedMessage
+        selectedMessage = selectedMessage,
+        skipPushNotification = skipPushNotification,
+        skipEnrichUrl = skipEnrichUrl,
     )
 
     MessagesScreenReactionsPicker(
@@ -284,6 +316,8 @@ private fun BoxScope.MessageMenus(
         composerViewModel = composerViewModel,
         selectedMessageState = selectedMessageState,
         selectedMessage = selectedMessage,
+        skipPushNotification = skipPushNotification,
+        skipEnrichUrl = skipEnrichUrl,
     )
 }
 
@@ -297,6 +331,10 @@ private fun BoxScope.MessageMenus(
  * perform actions.
  * @param selectedMessageState The state of the currently selected message.
  * @param selectedMessage The currently selected message.
+ * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default. Note, only
+ * new messages trigger push notifications, updating edited messages does not.
+ * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
+ * displayed as a link attachment. False by default.
  */
 @Suppress("LongMethod")
 @OptIn(ExperimentalAnimationApi::class)
@@ -306,6 +344,8 @@ private fun BoxScope.MessagesScreenMenus(
     composerViewModel: MessageComposerViewModel,
     selectedMessageState: SelectedMessageState?,
     selectedMessage: Message,
+    skipPushNotification: Boolean,
+    skipEnrichUrl: Boolean,
 ) {
 
     val user by listViewModel.user.collectAsState()
@@ -351,6 +391,9 @@ private fun BoxScope.MessagesScreenMenus(
             message = selectedMessage,
             ownCapabilities = ownCapabilities,
             onMessageAction = { action ->
+                action.message.skipPushNotification = skipPushNotification
+                action.message.skipEnrichUrl = skipEnrichUrl
+
                 composerViewModel.performMessageAction(action)
                 listViewModel.performMessageAction(action)
             },
@@ -382,6 +425,9 @@ private fun BoxScope.MessagesScreenMenus(
             currentUser = user,
             message = selectedMessage,
             onMessageAction = { action ->
+                action.message.skipPushNotification = skipPushNotification
+                action.message.skipEnrichUrl = skipEnrichUrl
+
                 composerViewModel.performMessageAction(action)
                 listViewModel.performMessageAction(action)
             },
@@ -404,6 +450,10 @@ private fun BoxScope.MessagesScreenMenus(
  * perform actions.
  * @param selectedMessageState The state of the currently selected message.
  * @param selectedMessage The currently selected message.
+ * @param skipPushNotification If the message should skip triggering a push notification when sent. False by default. Note, only
+ * new messages trigger push notifications, updating edited messages does not.
+ * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
+ * displayed as a link attachment. False by default.
  */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -412,6 +462,8 @@ private fun BoxScope.MessagesScreenReactionsPicker(
     composerViewModel: MessageComposerViewModel,
     selectedMessageState: SelectedMessageState?,
     selectedMessage: Message,
+    skipPushNotification: Boolean,
+    skipEnrichUrl: Boolean,
 ) {
 
     AnimatedVisibility(
@@ -436,6 +488,9 @@ private fun BoxScope.MessagesScreenReactionsPicker(
                 ),
             message = selectedMessage,
             onMessageAction = { action ->
+                action.message.skipPushNotification = skipPushNotification
+                action.message.skipEnrichUrl = skipEnrichUrl
+
                 composerViewModel.performMessageAction(action)
                 listViewModel.performMessageAction(action)
             },
@@ -506,6 +561,8 @@ private fun BoxScope.AttachmentsPickerMenu(
 private fun MessageModerationDialog(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
+    skipPushNotification: Boolean,
+    skipEnrichUrl: Boolean,
 ) {
     val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
 
@@ -523,7 +580,14 @@ private fun MessageModerationDialog(
                 when (action) {
                     DeleteMessage -> listViewModel.deleteMessage(message = message, true)
                     EditMessage -> composerViewModel.performMessageAction(Edit(message))
-                    SendAnyway -> listViewModel.performMessageAction(Resend(message))
+                    SendAnyway -> listViewModel.performMessageAction(
+                        Resend(
+                            message.apply {
+                                this.skipPushNotification = skipPushNotification
+                                this.skipEnrichUrl = skipEnrichUrl
+                            }
+                        )
+                    )
                     else -> {
                         // Custom events
                     }

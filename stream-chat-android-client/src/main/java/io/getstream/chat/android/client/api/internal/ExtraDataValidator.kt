@@ -57,13 +57,23 @@ internal class ExtraDataValidator(
     }
 
     override fun updateMessage(message: Message): Call<Message> {
-        return delegate.updateMessage(message)
-            .withExtraDataValidation(message.extraData)
+        return delegate.updateMessage(
+            message = message
+        ).withExtraDataValidation(message.extraData)
     }
 
-    override fun partialUpdateMessage(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Message> {
-        return delegate.partialUpdateMessage(messageId, set, unset)
-            .withExtraDataValidation(set)
+    override fun partialUpdateMessage(
+        messageId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+        skipEnrichUrl: Boolean,
+    ): Call<Message> {
+        return delegate.partialUpdateMessage(
+            messageId = messageId,
+            set = set,
+            unset = unset,
+            skipEnrichUrl = skipEnrichUrl
+        ).withExtraDataValidation(set)
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {
@@ -77,7 +87,7 @@ internal class ExtraDataValidator(
     }
 
     private fun <T : CustomObject> Call<List<T>>.withExtraDataValidation(
-        objects: List<T>
+        objects: List<T>,
     ): Call<List<T>> {
         val (obj, reserved) = objects.findReserved()
         return when (obj == null || reserved == null) {
@@ -105,7 +115,7 @@ internal class ExtraDataValidator(
     }
 
     private inline fun <reified T : CustomObject> Call<T>.withExtraDataValidation(
-        extraData: Map<String, Any>
+        extraData: Map<String, Any>,
     ): Call<T> {
         val reserved = extraData.findReserved<T>()
         return when (reserved.isEmpty()) {

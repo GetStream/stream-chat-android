@@ -28,10 +28,18 @@ import kotlinx.coroutines.flow.StateFlow
 
 /**
  * ViewModel responsible for loading and showing the images of a selected message.
+ *
+ *
+ * @param chatClient The low level chat client used for API calls.
+ * @param messageId The ID of the message containing the attachments to be previewed.
+ * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  */
 public class ImagePreviewViewModel(
     private val chatClient: ChatClient,
     messageId: String,
+    private val skipEnrichUrl: Boolean = false,
+
 ) : ViewModel() {
 
     /**
@@ -92,8 +100,13 @@ public class ImagePreviewViewModel(
      * This will in turn update the UI accordingly or finish this screen in case there are no more images to show.
      *
      * @param currentImage The image attachment to remove from the message we're updating.
+     * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
+     * by deleting an attachment contained within it. Set to false by default.
      */
-    public fun deleteCurrentImage(currentImage: Attachment) {
+    public fun deleteCurrentImage(
+        currentImage: Attachment,
+        skipEnrichUrl: Boolean = this.skipEnrichUrl,
+    ) {
         val attachments = message.attachments
         val numberOfAttachments = attachments.size
 
@@ -105,7 +118,12 @@ public class ImagePreviewViewModel(
                 it.assetUrl == imageUrl || it.imageUrl == imageUrl
             }
 
-            chatClient.updateMessage(message).enqueue()
+            chatClient.updateMessage(
+                message = message
+                    .apply {
+                        this.skipEnrichUrl = skipEnrichUrl
+                    }
+            ).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
             chatClient.deleteMessage(message.id).enqueue { result ->
                 if (result.isSuccess) {

@@ -53,6 +53,8 @@ public object StreamAttachmentFactories {
      *
      * Setting it to fixed size mode will make it respect all given dimensions.
      * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+     * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the
+     * message by deleting an attachment contained within it. Set to false by default.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
@@ -61,6 +63,7 @@ public object StreamAttachmentFactories {
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
         contentScale: ContentScale = ContentScale.Crop,
+        skipEnrichUrl: Boolean = false,
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(),
         LinkAttachmentFactory(linkDescriptionMaxLines),
@@ -69,7 +72,9 @@ public object StreamAttachmentFactories {
             giphySizingMode = giphySizingMode,
             contentScale = contentScale,
         ),
-        ImageAttachmentFactory(),
+        ImageAttachmentFactory(
+            skipEnrichUrl = skipEnrichUrl
+        ),
         FileAttachmentFactory(),
     )
 

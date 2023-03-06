@@ -52,7 +52,6 @@ import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
-import io.getstream.chat.android.client.api2.model.requests.MessageRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
@@ -64,11 +63,13 @@ import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
+import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
@@ -130,7 +131,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     private val callApi: VideoCallApi,
     private val fileDownloadApi: FileDownloadApi,
     private val coroutineScope: CoroutineScope,
-    private val userScope: UserScope
+    private val userScope: UserScope,
 ) : ChatApi {
 
     private val logger = StreamLog.getLogger("Chat:MoshiChatApi")
@@ -177,25 +178,47 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         return configApi.getAppSettings().map(AppSettingsResponse::toDomain)
     }
 
-    override fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message> {
+    override fun sendMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+    ): Call<Message> {
         return messageApi.sendMessage(
             channelType = channelType,
             channelId = channelId,
-            message = MessageRequest(message.toDto()),
+            message = SendMessageRequest(
+                message = message.toDto(),
+                skip_push = message.skipPushNotification,
+                skip_enrich_url = message.skipEnrichUrl,
+            ),
         ).map { response -> response.message.toDomain() }
     }
 
-    override fun updateMessage(message: Message): Call<Message> {
+    override fun updateMessage(
+        message: Message,
+    ): Call<Message> {
         return messageApi.updateMessage(
             messageId = message.id,
-            message = MessageRequest(message.toDto()),
+            message = UpdateMessageRequest(
+                message = message.toDto(),
+                skip_enrich_url = message.skipEnrichUrl
+            ),
         ).map { response -> response.message.toDomain() }
     }
 
-    override fun partialUpdateMessage(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Message> {
+    override fun partialUpdateMessage(
+        messageId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+        skipEnrichUrl: Boolean,
+    ): Call<Message> {
         return messageApi.partialUpdateMessage(
             messageId = messageId,
-            body = PartialUpdateMessageRequest(set, unset)
+            body = PartialUpdateMessageRequest(
+                set = set,
+                unset = unset,
+                skip_enrich_url = skipEnrichUrl,
+            )
         ).map { response -> response.message.toDomain() }
     }
 

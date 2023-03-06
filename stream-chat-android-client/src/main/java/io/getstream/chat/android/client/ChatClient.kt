@@ -1546,7 +1546,6 @@ internal constructor(
             .share(userScope) { DeleteMessageIdentifier(messageId, hard) }
     }
 
-    @CheckResult
     /**
      * Fetches a single message from the backend.
      *
@@ -1555,6 +1554,7 @@ internal constructor(
      * @return The message wrapped inside [Result] if the call was successful,
      * otherwise returns a [ChatError] instance wrapped inside [Result].
      */
+    @CheckResult
     public fun getMessage(messageId: String): Call<Message> {
         logger.d { "[getMessage] messageId: $messageId" }
         val relevantPlugins = plugins.filterIsInstance<GetMessageListener>().also(::logPlugins)
@@ -1600,7 +1600,11 @@ internal constructor(
                     interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
                 } else message
             }.flatMapSuspend { newMessage ->
-                api.sendMessage(channelType, channelId, newMessage)
+                api.sendMessage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    message = newMessage,
+                )
                     .retry(userScope, retryPolicy)
                     .doOnResult(userScope) { result ->
                         logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
@@ -1628,7 +1632,9 @@ internal constructor(
     public fun updateMessage(message: Message): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<EditMessageListener>().also(::logPlugins)
 
-        return api.updateMessage(message)
+        return api.updateMessage(
+            message = message
+        )
             .doOnStart(userScope) {
                 relevantPlugins.forEach { plugin ->
                     logger.v { "[updateMessage] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
