@@ -62,8 +62,8 @@ internal data class ReplyAttachmentEntity(
     val uploadFilePath: String?,
     var originalHeight: Int?,
     var originalWidth: Int?,
-    // @Embedded
-    // var uploadState: UploadStateEntity? = null,
+    @Embedded
+    var uploadState: UploadStateEntity? = null,
     val extraData: Map<String, Any>,
 ) {
     companion object {
