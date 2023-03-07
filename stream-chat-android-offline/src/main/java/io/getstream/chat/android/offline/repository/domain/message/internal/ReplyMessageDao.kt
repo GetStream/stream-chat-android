@@ -33,7 +33,6 @@ internal interface ReplyMessageDao {
 
     @Transaction
     suspend fun insert(replyMessageEntities: List<ReplyMessageEntity>) {
-        // Todo: Test if having a separated attachments table solve the issue.
         insertAttachments(replyMessageEntities.flatMap(ReplyMessageEntity::attachments))
         insertInnerEntity(replyMessageEntities.map(ReplyMessageEntity::replyMessageInnerEntity))
     }
