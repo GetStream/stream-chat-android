@@ -179,7 +179,7 @@ internal open class BaseChatModule(
                         CurlInterceptor(
                             logger = object : Logger {
                                 override fun log(message: String) {
-                                    StreamLog.i("CURL") { message }
+                                    StreamLog.i("Chat:CURL") { message }
                                 }
                             },
                         )

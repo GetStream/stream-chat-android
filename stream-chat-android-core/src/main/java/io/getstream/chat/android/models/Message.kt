@@ -201,6 +201,23 @@ public data class Message(
      * The list of users who participate in thread
      */
     var threadParticipants: List<User> = emptyList(),
+
+    /**
+     * If the message should skip triggering a push notification when sent. Used when sending a new message.
+     * False by default.
+     *
+     * Note: This property is local only, it is not sent to the backend.
+     */
+    var skipPushNotification: Boolean = false,
+
+    /**
+     * If the message should skip enriching the URL. If URl is not enriched, it will not be
+     * displayed as a link attachment. Used when sending or updating a message. False by default.
+     *
+     * Note: This property is local only, it is not sent to the backend.
+     */
+    var skipEnrichUrl: Boolean = false,
+
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         public const val TYPE_REGULAR: String = "regular"

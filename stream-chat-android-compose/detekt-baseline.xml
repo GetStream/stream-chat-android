@@ -24,6 +24,7 @@
     <ID>LongParameterList:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$( context: Context, mediaGalleryPreviewAction: MediaGalleryPreviewAction, currentPage: Int, attachments: List&lt;Attachment>, writePermissionState: PermissionState, downloadPayload: MutableState&lt;Attachment?> )</ID>
     <ID>LongParameterList:MediaGalleryPreviewActivityAttachmentState.kt$MediaGalleryPreviewActivityAttachmentState$( val name: String?, val url: String?, val thumbUrl: String?, val imageUrl: String?, val assetUrl: String?, val originalWidth: Int?, val originalHeight: Int?, val type: String?, )</ID>
     <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, )</ID>
+    <ID>LongParameterList:MessagesScreen.kt$( listViewModel: MessageListViewModel, composerViewModel: MessageComposerViewModel, selectedMessageState: SelectedMessageState?, selectedMessage: Message, skipPushNotification: Boolean, skipEnrichUrl: Boolean, )</ID>
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
     <ID>MagicNumber:FileAttachmentContent.kt$0.85f</ID>
     <ID>MagicNumber:FilesPicker.kt$6f</ID>
@@ -40,7 +41,9 @@
     <ID>MaxLineLength:ChatTheme.kt$error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")</ID>
     <ID>MaxLineLength:MessageOptions.kt$iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message)</ID>
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
+    <ID>MaxLineLength:MessagesScreen.kt$*</ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
+    <ID>UnusedPrivateMember:StreamAttachmentFactories.kt$StreamAttachmentFactories$skipEnrichUrl: Boolean = false</ID>
   </CurrentIssues>
 </SmellBaseline>
