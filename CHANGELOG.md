@@ -16,9 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added the following parameters to `Message`. [#4701](https://github.com/GetStream/stream-chat-android/pull/4701)
-  * `skipPushNotification`: when set to `true` a newly sent message will not trigger a push notification.
-  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link
 
 ### ⚠️ Changed
 
@@ -74,10 +71,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added the property `skipEnrichUrl` to `ImagePreviewViewModelFactory`, `ImagePreviewViewModel` and `ImagePreviewContract.Input` constructors and the functions `StreamAttachmentFactories.defaultFactories()`, `ImageAttachmentFactory()`, `ImageAttachmentContent()`. When set to false, updating a message by deleting an attachment inside the message will skip the URL enrichment process, meaning the links will not be transformed to link attachments. Any existing link attachments will be preserved. [#4701](https://github.com/GetStream/stream-chat-android/pull/4701)
-- Added the following parameters to `MessagesScreen`. [#4701](https://github.com/GetStream/stream-chat-android/pull/4701)
-  * `skipPushNotification`: when set to `true` a newly sent message will not trigger a push notification.
-  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link.
 
 ### ⚠️ Changed
 
@@ -126,6 +119,22 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# March 7th, 2023 - 5.14.0
+## stream-chat-android-client
+
+### ✅ Added
+- Added the following parameters to `Message`. [#4701](https://github.com/GetStream/stream-chat-android/pull/4701)
+  * `skipPushNotification`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link
+
+## stream-chat-android-compose
+
+### ✅ Added
+- Added the property `skipEnrichUrl` to `ImagePreviewViewModelFactory`, `ImagePreviewViewModel` and `ImagePreviewContract.Input` constructors and the functions `StreamAttachmentFactories.defaultFactories()`, `ImageAttachmentFactory()`, `ImageAttachmentContent()`. When set to false, updating a message by deleting an attachment inside the message will skip the URL enrichment process, meaning the links will not be transformed to link attachments. Any existing link attachments will be preserved. [#4701](https://github.com/GetStream/stream-chat-android/pull/4701)
+- Added the following parameters to `MessagesScreen`. [#4701](https://github.com/GetStream/stream-chat-android/pull/4701)
+  * `skipPushNotification`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link.
 
 # February 23rd, 2023 - 5.13.0
 ## stream-chat-android-ui-components
