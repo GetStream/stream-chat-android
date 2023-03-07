@@ -22,7 +22,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.ReplyAttachmentEntity
 
 @Dao
 internal interface ReplyMessageDao {
@@ -33,15 +33,16 @@ internal interface ReplyMessageDao {
 
     @Transaction
     suspend fun insert(replyMessageEntities: List<ReplyMessageEntity>) {
-        insertInnerEntity(replyMessageEntities.map(ReplyMessageEntity::replyMessageInnerEntity))
+        // Todo: Test if having a separated attachments table solve the issue.
         insertAttachments(replyMessageEntities.flatMap(ReplyMessageEntity::attachments))
+        insertInnerEntity(replyMessageEntities.map(ReplyMessageEntity::replyMessageInnerEntity))
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInnerEntity(replyMessageEntities: List<ReplyMessageInnerEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAttachments(attachmentEntities: List<AttachmentEntity>)
+    suspend fun insertAttachments(attachmentEntities: List<ReplyAttachmentEntity>)
 
     @Delete
     suspend fun delete(replyMessageInnerEntity: ReplyMessageInnerEntity)
