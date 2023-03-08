@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
@@ -54,7 +53,6 @@ import java.util.concurrent.ConcurrentHashMap
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
     private val globalState: MutableGlobalState,
-    private val clientState: ClientState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
@@ -79,8 +77,6 @@ internal class LogicRegistry internal constructor(
                 queryChannelsRepository = repos,
                 channelConfigRepository = repos,
                 channelRepository = repos,
-                messageRepository = repos,
-                userRepository = repos,
                 repositoryFacade = repos
             )
 
@@ -264,7 +260,6 @@ internal class LogicRegistry internal constructor(
         internal fun create(
             stateRegistry: StateRegistry,
             globalState: MutableGlobalState,
-            clientState: ClientState,
             userPresence: Boolean,
             repos: RepositoryFacade,
             client: ChatClient,
@@ -280,7 +275,6 @@ internal class LogicRegistry internal constructor(
             return LogicRegistry(
                 stateRegistry = stateRegistry,
                 globalState = globalState,
-                clientState = clientState,
                 userPresence = userPresence,
                 repos = repos,
                 client = client,
