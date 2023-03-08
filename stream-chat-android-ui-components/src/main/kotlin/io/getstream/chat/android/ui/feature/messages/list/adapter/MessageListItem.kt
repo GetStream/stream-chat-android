@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.TypingItem
 import java.util.Date
 
-private const val HASH_MULTIPLIER = 31;
+private const val HASH_MULTIPLIER = 31
 
 /**
  * [MessageListItem] represents elements that are displayed in a [MessageListView].
