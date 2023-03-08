@@ -128,12 +128,9 @@ internal class EventBatchUpdate private constructor(
         enrichChannelsWithCapabilities()
         logger.v { "[execute] id: $id, channelMap.size: ${channelMap.size}" }
 
-        repos.storeStateForChannels(
-            users = userMap.values.toList(),
-            channels = channelMap.values.updateUsers(userMap),
-            messages = messageMap.values.toList().updateUsers(userMap),
-            cacheForMessages = true
-        )
+        repos.insertUsers(userMap.values.toList())
+        repos.upsertChannels(channelMap.values.updateUsers(userMap))
+        repos.insertMessages(messageMap.values.toList().updateUsers(userMap), true)
     }
 
     /**

@@ -17,8 +17,6 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.Result
@@ -61,22 +59,7 @@ internal class QueryChannelListenerDatabase(private val repos: RepositoryFacade)
         result.onSuccessSuspend { channel ->
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             repos.insertChannelConfig(ChannelConfig(channel.type, channel.config))
-            storeStateForChannel(channel)
+            repos.storeStateForChannel(channel)
         }
-    }
-
-    private suspend fun storeStateForChannel(channel: Channel) {
-        val users = channel.users().associateBy { it.id }.toMutableMap()
-        val configs: MutableCollection<ChannelConfig> = mutableSetOf(ChannelConfig(channel.type, channel.config))
-        channel.messages.forEach { message ->
-            message.enrichWithCid(channel.cid)
-            users.putAll(message.users().associateBy { it.id })
-        }
-        repos.storeStateForChannels(
-            configs = configs,
-            users = users.values.toList(),
-            channels = listOf(channel),
-            messages = channel.messages
-        )
     }
 }

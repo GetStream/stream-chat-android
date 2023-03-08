@@ -25,8 +25,6 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.User
 
 @Suppress("LongParameterList")
 internal class QueryChannelsDatabaseLogic(
@@ -36,14 +34,8 @@ internal class QueryChannelsDatabaseLogic(
     private val repositoryFacade: RepositoryFacade,
 ) {
 
-    internal suspend fun storeStateForChannels(
-        configs: Collection<ChannelConfig>?,
-        users: List<User>,
-        channels: Collection<Channel>,
-        messages: List<Message>,
-        cacheForMessages: Boolean,
-    ) {
-        repositoryFacade.storeStateForChannels(configs, users, channels, messages, cacheForMessages)
+    internal suspend fun storeStateForChannels(channels: Collection<Channel>) {
+        repositoryFacade.storeStateForChannels(channels)
     }
 
     /**

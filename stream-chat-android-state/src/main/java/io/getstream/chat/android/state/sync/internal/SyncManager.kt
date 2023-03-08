@@ -28,8 +28,6 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
@@ -39,12 +37,9 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserEntity
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -395,7 +390,7 @@ internal class SyncManager(
                     val channelLogic = logicRegistry.channel(channel.type, channel.id)
                     channelLogic.updateDataForChannel(channel, channel.messages.size)
                 }
-                storeStateForChannels(foundChannels)
+                repos.storeStateForChannels(foundChannels)
                 val foundCids = foundChannels.map { it.cid }
                 val stillMissingCids = missingCids - foundCids.toSet()
                 logger.v { "[updateActiveChannels] stillMissingCids.size: ${stillMissingCids.size}" }
@@ -508,39 +503,6 @@ internal class SyncManager(
 
     private suspend fun RepositoryFacade.markMessageAsFailed(message: Message) =
         insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))
-
-    private suspend fun storeStateForChannels(channelsResponse: Collection<Channel>) {
-        val users = mutableMapOf<String, User>()
-        val configs: MutableCollection<ChannelConfig> = mutableSetOf()
-        // start by gathering all the users
-        val messages = mutableListOf<Message>()
-
-        for (channel in channelsResponse) {
-            users.putAll(channel.users().associateBy { it.id })
-            configs += ChannelConfig(channel.type, channel.config)
-
-            channel.messages.forEach { message ->
-                message.enrichWithCid(channel.cid)
-                users.putAll(message.users().associateBy { it.id })
-            }
-
-            messages.addAll(channel.messages)
-        }
-
-        repos.storeStateForChannels(
-            configs = configs,
-            users = users.values.toList(),
-            channels = channelsResponse,
-            messages = messages
-        )
-
-        logger.i {
-            "storeStateForChannels stored ${channelsResponse.size} channels, " +
-                "${configs.size} configs, " +
-                "${users.size} users " +
-                "and ${messages.size} messages"
-        }
-    }
 
     private enum class State {
         Idle, Syncing
