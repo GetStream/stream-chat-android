@@ -28,6 +28,8 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.TypingItem
 import java.util.Date
 
+private const val HASH_MULTIPLIER = 31;
+
 /**
  * [MessageListItem] represents elements that are displayed in a [MessageListView].
  * There are the following subclasses of the [MessageListItem] available:
@@ -70,7 +72,8 @@ public sealed class MessageListItem {
          * Identifier of message. This should be used instead of hashCode to compare in DiffUtil.ItemCallback to
          * correctly update the message in the MessageListView when, and only when, updates are necessary.
          */
-        internal fun identifierHash(): Long = (message.identifierHash() * 31) + messageReadBy.size.hashCode()
+        internal fun identifierHash(): Long =
+            (message.identifierHash() * HASH_MULTIPLIER) + messageReadBy.size.hashCode()
     }
 
     public data class TypingItem(
