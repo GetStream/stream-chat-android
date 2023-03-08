@@ -35,8 +35,6 @@ internal class QueryChannelsDatabaseLogic(
     private val queryChannelsRepository: QueryChannelsRepository,
     private val channelConfigRepository: ChannelConfigRepository,
     private val channelRepository: ChannelRepository,
-    private val messageRepository: MessageRepository,
-    private val userRepository: UserRepository,
     private val repositoryFacade: RepositoryFacade,
 ) {
 
@@ -47,10 +45,7 @@ internal class QueryChannelsDatabaseLogic(
         messages: List<Message>,
         cacheForMessages: Boolean,
     ) {
-        configs?.let { channelConfigRepository.insertChannelConfigs(it) }
-        userRepository.insertUsers(users)
-        channelRepository.upsertChannels(channels)
-        messageRepository.insertMessages(messages, cacheForMessages)
+        repositoryFacade.storeStateForChannels(configs, users, channels, messages, cacheForMessages)
     }
 
     /**
