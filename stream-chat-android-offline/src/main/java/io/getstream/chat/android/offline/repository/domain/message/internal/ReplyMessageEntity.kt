@@ -22,14 +22,14 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.ReplyAttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
 import java.util.Date
 
 internal data class ReplyMessageEntity(
     @Embedded val replyMessageInnerEntity: ReplyMessageInnerEntity,
-    @Relation(entity = AttachmentEntity::class, parentColumn = "id", entityColumn = "messageId")
-    val attachments: List<AttachmentEntity>,
+    @Relation(entity = ReplyAttachmentEntity::class, parentColumn = "id", entityColumn = "messageId")
+    val attachments: List<ReplyAttachmentEntity>,
 )
 
 @Entity(tableName = REPLY_MESSAGE_ENTITY_TABLE_NAME)

@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toModel
+import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toReplyEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.toModel
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.toEntity
@@ -185,7 +186,7 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
             pinExpires = pinExpires,
             pinnedByUserId = pinnedBy?.id,
         ),
-        attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
+        attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )
 
 private fun MessageEntity.buildMessageSyncDescription(): MessageSyncDescription? = with(messageInnerEntity) {

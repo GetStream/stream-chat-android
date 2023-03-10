@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.facade
 
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomChannel
+import io.getstream.chat.android.client.test.randomConfig
 import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomReaction
@@ -42,9 +43,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
@@ -263,45 +262,38 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     }
 
     @Test
-    fun `Proves that correct methods are called in storeStateForChannels`() {
-        runTest {
-            val configList = listOf<ChannelConfig>(mock())
-            val userList = listOf(randomUser())
-            val channelList = listOf(randomChannel())
-            val messageList = listOf(randomMessage())
+    fun `When storing state for a channel, messages and config should be stored as well`() = runTest {
+        val channel = randomChannel(
+            config = randomConfig(),
+            messages = (0..positiveRandomInt(20)).map { randomMessage() },
+        )
+        val expectedChannelsConfig = listOf(ChannelConfig(channel.type, channel.config))
+        val expectedChannels = listOf(channel)
+        val expectedMessages = channel.messages
 
-            sut.storeStateForChannels(
-                configs = configList,
-                users = userList,
-                channels = channelList,
-                messages = messageList,
-                cacheForMessages = false
-            )
+        sut.storeStateForChannel(channel)
 
-            verify(configs).insertChannelConfigs(configList)
-            verify(users).insertUsers(userList)
-            verify(channels).upsertChannels(channelList)
-            verify(messages).insertMessages(messageList, false)
-        }
+        verify(configs).insertChannelConfigs(expectedChannelsConfig)
+        verify(channels).upsertChannels(expectedChannels)
+        verify(messages).insertMessages(expectedMessages, false)
     }
 
     @Test
-    fun `Proves that configs are not change if null is passed`() = runTest {
-        val userList = listOf(randomUser())
-        val channelList = listOf(randomChannel())
-        val messageList = listOf(randomMessage())
+    fun `When storing state for channels, messages and config should be stored as well`() = runTest {
+        val channelsToBeInserted = (0..positiveRandomInt(20)).map {
+            randomChannel(
+                config = randomConfig(),
+                messages = (0..positiveRandomInt(20)).map { randomMessage() },
+            )
+        }
+        val expectedChannelsConfig = channelsToBeInserted.map { ChannelConfig(it.type, it.config) }
+        val expectedChannels = channelsToBeInserted
+        val expectedMessages = channelsToBeInserted.flatMap { it.messages }
 
-        sut.storeStateForChannels(
-            configs = null,
-            users = userList,
-            channels = channelList,
-            messages = messageList,
-            cacheForMessages = false
-        )
+        sut.storeStateForChannels(channelsToBeInserted)
 
-        verifyNoInteractions(configs)
-        verify(users).insertUsers(userList)
-        verify(channels).upsertChannels(channelList)
-        verify(messages).insertMessages(messageList, false)
+        verify(configs).insertChannelConfigs(expectedChannelsConfig)
+        verify(channels).upsertChannels(expectedChannels)
+        verify(messages).insertMessages(expectedMessages, false)
     }
 }

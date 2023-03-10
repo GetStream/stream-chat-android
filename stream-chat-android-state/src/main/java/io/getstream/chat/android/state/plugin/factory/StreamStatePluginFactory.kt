@@ -104,7 +104,6 @@ public class StreamStatePluginFactory(
             userPresence = config.userPresence,
             repos = repositoryFacade,
             client = chatClient,
-            clientState = clientState,
             coroutineScope = scope,
             queryingChannelsFree = isQueryingFree
         )

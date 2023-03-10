@@ -19,38 +19,23 @@ package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.User
 
 @Suppress("LongParameterList")
 internal class QueryChannelsDatabaseLogic(
     private val queryChannelsRepository: QueryChannelsRepository,
     private val channelConfigRepository: ChannelConfigRepository,
     private val channelRepository: ChannelRepository,
-    private val messageRepository: MessageRepository,
-    private val userRepository: UserRepository,
     private val repositoryFacade: RepositoryFacade,
 ) {
 
-    internal suspend fun storeStateForChannels(
-        configs: Collection<ChannelConfig>?,
-        users: List<User>,
-        channels: Collection<Channel>,
-        messages: List<Message>,
-        cacheForMessages: Boolean,
-    ) {
-        configs?.let { channelConfigRepository.insertChannelConfigs(it) }
-        userRepository.insertUsers(users)
-        channelRepository.upsertChannels(channels)
-        messageRepository.insertMessages(messages, cacheForMessages)
+    internal suspend fun storeStateForChannels(channels: Collection<Channel>) {
+        repositoryFacade.storeStateForChannels(channels)
     }
 
     /**
