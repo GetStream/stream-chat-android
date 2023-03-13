@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.ConnectionData
-import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
@@ -77,7 +77,7 @@ class UserLoginViewModel : ViewModel() {
                     _events.postValue(Event(UiEvent.RedirectToChannels))
                 }.enqueue(::handleUserConnection)
             } else {
-                if (globalState.user.value == null) {
+                if (clientState.initializationState.value == InitializationState.NOT_INITIALIZED) {
                     connectUser(chatUser, user.token).enqueue(::handleUserConnection)
                 }
 

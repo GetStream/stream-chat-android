@@ -28,10 +28,10 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
@@ -93,7 +93,7 @@ object ChatHelper {
         onError: (ChatError) -> Unit = {},
     ) {
         ChatClient.instance().run {
-            if (globalState.user.value == null) {
+            if (clientState.initializationState.value == InitializationState.NOT_INITIALIZED) {
                 connectUser(userCredentials.user, userCredentials.token)
                     .enqueue { result ->
                         when (result) {
