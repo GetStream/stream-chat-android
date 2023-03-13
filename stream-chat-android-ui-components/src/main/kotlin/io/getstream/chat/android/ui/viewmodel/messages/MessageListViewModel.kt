@@ -135,7 +135,7 @@ public class MessageListViewModel(
      * The target message that the list should scroll to. Used when scrolling to a pinned message, a message opened from
      * a push notification or similar.
      */
-    public val targetMessage: LiveData<Message> = messageListController.messageListState.map {
+    public val targetMessage: LiveData<Message> = messageListController.listState.map {
         (it.messageItems.firstOrNull { it is MessageItemState && it.focusState == MessageFocused } as? MessageItemState)
             ?.message
             ?: Message()
