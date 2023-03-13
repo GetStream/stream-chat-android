@@ -41,6 +41,8 @@ import io.getstream.chat.android.models.AttachmentType
  *
  * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
  * in a group when previewing Media attachments in the message list. Values between 4 and 8 are optimal.
+ * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  * @param itemOverlayContent Represents the content overlaid above individual items.
  * By default it is used to display a play button over video previews.
  * @param previewItemOverlayContent Represents the content overlaid above individual preview items.
@@ -49,6 +51,7 @@ import io.getstream.chat.android.models.AttachmentType
 @Suppress("FunctionName")
 public fun MediaAttachmentFactory(
     maximumNumberOfPreviewedItems: Int = 4,
+    skipEnrichUrl: Boolean = false,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
             DefaultItemOverlayContent()
@@ -79,7 +82,8 @@ public fun MediaAttachmentFactory(
                 modifier = modifier,
                 attachmentState = state,
                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
-                itemOverlayContent = itemOverlayContent
+                itemOverlayContent = itemOverlayContent,
+                skipEnrichUrl = skipEnrichUrl,
             )
         }
     )

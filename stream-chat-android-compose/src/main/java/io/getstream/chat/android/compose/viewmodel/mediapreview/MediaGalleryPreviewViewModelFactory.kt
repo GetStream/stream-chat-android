@@ -30,11 +30,14 @@ import io.getstream.chat.android.client.setup.state.ClientState
  * @param clientState Holds information about the current SDK state.
  * @param messageId The ID of the message we are fetching in order
  * to display the attachments.
+ * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  */
 public class MediaGalleryPreviewViewModelFactory(
     private val chatClient: ChatClient,
     private val clientState: ClientState = chatClient.clientState,
     private val messageId: String,
+    private val skipEnrichUrl: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -45,7 +48,8 @@ public class MediaGalleryPreviewViewModelFactory(
         return MediaGalleryPreviewViewModel(
             chatClient = chatClient,
             clientState = clientState,
-            messageId = messageId
+            messageId = messageId,
+            skipEnrichUrl = skipEnrichUrl,
         ) as T
     }
 }

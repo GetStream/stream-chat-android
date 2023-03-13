@@ -34,11 +34,18 @@ import kotlinx.coroutines.launch
 
 /**
  * A ViewModel capable of loading images, playing videos.
+ *
+ * @param chatClient The low level chat client used for API calls.
+ * @param clientState Used to collect client state information such as the connectivity status.
+ * @param messageId The ID of the message containing the attachments to be previewed.
+ * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  */
 public class MediaGalleryPreviewViewModel(
     private val chatClient: ChatClient,
     private val clientState: ClientState,
     private val messageId: String,
+    private val skipEnrichUrl: Boolean = false,
 ) : ViewModel() {
 
     /**
@@ -164,8 +171,13 @@ public class MediaGalleryPreviewViewModel(
      * to show.
      *
      * @param currentMediaAttachment The image attachment to remove from the message we're updating.
+     * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
+     * by deleting an attachment contained within it. Set to false by default.
      */
-    public fun deleteCurrentMediaAttachment(currentMediaAttachment: Attachment) {
+    public fun deleteCurrentMediaAttachment(
+        currentMediaAttachment: Attachment,
+        skipEnrichUrl: Boolean = this.skipEnrichUrl,
+    ) {
         val attachments = message.attachments
         val numberOfAttachments = attachments.size
 
@@ -176,7 +188,11 @@ public class MediaGalleryPreviewViewModel(
                 it.url == currentMediaAttachment.url
             }
 
-            chatClient.updateMessage(message).enqueue()
+            chatClient.updateMessage(
+                message = message.apply {
+                    this.skipEnrichUrl = skipEnrichUrl
+                }
+            ).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
             chatClient.deleteMessage(message.id).enqueue { result ->
                 if (result is Result.Success) {

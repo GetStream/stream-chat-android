@@ -1650,6 +1650,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         public const val KeyMediaGalleryPreviewResult: String = "mediaGalleryPreviewResult"
 
         /**
+         * Represents the key for the boolean which dictates if we should skip enriching URLs when updating a
+         * message.
+         */
+        private const val KeySkipEnrichUrl: String = "skipEnrichUrl"
+
+        /**
          * Time period inside which two taps are registered as double tap.
          */
         private const val DoubleTapTimeoutMs: Long = 500L
@@ -1679,6 +1685,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
          * @param streamCdnImageResizing Sets the Stream CDN hosted image resizing strategy. Turned off by default.
          * Please note that only Stream CDN hosted images containing original width (ow) and original height (oh)
          * parameters are able to be resized.
+         * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
+         * by deleting an attachment contained within it. Set to false by default.
          */
         public fun getIntent(
             context: Context,
@@ -1686,6 +1694,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             attachmentPosition: Int,
             videoThumbnailsEnabled: Boolean,
             streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
+            skipEnrichUrl: Boolean = false,
         ): Intent {
             return Intent(context, MediaGalleryPreviewActivity::class.java).apply {
                 val mediaGalleryPreviewActivityState = message.toMediaGalleryPreviewActivityState()
@@ -1700,6 +1709,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 putExtra(KeyStreamCdnResizeImagedHeightPercentage, streamCdnImageResizing.resizedHeightPercentage)
                 putExtra(KeyStreamCdnResizeImageMode, streamCdnImageResizing.resizeMode?.name)
                 putExtra(KeyStreamCdnResizeImageCropMode, streamCdnImageResizing.cropMode?.name)
+                putExtra(KeySkipEnrichUrl, skipEnrichUrl)
             }
         }
     }
