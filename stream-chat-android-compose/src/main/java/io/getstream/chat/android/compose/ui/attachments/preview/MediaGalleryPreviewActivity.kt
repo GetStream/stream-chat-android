@@ -576,6 +576,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(),
                     onClick = {
+                        mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false)
+
                         handleMediaAction(
                             context = context,
                             mediaGalleryPreviewAction = mediaGalleryPreviewOption.action,
