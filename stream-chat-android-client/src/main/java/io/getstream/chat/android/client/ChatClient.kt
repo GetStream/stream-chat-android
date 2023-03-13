@@ -167,6 +167,7 @@ import io.getstream.log.android.AndroidStreamLogger
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
@@ -194,7 +195,7 @@ public class ChatClient
 internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
-    @property:InternalStreamChatApi public val notifications: ChatNotifications,
+    private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
@@ -623,8 +624,11 @@ internal constructor(
      * Moreover, it warms up the connection, and sets up notifications.
      */
     @InternalStreamChatApi
-    public fun setUserWithoutConnectingIfNeeded() {
-        if (isUserSet() || clientState.initializationState.value != InitializationState.NOT_INITIALIZED) {
+    public suspend fun setUserWithoutConnectingIfNeeded() {
+        if (clientState.initializationState.value == InitializationState.RUNNING) {
+            delay(INITIALIZATION_DELAY)
+            return setUserWithoutConnectingIfNeeded()
+        } else if (isUserSet() || clientState.initializationState.value == InitializationState.COMPLETE) {
             logger.d {
                 "[setUserWithoutConnectingIfNeeded] User is already set: ${isUserSet()}" +
                     " Initialization state: ${clientState.initializationState.value}"
@@ -1202,6 +1206,18 @@ internal constructor(
     }
 
     /**
+     * Dismiss notifications from a given [channelType] and [channelId].
+     * Be sure to initialize ChatClient before calling this method!
+     *
+     * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
+     * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
+     *
+     */
+    public fun dismissChannelNotifications(channelType: String, channelId: String) {
+        notifications.dismissChannelNotifications(channelType, channelId)
+    }
+
+    /**
      * Search messages across channels. There are two ways to paginate through search results:
      *
      * 1. Using [limit] and [offset] parameters
@@ -1463,7 +1479,6 @@ internal constructor(
             .share(userScope) { DeleteMessageIdentifier(messageId, hard) }
     }
 
-    @CheckResult
     /**
      * Fetches a single message from the backend.
      *
@@ -1472,6 +1487,7 @@ internal constructor(
      * @return The message wrapped inside [Result] if the call was successful,
      * otherwise returns a [ChatError] instance wrapped inside [Result].
      */
+    @CheckResult
     public fun getMessage(messageId: String): Call<Message> {
         logger.d { "[getMessage] messageId: $messageId" }
 
@@ -3008,6 +3024,7 @@ internal constructor(
         private const val MESSAGE_ACTION_SEND = "send"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
         private val THIRTY_DAYS_IN_MILLISECONDS = 30.days.inWholeMilliseconds
+        private const val INITIALIZATION_DELAY = 100L
 
         private const val ARG_TYPING_PARENT_ID = "parent_id"
 
@@ -3044,8 +3061,10 @@ internal constructor(
         @JvmStatic
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                setUserWithoutConnectingIfNeeded()
-                notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
+                clientScope.launch {
+                    setUserWithoutConnectingIfNeeded()
+                    notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
+                }
             }
         }
 
@@ -3061,29 +3080,13 @@ internal constructor(
         }
 
         /**
-         * Dismiss notifications from a given [channelType] and [channelId].
-         * Be sure to initialize ChatClient before calling this method!
-         *
-         * @param channelType String that represent the channel type of the channel you want to dismiss notifications.
-         * @param channelId String that represent the channel id of the channel you want to dismiss notifications.
-         *
-         * @throws IllegalStateException if called before initializing ChatClient
-         */
-        @Throws(IllegalStateException::class)
-        @JvmStatic
-        public fun dismissChannelNotifications(channelType: String, channelId: String) {
-            ensureClientInitialized().notifications.dismissChannelNotifications(channelType, channelId)
-        }
-
-        /**
          * Sets device.
          * Be sure to initialize ChatClient before calling this method!
          *
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
-        @JvmStatic
-        public fun setDevice(device: Device) {
+        internal fun setDevice(device: Device) {
             ensureClientInitialized().notifications.setDevice(device)
         }
 

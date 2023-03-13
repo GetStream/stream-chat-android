@@ -33,7 +33,8 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 val oldMessage = oldItem.message
                 val newMessage = newItem.message
 
-                oldMessage.text == newItem.message.text &&
+                oldMessage.text == newMessage.text &&
+                    oldMessage.replyTo?.text == newMessage.replyTo?.text &&
                     oldMessage.reactionScores == newMessage.reactionScores &&
                     oldMessage.reactionCounts == newMessage.reactionCounts &&
                     oldMessage.attachments == newMessage.attachments &&
@@ -67,6 +68,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
 
             MessageListItemPayloadDiff(
                 text = oldMessage.text != newMessage.text,
+                replyText = oldMessage.replyTo?.text != newMessage.replyTo?.text,
                 reactions = (oldMessage.reactionCounts != newMessage.reactionCounts) || (oldMessage.reactionScores != newMessage.reactionScores),
                 attachments = oldMessage.attachments != newMessage.attachments,
                 replies = oldMessage.replyCount != newMessage.replyCount,
@@ -76,7 +78,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 pinned = oldMessage.pinned != newMessage.pinned,
                 user = oldMessage.user != newMessage.user,
                 mentions = oldMessage.mentionedUsers != newMessage.mentionedUsers,
-                footer = oldItem.showMessageFooter != newItem.showMessageFooter
+                footer = oldItem.showMessageFooter != newItem.showMessageFooter,
             )
         } else {
             null

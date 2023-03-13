@@ -19,6 +19,7 @@ include (
 		':stream-chat-android-compose-sample',
 		':stream-chat-android-markdown-transformer',
 		':stream-chat-android-ui-uitests',
+		':stream-chat-android-benchmark',
 )
 
 buildCache {

@@ -207,7 +207,7 @@ public class MessageListController(
     public val channel: StateFlow<Channel> = channelState.filterNotNull()
         .map { it.toChannel() }
         .onEach { channel ->
-            chatClient.notifications.dismissChannelNotifications(
+            chatClient.dismissChannelNotifications(
                 channelType = channel.type,
                 channelId = channel.id
             )
@@ -1063,7 +1063,7 @@ public class MessageListController(
     public fun selectMessage(message: Message?) {
         if (message != null) {
             changeSelectMessageState(
-                if (message.isModerationFailed(chatClient)) {
+                if (message.isModerationFailed(chatClient.getCurrentUser())) {
                     SelectedMessageFailedModerationState(
                         message = message,
                         ownCapabilities = ownCapabilities.value

@@ -51,7 +51,14 @@ class StartupActivity : AppCompatActivity() {
 
                 TaskStackBuilder.create(this)
                     .addNextIntent(ChannelsActivity.createIntent(this))
-                    .addNextIntent(MessagesActivity.createIntent(this, channelId, messageId, parentMessageId))
+                    .addNextIntent(
+                        MessagesActivity.createIntent(
+                            context = this,
+                            channelId = channelId,
+                            messageId = messageId,
+                            parentMessageId = parentMessageId
+                        )
+                    )
                     .startActivities()
             } else {
                 // Logged in, navigate to the channels screen

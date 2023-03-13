@@ -96,9 +96,7 @@ class MessagesActivity : BaseConnectedActivity() {
             ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 MessagesScreen(
                     viewModelFactory = factory,
-                    onBackPressed = {
-                        finish()
-                    },
+                    onBackPressed = { finish() },
                     onHeaderTitleClick = {}
                 )
 

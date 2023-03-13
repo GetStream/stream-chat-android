@@ -59,7 +59,6 @@ internal class MessageListViewModelTest {
             .givenCurrentUser()
             .givenChannelQuery()
             .givenChannelState(messageState = messageState)
-            .givenNotifications()
             .get()
 
         // Avoid counting date separators
@@ -76,7 +75,6 @@ internal class MessageListViewModelTest {
             .givenCurrentUser()
             .givenChannelQuery()
             .givenChannelState(messageState = messageState)
-            .givenNotifications()
             .get()
 
         viewModel.selectMessage(message1)
@@ -95,7 +93,6 @@ internal class MessageListViewModelTest {
             .givenCurrentUser()
             .givenChannelQuery()
             .givenChannelState(messageState = messageState)
-            .givenNotifications()
             .givenSendReaction()
             .get()
 
@@ -131,10 +128,6 @@ internal class MessageListViewModelTest {
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
             whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
-        }
-
-        fun givenNotifications() = apply {
-            whenever(chatClient.notifications) doReturn mock()
         }
 
         fun givenSendReaction() = apply {

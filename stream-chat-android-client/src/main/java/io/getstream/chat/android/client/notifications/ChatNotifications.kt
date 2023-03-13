@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManager
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManagerImpl
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
@@ -33,15 +32,14 @@ import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@InternalStreamChatApi
-public interface ChatNotifications {
-    public fun onSetUser()
-    public fun setDevice(device: Device)
-    public fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
-    public fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
-    public suspend fun onLogout(flushPersistence: Boolean)
-    public fun displayNotification(channel: Channel, message: Message)
-    public fun dismissChannelNotifications(channelType: String, channelId: String)
+internal interface ChatNotifications {
+    fun onSetUser()
+    fun setDevice(device: Device)
+    fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
+    fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
+    suspend fun onLogout(flushPersistence: Boolean)
+    fun displayNotification(channel: Channel, message: Message)
+    fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
 @Suppress("TooManyFunctions")

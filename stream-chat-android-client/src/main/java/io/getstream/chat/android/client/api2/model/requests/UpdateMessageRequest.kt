@@ -17,9 +17,19 @@
 package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 
+/**
+ * Used to form an update message request.
+ * @see [MessageApi.updateMessage]
+ *
+ * @param message The upstream version of the message.
+ * @param skip_enrich_url If the message should skip enriching the URL. If URl is not enriched, it will not be
+ * displayed as a link attachment. False by default.
+ * */
 @JsonClass(generateAdapter = true)
-internal data class MessageRequest(
+internal data class UpdateMessageRequest(
     val message: UpstreamMessageDto,
+    val skip_enrich_url: Boolean = false,
 )

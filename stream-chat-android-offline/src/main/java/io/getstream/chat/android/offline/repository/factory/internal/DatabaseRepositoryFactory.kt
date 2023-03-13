@@ -100,6 +100,7 @@ internal class DatabaseRepositoryFactory(
         return databaseMessageRepository ?: run {
             DatabaseMessageRepository(
                 database.messageDao(),
+                database.replyMessageDao(),
                 getUser,
                 currentUser,
                 DEFAULT_CACHE_SIZE

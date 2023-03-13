@@ -86,6 +86,7 @@ public fun MessageInput(
                     QuotedMessage(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         message = activeAction.message,
+                        currentUser = messageComposerState.currentUser,
                         replyMessage = null,
                         onLongItemClick = {},
                         onQuotedMessageClick = {}

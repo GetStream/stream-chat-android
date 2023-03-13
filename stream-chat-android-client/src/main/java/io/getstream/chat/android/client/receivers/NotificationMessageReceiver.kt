@@ -192,6 +192,12 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
     }
 
     private fun cancelNotification(channelType: String, channelId: String) {
-        ChatClient.dismissChannelNotifications(channelType, channelId)
+        if (!ChatClient.isInitialized) {
+            logger.d {
+                "[cancelNotification] ChatClient is not initialized, returning."
+            }
+            return
+        }
+        ChatClient.instance().dismissChannelNotifications(channelType, channelId)
     }
 }

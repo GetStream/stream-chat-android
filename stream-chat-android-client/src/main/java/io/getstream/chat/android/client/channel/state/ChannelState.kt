@@ -42,6 +42,13 @@ public interface ChannelState {
     /** A replied message state in this channel. By default is null. There is a value if you're replying some message.*/
     public val repliedMessage: StateFlow<Message?>
 
+    /**
+     * A map containing all the ids that quoted a message. Using the id of a message you can get the IDs of the
+     * messages that quoted it. This can be used to reflected changes of the original message to the messages that
+     * quoted it.
+     */
+    public val quotedMessagesMap: StateFlow<Map<String, List<String>>>
+
     /** The message collection of this channel. */
     public val messages: StateFlow<List<Message>>
 
