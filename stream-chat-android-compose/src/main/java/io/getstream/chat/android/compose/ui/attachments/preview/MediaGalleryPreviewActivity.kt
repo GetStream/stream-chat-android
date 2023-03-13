@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.attachments.preview
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -177,11 +178,20 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * Factory used to build the screen ViewModel given the received message ID.
      */
     private val factory by lazy {
+        val messageId = if (Build.VERSION.SDK_INT >= 33) {
+            intent?.getParcelableExtra(
+                KeyMediaGalleryPreviewActivityState, MediaGalleryPreviewActivityState::class.java
+            )?.messageId
+        } else {
+            intent?.getParcelableExtra<MediaGalleryPreviewActivityState>(
+                KeyMediaGalleryPreviewActivityState
+            )?.messageId
+        } ?: ""
+
         MediaGalleryPreviewViewModelFactory(
             chatClient = ChatClient.instance(),
-            messageId = intent?.getParcelableExtra<MediaGalleryPreviewActivityState>(
-                KeyMediaGalleryPreviewActivityState
-            )?.messageId ?: ""
+            messageId = messageId,
+            skipEnrichUrl = intent?.getBooleanExtra(KeySkipEnrichUrl, false) ?: false
         )
     }
 
@@ -618,7 +628,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         currentPage: Int,
         attachments: List<Attachment>,
         writePermissionState: PermissionState,
-        downloadPayload: MutableState<Attachment?>
+        downloadPayload: MutableState<Attachment?>,
     ) {
         val message = mediaGalleryPreviewAction.message
 
