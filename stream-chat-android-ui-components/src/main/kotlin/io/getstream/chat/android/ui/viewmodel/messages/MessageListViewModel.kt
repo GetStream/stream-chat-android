@@ -269,7 +269,7 @@ public class MessageListViewModel(
             is Event.ShowMessage -> {
                 messageListController.scrollToMessage(
                     messageId = event.messageId,
-                    parentMessageId = event.parentMessageId
+                    parentMessageId = event.parentMessageId,
                 )
             }
             is Event.RemoveAttachment -> {

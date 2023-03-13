@@ -764,12 +764,11 @@ public class MessageListController(
             chatClient.loadNewestMessages(cid, messageLimit).enqueue { result ->
                 when (result) {
                     is Result.Success -> scrollToBottom()
-                    is Result.Failure -> {
+                    is Result.Failure ->
                         logger.e {
                             "Could not load newest messages. Message: ${result.value.message}. " +
                                 "Cause: ${result.value.extractCause()}"
                         }
-                    }
                 }
             }
         }
@@ -892,13 +891,10 @@ public class MessageListController(
             is Result.Success -> {
                 enterThreadSequential(result.value)
             }
-            is Result.Failure -> {
-                val error = result.value
-
+            is Result.Failure ->
                 logger.e {
-                    "[enterThreadSequential] -> Could not get message: ${error.message}."
+                    "[enterThreadSequential] -> Could not get message: ${result.value.message}."
                 }
-            }
         }
     }
 
@@ -983,11 +979,10 @@ public class MessageListController(
                 focusedMessage.value = when (result) {
                     is Result.Success -> result.value
                     is Result.Failure -> {
-                        val error = result.value
-
                         logger.e {
-                            "[focusChannelMessage] -> Could not load message: ${error.message}."
+                            "[focusChannelMessage] -> Could not load message: ${result.value.message}."
                         }
+
                         null
                     }
                 }
@@ -1017,11 +1012,10 @@ public class MessageListController(
             focusedMessage.value = when (threadMessageResult) {
                 is Result.Success -> threadMessageResult.value
                 is Result.Failure -> {
-                    val error = threadMessageResult.value
-
                     logger.e {
-                        "[focusThreadMessage] -> Could not focus thread parent: ${error.message}."
+                        "[focusThreadMessage] -> Could not focus thread parent: ${threadMessageResult.value.message}."
                     }
+
                     null
                 }
             }

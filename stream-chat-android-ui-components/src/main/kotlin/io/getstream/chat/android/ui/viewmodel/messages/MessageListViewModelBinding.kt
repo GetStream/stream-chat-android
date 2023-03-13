@@ -83,7 +83,7 @@ public fun MessageListViewModel.bindView(
         onEvent(
             MessageListViewModel.Event.ShowMessage(
                 messageId = replyTo.id,
-                parentMessageId = replyTo.parentId
+                parentMessageId = replyTo.parentId,
             )
         )
     }
@@ -123,7 +123,7 @@ public fun MessageListViewModel.bindView(
         onEvent(
             MessageListViewModel.Event.ShowMessage(
                 messageId = result.messageId,
-                parentMessageId = result.parentId
+                parentMessageId = result.parentId,
             )
         )
     }

@@ -1652,7 +1652,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface ReplyMessageClickListener {
-
         public fun onReplyClick(
             replyTo: Message
         )
