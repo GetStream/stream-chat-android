@@ -1419,25 +1419,6 @@ public class MessageListController(
     }
 
     /**
-     * Fetches the message with the given ID. Spares unnecessary API calls by first trying to load
-     * the message from the database and only if that fails will it then initiate an API call.
-     *
-     * @param messageId The ID of the message we are fetching.
-     *
-     * @return The message with the given ID if it was successfully fetched, null otherwise.
-     */
-    public suspend fun getMessageById(messageId: String): Message? {
-        val result = chatClient.getMessageUsingCache(messageId).await()
-
-        return when (result) {
-            is Result.Success -> result.value
-            is Result.Failure -> {
-                null
-            }
-        }
-    }
-
-    /**
      * Clears the new messages state and drops the unread count to 0 after the user scrolls to the newest message.
      */
     public fun clearNewMessageState() {
