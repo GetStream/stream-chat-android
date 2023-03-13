@@ -368,7 +368,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Link
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentContentKt {
-	public static final fun MediaAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MediaAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;IZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentPreviewContentKt {
@@ -444,8 +444,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Link
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/MediaAttachmentFactoryKt {
-	public static final fun MediaAttachmentFactory (ILkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
-	public static synthetic fun MediaAttachmentFactory$default (ILkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+	public static final fun MediaAttachmentFactory (IZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+	public static synthetic fun MediaAttachmentFactory$default (IZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/QuotedAttachmentFactoryKt {
@@ -484,8 +484,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Medi
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewActivity$Companion {
-	public final fun getIntent (Landroid/content/Context;Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;)Landroid/content/Intent;
-	public static synthetic fun getIntent$default (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewActivity$Companion;Landroid/content/Context;Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ILjava/lang/Object;)Landroid/content/Intent;
+	public final fun getIntent (Landroid/content/Context;Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;Z)Landroid/content/Intent;
+	public static synthetic fun getIntent$default (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewActivity$Companion;Landroid/content/Context;Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZILjava/lang/Object;)Landroid/content/Intent;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewContract : androidx/activity/result/contract/ActivityResultContract {
@@ -499,10 +499,11 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Medi
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewContract$Input {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getInitialPosition ()I
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getSkipEnrichUrl ()Z
 	public final fun getStreamCdnImageResizing ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
 	public final fun getVideoThumbnailsEnabled ()Z
 }
@@ -1795,8 +1796,10 @@ public final class io/getstream/chat/android/compose/viewmodel/imagepreview/Imag
 
 public final class io/getstream/chat/android/compose/viewmodel/mediapreview/MediaGalleryPreviewViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Ljava/lang/String;)V
-	public final fun deleteCurrentMediaAttachment (Lio/getstream/chat/android/models/Attachment;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Ljava/lang/String;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun deleteCurrentMediaAttachment (Lio/getstream/chat/android/models/Attachment;Z)V
+	public static synthetic fun deleteCurrentMediaAttachment$default (Lio/getstream/chat/android/compose/viewmodel/mediapreview/MediaGalleryPreviewViewModel;Lio/getstream/chat/android/models/Attachment;ZILjava/lang/Object;)V
 	public final fun getConnectionState ()Lio/getstream/chat/android/models/ConnectionState;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public final fun getPromptedAttachment ()Lio/getstream/chat/android/models/Attachment;
@@ -1812,8 +1815,8 @@ public final class io/getstream/chat/android/compose/viewmodel/mediapreview/Medi
 
 public final class io/getstream/chat/android/compose/viewmodel/mediapreview/MediaGalleryPreviewViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Ljava/lang/String;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Ljava/lang/String;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

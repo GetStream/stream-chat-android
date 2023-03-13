@@ -84,6 +84,8 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param modifier The modifier used for styling.
  * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
  * in a group when previewing Media attachments in the message list.
+ * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  * @param itemOverlayContent Represents the content overlaid above individual items.
  * By default it is used to display a play button over video previews.
  */
@@ -93,6 +95,7 @@ public fun MediaAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
     maximumNumberOfPreviewedItems: Int = 4,
+    skipEnrichUrl: Boolean = false,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
             PlayButton()
@@ -126,7 +129,8 @@ public fun MediaAttachmentContent(
                 message = message,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
-                overlayContent = itemOverlayContent
+                skipEnrichUrl = skipEnrichUrl,
+                overlayContent = itemOverlayContent,
             )
         } else {
             MultipleMediaAttachments(
@@ -135,6 +139,7 @@ public fun MediaAttachmentContent(
                 gridSpacing = gridSpacing,
                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                 message = message,
+                skipEnrichUrl = skipEnrichUrl,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
                 itemOverlayContent = itemOverlayContent
@@ -148,6 +153,8 @@ public fun MediaAttachmentContent(
  *
  * @param attachment The attachment that is previewed.
  * @param message The original message containing the attachment.
+ * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when an item is long clicked.
@@ -158,6 +165,7 @@ public fun MediaAttachmentContent(
 internal fun SingleMediaAttachment(
     attachment: Attachment,
     message: Message,
+    skipEnrichUrl: Boolean,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
@@ -199,7 +207,8 @@ internal fun SingleMediaAttachment(
         attachmentPosition = 0,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onLongItemClick = onLongItemClick,
-        overlayContent = overlayContent
+        skipEnrichUrl = skipEnrichUrl,
+        overlayContent = overlayContent,
     )
 }
 
@@ -212,6 +221,8 @@ internal fun SingleMediaAttachment(
  * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
  * in a group when previewing Media attachments in the message list.
  * @param message The original message containing the attachments.
+ * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when an item is long clicked.
@@ -226,6 +237,7 @@ internal fun RowScope.MultipleMediaAttachments(
     gridSpacing: Dp,
     maximumNumberOfPreviewedItems: Int = 4,
     message: Message,
+    skipEnrichUrl: Boolean,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit,
@@ -244,10 +256,11 @@ internal fun RowScope.MultipleMediaAttachments(
                     attachment = attachments[attachmentIndex],
                     modifier = Modifier.weight(1f),
                     message = message,
+                    skipEnrichUrl = skipEnrichUrl,
                     attachmentPosition = attachmentIndex,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                     onLongItemClick = onLongItemClick,
-                    overlayContent = itemOverlayContent
+                    overlayContent = itemOverlayContent,
                 )
             }
         }
@@ -271,6 +284,7 @@ internal fun RowScope.MultipleMediaAttachments(
                         MediaAttachmentContentItem(
                             attachment = attachment,
                             message = message,
+                            skipEnrichUrl = skipEnrichUrl,
                             attachmentPosition = attachmentIndex,
                             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                             onLongItemClick = onLongItemClick,
@@ -290,6 +304,7 @@ internal fun RowScope.MultipleMediaAttachments(
                         attachment = attachment,
                         modifier = Modifier.weight(1f),
                         message = message,
+                        skipEnrichUrl = skipEnrichUrl,
                         attachmentPosition = attachmentIndex,
                         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                         onLongItemClick = onLongItemClick,
@@ -309,6 +324,8 @@ internal fun RowScope.MultipleMediaAttachments(
  * of attachments. Used to remember the item position when viewing it in a separate
  * activity.
  * @param attachment The attachment that is previewed.
+ * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when the item is long clicked.
@@ -323,6 +340,7 @@ internal fun MediaAttachmentContentItem(
     message: Message,
     attachmentPosition: Int,
     attachment: Attachment,
+    skipEnrichUrl: Boolean,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
@@ -389,6 +407,7 @@ internal fun MediaAttachmentContentItem(
                                 initialPosition = attachmentPosition,
                                 videoThumbnailsEnabled = areVideosEnabled,
                                 streamCdnImageResizing = streamCdnImageResizing,
+                                skipEnrichUrl = skipEnrichUrl,
                             )
                         )
                     } else {

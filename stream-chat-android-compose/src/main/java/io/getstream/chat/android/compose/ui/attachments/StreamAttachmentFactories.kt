@@ -56,6 +56,8 @@ public object StreamAttachmentFactories {
      * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
      * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the
      * message by deleting an attachment contained within it. Set to false by default.
+     * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
+     * by deleting an attachment contained within it. Set to false by default.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
@@ -73,7 +75,9 @@ public object StreamAttachmentFactories {
             giphySizingMode = giphySizingMode,
             contentScale = contentScale,
         ),
-        MediaAttachmentFactory(),
+        MediaAttachmentFactory(
+            skipEnrichUrl = skipEnrichUrl,
+        ),
         FileAttachmentFactory(),
         UnsupportedAttachmentFactory(),
     )
