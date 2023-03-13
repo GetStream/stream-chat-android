@@ -305,7 +305,7 @@ class MessagesActivity : BaseConnectedActivity() {
             context: Context,
             channelId: String,
             messageId: String? = null,
-            parentMessageId: String?,
+            parentMessageId: String? = null,
         ): Intent {
             return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
