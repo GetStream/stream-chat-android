@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.extensions.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.state.extensions.state
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.internal.ChatClientStateCalls
 import kotlinx.coroutines.CoroutineScope
@@ -26,10 +27,7 @@ import kotlinx.coroutines.CoroutineScope
  * [LogicRegistry] instance that contains all objects responsible for handling logic in offline plugin.
  */
 internal val ChatClient.logic: LogicRegistry
-    get() = requireNotNull(LogicRegistry.get()) {
-        "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
-            "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
-    }
+    get() = resolveDependency<StatePlugin, LogicRegistry>()
 
 /**
  * Intermediate class to request ChatClient class as states

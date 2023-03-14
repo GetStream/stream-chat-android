@@ -125,6 +125,7 @@ public class StatePlugin internal constructor(
     public override fun <T : Any> resolveDependency(klass: KClass<T>): T? = when (klass) {
         SyncHistoryManager::class -> syncManager as T
         EventHandler::class -> eventHandler as T
+        LogicRegistry::class -> logic as T
         else -> null
     }
 }
