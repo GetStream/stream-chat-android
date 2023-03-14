@@ -103,6 +103,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             val currentItem = attachmentGalleryItems[binding.galleryViewPager.currentItem]
             return currentItem.attachment.toAttachmentGalleryResultItem(
                 messageId = currentItem.messageId,
+                parentId = currentItem.messageId,
                 cid = currentItem.cid,
                 userName = currentItem.user.name,
                 isMine = currentItem.isMine

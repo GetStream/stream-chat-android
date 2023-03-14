@@ -330,13 +330,15 @@ public class MessageListView : ConstraintLayout {
 
     private val defaultMessageClickListener =
         MessageClickListener { message ->
+            val replyTo = message.replyTo
+
             when {
                 message.replyCount > 0 -> {
                     threadStartHandler.onStartThread(message)
                 }
 
-                message.replyMessageId != null -> {
-                    replyMessageClickListener.onReplyClick(message.replyMessageId!!)
+                replyTo?.id != null -> {
+                    replyMessageClickListener.onReplyClick(replyTo)
                 }
             }
         }
@@ -1650,7 +1652,9 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun interface ReplyMessageClickListener {
-        public fun onReplyClick(replyMessageId: String)
+        public fun onReplyClick(
+            replyTo: Message
+        )
     }
 
     public fun interface MessageRetryListener {
