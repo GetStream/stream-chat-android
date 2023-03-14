@@ -21,7 +21,7 @@
     <ID>LongMethod:MessageItem.kt$@Composable internal fun RegularMessageContent( messageItem: MessageItemState, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit = {}, onGiphyActionClick: (GiphyAction) -> Unit = {}, onQuotedMessageClick: (Message) -> Unit = {}, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {}, )</ID>
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:StreamTypography.kt$StreamTypography.Companion$public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography</ID>
-    <ID>LongParameterList:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$( context: Context, mediaGalleryPreviewAction: MediaGalleryPreviewAction, currentPage: Int, attachments: List&lt;Attachment>, writePermissionState: PermissionState, downloadPayload: MutableState&lt;Attachment?> )</ID>
+    <ID>LongParameterList:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$( context: Context, mediaGalleryPreviewAction: MediaGalleryPreviewAction, currentPage: Int, attachments: List&lt;Attachment>, writePermissionState: PermissionState, downloadPayload: MutableState&lt;Attachment?>, )</ID>
     <ID>LongParameterList:MediaGalleryPreviewActivityAttachmentState.kt$MediaGalleryPreviewActivityAttachmentState$( val name: String?, val url: String?, val thumbUrl: String?, val imageUrl: String?, val assetUrl: String?, val originalWidth: Int?, val originalHeight: Int?, val type: String?, )</ID>
     <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, )</ID>
     <ID>LongParameterList:MessagesScreen.kt$( listViewModel: MessageListViewModel, composerViewModel: MessageComposerViewModel, selectedMessageState: SelectedMessageState?, selectedMessage: Message, skipPushNotification: Boolean, skipEnrichUrl: Boolean, )</ID>
@@ -31,6 +31,7 @@
     <ID>MagicNumber:MediaAttachmentFactory.kt$0.25f</ID>
     <ID>MagicNumber:MediaAttachmentQuotedContent.kt$0.8f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.2f</ID>
+    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$33</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$8f</ID>
     <ID>MagicNumber:MediaPreviewPlaceHolder.kt$0.4f</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
@@ -44,6 +45,5 @@
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
-    <ID>UnusedPrivateMember:StreamAttachmentFactories.kt$StreamAttachmentFactories$skipEnrichUrl: Boolean = false</ID>
   </CurrentIssues>
 </SmellBaseline>
