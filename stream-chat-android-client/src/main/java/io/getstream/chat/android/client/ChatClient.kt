@@ -266,13 +266,21 @@ internal constructor(
      * Resolves dependency [T] within the provided plugin [P].
      *
      * @see [Plugin]
+     * @throws IllegalStateException if plugin was not added or dependency is not found.
      */
     @InternalStreamChatApi
-    public inline fun <reified P : Plugin, reified T : Any> resolveDependency(): T? {
+    @Throws(IllegalStateException::class)
+    public inline fun <reified P : Plugin, reified T : Any> resolveDependency(): T {
         val resolver = plugins.find { plugin ->
             plugin is P && plugin is DependencyResolver
         } as? DependencyResolver
-        return resolver?.resolveDependency(T::class)
+            ?: throw IllegalStateException(
+                "Plugin '${P::class.qualifiedName}' was not found. Did you init it within ChatClient?"
+            )
+        return resolver.resolveDependency(T::class)
+            ?: throw IllegalStateException(
+                "Dependency '${T::class.qualifiedName}' was not resolved from plugin '${P::class.qualifiedName}'"
+            )
     }
 
     /**
