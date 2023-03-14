@@ -60,7 +60,7 @@ public class MediaGalleryPreviewContract :
      * Defines the input for the [MediaGalleryPreviewContract].
      *
      * @param message The message containing the attachments.
-     * @param initialPosition The initial position of the Image gallery, based on the clicked item.
+     * @param initialPosition The initial position of the media gallery, based on the clicked item.
      * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
      * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
      * by deleting an attachment contained within it. Set to false by default.

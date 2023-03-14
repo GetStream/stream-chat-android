@@ -170,7 +170,7 @@ public class MediaGalleryPreviewViewModel(
      * This will in turn update the UI accordingly or finish this screen in case there are no more media attachments
      * to show.
      *
-     * @param currentMediaAttachment The image attachment to remove from the message we're updating.
+     * @param currentMediaAttachment The media attachment to remove from the message we're updating.
      * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
      * by deleting an attachment contained within it. Set to false by default.
      */
