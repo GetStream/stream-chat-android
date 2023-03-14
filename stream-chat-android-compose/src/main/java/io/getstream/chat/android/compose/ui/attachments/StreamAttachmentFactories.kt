@@ -54,7 +54,7 @@ public object StreamAttachmentFactories {
      *
      * Setting it to fixed size mode will make it respect all given dimensions.
      * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
-     * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the
+     * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the
      * message by deleting an attachment contained within it. Set to false by default.
      * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
      * by deleting an attachment contained within it. Set to false by default.

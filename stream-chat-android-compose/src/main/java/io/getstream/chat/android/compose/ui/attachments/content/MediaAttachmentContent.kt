@@ -84,7 +84,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param modifier The modifier used for styling.
  * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
  * in a group when previewing Media attachments in the message list.
- * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
  * @param itemOverlayContent Represents the content overlaid above individual items.
  * By default it is used to display a play button over video previews.
@@ -153,7 +153,7 @@ public fun MediaAttachmentContent(
  *
  * @param attachment The attachment that is previewed.
  * @param message The original message containing the attachment.
- * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
@@ -221,7 +221,7 @@ internal fun SingleMediaAttachment(
  * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
  * in a group when previewing Media attachments in the message list.
  * @param message The original message containing the attachments.
- * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
@@ -324,7 +324,7 @@ internal fun RowScope.MultipleMediaAttachments(
  * of attachments. Used to remember the item position when viewing it in a separate
  * activity.
  * @param attachment The attachment that is previewed.
- * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
+ * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
