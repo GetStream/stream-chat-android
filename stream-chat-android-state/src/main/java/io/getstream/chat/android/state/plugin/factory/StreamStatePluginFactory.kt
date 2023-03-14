@@ -93,8 +93,11 @@ public class StreamStatePluginFactory(
             setUser(user)
         }
 
-        val stateRegistry = StateRegistry.create(
-            scope.coroutineContext.job, scope, globalState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
+        val stateRegistry = StateRegistry(
+            globalState.user,
+            repositoryFacade.observeLatestUsers(),
+            scope.coroutineContext.job,
+            scope
         )
 
         val isQueryingFree = MutableStateFlow(true)

@@ -62,7 +62,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getMessagesWithAttachments (Ljava/lang/String;Ljava/lang/String;IILjava/util/List;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun getOFFLINE_SUPPORT_ENABLED ()Z
 	public final fun getPinnedMessages (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination;)Lio/getstream/chat/android/client/call/Call;
-	public final fun getPlugins ()Ljava/util/List;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
@@ -134,7 +133,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun setLogicRegistry (Lio/getstream/chat/android/client/channel/state/ChannelStateLogicProvider;)V
 	public static final fun setOFFLINE_SUPPORT_ENABLED (Z)V
-	public final fun setPlugins (Ljava/util/List;)V
 	public static final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/client/call/Call;
 	public final fun showChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;

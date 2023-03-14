@@ -169,11 +169,10 @@ internal class TypingEventsTest {
         }
 
     private class Fixture(scope: CoroutineScope, user: User) {
-        private val stateRegistry = StateRegistry.create(
+        private val stateRegistry = StateRegistry(
             job = mock(),
             scope = scope,
             userStateFlow = MutableStateFlow(user),
-            messageRepository = mock(),
             latestUsers = MutableStateFlow(emptyMap()),
         )
 

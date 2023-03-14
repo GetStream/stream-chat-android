@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
@@ -47,6 +48,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -219,9 +221,11 @@ internal class MessageListViewModelTest {
         private val clientState: ClientState = mock()
 
         init {
-            StateRegistry.instance = stateRegistry
             GlobalMutableState.instance = globalState
 
+            val statePlugin: StatePlugin = mock()
+            whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
+            whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.clientState) doReturn clientState
         }
 
