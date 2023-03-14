@@ -95,7 +95,7 @@ internal class ChatClientStateCalls(
      *
      * @return The replies in the form of [ThreadState].
      */
-    internal suspend fun getRepliesAsStateCall(messageId: String, messageLimit: Int): ThreadState {
+    internal suspend fun awaitReplies(messageId: String, messageLimit: Int): ThreadState {
         logger.d { "getting replied for message with id: $messageId" }
         chatClient.getReplies(messageId, messageLimit).await()
         return state.thread(messageId)

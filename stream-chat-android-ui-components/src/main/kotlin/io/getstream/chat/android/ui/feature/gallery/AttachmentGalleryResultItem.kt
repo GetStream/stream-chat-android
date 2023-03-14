@@ -27,6 +27,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 public data class AttachmentGalleryResultItem(
     val messageId: String,
+    val parentId: String?,
     val cid: String,
     val userName: String,
     val isMine: Boolean = false,
@@ -69,12 +70,14 @@ public fun AttachmentGalleryResultItem.toAttachment(): Attachment {
  */
 public fun Attachment.toAttachmentGalleryResultItem(
     messageId: String,
+    parentId: String?,
     cid: String,
     userName: String,
     isMine: Boolean,
 ): AttachmentGalleryResultItem {
     return AttachmentGalleryResultItem(
         messageId = messageId,
+        parentId = parentId,
         cid = cid,
         userName = userName,
         isMine = isMine,

@@ -86,10 +86,18 @@ public fun MessageList(
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
-    onQuotedMessageClick: (Message) -> Unit = { viewModel.scrollToMessage(it.id) },
+    onQuotedMessageClick: (Message) -> Unit = { message ->
+        viewModel.scrollToMessage(
+            messageId = message.id,
+            parentMessageId = message.parentId
+        )
+    },
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
-            viewModel.scrollToMessage(it.messageId)
+            viewModel.scrollToMessage(
+                messageId = it.messageId,
+                parentMessageId = it.parentMessageId
+            )
         }
     },
     onMessagesPageEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },

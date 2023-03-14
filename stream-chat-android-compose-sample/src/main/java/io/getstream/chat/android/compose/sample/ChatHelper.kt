@@ -59,6 +59,7 @@ object ChatHelper {
                     context = context,
                     channelId = "${channel.type}:${channel.id}",
                     messageId = message.id,
+                    parentMessageId = message.parentId,
                 )
             }
         )
