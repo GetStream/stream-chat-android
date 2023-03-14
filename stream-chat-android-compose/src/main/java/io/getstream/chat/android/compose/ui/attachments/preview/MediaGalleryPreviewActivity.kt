@@ -139,6 +139,7 @@ import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.RetryHash
+import io.getstream.chat.android.compose.ui.util.onImageNeedsToReload
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
@@ -744,9 +745,10 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
             // Used to refresh the request for the current page
             // if it has previously failed.
-            if (data != null && page == pagerState.currentPage &&
-                mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
-                painter.state is AsyncImagePainter.State.Error
+            onImageNeedsToReload(
+                data = data,
+                connectionState = mediaGalleryPreviewViewModel.connectionState,
+                asyncImagePainterState = painter.state
             ) {
                 retryHash++
             }
@@ -1492,8 +1494,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .build()
             )
 
-            if (data != null && mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &&
-                painter.state is AsyncImagePainter.State.Error
+            // Used to refresh the request for the current page
+            // if it has previously failed.
+            onImageNeedsToReload(
+                data = data,
+                connectionState = mediaGalleryPreviewViewModel.connectionState,
+                asyncImagePainterState = painter.state
             ) {
                 retryHash++
             }
