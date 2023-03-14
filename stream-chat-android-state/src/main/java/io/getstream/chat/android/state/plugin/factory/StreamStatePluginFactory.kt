@@ -99,7 +99,7 @@ public class StreamStatePluginFactory(
 
         val isQueryingFree = MutableStateFlow(true)
 
-        val logic = LogicRegistry.create(
+        val logic = LogicRegistry(
             stateRegistry = stateRegistry,
             globalState = globalState,
             userPresence = config.userPresence,
