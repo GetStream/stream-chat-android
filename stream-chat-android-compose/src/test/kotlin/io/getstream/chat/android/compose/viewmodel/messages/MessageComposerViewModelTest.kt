@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -357,8 +358,10 @@ internal class MessageComposerViewModelTest {
         private val stateRegistry: StateRegistry = mock()
 
         init {
-            StateRegistry.instance = stateRegistry
             GlobalMutableState.instance = globalState
+            val statePlugin: StatePlugin = mock()
+            whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
+            whenever(chatClient.plugins) doReturn listOf(statePlugin)
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {

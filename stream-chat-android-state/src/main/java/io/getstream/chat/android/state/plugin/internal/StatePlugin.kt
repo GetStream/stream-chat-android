@@ -126,6 +126,7 @@ public class StatePlugin internal constructor(
         SyncHistoryManager::class -> syncManager as T
         EventHandler::class -> eventHandler as T
         LogicRegistry::class -> logic as T
+        StateRegistry::class -> stateRegistry as T
         else -> null
     }
 }

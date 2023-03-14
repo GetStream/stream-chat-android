@@ -259,8 +259,8 @@ internal constructor(
      *
      * @see [Plugin]
      */
-    @PublishedApi
-    internal var plugins: List<Plugin> = emptyList()
+    @InternalStreamChatApi
+    public var plugins: List<Plugin> = emptyList()
 
     /**
      * Resolves dependency [T] within the provided plugin [P].

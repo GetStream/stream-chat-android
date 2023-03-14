@@ -45,6 +45,7 @@ import io.getstream.chat.android.state.extensions.internal.parseAttachmentNameFr
 import io.getstream.chat.android.state.extensions.internal.requestsAsState
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.internal.ConfigSingleton
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
@@ -71,10 +72,7 @@ import java.util.Locale
  */
 public val ChatClient.state: StateRegistry
     @Throws(IllegalArgumentException::class)
-    get() = requireNotNull(StateRegistry.get()) {
-        "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
-            "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
-    }
+    get() = resolveDependency<StatePlugin, StateRegistry>()
 
 /**
  * [GlobalState] instance that contains information about the current user, unreads, etc.

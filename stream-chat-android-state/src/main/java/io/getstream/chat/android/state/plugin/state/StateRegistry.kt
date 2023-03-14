@@ -16,9 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.state
 
-import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
@@ -29,7 +27,6 @@ import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
-import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
@@ -40,14 +37,12 @@ import java.util.concurrent.ConcurrentHashMap
  * Registry of all state objects exposed in the offline plugin. This class should have only one instance for the SDK.
  *
  * @param userStateFlow The state flow that provides the user once it is set.
- * @param messageRepository [MessageRepository] Repository for all messages
  * @param latestUsers Latest users of the SDK.
  * @param job A background job cancelled after calling [clear].
  * @param scope A scope for new coroutines.
  */
-public class StateRegistry private constructor(
+public class StateRegistry constructor(
     private val userStateFlow: StateFlow<User?>,
-    private val messageRepository: MessageRepository,
     private var latestUsers: StateFlow<Map<String, User>>,
     internal val job: Job,
     @property:InternalStreamChatApi public val scope: CoroutineScope,
@@ -143,63 +138,5 @@ public class StateRegistry private constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
-    }
-
-    public companion object {
-        @InternalStreamChatApi
-        @VisibleForTesting
-        public var instance: StateRegistry? = null
-
-        private val logger by taggedLogger("Chat:StateRegistry")
-
-        /**
-         * Creates and returns a new instance of StateRegistry.
-         *
-         * @param job A background job cancelled after calling [clear].
-         * @param scope A scope for new coroutines.
-         * @param userStateFlow The state flow that provides the user once it is set.
-         * @param messageRepository [MessageRepository] Repository for all messages
-         * @param latestUsers Latest users of the SDK.
-         *
-         * @return Instance of [StateRegistry].
-         *
-         * @throws IllegalStateException if instance is not null.
-         */
-        internal fun create(
-            job: Job,
-            scope: CoroutineScope,
-            userStateFlow: StateFlow<User?>,
-            messageRepository: MessageRepository,
-            latestUsers: StateFlow<Map<String, User>>,
-        ): StateRegistry {
-            if (instance != null) {
-                logger.e {
-                    "StateRegistry instance is already created. " +
-                        "Avoid creating multiple instances to prevent ambiguous state. Use StateRegistry.get()"
-                }
-            }
-            return StateRegistry(
-                job = job,
-                scope = scope,
-                userStateFlow = userStateFlow,
-                messageRepository = messageRepository,
-                latestUsers = latestUsers,
-            ).also { stateRegistry ->
-                instance = stateRegistry
-            }
-        }
-
-        /**
-         * Gets the current Singleton of StateRegistry. If the initialization is not set yet, it throws exception.
-         *
-         * @return Singleton instance of [StateRegistry].
-         *
-         * @throws IllegalArgumentException if instance is null.
-         */
-        @Throws(IllegalArgumentException::class)
-        internal fun get(): StateRegistry = requireNotNull(instance) {
-            "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
-                "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
-        }
     }
 }

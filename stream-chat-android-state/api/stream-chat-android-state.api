@@ -120,15 +120,11 @@ public final class io/getstream/chat/android/state/plugin/factory/StreamStatePlu
 }
 
 public final class io/getstream/chat/android/state/plugin/state/StateRegistry {
-	public static final field Companion Lio/getstream/chat/android/state/plugin/state/StateRegistry$Companion;
-	public synthetic fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/persistance/repository/MessageRepository;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlinx/coroutines/CoroutineScope;)V
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/state/ChannelState;
 	public final fun clear ()V
 	public final fun queryChannels (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/chat/android/state/plugin/state/querychannels/QueryChannelsState;
 	public final fun thread (Ljava/lang/String;)Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;
-}
-
-public final class io/getstream/chat/android/state/plugin/state/StateRegistry$Companion {
 }
 
 public abstract interface class io/getstream/chat/android/state/plugin/state/channel/thread/ThreadState {
