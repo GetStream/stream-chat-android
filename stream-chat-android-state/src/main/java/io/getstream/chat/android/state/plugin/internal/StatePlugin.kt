@@ -39,7 +39,6 @@ import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.plugin.listener.internal.ChannelMarkReadListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteMessageListenerState
@@ -80,6 +79,7 @@ import kotlin.reflect.KClass
 @InternalStreamChatApi
 @Suppress("LongParameterList")
 public class StatePlugin internal constructor(
+    private val errorHandlerFactory: ErrorHandlerFactory,
     private val logic: LogicRegistry,
     private val repositoryFacade: RepositoryFacade,
     private val clientState: ClientState,
@@ -87,7 +87,7 @@ public class StatePlugin internal constructor(
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
     private val globalState: MutableGlobalState,
-    private val queryingChannelsFree: MutableStateFlow<Boolean>
+    private val queryingChannelsFree: MutableStateFlow<Boolean>,
 ) : Plugin,
     DependencyResolver,
     QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
@@ -106,10 +106,7 @@ public class StatePlugin internal constructor(
     TypingEventListener by TypingEventListenerState(stateRegistry),
     SendAttachmentListener by SendAttachmentListenerState(logic) {
 
-    private val errorHandlerFactory: ErrorHandlerFactory =
-        StateErrorHandlerFactory()
-
-    override var errorHandler: ErrorHandler = errorHandlerFactory.create(repositoryFacade)
+    override var errorHandler: ErrorHandler = errorHandlerFactory.create()
 
     override fun onUserSet(user: User) {
         syncManager.start()

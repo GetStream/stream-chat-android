@@ -5,11 +5,6 @@ public final class io/getstream/chat/android/state/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/state/errorhandler/StateErrorHandlerFactory : io/getstream/chat/android/client/errorhandler/factory/ErrorHandlerFactory {
-	public fun <init> ()V
-	public fun create (Lio/getstream/chat/android/client/persistance/repository/ChannelRepository;)Lio/getstream/chat/android/client/errorhandler/ErrorHandler;
-}
-
 public abstract class io/getstream/chat/android/state/event/handler/chat/BaseChatEventHandler : io/getstream/chat/android/state/event/handler/chat/ChatEventHandler {
 	public fun <init> ()V
 	public fun handleChannelEvent (Lio/getstream/chat/android/client/events/HasChannel;Lio/getstream/chat/android/models/FilterObject;)Lio/getstream/chat/android/state/event/handler/chat/EventHandlingResult;
