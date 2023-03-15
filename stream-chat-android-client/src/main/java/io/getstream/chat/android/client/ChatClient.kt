@@ -167,6 +167,7 @@ import io.getstream.log.android.AndroidStreamLogger
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
@@ -623,8 +624,11 @@ internal constructor(
      * Moreover, it warms up the connection, and sets up notifications.
      */
     @InternalStreamChatApi
-    public fun setUserWithoutConnectingIfNeeded() {
-        if (isUserSet() || clientState.initializationState.value != InitializationState.NOT_INITIALIZED) {
+    public suspend fun setUserWithoutConnectingIfNeeded() {
+        if (clientState.initializationState.value == InitializationState.RUNNING) {
+            delay(INITIALIZATION_DELAY)
+            return setUserWithoutConnectingIfNeeded()
+        } else if (isUserSet() || clientState.initializationState.value == InitializationState.COMPLETE) {
             logger.d {
                 "[setUserWithoutConnectingIfNeeded] User is already set: ${isUserSet()}" +
                     " Initialization state: ${clientState.initializationState.value}"
@@ -1475,7 +1479,6 @@ internal constructor(
             .share(userScope) { DeleteMessageIdentifier(messageId, hard) }
     }
 
-    @CheckResult
     /**
      * Fetches a single message from the backend.
      *
@@ -1484,6 +1487,7 @@ internal constructor(
      * @return The message wrapped inside [Result] if the call was successful,
      * otherwise returns a [ChatError] instance wrapped inside [Result].
      */
+    @CheckResult
     public fun getMessage(messageId: String): Call<Message> {
         logger.d { "[getMessage] messageId: $messageId" }
 
@@ -3020,6 +3024,7 @@ internal constructor(
         private const val MESSAGE_ACTION_SEND = "send"
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
         private val THIRTY_DAYS_IN_MILLISECONDS = 30.days.inWholeMilliseconds
+        private const val INITIALIZATION_DELAY = 100L
 
         private const val ARG_TYPING_PARENT_ID = "parent_id"
 
@@ -3056,8 +3061,10 @@ internal constructor(
         @JvmStatic
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                setUserWithoutConnectingIfNeeded()
-                notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
+                clientScope.launch {
+                    setUserWithoutConnectingIfNeeded()
+                    notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
+                }
             }
         }
 

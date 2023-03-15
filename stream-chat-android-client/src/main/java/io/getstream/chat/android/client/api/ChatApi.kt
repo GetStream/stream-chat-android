@@ -178,6 +178,7 @@ internal interface ChatApi {
         messageId: String,
         set: Map<String, Any>,
         unset: List<String>,
+        skipEnrichUrl: Boolean = false,
     ): Call<Message>
 
     @CheckResult

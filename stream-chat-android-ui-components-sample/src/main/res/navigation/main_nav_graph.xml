@@ -190,8 +190,16 @@
             app:argType="string"
             app:nullable="false"
             />
+
         <argument
             android:name="messageId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true"
+            />
+
+        <argument
+            android:name="parentMessageId"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true"

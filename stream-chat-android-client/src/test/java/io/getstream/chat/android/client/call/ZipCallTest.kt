@@ -46,9 +46,9 @@ internal class ZipCallTest {
     private val errorResultA = Result.Failure(errorA)
     private val errorResultB = Result.Failure(errorB)
     private val expectedErrorResultA =
-        Result.Failure(ChatError.ThrowableError(message = "Error executing callA", cause = errorA.cause))
+        Result.Failure(errorA)
     private val expectedErrorResultB =
-        Result.Failure(ChatError.ThrowableError(message = "Error executing callB", cause = errorB.cause))
+        Result.Failure(errorB)
 
     @Test
     fun `Call should be executed and return a valid result`() = runTest {

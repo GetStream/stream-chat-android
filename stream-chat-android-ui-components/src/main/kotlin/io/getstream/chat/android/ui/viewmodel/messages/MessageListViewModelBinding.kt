@@ -79,7 +79,14 @@ public fun MessageListViewModel.bindView(
             onEvent(DownloadAttachment(downloadAttachmentCall))
         }
     }
-    view.setReplyMessageClickListener { messageId -> onEvent(MessageListViewModel.Event.ShowMessage(messageId)) }
+    view.setReplyMessageClickListener { replyTo ->
+        onEvent(
+            MessageListViewModel.Event.ShowMessage(
+                messageId = replyTo.id,
+                parentMessageId = replyTo.parentId,
+            )
+        )
+    }
     view.setOnScrollToBottomHandler { scrollToBottom { view.scrollToBottom() } }
 
     ownCapabilities.observe(lifecycleOwner) {
@@ -113,7 +120,12 @@ public fun MessageListViewModel.bindView(
         onEvent(MessageListViewModel.Event.ReplyAttachment(result.cid, result.messageId))
     }
     view.setAttachmentShowInChatOptionClickHandler { result ->
-        onEvent(MessageListViewModel.Event.ShowMessage(result.messageId))
+        onEvent(
+            MessageListViewModel.Event.ShowMessage(
+                messageId = result.messageId,
+                parentMessageId = result.parentId,
+            )
+        )
     }
     view.setAttachmentDeleteOptionClickHandler { result ->
         onEvent(

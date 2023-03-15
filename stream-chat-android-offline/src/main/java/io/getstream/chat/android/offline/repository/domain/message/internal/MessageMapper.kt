@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toModel
+import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toReplyEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.toModel
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.toEntity
@@ -67,7 +68,9 @@ internal suspend fun MessageEntity.toModel(
         pinned = pinned,
         pinnedAt = pinnedAt,
         pinExpires = pinExpires,
-        pinnedBy = pinnedByUserId?.let { getUser(it) }
+        pinnedBy = pinnedByUserId?.let { getUser(it) },
+        skipEnrichUrl = skipEnrichUrl,
+        skipPushNotification = skipPushNotification,
     )
 }
 
@@ -105,6 +108,8 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         pinnedAt = pinnedAt,
         pinExpires = pinExpires,
         pinnedByUserId = pinnedBy?.id,
+        skipPushNotification = skipPushNotification,
+        skipEnrichUrl = skipEnrichUrl,
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     latestReactions = latestReactions.map(Reaction::toEntity),
@@ -181,7 +186,7 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
             pinExpires = pinExpires,
             pinnedByUserId = pinnedBy?.id,
         ),
-        attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
+        attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )
 
 private fun MessageEntity.buildMessageSyncDescription(): MessageSyncDescription? = with(messageInnerEntity) {

@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
@@ -41,6 +42,8 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
  * @param context Used to build the [ClipboardManager].
  * @param channelId The current channel ID, to load the messages from.
  * @param messageId The message id to which we want to scroll to when opening the message list.
+ * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
+ * message we want to scroll to is not in a thread, you can pass in a null value.
  * @param chatClient The client to use for API calls.
  * @param clientState The current state of the SDK.
  * @param messageLimit The number of messages to load in a single page.
@@ -59,6 +62,7 @@ public class MessagesViewModelFactory(
     private val context: Context,
     private val channelId: String,
     private val messageId: String? = null,
+    private val parentMessageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
@@ -96,6 +100,7 @@ public class MessagesViewModelFactory(
                     cid = channelId,
                     clipboardHandler = clipboardHandler,
                     messageId = messageId,
+                    parentMessageId = parentMessageId,
                     messageLimit = messageLimit,
                     chatClient = chatClient,
                     clientState = clientState,

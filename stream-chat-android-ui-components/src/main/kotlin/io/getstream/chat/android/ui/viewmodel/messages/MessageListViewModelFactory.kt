@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
@@ -33,6 +34,8 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
  *
  * @param cid The current channel ID, to load the messages from.
  * @param messageId The message ID to which we want to scroll to when opening the message list.
+ * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
+ * message we want to scroll to is not in a thread, you can pass in a null value.
  * @param chatClient The client to use for API calls.
  * @param clientState The current state of the SDK.
  * @param messageLimit The limit of the messages to load in a single page.
@@ -53,6 +56,7 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 public class MessageListViewModelFactory @JvmOverloads constructor(
     private val cid: String,
     private val messageId: String? = null,
+    private val parentMessageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
@@ -85,6 +89,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     clipboardHandler = {},
                     messageLimit = messageLimit,
                     messageId = messageId,
+                    parentMessageId = parentMessageId,
                     chatClient = chatClient,
                     clientState = clientState,
                     enforceUniqueReactions = enforceUniqueReactions,

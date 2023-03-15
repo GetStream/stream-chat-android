@@ -20,8 +20,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.client.extensions.enrichWithCid
-import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filterWithOffset
 import io.getstream.chat.android.client.utils.Result
@@ -29,7 +27,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
@@ -193,42 +190,11 @@ internal class QueryChannelsLogic(
                 // first things first, store the configs
                 queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
                 logger.i { "[onOnlineQueryResult] api call returned ${channelsResponse.size} channels" }
-                storeStateForChannelsInDb(channelsResponse)
+                queryChannelsDatabaseLogic.storeStateForChannels(channelsResponse)
             }
             is Result.Failure -> {
                 logger.i { "[onOnlineQueryResult] query with filter ${request.filter} failed; recovery needed" }
             }
-        }
-    }
-
-    private suspend fun storeStateForChannelsInDb(channelsResponse: Collection<Channel>) {
-        val users = mutableMapOf<String, User>()
-        val configs: MutableCollection<ChannelConfig> = mutableSetOf()
-        // start by gathering all the users
-        val messages = mutableListOf<Message>()
-        for (channel in channelsResponse) {
-            users.putAll(channel.users().associateBy { it.id })
-            configs += ChannelConfig(channel.type, channel.config)
-
-            channel.messages.forEach { message ->
-                message.enrichWithCid(channel.cid)
-                users.putAll(message.users().associateBy { it.id })
-            }
-
-            messages.addAll(channel.messages)
-        }
-
-        queryChannelsDatabaseLogic.storeStateForChannels(
-            configs = configs,
-            users = users.values.toList(),
-            channels = channelsResponse,
-            messages = messages,
-            cacheForMessages = false
-        )
-
-        logger.i {
-            "[storeStateForChannels] stored ${channelsResponse.size} channels, " +
-                "${configs.size} configs, ${users.size} users and ${messages.size} messages"
         }
     }
 

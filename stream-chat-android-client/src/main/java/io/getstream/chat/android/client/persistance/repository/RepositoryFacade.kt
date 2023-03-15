@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.persistance.repository
 
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -133,17 +134,19 @@ public class RepositoryFacade private constructor(
         channelsRepository.updateMembersForChannel(cid, members)
     }
 
-    public suspend fun storeStateForChannels(
-        configs: Collection<ChannelConfig>? = null,
-        users: List<User>,
-        channels: Collection<Channel>,
-        messages: List<Message>,
-        cacheForMessages: Boolean = false,
-    ) {
-        configs?.let { insertChannelConfigs(it) }
-        insertUsers(users)
+    public suspend fun storeStateForChannels(channels: Collection<Channel>) {
+        insertChannelConfigs(channels.map { ChannelConfig(it.type, it.config) })
         upsertChannels(channels)
-        insertMessages(messages, cacheForMessages)
+        insertMessages(
+            channels.flatMap { channel ->
+                channel.messages.map { it.enrichWithCid(channel.cid) }
+            },
+            false
+        )
+    }
+
+    public suspend fun storeStateForChannel(channel: Channel) {
+        storeStateForChannels(listOf(channel))
     }
 
     override suspend fun clear() {

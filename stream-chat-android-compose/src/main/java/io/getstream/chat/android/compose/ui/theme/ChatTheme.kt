@@ -178,7 +178,7 @@ public fun ChatTheme(
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
-        LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current),
+        LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,

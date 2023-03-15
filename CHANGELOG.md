@@ -74,6 +74,9 @@
 - Added `ChatUI.streamCdnImageResizing` which allows resizing images where they appear as previews, such as the message list, attachment gallery overview or user and channel avatars. Only images hosted by Stream's CDN which contain original width and height query parameters can be resized. Image resizing is a paid feature and is disabled by default, you can enable it by overriding the aforementioned `ChatUI.streamCdnImageResizing` property with with an instance that has `StreamCdnImageResizing.imageResizingEnabled` set to true. Pricing can be found [here](https://getstream.io/chat/pricing/). [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
 
 ### ⚠️ Changed
+- Replaced the method parameter `replyMessageId: String` with `replyTo: Message` inside `ReplyMessageClickListener.onReplyClick()`. The new parameter now contains the complete message to which the reply was made. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
+- Added the parameter `parentId: String?` to `AttachmentGalleryResultItem`. It is used to indicate when a message is belongs to a thread. Same has been added to the extension function `Attachment.toAttachmentGalleryResultItem()`. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
+- Added the parameter `parentMessageId: String?` to the class `MessageListViewModel.ShowMessage`. If the message you want to scroll to is a thread message, pass in its parent message ID, otherwise you can pass in `null`. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
 
 ### ❌ Removed
 
@@ -91,6 +94,9 @@
 - 🚨 Breaking change: Renamed `onHeaderActionClick` to `onHeaderTitleClick` in `MessagesScreen`. Change made in order to better reflect the handler's behavior. [#4535](https://github.com/GetStream/stream-chat-android/pull/4535)
 - 🚨 Breaking change: Renamed `onHeaderActionClick` to `onHeaderTitleClick` in `MessageListHeader`. Change made in order to better reflect the handler's behavior. [#4535](https://github.com/GetStream/stream-chat-android/pull/4535)
 - Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
+- Added `parentMessageId` to `MediaGalleryPreviewResult`. It is used when we need to return a result upon which we navigate to a thread message. If the message we need to navigate to is not a thread message the `parentMessageId` value will be null. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
+- Added argument `parentMessageId: String?` to `MessageListViewModel.scrollToMessage()`. If the message you want to scroll to is a thread message, pass in its parent message ID, otherwise you can pass in `null`. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
+- Added parameter `parentMessageId: String?` to `MessageListViewModelFactory`. If you want to scroll to a thread message upon opening the messaging screen, pass in the thread message's parent message ID, otherwise you can pass in `null`. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
 
 ### ❌ Removed
 
@@ -346,6 +352,22 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: Removed compose `MessageMode` indicating whether the list is in thread mode or normal mode in favor of ui-common `MessageMode`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
+
+# March 7th, 2023 - 5.14.0
+## stream-chat-android-client
+
+### ✅ Added
+- Added the following parameters to `Message`. [#4701](https://github.com/GetStream/stream-chat-android/pull/4701)
+  * `skipPushNotification`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link
+
+## stream-chat-android-compose
+
+### ✅ Added
+- Added the property `skipEnrichUrl` to `ImagePreviewViewModelFactory`, `ImagePreviewViewModel` and `ImagePreviewContract.Input` constructors and the functions `StreamAttachmentFactories.defaultFactories()`, `ImageAttachmentFactory()`, `ImageAttachmentContent()`. When set to false, updating a message by deleting an attachment inside the message will skip the URL enrichment process, meaning the links will not be transformed to link attachments. Any existing link attachments will be preserved. [#4701](https://github.com/GetStream/stream-chat-android/pull/4701)
+- Added the following parameters to `MessagesScreen`. [#4701](https://github.com/GetStream/stream-chat-android/pull/4701)
+  * `skipPushNotification`: when set to `true` a newly sent message will not trigger a push notification.
+  * `skipEnrichUrl`: when set to `true` the URL contained inside the message will not be enriched as a link.
 
 # February 23rd, 2023 - 5.13.0
 ## stream-chat-android-ui-components
