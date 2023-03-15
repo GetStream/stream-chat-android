@@ -135,7 +135,7 @@ public class MessageListViewModel(
      * The target message that the list should scroll to. Used when scrolling to a pinned message, a message opened from
      * a push notification or similar.
      */
-    public val targetMessage: LiveData<Message> = messageListController.messageListState.map {
+    public val targetMessage: LiveData<Message> = messageListController.listState.map {
         (it.messageItems.firstOrNull { it is MessageItemState && it.focusState == MessageFocused } as? MessageItemState)
             ?.message
             ?: Message()
@@ -267,7 +267,10 @@ public class MessageListViewModel(
                 )
             }
             is Event.ShowMessage -> {
-                messageListController.scrollToMessage(event.messageId)
+                messageListController.scrollToMessage(
+                    messageId = event.messageId,
+                    parentMessageId = event.parentMessageId,
+                )
             }
             is Event.RemoveAttachment -> {
                 messageListController.removeAttachment(event.messageId, event.attachment)
@@ -296,7 +299,8 @@ public class MessageListViewModel(
      * @param messageId The ID of the selected message.
      * @return The [Message] with the ID, if it exists.
      */
-    public fun getMessageById(messageId: String): Message? = messageListController.getMessageById(messageId)
+    public fun getMessageById(messageId: String): Message? =
+        messageListController.getMessageFromListStateById(messageId)
 
     /**
      * When the user clicks the scroll to bottom button we need to take the user to the bottom of the newest
@@ -660,8 +664,13 @@ public class MessageListViewModel(
          * Usually triggered by clicking on pinned messages and replied messages.
          *
          * @param messageId The id of the message we need to navigate to.
+         * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread.
+         * If the message we want to scroll to is not in a thread, you can pass in a null value.
          */
-        public data class ShowMessage(val messageId: String) : Event()
+        public data class ShowMessage(
+            val messageId: String,
+            val parentMessageId: String?,
+        ) : Event()
 
         /**
          * When the user removes an attachment from a message that was previously sent.

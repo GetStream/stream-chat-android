@@ -626,6 +626,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 handleResult(
                     MediaGalleryPreviewResult(
                         messageId = message.id,
+                        parentMessageId = message.parentId,
                         resultType = MediaGalleryPreviewResultType.SHOW_IN_CHAT
                     )
                 )
@@ -634,6 +635,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 handleResult(
                     MediaGalleryPreviewResult(
                         messageId = message.id,
+                        parentMessageId = message.parentId,
                         resultType = MediaGalleryPreviewResultType.QUOTE
                     )
                 )

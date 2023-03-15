@@ -46,6 +46,7 @@ import io.getstream.chat.ui.sample.databinding.FragmentHomeBinding
 import io.getstream.chat.ui.sample.feature.EXTRA_CHANNEL_ID
 import io.getstream.chat.ui.sample.feature.EXTRA_CHANNEL_TYPE
 import io.getstream.chat.ui.sample.feature.EXTRA_MESSAGE_ID
+import io.getstream.chat.ui.sample.feature.EXTRA_PARENT_MESSAGE_ID
 import io.getstream.chat.ui.sample.feature.user_login.UserLoginViewModel
 import io.getstream.chat.ui.sample.util.extensions.useAdjustNothing
 
@@ -148,10 +149,13 @@ class HomeFragment : Fragment() {
                 val channelId = it.getStringExtra(EXTRA_CHANNEL_ID)
                 val cid = "$channelType:$channelId"
                 val messageId = it.getStringExtra(EXTRA_MESSAGE_ID)
+                val parentMessageId = it.getStringExtra(EXTRA_PARENT_MESSAGE_ID)
 
                 requireActivity().intent = null
 
-                findNavController().navigateSafely(HomeFragmentDirections.actionOpenChat(cid, messageId))
+                findNavController().navigateSafely(
+                    HomeFragmentDirections.actionOpenChat(cid, messageId, parentMessageId)
+                )
             }
         }
     }
