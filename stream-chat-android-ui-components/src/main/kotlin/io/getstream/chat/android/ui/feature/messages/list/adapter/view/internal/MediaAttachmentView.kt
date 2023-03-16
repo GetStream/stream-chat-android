@@ -133,13 +133,14 @@ internal class MediaAttachmentView : ConstraintLayout {
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url =
             if (attachment.isImage() ||
-                (attachment.isVideo() && ChatUI.videoThumbnailsEnabled)
+                (attachment.isVideo() && ChatUI.videoThumbnailsEnabled && attachment.thumbUrl != null)
             ) {
                 attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
                     ?: attachment.titleLink ?: attachment.ogUrl ?: attachment.upload ?: return
             } else {
                 null
             }
+
         val showMore = {
             if (andMoreCount > NO_MORE_COUNT) {
                 showMoreCount(andMoreCount)

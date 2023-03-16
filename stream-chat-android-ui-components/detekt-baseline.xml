@@ -4,6 +4,7 @@
   <CurrentIssues>
     <ID>ComplexCondition:AttachmentDestination.kt$AttachmentDestination$attachment.isFile() || attachment.isVideo() || attachment.isAudio() || attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$FileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
+    <ID>ComplexCondition:MediaAttachmentView.kt$MediaAttachmentView$attachment.isImage() || (attachment.isVideo() &amp;&amp; ChatUI.videoThumbnailsEnabled &amp;&amp; attachment.thumbUrl != null)</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.deleteMessageEnabled &amp;&amp; (canDeleteAnyMessage || (isOwnMessage &amp;&amp; canDeleteOwnMessage))</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.editMessageEnabled &amp;&amp; ((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; selectedMessage.command != AttachmentType.GIPHY</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.threadsEnabled &amp;&amp; !isInThread &amp;&amp; isMessageSynced &amp;&amp; canThreadReply</ID>
