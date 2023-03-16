@@ -236,7 +236,8 @@ class ChannelsActivity : BaseConnectedActivity() {
             MessagesActivity.createIntent(
                 context = this,
                 channelId = channel.cid,
-                messageId = null
+                messageId = null,
+                parentMessageId = null
             )
         )
     }

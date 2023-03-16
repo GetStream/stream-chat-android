@@ -57,6 +57,7 @@ class ChatFragment : Fragment() {
         MessageListViewModelFactory(
             cid = args.cid,
             messageId = args.messageId,
+            parentMessageId = args.parentMessageId
         )
     }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
