@@ -177,7 +177,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * Factory used to build the screen ViewModel given the received message ID.
      */
     private val factory by lazy {
-        val messageId = if (Build.VERSION.SDK_INT >= 33) {
+        val messageId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent?.getParcelableExtra(
                 KeyMediaGalleryPreviewActivityState, MediaGalleryPreviewActivityState::class.java
             )?.messageId
