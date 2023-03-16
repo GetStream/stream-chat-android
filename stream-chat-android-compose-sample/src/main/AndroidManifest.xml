@@ -37,6 +37,7 @@
         <activity
             android:name=".ui.StartupActivity"
             android:exported="true"
+            android:launchMode="singleInstance"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
