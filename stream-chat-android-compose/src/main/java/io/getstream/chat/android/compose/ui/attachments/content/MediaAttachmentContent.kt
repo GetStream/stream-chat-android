@@ -66,10 +66,10 @@ import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPrev
 import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.RetryHash
+import io.getstream.chat.android.compose.ui.util.onImageNeedsToReload
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
@@ -363,8 +363,10 @@ internal fun MediaAttachmentContentItem(
 
     // Used to refresh the request for the current page
     // if it has previously failed.
-    if (data != null && connectionState == ConnectionState.CONNECTED &&
-        painter.state is AsyncImagePainter.State.Error
+    onImageNeedsToReload(
+        data = data,
+        connectionState = connectionState,
+        asyncImagePainterState = painter.state
     ) {
         retryHash++
     }
