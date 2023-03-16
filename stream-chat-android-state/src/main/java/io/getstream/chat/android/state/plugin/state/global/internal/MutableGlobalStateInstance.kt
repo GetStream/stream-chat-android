@@ -18,21 +18,16 @@
 
 package io.getstream.chat.android.state.plugin.state.global.internal
 
-import androidx.annotation.VisibleForTesting
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @InternalStreamChatApi
-public class GlobalMutableState private constructor(
-    override val clientState: ClientState,
-) : MutableGlobalState {
+public object MutableGlobalStateInstance : MutableGlobalState {
 
     private val _totalUnreadCount = MutableStateFlow(0)
     private val _channelUnreadCount = MutableStateFlow(0)
@@ -57,26 +52,6 @@ public class GlobalMutableState private constructor(
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels
 
     override val user: StateFlow<User?> = _user
-
-    public companion object {
-
-        @InternalStreamChatApi
-        @VisibleForTesting
-        @Volatile
-        public var instance: GlobalMutableState? = null
-
-        /**
-         * Gets the singleton of [GlobalMutableState] or creates it in the first call.
-         */
-        @InternalStreamChatApi
-        public fun get(clientState: ClientState): GlobalMutableState {
-            return instance ?: synchronized(this) {
-                instance ?: GlobalMutableState(clientState).also { globalState ->
-                    instance = globalState
-                }
-            }
-        }
-    }
 
     override fun clearState() {
         _user.value = null
@@ -123,5 +98,3 @@ public class GlobalMutableState private constructor(
         _typingChannels.tryEmit(typingChannelsCopy)
     }
 }
-
-internal fun GlobalState.toMutableState(): GlobalMutableState = this as GlobalMutableState

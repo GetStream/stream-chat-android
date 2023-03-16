@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.log.StreamLog
 import kotlinx.coroutines.flow.StateFlow
@@ -44,7 +44,7 @@ private const val COUNT_BUFFER_LIMIT = 100
  * logic, only counting logic.
  *
  * @param mutableState [ChannelMutableState]
- * @param globalMutableState [MutableGlobalState]
+ * @param globalState [GlobalState]
  * @param unreadTrigger StateFlow<Boolean> Trigger of the count with control and the SDK is able or not able to count
  * the unread messages to avoid race conditions.
  * @param countBuffer [StartStopBuffer] The buffer that holds the counting and keeps the events to be counted in a later
@@ -52,7 +52,7 @@ private const val COUNT_BUFFER_LIMIT = 100
  */
 internal class UnreadCountLogic(
     private val mutableState: ChannelMutableState,
-    private val globalMutableState: MutableGlobalState,
+    private val globalState: GlobalState,
     private val unreadTrigger: StateFlow<Boolean>,
     private val countBuffer: StartStopBuffer<ChatEvent> = StartStopBuffer(
         bufferLimit = COUNT_BUFFER_LIMIT,
@@ -109,7 +109,7 @@ internal class UnreadCountLogic(
      * Perform count the a new message arrive.
      */
     private fun performCount(message: Message) {
-        val user = globalMutableState.user.value ?: return
+        val user = globalState.user.value ?: return
         val currentUserId = user.id
 
         /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
@@ -126,7 +126,7 @@ internal class UnreadCountLogic(
                     message.shouldIncrementUnreadCount(
                         currentUserId = currentUserId,
                         lastMessageAtDate = lastMessageSeenDate,
-                        isChannelMuted = globalMutableState.isChannelMutedForCurrentUser(mutableState.cid)
+                        isChannelMuted = globalState.isChannelMutedForCurrentUser(mutableState.cid)
                     )
 
             val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss''SSS", Locale.ENGLISH)

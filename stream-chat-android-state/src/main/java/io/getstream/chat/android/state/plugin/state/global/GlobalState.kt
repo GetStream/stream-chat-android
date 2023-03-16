@@ -67,9 +67,4 @@ public interface GlobalState {
      * @see [TypingEvent]
      */
     public val typingChannels: StateFlow<Map<String, TypingEvent>>
-
-    /**
-     * Clears the state of [GlobalState].
-     */
-    public fun clearState()
 }

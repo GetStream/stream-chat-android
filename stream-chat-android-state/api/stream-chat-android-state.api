@@ -137,7 +137,6 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/cha
 }
 
 public abstract interface class io/getstream/chat/android/state/plugin/state/global/GlobalState {
-	public abstract fun clearState ()V
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
@@ -145,9 +144,6 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/glo
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
-}
-
-public final class io/getstream/chat/android/state/plugin/state/global/internal/GlobalMutableState$Companion {
 }
 
 public abstract class io/getstream/chat/android/state/plugin/state/querychannels/ChannelsStateData {

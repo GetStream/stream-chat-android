@@ -49,7 +49,7 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -78,7 +78,7 @@ public val ChatClient.state: StateRegistry
  * [GlobalState] instance that contains information about the current user, unreads, etc.
  */
 public val ChatClient.globalState: GlobalState
-    get() = GlobalMutableState.get(clientState)
+    get() = MutableGlobalStateInstance
 
 /**
  * [StatePluginConfig] instance used to configure [io.getstream.chat.android.state.plugin.internal.StatePlugin]

@@ -50,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap
 @Suppress("LongParameterList")
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
-    private val globalState: MutableGlobalState,
+    private val mutableGlobalState: MutableGlobalState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
@@ -98,10 +98,10 @@ internal class LogicRegistry internal constructor(
             val mutableState = stateRegistry.mutableChannel(channelType, channelId)
             val stateLogic = ChannelStateLogic(
                 mutableState = mutableState,
-                globalMutableState = globalState,
+                globalMutableState = mutableGlobalState,
                 searchLogic = SearchLogic(mutableState),
                 coroutineScope = coroutineScope,
-                unreadCountLogic = UnreadCountLogic(mutableState, globalState, queryingChannelsFree)
+                unreadCountLogic = UnreadCountLogic(mutableState, mutableGlobalState, queryingChannelsFree)
             )
 
             ChannelLogic(
@@ -233,6 +233,6 @@ internal class LogicRegistry internal constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
-        globalState.clearState()
+        mutableGlobalState.clearState()
     }
 }
