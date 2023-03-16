@@ -336,7 +336,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
 public fun ChatClient.getMessageUsingCache(
     messageId: String,
 ): Call<Message> {
-    return CoroutineCall(state.scope) {
+    return CoroutineCall(inheritScope { SupervisorJob(it) }) {
         val message = logic.getMessageById(messageId) ?: logic.getMessageByIdFromDb(messageId)
 
         if (message != null) {

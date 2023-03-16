@@ -17,7 +17,6 @@
 package io.getstream.chat.android.state.plugin.state
 
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.User
@@ -44,8 +43,8 @@ import java.util.concurrent.ConcurrentHashMap
 public class StateRegistry constructor(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
-    internal val job: Job,
-    @property:InternalStreamChatApi public val scope: CoroutineScope,
+    private val job: Job,
+    private val scope: CoroutineScope,
 ) {
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
