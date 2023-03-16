@@ -492,7 +492,8 @@ public class MessageListView : ConstraintLayout {
                                 createdAt = message.getCreatedAtOrThrow(),
                                 messageId = message.id,
                                 cid = message.cid,
-                                isMine = message.user.isCurrentUser()
+                                isMine = message.user.isCurrentUser(),
+                                parentMessageId = message.parentId,
                             )
                         }
                         val attachmentIndex = filteredAttachments.indexOf(attachment)

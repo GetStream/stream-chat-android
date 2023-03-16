@@ -42,6 +42,7 @@ public data class AttachmentGalleryResultItem(
     val image: String? = null,
     val url: String? = null,
     val name: String? = null,
+    val parentMessageId: String? = null,
 ) : Parcelable
 
 /**
@@ -66,12 +67,20 @@ public fun AttachmentGalleryResultItem.toAttachment(): Attachment {
 
 /**
  * Extension to convert instance of [Attachment] to [AttachmentGalleryResultItem] type.
+ *
+ * @param messageId The ID of the message containing the attachment.
+ * @param cid the ID of the channel containing the message which contains the attachment.
+ * @param userName The name of the user who sent the message containing the attachment.
+ * @param isMine If the message containing the attachment was sent by the currently logged in user or not.
+ * @param parentMessageId Indicates if the message is a thread message and has a parent. If it is not a thread message,
+ *  a null value should be passed in.
  */
 public fun Attachment.toAttachmentGalleryResultItem(
     messageId: String,
     cid: String,
     userName: String,
     isMine: Boolean,
+    parentMessageId: String?,
 ): AttachmentGalleryResultItem {
     return AttachmentGalleryResultItem(
         messageId = messageId,
@@ -81,6 +90,7 @@ public fun Attachment.toAttachmentGalleryResultItem(
         imageUrl = this.imageUrl,
         assetUrl = this.assetUrl,
         name = this.name,
-        authorLink = authorLink
+        authorLink = authorLink,
+        parentMessageId = parentMessageId,
     )
 }

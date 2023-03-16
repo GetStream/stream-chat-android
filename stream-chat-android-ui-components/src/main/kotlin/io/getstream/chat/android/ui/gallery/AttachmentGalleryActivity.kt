@@ -92,7 +92,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 messageId = currentItem.messageId,
                 cid = currentItem.cid,
                 userName = currentItem.user.name,
-                isMine = currentItem.isMine
+                isMine = currentItem.isMine,
+                parentMessageId = currentItem.parentMessageId
             )
         }
     private var isFullScreen = false

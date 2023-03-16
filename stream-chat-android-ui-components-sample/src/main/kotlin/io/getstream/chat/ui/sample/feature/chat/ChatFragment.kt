@@ -208,8 +208,14 @@ class ChatFragment : Fragment() {
                 }
             }
             binding.messageListView.setAttachmentReplyOptionClickHandler { result ->
-                messageListViewModel.getMessageWithId(result.messageId)?.let { message ->
-                    messageComposerViewModel.performMessageAction(Reply(message))
+                val message = if (result.parentMessageId == null) {
+                    messageListViewModel.getMessageWithId(result.messageId)
+                } else {
+                    messageListViewModel.getThreadMessageWithId(result.messageId)
+                }
+
+                message?.let { it ->
+                    messageComposerViewModel.performMessageAction(Reply(it))
                 }
             }
         }

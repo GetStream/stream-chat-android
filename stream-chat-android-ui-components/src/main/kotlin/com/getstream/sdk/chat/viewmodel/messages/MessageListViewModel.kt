@@ -712,10 +712,26 @@ public class MessageListViewModel(
      * Returns a message with the given ID from the [messageListData].
      *
      * @param messageId The ID of the selected message.
-     * @return The [Message] with the ID, if it exists.
+     *
+     * @return The [Message] with the ID, if it exists, null otherwise.
      */
     public fun getMessageWithId(messageId: String): Message? {
         val messageItem = messageListData?.value?.items?.firstOrNull {
+            it is MessageListItem.MessageItem && it.message.id == messageId
+        }
+
+        return (messageItem as? MessageListItem.MessageItem)?.message
+    }
+
+    /**
+     * Returns a message with the given ID from the [threadListData].
+     *
+     * @param messageId The ID of the selected message.
+     *
+     * @return The [Message] with the ID, if it exists, null otherwise.
+     */
+    public fun getThreadMessageWithId(messageId: String): Message? {
+        val messageItem = threadListData?.value?.items?.firstOrNull {
             it is MessageListItem.MessageItem && it.message.id == messageId
         }
 

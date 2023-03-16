@@ -219,6 +219,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public final fun getOwnCapabilities ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun getTargetMessage ()Landroidx/lifecycle/LiveData;
+	public final fun getThreadMessageWithId (Ljava/lang/String;)Lio/getstream/chat/android/client/models/Message;
 	public final fun getUser ()Landroidx/lifecycle/LiveData;
 	public final fun onEvent (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event;)V
 	public final fun setDateSeparatorHandler (Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$DateSeparatorHandler;)V
@@ -1586,20 +1587,22 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryDestina
 }
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryItem {
-	public fun <init> (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Z)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Attachment;
 	public final fun component2 ()Lio/getstream/chat/android/client/models/User;
 	public final fun component3 ()Ljava/util/Date;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Z
-	public final fun copy (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryItem;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryItem;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryItem;Lio/getstream/chat/android/client/models/Attachment;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryItem;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachment ()Lio/getstream/chat/android/client/models/Attachment;
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getMessageId ()Ljava/lang/String;
+	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
 	public final fun isMine ()Z
@@ -1608,8 +1611,8 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryItem {
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem : android/os/Parcelable {
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()I
 	public final fun component11 ()Ljava/lang/String;
@@ -1618,6 +1621,7 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 	public final fun component14 ()Ljava/lang/String;
 	public final fun component15 ()Ljava/lang/String;
 	public final fun component16 ()Ljava/lang/String;
+	public final fun component17 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Z
@@ -1626,8 +1630,8 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Ljava/lang/String;
 	public final fun component9 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
 	public fun describeContents ()I
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAssetUrl ()Ljava/lang/String;
@@ -1640,6 +1644,7 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getMimeType ()Ljava/lang/String;
 	public final fun getName ()Ljava/lang/String;
+	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getText ()Ljava/lang/String;
 	public final fun getTitle ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
@@ -1661,7 +1666,7 @@ public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultI
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentGalleryResultItemKt {
 	public static final fun toAttachment (Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;)Lio/getstream/chat/android/client/models/Attachment;
-	public static final fun toAttachmentGalleryResultItem (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
+	public static final fun toAttachmentGalleryResultItem (Lio/getstream/chat/android/client/models/Attachment;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;)Lio/getstream/chat/android/ui/gallery/AttachmentGalleryResultItem;
 }
 
 public final class io/getstream/chat/android/ui/gallery/AttachmentMediaActivity : androidx/appcompat/app/AppCompatActivity {

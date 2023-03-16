@@ -27,4 +27,7 @@ public data class AttachmentGalleryItem(
     val messageId: String,
     val cid: String,
     val isMine: Boolean,
+    // TODO decide if making this nullable is preferable since it creates a smoother API transition,
+    // TODO or if breaking the API in a more noticeable manner is the better alternative
+    val parentMessageId: String?,
 )
