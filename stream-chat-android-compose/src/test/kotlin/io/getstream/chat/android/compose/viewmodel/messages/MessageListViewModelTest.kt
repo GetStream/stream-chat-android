@@ -163,7 +163,6 @@ internal class MessageListViewModelTest {
                 whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
-            whenever(stateRegistry.scope) doReturn testCoroutines.scope
         }
 
         fun get(): MessageListViewModel {

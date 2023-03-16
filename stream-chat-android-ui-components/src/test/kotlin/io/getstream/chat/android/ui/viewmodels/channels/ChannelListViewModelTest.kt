@@ -302,7 +302,6 @@ internal class ChannelListViewModelTest {
                 whenever(it.nextPageRequest) doReturn MutableStateFlow(nextPageRequest)
             }
             whenever(stateRegistry.queryChannels(any(), any())) doReturn queryChannelsState
-            whenever(stateRegistry.scope) doReturn testCoroutines.scope
         }
 
         fun get(): ChannelListViewModel {
