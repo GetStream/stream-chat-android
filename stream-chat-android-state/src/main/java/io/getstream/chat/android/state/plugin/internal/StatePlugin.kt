@@ -109,6 +109,7 @@ public class StatePlugin internal constructor(
     override var errorHandler: ErrorHandler = errorHandlerFactory.create()
 
     override fun onUserSet(user: User) {
+        globalState.setUser(user)
         syncManager.start()
         eventHandler.startListening()
     }
