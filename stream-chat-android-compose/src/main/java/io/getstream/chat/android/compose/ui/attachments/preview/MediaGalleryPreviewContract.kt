@@ -43,7 +43,7 @@ public class MediaGalleryPreviewContract :
             attachmentPosition = input.initialPosition,
             videoThumbnailsEnabled = input.videoThumbnailsEnabled,
             streamCdnImageResizing = input.streamCdnImageResizing,
-            skipEnrichUrl = input.skipEnrichUrl
+            skipEnrichUrl = input.skipEnrichUrl,
         )
     }
 
