@@ -23,47 +23,65 @@ import io.getstream.chat.android.client.call.launch
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.state
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 
 /**
  * Adapter for [ChatClient] that wraps some of it's request.
  */
 internal class ChatClientStateCalls(
     private val chatClient: ChatClient,
-    private val state: StateRegistry,
     private val scope: CoroutineScope,
 ) {
     private val logger by taggedLogger("ChatClientState")
 
+    /**
+     * Deferred value of StateRegistry.
+     * It needs to be accessed after the user is connected to be sure needed plugins are initialized.
+     */
+    private val deferredState: Deferred<StateRegistry> = scope.async(start = CoroutineStart.LAZY) {
+        chatClient.globalState.user.first { it != null }
+        chatClient.state
+    }
+
     /** Reference request of the channels query. */
-    internal fun queryChannels(
+    internal suspend fun queryChannels(
         request: QueryChannelsRequest,
         chatEventHandlerFactory: ChatEventHandlerFactory,
     ): QueryChannelsState {
         logger.d { "querying state for channels" }
         chatClient.queryChannels(request).launch(scope)
-        return state.queryChannels(request.filter, request.querySort)
+        return deferredState
+            .await()
+            .queryChannels(request.filter, request.querySort)
             .also { queryChannelsState -> queryChannelsState.chatEventHandlerFactory = chatEventHandlerFactory }
     }
 
     /** Reference request of the channel query. */
-    private fun queryChannel(
+    private suspend fun queryChannel(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
     ): ChannelState {
         logger.d { "querying state for channel with id: $channelId" }
         chatClient.queryChannel(channelType, channelId, request).launch(scope)
-        return state.channel(channelType, channelId)
+        return deferredState
+            .await()
+            .channel(channelType, channelId)
     }
 
     /** Reference request of the watch channel query. */
-    internal fun watchChannel(cid: String, messageLimit: Int, userPresence: Boolean): ChannelState {
+    internal suspend fun watchChannel(cid: String, messageLimit: Int, userPresence: Boolean): ChannelState {
         logger.d { "watching channel with cid: $cid" }
         val (channelType, channelId) = cid.cidToTypeAndId()
         val request = QueryChannelPaginationRequest(messageLimit)
@@ -76,10 +94,12 @@ internal class ChatClientStateCalls(
     }
 
     /** Reference request of the get thread replies query. */
-    internal fun getReplies(messageId: String, messageLimit: Int): ThreadState {
+    internal suspend fun getReplies(messageId: String, messageLimit: Int): ThreadState {
         logger.d { "getting replied for message with id: $messageId" }
         chatClient.getReplies(messageId, messageLimit).launch(scope)
-        return state.thread(messageId)
+        return deferredState
+            .await()
+            .thread(messageId)
     }
 
     /**
@@ -98,6 +118,8 @@ internal class ChatClientStateCalls(
     internal suspend fun awaitReplies(messageId: String, messageLimit: Int): ThreadState {
         logger.d { "getting replied for message with id: $messageId" }
         chatClient.getReplies(messageId, messageLimit).await()
-        return state.thread(messageId)
+        return deferredState
+            .await()
+            .thread(messageId)
     }
 }
