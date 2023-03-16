@@ -90,7 +90,6 @@ public class StreamStatePluginFactory(
         val clientState = chatClient.clientState
         val globalState = GlobalMutableState.get(chatClient.clientState).apply {
             clearState()
-            setUser(user)
         }
 
         val stateRegistry = StateRegistry(
