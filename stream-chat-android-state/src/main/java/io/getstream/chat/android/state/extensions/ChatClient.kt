@@ -145,7 +145,7 @@ public fun ChatClient.watchChannelAsState(
  * @return [ThreadState]
  */
 @JvmOverloads
-public fun ChatClient.getRepliesAsState(
+public suspend fun ChatClient.getRepliesAsState(
     messageId: String,
     messageLimit: Int,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
@@ -183,7 +183,7 @@ public suspend fun ChatClient.awaitRepliesAsState(
  */
 private fun <T> ChatClient.getStateOrNull(
     coroutineScope: CoroutineScope,
-    producer: () -> T,
+    producer: suspend () -> T,
 ): StateFlow<T?> {
     return globalState.user.map { it?.id }.distinctUntilChanged().map { userId ->
         if (userId == null) {

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.state.extensions.internal
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.state.extensions.state
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.internal.ChatClientStateCalls
@@ -35,4 +34,4 @@ internal val ChatClient.logic: LogicRegistry
  * @return [ChatClientStateCalls]
  */
 internal fun ChatClient.requestsAsState(scope: CoroutineScope): ChatClientStateCalls =
-    ChatClientStateCalls(this, state, scope)
+    ChatClientStateCalls(this, scope)
