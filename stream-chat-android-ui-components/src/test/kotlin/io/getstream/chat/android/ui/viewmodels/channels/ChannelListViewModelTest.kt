@@ -30,7 +30,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
@@ -43,6 +43,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
@@ -61,6 +62,10 @@ internal class ChannelListViewModelTest {
     @RegisterExtension
     val instantExecutorExtension: InstantTaskExecutorExtension = InstantTaskExecutorExtension()
 
+    @AfterEach
+    fun tearDown() {
+        MutableGlobalStateInstance.clearState()
+    }
     @Test
     fun `Given channel list in loading state When showing the channel list Should show loading state`() =
         runTest {
@@ -245,13 +250,10 @@ internal class ChannelListViewModelTest {
         private val initialFilters: FilterObject? = queryFilter,
     ) {
 
-        private val globalState: GlobalMutableState = mock()
         private val stateRegistry: StateRegistry = mock()
         private val clientState: ClientState = mock()
 
         init {
-            GlobalMutableState.instance = globalState
-
             whenever(chatClient.channel(any())) doReturn channelClient
             whenever(chatClient.channel(any(), any())) doReturn channelClient
             val statePlugin: StatePlugin = mock()
@@ -261,12 +263,12 @@ internal class ChannelListViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            MutableGlobalStateInstance.setUser(currentUser)
             whenever(chatClient.getCurrentUser()) doReturn currentUser
         }
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
-            whenever(globalState.channelMutes) doReturn MutableStateFlow(channelMutes)
+            MutableGlobalStateInstance.setChannelMutes(channelMutes)
         }
 
         fun givenChannelsQuery(channels: List<Channel> = emptyList()) = apply {
@@ -309,7 +311,10 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 sort = initialSort,
                 filter = initialFilters,
-                chatEventHandlerFactory = ChatEventHandlerFactory(clientState = clientState, globalState = globalState)
+                chatEventHandlerFactory = ChatEventHandlerFactory(
+                    clientState = clientState,
+                    globalState = MutableGlobalStateInstance
+                )
             )
         }
     }

@@ -23,11 +23,11 @@ import io.getstream.chat.android.client.call.launch
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.state
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.first
  */
 internal class ChatClientStateCalls(
     private val chatClient: ChatClient,
+    private val globalState: GlobalState,
     private val scope: CoroutineScope,
 ) {
     private val logger by taggedLogger("ChatClientState")
@@ -50,7 +51,7 @@ internal class ChatClientStateCalls(
      * It needs to be accessed after the user is connected to be sure needed plugins are initialized.
      */
     private val deferredState: Deferred<StateRegistry> = scope.async(start = CoroutineStart.LAZY) {
-        chatClient.globalState.user.first { it != null }
+        globalState.user.first { it != null }
         chatClient.state
     }
 

@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.viewmodels.messages
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -29,7 +28,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
@@ -45,6 +44,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
@@ -58,6 +58,11 @@ import org.mockito.kotlin.whenever
 @ExperimentalCoroutinesApi
 @ExtendWith(TestCoroutineExtension::class)
 internal class MessageComposerViewModelTest {
+
+    @AfterEach
+    fun tearDown() {
+        MutableGlobalStateInstance.clearState()
+    }
 
     @Test
     fun `Given message composer When typing a message Should display the message`() = runTest {
@@ -354,20 +359,16 @@ internal class MessageComposerViewModelTest {
         private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
         private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     ) {
-        private val globalState: GlobalMutableState = mock()
-        private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
 
         init {
-            GlobalMutableState.instance = globalState
             val statePlugin: StatePlugin = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
-            whenever(chatClient.clientState) doReturn clientState
+            MutableGlobalStateInstance.setUser(currentUser)
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {

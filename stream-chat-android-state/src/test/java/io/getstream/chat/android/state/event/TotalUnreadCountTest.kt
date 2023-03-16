@@ -25,14 +25,14 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -41,7 +41,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
@@ -55,33 +54,25 @@ internal class TotalUnreadCountTest {
     }
 
     private lateinit var data: TestDataHelper
-    private lateinit var globalMutableState: GlobalMutableState
     private lateinit var clientMutableState: ClientState
-
-    private val totalUnreadCount = MutableStateFlow(0)
-    private val channelUnreadCount = MutableStateFlow(0)
-
-    private lateinit var userStateFlow: StateFlow<User>
 
     @BeforeEach
     fun setUp() {
         data = TestDataHelper()
-        userStateFlow = MutableStateFlow(data.user1)
         clientMutableState = mock()
+        MutableGlobalStateInstance.clearState()
+        MutableGlobalStateInstance.setUser(data.user1)
+    }
 
-        globalMutableState = mock {
-            on(it.channelMutes) doReturn MutableStateFlow(emptyList())
-            on(it.totalUnreadCount) doReturn totalUnreadCount
-            on(it.channelUnreadCount) doReturn channelUnreadCount
-            on(it.user) doReturn userStateFlow
-        }
-        GlobalMutableState.instance = globalMutableState
+    @AfterEach
+    fun tearDown() {
+        MutableGlobalStateInstance.clearState()
     }
 
     @Test
     fun `When new message event is received for channel with read capability Should properly update total unread counts`() = runTest {
         val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-        val sut = Fixture(globalMutableState, data.user1)
+        val sut = Fixture(data.user1)
             .givenMockedRepositories()
             .givenChannel(channelWithReadCapability)
             .get()
@@ -94,14 +85,14 @@ internal class TotalUnreadCountTest {
 
         sut.handleEvents(newMessageEventWithUnread)
 
-        verify(globalMutableState).setTotalUnreadCount(5)
-        verify(globalMutableState).setChannelUnreadCount(2)
+        MutableGlobalStateInstance.totalUnreadCount.value `should be equal to` 5
+        MutableGlobalStateInstance.channelUnreadCount.value `should be equal to` 2
     }
 
     @Test
     fun `When mark read event is received for channel with read capability Should properly update total unread counts`() = runTest {
         val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-        val sut = Fixture(globalMutableState, data.user1)
+        val sut = Fixture(data.user1)
             .givenMockedRepositories()
             .givenChannel(channelWithReadCapability)
             .get()
@@ -113,13 +104,13 @@ internal class TotalUnreadCountTest {
         )
         sut.handleEvents(markReadEventWithUnread)
 
-        verify(globalMutableState).setTotalUnreadCount(0)
-        verify(globalMutableState).setChannelUnreadCount(0)
+        MutableGlobalStateInstance.totalUnreadCount.value `should be equal to` 0
+        MutableGlobalStateInstance.channelUnreadCount.value `should be equal to` 0
     }
 
     // @Test
     fun `when connected event is received, current user should be updated`() = runTest {
-        val sut = Fixture(globalMutableState, data.user1)
+        val sut = Fixture(data.user1)
             .givenMockedRepositories()
             .get()
 
@@ -129,11 +120,10 @@ internal class TotalUnreadCountTest {
         sut.handleEvents(connectedEvent)
 
         // unread count are updated internally when a user is updated
-        userStateFlow.value `should be equal to` userWithUnread
+        MutableGlobalStateInstance.user.value `should be equal to` userWithUnread
     }
 
     private class Fixture(
-        globalMutableState: GlobalMutableState,
         currentUser: User,
         sideEffect: suspend () -> Unit = {},
         syncedEvents: Flow<List<ChatEvent>> = MutableStateFlow(emptyList()),
@@ -145,7 +135,7 @@ internal class TotalUnreadCountTest {
             subscribeForEvents = { mock() },
             logicRegistry = mock(),
             stateRegistry = mock(),
-            mutableGlobalState = globalMutableState,
+            mutableGlobalState = MutableGlobalStateInstance,
             repos = repos,
             sideEffect = sideEffect,
             syncedEvents = syncedEvents
