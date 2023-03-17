@@ -353,6 +353,11 @@ If you want to learn more about these changes and our decisions, check out our [
 - 🚨 Breaking change: Removed compose models in favor of `ui-common` models: `MessageListState`, `MessageListItemState`, `MessageItemState`, `DateSeparatorState`, `ThreadSeparatorState`, `SystemMessageState`, `MessagePosition`, `NewMessageState`, `SelectedMessageState` and `MessageFocusState`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 - 🚨 Breaking change: Removed `MessageListViewModel.focusMessage()`. To achieve the same effect use `MessageListViewModel.scrollToMessage(messageId: String)`. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)
 
+# March 17th, 2023 - 5.15.0
+## Common changes for all artifacts
+### ⚠️ Changed
+- Upgrade ThreeTenBP and ThreeTenABP to support new added timezones. [#4734](https://github.com/GetStream/stream-chat-android/pull/4734)
+
 # March 7th, 2023 - 5.14.0
 ## stream-chat-android-client
 
