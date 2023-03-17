@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Upgrade ThreeTenBP and ThreeTenABP to support new added timezones. [#4734](https://github.com/GetStream/stream-chat-android/pull/4734)
 
 ### ❌ Removed
 
