@@ -2,12 +2,10 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexCondition:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$data != null &amp;&amp; page == pagerState.currentPage &amp;&amp; mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED &amp;&amp; painter.state is AsyncImagePainter.State.Error</ID>
     <ID>ComplexCondition:MessageItem.kt$!messageItem.isMine &amp;&amp; ( messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(MessagePosition.NONE) )</ID>
     <ID>ComplexCondition:MessageOptions.kt$((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; !selectedMessage.isGiphy()</ID>
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ComplexCondition:Messages.kt$!startOfMessages &amp;&amp; index == 0 &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
-    <ID>ComplexMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
     <ID>ComplexMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
@@ -31,7 +29,6 @@
     <ID>MagicNumber:MediaAttachmentFactory.kt$0.25f</ID>
     <ID>MagicNumber:MediaAttachmentQuotedContent.kt$0.8f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.2f</ID>
-    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$33</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$8f</ID>
     <ID>MagicNumber:MediaPreviewPlaceHolder.kt$0.4f</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
