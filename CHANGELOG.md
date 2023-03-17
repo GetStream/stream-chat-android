@@ -7,7 +7,6 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- Upgrade ThreeTenBP and ThreeTenABP to support new added timezones. [#4734](https://github.com/GetStream/stream-chat-android/pull/4734)
 
 ### ❌ Removed
 
@@ -120,6 +119,11 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# March 17th, 2023 - 5.15.0
+## Common changes for all artifacts
+### ⚠️ Changed
+- Upgrade ThreeTenBP and ThreeTenABP to support new added timezones. [#4734](https://github.com/GetStream/stream-chat-android/pull/4734)
 
 # March 7th, 2023 - 5.14.0
 ## stream-chat-android-client
