@@ -55,8 +55,8 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun dismissAllMessageActions ()V
 	public final fun dismissMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;)V
 	public final fun enterNormalMode ()V
-	public final fun enterThreadMode (Lio/getstream/chat/android/models/Message;I)V
-	public static synthetic fun enterThreadMode$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Lio/getstream/chat/android/models/Message;IILjava/lang/Object;)V
+	public final fun enterThreadMode (Lio/getstream/chat/android/models/Message;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun enterThreadMode$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Lio/getstream/chat/android/models/Message;ILkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun flagMessage (Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun flagMessage$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun getChannel ()Lkotlinx/coroutines/flow/StateFlow;
@@ -91,7 +91,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public static synthetic fun muteUser$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public final fun onCleared ()V
 	public final fun performGiphyAction (Lio/getstream/chat/android/ui/common/state/messages/list/GiphyAction;)V
-	public final fun performMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;)V
+	public final fun performMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun reactToMessage (Lio/getstream/chat/android/models/Reaction;Lio/getstream/chat/android/models/Message;)V
 	public final fun removeAttachment (Ljava/lang/String;Lio/getstream/chat/android/models/Attachment;)V

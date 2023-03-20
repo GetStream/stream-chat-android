@@ -21,13 +21,15 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -36,6 +38,11 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class ImagePreviewViewModelTest {
+
+    @AfterEach
+    fun tearDown() {
+        MutableGlobalStateInstance.clearState()
+    }
 
     @Test
     fun `Given a message with image attachments When showing image gallery Should show the gallery`() = runTest {
@@ -76,16 +83,14 @@ internal class ImagePreviewViewModelTest {
         private val messageId: String = MESSAGE_ID,
     ) {
 
-        private val globalState: GlobalMutableState = mock()
         private val clientState: ClientState = mock()
 
         init {
-            GlobalMutableState.instance = globalState
             whenever(chatClient.clientState) doReturn mock()
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            MutableGlobalStateInstance.setUser(currentUser)
         }
 
         fun givenAttachments(attachments: MutableList<Attachment>) = apply {
@@ -110,6 +115,9 @@ internal class ImagePreviewViewModelTest {
     }
 
     companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
         private const val MESSAGE_ID = "message-id"
         private val attachment1 = Attachment(type = "image", imageUrl = "http://example.com/img1.png")
         private val attachment2 = Attachment(type = "image", imageUrl = "http://example.com/img2.png")

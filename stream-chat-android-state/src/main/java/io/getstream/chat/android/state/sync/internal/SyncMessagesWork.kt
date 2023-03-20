@@ -49,9 +49,7 @@ internal class SyncMessagesWork(
 
             client.logic.channel(type, id) // Adds this channel to logic - Now it is an active channel
 
-            val syncManager = client.resolveDependency<StatePlugin, SyncHistoryManager>() ?: error(
-                "No SyncHistoryManager found in StatePlugin."
-            )
+            val syncManager = client.resolveDependency<StatePlugin, SyncHistoryManager>()
             syncManager.sync()
 
             Result.success()

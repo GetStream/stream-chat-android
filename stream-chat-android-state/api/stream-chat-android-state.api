@@ -5,11 +5,6 @@ public final class io/getstream/chat/android/state/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class io/getstream/chat/android/state/errorhandler/StateErrorHandlerFactory : io/getstream/chat/android/client/errorhandler/factory/ErrorHandlerFactory {
-	public fun <init> ()V
-	public fun create (Lio/getstream/chat/android/client/persistance/repository/ChannelRepository;)Lio/getstream/chat/android/client/errorhandler/ErrorHandler;
-}
-
 public abstract class io/getstream/chat/android/state/event/handler/chat/BaseChatEventHandler : io/getstream/chat/android/state/event/handler/chat/ChatEventHandler {
 	public fun <init> ()V
 	public fun handleChannelEvent (Lio/getstream/chat/android/client/events/HasChannel;Lio/getstream/chat/android/models/FilterObject;)Lio/getstream/chat/android/state/event/handler/chat/EventHandlingResult;
@@ -83,9 +78,9 @@ public final class io/getstream/chat/android/state/extensions/ChatClientExtensio
 	public static final fun cancelEphemeralMessage (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;Lio/getstream/chat/android/models/Attachment;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun getGlobalState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/state/plugin/state/global/GlobalState;
-	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;I)Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;
-	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;)Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;
-	public static synthetic fun getRepliesAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;
+	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun getRepliesAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun getState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/state/plugin/state/StateRegistry;
 	public static final fun getStateConfig (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
 	public static final fun loadMessageById (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -125,15 +120,11 @@ public final class io/getstream/chat/android/state/plugin/factory/StreamStatePlu
 }
 
 public final class io/getstream/chat/android/state/plugin/state/StateRegistry {
-	public static final field Companion Lio/getstream/chat/android/state/plugin/state/StateRegistry$Companion;
-	public synthetic fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lio/getstream/chat/android/client/persistance/repository/MessageRepository;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlinx/coroutines/CoroutineScope;)V
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/state/ChannelState;
 	public final fun clear ()V
 	public final fun queryChannels (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/chat/android/state/plugin/state/querychannels/QueryChannelsState;
 	public final fun thread (Ljava/lang/String;)Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;
-}
-
-public final class io/getstream/chat/android/state/plugin/state/StateRegistry$Companion {
 }
 
 public abstract interface class io/getstream/chat/android/state/plugin/state/channel/thread/ThreadState {
@@ -146,7 +137,6 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/cha
 }
 
 public abstract interface class io/getstream/chat/android/state/plugin/state/global/GlobalState {
-	public abstract fun clearState ()V
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
@@ -154,9 +144,6 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/glo
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
-}
-
-public final class io/getstream/chat/android/state/plugin/state/global/internal/GlobalMutableState$Companion {
 }
 
 public abstract class io/getstream/chat/android/state/plugin/state/querychannels/ChannelsStateData {

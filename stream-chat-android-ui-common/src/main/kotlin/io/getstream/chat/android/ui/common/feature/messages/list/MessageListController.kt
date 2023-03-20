@@ -853,7 +853,7 @@ public class MessageListController(
      * @param parentMessage The root [Message] which contains the thread we want to show.
      * @param messageLimit The size of the message list page to load.
      */
-    public fun enterThreadMode(parentMessage: Message, messageLimit: Int = this.messageLimit) {
+    public suspend fun enterThreadMode(parentMessage: Message, messageLimit: Int = this.messageLimit) {
         val channelState = channelState.value ?: return
         _messageActions.value = _messageActions.value + Reply(parentMessage)
         val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit)
@@ -1142,7 +1142,7 @@ public class MessageListController(
      *
      * @param messageAction The action the user chose.
      */
-    public fun performMessageAction(messageAction: MessageAction) {
+    public suspend fun performMessageAction(messageAction: MessageAction) {
         removeOverlay()
 
         when (messageAction) {

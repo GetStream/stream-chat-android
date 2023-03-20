@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
@@ -31,7 +32,7 @@ import io.getstream.chat.android.state.plugin.internal.ConfigSingleton
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.state.sync.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.state.sync.internal.SyncManager
 import io.getstream.log.StreamLog
@@ -87,20 +88,20 @@ public class StreamStatePluginFactory(
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
         val clientState = chatClient.clientState
-        val globalState = GlobalMutableState.get(chatClient.clientState).apply {
-            clearState()
-            setUser(user)
-        }
+        MutableGlobalStateInstance.clearState()
 
-        val stateRegistry = StateRegistry.create(
-            scope.coroutineContext.job, scope, globalState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
+        val stateRegistry = StateRegistry(
+            MutableGlobalStateInstance.user,
+            repositoryFacade.observeLatestUsers(),
+            scope.coroutineContext.job,
+            scope
         )
 
         val isQueryingFree = MutableStateFlow(true)
 
-        val logic = LogicRegistry.create(
+        val logic = LogicRegistry(
             stateRegistry = stateRegistry,
-            globalState = globalState,
+            mutableGlobalState = MutableGlobalStateInstance,
             userPresence = config.userPresence,
             repos = repositoryFacade,
             client = chatClient,
@@ -127,7 +128,7 @@ public class StreamStatePluginFactory(
             client = chatClient,
             logicRegistry = logic,
             stateRegistry = stateRegistry,
-            mutableGlobalState = globalState,
+            mutableGlobalState = MutableGlobalStateInstance,
             repos = repositoryFacade,
             syncedEvents = syncManager.syncedEvents,
             sideEffect = syncManager::awaitSyncing
@@ -139,14 +140,22 @@ public class StreamStatePluginFactory(
             }
         }
 
+        val stateErrorHandlerFactory = StateErrorHandlerFactory(
+            scope = scope,
+            logicRegistry = logic,
+            clientState = clientState,
+            repositoryFacade = repositoryFacade
+        )
+
         return StatePlugin(
+            errorHandlerFactory = stateErrorHandlerFactory,
             logic = logic,
             repositoryFacade = repositoryFacade,
             clientState = clientState,
             stateRegistry = stateRegistry,
             syncManager = syncManager,
             eventHandler = eventHandler,
-            globalState = globalState,
+            globalState = MutableGlobalStateInstance,
             queryingChannelsFree = isQueryingFree
         )
     }
@@ -158,7 +167,7 @@ public class StreamStatePluginFactory(
         client: ChatClient,
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
-        mutableGlobalState: GlobalMutableState,
+        mutableGlobalState: MutableGlobalStateInstance,
         repos: RepositoryFacade,
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,

@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.utils.message.latestOrNull
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
@@ -54,7 +54,7 @@ import io.getstream.log.taggedLogger
 internal class EventBatchUpdate private constructor(
     private val id: Int,
     private val currentUserId: String?,
-    private val mutableGlobalState: MutableGlobalState,
+    private val globalState: GlobalState,
     private val repos: RepositoryFacade,
     private val channelMap: MutableMap<String, Channel>,
     private val messageMap: MutableMap<String, Message>,
@@ -80,7 +80,7 @@ internal class EventBatchUpdate private constructor(
                 if (message.shouldIncrementUnreadCount(
                         currentUserId = currentUserId,
                         lastMessageAtDate = lastReadDate,
-                        isChannelMuted = mutableGlobalState.isChannelMutedForCurrentUser(channel.cid)
+                        isChannelMuted = globalState.isChannelMutedForCurrentUser(channel.cid)
                     )
                 ) {
                     channel.incrementUnreadCount(currentUserId, message.createdAt)
@@ -175,7 +175,7 @@ internal class EventBatchUpdate private constructor(
         }
 
         suspend fun build(
-            mutableGlobalState: MutableGlobalState,
+            globalState: GlobalState,
             repos: RepositoryFacade,
             currentUserId: String?
         ): EventBatchUpdate {
@@ -192,7 +192,7 @@ internal class EventBatchUpdate private constructor(
             return EventBatchUpdate(
                 id,
                 currentUserId,
-                mutableGlobalState,
+                globalState,
                 repos,
                 channelMap.toMutableMap(),
                 messageMap.toMutableMap(),

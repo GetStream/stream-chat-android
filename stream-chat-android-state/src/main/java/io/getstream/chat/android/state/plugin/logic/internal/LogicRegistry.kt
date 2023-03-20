@@ -35,10 +35,8 @@ import io.getstream.chat.android.state.plugin.logic.querychannels.internal.Query
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsStateLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
-import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import java.util.concurrent.ConcurrentHashMap
@@ -52,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap
 @Suppress("LongParameterList")
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
-    private val globalState: MutableGlobalState,
+    private val mutableGlobalState: MutableGlobalState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
@@ -100,10 +98,10 @@ internal class LogicRegistry internal constructor(
             val mutableState = stateRegistry.mutableChannel(channelType, channelId)
             val stateLogic = ChannelStateLogic(
                 mutableState = mutableState,
-                globalMutableState = globalState,
+                globalMutableState = mutableGlobalState,
                 searchLogic = SearchLogic(mutableState),
                 coroutineScope = coroutineScope,
-                unreadCountLogic = UnreadCountLogic(mutableState, globalState, queryingChannelsFree)
+                unreadCountLogic = UnreadCountLogic(mutableState, mutableGlobalState, queryingChannelsFree)
             )
 
             ChannelLogic(
@@ -235,68 +233,6 @@ internal class LogicRegistry internal constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
-        globalState.clearState()
-    }
-
-    internal companion object {
-        private var instance: LogicRegistry? = null
-
-        private val logger by taggedLogger("Chat:LogicRegistry")
-
-        /**
-         * Creates and returns new instance of LogicRegistry.
-         *
-         * @param stateRegistry [StateRegistry].
-         * @param globalState [GlobalMutableState] state of the SDK.
-         * @param userPresence True if userPresence should be enabled, false otherwise.
-         * @param repos [RepositoryFacade] to interact with local data sources.
-         * @param client An instance of [ChatClient].
-         *
-         * @return Instance of [LogicRegistry].
-         *
-         * @throws IllegalStateException if instance is not null.
-         */
-        @Suppress("LongParameterList")
-        internal fun create(
-            stateRegistry: StateRegistry,
-            globalState: MutableGlobalState,
-            userPresence: Boolean,
-            repos: RepositoryFacade,
-            client: ChatClient,
-            coroutineScope: CoroutineScope,
-            queryingChannelsFree: StateFlow<Boolean>
-        ): LogicRegistry {
-            if (instance != null) {
-                logger.e {
-                    "LogicRegistry instance is already created. " +
-                        "Avoid creating multiple instances to prevent ambiguous state. Use LogicRegistry.get()"
-                }
-            }
-            return LogicRegistry(
-                stateRegistry = stateRegistry,
-                globalState = globalState,
-                userPresence = userPresence,
-                repos = repos,
-                client = client,
-                coroutineScope = coroutineScope,
-                queryingChannelsFree = queryingChannelsFree
-            )
-                .also { logicRegistry ->
-                    instance = logicRegistry
-                }
-        }
-
-        /**
-         * Gets the current Singleton of LogicRegistry. If the initialization is not set yet, it throws exception.
-         *
-         * @return Singleton instance of [LogicRegistry].
-         *
-         * @throws IllegalArgumentException if instance is null.
-         */
-        @Throws(IllegalArgumentException::class)
-        internal fun get(): LogicRegistry = requireNotNull(instance) {
-            "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
-                "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
-        }
+        mutableGlobalState.clearState()
     }
 }
