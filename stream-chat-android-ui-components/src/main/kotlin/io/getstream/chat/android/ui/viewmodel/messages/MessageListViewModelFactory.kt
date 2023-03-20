@@ -48,8 +48,8 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
  * @param dateSeparatorHandler Handler that determines when the date separators should be visible.
  * @param threadDateSeparatorHandler Handler that determines when the thread date separators should be visible.
  * @param messagePositionHandler Determines the position of the message inside a group.
- * @param showDateSeparatorInEmptyThread Configures if we show a thread separator when threads are empty or not. Adds the
- * separator item when the value is `true`.
+ * @param showDateSeparatorInEmptyThread Configures if we show a thread separator when threads are empty or not.
+ * Adds the separator item when the value is `true`.
  *
  * @see MessageListHeaderViewModel
  * @see MessageListViewModel

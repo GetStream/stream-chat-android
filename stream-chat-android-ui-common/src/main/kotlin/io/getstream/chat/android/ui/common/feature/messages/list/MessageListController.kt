@@ -136,8 +136,8 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
  * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  * @param messagePositionHandler Determines the position of the message inside a group.
- * @param showDateSeparatorInEmptyThread Configures if we show a thread separator when threads are empty or not. Adds the
- * separator item when the value is `true`.
+ * @param showDateSeparatorInEmptyThread Configures if we show a thread separator when threads are empty or not.
+ * Adds the separator item when the value is `true`.
  */
 public class MessageListController(
     private val cid: String,
