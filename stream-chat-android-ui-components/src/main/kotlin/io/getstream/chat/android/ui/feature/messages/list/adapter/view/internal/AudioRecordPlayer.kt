@@ -3,6 +3,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.View
 import androidx.appcompat.widget.LinearLayoutCompat
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -22,7 +23,11 @@ public class AudioRecordPlayer : LinearLayoutCompat {
     }
 
     public fun setDuration(duration: String) {
-        playerView.duration.text = duration
+        playerView.duration.run {
+            text = duration
+            visibility = View.VISIBLE
+        }
     }
 
 }
+    
