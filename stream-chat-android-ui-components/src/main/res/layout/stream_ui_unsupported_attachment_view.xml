@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stream_ui_spacing_medium"
         android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
-        android:text="Unsupported attachment"
+        android:text="@string/stream_ui_attachment_unsupported_attachment"
         android:textAppearance="@style/StreamUiTextAppearance.Body"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
