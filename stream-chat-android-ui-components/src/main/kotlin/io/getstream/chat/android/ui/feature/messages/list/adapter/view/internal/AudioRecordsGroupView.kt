@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.LinearLayoutCompat
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.utils.DurationParser
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 
 public class AudioRecordsGroupView : LinearLayoutCompat {
@@ -26,7 +27,10 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
 
     private fun addAttachmentPlayerView(attachment: Attachment) {
         AudioRecordPlayer(context).apply {
-            setDuration((attachment.extraData["duration"] as? Double)?.toString() ?: "4:19")
+            (attachment.extraData["duration"] as? Double)
+                ?.toInt()
+                ?.let(DurationParser::durationInMilliToReadableTime)
+                ?.let(this::setDuration)
         }.let{ playerView ->
             addView(playerView)
         }
