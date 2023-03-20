@@ -46,6 +46,8 @@ public class AudioRecordPlayer : LinearLayoutCompat {
             isVisible = true
             setImageResource(R.drawable.stream_ui_ic_user_block)
         }
+        playerView.speedButton.isVisible = true
+        playerView.fileView.isVisible = false
     }
 
     public fun setIdle() {
@@ -54,6 +56,8 @@ public class AudioRecordPlayer : LinearLayoutCompat {
             isVisible = true
             setImageResource(R.drawable.stream_ui_ic_play)
         }
+        playerView.speedButton.isVisible = false
+        playerView.fileView.isVisible = true
     }
 }
 
