@@ -77,6 +77,7 @@ internal class MediaAttachmentsViewHolder(
             bindMediaAttachments()
             bindAudioRecordAttachments()
         }
+
         bindUploadingIndicator()
     }
 

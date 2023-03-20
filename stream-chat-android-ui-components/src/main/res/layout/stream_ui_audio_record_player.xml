@@ -16,52 +16,67 @@
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat"
     android:orientation="horizontal"
-    android:layout_height="60dp"
-    android:layout_width="wrap_content"
-    android:paddingHorizontal="12dp"
+    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat"
     >
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/playButton"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_width="60dp"
-        android:src="@drawable/stream_ui_ic_play"
-        android:paddingHorizontal="10dp"
-        android:tint="@color/stream_ui_literal_black"
+        android:layout_marginStart="10dp"
         android:background="@drawable/stream_ui_white_shape_circular"
+        android:padding="10dp"
+        android:src="@drawable/stream_ui_ic_play"
+        android:tint="@color/stream_ui_literal_black"
+        android:layout_marginVertical="8dp"
         />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/duration"
-        android:layout_height="match_parent"
         android:layout_width="wrap_content"
-        tools:text="4:19"
+        android:layout_height="match_parent"
         android:gravity="center"
+        android:paddingHorizontal="6dp"
         android:textAlignment="center"
         android:textStyle="bold"
-        android:paddingHorizontal="10dp"
+        tools:text="4:19"
         />
 
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/progress"
-        android:layout_height="match_parent"
         android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/speedButton"
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_width="60dp"
-        tools:text="1x"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        android:paddingHorizontal="10dp"
-        android:textColor="@color/stream_ui_literal_black"
-        android:background="@drawable/stream_ui_white_shape_circular"
-        />
+        android:layout_marginEnd="8dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/stream_ui_ic_file_mp3"
+            android:visibility="visible"
+            android:layout_gravity="center"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/speedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/stream_ui_white_shape_circular"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:textAlignment="center"
+            android:textColor="@color/stream_ui_literal_black"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="1x"
+            />
+    </FrameLayout>
 
 </merge>
