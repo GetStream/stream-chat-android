@@ -59,23 +59,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/stream_ui_ic_file_mp3"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_gravity="center"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/speedButton"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/stream_ui_white_shape_circular"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:background="@drawable/stream_ui_literal_white_shape_16dp_corners"
             android:gravity="center"
-            android:paddingHorizontal="10dp"
             android:textAlignment="center"
             android:textColor="@color/stream_ui_literal_black"
             android:textStyle="bold"
-            android:visibility="gone"
-            tools:text="1x"
+            android:visibility="visible"
+            android:text="x1.0"
+            tools:text="x1.0"
+            android:layout_gravity="center"
             />
     </FrameLayout>
 
