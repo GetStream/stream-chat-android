@@ -35,7 +35,9 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
@@ -58,6 +60,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
  * @param systemMessageContent Composable that represents system messages.
  * @param messageItemContent Composable that represents regular messages.
  * @param typingIndicatorContent Composable that represents a typing indicator.
+ * @param emptyThreadPlaceholderItemContent Composable that represents placeholders inside of an empty thread.
+ * This content is disabled by default and can be enabled via [MessageListController.showDateSeparatorInEmptyThread].
  */
 @Composable
 public fun MessageContainer(
@@ -89,6 +93,7 @@ public fun MessageContainer(
         )
     },
     typingIndicatorContent: @Composable (TypingItemState) -> Unit = { },
+    emptyThreadPlaceholderItemContent: @Composable (EmptyThreadPlaceholderItemState) -> Unit = { },
 ) {
     when (messageListItemState) {
         is DateSeparatorItemState -> dateSeparatorContent(messageListItemState)
@@ -96,6 +101,7 @@ public fun MessageContainer(
         is SystemMessageItemState -> systemMessageContent(messageListItemState)
         is MessageItemState -> messageItemContent(messageListItemState)
         is TypingItemState -> typingIndicatorContent(messageListItemState)
+        is EmptyThreadPlaceholderItemState -> emptyThreadPlaceholderItemContent(messageListItemState)
     }
 }
 

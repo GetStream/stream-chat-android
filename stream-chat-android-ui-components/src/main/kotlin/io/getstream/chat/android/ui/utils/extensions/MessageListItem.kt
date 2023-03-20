@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.utils.extensions
 
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
@@ -45,5 +46,6 @@ public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
             isMessageRead = isMessageRead,
             showMessageFooter = showMessageFooter
         )
+        is EmptyThreadPlaceholderItemState -> MessageListItem.ThreadPlaceholderItem
     }
 }

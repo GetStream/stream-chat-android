@@ -67,6 +67,7 @@ import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocusRemoved
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -135,6 +136,8 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
  * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  * @param messagePositionHandler Determines the position of the message inside a group.
+ * @param showDateSeparatorInEmptyThread Configures if we show a thread separator when threads are empty or not. Adds the
+ * separator item when the value is `true`.
  */
 public class MessageListController(
     private val cid: String,
@@ -153,6 +156,7 @@ public class MessageListController(
     private val threadDateSeparatorHandler: DateSeparatorHandler =
         DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
+    private val showDateSeparatorInEmptyThread: Boolean = false,
 ) {
 
     /**
@@ -617,6 +621,8 @@ public class MessageListController(
             val nextMessage = messages.getOrNull(index + 1)
 
             val shouldAddDateSeparator = dateSeparatorHandler.shouldAddDateSeparator(previousMessage, message)
+            val isThreadWithNoReplies = isInThread && messages.size == 1
+            val shouldAddDateSeparatorInEmptyThread = isThreadWithNoReplies && showDateSeparatorInEmptyThread
 
             val position = messagePositionHandler.handleMessagePosition(
                 previousMessage = previousMessage,
@@ -669,7 +675,15 @@ public class MessageListController(
                 )
             }
 
-            if (index == 0 && isInThread) {
+            if (shouldAddDateSeparatorInEmptyThread) {
+                groupedMessages.add(DateSeparatorItemState(message.getCreatedAtOrThrow()))
+            }
+
+            if (isThreadWithNoReplies) {
+                groupedMessages.add(EmptyThreadPlaceholderItemState)
+            }
+
+            if (index == 0 && isInThread && isThreadWithNoReplies) {
                 groupedMessages.add(
                     ThreadDateSeparatorItemState(
                         date = message.createdAt ?: message.createdLocallyAt ?: Date(),

@@ -92,3 +92,8 @@ public data class SystemMessageItemState(
 public data class TypingItemState(
     public val typingUsers: List<User>,
 ) : MessageListItemState()
+
+/**
+ * Represents an empty thread placeholder item inside thread messages list.
+ */
+public object EmptyThreadPlaceholderItemState : MessageListItemState()
