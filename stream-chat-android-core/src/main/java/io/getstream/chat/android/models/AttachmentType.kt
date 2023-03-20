@@ -21,6 +21,7 @@ package io.getstream.chat.android.models
  */
 public object AttachmentType {
     public const val IMAGE: String = "image"
+    public const val AUDIO_RECORDING: String = "audio_recording"
     public const val IMGUR: String = "imgur"
     public const val GIPHY: String = "giphy"
     public const val VIDEO: String = "video"

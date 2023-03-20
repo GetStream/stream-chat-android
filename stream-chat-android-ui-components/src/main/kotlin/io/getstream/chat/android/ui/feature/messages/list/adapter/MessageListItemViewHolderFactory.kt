@@ -178,7 +178,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that displays messages with custom attachments.
      */
-    protected fun createCustomAttachmentsViewHolder(
+    private fun createCustomAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {
         return CustomAttachmentsViewHolder(
@@ -196,7 +196,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that holds a Giphy image in various quality types.
      */
-    protected fun createGiphyAttachmentViewHolder(
+    private fun createGiphyAttachmentViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {
         return GiphyAttachmentViewHolder(
@@ -214,7 +214,8 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that displays messages with image and/or video attachments.
      */
-    protected fun createMediaAttachmentsViewHolder(
+    //Here!
+    private fun createMediaAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {
         return MediaAttachmentsViewHolder(
@@ -231,7 +232,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that represents the date divider.
      */
-    protected fun createDateDividerViewHolder(
+    private fun createDateDividerViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem> {
         return DateDividerViewHolder(parentView, decoratorProvider.decorators, style)
@@ -243,7 +244,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that shows information about the deleted message.
      */
-    protected fun createLoadingMoreViewHolder(
+    private fun createLoadingMoreViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.LoadingMoreIndicatorItem> {
         return LoadingMoreViewHolder(parentView, style)
@@ -255,7 +256,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that shows information about the deleted message.
      */
-    protected fun createMessageDeletedViewHolder(
+    private fun createMessageDeletedViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return MessageDeletedViewHolder(parentView, decoratorProvider.decorators, style)
@@ -267,7 +268,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that holds just text.
      */
-    protected fun createPlainTextViewHolder(
+    private fun createPlainTextViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return MessagePlainTextViewHolder(
@@ -284,7 +285,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that represents the thread separator.
      */
-    protected fun createThreadSeparatorViewHolder(
+    private fun createThreadSeparatorViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.ThreadSeparatorItem> {
         return ThreadSeparatorViewHolder(parentView, decoratorProvider.decorators, style)
@@ -296,7 +297,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that can holds the Giphy preview and options.
      */
-    protected fun createGiphyMessageItemViewHolder(
+    private fun createGiphyMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return GiphyViewHolder(
@@ -313,7 +314,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that shows the system message.
      */
-    protected fun createSystemMessageItemViewHolder(
+    private fun createSystemMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return SystemMessageViewHolder(parentView, style)
@@ -325,7 +326,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that shows the error.
      */
-    protected fun createErrorMessageItemViewHolder(
+    private fun createErrorMessageItemViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return ErrorMessageViewHolder(parentView, style)
@@ -370,7 +371,7 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that displays messages with link attachments.
      */
-    protected fun createLinkAttachmentsViewHolder(
+    private fun createLinkAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
         return LinkAttachmentsViewHolder(

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.internal
 
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -96,8 +97,7 @@ internal object MessageListItemViewTypeMapper {
      */
     private fun Message.isMediaAttachment(): Boolean {
         return attachments.isNotEmpty() &&
-            attachments.any { it.isImage() || it.isVideo() } &&
-            attachments.all { it.isImage() || it.isVideo() || it.hasLink() } &&
+            attachments.all { it.isImage() || it.isVideo() || it.hasLink() || it.isAudioRecording() } &&
             attachments.none { it.isUploading() }
     }
 
