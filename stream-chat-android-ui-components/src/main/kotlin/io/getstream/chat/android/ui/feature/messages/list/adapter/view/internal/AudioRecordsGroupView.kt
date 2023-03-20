@@ -5,22 +5,30 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.LinearLayoutCompat
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 
 public class AudioRecordsGroupView : LinearLayoutCompat {
 
-    public constructor(context: Context) : super(context)
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    public constructor(context: Context) : super(context.createStreamThemeWrapper())
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
+    public constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+    ) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
 
     public fun showAudioAttachments(attachments: List<Attachment>) {
+        removeAllViews()
+
         attachments.filter { attachment -> attachment.isAudioRecording() }
             .forEach(::addAttachmentPlayerView)
     }
 
     private fun addAttachmentPlayerView(attachment: Attachment) {
         AudioRecordPlayer(context).apply {
-            setDuration((attachment.extraData["duration"] as? String) ?: "4:19")
-        }.let(::addView)
+            setDuration((attachment.extraData["duration"] as? Double)?.toString() ?: "4:19")
+        }.let{ playerView ->
+            addView(playerView)
+        }
     }
-
 }
