@@ -87,6 +87,12 @@
             android:layout_height="wrap_content"
             />
 
+        <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordsGroupView
+            android:id="@+id/audioRecordsView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
         <TextView
             android:id="@+id/messageText"
             android:layout_width="wrap_content"

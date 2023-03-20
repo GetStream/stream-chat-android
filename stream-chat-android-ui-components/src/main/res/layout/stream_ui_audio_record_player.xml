@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat"
+    android:orientation="horizontal"
+    android:layout_height="60dp"
+    android:layout_width="wrap_content"
+    android:paddingHorizontal="12dp"
+    >
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/playButton"
+        android:layout_height="match_parent"
+        android:layout_width="60dp"
+        android:src="@drawable/stream_ui_ic_play"
+        android:paddingHorizontal="10dp"
+        android:tint="@color/stream_ui_literal_black"
+        android:background="@drawable/stream_ui_white_shape_circular"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/duration"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        tools:text="4:19"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:paddingHorizontal="10dp"
+        />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/progress"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/speedButton"
+        android:layout_height="match_parent"
+        android:layout_width="60dp"
+        tools:text="1x"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:paddingHorizontal="10dp"
+        android:textColor="@color/stream_ui_literal_black"
+        android:background="@drawable/stream_ui_white_shape_circular"
+        />
+
+</merge>

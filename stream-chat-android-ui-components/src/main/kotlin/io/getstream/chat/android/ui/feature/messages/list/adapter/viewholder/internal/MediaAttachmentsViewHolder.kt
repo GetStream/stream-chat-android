@@ -73,7 +73,10 @@ internal class MediaAttachmentsViewHolder(
 
         bindMessageText()
         bindHorizontalBias()
-        bindMediaAttachments(diff)
+        if (diff?.attachments != false) {
+            bindMediaAttachments()
+            bindAudioRecordAttachments()
+        }
         bindUploadingIndicator()
     }
 
@@ -98,12 +101,14 @@ internal class MediaAttachmentsViewHolder(
     /**
      * Updates the media attachments section of the message.
      */
-    private fun bindMediaAttachments(diff: MessageListItemPayloadDiff?) {
-        if (diff?.attachments != false) {
-            binding.mediaAttachmentView.setPadding(1.dpToPx())
-            binding.mediaAttachmentView.setupBackground(data)
-            binding.mediaAttachmentView.showAttachments(data.message.attachments)
-        }
+    private fun bindMediaAttachments() {
+        binding.mediaAttachmentView.setPadding(1.dpToPx())
+        binding.mediaAttachmentView.setupBackground(data)
+        binding.mediaAttachmentView.showAttachments(data.message.attachments)
+    }
+
+    private fun bindAudioRecordAttachments() {
+        binding.audioRecordsView.showAudioAttachments(data.message.attachments)
     }
 
     /**
