@@ -31,6 +31,10 @@ public class AudioRecordPlayer : LinearLayoutCompat {
         }
     }
 
+    public fun setProgress(progress: Double) {
+        playerView.progressBar.progress = (progress * 100).toInt()
+    }
+
     public fun setPlayCallBack(func: () -> Unit) {
         playerView.playButton.setOnClickListener { func() }
     }
@@ -43,8 +47,8 @@ public class AudioRecordPlayer : LinearLayoutCompat {
     public fun setPlaying() {
         playerView.loadingView.isVisible = false
         playerView.playButton.run {
-            isVisible = true
             setImageResource(R.drawable.stream_ui_ic_user_block)
+            isVisible = true
         }
         playerView.speedButton.isVisible = true
         playerView.fileView.isVisible = false

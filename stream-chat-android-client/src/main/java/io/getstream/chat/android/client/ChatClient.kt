@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
@@ -48,6 +50,8 @@ import io.getstream.chat.android.client.api.models.identifier.SendReactionIdenti
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.attachment.AttachmentsSender
+import io.getstream.chat.android.client.audio.RecordsPlayer
+import io.getstream.chat.android.client.audio.StreamMediaPlayer
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
@@ -221,6 +225,16 @@ internal constructor(
     private val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
+
+    public val recordsPlayer: RecordsPlayer = StreamMediaPlayer(
+        mediaPlayer = MediaPlayer().apply {
+            AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+                .let(this::setAudioAttributes)
+        },
+        userScope = userScope,
+    )
 
     /**
      * The user's id for which the client is initialized.
