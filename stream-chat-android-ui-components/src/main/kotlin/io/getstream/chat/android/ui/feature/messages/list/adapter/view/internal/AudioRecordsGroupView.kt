@@ -1,12 +1,10 @@
 package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.MediaPlayer
 import android.util.AttributeSet
 import androidx.appcompat.widget.LinearLayoutCompat
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioState
-import io.getstream.chat.android.client.audio.StreamAudioPlayer
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationParser
@@ -22,19 +20,8 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         defStyleAttr: Int,
     ) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
 
-    private lateinit var audioPlayer: StreamAudioPlayer
-
     public fun showAudioAttachments(attachments: List<Attachment>) {
         removeAllViews()
-
-        audioPlayer = StreamAudioPlayer(
-            MediaPlayer().apply {
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-                    .let(this::setAudioAttributes)
-            }
-        )
 
         val audiosAttachment = attachments.filter { attachment -> attachment.isAudioRecording() }
         audiosAttachment.forEach(::addAttachmentPlayerView)
@@ -49,12 +36,20 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         }.let { playerView ->
             addView(playerView)
 
-            audioPlayer.onAudioStateChange(attachment.hashCode().toString()) { audioState ->
+            val audioPlayer = ChatClient.instance().recordsPlayer
+            val hashCode = attachment.hashCode().toString()
+
+            audioPlayer.onAudioStateChange(hashCode) { audioState ->
                 when (audioState) {
                     AudioState.UNSET, AudioState.LOADING -> playerView.setLoading()
-                    AudioState.IDLE -> playerView.setIdle()
+                    AudioState.IDLE, AudioState.PAUSE -> playerView.setIdle()
                     AudioState.PLAYING -> playerView.setPlaying()
                 }
+            }
+
+            audioPlayer.onProgressStateChange(hashCode) { (duration, progress) ->
+                playerView.setDuration(DurationParser.durationInMilliToReadableTime(duration))
+                playerView.setProgress(progress)
             }
 
             playerView.setPlayCallBack {
