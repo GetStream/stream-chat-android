@@ -49,6 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `messageInputShowReplyView` to `MessageComposerViewStyle` to determine whether to show or hide the default reply view inside center content. [#4746](https://github.com/GetStream/stream-chat-android/pull/4746)
 
 ### ⚠️ Changed
 
