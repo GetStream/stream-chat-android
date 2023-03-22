@@ -50,10 +50,11 @@ import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import io.getstream.chat.android.state.utils.Event as EventWrapper
 
@@ -168,16 +169,23 @@ public class MessageListViewModel(
      * Initializes the full message list state conversion and collection.
      */
     init {
-        val listState = messageListController.listState
-            .onSubscription { State.Loading }
-            .map {
-                if (it.isLoading) {
-                    State.Loading
-                } else {
-                    State.Result(it.toMessageListItemWrapper())
-                }
-            }.asLiveData()
-        stateMerger.addSource(listState) { stateMerger.value = it }
+        viewModelScope.launch {
+            val listState = messageListController.listState.combine(messageListController.mode) { listState, mode ->
+                Pair(listState, mode)
+            }.onStart { State.Loading }
+                .map {
+                    if (it.first.isLoading) {
+                        State.Loading
+                    } else {
+                        State.Result(
+                            it.first.toMessageListItemWrapper(
+                                isInThread = it.second is MessageMode.MessageThread
+                            )
+                        )
+                    }
+                }.asLiveData()
+            stateMerger.addSource(listState) { stateMerger.value = it }
+        }
     }
 
     /**
