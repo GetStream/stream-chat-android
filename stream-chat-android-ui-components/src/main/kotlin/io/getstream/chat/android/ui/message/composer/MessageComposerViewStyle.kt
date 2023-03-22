@@ -64,6 +64,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param messageInputMaxLines The maximum number of message input lines.
  * @param messageInputCannotSendHintText The input hint text in case we can't send messages in this channel.
  * @param messageInputInputType The [InputType] to be applied to the message input edit text.
+ * @param messageInputShowReplyView Whether to show the default reply view inside the message input or not.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
@@ -122,6 +123,7 @@ public data class MessageComposerViewStyle(
     public val messageInputMaxLines: Int,
     public val messageInputCannotSendHintText: String,
     public val messageInputInputType: Int,
+    public val messageInputShowReplyView: Boolean,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -524,6 +526,11 @@ public data class MessageComposerViewStyle(
                         InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
                 )
 
+                val messageInputShowReplyView = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerShowMessageReplyView,
+                    true
+                )
+
                 val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
 
                 val messageReplyBackgroundColor: Int =
@@ -625,6 +632,7 @@ public data class MessageComposerViewStyle(
                     messageInputMaxLines = messageInputMaxLines,
                     messageInputCannotSendHintText = messageInputCannotSendHintText,
                     messageInputInputType = messageInputInputType,
+                    messageInputShowReplyView = messageInputShowReplyView,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
@@ -655,7 +663,6 @@ public data class MessageComposerViewStyle(
                     messageReplyTextStyleTheirs = messageReplyTextStyleTheirs,
                     messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
                     messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
-
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
             }
         }
