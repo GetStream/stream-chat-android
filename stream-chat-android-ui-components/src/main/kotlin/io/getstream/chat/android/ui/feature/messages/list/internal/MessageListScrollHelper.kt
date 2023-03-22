@@ -196,13 +196,13 @@ internal class MessageListScrollHelper(
         this.areNewestMessagesLoaded = areNewestMessagesLoaded
         scrollButtonView.isVisible = shouldScrollToBottomBeVisible()
 
-        if (shouldKeepScrollPosition(areNewestMessagesLoaded, hasNewMessages)) {
+        if (!isThreadStart && shouldKeepScrollPosition(areNewestMessagesLoaded, hasNewMessages)) {
             return
         }
 
         if (isThreadStart) {
             layoutManager.scrollToPosition(currentList.lastIndex)
-        } else if (!adapter.isThread && shouldScrollToBottom(isInitialList, areNewestMessagesLoaded, hasNewMessages)) {
+        } else if (shouldScrollToBottom(isInitialList, areNewestMessagesLoaded, hasNewMessages)) {
             layoutManager.scrollToPosition(currentList.lastIndex)
             callback.onLastMessageRead()
         }
