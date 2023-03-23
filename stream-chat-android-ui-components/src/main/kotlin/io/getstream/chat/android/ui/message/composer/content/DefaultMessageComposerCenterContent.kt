@@ -166,6 +166,8 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      * @param state The state that will be used to render the updated UI.
      */
     private fun renderReplyState(state: MessageComposerState) {
+        if (!style.messageInputShowReplyView) return
+
         val action = state.action
         if (action is Reply) {
             val quotedMessage = action.message
