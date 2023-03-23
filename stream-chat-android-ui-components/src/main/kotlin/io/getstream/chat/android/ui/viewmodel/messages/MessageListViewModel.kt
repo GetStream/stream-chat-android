@@ -49,11 +49,14 @@ import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import io.getstream.chat.android.state.utils.Event as EventWrapper
 
@@ -64,6 +67,7 @@ import io.getstream.chat.android.state.utils.Event as EventWrapper
  *
  * @param messageListController Controller used to relay the logic and fetch the state.
  */
+@OptIn(FlowPreview::class)
 @Suppress("TooManyFunctions")
 public class MessageListViewModel(
     private val messageListController: MessageListController,
@@ -168,16 +172,30 @@ public class MessageListViewModel(
      * Initializes the full message list state conversion and collection.
      */
     init {
-        val listState = messageListController.listState
-            .onSubscription { State.Loading }
-            .map {
-                if (it.isLoading) {
-                    State.Loading
-                } else {
-                    State.Result(it.toMessageListItemWrapper())
-                }
-            }.asLiveData()
-        stateMerger.addSource(listState) { stateMerger.value = it }
+        viewModelScope.launch {
+            val listState = messageListController.listState.combine(messageListController.mode) { listState, mode ->
+                Pair(listState, mode)
+            }
+                // TODO - Think of a better solution once we have more capacity to do larger refactors
+                // Due to the way we combine upstream flows in MessageListController, we get unnecessary multiple
+                // emissions at the start of a collecting a new state. These multiple emissions happen within a
+                // millisecond of one another and can force the RecyclerView adapter to skip actions when loading a
+                // thread.
+                .debounce(5)
+                .onStart { State.Loading }
+                .map {
+                    if (it.first.isLoading) {
+                        State.Loading
+                    } else {
+                        State.Result(
+                            it.first.toMessageListItemWrapper(
+                                isInThread = it.second is MessageMode.MessageThread
+                            )
+                        )
+                    }
+                }.asLiveData()
+            stateMerger.addSource(listState) { stateMerger.value = it }
+        }
     }
 
     /**

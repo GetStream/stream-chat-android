@@ -940,6 +940,10 @@ public final class io/getstream/chat/android/ui/common/utils/extensions/ContextK
 	public static final fun wasPermissionRequested (Landroid/content/Context;Ljava/lang/String;)Z
 }
 
+public final class io/getstream/chat/android/ui/common/utils/extensions/FlowKt {
+	public static final fun onFirst (Lkotlinx/coroutines/flow/Flow;Lkotlin/jvm/functions/Function1;)Lkotlinx/coroutines/flow/Flow;
+}
+
 public final class io/getstream/chat/android/ui/common/utils/extensions/MessageFooterVisibilityKt {
 }
 
