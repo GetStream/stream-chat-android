@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.audio
 
 import android.media.MediaPlayer
+import android.os.Build
 import io.getstream.chat.android.client.scope.UserScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -12,8 +13,8 @@ import kotlinx.coroutines.withContext
 internal class StreamMediaPlayer(
     private val mediaPlayer: MediaPlayer,
     private val userScope: UserScope,
-    private val progressUpdatePeriod: Long = 50
-) : RecordsPlayer{
+    private val progressUpdatePeriod: Long = 50,
+) : RecordsPlayer {
 
     private val onStateListeners: MutableMap<String, (AudioState) -> Unit> = mutableMapOf()
     private val onProgressListeners: MutableMap<String, (ProgressData) -> Unit> = mutableMapOf()
@@ -37,6 +38,15 @@ internal class StreamMediaPlayer(
             PlayerState.PLAYING -> pause()
         }
     }
+
+    override fun changeSpeed(speed: Float) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(speed)
+        }
+    }
+
+    override fun currentSpeed(): Float =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) mediaPlayer.playbackParams.speed else 1F
 
     override fun dispose() {
         stopPooling()
