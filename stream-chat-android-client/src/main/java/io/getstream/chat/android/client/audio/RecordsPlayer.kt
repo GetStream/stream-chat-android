@@ -8,6 +8,10 @@ public interface RecordsPlayer {
 
     public fun play(sourceUrl: String)
 
+    public fun changeSpeed(speed: Float)
+
+    public fun currentSpeed(): Float
+
     public fun dispose()
 }
 
