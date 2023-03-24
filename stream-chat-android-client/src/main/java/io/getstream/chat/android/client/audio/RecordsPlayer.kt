@@ -2,13 +2,13 @@ package io.getstream.chat.android.client.audio
 
 public interface RecordsPlayer {
 
-    public fun onAudioStateChange(hash: String, func: (AudioState) -> Unit)
+    public fun onAudioStateChange(hash: Int, func: (AudioState) -> Unit)
 
-    public fun onProgressStateChange(hash: String, func: (ProgressData) -> Unit)
+    public fun onProgressStateChange(hash: Int, func: (ProgressData) -> Unit)
 
-    public fun onSpeedChange(hash: String, func: (Float) -> Unit)
+    public fun onSpeedChange(hash: Int, func: (Float) -> Unit)
 
-    public fun play(sourceUrl: String)
+    public fun play(sourceUrl: String, audioHash: Int)
 
     public fun changeSpeed()
 

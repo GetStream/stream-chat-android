@@ -37,7 +37,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             addView(playerView)
 
             val audioPlayer = ChatClient.instance().recordsPlayer
-            val hashCode = attachment.hashCode().toString()
+            val hashCode = attachment.hashCode()
 
             audioPlayer.onAudioStateChange(hashCode) { audioState ->
                 when (audioState) {
@@ -54,7 +54,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
 
             playerView.setPlayButtonCallBack {
                 if (attachment.assetUrl != null) {
-                    audioPlayer.play(attachment.assetUrl!!)
+                    audioPlayer.play(attachment.assetUrl!!, hashCode)
                 } else {
                     playerView.setLoading()
                 }
