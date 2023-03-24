@@ -24,6 +24,13 @@ public class AudioRecordPlayer : LinearLayoutCompat {
         gravity = Gravity.CENTER_VERTICAL
     }
 
+    private var totalDuration: String? = null
+
+    public fun setTotalDuration(duration: String) {
+        totalDuration = duration
+        setDuration(duration)
+    }
+
     public fun setDuration(duration: String) {
         playerView.duration.run {
             text = duration
@@ -59,11 +66,13 @@ public class AudioRecordPlayer : LinearLayoutCompat {
     }
 
     public fun setIdle() {
+        totalDuration?.let(::setDuration)
         playerView.loadingView.isVisible = false
         playerView.playButton.run {
             isVisible = true
             setImageResource(R.drawable.stream_ui_ic_play)
         }
+        setProgress(0.0)
         playerView.speedButton.isVisible = false
         playerView.fileView.isVisible = true
     }

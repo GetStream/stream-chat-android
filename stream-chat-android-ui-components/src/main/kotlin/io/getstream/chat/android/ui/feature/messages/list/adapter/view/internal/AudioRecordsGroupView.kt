@@ -32,7 +32,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             (attachment.extraData["duration"] as? Double)
                 ?.toInt()
                 ?.let(DurationParser::durationInMilliToReadableTime)
-                ?.let(this::setDuration)
+                ?.let(this::setTotalDuration)
         }.let { playerView ->
             addView(playerView)
 
@@ -41,8 +41,8 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
 
             audioPlayer.onAudioStateChange(hashCode) { audioState ->
                 when (audioState) {
-                    AudioState.UNSET, AudioState.LOADING -> playerView.setLoading()
-                    AudioState.IDLE, AudioState.PAUSE -> playerView.setIdle()
+                    AudioState.LOADING -> playerView.setLoading()
+                    AudioState.UNSET, AudioState.IDLE, AudioState.PAUSE -> playerView.setIdle()
                     AudioState.PLAYING -> playerView.setPlaying()
                 }
             }

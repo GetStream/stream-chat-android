@@ -36,6 +36,13 @@ internal class StreamMediaPlayer(
     }
 
     override fun play(sourceUrl: String, audioHash: Int) {
+        if (audioHash != currentAudioHash) {
+            publishAudioState(currentAudioHash, AudioState.UNSET)
+            mediaPlayer.reset()
+            setAudio(sourceUrl, audioHash)
+            return
+        }
+
         when (playerState) {
             PlayerState.UNSET -> setAudio(sourceUrl, audioHash)
             PlayerState.LOADING -> {}
@@ -54,7 +61,7 @@ internal class StreamMediaPlayer(
             }
 
             mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(newSpeed)
-            publishSpeed(mediaPlayer.playbackParams.speed)
+            publishSpeed(currentAudioHash, mediaPlayer.playbackParams.speed)
         }
     }
 
@@ -72,9 +79,9 @@ internal class StreamMediaPlayer(
         currentAudioHash = audioHash
 
         mediaPlayer.run {
-            setOnPreparedListener { mediaPlayer ->
+            setOnPreparedListener {
                 playerState = PlayerState.IDLE
-                mediaPlayer.start()
+                this@StreamMediaPlayer.start()
             }
 
             setOnCompletionListener {
@@ -82,7 +89,7 @@ internal class StreamMediaPlayer(
             }
 
             playerState = PlayerState.LOADING
-            publishAudioState(AudioState.LOADING)
+            publishAudioState(currentAudioHash, AudioState.LOADING)
             setDataSource(sourceUrl)
             prepareAsync()
         }
@@ -92,7 +99,10 @@ internal class StreamMediaPlayer(
         if (playerState == PlayerState.IDLE) {
             mediaPlayer.start()
             playerState = PlayerState.PLAYING
-            publishAudioState(AudioState.PLAYING)
+            publishAudioState(currentAudioHash, AudioState.PLAYING)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                publishSpeed(currentAudioHash, mediaPlayer.playbackParams.speed)
+            }
             poolProgress()
         }
     }
@@ -101,7 +111,7 @@ internal class StreamMediaPlayer(
         if (playerState == PlayerState.PLAYING) {
             mediaPlayer.pause()
             currentSeek = mediaPlayer.currentPosition
-            publishAudioState(AudioState.PAUSE)
+            publishAudioState(currentAudioHash, AudioState.PAUSE)
             playerState = PlayerState.IDLE
             stopPooling()
         }
@@ -111,8 +121,8 @@ internal class StreamMediaPlayer(
         stopPooling()
         currentSeek = 0
         playerState = PlayerState.IDLE
-        publishProgress(ProgressData(0, 0.0))
-        publishAudioState(AudioState.IDLE)
+        publishProgress(currentAudioHash, ProgressData(0, 0.0))
+        publishAudioState(currentAudioHash, AudioState.IDLE)
     }
 
     private fun poolProgress() {
@@ -123,7 +133,7 @@ internal class StreamMediaPlayer(
                 val progress = mediaPlayer.currentPosition.toDouble() / mediaPlayer.duration
 
                 withContext(Dispatchers.Main) {
-                    publishProgress(ProgressData(mediaPlayer.currentPosition, progress))
+                    publishProgress(currentAudioHash, ProgressData(mediaPlayer.currentPosition, progress))
                 }
             }
         }
@@ -133,16 +143,16 @@ internal class StreamMediaPlayer(
         poolJob?.cancel()
     }
 
-    private fun publishAudioState(audioState: AudioState) {
-        onStateListeners[currentAudioHash]?.invoke(audioState)
+    private fun publishAudioState(audioHash: Int, audioState: AudioState) {
+        onStateListeners[audioHash]?.invoke(audioState)
     }
 
-    private fun publishProgress(progressData: ProgressData) {
-        onProgressListeners[currentAudioHash]?.invoke(progressData)
+    private fun publishProgress(audioHash: Int, progressData: ProgressData) {
+        onProgressListeners[audioHash]?.invoke(progressData)
     }
 
-    private fun publishSpeed(speed: Float) {
-        onSpeedListeners[currentAudioHash]?.invoke(speed)
+    private fun publishSpeed(audioHash: Int, speed: Float) {
+        onSpeedListeners[audioHash]?.invoke(speed)
     }
 }
 
