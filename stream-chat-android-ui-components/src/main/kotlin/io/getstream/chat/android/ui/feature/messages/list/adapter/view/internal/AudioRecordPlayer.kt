@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 
 import android.content.Context
@@ -9,6 +25,8 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+
+private const val PERCENTAGE = 100
 
 public class AudioRecordPlayer : LinearLayoutCompat {
 
@@ -39,7 +57,7 @@ public class AudioRecordPlayer : LinearLayoutCompat {
     }
 
     public fun setProgress(progress: Double) {
-        playerView.progressBar.progress = (progress * 100).toInt()
+        playerView.progressBar.progress = (progress * PERCENTAGE).toInt()
     }
 
     public fun setPlayButtonCallBack(func: () -> Unit) {
@@ -81,4 +99,3 @@ public class AudioRecordPlayer : LinearLayoutCompat {
         playerView.speedButton.text = "${speed}x"
     }
 }
-
