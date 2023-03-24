@@ -18,6 +18,7 @@ internal class StreamMediaPlayer(
 
     private val onStateListeners: MutableMap<String, (AudioState) -> Unit> = mutableMapOf()
     private val onProgressListeners: MutableMap<String, (ProgressData) -> Unit> = mutableMapOf()
+    private val onSpeedListeners: MutableMap<String, (Float) -> Unit> = mutableMapOf()
     private var currentSeek = 0
     private var playerState = PlayerState.UNSET
     private var poolJob: Job? = null
@@ -30,6 +31,10 @@ internal class StreamMediaPlayer(
         onProgressListeners[hash] = func
     }
 
+    override fun onSpeedChange(hash: String, func: (Float) -> Unit) {
+        onSpeedListeners[hash] = func
+    }
+
     override fun play(sourceUrl: String) {
         when (playerState) {
             PlayerState.UNSET -> init(sourceUrl)
@@ -39,9 +44,17 @@ internal class StreamMediaPlayer(
         }
     }
 
-    override fun changeSpeed(speed: Float) {
+    override fun changeSpeed() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(speed)
+            val currentSpeed = mediaPlayer.playbackParams.speed
+            val newSpeed = if (currentSpeed >= 2) {
+                1.0F
+            } else {
+                currentSpeed + 0.5F
+            }
+
+            mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(newSpeed)
+            publishSpeed(mediaPlayer.playbackParams.speed)
         }
     }
 
@@ -126,6 +139,11 @@ internal class StreamMediaPlayer(
     private fun publishProgress(progressData: ProgressData) {
         // Todo: Publish only for the correct ID
         onProgressListeners.values.forEach { listener -> listener(progressData) }
+    }
+
+    private fun publishSpeed(speed: Float) {
+        // Todo: Publish only for the correct ID
+        onSpeedListeners.values.forEach { listener -> listener(speed) }
     }
 }
 
