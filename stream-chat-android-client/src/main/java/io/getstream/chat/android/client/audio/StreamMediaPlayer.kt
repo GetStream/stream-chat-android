@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.audio
 
 import android.media.MediaPlayer
@@ -8,6 +24,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+private const val INITIAL_SPEED = 1F
+private const val SPEED_INCREMENT = 0.5F
 
 internal class StreamMediaPlayer(
     private val mediaPlayer: MediaPlayer,
@@ -56,9 +75,9 @@ internal class StreamMediaPlayer(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val currentSpeed = mediaPlayer.playbackParams.speed
             val newSpeed = if (currentSpeed >= 2) {
-                1.0F
+                INITIAL_SPEED
             } else {
-                currentSpeed + 0.5F
+                currentSpeed + SPEED_INCREMENT
             }
 
             playingSpeed = newSpeed
@@ -167,4 +186,3 @@ public enum class AudioState {
 public enum class PlayerState {
     UNSET, LOADING, IDLE, PLAYING;
 }
-
