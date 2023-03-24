@@ -22,6 +22,7 @@ internal class StreamMediaPlayer(
     private var playerState = PlayerState.UNSET
     private var poolJob: Job? = null
     private var currentAudioHash: Int = -1
+    private var playingSpeed = 1F
 
     override fun onAudioStateChange(hash: Int, func: (AudioState) -> Unit) {
         onStateListeners[hash] = func
@@ -59,6 +60,8 @@ internal class StreamMediaPlayer(
             } else {
                 currentSpeed + 0.5F
             }
+
+            playingSpeed = newSpeed
 
             mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(newSpeed)
             publishSpeed(currentAudioHash, mediaPlayer.playbackParams.speed)
@@ -101,7 +104,8 @@ internal class StreamMediaPlayer(
             playerState = PlayerState.PLAYING
             publishAudioState(currentAudioHash, AudioState.PLAYING)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                publishSpeed(currentAudioHash, mediaPlayer.playbackParams.speed)
+                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(playingSpeed)
+                publishSpeed(currentAudioHash, playingSpeed)
             }
             poolProgress()
         }
