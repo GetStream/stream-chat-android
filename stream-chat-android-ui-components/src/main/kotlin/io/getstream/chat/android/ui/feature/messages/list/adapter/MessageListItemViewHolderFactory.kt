@@ -214,7 +214,6 @@ public open class MessageListItemViewHolderFactory {
      * @param parentView The parent container.
      * @return The [BaseMessageItemViewHolder] that displays messages with image and/or video attachments.
      */
-    //Here!
     private fun createMediaAttachmentsViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<out MessageListItem> {

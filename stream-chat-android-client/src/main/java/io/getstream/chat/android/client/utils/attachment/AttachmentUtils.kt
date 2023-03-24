@@ -58,5 +58,3 @@ public fun Attachment.isLink(): Boolean = type == AttachmentType.LINK
  * @return If the attachment type is audio recording.
  */
 public fun Attachment.isAudioRecording(): Boolean = type == AttachmentType.AUDIO_RECORDING
-
-
