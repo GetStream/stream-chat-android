@@ -46,18 +46,22 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
                     AudioState.PLAYING -> playerView.setPlaying()
                 }
             }
-
             audioPlayer.onProgressStateChange(hashCode) { (duration, progress) ->
                 playerView.setDuration(DurationParser.durationInMilliToReadableTime(duration))
                 playerView.setProgress(progress)
             }
+            audioPlayer.onSpeedChange(hashCode, playerView::setSpeedText)
 
-            playerView.setPlayCallBack {
+            playerView.setPlayButtonCallBack {
                 if (attachment.assetUrl != null) {
                     audioPlayer.play(attachment.assetUrl!!)
                 } else {
                     playerView.setLoading()
                 }
+            }
+
+            playerView.setSpeedButtonCallBack {
+                audioPlayer.changeSpeed()
             }
         }
     }

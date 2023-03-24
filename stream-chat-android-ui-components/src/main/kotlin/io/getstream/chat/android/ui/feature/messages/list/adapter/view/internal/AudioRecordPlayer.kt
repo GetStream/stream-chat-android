@@ -35,8 +35,12 @@ public class AudioRecordPlayer : LinearLayoutCompat {
         playerView.progressBar.progress = (progress * 100).toInt()
     }
 
-    public fun setPlayCallBack(func: () -> Unit) {
+    public fun setPlayButtonCallBack(func: () -> Unit) {
         playerView.playButton.setOnClickListener { func() }
+    }
+
+    public fun setSpeedButtonCallBack(func: () -> Unit) {
+        playerView.speedButton.setOnClickListener { func() }
     }
 
     public fun setLoading() {
@@ -62,6 +66,10 @@ public class AudioRecordPlayer : LinearLayoutCompat {
         }
         playerView.speedButton.isVisible = false
         playerView.fileView.isVisible = true
+    }
+
+    public fun setSpeedText(speed: Float) {
+        playerView.speedButton.text = "${speed}x"
     }
 }
 
