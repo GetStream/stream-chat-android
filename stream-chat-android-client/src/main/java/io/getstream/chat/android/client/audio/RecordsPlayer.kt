@@ -6,9 +6,11 @@ public interface RecordsPlayer {
 
     public fun onProgressStateChange(hash: String, func: (ProgressData) -> Unit)
 
+    public fun onSpeedChange(hash: String, func: (Float) -> Unit)
+
     public fun play(sourceUrl: String)
 
-    public fun changeSpeed(speed: Float)
+    public fun changeSpeed()
 
     public fun currentSpeed(): Float
 
