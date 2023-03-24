@@ -9,35 +9,35 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-// Todo: This class can be internal an implement a interface
 internal class StreamMediaPlayer(
     private val mediaPlayer: MediaPlayer,
     private val userScope: UserScope,
     private val progressUpdatePeriod: Long = 50,
 ) : RecordsPlayer {
 
-    private val onStateListeners: MutableMap<String, (AudioState) -> Unit> = mutableMapOf()
-    private val onProgressListeners: MutableMap<String, (ProgressData) -> Unit> = mutableMapOf()
-    private val onSpeedListeners: MutableMap<String, (Float) -> Unit> = mutableMapOf()
+    private val onStateListeners: MutableMap<Int, (AudioState) -> Unit> = mutableMapOf()
+    private val onProgressListeners: MutableMap<Int, (ProgressData) -> Unit> = mutableMapOf()
+    private val onSpeedListeners: MutableMap<Int, (Float) -> Unit> = mutableMapOf()
     private var currentSeek = 0
     private var playerState = PlayerState.UNSET
     private var poolJob: Job? = null
+    private var currentAudioHash: Int = -1
 
-    override fun onAudioStateChange(hash: String, func: (AudioState) -> Unit) {
+    override fun onAudioStateChange(hash: Int, func: (AudioState) -> Unit) {
         onStateListeners[hash] = func
     }
 
-    override fun onProgressStateChange(hash: String, func: (ProgressData) -> Unit) {
+    override fun onProgressStateChange(hash: Int, func: (ProgressData) -> Unit) {
         onProgressListeners[hash] = func
     }
 
-    override fun onSpeedChange(hash: String, func: (Float) -> Unit) {
+    override fun onSpeedChange(hash: Int, func: (Float) -> Unit) {
         onSpeedListeners[hash] = func
     }
 
-    override fun play(sourceUrl: String) {
+    override fun play(sourceUrl: String, audioHash: Int) {
         when (playerState) {
-            PlayerState.UNSET -> init(sourceUrl)
+            PlayerState.UNSET -> setAudio(sourceUrl, audioHash)
             PlayerState.LOADING -> {}
             PlayerState.IDLE -> start()
             PlayerState.PLAYING -> pause()
@@ -68,11 +68,13 @@ internal class StreamMediaPlayer(
         mediaPlayer.release()
     }
 
-    private fun init(sourceUrl: String) {
+    private fun setAudio(sourceUrl: String, audioHash: Int) {
+        currentAudioHash = audioHash
+
         mediaPlayer.run {
-            setOnPreparedListener {
+            setOnPreparedListener { mediaPlayer ->
                 playerState = PlayerState.IDLE
-                this@StreamMediaPlayer.start()
+                mediaPlayer.start()
             }
 
             setOnCompletionListener {
@@ -132,18 +134,15 @@ internal class StreamMediaPlayer(
     }
 
     private fun publishAudioState(audioState: AudioState) {
-        // Todo: Publish only for the correct ID
-        onStateListeners.values.forEach { listener -> listener(audioState) }
+        onStateListeners[currentAudioHash]?.invoke(audioState)
     }
 
     private fun publishProgress(progressData: ProgressData) {
-        // Todo: Publish only for the correct ID
-        onProgressListeners.values.forEach { listener -> listener(progressData) }
+        onProgressListeners[currentAudioHash]?.invoke(progressData)
     }
 
     private fun publishSpeed(speed: Float) {
-        // Todo: Publish only for the correct ID
-        onSpeedListeners.values.forEach { listener -> listener(speed) }
+        onSpeedListeners[currentAudioHash]?.invoke(speed)
     }
 }
 
