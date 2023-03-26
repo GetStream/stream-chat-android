@@ -119,6 +119,7 @@ internal open class BaseChatClientTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             mutableClientState = mutableClientState,
             currentUserFetcher = currentUserFetcher,
+            audioPlayer = mock(),
         )
 
         Mockito.reset(

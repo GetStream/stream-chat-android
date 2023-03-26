@@ -52,6 +52,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class ChatClientTest {
 
     companion object {
@@ -132,6 +133,7 @@ internal class ChatClientTest {
             mutableClientState = Mother.mockedClientState(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             currentUserFetcher = mock(),
+            audioPlayer = mock()
         ).apply {
             connectUser(user, token).enqueue()
         }

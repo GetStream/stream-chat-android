@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.audio
 
-public interface RecordsPlayer {
+public interface AudioPlayer {
 
     public fun onAudioStateChange(hash: Int, func: (AudioState) -> Unit)
 
