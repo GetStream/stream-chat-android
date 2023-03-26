@@ -119,6 +119,7 @@ internal class ConnectUserTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             mutableClientState = mutableClientState,
             currentUserFetcher = mock()
+            audioPlayer = mock()
         )
     }
 

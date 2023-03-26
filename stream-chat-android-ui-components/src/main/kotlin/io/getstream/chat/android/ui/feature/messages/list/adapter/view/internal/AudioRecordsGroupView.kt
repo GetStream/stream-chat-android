@@ -52,7 +52,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         }.let { playerView ->
             addView(playerView)
 
-            val audioPlayer = ChatClient.instance().recordsPlayer
+            val audioPlayer = ChatClient.instance().audioPlayer
             val hashCode = attachment.hashCode()
 
             audioPlayer.onAudioStateChange(hashCode) { audioState ->
