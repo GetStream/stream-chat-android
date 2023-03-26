@@ -178,11 +178,3 @@ internal class StreamMediaPlayer(
         onSpeedListeners[audioHash]?.invoke(speed)
     }
 }
-
-public enum class AudioState {
-    UNSET, LOADING, IDLE, PAUSE, PLAYING;
-}
-
-public enum class PlayerState {
-    UNSET, LOADING, IDLE, PLAYING;
-}

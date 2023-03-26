@@ -63,6 +63,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static final fun getOFFLINE_SUPPORT_ENABLED ()Z
 	public final fun getPinnedMessages (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
+	public final fun getRecordsPlayer ()Lio/getstream/chat/android/client/audio/RecordsPlayer;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -495,6 +496,48 @@ public final class io/getstream/chat/android/client/api/models/WatchChannelReque
 	public fun withMessages (Lio/getstream/chat/android/client/api/models/Pagination;Ljava/lang/String;I)Lio/getstream/chat/android/client/api/models/WatchChannelRequest;
 	public synthetic fun withWatchers (II)Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
 	public fun withWatchers (II)Lio/getstream/chat/android/client/api/models/WatchChannelRequest;
+}
+
+public final class io/getstream/chat/android/client/audio/AudioState : java/lang/Enum {
+	public static final field IDLE Lio/getstream/chat/android/client/audio/AudioState;
+	public static final field LOADING Lio/getstream/chat/android/client/audio/AudioState;
+	public static final field PAUSE Lio/getstream/chat/android/client/audio/AudioState;
+	public static final field PLAYING Lio/getstream/chat/android/client/audio/AudioState;
+	public static final field UNSET Lio/getstream/chat/android/client/audio/AudioState;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/audio/AudioState;
+	public static fun values ()[Lio/getstream/chat/android/client/audio/AudioState;
+}
+
+public final class io/getstream/chat/android/client/audio/PlayerState : java/lang/Enum {
+	public static final field IDLE Lio/getstream/chat/android/client/audio/PlayerState;
+	public static final field LOADING Lio/getstream/chat/android/client/audio/PlayerState;
+	public static final field PLAYING Lio/getstream/chat/android/client/audio/PlayerState;
+	public static final field UNSET Lio/getstream/chat/android/client/audio/PlayerState;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/audio/PlayerState;
+	public static fun values ()[Lio/getstream/chat/android/client/audio/PlayerState;
+}
+
+public final class io/getstream/chat/android/client/audio/ProgressData {
+	public fun <init> (ID)V
+	public final fun component1 ()I
+	public final fun component2 ()D
+	public final fun copy (ID)Lio/getstream/chat/android/client/audio/ProgressData;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/audio/ProgressData;IDILjava/lang/Object;)Lio/getstream/chat/android/client/audio/ProgressData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDuration ()I
+	public final fun getProgress ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/client/audio/RecordsPlayer {
+	public abstract fun changeSpeed ()V
+	public abstract fun currentSpeed ()F
+	public abstract fun dispose ()V
+	public abstract fun onAudioStateChange (ILkotlin/jvm/functions/Function1;)V
+	public abstract fun onProgressStateChange (ILkotlin/jvm/functions/Function1;)V
+	public abstract fun onSpeedChange (ILkotlin/jvm/functions/Function1;)V
+	public abstract fun play (Ljava/lang/String;I)V
 }
 
 public final class io/getstream/chat/android/client/channel/ChannelClient {
@@ -2493,6 +2536,7 @@ public final class io/getstream/chat/android/client/utils/UserUtilsKt {
 
 public final class io/getstream/chat/android/client/utils/attachment/AttachmentUtilsKt {
 	public static final fun isAudio (Lio/getstream/chat/android/models/Attachment;)Z
+	public static final fun isAudioRecording (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isFile (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isGiphy (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isImage (Lio/getstream/chat/android/models/Attachment;)Z

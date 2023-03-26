@@ -34,3 +34,11 @@ public interface RecordsPlayer {
 }
 
 public data class ProgressData(public val duration: Int, public val progress: Double)
+
+public enum class AudioState {
+    UNSET, LOADING, IDLE, PAUSE, PLAYING;
+}
+
+public enum class PlayerState {
+    UNSET, LOADING, IDLE, PLAYING;
+}

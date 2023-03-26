@@ -864,6 +864,12 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Typin
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/utils/DurationParser {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/utils/DurationParser;
+	public final fun durationInMilliToReadableTime (I)Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/utils/GiphyInfo {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;II)V
