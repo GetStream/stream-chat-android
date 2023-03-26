@@ -93,6 +93,7 @@ public class DependencyResolverTest {
             pluginFactories = mock(),
             repositoryFactoryProvider = mock(),
             clientState = mock(),
+            audioPlayer = mock(),
         ).apply {
             this.plugins = this@Fixture.plugins
         }

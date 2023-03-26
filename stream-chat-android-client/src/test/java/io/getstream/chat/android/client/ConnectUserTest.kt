@@ -118,7 +118,8 @@ internal class ConnectUserTest {
             chatSocket = fakeChatSocket,
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = clientState
+            clientState = clientState,
+            audioPlayer = mock()
         )
     }
 

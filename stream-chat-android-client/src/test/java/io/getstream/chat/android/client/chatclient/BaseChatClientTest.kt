@@ -113,7 +113,8 @@ internal open class BaseChatClientTest {
             chatSocket = fakeChatSocket,
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = clientState
+            clientState = clientState,
+            audioPlayer = mock(),
         )
 
         Mockito.reset(

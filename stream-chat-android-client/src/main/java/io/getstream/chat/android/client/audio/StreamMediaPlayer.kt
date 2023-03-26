@@ -32,7 +32,7 @@ internal class StreamMediaPlayer(
     private val mediaPlayer: MediaPlayer,
     private val userScope: UserScope,
     private val progressUpdatePeriod: Long = 50,
-) : RecordsPlayer {
+) : AudioPlayer {
 
     private val onStateListeners: MutableMap<Int, (AudioState) -> Unit> = mutableMapOf()
     private val onProgressListeners: MutableMap<Int, (ProgressData) -> Unit> = mutableMapOf()

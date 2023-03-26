@@ -50,7 +50,7 @@ import io.getstream.chat.android.client.api.models.identifier.SendReactionIdenti
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.attachment.AttachmentsSender
-import io.getstream.chat.android.client.audio.RecordsPlayer
+import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.StreamMediaPlayer
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
@@ -212,6 +212,7 @@ internal constructor(
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
+    public val audioPlayer: AudioPlayer
 ) {
     private val logger by taggedLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -220,16 +221,6 @@ internal constructor(
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
-
-    public val recordsPlayer: RecordsPlayer = StreamMediaPlayer(
-        mediaPlayer = MediaPlayer().apply {
-            AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-                .let(this::setAudioAttributes)
-        },
-        userScope = userScope,
-    )
 
     /**
      * The user's id for which the client is initialized.
@@ -2961,6 +2952,16 @@ internal constructor(
 
             val appSettingsManager = AppSettingManager(module.api())
 
+            val audioPlayer: AudioPlayer = StreamMediaPlayer(
+                mediaPlayer = MediaPlayer().apply {
+                    AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                        .let(this::setAudioAttributes)
+                },
+                userScope = userScope,
+            )
+
             return ChatClient(
                 config,
                 module.api(),
@@ -2979,7 +2980,8 @@ internal constructor(
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
-                clientState = ClientStateImpl(module.networkStateProvider)
+                clientState = ClientStateImpl(module.networkStateProvider),
+                audioPlayer = audioPlayer
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     appContext,
