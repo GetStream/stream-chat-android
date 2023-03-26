@@ -2102,18 +2102,6 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 
 public class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemViewHolderFactory {
 	public fun <init> ()V
-	protected final fun createCustomAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createDateDividerViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createErrorMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createGiphyAttachmentViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createGiphyMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createLinkAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createLoadingMoreViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createMediaAttachmentsViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createMessageDeletedViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createPlainTextViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createSystemMessageItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
-	protected final fun createThreadSeparatorViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
 	protected final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager;
 	public fun getItemViewType (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;)I
@@ -2210,6 +2198,28 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public final fun getProgressIcon ()Landroid/graphics/drawable/Drawable;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/AudioRecordPlayer : androidx/appcompat/widget/LinearLayoutCompat {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun setDuration (Ljava/lang/String;)V
+	public final fun setIdle ()V
+	public final fun setLoading ()V
+	public final fun setPlayButtonCallBack (Lkotlin/jvm/functions/Function0;)V
+	public final fun setPlaying ()V
+	public final fun setProgress (D)V
+	public final fun setSpeedButtonCallBack (Lkotlin/jvm/functions/Function0;)V
+	public final fun setSpeedText (F)V
+	public final fun setTotalDuration (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/AudioRecordsGroupView : androidx/appcompat/widget/LinearLayoutCompat {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun showAudioAttachments (Ljava/util/List;)V
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/GiphyMediaAttachmentView : androidx/constraintlayout/widget/ConstraintLayout {
