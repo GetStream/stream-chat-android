@@ -48,6 +48,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getAppSettings ()Lio/getstream/chat/android/models/AppSettings;
+	public final fun getAudioPlayer ()Lio/getstream/chat/android/client/audio/AudioPlayer;
 	public final fun getClientState ()Lio/getstream/chat/android/client/setup/state/ClientState;
 	public final fun getConfig ()Lio/getstream/chat/android/client/api/ChatClientConfig;
 	public final fun getConnectionId ()Ljava/lang/String;
@@ -63,7 +64,6 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static final fun getOFFLINE_SUPPORT_ENABLED ()Z
 	public final fun getPinnedMessages (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination;)Lio/getstream/chat/android/client/call/Call;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/chat/android/client/call/Call;
-	public final fun getRecordsPlayer ()Lio/getstream/chat/android/client/audio/RecordsPlayer;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
@@ -498,6 +498,16 @@ public final class io/getstream/chat/android/client/api/models/WatchChannelReque
 	public fun withWatchers (II)Lio/getstream/chat/android/client/api/models/WatchChannelRequest;
 }
 
+public abstract interface class io/getstream/chat/android/client/audio/AudioPlayer {
+	public abstract fun changeSpeed ()V
+	public abstract fun currentSpeed ()F
+	public abstract fun dispose ()V
+	public abstract fun onAudioStateChange (ILkotlin/jvm/functions/Function1;)V
+	public abstract fun onProgressStateChange (ILkotlin/jvm/functions/Function1;)V
+	public abstract fun onSpeedChange (ILkotlin/jvm/functions/Function1;)V
+	public abstract fun play (Ljava/lang/String;I)V
+}
+
 public final class io/getstream/chat/android/client/audio/AudioState : java/lang/Enum {
 	public static final field IDLE Lio/getstream/chat/android/client/audio/AudioState;
 	public static final field LOADING Lio/getstream/chat/android/client/audio/AudioState;
@@ -528,16 +538,6 @@ public final class io/getstream/chat/android/client/audio/ProgressData {
 	public final fun getProgress ()D
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public abstract interface class io/getstream/chat/android/client/audio/RecordsPlayer {
-	public abstract fun changeSpeed ()V
-	public abstract fun currentSpeed ()F
-	public abstract fun dispose ()V
-	public abstract fun onAudioStateChange (ILkotlin/jvm/functions/Function1;)V
-	public abstract fun onProgressStateChange (ILkotlin/jvm/functions/Function1;)V
-	public abstract fun onSpeedChange (ILkotlin/jvm/functions/Function1;)V
-	public abstract fun play (Ljava/lang/String;I)V
 }
 
 public final class io/getstream/chat/android/client/channel/ChannelClient {
