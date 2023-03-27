@@ -58,7 +58,8 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             audioPlayer.onAudioStateChange(hashCode) { audioState ->
                 when (audioState) {
                     AudioState.LOADING -> playerView.setLoading()
-                    AudioState.UNSET, AudioState.IDLE, AudioState.PAUSE -> playerView.setIdle()
+                    AudioState.PAUSE -> playerView.setPaused()
+                    AudioState.UNSET, AudioState.IDLE -> playerView.setIdle()
                     AudioState.PLAYING -> playerView.setPlaying()
                 }
             }

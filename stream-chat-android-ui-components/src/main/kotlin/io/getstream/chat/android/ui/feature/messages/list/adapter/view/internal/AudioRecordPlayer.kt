@@ -95,6 +95,16 @@ public class AudioRecordPlayer : LinearLayoutCompat {
         playerView.fileView.isVisible = true
     }
 
+    public fun setPaused() {
+        playerView.loadingView.isVisible = false
+        playerView.playButton.run {
+            isVisible = true
+            setImageResource(R.drawable.stream_ui_ic_play)
+        }
+        playerView.speedButton.isVisible = true
+        playerView.fileView.isVisible = false
+    }
+
     public fun setSpeedText(speed: Float) {
         playerView.speedButton.text = "${speed}x"
     }
