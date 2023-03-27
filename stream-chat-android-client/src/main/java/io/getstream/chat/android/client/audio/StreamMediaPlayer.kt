@@ -66,7 +66,7 @@ internal class StreamMediaPlayer(
         when (playerState) {
             PlayerState.UNSET -> setAudio(sourceUrl, audioHash)
             PlayerState.LOADING -> {}
-            PlayerState.IDLE -> start()
+            PlayerState.IDLE, PlayerState.PAUSE -> start()
             PlayerState.PLAYING -> pause()
         }
     }
@@ -118,7 +118,8 @@ internal class StreamMediaPlayer(
     }
 
     private fun start() {
-        if (playerState == PlayerState.IDLE) {
+        if (playerState == PlayerState.IDLE || playerState == PlayerState.PAUSE) {
+            mediaPlayer.seekTo(currentSeek)
             mediaPlayer.start()
             playerState = PlayerState.PLAYING
             publishAudioState(currentAudioHash, AudioState.PLAYING)
@@ -130,14 +131,24 @@ internal class StreamMediaPlayer(
         }
     }
 
-    private fun pause() {
+    override fun pause() {
         if (playerState == PlayerState.PLAYING) {
             mediaPlayer.pause()
             currentSeek = mediaPlayer.currentPosition
             publishAudioState(currentAudioHash, AudioState.PAUSE)
-            playerState = PlayerState.IDLE
+            playerState = PlayerState.PAUSE
             stopPooling()
         }
+    }
+
+    override fun seekTo(msec: Int) {
+        currentSeek = msec
+
+        if (playerState == PlayerState.PLAYING) {
+            pause()
+        }
+
+        mediaPlayer.seekTo(currentSeek)
     }
 
     private fun onComplete() {

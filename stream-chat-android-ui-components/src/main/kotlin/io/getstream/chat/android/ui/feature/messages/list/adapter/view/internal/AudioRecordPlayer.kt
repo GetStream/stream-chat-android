@@ -20,6 +20,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
@@ -58,14 +60,6 @@ public class AudioRecordPlayer : LinearLayoutCompat {
 
     public fun setProgress(progress: Double) {
         playerView.progressBar.progress = (progress * PERCENTAGE).toInt()
-    }
-
-    public fun setPlayButtonCallBack(func: () -> Unit) {
-        playerView.playButton.setOnClickListener { func() }
-    }
-
-    public fun setSpeedButtonCallBack(func: () -> Unit) {
-        playerView.speedButton.setOnClickListener { func() }
     }
 
     public fun setLoading() {
@@ -107,5 +101,29 @@ public class AudioRecordPlayer : LinearLayoutCompat {
 
     public fun setSpeedText(speed: Float) {
         playerView.speedButton.text = "${speed}x"
+    }
+
+    public fun onPlayButtonPress(func: () -> Unit) {
+        playerView.playButton.setOnClickListener { func() }
+    }
+
+    public fun onSpeedButtonPress(func: () -> Unit) {
+        playerView.speedButton.setOnClickListener { func() }
+    }
+
+    public fun onSeekbarMove(startDrag: () -> Unit, stopDrag: (Int) -> Unit) {
+        playerView.progressBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(seekbar: SeekBar, progress: Int, fromUser: Boolean) {
+
+            }
+
+            override fun onStartTrackingTouch(seekbar: SeekBar) {
+                startDrag()
+            }
+
+            override fun onStopTrackingTouch(seekbar: SeekBar) {
+                stopDrag(seekbar.progress)
+            }
+        })
     }
 }
