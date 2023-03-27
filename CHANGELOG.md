@@ -21,7 +21,6 @@
 ### ⚠️ Changed
 - Added the property `deactivatedAt` to `User`. If you're not using named arguments this could be a potentially breaking change. [#4751](https://github.com/GetStream/stream-chat-android/pull/4751)
 
-
 ### ❌ Removed
 
 ## stream-chat-android-offline
