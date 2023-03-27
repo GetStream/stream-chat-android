@@ -83,9 +83,12 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
                 audioPlayer.changeSpeed()
             }
 
-            playerView.onSeekbarMove(startDrag = { }, stopDrag = { progress ->
+            playerView.onSeekbarMove(startDrag = {
+                audioPlayer.startSeek(attachment.hashCode())
+            }, stopDrag = { progress ->
                 audioPlayer.seekTo(
-                    (progress.times((attachment.extraData["duration"] as? Double) ?: 0.0) / 100).toInt()
+                    (progress.times((attachment.extraData["duration"] as? Double) ?: 0.0) / 100).toInt(),
+                    attachment.hashCode()
                 )
             })
         }
