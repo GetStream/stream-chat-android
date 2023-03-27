@@ -37,7 +37,8 @@ internal class StreamMediaPlayer(
     private val onStateListeners: MutableMap<Int, (AudioState) -> Unit> = mutableMapOf()
     private val onProgressListeners: MutableMap<Int, (ProgressData) -> Unit> = mutableMapOf()
     private val onSpeedListeners: MutableMap<Int, (Float) -> Unit> = mutableMapOf()
-    private var currentSeek = 0
+    private val seekMap: MutableMap<Int, Int> = mutableMapOf()
+    // private var currentSeek = 0
     private var playerState = PlayerState.UNSET
     private var poolJob: Job? = null
     private var currentAudioHash: Int = -1
@@ -122,7 +123,7 @@ internal class StreamMediaPlayer(
 
     private fun start() {
         if (playerState == PlayerState.IDLE || playerState == PlayerState.PAUSE) {
-            mediaPlayer.seekTo(currentSeek)
+            mediaPlayer.seekTo(seekMap[currentAudioHash] ?: 0)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(playingSpeed)
             }
@@ -140,26 +141,28 @@ internal class StreamMediaPlayer(
     override fun pause() {
         if (playerState == PlayerState.PLAYING) {
             mediaPlayer.pause()
-            currentSeek = mediaPlayer.currentPosition
+            seekMap[currentAudioHash] = mediaPlayer.currentPosition
             publishAudioState(currentAudioHash, AudioState.PAUSE)
             playerState = PlayerState.PAUSE
             stopPooling()
         }
     }
 
-    override fun seekTo(msec: Int) {
-        if (playerState == PlayerState.PLAYING) {
+    override fun seekTo(msec: Int, audioHash: Int) {
+        seekMap[audioHash] = msec
+
+        mediaPlayer.seekTo(msec)
+    }
+
+    override fun startSeek(audioHash: Int) {
+        if (playerState == PlayerState.PLAYING && currentAudioHash == audioHash) {
             pause()
         }
-
-        currentSeek = msec
-
-        mediaPlayer.seekTo(currentSeek)
     }
 
     private fun onComplete() {
         stopPooling()
-        currentSeek = 0
+        seekMap[currentAudioHash] = 0
         playerState = PlayerState.IDLE
         publishProgress(currentAudioHash, ProgressData(0, 0.0))
         publishAudioState(currentAudioHash, AudioState.IDLE)

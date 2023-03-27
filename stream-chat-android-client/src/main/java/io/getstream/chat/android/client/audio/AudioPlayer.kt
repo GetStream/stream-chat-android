@@ -28,7 +28,9 @@ public interface AudioPlayer {
 
     public fun pause()
 
-    public fun seekTo(msec: Int)
+    public fun seekTo(msec: Int, audioHash: Int)
+
+    public fun startSeek(audioHash: Int)
 
     public fun changeSpeed()
 
