@@ -18,6 +18,7 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 private const val MIN_BAR_VALUE = 0.05F
+private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
 
 public class AudioWavesSeekBar : LinearLayoutCompat {
     public constructor(context: Context) : super(context)
@@ -52,6 +53,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
     private var spaceWidth: Float? = null
     private var maxHeight: Int? = null
     private val barSpacing = 0.4
+    private var barHeightRatio: Float = DEFAULT_BAR_HEIGHT_RATIO
     private var onStartDrag: () -> Unit = {}
     private var onEndDrag: (Int) -> Unit = {}
 
@@ -118,7 +120,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
                 onStartDrag()
                 parent.requestDisallowInterceptTouchEvent(true)
                 tracker.updateLayoutParams {
-                    width += 10.dp
+                    width += 12.dp
                 }
                 setProgress(xToProgress(motionEvent.x))
                 true
@@ -133,7 +135,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
                 onEndDrag(xToProgress(motionEvent.x).toInt())
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
-                    width -= 10.dp
+                    width -= 12.dp
                 }
                 true
             }
@@ -141,7 +143,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
             MotionEvent.ACTION_CANCEL -> {
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
-                    width -= 10.dp
+                    width -= 12.dp
                 }
                 true
             }
@@ -154,7 +156,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         super.onDraw(canvas)
 
         waveBars.forEachIndexed { index, barValue ->
-            val barHeight = maxHeight!! * max(barValue, MIN_BAR_VALUE)
+            val barHeight = (maxHeight!! * max(barValue, MIN_BAR_VALUE) * barHeightRatio)
 
             val left = (barWidth!! + spaceWidth!!) * index + realPaddingStart
             val right = left + barWidth!!
