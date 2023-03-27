@@ -148,11 +148,11 @@ internal class StreamMediaPlayer(
     }
 
     override fun seekTo(msec: Int) {
-        currentSeek = msec
-
         if (playerState == PlayerState.PLAYING) {
             pause()
         }
+
+        currentSeek = msec
 
         mediaPlayer.seekTo(currentSeek)
     }

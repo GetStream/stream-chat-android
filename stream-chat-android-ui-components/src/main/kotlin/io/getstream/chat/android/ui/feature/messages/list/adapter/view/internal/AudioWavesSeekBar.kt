@@ -52,6 +52,8 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
     private var spaceWidth: Float? = null
     private var maxHeight: Int? = null
     private val barSpacing = 0.4
+    private var onStartDrag: () -> Unit = {}
+    private var onEndDrag: (Int) -> Unit = {}
 
     private fun seekWidth(): Int = width - realPaddingStart - realPaddingEnd
 
@@ -66,6 +68,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
     }
 
     private var internalWaveBars: List<Float>? = null
+
     public var waveBars: List<Float>
         set(value) {
             internalWaveBars = value
@@ -83,6 +86,14 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
     public fun setProgress(progress: Float) {
         this.progress = progress
         invalidate()
+    }
+
+    public fun setOnStartDrag(func: () -> Unit) {
+        onStartDrag = func
+    }
+
+    public fun setOnEndDrag(func: (Int) -> Unit) {
+        onEndDrag = func
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -104,6 +115,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         return when (motionEvent.action) {
             MotionEvent.ACTION_DOWN -> {
                 performClick()
+                onStartDrag()
                 parent.requestDisallowInterceptTouchEvent(true)
                 tracker.updateLayoutParams {
                     width += 10.dp
@@ -117,7 +129,16 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
                 true
             }
 
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+            MotionEvent.ACTION_UP -> {
+                onEndDrag(xToProgress(motionEvent.x).toInt())
+                parent.requestDisallowInterceptTouchEvent(false)
+                tracker.updateLayoutParams {
+                    width -= 10.dp
+                }
+                true
+            }
+
+            MotionEvent.ACTION_CANCEL -> {
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
                     width -= 10.dp
