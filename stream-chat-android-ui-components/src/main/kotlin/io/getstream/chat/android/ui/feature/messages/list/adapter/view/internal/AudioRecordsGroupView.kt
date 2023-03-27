@@ -69,7 +69,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             }
             audioPlayer.onSpeedChange(hashCode, playerView::setSpeedText)
 
-            playerView.setPlayButtonCallBack {
+            playerView.onPlayButtonPress {
                 if (attachment.assetUrl != null) {
                     audioPlayer.play(attachment.assetUrl!!, hashCode)
                 } else {
@@ -77,9 +77,15 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
                 }
             }
 
-            playerView.setSpeedButtonCallBack {
+            playerView.onSpeedButtonPress {
                 audioPlayer.changeSpeed()
             }
+
+            playerView.onSeekbarMove(startDrag = audioPlayer::pause, stopDrag = { progress ->
+                audioPlayer.seekTo(
+                    (progress.times((attachment.extraData["duration"] as? Double) ?: 0.0) / 100).toInt()
+                )
+            })
         }
     }
 }
