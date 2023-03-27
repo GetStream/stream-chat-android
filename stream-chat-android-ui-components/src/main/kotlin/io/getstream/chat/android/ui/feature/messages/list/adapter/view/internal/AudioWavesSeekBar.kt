@@ -56,6 +56,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
     private var barHeightRatio: Float = DEFAULT_BAR_HEIGHT_RATIO
     private var onStartDrag: () -> Unit = {}
     private var onEndDrag: (Int) -> Unit = {}
+    private var isDragging = false
 
     private fun seekWidth(): Int = width - realPaddingStart - realPaddingEnd
 
@@ -86,6 +87,13 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
     private var progressCorrection = 1F
 
     public fun setProgress(progress: Float) {
+        if (!isDragging) {
+            this.progress = progress
+            invalidate()
+        }
+    }
+
+    private fun forceProgress(progress: Float) {
         this.progress = progress
         invalidate()
     }
@@ -117,21 +125,23 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         return when (motionEvent.action) {
             MotionEvent.ACTION_DOWN -> {
                 performClick()
+                isDragging = true
                 onStartDrag()
                 parent.requestDisallowInterceptTouchEvent(true)
                 tracker.updateLayoutParams {
                     width += 12.dp
                 }
-                setProgress(xToProgress(motionEvent.x))
+                forceProgress(xToProgress(motionEvent.x))
                 true
             }
 
             MotionEvent.ACTION_MOVE -> {
-                setProgress(xToProgress(motionEvent.x))
+                forceProgress(xToProgress(motionEvent.x))
                 true
             }
 
             MotionEvent.ACTION_UP -> {
+                isDragging = false
                 onEndDrag(xToProgress(motionEvent.x).toInt())
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
@@ -141,6 +151,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
             }
 
             MotionEvent.ACTION_CANCEL -> {
+                isDragging = false
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
                     width -= 12.dp
@@ -185,7 +196,6 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         val croppedX = min(max(realPaddingStart.toFloat(), x), width - realPaddingEnd.toFloat())
         return 100F * ((croppedX - realPaddingStart) / seekWidth())
     }
-
 }
 
 private val Int.dp: Int
