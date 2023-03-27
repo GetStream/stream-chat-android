@@ -49,6 +49,8 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
                 ?.toInt()
                 ?.let(DurationParser::durationInMilliToReadableTime)
                 ?.let(this::setTotalDuration)
+
+            (attachment.extraData["waveList"] as? List<Float>)?.let(::setWaveBars)
         }.let { playerView ->
             addView(playerView)
 
