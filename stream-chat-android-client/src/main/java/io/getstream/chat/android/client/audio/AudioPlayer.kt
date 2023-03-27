@@ -26,6 +26,10 @@ public interface AudioPlayer {
 
     public fun play(sourceUrl: String, audioHash: Int)
 
+    public fun pause()
+
+    public fun seekTo(msec: Int)
+
     public fun changeSpeed()
 
     public fun currentSpeed(): Float
@@ -40,5 +44,5 @@ public enum class AudioState {
 }
 
 public enum class PlayerState {
-    UNSET, LOADING, IDLE, PLAYING;
+    UNSET, LOADING, IDLE, PAUSE, PLAYING;
 }
