@@ -32,6 +32,7 @@ import java.util.Date
  * @param devices The list of devices for the current user.
  * @param online Whether a is user online or not.
  * @param createdAt Date/time of creation.
+ * @param deactivatedAt Date/time of deactivation.
  * @param updatedAt Date/time of the last update.
  * @param lastActive Date of last activity.
  * @param totalUnreadCount The total unread messages count for the current user.
@@ -51,6 +52,7 @@ public data class User(
     var devices: List<Device> = mutableListOf(),
     var online: Boolean = false,
     var createdAt: Date? = null,
+    val deactivatedAt: Date? = null,
     var updatedAt: Date? = null,
     var lastActive: Date? = null,
     var totalUnreadCount: Int = 0,
@@ -73,6 +75,7 @@ public data class User(
             "totalUnreadCount" -> totalUnreadCount
             "unreadChannels" -> unreadChannels
             "createdAt" -> createdAt
+            "deactivatedAt" -> deactivatedAt
             "updatedAt" -> updatedAt
             "lastActive" -> lastActive
             else -> extraData[fieldName] as? Comparable<*>
