@@ -8,7 +8,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -33,8 +32,6 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
 
     init {
         orientation = HORIZONTAL
-
-        setOnTouchListener(DragListener())
 
         tracker = ImageView(context).apply {
             setBackgroundResource(R.drawable.stream_ui_share_rectangle)
@@ -103,6 +100,35 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         progressCorrection = barCount / 100F
     }
 
+    override fun onTouchEvent(motionEvent: MotionEvent): Boolean {
+        return when (motionEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+                performClick()
+                parent.requestDisallowInterceptTouchEvent(true)
+                tracker.updateLayoutParams {
+                    width += 10.dp
+                }
+                setProgress(xToProgress(motionEvent.x))
+                true
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                setProgress(xToProgress(motionEvent.x))
+                true
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                parent.requestDisallowInterceptTouchEvent(false)
+                tracker.updateLayoutParams {
+                    width -= 10.dp
+                }
+                true
+            }
+
+            else -> super.onTouchEvent(motionEvent)
+        }
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -137,33 +163,6 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         return 100F * ((croppedX - realPaddingStart) / seekWidth())
     }
 
-    private inner class DragListener : OnTouchListener {
-        override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
-            return when (motionEvent.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    tracker.updateLayoutParams {
-                        width += 10.dp
-                    }
-                    setProgress(xToProgress(motionEvent.x))
-                    true
-                }
-
-                MotionEvent.ACTION_MOVE -> {
-                    setProgress(xToProgress(motionEvent.x))
-                    true
-                }
-
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    tracker.updateLayoutParams {
-                        width -= 10.dp
-                    }
-                    performClick()
-                }
-
-                else -> false
-            }
-        }
-    }
 }
 
 private val Int.dp: Int
