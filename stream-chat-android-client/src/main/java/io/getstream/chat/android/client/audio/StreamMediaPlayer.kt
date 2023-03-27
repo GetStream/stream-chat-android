@@ -73,8 +73,8 @@ internal class StreamMediaPlayer(
 
     override fun changeSpeed() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val currentSpeed = mediaPlayer.playbackParams.speed
-            val newSpeed = if (currentSpeed >= 2) {
+            val currentSpeed = playingSpeed
+            val newSpeed = if (currentSpeed >= 2 || currentSpeed < 1) {
                 INITIAL_SPEED
             } else {
                 currentSpeed + SPEED_INCREMENT
@@ -82,8 +82,11 @@ internal class StreamMediaPlayer(
 
             playingSpeed = newSpeed
 
-            mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(newSpeed)
-            publishSpeed(currentAudioHash, mediaPlayer.playbackParams.speed)
+            if (playerState == PlayerState.PLAYING) {
+                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(newSpeed)
+            }
+
+            publishSpeed(currentAudioHash, newSpeed)
         }
     }
 
@@ -120,6 +123,9 @@ internal class StreamMediaPlayer(
     private fun start() {
         if (playerState == PlayerState.IDLE || playerState == PlayerState.PAUSE) {
             mediaPlayer.seekTo(currentSeek)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(playingSpeed)
+            }
             mediaPlayer.start()
             playerState = PlayerState.PLAYING
             publishAudioState(currentAudioHash, AudioState.PLAYING)
