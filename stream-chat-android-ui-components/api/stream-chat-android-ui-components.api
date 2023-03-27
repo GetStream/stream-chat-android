@@ -2204,15 +2204,18 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun onPlayButtonPress (Lkotlin/jvm/functions/Function0;)V
+	public final fun onSeekbarMove (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)V
+	public final fun onSpeedButtonPress (Lkotlin/jvm/functions/Function0;)V
 	public final fun setDuration (Ljava/lang/String;)V
 	public final fun setIdle ()V
 	public final fun setLoading ()V
-	public final fun setPlayButtonCallBack (Lkotlin/jvm/functions/Function0;)V
+	public final fun setPaused ()V
 	public final fun setPlaying ()V
 	public final fun setProgress (D)V
-	public final fun setSpeedButtonCallBack (Lkotlin/jvm/functions/Function0;)V
 	public final fun setSpeedText (F)V
 	public final fun setTotalDuration (Ljava/lang/String;)V
+	public final fun setWaveBars (Ljava/util/List;)V
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/AudioRecordsGroupView : androidx/appcompat/widget/LinearLayoutCompat {
@@ -2220,6 +2223,18 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun showAudioAttachments (Ljava/util/List;)V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/AudioWavesSeekBar : androidx/appcompat/widget/LinearLayoutCompat {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getWaveBars ()Ljava/util/List;
+	public fun onTouchEvent (Landroid/view/MotionEvent;)Z
+	public final fun setOnEndDrag (Lkotlin/jvm/functions/Function1;)V
+	public final fun setOnStartDrag (Lkotlin/jvm/functions/Function0;)V
+	public final fun setProgress (F)V
+	public final fun setWaveBars (Ljava/util/List;)V
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/GiphyMediaAttachmentView : androidx/constraintlayout/widget/ConstraintLayout {
