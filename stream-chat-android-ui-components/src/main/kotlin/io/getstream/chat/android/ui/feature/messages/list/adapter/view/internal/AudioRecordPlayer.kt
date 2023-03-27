@@ -114,18 +114,9 @@ public class AudioRecordPlayer : LinearLayoutCompat {
     }
 
     public fun onSeekbarMove(startDrag: () -> Unit, stopDrag: (Int) -> Unit) {
-        // playerView.progressBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-        //     override fun onProgressChanged(seekbar: SeekBar, progress: Int, fromUser: Boolean) {
-        //
-        //     }
-        //
-        //     override fun onStartTrackingTouch(seekbar: SeekBar) {
-        //         startDrag()
-        //     }
-        //
-        //     override fun onStopTrackingTouch(seekbar: SeekBar) {
-        //         stopDrag(seekbar.progress)
-        //     }
-        // })
+        playerView.progressBar.run {
+            setOnStartDrag(startDrag)
+            setOnEndDrag(stopDrag)
+        }
     }
 }
