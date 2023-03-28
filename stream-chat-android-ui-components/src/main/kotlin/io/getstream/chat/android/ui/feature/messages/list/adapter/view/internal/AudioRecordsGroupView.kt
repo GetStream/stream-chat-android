@@ -103,15 +103,14 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
                 audioPlayer.changeSpeed()
             }
 
-            playerView.onSeekbarMove(startDrag = {
+            playerView.onSeekbarMove({
                 audioPlayer.startSeek(attachment.hashCode())
-            }, stopDrag = { progress ->
-                    audioPlayer.seekTo(
-                        progressToDecimal(progress, attachment.extraData["duration"] as? Double),
-                        attachment.hashCode()
-                    )
-                }
-            )
+            }, { progress ->
+                audioPlayer.seekTo(
+                    progressToDecimal(progress, attachment.extraData["duration"] as? Double),
+                    attachment.hashCode()
+                )
+            })
         }
     }
 
