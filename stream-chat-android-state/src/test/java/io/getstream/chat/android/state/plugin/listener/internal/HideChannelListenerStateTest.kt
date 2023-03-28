@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -54,7 +54,7 @@ internal class HideChannelListenerStateTest {
     @Test
     fun `after the request is made and it fails, the channel should be set to NOT hidden`() = runTest {
         hideChannelListenerState.onHideChannelResult(
-            Result.Failure(ChatError.GenericError("")),
+            Result.Failure(StreamError.GenericError("")),
             randomString(),
             randomString(),
             randomBoolean()

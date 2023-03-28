@@ -26,7 +26,6 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Filters
@@ -37,6 +36,7 @@ import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.utils.Event
+import io.getstream.result.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest

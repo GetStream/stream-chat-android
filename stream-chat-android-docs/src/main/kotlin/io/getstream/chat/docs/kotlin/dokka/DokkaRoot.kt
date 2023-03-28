@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.result.Result
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 
 /**

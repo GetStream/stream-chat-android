@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 
 /** Updates collection of reactions with more recent data of [users]. */
 @InternalStreamChatApi
@@ -74,16 +74,16 @@ public fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
 }
 
 /**
- * Updates the reaction's sync status based on [chatError].
+ * Updates the reaction's sync status based on [streamError].
  * Status can be either [SyncStatus.FAILED_PERMANENTLY] or [SyncStatus.SYNC_NEEDED] depends on type of error.
  *
- * @param chatError The error returned by the API call.
+ * @param streamError The error returned by the API call.
  *
  * @return [Reaction] object with updated [Reaction.syncStatus].
  */
-private fun Reaction.updateFailedReactionSyncStatus(chatError: ChatError): Reaction {
+private fun Reaction.updateFailedReactionSyncStatus(streamError: StreamError): Reaction {
     return copy(
-        syncStatus = if (chatError.isPermanent()) {
+        syncStatus = if (streamError.isPermanent()) {
             SyncStatus.FAILED_PERMANENTLY
         } else {
             SyncStatus.SYNC_NEEDED

@@ -19,12 +19,12 @@ package io.getstream.chat.android.client.chatclient
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.test.asCall
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
@@ -43,7 +43,7 @@ internal class WhenQueryChannel : BaseChatClientTest() {
     @Test
     fun `Given offline plugin with failing precondition Should not make API call and return error result`() = runTest {
         val plugin = mock<QueryChannelListenerPlugin> {
-            onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.Failure(ChatError.GenericError(message = ""))
+            onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.Failure(StreamError.GenericError(message = ""))
         }
         var isNetworkApiCalled = false
         val sut = Fixture().givenPlugin(plugin).givenChannelResponse { isNetworkApiCalled = true; mock() }.get()

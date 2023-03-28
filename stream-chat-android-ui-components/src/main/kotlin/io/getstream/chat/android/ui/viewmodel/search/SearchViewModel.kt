@@ -20,14 +20,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.utils.Event
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -148,8 +148,8 @@ public class SearchViewModel : ViewModel() {
     /**
      * Notifies the UI about the error and enables the pagination.
      */
-    private fun handleSearchMessagesError(chatError: ChatError) {
-        logger.d { "Error searching messages: ${chatError.message}" }
+    private fun handleSearchMessagesError(streamError: StreamError) {
+        logger.d { "Error searching messages: ${streamError.message}" }
         _state.value = _state.value!!.copy(
             isLoading = false,
             isLoadingMore = false,

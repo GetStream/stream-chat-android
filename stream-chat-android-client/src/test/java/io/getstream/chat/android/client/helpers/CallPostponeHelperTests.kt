@@ -20,11 +20,11 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.scope.UserTestScope
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.result.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`

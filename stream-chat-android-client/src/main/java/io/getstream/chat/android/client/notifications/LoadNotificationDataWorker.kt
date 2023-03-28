@@ -61,7 +61,7 @@ internal class LoadNotificationDataWorker(
 
             val result = getChannel.zipWith(getMessage).await()
             when (result) {
-                is io.getstream.chat.android.client.utils.Result.Success -> {
+                is io.getstream.result.Result.Success -> {
                     val (channel, message) = result.value
                     val messageParentId = message.parentId
 
@@ -72,7 +72,7 @@ internal class LoadNotificationDataWorker(
                     ChatClient.displayNotification(channel = channel, message = message)
                     Result.success()
                 }
-                is io.getstream.chat.android.client.utils.Result.Failure -> {
+                is io.getstream.result.Result.Failure -> {
                     logger.e { "Error while loading notification data: ${result.value}" }
                     Result.failure()
                 }

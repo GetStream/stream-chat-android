@@ -16,17 +16,17 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import java.util.Date
 
 /**
@@ -111,7 +111,7 @@ internal class DeleteReactionListenerState(
         return if (currentUser != null) {
             Result.Success(Unit)
         } else {
-            Result.Failure(ChatError.GenericError(message = "Current user is null!"))
+            Result.Failure(StreamError.GenericError(message = "Current user is null!"))
         }
     }
 }

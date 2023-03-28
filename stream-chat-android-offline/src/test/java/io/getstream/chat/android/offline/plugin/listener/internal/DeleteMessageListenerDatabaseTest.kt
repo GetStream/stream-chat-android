@@ -16,15 +16,15 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.test.randomCID
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -118,7 +118,7 @@ internal class DeleteMessageListenerDatabaseTest {
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Failure(ChatError.GenericError("")))
+        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Failure(StreamError.GenericError("")))
 
         verify(messageRepository).insertMessage(
             argThat { message ->

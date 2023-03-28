@@ -1,10 +1,10 @@
 package io.getstream.chat.docs.java.client.docusaurus;
 
 import io.getstream.chat.android.client.channel.ChannelClient;
-import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.models.Channel;
 import io.getstream.chat.android.models.Message;
-import io.getstream.chat.android.client.utils.Result;
+import io.getstream.result.Result;
+import io.getstream.result.StreamError;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/basics/core-concepts/#core-concepts">Core Concepts</a>
@@ -38,7 +38,7 @@ public class CoreConcepts {
             Channel channel = result.getOrNull();
         } else {
             // Handle error
-            ChatError error = result.chatErrorOrNull();
+            StreamError error = result.chatErrorOrNull();
         }
     }
 
@@ -46,7 +46,7 @@ public class CoreConcepts {
         result.onSuccess(channel -> {
             // Handle success
             return null;
-        }).onError(chatError -> {
+        }).onError(streamError -> {
             // Handle error
             return null;
         });

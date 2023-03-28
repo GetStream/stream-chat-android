@@ -11,19 +11,19 @@ import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination;
 import io.getstream.chat.android.client.api.models.QueryChannelRequest;
-import io.getstream.chat.android.models.querysort.QuerySortByField;
 import io.getstream.chat.android.client.channel.ChannelClient;
-import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.chat.android.models.Attachment;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.models.Reaction;
 import io.getstream.chat.android.models.User;
-import io.getstream.chat.android.client.utils.ProgressCallback;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
 import io.getstream.chat.docs.java.client.helpers.MyFileUploader;
+import io.getstream.result.StreamError;
 
 public class Messages {
     private ChatClient client;
@@ -176,7 +176,7 @@ public class Messages {
                 }
 
                 @Override
-                public void onError(@NotNull ChatError error) {
+                public void onError(@NotNull StreamError error) {
                     // Handle error
                 }
 

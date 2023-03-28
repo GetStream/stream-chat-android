@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.utils.retry
 
 import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
 import kotlinx.coroutines.delay
 
 /**

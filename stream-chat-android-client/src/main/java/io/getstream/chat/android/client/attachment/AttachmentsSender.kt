@@ -18,15 +18,15 @@ package io.getstream.chat.android.client.attachment
 
 import android.content.Context
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsAndroidWorker
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
@@ -112,7 +112,7 @@ internal class AttachmentsSender(
             enqueueAttachmentUpload(message, channelType, channelId)
             logger.d { "[uploadAttachments] Chat is offline, not sending message with id ${message.id}" }
             Result.Failure(
-                ChatError.GenericError(
+                StreamError.GenericError(
                     "Chat is offline, not sending message with id ${message.id} and text ${message.text}",
                 )
             )
@@ -163,7 +163,7 @@ internal class AttachmentsSender(
         } else {
             logger.i { "[waitForAttachmentsToBeSent] Could not upload attachments for message ${newMessage.id}" }
             Result.Failure(
-                ChatError.GenericError("Could not upload attachments, not sending message with id ${newMessage.id}"),
+                StreamError.GenericError("Could not upload attachments, not sending message with id ${newMessage.id}"),
             )
         }.also {
             uploadIds.remove(newMessage.id)

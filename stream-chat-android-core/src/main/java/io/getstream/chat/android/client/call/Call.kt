@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.call
 
 import androidx.annotation.WorkerThread
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -78,7 +78,7 @@ public interface Call<T : Any> {
     @InternalStreamChatApi
     public companion object {
         public fun <T : Any> callCanceledError(): Result<T> =
-            Result.Failure(ChatError.GenericError(message = "The call was canceled before complete its execution."))
+            Result.Failure(StreamError.GenericError(message = "The call was canceled before complete its execution."))
 
         @SuppressWarnings("TooGenericExceptionCaught")
         public suspend fun <T : Any> runCatching(
@@ -92,7 +92,7 @@ public interface Call<T : Any> {
 
         private fun <T : Any> Throwable.toResult(): Result<T> = when (this) {
             is CancellationException -> callCanceledError()
-            else -> Result.Failure(ChatError.ThrowableError(message = "", cause = this))
+            else -> Result.Failure(StreamError.ThrowableError(message = "", cause = this))
         }
     }
 }
@@ -142,7 +142,7 @@ public fun <T : Any> Call<T>.withPrecondition(
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.onErrorReturn(
     scope: CoroutineScope,
-    function: suspend (originalError: ChatError) -> Result<T>,
+    function: suspend (originalError: StreamError) -> Result<T>,
 ): ReturnOnErrorCall<T> = ReturnOnErrorCall(this, scope, function)
 
 /**
@@ -161,12 +161,12 @@ public fun <T : Any> Call<T>.share(
 public fun Call<*>.toUnitCall(): Call<Unit> = map {}
 
 private val onSuccessStub: (Any) -> Unit = {}
-private val onErrorStub: (ChatError) -> Unit = {}
+private val onErrorStub: (StreamError) -> Unit = {}
 
 @InternalStreamChatApi
 public fun <T : Any> Call<T>.enqueue(
     onSuccess: (T) -> Unit = onSuccessStub,
-    onError: (ChatError) -> Unit = onErrorStub,
+    onError: (StreamError) -> Unit = onErrorStub,
 ) {
     enqueue { result ->
         when (result) {

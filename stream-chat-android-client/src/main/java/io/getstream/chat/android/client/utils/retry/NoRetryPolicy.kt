@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.utils.retry
 
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.result.StreamError
 
 /**
  * Default retry policy that won't retry any calls.
@@ -27,10 +27,10 @@ internal class NoRetryPolicy : RetryPolicy {
      *
      * @return false
      */
-    override fun shouldRetry(attempt: Int, error: ChatError): Boolean = false
+    override fun shouldRetry(attempt: Int, error: StreamError): Boolean = false
 
     /**
      * Should never be called as the policy doesn't allow retrying.
      */
-    override fun retryTimeout(attempt: Int, error: ChatError): Int = 0
+    override fun retryTimeout(attempt: Int, error: StreamError): Int = 0
 }

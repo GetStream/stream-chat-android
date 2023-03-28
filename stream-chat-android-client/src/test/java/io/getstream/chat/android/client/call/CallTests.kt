@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.retry
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -53,7 +53,7 @@ internal class CallTests {
     @Test
     fun `Should return from onErrorReturn when original call gives error`() = runTest {
         val result = CoroutineCall<List<Int>>(testCoroutines.scope) {
-            Result.Failure(ChatError.GenericError(message = "Test error"))
+            Result.Failure(StreamError.GenericError(message = "Test error"))
         }.onErrorReturn(testCoroutines.scope) {
             Result.Success(listOf(0, 1))
         }.await()
@@ -65,7 +65,7 @@ internal class CallTests {
         val result = CoroutineCall(testCoroutines.scope) {
             Result.Success(listOf(10, 20, 30))
         }.withPrecondition(testCoroutines.scope) {
-            Result.Failure(ChatError.GenericError(message = "Error from precondition"))
+            Result.Failure(StreamError.GenericError(message = "Error from precondition"))
         }.onErrorReturn(testCoroutines.scope) {
             Result.Success(listOf(0, 1))
         }.await()
@@ -87,14 +87,14 @@ internal class CallTests {
         var currentValue = 0
         val maxAttempts = 3
         val retryPolicy = object : RetryPolicy {
-            override fun shouldRetry(attempt: Int, error: ChatError): Boolean = attempt < maxAttempts
+            override fun shouldRetry(attempt: Int, error: StreamError): Boolean = attempt < maxAttempts
 
-            override fun retryTimeout(attempt: Int, error: ChatError): Int = 0
+            override fun retryTimeout(attempt: Int, error: StreamError): Int = 0
         }
 
         CoroutineCall(testCoroutines.scope) {
             currentValue++
-            Result.Failure(ChatError.GenericError(message = ""))
+            Result.Failure(StreamError.GenericError(message = ""))
         }
             .retry(testCoroutines.scope, retryPolicy)
             .doOnStart(testCoroutines.scope) { currentValue++ }

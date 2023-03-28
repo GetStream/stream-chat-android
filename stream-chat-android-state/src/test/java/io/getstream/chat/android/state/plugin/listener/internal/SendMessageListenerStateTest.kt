@@ -16,14 +16,14 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -76,7 +76,7 @@ internal class SendMessageListenerStateTest {
         val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
 
         sendMessageListener.onMessageSendResult(
-            result = Result.Failure(ChatError.GenericError("")),
+            result = Result.Failure(StreamError.GenericError("")),
             channelType = randomString(),
             channelId = randomString(),
             message = testMessage,

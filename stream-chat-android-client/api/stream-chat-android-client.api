@@ -656,12 +656,12 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$Error : io/getstream/chat/android/client/clientstate/DisconnectCause {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError$NetworkError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;Lio/getstream/chat/android/client/errors/ChatError$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
+	public fun <init> (Lio/getstream/result/StreamError$NetworkError;)V
+	public final fun component1 ()Lio/getstream/result/StreamError$NetworkError;
+	public final fun copy (Lio/getstream/result/StreamError$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;Lio/getstream/result/StreamError$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
+	public final fun getError ()Lio/getstream/result/StreamError$NetworkError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -672,12 +672,12 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError : io/getstream/chat/android/client/clientstate/DisconnectCause {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError$NetworkError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;Lio/getstream/chat/android/client/errors/ChatError$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
+	public fun <init> (Lio/getstream/result/StreamError$NetworkError;)V
+	public final fun component1 ()Lio/getstream/result/StreamError$NetworkError;
+	public final fun copy (Lio/getstream/result/StreamError$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;Lio/getstream/result/StreamError$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatError$NetworkError;
+	public final fun getError ()Lio/getstream/result/StreamError$NetworkError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1009,16 +1009,16 @@ public final class io/getstream/chat/android/client/events/DisconnectedEvent : i
 }
 
 public final class io/getstream/chat/android/client/events/ErrorEvent : io/getstream/chat/android/client/events/ChatEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/result/StreamError;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
-	public final fun component4 ()Lio/getstream/chat/android/client/errors/ChatError;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/client/events/ErrorEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ErrorEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ErrorEvent;
+	public final fun component4 ()Lio/getstream/result/StreamError;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/result/StreamError;)Lio/getstream/chat/android/client/events/ErrorEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ErrorEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/result/StreamError;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ErrorEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getCreatedAt ()Ljava/util/Date;
-	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun getError ()Lio/getstream/result/StreamError;
 	public fun getRawCreatedAt ()Ljava/lang/String;
 	public fun getType ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -2140,44 +2140,44 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 	public abstract fun getErrorHandler ()Lio/getstream/chat/android/client/errorhandler/ErrorHandler;
 	public abstract fun onAttachmentSendRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onChannelMarkReadPrecondition (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onCreateChannelPrecondition (Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onCreateChannelPrecondition (Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/result/Result;
 	public abstract fun onCreateChannelRequest (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onCreateChannelResult (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onDeleteReactionPrecondition (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onCreateChannelResult (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onDeleteReactionPrecondition (Lio/getstream/chat/android/models/User;)Lio/getstream/result/Result;
 	public abstract fun onDeleteReactionRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onDeleteReactionResult (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onGetMessageResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onDeleteReactionResult (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onGetMessageResult (Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesMorePrecondition (Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesMoreRequest (Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onGetRepliesMoreResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onGetRepliesMoreResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesPrecondition (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesRequest (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onGetRepliesResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onGiphySendResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;)V
+	public abstract fun onGetRepliesResult (Lio/getstream/result/Result;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onGiphySendResult (Ljava/lang/String;Lio/getstream/result/Result;)V
 	public abstract fun onHideChannelPrecondition (Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onHideChannelRequest (Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onHideChannelResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onHideChannelResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMarkAllReadRequest (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMessageDeletePrecondition (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMessageDeleteRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onMessageDeleteResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageDeleteResult (Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMessageEditRequest (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onMessageEditResult (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onMessageSendResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageEditResult (Lio/getstream/chat/android/models/Message;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageSendResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelPrecondition (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onQueryChannelResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryChannelResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelsPrecondition (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelsRequest (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onQueryChannelsResult (Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onQueryMembersResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onSendReactionPrecondition (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onQueryChannelsResult (Lio/getstream/result/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryMembersResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onSendReactionPrecondition (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Reaction;)Lio/getstream/result/Result;
 	public abstract fun onSendReactionRequest (Ljava/lang/String;Lio/getstream/chat/android/models/Reaction;ZLio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onSendReactionResult (Ljava/lang/String;Lio/getstream/chat/android/models/Reaction;ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onShuffleGiphyResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onTypingEventPrecondition (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onSendReactionResult (Ljava/lang/String;Lio/getstream/chat/android/models/Reaction;ZLio/getstream/chat/android/models/User;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onShuffleGiphyResult (Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onTypingEventPrecondition (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/result/Result;
 	public abstract fun onTypingEventRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
-	public abstract fun onTypingEventResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
+	public abstract fun onTypingEventResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
 	public abstract fun onUserDisconnected ()V
 	public abstract fun onUserSet (Lio/getstream/chat/android/models/User;)V
 }
@@ -2185,44 +2185,44 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
 	public static fun onAttachmentSendRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onCreateChannelPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onCreateChannelPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/result/Result;
 	public static fun onCreateChannelRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onCreateChannelResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onDeleteReactionPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onCreateChannelResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onDeleteReactionPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;)Lio/getstream/result/Result;
 	public static fun onDeleteReactionRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onDeleteReactionResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onGetMessageResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onDeleteReactionResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGetMessageResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onGetRepliesMorePrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onGetRepliesMoreRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onGetRepliesMoreResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGetRepliesMoreResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onGetRepliesPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onGetRepliesRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onGetRepliesResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onGiphySendResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;)V
+	public static fun onGetRepliesResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onGiphySendResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/result/Result;)V
 	public static fun onHideChannelPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onHideChannelRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onHideChannelResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onHideChannelResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onMarkAllReadRequest (Lio/getstream/chat/android/client/plugin/Plugin;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onMessageDeletePrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onMessageDeleteRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onMessageDeleteResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMessageDeleteResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onMessageEditRequest (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onMessageEditResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onMessageSendResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMessageEditResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/Message;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onMessageSendResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onQueryChannelResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryChannelResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelsPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelsRequest (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onQueryChannelsResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onQueryMembersResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onSendReactionPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onQueryChannelsResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryMembersResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onSendReactionPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Reaction;)Lio/getstream/result/Result;
 	public static fun onSendReactionRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/models/Reaction;ZLio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onSendReactionResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/models/Reaction;ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onShuffleGiphyResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onTypingEventPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/client/utils/Result;
+	public static fun onSendReactionResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/chat/android/models/Reaction;ZLio/getstream/chat/android/models/User;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onShuffleGiphyResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onTypingEventPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/result/Result;
 	public static fun onTypingEventRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
-	public static fun onTypingEventResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
+	public static fun onTypingEventResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/factory/PluginFactory {
@@ -2234,36 +2234,36 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/CreateChannelListener {
-	public abstract fun onCreateChannelPrecondition (Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onCreateChannelPrecondition (Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/result/Result;
 	public abstract fun onCreateChannelRequest (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onCreateChannelResult (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onCreateChannelResult (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/DeleteMessageListener {
 	public abstract fun onMessageDeletePrecondition (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onMessageDeleteRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onMessageDeleteResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageDeleteResult (Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/DeleteReactionListener {
-	public abstract fun onDeleteReactionPrecondition (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onDeleteReactionPrecondition (Lio/getstream/chat/android/models/User;)Lio/getstream/result/Result;
 	public abstract fun onDeleteReactionRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onDeleteReactionResult (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onDeleteReactionResult (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/EditMessageListener {
 	public abstract fun onMessageEditRequest (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onMessageEditResult (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageEditResult (Lio/getstream/chat/android/models/Message;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/GetMessageListener {
-	public abstract fun onGetMessageResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onGetMessageResult (Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/HideChannelListener {
 	public abstract fun onHideChannelPrecondition (Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onHideChannelRequest (Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onHideChannelResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onHideChannelResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/MarkAllReadListener {
@@ -2273,17 +2273,17 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/QueryChannelListener {
 	public abstract fun onQueryChannelPrecondition (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onQueryChannelResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryChannelResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/QueryChannelsListener {
 	public abstract fun onQueryChannelsPrecondition (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelsRequest (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onQueryChannelsResult (Lio/getstream/chat/android/client/utils/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryChannelsResult (Lio/getstream/result/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/QueryMembersListener {
-	public abstract fun onQueryMembersResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryMembersResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/SendAttachmentListener {
@@ -2291,30 +2291,30 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/SendGiphyListener {
-	public abstract fun onGiphySendResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;)V
+	public abstract fun onGiphySendResult (Ljava/lang/String;Lio/getstream/result/Result;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/SendMessageListener {
-	public abstract fun onMessageSendResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onMessageSendResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/SendReactionListener {
-	public abstract fun onSendReactionPrecondition (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Reaction;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onSendReactionPrecondition (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Reaction;)Lio/getstream/result/Result;
 	public abstract fun onSendReactionRequest (Ljava/lang/String;Lio/getstream/chat/android/models/Reaction;ZLio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onSendReactionResult (Ljava/lang/String;Lio/getstream/chat/android/models/Reaction;ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onSendReactionResult (Ljava/lang/String;Lio/getstream/chat/android/models/Reaction;ZLio/getstream/chat/android/models/User;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/ShuffleGiphyListener {
-	public abstract fun onShuffleGiphyResult (Ljava/lang/String;Lio/getstream/chat/android/client/utils/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onShuffleGiphyResult (Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/ThreadQueryListener {
 	public abstract fun onGetRepliesMorePrecondition (Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesMoreRequest (Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onGetRepliesMoreResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onGetRepliesMoreResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesPrecondition (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onGetRepliesRequest (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onGetRepliesResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onGetRepliesResult (Lio/getstream/result/Result;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/client/plugin/listeners/ThreadQueryListener$DefaultImpls {
@@ -2323,9 +2323,9 @@ public final class io/getstream/chat/android/client/plugin/listeners/ThreadQuery
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/TypingEventListener {
-	public abstract fun onTypingEventPrecondition (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun onTypingEventPrecondition (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/result/Result;
 	public abstract fun onTypingEventRequest (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
-	public abstract fun onTypingEventResult (Lio/getstream/chat/android/client/utils/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
+	public abstract fun onTypingEventResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Date;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/plugins/requests/ApiRequestsAnalyser {
@@ -2417,7 +2417,7 @@ public class io/getstream/chat/android/client/socket/SocketListener {
 	public fun onConnected (Lio/getstream/chat/android/client/events/ConnectedEvent;)V
 	public fun onConnecting ()V
 	public fun onDisconnected (Lio/getstream/chat/android/client/clientstate/DisconnectCause;)V
-	public fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public fun onError (Lio/getstream/result/StreamError;)V
 	public fun onEvent (Lio/getstream/chat/android/client/events/ChatEvent;)V
 }
 
@@ -2446,12 +2446,12 @@ public abstract interface class io/getstream/chat/android/client/token/TokenProv
 }
 
 public abstract interface class io/getstream/chat/android/client/uploader/FileUploader {
-	public abstract fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
-	public abstract fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/utils/Result;
-	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/chat/android/client/utils/Result;
-	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/utils/Result;
-	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/chat/android/client/utils/Result;
-	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/chat/android/client/utils/Result;
+	public abstract fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
+	public abstract fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
+	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/result/Result;
+	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
+	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/result/Result;
+	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 }
 
 public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeTypes {
@@ -2474,7 +2474,7 @@ public abstract interface class io/getstream/chat/android/client/user/storage/Us
 }
 
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
-	public abstract fun onError (Lio/getstream/chat/android/client/errors/ChatError;)V
+	public abstract fun onError (Lio/getstream/result/StreamError;)V
 	public abstract fun onProgress (JJ)V
 	public abstract fun onSuccess (Ljava/lang/String;)V
 }
@@ -2535,7 +2535,7 @@ public abstract interface class io/getstream/chat/android/client/utils/observabl
 }
 
 public abstract interface class io/getstream/chat/android/client/utils/retry/RetryPolicy {
-	public abstract fun retryTimeout (ILio/getstream/chat/android/client/errors/ChatError;)I
-	public abstract fun shouldRetry (ILio/getstream/chat/android/client/errors/ChatError;)Z
+	public abstract fun retryTimeout (ILio/getstream/result/StreamError;)I
+	public abstract fun shouldRetry (ILio/getstream/result/StreamError;)Z
 }
 

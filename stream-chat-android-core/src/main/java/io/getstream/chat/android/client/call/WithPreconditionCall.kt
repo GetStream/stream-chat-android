@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.flatMapSuspend
-import io.getstream.chat.android.client.utils.onErrorSuspend
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.Result
+import io.getstream.result.flatMapSuspend
+import io.getstream.result.onErrorSuspend
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren

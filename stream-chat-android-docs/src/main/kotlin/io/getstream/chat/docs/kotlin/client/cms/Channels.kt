@@ -25,7 +25,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.client.subscribeFor
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.result.Result
 
 class Channels(val client: ChatClient, val channelClient: ChannelClient) {
 

@@ -16,17 +16,17 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomReaction
 import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -171,7 +171,7 @@ internal class DeleteReactionListenerDatabaseTest {
                 messageId = testMessage.id,
                 reactionType = testReaction.type,
                 currentUser = testUser,
-                Result.Failure(ChatError.GenericError(""))
+                Result.Failure(StreamError.GenericError(""))
             )
 
             verify(reactionRepository).insertReaction(
