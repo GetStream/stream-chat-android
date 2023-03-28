@@ -97,6 +97,8 @@ internal class StreamMediaPlayer(
         stopPooling()
         onStateListeners.clear()
         onProgressListeners.clear()
+        onSpeedListeners.clear()
+        seekMap.clear()
         mediaPlayer.release()
     }
 
