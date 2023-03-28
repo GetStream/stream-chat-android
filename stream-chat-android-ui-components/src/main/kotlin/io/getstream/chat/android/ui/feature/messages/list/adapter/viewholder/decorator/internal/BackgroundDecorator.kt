@@ -166,6 +166,6 @@ internal class BackgroundDecorator(
     }
 
     companion object {
-        internal val DEFAULT_CORNER_RADIUS = 16.dpToPxPrecise()
+        internal val DEFAULT_CORNER_RADIUS = 14.dpToPxPrecise()
     }
 }
