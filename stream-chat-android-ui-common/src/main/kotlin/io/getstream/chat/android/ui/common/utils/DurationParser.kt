@@ -23,6 +23,9 @@ private const val TIME_DIVIDER = 60
 
 public object DurationParser {
 
+    /**
+     * Parses duration in milli seconds and creates a String of the patter mm:ss.
+     */
     public fun durationInMilliToReadableTime(millis: Int): String {
         val duration = millis.toDuration(DurationUnit.MILLISECONDS)
         val seconds = duration.inWholeSeconds.rem(TIME_DIVIDER).toString().padStart(2, '0')
