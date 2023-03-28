@@ -49,6 +49,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
@@ -61,12 +62,21 @@ import io.getstream.chat.android.compose.util.onDownloadHandleRequest
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  * @param modifier Modifier for styling.
+ * @param onItemClicked Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
+    onItemClicked: (
+        previewHandler: List<AttachmentPreviewHandler>,
+        attachment: Attachment,
+    ) -> Unit = { previewHandlers, attachment ->
+        previewHandlers
+            .firstOrNull { it.canHandle(attachment) }
+            ?.handleAttachmentPreview(attachment)
+    },
 ) {
     val (message, onItemLongClick) = attachmentState
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
@@ -88,9 +98,7 @@ public fun FileAttachmentContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            previewHandlers
-                                .firstOrNull { it.canHandle(attachment) }
-                                ?.handleAttachmentPreview(attachment)
+                            onItemClicked(previewHandlers, attachment)
                         },
                         onLongClick = { onItemLongClick(message) },
                     ),

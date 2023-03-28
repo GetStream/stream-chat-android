@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -61,6 +62,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param attachmentState The state of the attachment, holding the root modifier, the message
  * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
+ * @param onContentItemClicked Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -68,6 +70,20 @@ public fun ImageAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
     skipEnrichUrl: Boolean = false,
+    onContentItemClicked: (
+        imagePreviewLauncher: ManagedActivityResultLauncher<ImagePreviewContract.Input, ImagePreviewResult?>,
+        message: Message,
+        attachmentPosition: Int,
+        skipEnrichUrl: Boolean,
+    ) -> Unit = { imagePreviewLauncher, messageClicked, clickedAttachmentPosition, skipEnrichUrl ->
+        imagePreviewLauncher.launch(
+            ImagePreviewContract.Input(
+                messageId = messageClicked.id,
+                initialPosition = clickedAttachmentPosition,
+                skipEnrichUrl = skipEnrichUrl,
+            )
+        )
+    },
 ) {
     val (message, onLongItemClick, onImagePreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentImageGridSpacing
@@ -114,6 +130,7 @@ public fun ImageAttachmentContent(
                 onImagePreviewResult = onImagePreviewResult,
                 onLongItemClick = onLongItemClick,
                 skipEnrichUrl = skipEnrichUrl,
+                onContentItemClicked = onContentItemClicked,
             )
         } else {
             Column(
@@ -130,7 +147,8 @@ public fun ImageAttachmentContent(
                             message = message,
                             attachmentPosition = imageIndex,
                             onImagePreviewResult = onImagePreviewResult,
-                            onLongItemClick = onLongItemClick
+                            onLongItemClick = onLongItemClick,
+                            onContentItemClicked = onContentItemClicked,
                         )
                     }
                 }
@@ -154,7 +172,8 @@ public fun ImageAttachmentContent(
                                     message = message,
                                     attachmentPosition = imageIndex,
                                     onImagePreviewResult = onImagePreviewResult,
-                                    onLongItemClick = onLongItemClick
+                                    onLongItemClick = onLongItemClick,
+                                    onContentItemClicked = onContentItemClicked,
                                 )
 
                                 if (!isUploading) {
@@ -172,7 +191,8 @@ public fun ImageAttachmentContent(
                                 message = message,
                                 attachmentPosition = imageIndex,
                                 onImagePreviewResult = onImagePreviewResult,
-                                onLongItemClick = onLongItemClick
+                                onLongItemClick = onLongItemClick,
+                                onContentItemClicked = onContentItemClicked,
                             )
                         }
                     }
@@ -200,6 +220,12 @@ internal fun ImageAttachmentContentItem(
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     skipEnrichUrl: Boolean = false,
+    onContentItemClicked: (
+        imagePreviewLauncher: ManagedActivityResultLauncher<ImagePreviewContract.Input, ImagePreviewResult?>,
+        message: Message,
+        attachmentPosition: Int,
+        skipEnrichUrl: Boolean,
+    ) -> Unit,
 ) {
     val painter = rememberStreamImagePainter(attachment.imagePreviewUrl)
 
@@ -215,12 +241,11 @@ internal fun ImageAttachmentContentItem(
                 interactionSource = MutableInteractionSource(),
                 indication = rememberRipple(),
                 onClick = {
-                    imagePreviewLauncher.launch(
-                        ImagePreviewContract.Input(
-                            messageId = message.id,
-                            initialPosition = attachmentPosition,
-                            skipEnrichUrl = skipEnrichUrl,
-                        )
+                    onContentItemClicked(
+                        imagePreviewLauncher,
+                        message,
+                        attachmentPosition,
+                        skipEnrichUrl
                     )
                 },
                 onLongClick = { onLongItemClick(message) }
