@@ -111,7 +111,7 @@ if (result.isSuccess()) {
     Channel channel = result.getOrNull();
 } else {
     // Handle error
-    ChatError error = result.chatErrorOrNull();
+    ChatError error = result.streamErrorOrNull();
 }
 ```
 </TabItem>

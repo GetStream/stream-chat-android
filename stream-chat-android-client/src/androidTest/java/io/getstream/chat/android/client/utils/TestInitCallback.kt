@@ -37,7 +37,7 @@ internal class TestInitCallback : Call.Callback<ConnectionData> {
         if (result.isSuccess) {
             data = result.getOrThrow()
         } else {
-            error = result.chatErrorOrNull()
+            error = result.streamErrorOrNull()
         }
     }
 }

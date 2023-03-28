@@ -38,7 +38,7 @@ public class CoreConcepts {
             Channel channel = result.getOrNull();
         } else {
             // Handle error
-            StreamError error = result.chatErrorOrNull();
+            StreamError error = result.streamErrorOrNull();
         }
     }
 
