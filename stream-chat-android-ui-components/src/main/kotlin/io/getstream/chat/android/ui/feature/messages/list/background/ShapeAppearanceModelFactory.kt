@@ -82,7 +82,6 @@ internal object ShapeAppearanceModelFactory {
                 )
                 setTint(ContextCompat.getColor(context, R.color.stream_ui_white))
             }
-
 }
 
 private val CORNER_SIZE_PX = 12.dpToPxPrecise()
