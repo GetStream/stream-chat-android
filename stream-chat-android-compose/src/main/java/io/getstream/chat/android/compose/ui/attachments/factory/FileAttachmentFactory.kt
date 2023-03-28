@@ -31,11 +31,11 @@ import io.getstream.chat.android.uiutils.extension.isAnyFileType
  * An [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
  * build the UI for the message.
  *
- * @param onContentItemClicked Lambda called when an item gets clicked.
+ * @param onContentItemClick Lambda called when an item gets clicked.
  */
 @Suppress("FunctionName")
 public fun FileAttachmentFactory(
-    onContentItemClicked: (
+    onContentItemClick: (
         previewHandler: List<AttachmentPreviewHandler>,
         attachment: Attachment,
     ) -> Unit = { previewHandlers, attachment ->
@@ -60,7 +60,7 @@ public fun FileAttachmentFactory(
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentFileWidth),
             attachmentState = state,
-            onItemClicked = onContentItemClicked,
+            onItemClicked = onContentItemClick,
         )
     },
 )
