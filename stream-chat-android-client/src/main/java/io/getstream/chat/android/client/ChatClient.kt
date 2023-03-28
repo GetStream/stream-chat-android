@@ -1184,6 +1184,8 @@ internal constructor(
         appSettingsManager.clear()
 
         clientState.toMutableState()?.clearState()
+
+        audioPlayer.dispose()
         logger.v { "[disconnectUserSuspend] completed('$userId')" }
     }
 
