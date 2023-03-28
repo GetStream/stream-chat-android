@@ -20,6 +20,6 @@
     <corners android:radius="5dp"/>
     <stroke
         android:width="1dp"
-        android:color="@color/stream_ui_grey" />
+        android:color="@color/stream_ui_grey_gainsboro" />
     <size android:width="7dp" />
 </shape>

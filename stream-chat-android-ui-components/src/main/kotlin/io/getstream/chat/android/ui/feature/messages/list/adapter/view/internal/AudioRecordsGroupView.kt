@@ -45,7 +45,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
     ) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
 
     init {
-        setPadding(4.dpToPx(), 2.dpToPx(), 4.dpToPx(), 4.dpToPx())
+        setPadding(2.dpToPx(), 0.dpToPx(), 2.dpToPx(), 2.dpToPx())
     }
 
     private var attachments: List<Attachment>? = null
@@ -77,7 +77,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             if (index > 0) {
                 playerView.updateLayoutParams {
                     if (this is MarginLayoutParams) {
-                        this.setMargins(0, 4.dpToPx(), 0, 0)
+                        this.setMargins(0, 2.dpToPx(), 0, 0)
                     }
                 }
             }
