@@ -19,12 +19,14 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationParser
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 public class AudioRecordsGroupView : LinearLayoutCompat {
 
@@ -36,14 +38,18 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         defStyleAttr: Int,
     ) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr)
 
+    init {
+        setPadding(4.dpToPx(), 2.dpToPx(), 4.dpToPx(), 4.dpToPx())
+    }
+
     public fun showAudioAttachments(attachments: List<Attachment>) {
         removeAllViews()
 
         val audiosAttachment = attachments.filter { attachment -> attachment.isAudioRecording() }
-        audiosAttachment.forEach(::addAttachmentPlayerView)
+        audiosAttachment.forEachIndexed(::addAttachmentPlayerView)
     }
 
-    private fun addAttachmentPlayerView(attachment: Attachment) {
+    private fun addAttachmentPlayerView(index: Int, attachment: Attachment) {
         AudioRecordPlayer(context).apply {
             (attachment.extraData["duration"] as? Double)
                 ?.toInt()
@@ -53,6 +59,14 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             (attachment.extraData["waveList"] as? List<Float>)?.let(::setWaveBars)
         }.let { playerView ->
             addView(playerView)
+
+            if (index > 0) {
+                playerView.updateLayoutParams {
+                    if (this is MarginLayoutParams) {
+                        this.setMargins(0, 4.dpToPx(), 0, 0)
+                    }
+                }
+            }
 
             val audioPlayer = ChatClient.instance().audioPlayer
             val hashCode = attachment.hashCode()
