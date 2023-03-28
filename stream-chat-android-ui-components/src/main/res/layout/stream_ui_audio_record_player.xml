@@ -46,6 +46,7 @@
             android:src="@drawable/stream_ui_ic_play"
             android:tint="@color/stream_ui_literal_black"
             android:visibility="visible"
+            android:elevation="2dp"
             />
     </FrameLayout>
 
