@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -28,11 +27,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.utils.extensions.dpToPx
-import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import java.lang.Float.min
 import kotlin.math.max
 import kotlin.math.roundToInt
