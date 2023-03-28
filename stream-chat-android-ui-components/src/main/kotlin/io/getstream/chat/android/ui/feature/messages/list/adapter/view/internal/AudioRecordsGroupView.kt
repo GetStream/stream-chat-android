@@ -31,6 +31,9 @@ import io.getstream.chat.android.ui.utils.extensions.dpToPx
 private const val NULL_DURATION = 0.0
 private const val ONE_HUNDRED = 100
 
+/**
+ * A LinearLayoutCompat that present the list of audio messages.
+ */
 public class AudioRecordsGroupView : LinearLayoutCompat {
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper())
@@ -47,6 +50,11 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
 
     private var attachments: List<Attachment>? = null
 
+    /**
+     * Shows audio track.
+     *
+     * @param attachments attachments of type "audio_recording".
+     */
     public fun showAudioAttachments(attachments: List<Attachment>) {
         this.attachments = attachments
         removeAllViews()
@@ -117,6 +125,9 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
     private fun progressToDecimal(progress: Int, totalDuration: Double?): Int =
         progress * (totalDuration ?: NULL_DURATION).toInt() / ONE_HUNDRED
 
+    /**
+     * Unbinds the view.
+     */
     public fun unbind() {
         attachments?.map { attachment -> attachment.hashCode() }?.let(ChatClient.instance().audioPlayer::removeAudios)
     }

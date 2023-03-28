@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
@@ -29,9 +28,9 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import java.lang.Float.min
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 private const val MIN_BAR_VALUE = 0.05F
 private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
@@ -45,10 +44,13 @@ private const val INITIAL_PROGRESS = 0F
 private const val ONE = 1
 private const val ONE_HUNDRED = 100
 
-public class AudioWavesSeekBar : LinearLayoutCompat {
-    public constructor(context: Context) : super(context)
-    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+/**
+ * Custom view that presents a Seekbar that shows and interacts with audio wave bars.
+ */
+internal class AudioWavesSeekBar : LinearLayoutCompat {
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
@@ -71,7 +73,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         addView(tracker, layoutParamsButton)
     }
 
-    private val barPadding = DEFAULT_BAR_PADDING.dp
+    private val barPadding = DEFAULT_BAR_PADDING.dpToPx()
     private val realPaddingStart = paddingStart + barPadding
     private val realPaddingEnd = paddingEnd + barPadding
     private var barWidth: Float? = null
@@ -97,7 +99,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
 
     private var internalWaveBars: List<Float>? = null
 
-    public var waveBars: List<Float>
+    internal var waveBars: List<Float>
         set(value) {
             internalWaveBars = value
         }
@@ -109,7 +111,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
 
     private var progress: Float = INITIAL_PROGRESS
 
-    public fun setProgress(progress: Float) {
+    internal fun setProgress(progress: Float) {
         if (!isDragging) {
             this.progress = progress
             invalidate()
@@ -121,14 +123,19 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         invalidate()
     }
 
-    public fun setOnStartDrag(func: () -> Unit) {
+    internal fun setOnStartDrag(func: () -> Unit) {
         onStartDrag = func
     }
 
-    public fun setOnEndDrag(func: (Int) -> Unit) {
+    internal fun setOnEndDrag(func: (Int) -> Unit) {
         onEndDrag = func
     }
 
+    /**
+     * In the method onMeasure the view calculates the size of important parts of the view, like the max height of
+     * the bars, the size of each bar, etc. It is important to do that in this method to avoid recalculating the
+     * sizes on each draw.
+     */
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
@@ -142,6 +149,13 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         maxHeight = measuredHeight - paddingTop - paddingBottom
     }
 
+    /**
+     * This methods intercepts any [MotionEvent] in this view. When the user is interacting with this view, it
+     * intercepts the actions, so it is not possible to perform actions like scrolling while interacting with this view.
+     *
+     * The progress of the view will change accordingly with the horizontal movement of the user. The wave bars and
+     * the tracker will move accordingly with the progress.
+     */
     override fun onTouchEvent(motionEvent: MotionEvent): Boolean {
         return when (motionEvent.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -150,7 +164,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
                 onStartDrag()
                 parent.requestDisallowInterceptTouchEvent(true)
                 tracker.updateLayoutParams {
-                    width += EXPAND_TRACKER_WIDTH.dp
+                    width += EXPAND_TRACKER_WIDTH.dpToPx()
                 }
                 forceProgress(xToProgress(motionEvent.x))
                 true
@@ -166,7 +180,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
                 onEndDrag(xToProgress(motionEvent.x).toInt())
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
-                    width -= EXPAND_TRACKER_WIDTH.dp
+                    width -= EXPAND_TRACKER_WIDTH.dpToPx()
                 }
                 true
             }
@@ -175,7 +189,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
                 isDragging = false
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
-                    width -= EXPAND_TRACKER_WIDTH.dp
+                    width -= EXPAND_TRACKER_WIDTH.dpToPx()
                 }
                 true
             }
@@ -184,6 +198,9 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         }
     }
 
+    /**
+     * In onDraw all the bars are drawn and the tracker position is calculated.
+     */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -204,6 +221,9 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         }
     }
 
+    /**
+     * Calculates the tracker position not allowing it go beyond the bounds of the seekbar.
+     */
     private fun trackerPosition(positionX: Float) =
         min(
             max(realPaddingStart.toFloat() + tracker.width / HALF, positionX),
@@ -218,6 +238,3 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         return ONE_HUNDRED * ((croppedX - realPaddingStart) / seekWidth())
     }
 }
-
-private val Int.dp: Int
-    get() = (this * Resources.getSystem().displayMetrics.density).roundToInt()
