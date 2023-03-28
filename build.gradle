@@ -32,6 +32,7 @@ buildscript {
                 includeGroup("com.huawei.agconnect")
             }
         }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     dependencies {
@@ -75,6 +76,7 @@ allprojects {
                 includeModule("com.github.stfalcon-studio", "StfalconImageViewer")
             }
         }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
 
