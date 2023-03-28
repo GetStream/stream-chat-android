@@ -21,15 +21,12 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
-import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerBinding
+import io.getstream.chat.android.ui.feature.messages.list.background.ShapeAppearanceModelFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
-import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 private const val PERCENTAGE = 100
@@ -49,17 +46,7 @@ public class AudioRecordPlayer : LinearLayoutCompat {
 
         setPadding(2.dpToPx())
 
-        background = ShapeAppearanceModel.builder()
-            .setAllCornerSizes(CORNER_SIZE_PX)
-            .build()
-            .let(::MaterialShapeDrawable)
-            .apply {
-                setStroke(
-                    STROKE_WIDTH_PX,
-                    ContextCompat.getColor(context, R.color.stream_ui_grey_whisper)
-                )
-                setTint(ContextCompat.getColor(context, R.color.stream_ui_white))
-            }
+        background = ShapeAppearanceModelFactory.audioBackground(context)
     }
 
     private var totalDuration: String? = null
@@ -138,10 +125,5 @@ public class AudioRecordPlayer : LinearLayoutCompat {
             setOnStartDrag(startDrag)
             setOnEndDrag(stopDrag)
         }
-    }
-
-    private companion object {
-        private val CORNER_SIZE_PX = 12.dpToPxPrecise()
-        private val STROKE_WIDTH_PX = 1.dpToPxPrecise()
     }
 }

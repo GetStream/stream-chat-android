@@ -23,7 +23,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,10 +36,10 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.feature.messages.list.FileAttachmentViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.background.ShapeAppearanceModelFactory
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
-import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 import io.getstream.chat.android.ui.widgets.internal.SimpleListAdapter
@@ -210,17 +209,7 @@ private class FileAttachmentViewHolder(
     }
 
     init {
-        binding.root.background = ShapeAppearanceModel.builder()
-            .setAllCornerSizes(CORNER_SIZE_PX)
-            .build()
-            .let(::MaterialShapeDrawable)
-            .apply {
-                setStroke(
-                    STROKE_WIDTH_PX,
-                    ContextCompat.getColor(itemView.context, R.color.stream_ui_grey_whisper)
-                )
-                setTint(ContextCompat.getColor(itemView.context, R.color.stream_ui_white))
-            }
+        binding.root.background = ShapeAppearanceModelFactory.fileBackground(context)
     }
 
     fun restartJob() {
@@ -284,10 +273,5 @@ private class FileAttachmentViewHolder(
     override fun unbind() {
         clearScope()
         super.unbind()
-    }
-
-    private companion object {
-        private val CORNER_SIZE_PX = 12.dpToPxPrecise()
-        private val STROKE_WIDTH_PX = 1.dpToPxPrecise()
     }
 }
