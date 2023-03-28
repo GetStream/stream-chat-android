@@ -16,13 +16,17 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentPreviewContent
+import io.getstream.chat.android.compose.ui.attachments.preview.ImagePreviewContract
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isMedia
 
@@ -32,10 +36,25 @@ import io.getstream.chat.android.compose.ui.util.isMedia
  *
  * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
+ * @param onContentItemClicked Lambda called when an item gets clicked.
  */
 @Suppress("FunctionName")
 public fun ImageAttachmentFactory(
     skipEnrichUrl: Boolean = false,
+    onContentItemClicked: (
+        imagePreviewLauncher: ManagedActivityResultLauncher<ImagePreviewContract.Input, ImagePreviewResult?>,
+        message: Message,
+        attachmentPosition: Int,
+        skipEnrichUrl: Boolean,
+    ) -> Unit = { imagePreviewLauncher, messageClicked, clickedAttachmentPosition, skipEnrichUrl ->
+        imagePreviewLauncher.launch(
+            ImagePreviewContract.Input(
+                messageId = messageClicked.id,
+                initialPosition = clickedAttachmentPosition,
+                skipEnrichUrl = skipEnrichUrl,
+            )
+        )
+    },
 ): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.all { it.isMedia() } },
     previewContent = { modifier, attachments, onAttachmentRemoved ->
@@ -52,7 +71,8 @@ public fun ImageAttachmentFactory(
                 .wrapContentHeight()
                 .heightIn(max = ChatTheme.dimens.attachmentsContentImageMaxHeight),
             attachmentState = state,
-            skipEnrichUrl = skipEnrichUrl
+            skipEnrichUrl = skipEnrichUrl,
+            onContentItemClicked = onContentItemClicked,
         )
     },
 )

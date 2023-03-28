@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -66,9 +67,9 @@ import io.getstream.chat.android.ui.utils.giphyInfo
  * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
  * dimensions, however you can still clip maximum dimensions using [StreamDimens.attachmentsContentGiphyMaxWidth]
  * and [StreamDimens.attachmentsContentGiphyMaxHeight].
- *
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+ * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
@@ -79,6 +80,14 @@ public fun GiphyAttachmentContent(
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
+    onItemClick: (context: Context, previewUrl: String) -> Unit = { context, previewUrl ->
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(previewUrl)
+            )
+        )
+    },
 ) {
     val context = LocalContext.current
     val (message, onLongItemClick) = attachmentState
@@ -148,12 +157,7 @@ public fun GiphyAttachmentContent(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    context.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(previewUrl)
-                        )
-                    )
+                    onItemClick(context, previewUrl)
                 },
                 onLongClick = { onLongItemClick(message) }
             )
