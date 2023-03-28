@@ -2188,6 +2188,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun showAudioAttachments (Ljava/util/List;)V
+	public final fun unbind ()V
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/AudioWavesSeekBar : androidx/appcompat/widget/LinearLayoutCompat {

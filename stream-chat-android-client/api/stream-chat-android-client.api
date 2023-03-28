@@ -507,6 +507,7 @@ public abstract interface class io/getstream/chat/android/client/audio/AudioPlay
 	public abstract fun onSpeedChange (ILkotlin/jvm/functions/Function1;)V
 	public abstract fun pause ()V
 	public abstract fun play (Ljava/lang/String;I)V
+	public abstract fun removeAudios (Ljava/util/List;)V
 	public abstract fun seekTo (II)V
 	public abstract fun startSeek (I)V
 }
