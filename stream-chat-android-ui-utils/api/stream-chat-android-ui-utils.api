@@ -38,6 +38,7 @@ public final class io/getstream/chat/android/uiutils/extension/UserKt {
 public final class io/getstream/chat/android/uiutils/model/MimeType {
 	public static final field INSTANCE Lio/getstream/chat/android/uiutils/model/MimeType;
 	public static final field MIME_TYPE_7Z Ljava/lang/String;
+	public static final field MIME_TYPE_AUDIO_MP4 Ljava/lang/String;
 	public static final field MIME_TYPE_CSV Ljava/lang/String;
 	public static final field MIME_TYPE_DOC Ljava/lang/String;
 	public static final field MIME_TYPE_DOCX Ljava/lang/String;
