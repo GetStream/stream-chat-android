@@ -182,4 +182,9 @@ internal class MediaAttachmentsViewHolder(
     override fun onAttachedToWindow() {
         bindUploadingIndicator()
     }
+
+    override fun unbind() {
+        super.unbind()
+        binding.audioRecordsView.unbind()
+    }
 }
