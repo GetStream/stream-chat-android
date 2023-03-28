@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -40,9 +43,9 @@ import io.getstream.chat.android.ui.common.utils.GiphySizingMode
  * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
  * dimensions, however you can still clip maximum dimensions using [StreamDimens.attachmentsContentGiphyMaxWidth]
  * and [StreamDimens.attachmentsContentGiphyMaxHeight].
- *
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+ * @param onContentItemClick Lambda called when an item gets clicked.
  *
  * @return Returns an instance of [AttachmentFactory] that is used to handle Giphys.
  */
@@ -51,6 +54,14 @@ public fun GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
+    onContentItemClick: (context: Context, Url: String) -> Unit = { context, url ->
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(url)
+            )
+        )
+    }
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = { attachments -> attachments.any(Attachment::isGiphy) },
@@ -61,6 +72,7 @@ public fun GiphyAttachmentFactory(
                 giphyInfoType = giphyInfoType,
                 giphySizingMode = giphySizingMode,
                 contentScale = contentScale,
+                onItemClick = onContentItemClick,
             )
         },
     )

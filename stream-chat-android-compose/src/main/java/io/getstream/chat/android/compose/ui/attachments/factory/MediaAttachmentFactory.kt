@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,11 +31,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
+import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClicked
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 
 /**
  * An [AttachmentFactory] that is able to handle Image and Video attachments.
@@ -43,6 +49,7 @@ import io.getstream.chat.android.models.AttachmentType
  * in a group when previewing Media attachments in the message list. Values between 4 and 8 are optimal.
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
+ * @param onContentItemClick Lambda called when an item gets clicked.
  * @param itemOverlayContent Represents the content overlaid above individual items.
  * By default it is used to display a play button over video previews.
  * @param previewItemOverlayContent Represents the content overlaid above individual preview items.
@@ -52,6 +59,14 @@ import io.getstream.chat.android.models.AttachmentType
 public fun MediaAttachmentFactory(
     maximumNumberOfPreviewedItems: Int = 4,
     skipEnrichUrl: Boolean = false,
+    onContentItemClick: (
+        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+        message: Message,
+        attachmentPosition: Int,
+        videoThumbnailsEnabled: Boolean,
+        streamCdnImageResizing: StreamCdnImageResizing,
+        skipEnrichUrl: Boolean,
+    ) -> Unit = ::onMediaAttachmentContentItemClicked,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
             DefaultItemOverlayContent()
@@ -84,6 +99,7 @@ public fun MediaAttachmentFactory(
                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                 itemOverlayContent = itemOverlayContent,
                 skipEnrichUrl = skipEnrichUrl,
+                onContentItemClick = onContentItemClick,
             )
         }
     )
