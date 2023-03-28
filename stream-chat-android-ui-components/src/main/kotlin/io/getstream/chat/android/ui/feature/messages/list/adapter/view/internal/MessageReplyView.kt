@@ -195,9 +195,11 @@ internal class MessageReplyView : FrameLayout {
             binding.additionalInfo.isVisible = true
             binding.additionalInfo.text =
                 DurationParser.durationInMilliToReadableTime(
-                    (message.attachments
-                        .first { it.isAudioRecording() }
-                        .extraData["duration"] as? Double)
+                    (
+                        message.attachments
+                            .first { it.isAudioRecording() }
+                            .extraData["duration"] as? Double
+                        )
                         ?.toInt() ?: 0
                 )
         } else {
