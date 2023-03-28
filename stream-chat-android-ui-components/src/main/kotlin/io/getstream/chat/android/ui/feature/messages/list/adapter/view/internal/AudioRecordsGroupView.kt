@@ -28,6 +28,9 @@ import io.getstream.chat.android.ui.common.utils.DurationParser
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
+private const val NULL_DURATION = 0.0
+private const val ONE_HUNDRED = 100
+
 public class AudioRecordsGroupView : LinearLayoutCompat {
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper())
@@ -103,13 +106,17 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             playerView.onSeekbarMove(startDrag = {
                 audioPlayer.startSeek(attachment.hashCode())
             }, stopDrag = { progress ->
-                audioPlayer.seekTo(
-                    (progress.times((attachment.extraData["duration"] as? Double) ?: 0.0) / 100).toInt(),
-                    attachment.hashCode()
-                )
-            })
+                    audioPlayer.seekTo(
+                        progressToDecimal(progress, attachment.extraData["duration"] as? Double),
+                        attachment.hashCode()
+                    )
+                }
+            )
         }
     }
+
+    private fun progressToDecimal(progress: Int, totalDuration: Double?): Int =
+        progress * (totalDuration ?: NULL_DURATION).toInt() / ONE_HUNDRED
 
     public fun unbind() {
         attachments?.map { attachment -> attachment.hashCode() }?.let(ChatClient.instance().audioPlayer::removeAudios)

@@ -35,6 +35,15 @@ import kotlin.math.roundToInt
 
 private const val MIN_BAR_VALUE = 0.05F
 private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
+private const val EXPAND_TRACKER_WIDTH = 12
+private const val HALF = 2
+private const val DEFAULT_BAR_PADDING = 5
+private const val DEFAULT_BAR_SPACING = 0.4
+private const val DEFAULT_BAR_NUMBER = 40
+private const val DEFAULT_BAR_VALUE = 0F
+private const val INITIAL_PROGRESS = 0F
+private const val ONE = 1
+private const val ONE_HUNDRED = 100
 
 public class AudioWavesSeekBar : LinearLayoutCompat {
     public constructor(context: Context) : super(context)
@@ -62,13 +71,13 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         addView(tracker, layoutParamsButton)
     }
 
-    private val barPadding = 5.dp
+    private val barPadding = DEFAULT_BAR_PADDING.dp
     private val realPaddingStart = paddingStart + barPadding
     private val realPaddingEnd = paddingEnd + barPadding
     private var barWidth: Float? = null
     private var spaceWidth: Float? = null
     private var maxHeight: Int? = null
-    private val barSpacing = 0.4
+    private val barSpacing = DEFAULT_BAR_SPACING
     private var barHeightRatio: Float = DEFAULT_BAR_HEIGHT_RATIO
     private var onStartDrag: () -> Unit = {}
     private var onEndDrag: (Int) -> Unit = {}
@@ -93,14 +102,12 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
             internalWaveBars = value
         }
         get() = internalWaveBars ?: buildList {
-            repeat(40) {
-                add(0F)
+            repeat(DEFAULT_BAR_NUMBER) {
+                add(DEFAULT_BAR_VALUE)
             }
         }
 
-    private var progress: Float = 0F
-
-    private var progressCorrection = 1F
+    private var progress: Float = INITIAL_PROGRESS
 
     public fun setProgress(progress: Float) {
         if (!isDragging) {
@@ -126,15 +133,13 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
         val totalWidth = measuredWidth - realPaddingStart - realPaddingEnd
-        val totalBarWidth = totalWidth * (1 - barSpacing)
+        val totalBarWidth = totalWidth * (ONE - barSpacing)
         val totalSpaceWidth = totalWidth * barSpacing
         val barCount = waveBars.size
 
         barWidth = totalBarWidth.toFloat() / barCount
         spaceWidth = totalSpaceWidth.toFloat() / barCount
         maxHeight = measuredHeight - paddingTop - paddingBottom
-
-        progressCorrection = barCount / 100F
     }
 
     override fun onTouchEvent(motionEvent: MotionEvent): Boolean {
@@ -145,7 +150,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
                 onStartDrag()
                 parent.requestDisallowInterceptTouchEvent(true)
                 tracker.updateLayoutParams {
-                    width += 12.dp
+                    width += EXPAND_TRACKER_WIDTH.dp
                 }
                 forceProgress(xToProgress(motionEvent.x))
                 true
@@ -161,7 +166,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
                 onEndDrag(xToProgress(motionEvent.x).toInt())
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
-                    width -= 12.dp
+                    width -= EXPAND_TRACKER_WIDTH.dp
                 }
                 true
             }
@@ -170,7 +175,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
                 isDragging = false
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
-                    width -= 12.dp
+                    width -= EXPAND_TRACKER_WIDTH.dp
                 }
                 true
             }
@@ -187,30 +192,30 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
 
             val left = (barWidth!! + spaceWidth!!) * index + realPaddingStart
             val right = left + barWidth!!
-            val top = (height - barHeight) / 2
+            val top = (height - barHeight) / HALF
             val bottom = top + barHeight
 
             val rect = RectF(left, top, right, bottom)
-            val paint = if (progressToX(progress) > left + barWidth!! / 2f) paintRight else paintLeft
+            val paint = if (progressToX(progress) > left + barWidth!! / HALF) paintRight else paintLeft
 
-            tracker.x = trackerPosition(progressToX(progress)) - tracker.width / 2
+            tracker.x = trackerPosition(progressToX(progress)) - tracker.width / HALF
 
-            canvas.drawRoundRect(rect, barWidth!! / 2f, barWidth!! / 2f, paint)
+            canvas.drawRoundRect(rect, barWidth!! / HALF, barWidth!! / HALF, paint)
         }
     }
 
     private fun trackerPosition(positionX: Float) =
         min(
-            max(realPaddingStart.toFloat() + tracker.width / 2, positionX),
-            (width - realPaddingEnd - tracker.width / 2).toFloat()
+            max(realPaddingStart.toFloat() + tracker.width / HALF, positionX),
+            (width - realPaddingEnd - tracker.width / HALF).toFloat()
         )
 
     private fun progressToX(progress: Float): Float =
-        (progress / 100) * seekWidth() + realPaddingStart
+        (progress / ONE_HUNDRED) * seekWidth() + realPaddingStart
 
     private fun xToProgress(x: Float): Float {
         val croppedX = min(max(realPaddingStart.toFloat(), x), width - realPaddingEnd.toFloat())
-        return 100F * ((croppedX - realPaddingStart) / seekWidth())
+        return ONE_HUNDRED * ((croppedX - realPaddingStart) / seekWidth())
     }
 }
 
