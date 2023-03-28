@@ -27,6 +27,7 @@
     <item quantity="one">"%d Réponse"</item>
     <item quantity="other">"%d Réponses"</item>
   </plurals>
+  <string name="stream_ui_message_audio_reply_info">"Message vocal"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Erreur. Le fichier ne peut pas être affiché"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Un problème est survenu. Impossible d\'ouvrir la pièce jointe: %1$s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"Le chargement a échoué en raison d\'une URL non valide."</string>
