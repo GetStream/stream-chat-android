@@ -95,10 +95,12 @@
             android:gravity="center"
             android:padding="8dp"
             android:text="x1.0"
+            android:layout_marginHorizontal="2dp"
             android:textAlignment="center"
             android:textColor="@color/stream_ui_literal_black"
             android:textStyle="bold"
             android:visibility="gone"
+            android:elevation="2dp"
             tools:text="x1.0"
             />
     </FrameLayout>
