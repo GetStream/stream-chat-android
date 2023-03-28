@@ -79,7 +79,7 @@ public class AudioRecordPlayer : LinearLayoutCompat {
     public fun setPlaying() {
         playerView.loadingView.isVisible = false
         playerView.playButton.run {
-            setImageResource(R.drawable.stream_ui_ic_user_block)
+            setImageResource(R.drawable.stream_ui_ic_pause)
             isVisible = true
         }
         playerView.speedButton.isVisible = true
