@@ -38,7 +38,6 @@ internal class StreamMediaPlayer(
     private val onProgressListeners: MutableMap<Int, (ProgressData) -> Unit> = mutableMapOf()
     private val onSpeedListeners: MutableMap<Int, (Float) -> Unit> = mutableMapOf()
     private val seekMap: MutableMap<Int, Int> = mutableMapOf()
-    // private var currentSeek = 0
     private var playerState = PlayerState.UNSET
     private var poolJob: Job? = null
     private var currentAudioHash: Int = -1
@@ -151,7 +150,9 @@ internal class StreamMediaPlayer(
     override fun seekTo(msec: Int, audioHash: Int) {
         seekMap[audioHash] = msec
 
-        mediaPlayer.seekTo(msec)
+        if (currentAudioHash == audioHash) {
+            mediaPlayer.seekTo(msec)
+        }
     }
 
     override fun startSeek(audioHash: Int) {
