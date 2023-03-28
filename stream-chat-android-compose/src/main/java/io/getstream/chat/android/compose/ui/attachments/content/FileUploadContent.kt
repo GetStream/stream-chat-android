@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
@@ -51,12 +52,20 @@ import io.getstream.chat.android.uiutils.extension.isUploading
  *
  * @param attachmentState The state of this attachment.
  * @param modifier Modifier for styling.
+ * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileUploadContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
+    onItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = { attachment, previewHandlers ->
+        if (!attachment.isUploading()) {
+            previewHandlers
+                .firstOrNull { it.canHandle(attachment) }
+                ?.handleAttachmentPreview(attachment)
+        }
+    },
 ) {
     val message = attachmentState.message
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
@@ -71,11 +80,7 @@ public fun FileUploadContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            if (!attachment.isUploading()) {
-                                previewHandlers
-                                    .firstOrNull { it.canHandle(attachment) }
-                                    ?.handleAttachmentPreview(attachment)
-                            }
+                            onItemClick(attachment, previewHandlers)
                         },
                         onLongClick = { }
                     ),
