@@ -36,12 +36,12 @@ import io.getstream.chat.android.compose.ui.util.isMedia
  *
  * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
- * @param onContentItemClicked Lambda called when an item gets clicked.
+ * @param onContentItemClick Lambda called when an item gets clicked.
  */
 @Suppress("FunctionName")
 public fun ImageAttachmentFactory(
     skipEnrichUrl: Boolean = false,
-    onContentItemClicked: (
+    onContentItemClick: (
         imagePreviewLauncher: ManagedActivityResultLauncher<ImagePreviewContract.Input, ImagePreviewResult?>,
         message: Message,
         attachmentPosition: Int,
@@ -72,7 +72,7 @@ public fun ImageAttachmentFactory(
                 .heightIn(max = ChatTheme.dimens.attachmentsContentImageMaxHeight),
             attachmentState = state,
             skipEnrichUrl = skipEnrichUrl,
-            onContentItemClicked = onContentItemClicked,
+            onContentItemClicked = onContentItemClick,
         )
     },
 )
