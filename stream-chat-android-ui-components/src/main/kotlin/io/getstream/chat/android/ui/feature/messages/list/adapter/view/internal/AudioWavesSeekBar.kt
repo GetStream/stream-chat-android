@@ -27,15 +27,19 @@ import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import java.lang.Float.min
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 private const val MIN_BAR_VALUE = 0.05F
 private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
-private const val EXPAND_TRACKER_WIDTH = 12
+private const val EXPAND_TRACKER_WIDTH = 10
 private const val HALF = 2
 private const val DEFAULT_BAR_PADDING = 5
 private const val DEFAULT_BAR_SPACING = 0.4
@@ -86,12 +90,12 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
     private fun seekWidth(): Int = width - realPaddingStart - realPaddingEnd
 
     private val paintLeft = Paint().apply {
-        color = Color.WHITE
+        color = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
         style = Paint.Style.FILL
     }
 
     private val paintRight = Paint().apply {
-        color = Color.GRAY
+        color = ContextCompat.getColor(context, R.color.stream_ui_grey)
         style = Paint.Style.FILL
     }
 
@@ -196,7 +200,7 @@ public class AudioWavesSeekBar : LinearLayoutCompat {
             val bottom = top + barHeight
 
             val rect = RectF(left, top, right, bottom)
-            val paint = if (progressToX(progress) > left + barWidth!! / HALF) paintRight else paintLeft
+            val paint = if (progressToX(progress) > left + barWidth!! / HALF) paintLeft else paintRight
 
             tracker.x = trackerPosition(progressToX(progress)) - tracker.width / HALF
 
