@@ -2226,18 +2226,6 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public final fun unbind ()V
 }
 
-public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/AudioWavesSeekBar : androidx/appcompat/widget/LinearLayoutCompat {
-	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
-	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
-	public final fun getWaveBars ()Ljava/util/List;
-	public fun onTouchEvent (Landroid/view/MotionEvent;)Z
-	public final fun setOnEndDrag (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnStartDrag (Lkotlin/jvm/functions/Function0;)V
-	public final fun setProgress (F)V
-	public final fun setWaveBars (Ljava/util/List;)V
-}
-
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/GiphyMediaAttachmentView : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
