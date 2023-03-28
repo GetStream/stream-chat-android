@@ -32,7 +32,6 @@ import java.util.Date
  * @param devices The list of devices for the current user.
  * @param online Whether a is user online or not.
  * @param createdAt Date/time of creation.
- * @param deactivatedAt Date/time of deactivation.
  * @param updatedAt Date/time of the last update.
  * @param lastActive Date of last activity.
  * @param totalUnreadCount The total unread messages count for the current user.
@@ -41,6 +40,7 @@ import java.util.Date
  * @param teams List of teams user is a part of.
  * @param channelMutes A list of channels muted by the current user.
  * @param extraData A map of custom fields for the user.
+ * @param deactivatedAt Date/time of deactivation.
  */
 public data class User(
     var id: String = "",
@@ -52,7 +52,6 @@ public data class User(
     var devices: List<Device> = mutableListOf(),
     var online: Boolean = false,
     var createdAt: Date? = null,
-    val deactivatedAt: Date? = null,
     var updatedAt: Date? = null,
     var lastActive: Date? = null,
     var totalUnreadCount: Int = 0,
@@ -61,6 +60,7 @@ public data class User(
     val teams: List<String> = listOf(),
     val channelMutes: List<ChannelMute> = emptyList(),
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
+    val deactivatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
