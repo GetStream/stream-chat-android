@@ -39,6 +39,8 @@ dependencies {
     implementation Dependencies.androidxAnnotations
     implementation Dependencies.streamLog
 
+    api "io.getstream:stream-result:0.1.1-SNAPSHOT"
+
     detektPlugins(Dependencies.detektFormatting)
 
     testImplementation Dependencies.junitJupiterApi
