@@ -100,6 +100,15 @@ internal class StreamMediaPlayer(
         mediaPlayer.release()
     }
 
+    override fun removeAudios(audioHashList: List<Int>) {
+        audioHashList.forEach { hash ->
+            onStateListeners.remove(hash)
+            onProgressListeners.remove(hash)
+            onSpeedListeners.remove(hash)
+            seekMap.remove(hash)
+        }
+    }
+
     private fun setAudio(sourceUrl: String, audioHash: Int) {
         currentAudioHash = audioHash
 

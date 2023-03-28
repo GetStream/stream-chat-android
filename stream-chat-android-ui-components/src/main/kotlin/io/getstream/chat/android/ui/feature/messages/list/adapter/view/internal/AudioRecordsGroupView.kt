@@ -42,7 +42,10 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         setPadding(4.dpToPx(), 2.dpToPx(), 4.dpToPx(), 4.dpToPx())
     }
 
+    private var attachments: List<Attachment>? = null
+
     public fun showAudioAttachments(attachments: List<Attachment>) {
+        this.attachments = attachments
         removeAllViews()
 
         val audiosAttachment = attachments.filter { attachment -> attachment.isAudioRecording() }
@@ -100,11 +103,15 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             playerView.onSeekbarMove(startDrag = {
                 audioPlayer.startSeek(attachment.hashCode())
             }, stopDrag = { progress ->
-                    audioPlayer.seekTo(
-                        (progress.times((attachment.extraData["duration"] as? Double) ?: 0.0) / 100).toInt(),
-                        attachment.hashCode()
-                    )
-                })
+                audioPlayer.seekTo(
+                    (progress.times((attachment.extraData["duration"] as? Double) ?: 0.0) / 100).toInt(),
+                    attachment.hashCode()
+                )
+            })
         }
+    }
+
+    public fun unbind() {
+        attachments?.map { attachment -> attachment.hashCode() }?.let(ChatClient.instance().audioPlayer::removeAudios)
     }
 }

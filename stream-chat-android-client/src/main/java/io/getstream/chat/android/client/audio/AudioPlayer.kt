@@ -37,6 +37,8 @@ public interface AudioPlayer {
     public fun currentSpeed(): Float
 
     public fun dispose()
+
+    public fun removeAudios(audioHashList: List<Int>)
 }
 
 public data class ProgressData(public val duration: Int, public val progress: Double)
