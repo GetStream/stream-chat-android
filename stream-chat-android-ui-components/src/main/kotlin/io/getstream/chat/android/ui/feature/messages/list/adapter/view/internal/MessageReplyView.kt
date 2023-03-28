@@ -26,10 +26,12 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.shape.MaterialShapeDrawable
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isLink
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.utils.DurationParser
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 import io.getstream.chat.android.ui.databinding.StreamUiMessageReplyViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
@@ -80,6 +82,7 @@ internal class MessageReplyView : FrameLayout {
         setAvatarPosition(message.isMine(ChatClient.instance().getCurrentUser()))
         setReplyBackground(message, isMine, style)
         setAttachmentImage(message)
+        setAdditionalInfo(message)
         setReplyText(message, isMine, style)
     }
 
@@ -187,6 +190,21 @@ internal class MessageReplyView : FrameLayout {
         }
     }
 
+    private fun setAdditionalInfo(message: Message) {
+        if (message.attachments.any { it.isAudioRecording() }) {
+            binding.additionalInfo.isVisible = true
+            binding.additionalInfo.text =
+                DurationParser.durationInMilliToReadableTime(
+                    (message.attachments
+                        .first { it.isAudioRecording() }
+                        .extraData["duration"] as? Double)
+                        ?.toInt() ?: 0
+                )
+        } else {
+            binding.additionalInfo.isVisible = false
+        }
+    }
+
     private fun setReplyText(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         val attachment = message.attachments.lastOrNull()
         binding.replyText.text = if (attachment == null || message.text.isNotBlank()) {
@@ -198,6 +216,8 @@ internal class MessageReplyView : FrameLayout {
         } else {
             if (attachment.isLink()) {
                 attachment.titleLink ?: attachment.ogUrl
+            } else if (attachment.isAudioRecording()) {
+                context.getString(R.string.stream_ui_message_audio_reply_info)
             } else {
                 attachment.title ?: attachment.name
             }

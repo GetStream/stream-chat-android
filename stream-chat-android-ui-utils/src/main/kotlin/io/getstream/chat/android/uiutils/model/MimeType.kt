@@ -44,6 +44,7 @@ public object MimeType {
     public const val MIME_TYPE_VIDEO_QUICKTIME: String = "video/quicktime"
     public const val MIME_TYPE_MP4: String = "mp4"
     public const val MIME_TYPE_VIDEO_MP4: String = "video/mp4"
+    public const val MIME_TYPE_AUDIO_MP4: String = "audio/mp4"
     public const val MIME_TYPE_MP3: String = "audio/mp3"
     public const val MIME_TYPE_M4A: String = "audio/m4a"
     public const val MIME_TYPE_GIF: String = "image/gif"

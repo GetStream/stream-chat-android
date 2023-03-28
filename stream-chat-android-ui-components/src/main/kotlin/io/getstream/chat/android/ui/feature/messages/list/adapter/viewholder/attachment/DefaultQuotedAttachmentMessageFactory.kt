@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.at
 
 import android.view.View
 import android.view.ViewGroup
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
@@ -38,8 +39,11 @@ public class DefaultQuotedAttachmentMessageFactory : QuotedAttachmentFactory {
     override fun canHandle(message: Message): Boolean {
         val attachment = message.attachments.firstOrNull() ?: return false
 
-        return attachment.isFile() || attachment.isImage() ||
-            attachment.isGiphy() || attachment.isVideo()
+        return attachment.isFile() ||
+            attachment.isImage() ||
+            attachment.isGiphy() ||
+            attachment.isVideo() ||
+            attachment.isAudioRecording()
     }
 
     /**

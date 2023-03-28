@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.helper
 
+import android.util.Log
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.file.internal.FileAttachmentAdapter
@@ -65,6 +66,7 @@ public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
         MimeType.MIME_TYPE_VIDEO_QUICKTIME to R.drawable.stream_ui_ic_file_mov,
         MimeType.MIME_TYPE_MP4 to R.drawable.stream_ui_ic_file_mov,
         MimeType.MIME_TYPE_VIDEO_MP4 to R.drawable.stream_ui_ic_file_mp4,
+        MimeType.MIME_TYPE_AUDIO_MP4 to R.drawable.stream_ui_ic_file_mp3,
         MimeType.MIME_TYPE_M4A to R.drawable.stream_ui_ic_file_m4a,
         MimeType.MIME_TYPE_MP3 to R.drawable.stream_ui_ic_file_mp3,
     )
@@ -79,6 +81,9 @@ public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
         if (mimeType == null) {
             return R.drawable.stream_ui_ic_file
         }
+
+        Log.d("MimeTypeIconProvider", "mimeType: $mimeType")
+
         return mimeTypesToIconResMap[mimeType] ?: when {
             mimeType.contains(AttachmentType.AUDIO) -> R.drawable.stream_ui_ic_file_audio_generic
             mimeType.contains(AttachmentType.VIDEO) -> R.drawable.stream_ui_ic_file_video_generic
