@@ -22,9 +22,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
+import io.getstream.result.Result
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date

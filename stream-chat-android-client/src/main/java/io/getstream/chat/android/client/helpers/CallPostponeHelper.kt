@@ -18,10 +18,10 @@ package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.scope.UserScope
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.withTimeout
 
 /**
@@ -59,7 +59,7 @@ internal class CallPostponeHelper(
             } catch (e: Throwable) {
                 logger.e { "[postponeCall] failed: $e" }
                 Result.Failure(
-                    ChatError.GenericError(
+                    StreamError.GenericError(
                         message = "Failed to perform call. Waiting for WS connection was too long.",
                     ),
                 )

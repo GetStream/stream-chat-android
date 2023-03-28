@@ -52,13 +52,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.BuildConfig
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.ChannelsActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
+import io.getstream.result.StreamError
 
 /**
  * An Activity that allows users to manually log in to an environment with an API key,
@@ -242,8 +242,8 @@ class CustomLoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun showError(chatError: ChatError) {
-        Toast.makeText(this, "Login failed ${chatError.message}", Toast.LENGTH_SHORT).show()
+    private fun showError(streamError: StreamError) {
+        Toast.makeText(this, "Login failed ${streamError.message}", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

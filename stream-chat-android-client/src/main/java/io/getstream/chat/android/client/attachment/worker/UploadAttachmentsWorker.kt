@@ -19,17 +19,17 @@ package io.getstream.chat.android.client.attachment.worker
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.recover
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
+import io.getstream.result.StreamError
+import io.getstream.result.recover
 
 @InternalStreamChatApi
 public class UploadAttachmentsWorker(
@@ -51,13 +51,13 @@ public class UploadAttachmentsWorker(
 
         return try {
             message?.let { sendAttachments(it) } ?: Result.Failure(
-                ChatError.GenericError("The message with id $messageId could not be found.")
+                StreamError.GenericError("The message with id $messageId could not be found.")
             )
         } catch (e: Exception) {
             logger.i { "[uploadAttachmentsForMessage] Couldn't upload attachments ${e.message}" }
             message?.let { updateMessages(it) }
             Result.Failure(
-                ChatError.ThrowableError(
+                StreamError.ThrowableError(
                     message = "Could not upload attachments for message $messageId",
                     cause = e,
                 ),
@@ -70,7 +70,7 @@ public class UploadAttachmentsWorker(
             logger.d { "[sendAttachments] Current user is not set. Restoring credentials" }
             if (!chatClient.containsStoredCredentials()) {
                 logger.d { "[sendAttachments] User's credentials are not available" }
-                return Result.Failure(ChatError.GenericError("Could not set user"))
+                return Result.Failure(StreamError.GenericError("Could not set user"))
             }
 
             chatClient.setUserWithoutConnectingIfNeeded()
@@ -93,7 +93,7 @@ public class UploadAttachmentsWorker(
                 Result.Success(Unit)
             } else {
                 logger.i { "[sendAttachments] Unable to upload attachments for message ${message.id}" }
-                Result.Failure(ChatError.GenericError("Unable to upload attachments for message ${message.id}"))
+                Result.Failure(StreamError.GenericError("Unable to upload attachments for message ${message.id}"))
             }
         }
     }
@@ -131,7 +131,7 @@ public class UploadAttachmentsWorker(
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
                     it.uploadState = Attachment.UploadState.Failed(
-                        ChatError.ThrowableError(message = "Could not upload attachments.", cause = e),
+                        StreamError.ThrowableError(message = "Could not upload attachments.", cause = e),
                     )
                 }
                 it
@@ -161,7 +161,7 @@ public class UploadAttachmentsWorker(
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
         }
 
-        override fun onError(error: ChatError) {
+        override fun onError(error: StreamError) {
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
         }
 

@@ -75,6 +75,7 @@ object Versions {
     internal const val STFALCON_IMAGE_VIEWER = "1.0.1"
     internal const val STREAM_LOG = "1.1.3"
     internal const val STREAM_PUSH = "1.0.2"
+    internal const val STREAM_RESULT = "0.1.4-SNAPSHOT"
     internal const val TEST_PARAMETER_INJECTOR = "1.10"
     internal const val THREETENBP = "1.6.5"
     internal const val TIMBER = "5.0.1"
@@ -212,6 +213,7 @@ object Dependencies {
     const val streamPushFirebase = "io.getstream:stream-android-push-firebase:${Versions.STREAM_PUSH}"
     const val streamPushHuawei = "io.getstream:stream-android-push-huawei:${Versions.STREAM_PUSH}"
     const val streamPushXiaomi = "io.getstream:stream-android-push-xiaomi:${Versions.STREAM_PUSH}"
+    const val streamResult = "io.getstream:stream-result:${Versions.STREAM_RESULT}"
     const val testParameterInjector =
         "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"
     const val threeTenBp = "org.threeten:threetenbp:${Versions.THREETENBP}"

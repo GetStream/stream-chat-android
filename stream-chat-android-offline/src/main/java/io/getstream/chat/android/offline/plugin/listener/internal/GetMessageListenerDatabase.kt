@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.log.StreamLog
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 
 /**
  * An implementation of [GetMessageListener] used to perform database operations when making an API call
@@ -44,7 +44,7 @@ internal class GetMessageListenerDatabase(
      *
      * @param messageId The ID of the message we are fetching.
      * @param result The result of the API call. Will contain an instance of [Message] wrapped inside [Result] if
-     * the request was successful, or an instance of [ChatError] if the request had failed.
+     * the request was successful, or an instance of [StreamError] if the request had failed.
      */
     override suspend fun onGetMessageResult(
         messageId: String,

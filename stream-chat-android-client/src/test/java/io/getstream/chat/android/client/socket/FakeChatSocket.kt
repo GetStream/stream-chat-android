@@ -25,10 +25,10 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.TokenManager
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
 import okhttp3.WebSocketListener
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn

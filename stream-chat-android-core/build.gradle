@@ -6,7 +6,6 @@ plugins {
     id 'kotlin'
 }
 
-
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
     PUBLISH_ARTIFACT_ID = 'stream-chat-android-core'
@@ -37,9 +36,9 @@ dependencies {
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxAnnotations
-    implementation Dependencies.streamLog
 
-    api "io.getstream:stream-result:0.1.1-SNAPSHOT"
+    api Dependencies.streamResult
+    implementation Dependencies.streamLog
 
     detektPlugins(Dependencies.detektFormatting)
 

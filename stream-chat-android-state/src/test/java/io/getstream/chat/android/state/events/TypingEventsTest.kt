@@ -18,12 +18,12 @@ package io.getstream.chat.android.state.events
 
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

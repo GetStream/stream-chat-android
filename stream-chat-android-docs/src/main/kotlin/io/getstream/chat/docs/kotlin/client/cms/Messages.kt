@@ -4,17 +4,17 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.docs.kotlin.client.helpers.MyFileUploader
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -180,7 +180,7 @@ class Messages(
                         val fileUrl = url
                     }
 
-                    override fun onError(error: ChatError) {
+                    override fun onError(error: StreamError) {
                         // Handle error
                     }
 

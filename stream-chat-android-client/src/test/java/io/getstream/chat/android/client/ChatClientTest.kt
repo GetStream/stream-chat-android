@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.UnknownEvent
@@ -34,12 +33,13 @@ import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -260,7 +260,7 @@ internal class ChatClientTest {
         /* Given */
         whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
             Result.Failure(
-                ChatError.NetworkError(
+                StreamError.NetworkError(
                     statusCode = 400,
                     streamCode = 4,
                     message = "channel_cids must contain at least 1 item",
@@ -272,7 +272,7 @@ internal class ChatClientTest {
         val result = client.getSyncHistory(emptyList(), Date()).await()
 
         /* Then */
-        result shouldBeEqualTo Result.Failure(ChatError.GenericError("channelsIds must contain at least 1 id."))
+        result shouldBeEqualTo Result.Failure(StreamError.GenericError("channelsIds must contain at least 1 id."))
     }
 
     @Test

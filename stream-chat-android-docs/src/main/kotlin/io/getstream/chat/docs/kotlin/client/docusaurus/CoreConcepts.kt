@@ -1,10 +1,10 @@
 package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -44,7 +44,7 @@ class CoreConcepts {
                 // Handle success
             }
             is Result.Failure -> {
-                val error: ChatError = result.value
+                val error: StreamError = result.value
                 // Handler error
             }
         }
@@ -53,7 +53,7 @@ class CoreConcepts {
     fun errorHandlingReactively(result: Result<Channel>) {
         result.onSuccess { channel ->
             // Handle success
-        }.onError { chatError ->
+        }.onError { streamError ->
             // Handle error
         }
     }

@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.call.Call.Companion.callCanceledError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.Result
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean

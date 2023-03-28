@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.extensions.countUnreadMentionsForUser
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.result.Result
 import io.getstream.chat.android.state.extensions.globalState
 
 class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {

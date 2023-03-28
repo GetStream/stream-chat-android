@@ -1494,7 +1494,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public final fun displayNewMessages (Lio/getstream/chat/android/ui/model/MessageListItemWrapper;)V
 	public final fun getRecyclerView ()Landroidx/recyclerview/widget/RecyclerView;
-	public final fun handleFlagMessageResult (Lio/getstream/chat/android/client/utils/Result;)V
+	public final fun handleFlagMessageResult (Lio/getstream/result/Result;)V
 	public final fun hideEmptyStateView ()V
 	public final fun hideLoadingView ()V
 	public final fun init (Lio/getstream/chat/android/models/Channel;)V
@@ -1618,7 +1618,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$FlagMessageResultHandler {
-	public abstract fun onHandleResult (Lio/getstream/chat/android/client/utils/Result;)V
+	public abstract fun onHandleResult (Lio/getstream/result/Result;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$GiphySendHandler {
@@ -2975,39 +2975,39 @@ public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListVi
 }
 
 public abstract class io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent {
-	public synthetic fun <init> (Lio/getstream/chat/android/client/errors/ChatError;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public synthetic fun <init> (Lio/getstream/result/StreamError;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getStreamError ()Lio/getstream/result/StreamError;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$DeleteChannelError : io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$DeleteChannelError;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$DeleteChannelError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$DeleteChannelError;
+	public fun <init> (Lio/getstream/result/StreamError;)V
+	public final fun component1 ()Lio/getstream/result/StreamError;
+	public final fun copy (Lio/getstream/result/StreamError;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$DeleteChannelError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$DeleteChannelError;Lio/getstream/result/StreamError;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$DeleteChannelError;
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun getStreamError ()Lio/getstream/result/StreamError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$HideChannelError : io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$HideChannelError;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$HideChannelError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$HideChannelError;
+	public fun <init> (Lio/getstream/result/StreamError;)V
+	public final fun component1 ()Lio/getstream/result/StreamError;
+	public final fun copy (Lio/getstream/result/StreamError;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$HideChannelError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$HideChannelError;Lio/getstream/result/StreamError;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$HideChannelError;
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun getStreamError ()Lio/getstream/result/StreamError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$LeaveChannelError : io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent {
-	public fun <init> (Lio/getstream/chat/android/client/errors/ChatError;)V
-	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatError;
-	public final fun copy (Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$LeaveChannelError;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$LeaveChannelError;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$LeaveChannelError;
+	public fun <init> (Lio/getstream/result/StreamError;)V
+	public final fun component1 ()Lio/getstream/result/StreamError;
+	public final fun copy (Lio/getstream/result/StreamError;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$LeaveChannelError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$LeaveChannelError;Lio/getstream/result/StreamError;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$ErrorEvent$LeaveChannelError;
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getChatError ()Lio/getstream/chat/android/client/errors/ChatError;
+	public fun getStreamError ()Lio/getstream/result/StreamError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -34,7 +34,7 @@ import kotlinx.coroutines.withContext
 public class ReturnOnErrorCall<T : Any>(
     private val originalCall: Call<T>,
     scope: CoroutineScope,
-    private val onErrorReturn: suspend (originalError: ChatError) -> Result<T>,
+    private val onErrorReturn: suspend (originalError: StreamError) -> Result<T>,
 ) : Call<T> {
 
     private val callScope = scope + SupervisorJob(scope.coroutineContext.job)

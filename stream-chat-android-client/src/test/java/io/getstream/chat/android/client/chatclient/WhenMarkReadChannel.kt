@@ -17,11 +17,11 @@
 package io.getstream.chat.android.client.chatclient
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.asCall
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -35,7 +35,7 @@ internal class WhenMarkReadChannel : BaseChatClientTest() {
     @Test
     fun `Given offline plugin with failing precondition Should not make API call and return error result`() = runTest {
         val plugin = mock<ChannelMarkReadListenerPlugin> {
-            onBlocking { it.onChannelMarkReadPrecondition(any(), any()) } doReturn Result.Failure(ChatError.GenericError(message = ""))
+            onBlocking { it.onChannelMarkReadPrecondition(any(), any()) } doReturn Result.Failure(StreamError.GenericError(message = ""))
         }
         val sut = Fixture().givenPlugin(plugin).get()
 

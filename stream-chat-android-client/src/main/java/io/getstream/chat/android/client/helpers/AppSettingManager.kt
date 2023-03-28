@@ -17,10 +17,10 @@
 package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.FileUploadConfig
+import io.getstream.result.Result
 
 /**
  * Maintains application settings fetched from the backend.

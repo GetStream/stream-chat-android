@@ -22,9 +22,9 @@ import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.errorhandler.SendReactionErrorHandler
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 
 /**

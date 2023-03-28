@@ -16,17 +16,17 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.randomCID
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -129,7 +129,7 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(ChatError.GenericError("")))
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(StreamError.GenericError("")))
 
         verify(channelLogic).upsertMessage(
             argThat { message ->

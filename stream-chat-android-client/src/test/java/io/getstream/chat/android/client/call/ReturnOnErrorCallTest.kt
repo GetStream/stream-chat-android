@@ -18,10 +18,10 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedCall
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
@@ -46,7 +46,7 @@ internal class ReturnOnErrorCallTest {
     private val resultValue = Mother.randomString()
     private val errorResultValue = Mother.randomString()
     private val validResult: Result<String> = Result.Success(resultValue)
-    private val error: ChatError = ChatError.GenericError(message = randomString())
+    private val error: StreamError = StreamError.GenericError(message = randomString())
     private val errorResult: Result<String> = Result.Failure(error)
     private val onErrorResult: Result<String> = Result.Success(errorResultValue)
     private val spyOnError = SpyOnError(onErrorResult)
@@ -180,16 +180,16 @@ internal class ReturnOnErrorCallTest {
         blockedCall.isCanceled() `should be equal to` true
     }
 
-    private class SpyOnError<T : Any>(private val result: Result<T>) : suspend (ChatError) -> Result<T> {
+    private class SpyOnError<T : Any>(private val result: Result<T>) : suspend (StreamError) -> Result<T> {
         private var invocations = 0
-        private var error: ChatError? = null
-        override suspend fun invoke(error: ChatError): Result<T> {
+        private var error: StreamError? = null
+        override suspend fun invoke(error: StreamError): Result<T> {
             invocations++
             this.error = error
             return result
         }
 
-        infix fun `should be invoked with`(error: ChatError) {
+        infix fun `should be invoked with`(error: StreamError) {
             invocations `should be equal to` 1
             this.error `should be equal to` error
         }

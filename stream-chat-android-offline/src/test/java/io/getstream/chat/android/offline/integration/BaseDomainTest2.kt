@@ -35,7 +35,6 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.test.SynchronizedCoroutineTest
 import io.getstream.chat.android.client.test.utils.TestDataHelper
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.Config
@@ -48,6 +47,7 @@ import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRep
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor

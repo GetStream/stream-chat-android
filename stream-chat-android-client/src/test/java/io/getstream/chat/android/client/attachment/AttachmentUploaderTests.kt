@@ -19,9 +19,7 @@ package io.getstream.chat.android.client.attachment
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
@@ -29,6 +27,8 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomFile
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -65,7 +65,7 @@ internal class AttachmentUploaderTests {
     @Test
     @Ignore("Current logic doesn't work so. Need to rewrite test")
     fun `Should return attachment with properly filled data when sending file has failed`(): Unit = runTest {
-        val error = ChatError.GenericError(message = "")
+        val error = StreamError.GenericError(message = "")
         val attachment = randomAttachments(size = 1).first()
 
         val sut = Fixture()

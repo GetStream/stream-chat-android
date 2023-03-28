@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.utils.internal
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import java.util.regex.Pattern
 
 private val cidPattern = Pattern.compile("^([a-zA-z0-9]|!|-)+:([a-zA-z0-9]|!|-)+$")
@@ -52,6 +52,6 @@ public fun validateCidWithResult(cid: String): Result<String> {
     return try {
         Result.Success(validateCid(cid))
     } catch (exception: IllegalArgumentException) {
-        Result.Failure(ChatError.ThrowableError(message = "Cid is invalid: $cid", cause = exception))
+        Result.Failure(StreamError.ThrowableError(message = "Cid is invalid: $cid", cause = exception))
     }
 }

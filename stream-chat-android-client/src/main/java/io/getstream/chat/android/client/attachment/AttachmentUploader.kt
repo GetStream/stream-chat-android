@@ -21,10 +21,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
 import java.io.File
 
 @InternalStreamChatApi
@@ -218,7 +218,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * @param progressCallback Used to listen to file upload
      * progress, success, and failure.
      *
-     * @return Returns a [Result] containing a [io.getstream.chat.android.client.errors.ChatError]
+     * @return Returns a [Result] containing a [io.getstream.result.StreamError]
      * */
     private fun onFailedUpload(
         attachment: Attachment,

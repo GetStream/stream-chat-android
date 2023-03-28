@@ -16,17 +16,17 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.cause.MessageModerationDeletedException
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 import java.util.Date
 
 /**
@@ -55,7 +55,7 @@ internal class DeleteMessageListenerState(
             if (isModerationFailed) {
                 deleteMessage(message)
                 Result.Failure(
-                    ChatError.ThrowableError(
+                    StreamError.ThrowableError(
                         message = "Message with failed moderation has been deleted locally: $messageId",
                         cause = MessageModerationDeletedException(
                             "Message with failed moderation has been deleted locally: $messageId",
@@ -65,7 +65,7 @@ internal class DeleteMessageListenerState(
             } else {
                 Result.Success(Unit)
             }
-        } ?: Result.Failure(ChatError.GenericError(message = "No message found with id: $messageId"))
+        } ?: Result.Failure(StreamError.GenericError(message = "No message found with id: $messageId"))
     }
 
     /**

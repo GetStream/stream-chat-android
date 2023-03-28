@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filterWithOffset
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.ChannelUserRead
@@ -31,6 +30,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 

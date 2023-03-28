@@ -20,10 +20,10 @@ import io.getstream.chat.android.client.extensions.updateFailedMessage
 import io.getstream.chat.android.client.extensions.updateMessageOnlineState
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.result.Result
 
 /**
  * Implementation of [EditMessageListener] that deals with state read and write.

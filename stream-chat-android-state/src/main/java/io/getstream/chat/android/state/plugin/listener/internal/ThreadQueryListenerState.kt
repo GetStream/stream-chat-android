@@ -16,14 +16,14 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
+import io.getstream.result.StreamError
 
 /**
  * ThreadQueryListenerState handles both state in the SDK. It uses, if available, the database
@@ -45,7 +45,7 @@ internal class ThreadQueryListenerState(
         return if (loadingMoreMessage) {
             val errorMsg = "already loading messages for this thread, ignoring the load requests."
             logger.i { errorMsg }
-            Result.Failure(ChatError.GenericError(errorMsg))
+            Result.Failure(StreamError.GenericError(errorMsg))
         } else {
             Result.Success(Unit)
         }
@@ -79,7 +79,7 @@ internal class ThreadQueryListenerState(
         return if (loadingMoreMessage) {
             val errorMsg = "already loading messages for this thread, ignoring the load more requests."
             logger.i { errorMsg }
-            Result.Failure(ChatError.GenericError(errorMsg))
+            Result.Failure(StreamError.GenericError(errorMsg))
         } else {
             Result.Success(Unit)
         }

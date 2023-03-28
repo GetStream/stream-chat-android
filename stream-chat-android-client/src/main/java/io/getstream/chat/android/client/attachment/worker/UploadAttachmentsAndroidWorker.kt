@@ -56,11 +56,11 @@ internal class UploadAttachmentsAndroidWorker(
             messageId
         ).let { result ->
             when (result) {
-                is io.getstream.chat.android.client.utils.Result.Success -> {
+                is io.getstream.result.Result.Success -> {
                     logger.d { "[doWork] Attachments uploaded successfully" }
                     Result.success()
                 }
-                is io.getstream.chat.android.client.utils.Result.Failure -> {
+                is io.getstream.result.Result.Failure -> {
                     logger.i { "[doWork] Error while uploading attachments: ${result.value}" }
                     Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to result.value.message)).build())
                 }
