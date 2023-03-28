@@ -80,7 +80,7 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
     fun showAttachment(attachment: Attachment) {
         this.attachment = attachment
         when (attachment.type) {
-            AttachmentType.FILE, AttachmentType.VIDEO -> loadAttachmentThumb(attachment)
+            AttachmentType.FILE, AttachmentType.VIDEO, AttachmentType.AUDIO_RECORDING -> loadAttachmentThumb(attachment)
             AttachmentType.IMAGE -> showAttachmentThumb(
                 attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
             )
