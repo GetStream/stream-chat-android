@@ -79,7 +79,10 @@ public object StreamAttachmentFactories {
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
         contentScale: ContentScale = ContentScale.Crop,
         skipEnrichUrl: Boolean = false,
-        onUploadContentItemClicked: (Attachment, List<AttachmentPreviewHandler>) -> Unit = { attachment, previewHandlers ->
+        onUploadContentItemClicked: (
+            Attachment,
+            List<AttachmentPreviewHandler>,
+        ) -> Unit = { attachment, previewHandlers ->
             if (!attachment.isUploading()) {
                 previewHandlers
                     .firstOrNull { it.canHandle(attachment) }
