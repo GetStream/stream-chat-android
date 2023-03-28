@@ -49,6 +49,7 @@ internal fun createUser(
     devices: List<Device> = mutableListOf(),
     online: Boolean = randomBoolean(),
     createdAt: Date? = randomDate(),
+    deactivatedAt: Date? = randomDate(),
     updatedAt: Date? = randomDate(),
     lastActive: Date? = randomDate(),
     totalUnreadCount: Int = positiveRandomInt(),
@@ -56,31 +57,32 @@ internal fun createUser(
     mutes: List<Mute> = mutableListOf(),
     teams: List<String> = listOf(),
     channelMutes: List<ChannelMute> = emptyList(),
-    extraData: MutableMap<String, Any> = mutableMapOf()
+    extraData: MutableMap<String, Any> = mutableMapOf(),
 ): User = User(
-    id,
-    name,
-    image,
-    role,
-    invisible,
-    banned,
-    devices,
-    online,
-    createdAt,
-    updatedAt,
-    lastActive,
-    totalUnreadCount,
-    unreadChannels,
-    mutes,
-    teams,
-    channelMutes,
-    extraData
+    id = id,
+    name = name,
+    image = image,
+    role = role,
+    invisible = invisible,
+    banned = banned,
+    devices = devices,
+    online = online,
+    createdAt = createdAt,
+    deactivatedAt = deactivatedAt,
+    updatedAt = updatedAt,
+    lastActive = lastActive,
+    totalUnreadCount = totalUnreadCount,
+    unreadChannels = unreadChannels,
+    mutes = mutes,
+    teams = teams,
+    channelMutes = channelMutes,
+    extraData = extraData
 )
 
 internal fun createChannel(
     cid: String = randomCID(),
     config: Config = Config(),
-    extraData: MutableMap<String, Any> = mutableMapOf()
+    extraData: MutableMap<String, Any> = mutableMapOf(),
 ): Channel =
     Channel(cid = cid, config = config, extraData = extraData)
 
@@ -105,7 +107,7 @@ internal fun createMessage(
     deletedAt: Date? = randomDate(),
     user: User = createUser(),
     extraData: MutableMap<String, Any> = mutableMapOf(),
-    silent: Boolean = randomBoolean()
+    silent: Boolean = randomBoolean(),
 ): Message = Message(
     id = id,
     cid = cid,
@@ -134,20 +136,20 @@ internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
 
 internal fun createMessageList(
     size: Int = 10,
-    creationFunction: (Int) -> Message = { createMessage() }
+    creationFunction: (Int) -> Message = { createMessage() },
 ): List<Message> = List(size, creationFunction)
 
 internal fun createChannelUserRead(
     user: User = createUser(),
     lastReadDate: Date = Date.from(Instant.now()),
-    unreadMessages: Int = 0
+    unreadMessages: Int = 0,
 ) = ChannelUserRead(user, lastReadDate, unreadMessages)
 
 internal fun createCommand(
     name: String = randomString(),
     description: String = randomString(),
     args: String = randomString(),
-    set: String = randomString()
+    set: String = randomString(),
 ): Command = Command(name, description, args, set)
 
 internal fun createMember(
@@ -156,12 +158,12 @@ internal fun createMember(
     updatedAt: Date? = randomDate(),
     isInvited: Boolean = randomBoolean(),
     inviteAcceptedAt: Date? = randomDate(),
-    inviteRejectedAt: Date? = randomDate()
+    inviteRejectedAt: Date? = randomDate(),
 ): Member = Member(user, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
 
 internal fun createMembers(
     size: Int = positiveRandomInt(10),
-    creationFunction: (Int) -> Member = { createMember() }
+    creationFunction: (Int) -> Member = { createMember() },
 ): List<Member> = List(size, creationFunction)
 
 internal fun createAttachment(
