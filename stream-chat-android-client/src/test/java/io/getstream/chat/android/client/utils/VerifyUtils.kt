@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.utils
 import io.getstream.result.StreamError
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
+import io.getstream.result.Result
 
 internal fun <T : Any> verifyError(result: Result<T>, statusCode: Int) {
     result shouldBeInstanceOf Result.Failure::class
