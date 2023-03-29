@@ -40,6 +40,7 @@ import java.util.Date
  * @param teams List of teams user is a part of.
  * @param channelMutes A list of channels muted by the current user.
  * @param extraData A map of custom fields for the user.
+ * @param deactivatedAt Date/time of deactivation.
  */
 public data class User(
     var id: String = "",
@@ -59,6 +60,7 @@ public data class User(
     val teams: List<String> = listOf(),
     val channelMutes: List<ChannelMute> = emptyList(),
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
+    val deactivatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
@@ -73,6 +75,7 @@ public data class User(
             "totalUnreadCount" -> totalUnreadCount
             "unreadChannels" -> unreadChannels
             "createdAt" -> createdAt
+            "deactivatedAt" -> deactivatedAt
             "updatedAt" -> updatedAt
             "lastActive" -> lastActive
             else -> extraData[fieldName] as? Comparable<*>

@@ -48,6 +48,7 @@ internal fun DownstreamUserDto.toDomain(): User =
         devices = devices.orEmpty().map(DeviceDto::toDomain),
         online = online,
         createdAt = created_at,
+        deactivatedAt = deactivated_at,
         updatedAt = updated_at,
         lastActive = last_active,
         totalUnreadCount = total_unread_count,
