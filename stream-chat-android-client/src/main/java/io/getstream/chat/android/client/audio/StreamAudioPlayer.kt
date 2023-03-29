@@ -24,6 +24,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Date
 
 private const val INITIAL_SPEED = 1F
 private const val SPEED_INCREMENT = 0.5F
@@ -37,11 +38,13 @@ internal class StreamMediaPlayer(
     private val onStateListeners: MutableMap<Int, (AudioState) -> Unit> = mutableMapOf()
     private val onProgressListeners: MutableMap<Int, (ProgressData) -> Unit> = mutableMapOf()
     private val onSpeedListeners: MutableMap<Int, (Float) -> Unit> = mutableMapOf()
+    private val audioTracks: MutableList<TrackInfo> = mutableListOf()
     private val seekMap: MutableMap<Int, Int> = mutableMapOf()
     private var playerState = PlayerState.UNSET
     private var poolJob: Job? = null
     private var currentAudioHash: Int = -1
     private var playingSpeed = 1F
+    private var currentIndex = 0
 
     override fun onAudioStateChange(hash: Int, func: (AudioState) -> Unit) {
         onStateListeners[hash] = func
@@ -53,6 +56,11 @@ internal class StreamMediaPlayer(
 
     override fun onSpeedChange(hash: Int, func: (Float) -> Unit) {
         onSpeedListeners[hash] = func
+    }
+
+    override fun registerTrack(url: String, hash: Int, createdAt: Date) {
+        audioTracks.add(TrackInfo(url, hash, createdAt))
+        // audioTracks.sort()
     }
 
     override fun play(sourceUrl: String, audioHash: Int) {
@@ -99,6 +107,7 @@ internal class StreamMediaPlayer(
         onProgressListeners.clear()
         onSpeedListeners.clear()
         seekMap.clear()
+        audioTracks.clear()
         mediaPlayer.release()
     }
 
@@ -107,11 +116,16 @@ internal class StreamMediaPlayer(
             onStateListeners.remove(hash)
             onProgressListeners.remove(hash)
             onSpeedListeners.remove(hash)
+            audioTracks.removeAll { trackInto -> trackInto.hash == hash }
             seekMap.remove(hash)
         }
     }
 
     private fun setAudio(sourceUrl: String, audioHash: Int) {
+        currentIndex = audioTracks.indexOfFirst { trackInfo -> trackInfo.hash == audioHash }
+            .takeUnless { index -> index == -1 }
+            ?: 0
+
         currentAudioHash = audioHash
 
         mediaPlayer.run {
@@ -174,10 +188,17 @@ internal class StreamMediaPlayer(
 
     private fun onComplete() {
         stopPooling()
-        seekMap[currentAudioHash] = 0
-        playerState = PlayerState.IDLE
         publishProgress(currentAudioHash, ProgressData(0, 0.0))
         publishAudioState(currentAudioHash, AudioState.IDLE)
+        seekMap[currentAudioHash] = 0
+
+        if (currentIndex >= audioTracks.lastIndex) {
+            playerState = PlayerState.IDLE
+        } else {
+            val trackInfo = audioTracks[currentIndex + 1]
+            mediaPlayer.reset()
+            setAudio(trackInfo.url, trackInfo.hash)
+        }
     }
 
     private fun poolProgress() {
@@ -209,4 +230,9 @@ internal class StreamMediaPlayer(
     private fun publishSpeed(audioHash: Int, speed: Float) {
         onSpeedListeners[audioHash]?.invoke(speed)
     }
+}
+
+internal class TrackInfo(val url: String, val hash: Int, val createdAt: Date) : Comparable<TrackInfo> {
+
+    override fun compareTo(other: TrackInfo): Int = this.createdAt.compareTo(other.createdAt)
 }
