@@ -28,7 +28,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationParser
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
-import java.util.Date
 
 private const val NULL_DURATION = 0.0
 private const val ONE_HUNDRED = 100
@@ -50,7 +49,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         setPadding(2.dpToPx(), 0.dpToPx(), 2.dpToPx(), 2.dpToPx())
     }
 
-    private var attachments: List<Attachment>? = null
+    private var audioAttachments: List<Attachment>? = null
 
     /**
      * Shows audio track.
@@ -58,10 +57,11 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
      * @param attachments attachments of type "audio_recording".
      */
     public fun showAudioAttachments(attachments: List<Attachment>) {
-        this.attachments = attachments
         removeAllViews()
 
         val audiosAttachment = attachments.filter { attachment -> attachment.isAudioRecording() }
+        this.audioAttachments = audiosAttachment
+
         audiosAttachment.forEachIndexed(::addAttachmentPlayerView)
     }
 
@@ -89,13 +89,13 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
                 val audioPlayer = ChatClient.instance().audioPlayer
                 val hashCode = attachment.hashCode()
 
-                audioPlayer.registerAudio(playerView, attachment.assetUrl!!, hashCode, Date())
+                audioPlayer.registerStateChange(playerView, hashCode)
                 playerView.registerButtonsListeners(audioPlayer, attachment, hashCode)
             }
         }
     }
 
-    private fun AudioPlayer.registerAudio(playerView: AudioRecordPlayer, url: String, hashCode: Int, createdAt: Date) {
+    private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayer, hashCode: Int) {
         onAudioStateChange(hashCode) { audioState ->
             when (audioState) {
                 AudioState.LOADING -> playerView.setLoading()
@@ -109,7 +109,6 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             playerView.setProgress(progress)
         }
         onSpeedChange(hashCode, playerView::setSpeedText)
-        this.registerTrack(url, hashCode, createdAt)
     }
 
     private fun AudioRecordPlayer.registerButtonsListeners(
@@ -118,6 +117,11 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         hashCode: Int,
     ) {
         onPlayButtonPress {
+            audioPlayer.clearTracks()
+            audioAttachments?.forEachIndexed { index, attachment ->
+                audioPlayer.registerTrack(attachment.assetUrl!!, attachment.hashCode(), index)
+            }
+
             if (attachment.assetUrl != null) {
                 audioPlayer.play(attachment.assetUrl!!, hashCode)
             } else {
@@ -146,6 +150,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
      * Unbinds the view.
      */
     public fun unbind() {
-        attachments?.map { attachment -> attachment.hashCode() }?.let(ChatClient.instance().audioPlayer::removeAudios)
+        audioAttachments?.map { attachment -> attachment.hashCode() }
+            ?.let(ChatClient.instance().audioPlayer::removeAudios)
     }
 }

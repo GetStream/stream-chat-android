@@ -48,7 +48,9 @@ public interface AudioPlayer {
      */
     public fun onSpeedChange(hash: Int, func: (Float) -> Unit)
 
-    public fun registerTrack(url: String, hash: Int, createdAt: Date)
+    public fun registerTrack(url: String, hash: Int, position: Int)
+
+    public fun clearTracks()
 
     /**
      * Plays an audio track with sourceUrl.
