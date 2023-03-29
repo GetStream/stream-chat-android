@@ -91,6 +91,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
+import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
@@ -551,10 +552,17 @@ public class MessageListController(
                     parentMessageId = threadId,
                     endOfNewMessagesReached = true
                 )
+            }.onFirst {
+                // Set the last message in the list of message items as the last loaded thread message
+                // when the thread is initially loaded.
+                lastLoadedThreadMessage =
+                    (it.messageItems.lastOrNull { it is MessageItemState } as? MessageItemState)?.message
             }.collect { newState ->
                 val newLastMessage =
                     (newState.messageItems.lastOrNull { it is MessageItemState } as? MessageItemState)?.message
+
                 val newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
+
                 _threadListState.value = newState.copy(newMessageState = newMessageState)
                 if (newMessageState != null) lastLoadedThreadMessage = newLastMessage
             }

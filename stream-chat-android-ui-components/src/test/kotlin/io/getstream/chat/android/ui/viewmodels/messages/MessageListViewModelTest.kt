@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.AfterEach
@@ -66,6 +67,7 @@ internal class MessageListViewModelTest {
     fun tearDown() {
         MutableGlobalStateInstance.clearState()
     }
+
     @Test
     fun `Given initial state remains unchanged Should be in loading state`() = runTest {
         val viewModel = Fixture()
@@ -74,6 +76,8 @@ internal class MessageListViewModelTest {
             .get()
 
         val state = viewModel.state.observeAll()
+
+        advanceUntilIdle()
 
         state.last() shouldBeEqualTo MessageListViewModel.State.Loading
     }
@@ -92,6 +96,8 @@ internal class MessageListViewModelTest {
             .get()
 
         val state = viewModel.state.observeAll()
+
+        advanceUntilIdle()
 
         val expectedState = MessageListViewModel.State.Result(
             messageListItem = MessageListItemWrapper(
