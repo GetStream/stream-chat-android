@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.audio
 
+import java.util.Date
+
 @Suppress("TooManyFunctions")
 /**
  * Audio player used to play audio messages.
@@ -45,6 +47,8 @@ public interface AudioPlayer {
      * @param func The listener of the speed change.
      */
     public fun onSpeedChange(hash: Int, func: (Float) -> Unit)
+
+    public fun registerTrack(url: String, hash: Int, createdAt: Date)
 
     /**
      * Plays an audio track with sourceUrl.

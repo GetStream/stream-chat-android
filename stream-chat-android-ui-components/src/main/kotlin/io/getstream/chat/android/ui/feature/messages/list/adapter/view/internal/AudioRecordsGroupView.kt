@@ -21,12 +21,14 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationParser
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import java.util.Date
 
 private const val NULL_DURATION = 0.0
 private const val ONE_HUNDRED = 100
@@ -72,54 +74,69 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
 
             (attachment.extraData["waveList"] as? List<Float>)?.let(::setWaveBars)
         }.let { playerView ->
-            addView(playerView)
+            if (attachment.assetUrl != null) {
 
-            if (index > 0) {
-                playerView.updateLayoutParams {
-                    if (this is MarginLayoutParams) {
-                        this.setMargins(0, 2.dpToPx(), 0, 0)
+                addView(playerView)
+
+                if (index > 0) {
+                    playerView.updateLayoutParams {
+                        if (this is MarginLayoutParams) {
+                            this.setMargins(0, 2.dpToPx(), 0, 0)
+                        }
                     }
                 }
-            }
 
-            val audioPlayer = ChatClient.instance().audioPlayer
-            val hashCode = attachment.hashCode()
+                val audioPlayer = ChatClient.instance().audioPlayer
+                val hashCode = attachment.hashCode()
 
-            audioPlayer.onAudioStateChange(hashCode) { audioState ->
-                when (audioState) {
-                    AudioState.LOADING -> playerView.setLoading()
-                    AudioState.PAUSE -> playerView.setPaused()
-                    AudioState.UNSET, AudioState.IDLE -> playerView.setIdle()
-                    AudioState.PLAYING -> playerView.setPlaying()
-                }
+                audioPlayer.registerAudio(playerView, attachment.assetUrl!!, hashCode, Date())
+                playerView.registerButtonsListeners(audioPlayer, attachment, hashCode)
             }
-            audioPlayer.onProgressStateChange(hashCode) { (duration, progress) ->
-                playerView.setDuration(DurationParser.durationInMilliToReadableTime(duration))
-                playerView.setProgress(progress)
-            }
-            audioPlayer.onSpeedChange(hashCode, playerView::setSpeedText)
-
-            playerView.onPlayButtonPress {
-                if (attachment.assetUrl != null) {
-                    audioPlayer.play(attachment.assetUrl!!, hashCode)
-                } else {
-                    playerView.setLoading()
-                }
-            }
-
-            playerView.onSpeedButtonPress {
-                audioPlayer.changeSpeed()
-            }
-
-            playerView.onSeekbarMove({
-                audioPlayer.startSeek(attachment.hashCode())
-            }, { progress ->
-                audioPlayer.seekTo(
-                    progressToDecimal(progress, attachment.extraData["duration"] as? Double),
-                    attachment.hashCode()
-                )
-            })
         }
+    }
+
+    private fun AudioPlayer.registerAudio(playerView: AudioRecordPlayer, url: String, hashCode: Int, createdAt: Date) {
+        onAudioStateChange(hashCode) { audioState ->
+            when (audioState) {
+                AudioState.LOADING -> playerView.setLoading()
+                AudioState.PAUSE -> playerView.setPaused()
+                AudioState.UNSET, AudioState.IDLE -> playerView.setIdle()
+                AudioState.PLAYING -> playerView.setPlaying()
+            }
+        }
+        onProgressStateChange(hashCode) { (duration, progress) ->
+            playerView.setDuration(DurationParser.durationInMilliToReadableTime(duration))
+            playerView.setProgress(progress)
+        }
+        onSpeedChange(hashCode, playerView::setSpeedText)
+        this.registerTrack(url, hashCode, createdAt)
+    }
+
+    private fun AudioRecordPlayer.registerButtonsListeners(
+        audioPlayer: AudioPlayer,
+        attachment: Attachment,
+        hashCode: Int,
+    ) {
+        onPlayButtonPress {
+            if (attachment.assetUrl != null) {
+                audioPlayer.play(attachment.assetUrl!!, hashCode)
+            } else {
+                setLoading()
+            }
+        }
+
+        onSpeedButtonPress {
+            audioPlayer.changeSpeed()
+        }
+
+        onSeekbarMove({
+            audioPlayer.startSeek(attachment.hashCode())
+        }, { progress ->
+            audioPlayer.seekTo(
+                progressToDecimal(progress, attachment.extraData["duration"] as? Double),
+                attachment.hashCode()
+            )
+        })
     }
 
     private fun progressToDecimal(progress: Int, totalDuration: Double?): Int =
