@@ -24,7 +24,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Date
 
 private const val INITIAL_SPEED = 1F
 private const val SPEED_INCREMENT = 0.5F
@@ -39,6 +38,7 @@ internal class StreamMediaPlayer(
     private val onProgressListeners: MutableMap<Int, (ProgressData) -> Unit> = mutableMapOf()
     private val onSpeedListeners: MutableMap<Int, (Float) -> Unit> = mutableMapOf()
     private val audioTracks: MutableList<TrackInfo> = mutableListOf()
+    private val registeredTrackHashSet: MutableSet<Int> = mutableSetOf()
     private val seekMap: MutableMap<Int, Int> = mutableMapOf()
     private var playerState = PlayerState.UNSET
     private var poolJob: Job? = null
@@ -58,9 +58,17 @@ internal class StreamMediaPlayer(
         onSpeedListeners[hash] = func
     }
 
-    override fun registerTrack(url: String, hash: Int, createdAt: Date) {
-        audioTracks.add(TrackInfo(url, hash, createdAt))
-        // audioTracks.sort()
+    override fun registerTrack(url: String, hash: Int, position: Int) {
+        if (!registeredTrackHashSet.contains(hash)) {
+            registeredTrackHashSet.add(hash)
+            audioTracks.add(TrackInfo(url, hash, position))
+            audioTracks.sort()
+        }
+    }
+
+    override fun clearTracks() {
+        registeredTrackHashSet.clear()
+        audioTracks.clear()
     }
 
     override fun play(sourceUrl: String, audioHash: Int) {
@@ -232,7 +240,7 @@ internal class StreamMediaPlayer(
     }
 }
 
-internal class TrackInfo(val url: String, val hash: Int, val createdAt: Date) : Comparable<TrackInfo> {
+internal class TrackInfo(val url: String, val hash: Int, private val positionInt: Int) : Comparable<TrackInfo> {
 
-    override fun compareTo(other: TrackInfo): Int = this.createdAt.compareTo(other.createdAt)
+    override fun compareTo(other: TrackInfo): Int = this.positionInt.compareTo(other.positionInt)
 }
