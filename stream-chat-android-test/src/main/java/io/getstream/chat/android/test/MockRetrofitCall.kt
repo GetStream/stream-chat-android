@@ -47,7 +47,9 @@ public class MockRetrofitCall<T : Any>(
         job.get()?.cancel()
         job.set(null)
         pendingCallback.get()
-            ?.onResult(Result.Failure(StreamError.ThrowableError(message = "", cause = AsyncTestCallCanceledException())))
+            ?.onResult(Result.Failure(
+                StreamError.ThrowableError(message = "", cause = AsyncTestCallCanceledException()))
+            )
         pendingCallback.set(null)
     }
 
