@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the property `deactivatedAt` to `User`. [#4751](https://github.com/GetStream/stream-chat-android/pull/4751) 
 
 ### ⚠️ Changed
 

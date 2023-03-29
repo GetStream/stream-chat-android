@@ -61,6 +61,7 @@ internal data class DownstreamUserDto(
     val devices: List<DeviceDto>?,
     val online: Boolean,
     val created_at: Date?,
+    val deactivated_at: Date?,
     val updated_at: Date?,
     val last_active: Date?,
     val total_unread_count: Int = 0,
