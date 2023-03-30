@@ -21,6 +21,7 @@ import androidx.collection.SparseArrayCompat
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AudioRecordAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FallbackAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory
@@ -36,6 +37,7 @@ public class AttachmentPreviewFactoryManager @JvmOverloads constructor(
     attachmentPreviewFactories: List<AttachmentPreviewFactory> = listOf(
         MediaAttachmentPreviewFactory(),
         FileAttachmentPreviewFactory(),
+        AudioRecordAttachmentPreviewFactory()
     ),
     private val fallbackAttachmentPreviewFactory: FallbackAttachmentPreviewFactory = FallbackAttachmentPreviewFactory(),
 ) {
