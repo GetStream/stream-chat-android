@@ -67,6 +67,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed edit messages with unsupported attachments. [#4757](https://github.com/GetStream/stream-chat-android/pull/4757)
 
 ### ⬆️ Improved
 
