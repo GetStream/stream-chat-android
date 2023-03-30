@@ -34,9 +34,9 @@ internal class StreamMediaPlayer(
     private val progressUpdatePeriod: Long = 50,
 ) : AudioPlayer {
 
-    private val onStateListeners: MutableMap<Int, (AudioState) -> Unit> = mutableMapOf()
-    private val onProgressListeners: MutableMap<Int, (ProgressData) -> Unit> = mutableMapOf()
-    private val onSpeedListeners: MutableMap<Int, (Float) -> Unit> = mutableMapOf()
+    private val onStateListeners: MutableMap<Int, MutableList<(AudioState) -> Unit>> = mutableMapOf()
+    private val onProgressListeners: MutableMap<Int, MutableList<(ProgressData) -> Unit>> = mutableMapOf()
+    private val onSpeedListeners: MutableMap<Int, MutableList<(Float) -> Unit>> = mutableMapOf()
     private val audioTracks: MutableList<TrackInfo> = mutableListOf()
     private val registeredTrackHashSet: MutableSet<Int> = mutableSetOf()
     private val seekMap: MutableMap<Int, Int> = mutableMapOf()
@@ -47,15 +47,27 @@ internal class StreamMediaPlayer(
     private var currentIndex = 0
 
     override fun onAudioStateChange(hash: Int, func: (AudioState) -> Unit) {
-        onStateListeners[hash] = func
+        if (onStateListeners[hash] != null) {
+            onStateListeners[hash]!!.add(func)
+        } else {
+            onStateListeners[hash] = mutableListOf(func)
+        }
     }
 
     override fun onProgressStateChange(hash: Int, func: (ProgressData) -> Unit) {
-        onProgressListeners[hash] = func
+        if (onProgressListeners[hash] != null) {
+            onProgressListeners[hash]!!.add(func)
+        } else {
+            onProgressListeners[hash] = mutableListOf(func)
+        }
     }
 
     override fun onSpeedChange(hash: Int, func: (Float) -> Unit) {
-        onSpeedListeners[hash] = func
+        if (onSpeedListeners[hash] != null) {
+            onSpeedListeners[hash]!!.add(func)
+        } else {
+            onSpeedListeners[hash] = mutableListOf(func)
+        }
     }
 
     override fun registerTrack(url: String, hash: Int, position: Int) {
@@ -180,10 +192,10 @@ internal class StreamMediaPlayer(
         }
     }
 
-    override fun seekTo(msec: Int, audioHash: Int) {
-        seekMap[audioHash] = msec
+    override fun seekTo(msec: Int, hash: Int) {
+        seekMap[hash] = msec
 
-        if (currentAudioHash == audioHash) {
+        if (currentAudioHash == hash) {
             mediaPlayer.seekTo(msec)
         }
     }
@@ -228,15 +240,15 @@ internal class StreamMediaPlayer(
     }
 
     private fun publishAudioState(audioHash: Int, audioState: AudioState) {
-        onStateListeners[audioHash]?.invoke(audioState)
+        onStateListeners[audioHash]?.forEach { listener -> listener.invoke(audioState) }
     }
 
     private fun publishProgress(audioHash: Int, progressData: ProgressData) {
-        onProgressListeners[audioHash]?.invoke(progressData)
+        onProgressListeners[audioHash]?.forEach { listener -> listener.invoke(progressData) }
     }
 
     private fun publishSpeed(audioHash: Int, speed: Float) {
-        onSpeedListeners[audioHash]?.invoke(speed)
+        onSpeedListeners[audioHash]?.forEach { listener -> listener.invoke(speed) }
     }
 }
 
