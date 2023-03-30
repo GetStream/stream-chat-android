@@ -16,11 +16,12 @@
 
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory
 
-import android.view.View
 import android.view.ViewGroup
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.databinding.StreamUiUnsupportedAttachmentPreviewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
+import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
  * A fallback [AttachmentPreviewFactory] for attachments unhandled by other factories.
@@ -49,17 +50,26 @@ public class FallbackAttachmentPreviewFactory : AttachmentPreviewFactory {
         attachmentRemovalListener: (Attachment) -> Unit,
         style: MessageComposerViewStyle?,
     ): AttachmentPreviewViewHolder {
-        return FallbackAttachmentPreviewViewHolder(View(parentView.context))
+        return StreamUiUnsupportedAttachmentPreviewBinding
+            .inflate(parentView.context.streamThemeInflater, parentView, false)
+            .let { binding ->
+                FallbackAttachmentPreviewViewHolder(binding, attachmentRemovalListener)
+            }
     }
 
     /**
      * An empty ViewHolder as we don't display unsupported attachment types.
      *
-     * @param itemView The view that this ViewHolder controls.
+     * @param binding [StreamUiUnsupportedAttachmentPreviewBinding] generated for the layout.
+     * @param attachmentRemovalListener Click listener for the remove attachment button.
      */
     private class FallbackAttachmentPreviewViewHolder(
-        itemView: View,
-    ) : AttachmentPreviewViewHolder(itemView) {
-        override fun bind(attachment: Attachment) = Unit
+        private val binding: StreamUiUnsupportedAttachmentPreviewBinding,
+        private val attachmentRemovalListener: (Attachment) -> Unit,
+    ) : AttachmentPreviewViewHolder(binding.root) {
+        override fun bind(attachment: Attachment) {
+            binding.titleImageView.text = attachment.title
+            binding.removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
+        }
     }
 }
