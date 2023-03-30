@@ -1154,6 +1154,12 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public static synthetic fun onCreateViewHolder$default (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory;Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewViewHolder;
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AudioRecordAttachmentPreviewFactory : io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/models/Attachment;)Z
+	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewViewHolder;
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/FallbackAttachmentPreviewFactory : io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory {
 	public fun <init> ()V
 	public fun canHandle (Lio/getstream/chat/android/models/Attachment;)Z
