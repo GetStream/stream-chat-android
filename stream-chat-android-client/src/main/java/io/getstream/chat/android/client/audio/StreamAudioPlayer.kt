@@ -28,6 +28,7 @@ import kotlinx.coroutines.withContext
 private const val INITIAL_SPEED = 1F
 private const val SPEED_INCREMENT = 0.5F
 
+@Suppress("TooManyFunctions")
 internal class StreamMediaPlayer(
     private val mediaPlayer: MediaPlayer,
     private val userScope: UserScope,

@@ -53,13 +53,10 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
         style: MessageComposerViewStyle?,
-    ): AttachmentPreviewViewHolder {
-
-
-        return StreamUiAudioRecordPlayerPreviewBinding
+    ): AttachmentPreviewViewHolder =
+        StreamUiAudioRecordPlayerPreviewBinding
             .inflate(parentView.context.streamThemeInflater, parentView, false)
             .let { AudioRecordAttachmentPreviewHandler(it, attachmentRemovalListener) }
-    }
 
     /**
      * A ViewHolder for file attachment preview.
