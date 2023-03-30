@@ -2205,6 +2205,12 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public fun generateQuotedAttachmentView (Lio/getstream/chat/android/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/FallbackQuotedAttachmentMessageFactory : io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
+	public fun <init> ()V
+	public fun canHandle (Lio/getstream/chat/android/models/Message;)Z
+	public fun generateQuotedAttachmentView (Lio/getstream/chat/android/models/Message;Landroid/view/ViewGroup;)Landroid/view/View;
+}
+
 public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder {
 	public fun <init> (Landroid/view/View;)V
 	public final fun getContext ()Landroid/content/Context;
