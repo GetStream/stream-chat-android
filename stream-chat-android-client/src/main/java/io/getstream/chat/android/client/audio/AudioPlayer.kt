@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.audio
 
-import java.util.Date
-
 @Suppress("TooManyFunctions")
 /**
  * Audio player used to play audio messages.
