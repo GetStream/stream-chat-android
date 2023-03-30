@@ -23,7 +23,8 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.DefaultQuotedAttachmentView
 
 /**
- * Factory for attachments we support by default.
+ * Factory for attachments that the SDK falls back when all the other [QuotedAttachmentFactory] don't support the
+ * attachment type. It simply shows a file icon with the attachment title.
  */
 public class FallbackQuotedAttachmentMessageFactory : QuotedAttachmentFactory {
 
