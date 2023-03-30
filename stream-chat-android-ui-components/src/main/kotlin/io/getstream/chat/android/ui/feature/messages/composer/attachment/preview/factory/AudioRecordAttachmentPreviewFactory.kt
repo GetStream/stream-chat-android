@@ -72,7 +72,7 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         private lateinit var attachment: Attachment
 
         init {
-            // binding.removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
+            binding.removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
         }
 
         override fun bind(attachment: Attachment) {
