@@ -52,13 +52,13 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
     }
 
     private lateinit var style: DefaultQuotedAttachmentViewStyle
-    private lateinit var attachment: Attachment
+    private var attachment: Attachment? = null
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
         layoutParams = layoutParams.apply {
-            when (attachment.type) {
+            when (attachment?.type) {
                 AttachmentType.FILE, AttachmentType.VIDEO -> {
                     width = style.fileAttachmentWidth
                     height = style.fileAttachmentHeight
@@ -102,6 +102,6 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
     }
 
     private fun init(context: Context) {
-        this.style = io.getstream.chat.android.ui.feature.messages.list.DefaultQuotedAttachmentViewStyle(context)
+        this.style = DefaultQuotedAttachmentViewStyle(context)
     }
 }
