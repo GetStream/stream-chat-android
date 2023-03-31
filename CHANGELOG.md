@@ -69,6 +69,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed a bug that resulted in the `skipEnrichUrl` property not being propagated to the image gallery. [#4769](https://github.com/GetStream/stream-chat-android/pull/4769)
 
 ### ⬆️ Improved
 
