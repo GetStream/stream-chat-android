@@ -32,8 +32,6 @@ buildscript {
                 includeGroup("com.huawei.agconnect")
             }
         }
-        // we should remove this after releasing the stable version of Stream Result
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     dependencies {
@@ -77,8 +75,6 @@ allprojects {
                 includeModule("com.github.stfalcon-studio", "StfalconImageViewer")
             }
         }
-        // we should remove this after releasing the stable version of Stream Result
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
 
