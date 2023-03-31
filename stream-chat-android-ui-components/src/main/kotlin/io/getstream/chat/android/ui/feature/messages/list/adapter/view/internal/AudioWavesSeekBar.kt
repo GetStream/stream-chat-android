@@ -35,18 +35,16 @@ import kotlin.math.max
 private const val MIN_BAR_VALUE = 0.05F
 private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
 private const val EXPAND_TRACKER_WIDTH = 10
-private const val HALF = 2
 private const val DEFAULT_BAR_PADDING = 5
 private const val DEFAULT_BAR_SPACING = 0.4
 private const val DEFAULT_BAR_NUMBER = 40
 private const val DEFAULT_BAR_VALUE = 0F
 private const val INITIAL_PROGRESS = 0F
-private const val ONE = 1
-private const val ONE_HUNDRED = 100
 
 /**
  * Custom view that presents a Seekbar that shows and interacts with audio wave bars.
  */
+@Suppress("MagicNumber")
 internal class AudioWavesSeekBar : LinearLayoutCompat {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -140,7 +138,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
         val totalWidth = measuredWidth - realPaddingStart - realPaddingEnd
-        val totalBarWidth = totalWidth * (ONE - barSpacing)
+        val totalBarWidth = totalWidth * (1 - barSpacing)
         val totalSpaceWidth = totalWidth * barSpacing
         val barCount = waveBars.size
 
@@ -209,15 +207,15 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
 
             val left = (barWidth!! + spaceWidth!!) * index + realPaddingStart
             val right = left + barWidth!!
-            val top = (height - barHeight) / HALF
+            val top = (height - barHeight) / 2
             val bottom = top + barHeight
 
             val rect = RectF(left, top, right, bottom)
-            val paint = if (progressToX(progress) > left + barWidth!! / HALF) paintLeft else paintRight
+            val paint = if (progressToX(progress) > left + barWidth!! / 2) paintLeft else paintRight
 
-            tracker.x = trackerPosition(progressToX(progress)) - tracker.width / HALF
+            tracker.x = trackerPosition(progressToX(progress)) - tracker.width / 2
 
-            canvas.drawRoundRect(rect, barWidth!! / HALF, barWidth!! / HALF, paint)
+            canvas.drawRoundRect(rect, barWidth!! / 2, barWidth!! / 2, paint)
         }
     }
 
@@ -226,15 +224,15 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
      */
     private fun trackerPosition(positionX: Float) =
         min(
-            max(realPaddingStart.toFloat() + tracker.width / HALF, positionX),
-            (width - realPaddingEnd - tracker.width / HALF).toFloat()
+            max(realPaddingStart.toFloat() + tracker.width / 2, positionX),
+            (width - realPaddingEnd - tracker.width / 2).toFloat()
         )
 
     private fun progressToX(progress: Float): Float =
-        (progress / ONE_HUNDRED) * seekWidth() + realPaddingStart
+        (progress / 100) * seekWidth() + realPaddingStart
 
     private fun xToProgress(x: Float): Float {
         val croppedX = min(max(realPaddingStart.toFloat(), x), width - realPaddingEnd.toFloat())
-        return ONE_HUNDRED * ((croppedX - realPaddingStart) / seekWidth())
+        return 100 * ((croppedX - realPaddingStart) / seekWidth())
     }
 }

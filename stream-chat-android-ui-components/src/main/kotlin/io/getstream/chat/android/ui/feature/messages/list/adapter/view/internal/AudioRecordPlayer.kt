@@ -40,8 +40,7 @@ public class AudioRecordPlayer : LinearLayoutCompat {
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private val playerView =
-        StreamUiAudioRecordPlayerBinding.inflate(streamThemeInflater, this)
+    private val playerView = StreamUiAudioRecordPlayerBinding.inflate(streamThemeInflater, this)
 
     init {
         orientation = HORIZONTAL

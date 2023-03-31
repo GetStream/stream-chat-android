@@ -30,11 +30,11 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 private const val NULL_DURATION = 0.0
-private const val ONE_HUNDRED = 100
 
 /**
  * A LinearLayoutCompat that present the list of audio messages.
  */
+@Suppress("MagicNumber")
 public class AudioRecordsGroupView : LinearLayoutCompat {
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper())
@@ -144,7 +144,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
     }
 
     private fun progressToDecimal(progress: Int, totalDuration: Double?): Int =
-        progress * (totalDuration ?: NULL_DURATION).toInt() / ONE_HUNDRED
+        progress * (totalDuration ?: NULL_DURATION).toInt() / 100
 
     /**
      * Unbinds the view.

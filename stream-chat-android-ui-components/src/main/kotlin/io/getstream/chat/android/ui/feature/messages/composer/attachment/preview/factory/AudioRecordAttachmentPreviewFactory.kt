@@ -17,13 +17,19 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory
 
 import android.view.ViewGroup
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioPlayer
+import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationParser
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerPreviewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordPlayer
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+
+private const val NULL_DURATION = 0.0
 
 /**
  * The default [AttachmentPreviewFactory] for file attachments.
@@ -76,20 +82,77 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         }
 
         override fun bind(attachment: Attachment) {
+            if (attachment.assetUrl == null) return
+
+            val audioPlayer = ChatClient.instance().audioPlayer
+            val playerView = binding.playerView
+
             this.attachment = attachment
 
-            binding.apply {
-                (attachment.extraData["duration"] as? Double)
-                    ?.toInt()
-                    ?.let(DurationParser::durationInMilliToReadableTime)
-                    ?.let { duration ->
-                        binding.duration.text = duration
-                    }
-
-                (attachment.extraData["waveList"] as? List<Float>)?.let { waveBars ->
-                    binding.progressBar.waveBars = waveBars
+            (attachment.extraData["duration"] as? Double)
+                ?.toInt()
+                ?.let(DurationParser::durationInMilliToReadableTime)
+                ?.let { duration ->
+                    playerView.setDuration(duration)
                 }
+
+            (attachment.extraData["waveList"] as? List<Float>)?.let { waveBars ->
+                playerView.setWaveBars(waveBars)
             }
+
+            audioPlayer.registerStateChange(playerView, attachment.hashCode())
+            playerView.registerButtonsListeners(audioPlayer, attachment, attachment.hashCode())
+        }
+
+        override fun unbind() {
+            ChatClient.instance().audioPlayer.removeAudios(listOf(attachment.hashCode()))
         }
     }
 }
+
+private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayer, hashCode: Int) {
+    onAudioStateChange(hashCode) { audioState ->
+        when (audioState) {
+            AudioState.LOADING -> playerView.setLoading()
+            AudioState.PAUSE -> playerView.setPaused()
+            AudioState.UNSET, AudioState.IDLE -> playerView.setIdle()
+            AudioState.PLAYING -> playerView.setPlaying()
+        }
+    }
+    onProgressStateChange(hashCode) { (duration, progress) ->
+        playerView.setDuration(DurationParser.durationInMilliToReadableTime(duration))
+        playerView.setProgress(progress)
+    }
+    onSpeedChange(hashCode, playerView::setSpeedText)
+}
+
+private fun AudioRecordPlayer.registerButtonsListeners(
+    audioPlayer: AudioPlayer,
+    attachment: Attachment,
+    hashCode: Int,
+) {
+    onPlayButtonPress {
+        if (attachment.assetUrl != null) {
+            audioPlayer.play(attachment.assetUrl!!, hashCode)
+        } else {
+            setLoading()
+        }
+    }
+
+    onSpeedButtonPress {
+        audioPlayer.changeSpeed()
+    }
+
+    onSeekbarMove({
+        audioPlayer.startSeek(attachment.hashCode())
+    }, { progress ->
+        audioPlayer.seekTo(
+            progressToDecimal(progress, attachment.extraData["duration"] as? Double),
+            attachment.hashCode()
+        )
+    })
+}
+
+@Suppress("MagicNumber")
+private fun progressToDecimal(progress: Int, totalDuration: Double?): Int =
+    progress * (totalDuration ?: NULL_DURATION).toInt() / 100
