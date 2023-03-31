@@ -14,114 +14,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/stream_ui_message_composer_file_attachment_width"
+    android:layout_width="230dp"
     android:layout_height="56dp"
     android:background="@drawable/stream_ui_borders_16dp_corners"
     >
 
-    <FrameLayout
-        android:id="@+id/playButtonContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        >
-
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/loadingView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/playButton"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="center"
-            android:layout_marginVertical="8dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="4dp"
-            android:background="@drawable/stream_ui_white_shape_circular"
-            android:padding="6dp"
-            android:src="@drawable/stream_ui_ic_play"
-            android:tint="@color/stream_ui_literal_black"
-            android:visibility="visible"
-            android:elevation="2dp"
-            />
-    </FrameLayout>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/duration"
-        android:layout_width="wrap_content"
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordPlayer
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:paddingHorizontal="6dp"
-        android:textAlignment="center"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/playButtonContainer"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="4:19"
+        android:layout_gravity="center"
         />
-
-    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioWavesSeekBar
-        android:id="@+id/progressBar"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@android:color/transparent"
-        android:paddingHorizontal="5dp"
-        android:paddingVertical="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/speedButtonContainer"
-        app:layout_constraintStart_toEndOf="@id/duration"
-        />
-
-
-    <FrameLayout
-        android:id="@+id/speedButtonContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/fileView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/stream_ui_ic_file_mp3"
-            android:visibility="visible"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/speedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/stream_ui_literal_white_shape_16dp_corners"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="x1.0"
-            android:layout_marginHorizontal="2dp"
-            android:textAlignment="center"
-            android:textColor="@color/stream_ui_literal_black"
-            android:textStyle="bold"
-            android:visibility="gone"
-            android:elevation="2dp"
-            tools:text="x1.0"
-            />
-    </FrameLayout>
 
     <ImageButton
         android:id="@+id/removeButton"
@@ -130,13 +36,8 @@
         android:background="@drawable/stream_ui_attachment_cancel_background"
         android:cropToPadding="true"
         android:src="@drawable/stream_ui_ic_close_white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
+        android:layout_gravity="top|end"
         tools:ignore="ContentDescription"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

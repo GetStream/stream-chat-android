@@ -263,4 +263,10 @@ private class AttachmentPreviewAdapter(
      * @return The number of attachments.
      */
     override fun getItemCount(): Int = attachments.size
+
+    override fun onViewDetachedFromWindow(holder: AttachmentPreviewViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+
+        holder.unbind()
+    }
 }

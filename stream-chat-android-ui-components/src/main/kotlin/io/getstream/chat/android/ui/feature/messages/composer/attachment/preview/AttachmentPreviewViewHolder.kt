@@ -37,4 +37,7 @@ public abstract class AttachmentPreviewViewHolder(
      * @param attachment The attachment that will be displayed.
      */
     public abstract fun bind(attachment: Attachment)
+
+    public open fun unbind() {
+    }
 }
