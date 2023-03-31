@@ -106,6 +106,7 @@
 - Added parameter `parentMessageId: String?` to `MessageListViewModelFactory`. If you want to scroll to a thread message upon opening the messaging screen, pass in the thread message's parent message ID, otherwise you can pass in `null`. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
 
 ### ❌ Removed
+- Removed `ImagePreviewAction`, `ImagePreviewOption`, `ImagePreviewResult`, `ImagePreviewResultType`, `ImagePreviewViewModel` and `ImagePreviewViewModelFactory`. These were removed in favor of using the newer `MediaGalleryPreviewActivity` along with it's accompanying classes. The removed classes have their media gallery counterparts, for instance `ImagePreviewAction` becomes `MediaGalleryPreviewAction`, and so on. [#4766](https://github.com/GetStream/stream-chat-android/pull/4766)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
