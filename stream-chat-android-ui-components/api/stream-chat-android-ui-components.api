@@ -1143,6 +1143,7 @@ public abstract class io/getstream/chat/android/ui/feature/messages/composer/att
 	public abstract fun bind (Lio/getstream/chat/android/models/Attachment;)V
 	public final fun getContext ()Landroid/content/Context;
 	public final fun getItemView ()Landroid/view/View;
+	public fun unbind ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/factory/AttachmentPreviewFactory {
