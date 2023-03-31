@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.viewmodel.imagepreview
+package io.getstream.chat.android.compose.viewmodel.mediagallerypreview
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.AfterEach
@@ -37,7 +40,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
-internal class ImagePreviewViewModelTest {
+internal class MediaGalleryPreviewViewModelTest {
 
     @AfterEach
     fun tearDown() {
@@ -45,14 +48,14 @@ internal class ImagePreviewViewModelTest {
     }
 
     @Test
-    fun `Given a message with image attachments When showing image gallery Should show the gallery`() = runTest {
+    fun `Given a message with media attachments When showing media gallery Should show the gallery`() = runTest {
         val viewModel = Fixture()
             .givenCurrentUser()
             .givenAttachments(mutableListOf(attachment1, attachment2))
             .get()
 
         viewModel.toggleGallery(true)
-        viewModel.toggleImageOptions(true)
+        viewModel.toggleMediaOptions(true)
 
         viewModel.isShowingGallery `should be equal to` true
         viewModel.isShowingOptions `should be equal to` true
@@ -60,7 +63,7 @@ internal class ImagePreviewViewModelTest {
     }
 
     @Test
-    fun `Given a message with image attachments When showing image gallery and removing the images Should update or delete the message`() =
+    fun `Given a message with media attachments When showing media gallery and removing the media Should update or delete the message`() =
         runTest {
             val chatClient: ChatClient = mock()
             val viewModel = Fixture(chatClient)
@@ -70,9 +73,8 @@ internal class ImagePreviewViewModelTest {
                 .givenDeleteMessage()
                 .get()
 
-            viewModel.toggleGallery(true)
-            viewModel.deleteCurrentImage(attachment1)
-            viewModel.deleteCurrentImage(attachment2)
+            viewModel.deleteCurrentMediaAttachment(attachment1)
+            viewModel.deleteCurrentMediaAttachment(attachment2)
 
             verify(chatClient).updateMessage(any())
             verify(chatClient).deleteMessage(MESSAGE_ID, false)
@@ -83,10 +85,12 @@ internal class ImagePreviewViewModelTest {
         private val messageId: String = MESSAGE_ID,
     ) {
 
-        private val clientState: ClientState = mock()
+        private val clientState: ClientState = mock {
+            whenever(it.connectionState) doReturn MutableStateFlow(ConnectionState.CONNECTED)
+        }
 
         init {
-            whenever(chatClient.clientState) doReturn mock()
+            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
@@ -106,10 +110,11 @@ internal class ImagePreviewViewModelTest {
             whenever(chatClient.deleteMessage(any(), any())) doReturn Message().asCall()
         }
 
-        fun get(): ImagePreviewViewModel {
-            return ImagePreviewViewModel(
+        fun get(): MediaGalleryPreviewViewModel {
+            return MediaGalleryPreviewViewModel(
                 chatClient = chatClient,
                 messageId = messageId,
+                clientState = clientState,
             )
         }
     }
@@ -119,7 +124,13 @@ internal class ImagePreviewViewModelTest {
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
         private const val MESSAGE_ID = "message-id"
-        private val attachment1 = Attachment(type = "image", imageUrl = "http://example.com/img1.png")
-        private val attachment2 = Attachment(type = "image", imageUrl = "http://example.com/img2.png")
+
+        /**
+         * [MediaGalleryPreviewViewModel.deleteCurrentMediaAttachment] uses the URL field to compare attachments.
+         */
+        private val attachment1 =
+            Attachment(type = "image", imageUrl = "http://example.com/img1.png", url = "http://example.com/img1.png")
+        private val attachment2 =
+            Attachment(type = "video", url = "http://example.com/img2.png")
     }
 }
