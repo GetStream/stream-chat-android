@@ -142,6 +142,7 @@ public fun ImageAttachmentContent(
                             onImagePreviewResult = onImagePreviewResult,
                             onLongItemClick = onLongItemClick,
                             onContentItemClicked = onContentItemClicked,
+                            skipEnrichUrl = skipEnrichUrl,
                         )
                     }
                 }
@@ -167,6 +168,7 @@ public fun ImageAttachmentContent(
                                     onImagePreviewResult = onImagePreviewResult,
                                     onLongItemClick = onLongItemClick,
                                     onContentItemClicked = onContentItemClicked,
+                                    skipEnrichUrl = skipEnrichUrl,
                                 )
 
                                 if (!isUploading) {
@@ -186,6 +188,7 @@ public fun ImageAttachmentContent(
                                 onImagePreviewResult = onImagePreviewResult,
                                 onLongItemClick = onLongItemClick,
                                 onContentItemClicked = onContentItemClicked,
+                                skipEnrichUrl = skipEnrichUrl,
                             )
                         }
                     }

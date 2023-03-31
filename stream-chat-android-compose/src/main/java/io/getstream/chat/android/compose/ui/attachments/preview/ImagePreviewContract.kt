@@ -36,7 +36,8 @@ public class ImagePreviewContract : ActivityResultContract<ImagePreviewContract.
         return ImagePreviewActivity.getIntent(
             context,
             messageId = input.messageId,
-            attachmentPosition = input.initialPosition
+            attachmentPosition = input.initialPosition,
+            skipEnrichUrl = input.skipEnrichUrl
         )
     }
 
