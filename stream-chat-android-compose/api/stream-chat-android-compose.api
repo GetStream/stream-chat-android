@@ -123,31 +123,6 @@ public final class io/getstream/chat/android/compose/state/channels/list/Channel
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/state/imagepreview/ImagePreviewResult : android/os/Parcelable {
-	public static final field $stable I
-	public static final field CREATOR Landroid/os/Parcelable$Creator;
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;)V
-	public fun describeContents ()I
-	public final fun getMessageId ()Ljava/lang/String;
-	public final fun getResultType ()Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
-	public fun writeToParcel (Landroid/os/Parcel;I)V
-}
-
-public final class io/getstream/chat/android/compose/state/imagepreview/ImagePreviewResult$Creator : android/os/Parcelable$Creator {
-	public fun <init> ()V
-	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResult;
-	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
-	public final fun newArray (I)[Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResult;
-	public synthetic fun newArray (I)[Ljava/lang/Object;
-}
-
-public final class io/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType : java/lang/Enum {
-	public static final field QUOTE Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
-	public static final field SHOW_IN_CHAT Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
-	public static fun values ()[Lio/getstream/chat/android/compose/state/imagepreview/ImagePreviewResultType;
-}
-
 public final class io/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewActivityAttachmentState$Creator : android/os/Parcelable$Creator {
 	public fun <init> ()V
 	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewActivityAttachmentState;
@@ -1767,27 +1742,6 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelV
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;IIILio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;IIILio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
-}
-
-public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModel : androidx/lifecycle/ViewModel {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Z)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun deleteCurrentImage (Lio/getstream/chat/android/models/Attachment;Z)V
-	public static synthetic fun deleteCurrentImage$default (Lio/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModel;Lio/getstream/chat/android/models/Attachment;ZILjava/lang/Object;)V
-	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
-	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun isShowingGallery ()Z
-	public final fun isShowingOptions ()Z
-	public final fun toggleGallery (Z)V
-	public final fun toggleImageOptions (Z)V
-}
-
-public final class io/getstream/chat/android/compose/viewmodel/imagepreview/ImagePreviewViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Z)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
