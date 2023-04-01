@@ -26,6 +26,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadCont
 import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
 import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
+import io.getstream.chat.android.compose.ui.attachments.factory.AudioRecordAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
@@ -122,6 +123,8 @@ public object StreamAttachmentFactories {
         FileAttachmentFactory(
             onContentItemClick = onFileContentItemClick,
         ),
+        FileAttachmentFactory(),
+        AudioRecordAttachmentFactory(),
         UnsupportedAttachmentFactory(),
     )
 
