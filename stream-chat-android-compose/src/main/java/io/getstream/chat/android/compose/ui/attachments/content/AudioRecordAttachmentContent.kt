@@ -42,10 +42,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioState
-import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationParser
 
 /**
@@ -56,12 +55,11 @@ import io.getstream.chat.android.ui.common.utils.DurationParser
 @Composable
 public fun AudioRecordAttachmentContent(
     modifier: Modifier = Modifier,
-    attachmentState: AttachmentState,
+    audioTrack: Attachment,
 ) {
-    val audioAttachment = attachmentState.message.attachments.firstOrNull { it.isAudioRecording() }
     val audioPlayer = ChatClient.instance().audioPlayer
 
-    val duration = ((audioAttachment?.extraData?.get("duration") as? Int) ?: 0)
+    val duration = ((audioTrack.extraData["duration"] as? Int) ?: 0)
         .let(DurationParser::durationInMilliToReadableTime)
 
     var trackProgress by remember { mutableStateOf(0F) }
@@ -70,7 +68,7 @@ public fun AudioRecordAttachmentContent(
     var speedState by remember { mutableStateOf(1F) }
 
     audioPlayer.run {
-        val audioHash = audioAttachment.hashCode()
+        val audioHash = audioTrack.hashCode()
 
         onProgressStateChange(audioHash) { progressData ->
             trackProgress = progressData.progress.toFloat()
@@ -93,62 +91,52 @@ public fun AudioRecordAttachmentContent(
         color = ChatTheme.colors.appBackground,
         shape = ChatTheme.shapes.attachment
     ) {
-        //Todo remove this later!
-        if (audioAttachment != null) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Card(elevation = 2.dp, shape = CircleShape) {
-                    IconButton(onClick = {
-                        audioAttachment.assetUrl?.let { trackUrl ->
-                            audioPlayer.play(trackUrl, audioAttachment.hashCode())
-                        }
-                    },
-                        modifier = Modifier
-                            .width(36.dp)
-                            .height(36.dp)) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_play),
-                            contentDescription = null,
-                            tint = Color.Black,
-                        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Card(elevation = 2.dp, shape = CircleShape) {
+                IconButton(onClick = {
+                    audioTrack.assetUrl?.let { trackUrl ->
+                        audioPlayer.play(trackUrl, audioTrack.hashCode())
                     }
-                }
-
-                Text(text = durationText, modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(8.dp))
-
-                Slider(
-                    value = trackProgress,
-                    onValueChange = {},
-                    modifier = Modifier.weight(1F),
-                )
-
-                if (playing) {
-                    Card(elevation = 2.dp, shape = CircleShape) {
-                        TextButton(onClick = { audioPlayer.changeSpeed() }) {
-                            Text(text = "x$speedState")
-                        }
-                    }
-                } else {
+                },
+                    modifier = Modifier
+                        .width(36.dp)
+                        .height(36.dp)) {
                     Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_file_mp3),
-                        contentDescription = "MP3 file",
+                        painter = painterResource(id = R.drawable.stream_compose_ic_play),
+                        contentDescription = null,
+                        tint = Color.Black,
                     )
                 }
             }
-        } else {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 8.dp),
-                text = "Not an audio attachment!!",
+
+            Text(text = durationText, modifier = Modifier
+                .fillMaxHeight()
+                .padding(8.dp))
+
+            Slider(
+                value = trackProgress,
+                onValueChange = {},
+                modifier = Modifier.weight(1F),
             )
+
+            if (playing) {
+                Card(elevation = 2.dp, shape = CircleShape) {
+                    TextButton(onClick = { audioPlayer.changeSpeed() }) {
+                        Text(text = "x$speedState")
+                    }
+                }
+            } else {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_file_mp3),
+                    contentDescription = "MP3 file",
+                )
+            }
         }
     }
 }

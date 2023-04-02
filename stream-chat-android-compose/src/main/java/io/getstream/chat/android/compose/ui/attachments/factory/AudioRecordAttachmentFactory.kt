@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContent
+import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordGroupContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -33,7 +33,7 @@ public fun AudioRecordAttachmentFactory(): AttachmentFactory = AttachmentFactory
         attachments.any { it.isAudioRecording() }
     },
     content = @Composable { modifier, attachmentState ->
-        AudioRecordAttachmentContent(
+        AudioRecordGroupContent(
             modifier = modifier
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
