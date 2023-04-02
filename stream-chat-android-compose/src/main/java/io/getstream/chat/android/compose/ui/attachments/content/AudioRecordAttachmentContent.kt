@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
@@ -30,17 +29,24 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Slider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.utils.DurationParser
 
 /**
  * Represents fallback content for unsupported attachments.
@@ -54,6 +60,31 @@ public fun AudioRecordAttachmentContent(
 ) {
     val audioAttachment = attachmentState.message.attachments.firstOrNull { it.isAudioRecording() }
     val audioPlayer = ChatClient.instance().audioPlayer
+
+    val duration = ((audioAttachment?.extraData?.get("duration") as? Int) ?: 0)
+        .let(DurationParser::durationInMilliToReadableTime)
+
+    var trackProgress by remember { mutableStateOf(0F) }
+    var durationText by remember { mutableStateOf(duration) }
+    var playing by remember { mutableStateOf(false) }
+    var speedState by remember { mutableStateOf(1F) }
+
+    audioPlayer.run {
+        val audioHash = audioAttachment.hashCode()
+
+        onProgressStateChange(audioHash) { progressData ->
+            trackProgress = progressData.progress.toFloat()
+            durationText = DurationParser.durationInMilliToReadableTime(progressData.duration)
+        }
+
+        onAudioStateChange(audioHash) { audioState ->
+            playing = audioState == AudioState.PLAYING
+        }
+
+        onSpeedChange(audioHash) { speed ->
+            speedState = speed
+        }
+    }
 
     Surface(
         modifier = modifier
@@ -88,18 +119,28 @@ public fun AudioRecordAttachmentContent(
                     }
                 }
 
-                Text(text = "00:00",
-                    Modifier
-                        .fillMaxHeight()
-                        .padding(8.dp))
+                Text(text = durationText, modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(8.dp))
 
-                Slider(value = 0F, onValueChange = {}, modifier = Modifier.weight(1F))
-
-                Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_file_mp3),
-                    contentDescription = "MP3 file",
-                    modifier = Modifier.size(24.dp)
+                Slider(
+                    value = trackProgress,
+                    onValueChange = {},
+                    modifier = Modifier.weight(1F),
                 )
+
+                if (playing) {
+                    Card(elevation = 2.dp, shape = CircleShape) {
+                        TextButton(onClick = { audioPlayer.changeSpeed() }) {
+                            Text(text = "x$speedState")
+                        }
+                    }
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_file_mp3),
+                        contentDescription = "MP3 file",
+                    )
+                }
             }
         } else {
             Text(
