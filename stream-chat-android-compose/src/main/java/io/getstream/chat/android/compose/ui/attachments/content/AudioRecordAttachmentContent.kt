@@ -56,6 +56,7 @@ import io.getstream.chat.android.ui.common.utils.DurationParser
 public fun AudioRecordAttachmentContent(
     modifier: Modifier = Modifier,
     audioTrack: Attachment,
+    onPlayPress: (Attachment) -> Unit
 ) {
     val audioPlayer = ChatClient.instance().audioPlayer
 
@@ -100,9 +101,7 @@ public fun AudioRecordAttachmentContent(
         ) {
             Card(elevation = 2.dp, shape = CircleShape) {
                 IconButton(onClick = {
-                    audioTrack.assetUrl?.let { trackUrl ->
-                        audioPlayer.play(trackUrl, audioTrack.hashCode())
-                    }
+                    onPlayPress(audioTrack)
                 },
                     modifier = Modifier
                         .width(36.dp)
