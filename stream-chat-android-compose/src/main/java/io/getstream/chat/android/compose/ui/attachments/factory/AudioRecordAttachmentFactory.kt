@@ -32,11 +32,12 @@ public fun AudioRecordAttachmentFactory(): AttachmentFactory = AttachmentFactory
     canHandle = { attachments ->
         attachments.any { it.isAudioRecording() }
     },
-    content = @Composable { modifier, _ ->
+    content = @Composable { modifier, attachmentState ->
         AudioRecordAttachmentContent(
             modifier = modifier
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
+            attachmentState = attachmentState
         )
     },
 )
