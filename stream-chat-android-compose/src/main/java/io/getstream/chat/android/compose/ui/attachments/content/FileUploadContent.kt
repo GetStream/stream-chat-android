@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.models.Attachment.UploadState.Idle
 import io.getstream.chat.android.client.models.Attachment.UploadState.InProgress
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.attachments.OnUploadAttachmentClickState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uiutils.extension.isUploading
@@ -72,7 +73,9 @@ public fun FileUploadContent(
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
                             if (!attachment.isUploading()) {
-                                previewHandlers
+                                attachmentState.onAttachmentClick?.let {
+                                    it(OnUploadAttachmentClickState(attachment = attachment))
+                                } ?: previewHandlers
                                     .firstOrNull { it.canHandle(attachment) }
                                     ?.handleAttachmentPreview(attachment)
                             }

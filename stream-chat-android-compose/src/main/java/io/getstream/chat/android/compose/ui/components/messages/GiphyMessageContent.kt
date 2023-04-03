@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.messages.attachments.OnAttachmentClickState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.SendGiphy
@@ -58,11 +59,13 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param modifier Modifier for styling.
  * @param onGiphyActionClick Handler when the user clicks on action button.
  */
+// TODO update documentation
 @Composable
 public fun GiphyMessageContent(
     message: Message,
     modifier: Modifier = Modifier,
     onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)? = null,
 ) {
     Column(
         modifier = modifier,
@@ -106,6 +109,7 @@ public fun GiphyMessageContent(
             message = message,
             onLongItemClick = {},
             onImagePreviewResult = {},
+            onItemClick = onAttachmentItemClick
         )
 
         Spacer(

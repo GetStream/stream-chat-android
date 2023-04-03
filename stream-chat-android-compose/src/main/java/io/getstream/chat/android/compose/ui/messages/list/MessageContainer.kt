@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
+import io.getstream.chat.android.compose.state.messages.attachments.OnAttachmentClickState
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
@@ -57,6 +58,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param systemMessageContent Composable that represents system messages.
  * @param messageItemContent Composable that represents regular messages.
  */
+// TODO update documentation
 @Composable
 public fun MessageContainer(
     messageListItem: MessageListItemState,
@@ -66,6 +68,7 @@ public fun MessageContainer(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)? = null,
     dateSeparatorContent: @Composable (DateSeparatorState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
     },
@@ -84,6 +87,7 @@ public fun MessageContainer(
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
+            onAttachmentItemClick = onAttachmentItemClick,
         )
     },
 ) {
@@ -191,6 +195,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageState)
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user receives an image preview result.
  */
+// TODO update documentation
 @Composable
 internal fun DefaultMessageItem(
     messageItem: MessageItemState,
@@ -200,6 +205,7 @@ internal fun DefaultMessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)?,
 ) {
     MessageItem(
         messageItem = messageItem,
@@ -209,5 +215,6 @@ internal fun DefaultMessageItem(
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,
         onImagePreviewResult = onImagePreviewResult,
+        onAttachmentItemClick = onAttachmentItemClick,
     )
 }

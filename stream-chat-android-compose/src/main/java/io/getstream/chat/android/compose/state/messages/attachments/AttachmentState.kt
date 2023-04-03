@@ -26,8 +26,10 @@ import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
  * @param onLongItemClick Handler for a long click on the message item.
  * @param onImagePreviewResult Handler when the user selects an action to scroll to and focus an image.
  */
+// TODO update documentation
 public data class AttachmentState(
     val message: Message,
     val onLongItemClick: (Message) -> Unit = {},
     val onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    val onAttachmentClick: ((onAttachmentClickState: OnAttachmentClickState) -> Unit)? = null,
 )

@@ -50,6 +50,7 @@ import com.getstream.sdk.chat.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.attachments.OnLinkAttachmentClickState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
@@ -103,12 +104,16 @@ public fun LinkAttachmentContent(
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
                     try {
-                        context.startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(urlWithScheme)
+                        if (urlWithScheme != null) {
+                            attachmentState.onAttachmentClick?.let {
+                                it(OnLinkAttachmentClickState(previewUrl = urlWithScheme))
+                            } ?: context.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(urlWithScheme)
+                                )
                             )
-                        )
+                        }
                     } catch (e: ActivityNotFoundException) {
                         e.printStackTrace()
                         Toast

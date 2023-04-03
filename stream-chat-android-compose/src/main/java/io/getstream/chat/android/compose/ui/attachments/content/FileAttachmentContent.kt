@@ -49,6 +49,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.attachments.OnFileAttachmentClickState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
@@ -88,9 +89,10 @@ public fun FileAttachmentContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            previewHandlers
-                                .firstOrNull { it.canHandle(attachment) }
-                                ?.handleAttachmentPreview(attachment)
+                            attachmentState.onAttachmentClick?.let { it(OnFileAttachmentClickState(attachment = attachment)) }
+                                ?: previewHandlers
+                                    .firstOrNull { it.canHandle(attachment) }
+                                    ?.handleAttachmentPreview(attachment)
                         },
                         onLongClick = { onItemLongClick(message) },
                     ),

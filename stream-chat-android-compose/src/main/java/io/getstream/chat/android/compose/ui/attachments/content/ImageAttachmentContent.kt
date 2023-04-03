@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.attachments.OnImageAttachmentClickState
 import io.getstream.chat.android.compose.ui.attachments.preview.ImagePreviewContract
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isMedia
@@ -109,7 +110,7 @@ public fun ImageAttachmentContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(ratio ?: EqualDimensionsRatio),
-                message = message,
+                attachmentState = attachmentState,
                 attachmentPosition = 0,
                 onImagePreviewResult = onImagePreviewResult,
                 onLongItemClick = onLongItemClick,
@@ -127,7 +128,7 @@ public fun ImageAttachmentContent(
                         ImageAttachmentContentItem(
                             attachment = attachments[imageIndex],
                             modifier = Modifier.weight(1f),
-                            message = message,
+                            attachmentState = attachmentState,
                             attachmentPosition = imageIndex,
                             onImagePreviewResult = onImagePreviewResult,
                             onLongItemClick = onLongItemClick
@@ -151,7 +152,7 @@ public fun ImageAttachmentContent(
                             Box(modifier = Modifier.weight(1f)) {
                                 ImageAttachmentContentItem(
                                     attachment = attachment,
-                                    message = message,
+                                    attachmentState = attachmentState,
                                     attachmentPosition = imageIndex,
                                     onImagePreviewResult = onImagePreviewResult,
                                     onLongItemClick = onLongItemClick
@@ -169,7 +170,7 @@ public fun ImageAttachmentContent(
                             ImageAttachmentContentItem(
                                 attachment = attachment,
                                 modifier = Modifier.weight(1f),
-                                message = message,
+                                attachmentState = attachmentState,
                                 attachmentPosition = imageIndex,
                                 onImagePreviewResult = onImagePreviewResult,
                                 onLongItemClick = onLongItemClick
@@ -193,7 +194,7 @@ public fun ImageAttachmentContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ImageAttachmentContentItem(
-    message: Message,
+    attachmentState: AttachmentState,
     attachmentPosition: Int,
     attachment: Attachment,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
@@ -215,15 +216,24 @@ internal fun ImageAttachmentContentItem(
                 interactionSource = MutableInteractionSource(),
                 indication = rememberRipple(),
                 onClick = {
-                    imagePreviewLauncher.launch(
+                    attachmentState.onAttachmentClick?.let {
+                        it(
+                            OnImageAttachmentClickState(
+                                imagePreviewLauncher = imagePreviewLauncher,
+                                message = attachmentState.message,
+                                attachmentPosition = attachmentPosition,
+                                skipEnrichUrl = skipEnrichUrl,
+                            )
+                        )
+                    } ?: imagePreviewLauncher.launch(
                         ImagePreviewContract.Input(
-                            messageId = message.id,
+                            messageId = attachmentState.message.id,
                             initialPosition = attachmentPosition,
                             skipEnrichUrl = skipEnrichUrl,
                         )
                     )
                 },
-                onLongClick = { onLongItemClick(message) }
+                onLongClick = { onLongItemClick(attachmentState.message) }
             )
     ) {
         Image(

@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.attachments.OnGiphyAttachmentClickState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
@@ -148,12 +149,13 @@ public fun GiphyAttachmentContent(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    context.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(previewUrl)
+                    attachmentState.onAttachmentClick?.let { it(OnGiphyAttachmentClickState(url = previewUrl)) }
+                        ?: context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(previewUrl)
+                            )
                         )
-                    )
                 },
                 onLongClick = { onLongItemClick(message) }
             )

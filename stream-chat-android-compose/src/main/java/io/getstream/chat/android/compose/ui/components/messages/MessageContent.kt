@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
+import io.getstream.chat.android.compose.state.messages.attachments.OnAttachmentClickState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTextContent
@@ -49,6 +50,7 @@ import io.getstream.chat.android.compose.ui.util.isGiphyEphemeral
  * @param regularMessageContent Composable that represents the default regular message content, such as attachments and
  * text.
  */
+// TODO update documentation
 @Composable
 public fun MessageContent(
     message: Message,
@@ -58,10 +60,12 @@ public fun MessageContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)? = null,
     giphyEphemeralContent: @Composable () -> Unit = {
         DefaultMessageGiphyContent(
             message = message,
-            onGiphyActionClick = onGiphyActionClick
+            onGiphyActionClick = onGiphyActionClick,
+            onAttachmentItemClick = onAttachmentItemClick,
         )
     },
     deletedMessageContent: @Composable () -> Unit = {
@@ -73,7 +77,8 @@ public fun MessageContent(
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
             onImagePreviewResult = onImagePreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
+            onAttachmentItemClick = onAttachmentItemClick,
         )
     },
 ) {
@@ -90,14 +95,17 @@ public fun MessageContent(
  * @param message The message to show.
  * @param onGiphyActionClick Handler for Giphy actions.
  */
+// TODO update documentation
 @Composable
 internal fun DefaultMessageGiphyContent(
     message: Message,
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)?,
 ) {
     GiphyMessageContent(
         message = message,
-        onGiphyActionClick = onGiphyActionClick
+        onGiphyActionClick = onGiphyActionClick,
+        onAttachmentItemClick = onAttachmentItemClick,
     )
 }
 
@@ -132,6 +140,7 @@ internal fun DefaultMessageDeletedContent(
  * @param onImagePreviewResult Handler when selecting images in the default content.
  * @param onQuotedMessageClick Handler for quoted message click action.
  */
+// TODO update documentation
 @Composable
 internal fun DefaultMessageContent(
     message: Message,
@@ -139,12 +148,14 @@ internal fun DefaultMessageContent(
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)?,
 ) {
     Column {
         MessageAttachmentsContent(
             message = message,
             onLongItemClick = onLongItemClick,
             onImagePreviewResult = onImagePreviewResult,
+            onItemClick = onAttachmentItemClick
         )
 
         if (message.text.isNotEmpty()) {

@@ -33,6 +33,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResultType
 import io.getstream.chat.android.compose.state.messages.MessagesState
+import io.getstream.chat.android.compose.state.messages.attachments.OnAttachmentClickState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
@@ -71,6 +72,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
  * the [MessageContainer] which sets up different message types. Users can override this to provide fully custom UI
  * and behavior.
  */
+// TODO update documentation
 @Composable
 public fun MessageList(
     viewModel: MessageListViewModel,
@@ -91,6 +93,7 @@ public fun MessageList(
             viewModel.focusMessage(it.messageId)
         }
     },
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)? = null,
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -109,6 +112,7 @@ public fun MessageList(
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
+            onAttachmentItemClick = onAttachmentItemClick,
         )
     },
 ) {
@@ -129,6 +133,7 @@ public fun MessageList(
         loadingContent = loadingContent,
         emptyContent = emptyContent,
         onQuotedMessageClick = onQuotedMessageClick,
+        onAttachmentItemClick = onAttachmentItemClick,
     )
 }
 
@@ -143,6 +148,7 @@ public fun MessageList(
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
  */
+// TODO update documentation
 @Composable
 internal fun DefaultMessageContainer(
     messageListItem: MessageListItemState,
@@ -152,6 +158,7 @@ internal fun DefaultMessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)?,
 ) {
     MessageContainer(
         messageListItem = messageListItem,
@@ -161,6 +168,7 @@ internal fun DefaultMessageContainer(
         onGiphyActionClick = onGiphyActionClick,
         onImagePreviewResult = onImagePreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
+        onAttachmentItemClick = onAttachmentItemClick
     )
 }
 
@@ -221,6 +229,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param itemContent Composable that represents each item in the list, that the user can override
  * for custom UI and behavior.
  */
+// TODO update documentation
 @Composable
 public fun MessageList(
     currentState: MessagesState,
@@ -236,6 +245,7 @@ public fun MessageList(
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)? = null,
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -251,6 +261,7 @@ public fun MessageList(
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
+            onAttachmentItemClick = onAttachmentItemClick,
         )
     },
 ) {

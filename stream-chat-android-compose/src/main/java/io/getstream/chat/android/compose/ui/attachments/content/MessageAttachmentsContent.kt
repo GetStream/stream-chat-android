@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.attachments.OnAttachmentClickState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uiutils.extension.hasLink
 
@@ -35,11 +36,13 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param onLongItemClick Handler for long item taps on this content.
  * @param onImagePreviewResult Handler when the user selects a message option in the Image Preview screen.
  */
+// TODO update documentation
 @Composable
 public fun MessageAttachmentsContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onItemClick: ((OnAttachmentClickState) -> Unit)? = null,
 ) {
     if (message.attachments.isNotEmpty()) {
         val (links, attachments) = message.attachments.partition { it.hasLink() && it.type != ModelType.attach_giphy }
@@ -59,7 +62,8 @@ public fun MessageAttachmentsContent(
         val attachmentState = AttachmentState(
             message = message,
             onLongItemClick = onLongItemClick,
-            onImagePreviewResult = onImagePreviewResult
+            onImagePreviewResult = onImagePreviewResult,
+            onAttachmentClick = onItemClick
         )
 
         if (attachmentFactory != null) {

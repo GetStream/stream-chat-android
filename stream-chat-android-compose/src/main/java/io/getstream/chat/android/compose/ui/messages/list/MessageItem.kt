@@ -57,6 +57,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
+import io.getstream.chat.android.compose.state.messages.attachments.OnAttachmentClickState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition.Bottom
@@ -114,6 +115,7 @@ import io.getstream.chat.android.compose.ui.util.isUploading
  * @param trailingContent The content shown at the end of a message list item. By default, we provide
  * [DefaultMessageItemTrailingContent], which adds an extra spacing to the end of the message list item.
  */
+// TODO update documentation
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun MessageItem(
@@ -125,6 +127,7 @@ public fun MessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)? = null,
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(messageItem = it)
     },
@@ -141,6 +144,7 @@ public fun MessageItem(
             onImagePreviewResult = onImagePreviewResult,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
+            onAttachmentItemClick = onAttachmentItemClick,
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -385,6 +389,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
+// TODO update documentation
 @Composable
 internal fun DefaultMessageItemCenterContent(
     messageItem: MessageItemState,
@@ -392,6 +397,7 @@ internal fun DefaultMessageItemCenterContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)?,
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isEmojiOnlyWithoutBubble()) {
@@ -401,7 +407,8 @@ internal fun DefaultMessageItemCenterContent(
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
+            onAttachmentItemClick = onAttachmentItemClick,
         )
     } else {
         RegularMessageContent(
@@ -410,7 +417,8 @@ internal fun DefaultMessageItemCenterContent(
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
+            onAttachmentItemClick = onAttachmentItemClick,
         )
     }
 }
@@ -425,6 +433,7 @@ internal fun DefaultMessageItemCenterContent(
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
+// TODO update documentation
 @Composable
 internal fun EmojiMessageContent(
     messageItem: MessageItemState,
@@ -433,6 +442,7 @@ internal fun EmojiMessageContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)?,
 ) {
     val message = messageItem.message
 
@@ -443,7 +453,8 @@ internal fun EmojiMessageContent(
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onImagePreviewResult = onImagePreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
+            onAttachmentItemClick = onAttachmentItemClick,
         )
     } else {
         Box(modifier = modifier) {
@@ -453,7 +464,8 @@ internal fun EmojiMessageContent(
                 onLongItemClick = onLongItemClick,
                 onGiphyActionClick = onGiphyActionClick,
                 onImagePreviewResult = onImagePreviewResult,
-                onQuotedMessageClick = onQuotedMessageClick
+                onQuotedMessageClick = onQuotedMessageClick,
+                onAttachmentItemClick = onAttachmentItemClick,
             )
 
             Icon(
@@ -478,6 +490,7 @@ internal fun EmojiMessageContent(
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onImagePreviewResult Handler when the user selects an option in the Image Preview screen.
  */
+// TODO update documentation
 @Composable
 internal fun RegularMessageContent(
     messageItem: MessageItemState,
@@ -486,6 +499,7 @@ internal fun RegularMessageContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onAttachmentItemClick: ((OnAttachmentClickState) -> Unit)?,
 ) {
     val (message, position, _, ownsMessage, _) = messageItem
 
@@ -516,7 +530,8 @@ internal fun RegularMessageContent(
                     onLongItemClick = onLongItemClick,
                     onGiphyActionClick = onGiphyActionClick,
                     onImagePreviewResult = onImagePreviewResult,
-                    onQuotedMessageClick = onQuotedMessageClick
+                    onQuotedMessageClick = onQuotedMessageClick,
+                    onAttachmentItemClick = onAttachmentItemClick,
                 )
             }
         )
@@ -533,7 +548,8 @@ internal fun RegularMessageContent(
                         onLongItemClick = onLongItemClick,
                         onGiphyActionClick = onGiphyActionClick,
                         onImagePreviewResult = onImagePreviewResult,
-                        onQuotedMessageClick = onQuotedMessageClick
+                        onQuotedMessageClick = onQuotedMessageClick,
+                        onAttachmentItemClick = onAttachmentItemClick,
                     )
                 }
             )
