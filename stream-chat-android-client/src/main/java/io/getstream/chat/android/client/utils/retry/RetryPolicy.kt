@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.utils.retry
 
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 
 /**
  * The retry policy is being used to determine if and when the call should be retried if a temporary error occurred.
@@ -30,7 +30,7 @@ public interface RetryPolicy {
      *
      * @return true if the call should be retried, false otherwise.
      */
-    public fun shouldRetry(attempt: Int, error: StreamError): Boolean
+    public fun shouldRetry(attempt: Int, error: Error): Boolean
 
     /**
      * Provides a timeout used to delay the next call.
@@ -40,5 +40,5 @@ public interface RetryPolicy {
      *
      * @return The timeout in milliseconds before making a retry.
      */
-    public fun retryTimeout(attempt: Int, error: StreamError): Int
+    public fun retryTimeout(attempt: Int, error: Error): Int
 }

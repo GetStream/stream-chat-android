@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-import io.getstream.result.StreamError;
+import io.getstream.result.Error;
 import io.getstream.chat.android.models.UploadedFile;
 import io.getstream.chat.android.models.UploadedImage;
 import io.getstream.chat.android.client.uploader.FileUploader;
@@ -21,7 +21,7 @@ public class MyFileUploader implements FileUploader {
         try {
             return new Result.Success<>(new UploadedFile("file url", "thumb url"));
         } catch (Exception e) {
-            return new Result.Failure(new StreamError.ThrowableError("Could not send file.", e));
+            return new Result.Failure(new Error.ThrowableError("Could not send file.", e));
         }
     }
 
@@ -31,7 +31,7 @@ public class MyFileUploader implements FileUploader {
         try {
             return new Result.Success<>(new UploadedFile("file url", "thumb url"));
         } catch (Exception e) {
-            return new Result.Failure(new StreamError.ThrowableError("Could not send file.", e));
+            return new Result.Failure(new Error.ThrowableError("Could not send file.", e));
         }
     }
 
@@ -41,7 +41,7 @@ public class MyFileUploader implements FileUploader {
         try {
             return new Result.Success<>(new UploadedImage("url", null));
         } catch (Exception e) {
-            return new Result.Failure(new StreamError.ThrowableError("Could not send image.", e));
+            return new Result.Failure(new Error.ThrowableError("Could not send image.", e));
         }
     }
 
@@ -51,7 +51,7 @@ public class MyFileUploader implements FileUploader {
         try {
             return new Result.Success<>(new UploadedImage("url", null));
         } catch (Exception e) {
-            return new Result.Failure(new StreamError.ThrowableError("Could not send image.", e));
+            return new Result.Failure(new Error.ThrowableError("Could not send image.", e));
         }
     }
 
@@ -60,7 +60,7 @@ public class MyFileUploader implements FileUploader {
         try {
             return new Result.Success<>(Unit.INSTANCE);
         } catch (Exception e) {
-            return new Result.Failure(new StreamError.ThrowableError("Could not delete file.", e));
+            return new Result.Failure(new Error.ThrowableError("Could not delete file.", e));
         }
     }
 
@@ -69,7 +69,7 @@ public class MyFileUploader implements FileUploader {
         try {
             return new Result.Success<>(Unit.INSTANCE);
         } catch (Exception e) {
-            return new Result.Failure(new StreamError.ThrowableError("Could not delete image.", e));
+            return new Result.Failure(new Error.ThrowableError("Could not delete image.", e));
         }
     }
 }

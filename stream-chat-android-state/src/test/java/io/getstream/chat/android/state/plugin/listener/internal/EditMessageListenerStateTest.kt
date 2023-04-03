@@ -24,8 +24,8 @@ import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStat
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -188,7 +188,7 @@ internal class EditMessageListenerStateTest {
 
         val testMessage = randomMessage()
 
-        editMessageListenerState.onMessageEditResult(testMessage, Result.Failure(StreamError.GenericError("")))
+        editMessageListenerState.onMessageEditResult(testMessage, Result.Failure(Error.GenericError("")))
 
         verify(channelStateLogic).upsertMessage(
             argThat { message ->

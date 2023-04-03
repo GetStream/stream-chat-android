@@ -25,8 +25,8 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomInt
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -72,7 +72,7 @@ internal class QueryMembersListenerDatabaseTest {
         val (type, id) = cid.cidToTypeAndId()
 
         queryMembersListenerDatabase.onQueryMembersResult(
-            result = Result.Failure(StreamError.GenericError("")),
+            result = Result.Failure(Error.GenericError("")),
             channelType = type,
             channelId = id,
             offset = randomInt(),

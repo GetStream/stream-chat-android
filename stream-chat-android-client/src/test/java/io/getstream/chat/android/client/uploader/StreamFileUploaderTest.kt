@@ -26,8 +26,8 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Before
@@ -53,7 +53,7 @@ internal class StreamFileUploaderTest {
     private val progressCallback = object : ProgressCallback {
         override fun onSuccess(url: String?) = Unit
 
-        override fun onError(error: StreamError) = Unit
+        override fun onError(error: Error) = Unit
 
         override fun onProgress(bytesUploaded: Long, totalBytes: Long) = Unit
     }

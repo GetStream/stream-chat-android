@@ -50,7 +50,7 @@ import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -277,12 +277,12 @@ public class ChannelListViewModel(
     public fun leaveChannel(channel: Channel) {
         chatClient.globalState.user.value?.let { user ->
             chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue(
-                onError = { streamError ->
+                onError = { error ->
                     logger.e {
                         "Could not leave channel with id: ${channel.id}. " +
-                            "Error: ${streamError.message}. Cause: ${streamError.extractCause()}"
+                            "Error: ${error.message}. Cause: ${error.extractCause()}"
                     }
-                    _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(streamError)))
+                    _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(error)))
                 }
             )
         }
@@ -295,12 +295,12 @@ public class ChannelListViewModel(
      */
     public fun deleteChannel(channel: Channel) {
         chatClient.channel(channel.cid).delete().enqueue(
-            onError = { streamError ->
+            onError = { error ->
                 logger.e {
                     "Could not delete channel with id: ${channel.id}. " +
-                        "Error: ${streamError.message}. Cause: ${streamError.extractCause()}"
+                        "Error: ${error.message}. Cause: ${error.extractCause()}"
                 }
-                _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(streamError)))
+                _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(error)))
             }
         )
     }
@@ -315,12 +315,12 @@ public class ChannelListViewModel(
             channelId = channelId,
             clearHistory = false
         ).enqueue(
-            onError = { streamError ->
+            onError = { error ->
                 logger.e {
                     "Could not hide channel with id: ${channel.id}. " +
-                        "Error: ${streamError.message}. Cause: ${streamError.extractCause()}"
+                        "Error: ${error.message}. Cause: ${error.extractCause()}"
                 }
-                _errorEvents.postValue(Event(ErrorEvent.HideChannelError(streamError)))
+                _errorEvents.postValue(Event(ErrorEvent.HideChannelError(error)))
             }
         )
     }
@@ -444,28 +444,28 @@ public class ChannelListViewModel(
     /**
      * Describes the actions that were taken.
      */
-    public sealed class ErrorEvent(public open val streamError: StreamError) {
+    public sealed class ErrorEvent(public open val streamError: Error) {
 
         /**
          * Event for errors upon leaving a channel.
          *
          * @param streamError Contains error data such as a [Throwable] and a message.
          */
-        public data class LeaveChannelError(override val streamError: StreamError) : ErrorEvent(streamError)
+        public data class LeaveChannelError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * Event for errors upon deleting a channel.
          *
          * @param streamError Contains error data such as a [Throwable] and a message.
          */
-        public data class DeleteChannelError(override val streamError: StreamError) : ErrorEvent(streamError)
+        public data class DeleteChannelError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * Event for errors upon hiding a channel.
          *
          * @param streamError Contains error data such as a [Throwable] and a message.
          */
-        public data class HideChannelError(override val streamError: StreamError) : ErrorEvent(streamError)
+        public data class HideChannelError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
     public companion object {

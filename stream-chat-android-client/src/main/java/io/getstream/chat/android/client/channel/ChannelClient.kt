@@ -90,8 +90,8 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import java.io.File
 import java.util.Date
 
@@ -712,7 +712,7 @@ public class ChannelClient internal constructor(
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
      * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
-     * [StreamError] if fails.
+     * [Error] if fails.
      */
     @CheckResult
     @JvmOverloads
@@ -726,7 +726,7 @@ public class ChannelClient internal constructor(
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
      * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
-     * [StreamError] if fails.
+     * [Error] if fails.
      */
     @CheckResult
     @JvmOverloads

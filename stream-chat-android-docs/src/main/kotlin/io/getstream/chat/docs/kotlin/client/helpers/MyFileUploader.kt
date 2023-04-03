@@ -1,6 +1,6 @@
 package io.getstream.chat.docs.kotlin.client.helpers
 
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -19,7 +19,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
         } catch (e: Exception) {
-            Result.Failure(StreamError.ThrowableError(message = "Could not send file.", cause = e))
+            Result.Failure(Error.ThrowableError(message = "Could not send file.", cause = e))
         }
     }
 
@@ -32,7 +32,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
         } catch (e: Exception) {
-            Result.Failure(StreamError.ThrowableError(message = "Could not send file.", cause = e))
+            Result.Failure(Error.ThrowableError(message = "Could not send file.", cause = e))
         }
     }
 
@@ -46,7 +46,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(UploadedImage(file = "url"))
         } catch (e: Exception) {
-            Result.Failure(StreamError.ThrowableError(message = "Could not send image.", cause = e))
+            Result.Failure(Error.ThrowableError(message = "Could not send image.", cause = e))
         }
     }
 
@@ -59,7 +59,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(UploadedImage(file = "url"))
         } catch (e: Exception) {
-            Result.Failure(StreamError.ThrowableError(message = "Could not send image.", cause = e))
+            Result.Failure(Error.ThrowableError(message = "Could not send image.", cause = e))
         }
     }
 
@@ -72,7 +72,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Failure(StreamError.ThrowableError(message = "Could not delete file.", cause = e))
+            Result.Failure(Error.ThrowableError(message = "Could not delete file.", cause = e))
         }
     }
 
@@ -85,7 +85,7 @@ class MyFileUploader : FileUploader {
         return try {
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Failure(StreamError.ThrowableError(message = "Could not delete image.", cause = e))
+            Result.Failure(Error.ThrowableError(message = "Could not delete image.", cause = e))
         }
     }
 }

@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.errors
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.result.StreamError
-import io.getstream.result.StreamError.NetworkError.Companion.UNKNOWN_STATUS_CODE
+import io.getstream.result.Error
+import io.getstream.result.Error.NetworkError.Companion.UNKNOWN_STATUS_CODE
 import java.net.UnknownHostException
 
 /**
@@ -29,23 +29,23 @@ private const val HTTP_TIMEOUT = 408
 private const val HTTP_API_ERROR = 500
 
 /**
- * Creates [StreamError.NetworkError] from [ChatErrorCode] with custom status code and optional cause.
+ * Creates [Error.NetworkError] from [ChatErrorCode] with custom status code and optional cause.
  *
  * @param chatErrorCode The [ChatErrorCode] from which the error should be created.
  * @param statusCode HTTP status code or [UNKNOWN_STATUS_CODE] if not available.
  * @param cause The optional [Throwable] associated with the error.
  *
- * @return [StreamError.NetworkError] instance.
+ * @return [Error.NetworkError] instance.
  */
 @InternalStreamChatApi
-public fun StreamError.NetworkError.Companion.fromChatErrorCode(
+public fun Error.NetworkError.Companion.fromChatErrorCode(
     chatErrorCode: ChatErrorCode,
     statusCode: Int = UNKNOWN_STATUS_CODE,
     cause: Throwable? = null,
-): StreamError.NetworkError {
-    return StreamError.NetworkError(
+): Error.NetworkError {
+    return Error.NetworkError(
         message = chatErrorCode.description,
-        streamCode = chatErrorCode.code,
+        serverErrorCode = chatErrorCode.code,
         statusCode = statusCode,
         cause = cause,
     )
@@ -63,13 +63,13 @@ public fun StreamError.NetworkError.Companion.fromChatErrorCode(
  * https://getstream.io/chat/docs/api_errors_response/?language=js
  */
 @InternalStreamChatApi
-public fun StreamError.isPermanent(): Boolean {
-    return if (this is StreamError.NetworkError) {
+public fun Error.isPermanent(): Boolean {
+    return if (this is Error.NetworkError) {
         // stream errors are mostly permanent. the exception to this are the rate limit and timeout error
-        val temporaryStreamErrors = listOf(HTTP_TOO_MANY_REQUESTS, HTTP_TIMEOUT, HTTP_API_ERROR)
+        val temporaryErrors = listOf(HTTP_TOO_MANY_REQUESTS, HTTP_TIMEOUT, HTTP_API_ERROR)
 
         when {
-            statusCode in temporaryStreamErrors -> false
+            statusCode in temporaryErrors -> false
             cause is UnknownHostException -> false
             else -> true
         }
@@ -79,31 +79,31 @@ public fun StreamError.isPermanent(): Boolean {
 }
 
 /**
- * Copies the original [StreamError] objects with custom message.
+ * Copies the original [Error] objects with custom message.
  *
  * @param message The message to replace.
  *
- * @return New [StreamError] instance.
+ * @return New [Error] instance.
  */
 @InternalStreamChatApi
-public fun StreamError.copyWithMessage(message: String): StreamError {
+public fun Error.copyWithMessage(message: String): Error {
     return when (this) {
-        is StreamError.GenericError -> this.copy(message = message)
-        is StreamError.NetworkError -> this.copy(message = message)
-        is StreamError.ThrowableError -> this.copy(message = message)
+        is Error.GenericError -> this.copy(message = message)
+        is Error.NetworkError -> this.copy(message = message)
+        is Error.ThrowableError -> this.copy(message = message)
     }
 }
 
 /**
- * Extracts the cause from [StreamError] object or null if it's not available.
+ * Extracts the cause from [Error] object or null if it's not available.
  *
  * @return The [Throwable] that is the error's cause or null if not available.
  */
 @InternalStreamChatApi
-public fun StreamError.extractCause(): Throwable? {
+public fun Error.extractCause(): Throwable? {
     return when (this) {
-        is StreamError.GenericError -> null
-        is StreamError.NetworkError -> cause
-        is StreamError.ThrowableError -> cause
+        is Error.GenericError -> null
+        is Error.NetworkError -> cause
+        is Error.ThrowableError -> cause
     }
 }

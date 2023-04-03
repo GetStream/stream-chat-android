@@ -27,8 +27,8 @@ import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.log.StreamLog
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import java.util.Date
 
 private const val TAG = "Chat:SendMessageHandlerDB"
@@ -82,11 +82,11 @@ internal class SendMessageListenerDatabase(
 
     private suspend fun handleSendMessageFail(
         message: Message,
-        error: StreamError,
+        error: Error,
     ) {
         val isPermanentError = error.isPermanent()
-        val isMessageModerationFailed = error is StreamError.NetworkError &&
-            error.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
+        val isMessageModerationFailed = error is Error.NetworkError &&
+            error.serverErrorCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
 
         StreamLog.w(TAG) {
             "[handleSendMessageFail] isPermanentError: $isPermanentError" +

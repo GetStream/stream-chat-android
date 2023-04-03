@@ -22,7 +22,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import java.util.Date
 
 public sealed class ChatEvent {
@@ -667,7 +667,7 @@ public data class ErrorEvent(
     override val type: String,
     override val createdAt: Date,
     override val rawCreatedAt: String?,
-    val error: StreamError,
+    val error: Error,
 ) : ChatEvent()
 
 /**

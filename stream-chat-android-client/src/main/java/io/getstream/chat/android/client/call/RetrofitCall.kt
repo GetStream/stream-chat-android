@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.errors.ChatRequestError
 import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -65,14 +65,14 @@ internal class RetrofitCall<T : Any>(
 
     private fun Throwable.toFailedResult(): Result<T> = Result.Failure(this.toFailedError())
 
-    private fun Throwable.toFailedError(): StreamError = when (this) {
-        is ChatRequestError -> StreamError.NetworkError(
-            streamCode = streamCode,
+    private fun Throwable.toFailedError(): Error = when (this) {
+        is ChatRequestError -> Error.NetworkError(
+            serverErrorCode = streamCode,
             message = message.toString(),
             statusCode = statusCode,
             cause = cause,
         )
-        else -> StreamError.NetworkError.fromChatErrorCode(
+        else -> Error.NetworkError.fromChatErrorCode(
             chatErrorCode = ChatErrorCode.NETWORK_FAILED,
             cause = this,
         )

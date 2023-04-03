@@ -38,7 +38,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.mockito.kotlin.mock
@@ -146,13 +146,13 @@ internal object Mother {
     }
 
     fun randomChatNetworkError(
-        streamCode: Int = randomInt(),
+        serverErrorCode: Int = randomInt(),
         description: String = randomString(),
         statusCode: Int = randomInt(),
         cause: Throwable? = null,
-    ): StreamError.NetworkError = StreamError.NetworkError(
+    ): Error.NetworkError = Error.NetworkError(
         message = description,
-        streamCode = streamCode,
+        serverErrorCode = serverErrorCode,
         statusCode = statusCode,
         cause = cause,
     )

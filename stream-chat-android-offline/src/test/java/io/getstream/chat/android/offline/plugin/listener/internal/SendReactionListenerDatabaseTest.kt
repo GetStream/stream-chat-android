@@ -26,8 +26,8 @@ import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.randomCID
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -140,7 +140,7 @@ internal class SendReactionListenerDatabaseTest {
             testReaction,
             false,
             currentUser,
-            Result.Failure(StreamError.GenericError(""))
+            Result.Failure(Error.GenericError(""))
         )
 
         verify(reactionsRepository).insertReaction(testReaction.copy(syncStatus = SyncStatus.SYNC_NEEDED))

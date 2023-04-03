@@ -28,8 +28,8 @@ import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -103,7 +103,7 @@ internal class StreamWebSocketTest {
         val code = randomInt()
         val message = randomString()
         val statusCode = randomInt()
-        val errorResult = Result.Failure(StreamError.ThrowableError(message = "", cause = mock()))
+        val errorResult = Result.Failure(Error.ThrowableError(message = "", cause = mock()))
         whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java)) doReturn errorResult
         whenever(parser.fromJsonOrError(textEvent, SocketErrorMessage::class.java))
             .doReturn(Result.Success(SocketErrorMessage(ErrorResponse(code, message, statusCode))))
@@ -117,9 +117,9 @@ internal class StreamWebSocketTest {
 
         listResult `should be equal to` listOf(
             StreamWebSocketEvent.Error(
-                StreamError.NetworkError(
+                Error.NetworkError(
                     message = message,
-                    streamCode = code,
+                    serverErrorCode = code,
                     statusCode = statusCode,
                 ),
             ),
@@ -132,8 +132,8 @@ internal class StreamWebSocketTest {
         val textEvent = randomString()
         val cause = mock<Throwable>()
         whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java))
-            .doReturn(Result.Failure(StreamError.ThrowableError(message = "", cause = cause)))
-        val errorResult = Result.Failure(StreamError.ThrowableError(message = "", cause = mock()))
+            .doReturn(Result.Failure(Error.ThrowableError(message = "", cause = cause)))
+        val errorResult = Result.Failure(Error.ThrowableError(message = "", cause = mock()))
         whenever(parser.fromJsonOrError(textEvent, SocketErrorMessage::class.java)) doReturn errorResult
         val listener = streamWebSocket.listen()
         val listResult = mutableListOf<StreamWebSocketEvent>()
@@ -145,7 +145,7 @@ internal class StreamWebSocketTest {
 
         listResult `should be equal to` listOf(
             StreamWebSocketEvent.Error(
-                StreamError.NetworkError.fromChatErrorCode(
+                Error.NetworkError.fromChatErrorCode(
                     chatErrorCode = ChatErrorCode.CANT_PARSE_EVENT,
                     cause = cause,
                 ),
@@ -180,7 +180,7 @@ internal class StreamWebSocketTest {
 
         listResult `should be equal to` listOf(
             StreamWebSocketEvent.Error(
-                StreamError.NetworkError.fromChatErrorCode(
+                Error.NetworkError.fromChatErrorCode(
                     chatErrorCode = ChatErrorCode.SOCKET_CLOSED,
                 ),
             ),

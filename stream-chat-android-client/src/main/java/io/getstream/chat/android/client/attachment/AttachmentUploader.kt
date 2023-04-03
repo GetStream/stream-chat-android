@@ -218,7 +218,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * @param progressCallback Used to listen to file upload
      * progress, success, and failure.
      *
-     * @return Returns a [Result] containing a [io.getstream.result.StreamError]
+     * @return Returns a [Result] containing a [io.getstream.result.Error]
      * */
     private fun onFailedUpload(
         attachment: Attachment,

@@ -22,8 +22,8 @@ import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.Thre
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
@@ -127,7 +127,7 @@ internal class ThreadQueryListenerStateTest {
 
     @Test
     fun `given response it failure, the state should NOT be updated in the SDK`() = runTest {
-        threadQueryListenerState.onGetRepliesResult(Result.Failure(StreamError.GenericError("")), message.id, 30)
+        threadQueryListenerState.onGetRepliesResult(Result.Failure(Error.GenericError("")), message.id, 30)
 
         verify(threadLogic).setLoading(false)
 

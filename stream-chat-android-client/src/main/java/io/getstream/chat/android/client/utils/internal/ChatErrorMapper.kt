@@ -22,11 +22,11 @@ import io.getstream.chat.android.models.MessageModerationFailed
 import io.getstream.chat.android.models.MessageSyncDescription
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.ModerationViolation
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 
 @InternalStreamChatApi
-public fun StreamError.toMessageSyncDescription(): MessageSyncDescription? {
-    val networkError = this as? StreamError.NetworkError ?: return null
+public fun Error.toMessageSyncDescription(): MessageSyncDescription? {
+    val networkError = this as? Error.NetworkError ?: return null
     return when (val cause = networkError.cause) {
         is MessageModerationFailedException -> MessageSyncDescription(
             type = MessageSyncType.FAILED_MODERATION,

@@ -25,8 +25,8 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
@@ -112,7 +112,7 @@ internal class AttachmentsSender(
             enqueueAttachmentUpload(message, channelType, channelId)
             logger.d { "[uploadAttachments] Chat is offline, not sending message with id ${message.id}" }
             Result.Failure(
-                StreamError.GenericError(
+                Error.GenericError(
                     "Chat is offline, not sending message with id ${message.id} and text ${message.text}",
                 )
             )
@@ -163,7 +163,7 @@ internal class AttachmentsSender(
         } else {
             logger.i { "[waitForAttachmentsToBeSent] Could not upload attachments for message ${newMessage.id}" }
             Result.Failure(
-                StreamError.GenericError("Could not upload attachments, not sending message with id ${newMessage.id}"),
+                Error.GenericError("Could not upload attachments, not sending message with id ${newMessage.id}"),
             )
         }.also {
             uploadIds.remove(newMessage.id)

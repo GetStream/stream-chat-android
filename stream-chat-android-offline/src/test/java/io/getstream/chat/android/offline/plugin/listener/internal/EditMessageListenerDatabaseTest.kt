@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -101,7 +101,7 @@ internal class EditMessageListenerDatabaseTest {
 
         val testMessage = randomMessage()
 
-        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.Failure(StreamError.GenericError("")))
+        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.Failure(Error.GenericError("")))
 
         verify(userRepository).insertUsers(testMessage.users())
         verify(messageRepository).insertMessage(

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.utils
 
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 
 /**
  * Callback to listen for file upload status.
@@ -32,9 +32,9 @@ public interface ProgressCallback {
      * Called when the attachment could not be uploaded due to cancellation, network problem or timeout etc
      * with an [error].
      *
-     * @see StreamError
+     * @see Error
      */
-    public fun onError(error: StreamError)
+    public fun onError(error: Error)
 
     /**
      * Called when the attachment upload is in progress with [bytesUploaded] count

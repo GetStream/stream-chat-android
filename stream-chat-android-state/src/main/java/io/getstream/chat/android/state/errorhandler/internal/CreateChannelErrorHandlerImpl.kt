@@ -24,8 +24,8 @@ import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import io.getstream.chat.android.models.Channel
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -70,7 +70,7 @@ internal class CreateChannelErrorHandlerImpl(
                     "$channelType:${generateChannelIdIfNeeded(channelId = channelId, memberIds = memberIds)}"
                 val cachedChannel = channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()
                 if (cachedChannel == null) {
-                    Result.Failure(StreamError.GenericError(message = "Channel wasn't cached properly."))
+                    Result.Failure(Error.GenericError(message = "Channel wasn't cached properly."))
                 } else {
                     Result.Success(cachedChannel)
                 }

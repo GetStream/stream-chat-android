@@ -58,7 +58,7 @@ import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.ChannelsActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 
 /**
  * An Activity that allows users to manually log in to an environment with an API key,
@@ -242,8 +242,8 @@ class CustomLoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun showError(streamError: StreamError) {
-        Toast.makeText(this, "Login failed ${streamError.message}", Toast.LENGTH_SHORT).show()
+    private fun showError(error: Error) {
+        Toast.makeText(this, "Login failed ${error.message}", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

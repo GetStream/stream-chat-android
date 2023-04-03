@@ -78,8 +78,8 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.t
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import java.util.Date
 
 /**
@@ -136,7 +136,7 @@ internal class ChannelLogic(
         if (mutableState.loading.value) {
             logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
             return Result.Failure(
-                StreamError.GenericError(
+                Error.GenericError(
                     "Another request to watch this channel is in progress. Ignoring this request.",
                 ),
             )

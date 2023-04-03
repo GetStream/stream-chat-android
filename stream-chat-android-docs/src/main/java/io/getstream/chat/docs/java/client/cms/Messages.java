@@ -23,7 +23,7 @@ import io.getstream.chat.android.models.Reaction;
 import io.getstream.chat.android.models.User;
 import io.getstream.chat.android.models.querysort.QuerySortByField;
 import io.getstream.chat.docs.java.client.helpers.MyFileUploader;
-import io.getstream.result.StreamError;
+import io.getstream.result.Error;
 
 public class Messages {
     private ChatClient client;
@@ -176,7 +176,7 @@ public class Messages {
                 }
 
                 @Override
-                public void onError(@NotNull StreamError error) {
+                public void onError(@NotNull Error error) {
                     // Handle error
                 }
 

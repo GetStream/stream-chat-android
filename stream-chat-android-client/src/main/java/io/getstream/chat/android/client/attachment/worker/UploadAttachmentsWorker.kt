@@ -27,8 +27,8 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import io.getstream.result.recover
 
 @InternalStreamChatApi
@@ -51,13 +51,13 @@ public class UploadAttachmentsWorker(
 
         return try {
             message?.let { sendAttachments(it) } ?: Result.Failure(
-                StreamError.GenericError("The message with id $messageId could not be found.")
+                Error.GenericError("The message with id $messageId could not be found.")
             )
         } catch (e: Exception) {
             logger.i { "[uploadAttachmentsForMessage] Couldn't upload attachments ${e.message}" }
             message?.let { updateMessages(it) }
             Result.Failure(
-                StreamError.ThrowableError(
+                Error.ThrowableError(
                     message = "Could not upload attachments for message $messageId",
                     cause = e,
                 ),
@@ -70,7 +70,7 @@ public class UploadAttachmentsWorker(
             logger.d { "[sendAttachments] Current user is not set. Restoring credentials" }
             if (!chatClient.containsStoredCredentials()) {
                 logger.d { "[sendAttachments] User's credentials are not available" }
-                return Result.Failure(StreamError.GenericError("Could not set user"))
+                return Result.Failure(Error.GenericError("Could not set user"))
             }
 
             chatClient.setUserWithoutConnectingIfNeeded()
@@ -93,7 +93,7 @@ public class UploadAttachmentsWorker(
                 Result.Success(Unit)
             } else {
                 logger.i { "[sendAttachments] Unable to upload attachments for message ${message.id}" }
-                Result.Failure(StreamError.GenericError("Unable to upload attachments for message ${message.id}"))
+                Result.Failure(Error.GenericError("Unable to upload attachments for message ${message.id}"))
             }
         }
     }
@@ -131,7 +131,7 @@ public class UploadAttachmentsWorker(
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
                     it.uploadState = Attachment.UploadState.Failed(
-                        StreamError.ThrowableError(message = "Could not upload attachments.", cause = e),
+                        Error.ThrowableError(message = "Could not upload attachments.", cause = e),
                     )
                 }
                 it
@@ -161,7 +161,7 @@ public class UploadAttachmentsWorker(
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
         }
 
-        override fun onError(error: StreamError) {
+        override fun onError(error: Error) {
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
         }
 

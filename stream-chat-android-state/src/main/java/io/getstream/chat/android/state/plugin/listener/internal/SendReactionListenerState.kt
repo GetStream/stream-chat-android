@@ -26,8 +26,8 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 
 /**
  * State implementation for SendReactionListener. It updates the state accordingly and does the optimistic UI update.
@@ -121,11 +121,11 @@ internal class SendReactionListenerState(
     override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
-                Result.Failure(StreamError.GenericError(message = "Current user is null!"))
+                Result.Failure(Error.GenericError(message = "Current user is null!"))
             }
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
                 Result.Failure(
-                    StreamError.GenericError(
+                    Error.GenericError(
                         message = "Reaction::messageId and Reaction::type cannot be empty!",
                     ),
                 )
@@ -143,7 +143,7 @@ internal class SendReactionListenerState(
         }
     }
 
-    private fun Reaction.updateFailedReactionSyncStatus(streamError: StreamError) {
+    private fun Reaction.updateFailedReactionSyncStatus(streamError: Error) {
         syncStatus = if (streamError.isPermanent()) {
             SyncStatus.FAILED_PERMANENTLY
         } else {

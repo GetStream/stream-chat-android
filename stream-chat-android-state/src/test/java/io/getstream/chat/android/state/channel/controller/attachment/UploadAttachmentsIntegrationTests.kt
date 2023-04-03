@@ -38,8 +38,8 @@ import io.getstream.chat.android.state.utils.randomAttachmentsWithFile
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -164,8 +164,8 @@ internal class UploadAttachmentsIntegrationTests {
 
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
-            val imageResult = Result.Failure(StreamError.GenericError(""))
-            val fileResult = Result.Failure(StreamError.GenericError(""))
+            val imageResult = Result.Failure(Error.GenericError(""))
+            val fileResult = Result.Failure(Error.GenericError(""))
 
             whenever(
                 chatClient.sendFile(

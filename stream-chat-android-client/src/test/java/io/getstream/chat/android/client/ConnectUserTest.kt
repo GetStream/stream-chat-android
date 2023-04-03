@@ -39,8 +39,8 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -187,7 +187,7 @@ internal class ConnectUserTest {
         val messageError = randomString()
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
-        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, StreamError.GenericError(message = messageError))
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, Error.GenericError(message = messageError))
 
         val localScope = testCoroutines.scope + Job()
         val deferred = localScope.async {
@@ -250,7 +250,7 @@ internal class ConnectUserTest {
         val messageError = randomString()
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
-        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, StreamError.GenericError(message = messageError))
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, Error.GenericError(message = messageError))
 
         whenever(chatApi.getGuestUser(user.id, user.name)) doReturn GuestUser(user, jwt).asCall()
         val localScope = testCoroutines.scope + Job()
@@ -285,7 +285,7 @@ internal class ConnectUserTest {
         val messageError = randomString()
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
-        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, StreamError.GenericError(message = messageError))
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, Error.GenericError(message = messageError))
 
         val localScope = testCoroutines.scope + Job()
         val deferred = localScope.async { client.connectAnonymousUser().await() }

@@ -18,15 +18,15 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 internal class ErrorCall<T : Any>(
     private val scope: CoroutineScope,
-    private val e: StreamError,
+    private val e: Error,
 ) : Call<T> {
     override fun cancel() {
         // Not supported

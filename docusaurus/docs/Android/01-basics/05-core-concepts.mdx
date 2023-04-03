@@ -91,7 +91,7 @@ when (result) {
         // Handle success
     }
     is Result.Failure -> {
-        val error: StreamError = result.value
+        val error: Error = result.value
         // Handler error
     }
 }
@@ -111,7 +111,7 @@ if (result.isSuccess()) {
     Channel channel = result.getOrNull();
 } else {
     // Handle error
-    StreamError error = result.streamErrorOrNull();
+    Error error = result.errorOrNull();
 }
 ```
 </TabItem>
@@ -125,7 +125,7 @@ Alternatively, you can handle `Call` operations in a reactive way by using opera
 ```kotlin
 result.onSuccess { channel ->
     // Handle success
-}.onError { streamError ->
+}.onError { error ->
     // Handle error
 }
 ```
@@ -137,7 +137,7 @@ result.onSuccess { channel ->
 result.onSuccess(channel -> {
     // Handle success
     return null;
-}).onError(streamError -> {
+}).onError(error -> {
     // Handle error
     return null;
 });
