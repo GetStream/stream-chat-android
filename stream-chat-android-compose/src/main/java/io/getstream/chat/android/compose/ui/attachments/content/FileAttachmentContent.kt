@@ -89,8 +89,9 @@ public fun FileAttachmentContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            attachmentState.onAttachmentClick?.let { it(OnFileAttachmentClickState(attachment = attachment)) }
-                                ?: previewHandlers
+                            attachmentState.onAttachmentClick?.let {
+                                it(OnFileAttachmentClickState(attachment = attachment))
+                            } ?: previewHandlers
                                     .firstOrNull { it.canHandle(attachment) }
                                     ?.handleAttachmentPreview(attachment)
                         },
