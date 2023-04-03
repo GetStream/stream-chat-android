@@ -130,13 +130,6 @@ internal class DatabaseChannelRepository(
     }
 
     /**
-     * Reads list of channels using specified [cids].
-     */
-    override suspend fun selectChannelsByCids(cids: List<String>): List<Channel> {
-        return channelDao.select(cids = cids).map { it.toModel(getUser, getMessage) }
-    }
-
-    /**
      * Read which channel cids need sync.
      */
     override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> {

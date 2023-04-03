@@ -84,15 +84,6 @@ public interface ChannelRepository {
     public suspend fun selectChannelByCid(cid: String): Channel?
 
     /**
-     * Select channels by full channel IDs [Channel.cid]
-     *
-     * @param cids A list of [Channel.cid] as query specification.
-     *
-     * @return A list of channels found in repository.
-     */
-    public suspend fun selectChannelsByCids(cids: List<String>): List<Channel>
-
-    /**
      * Read which channel cids need sync.
      */
     public suspend fun selectChannelCidsBySyncNeeded(limit: Int = NO_LIMIT): List<String>

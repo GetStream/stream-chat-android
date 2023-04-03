@@ -34,7 +34,6 @@ internal object NoOpChannelRepository : ChannelRepository {
     override suspend fun selectAllCids(): List<String> = emptyList()
     override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> = emptyList()
     override suspend fun selectChannelByCid(cid: String): Channel? = null
-    override suspend fun selectChannelsByCids(cids: List<String>): List<Channel> = emptyList()
     override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> = emptyList()
     override suspend fun selectChannelsSyncNeeded(limit: Int): List<Channel> = emptyList()
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) { /* No-Op */ }
