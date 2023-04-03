@@ -92,8 +92,8 @@ public fun FileAttachmentContent(
                             attachmentState.onAttachmentClick?.let {
                                 it(OnFileAttachmentClickState(attachment = attachment))
                             } ?: previewHandlers
-                                    .firstOrNull { it.canHandle(attachment) }
-                                    ?.handleAttachmentPreview(attachment)
+                                .firstOrNull { it.canHandle(attachment) }
+                                ?.handleAttachmentPreview(attachment)
                         },
                         onLongClick = { onItemLongClick(message) },
                     ),
