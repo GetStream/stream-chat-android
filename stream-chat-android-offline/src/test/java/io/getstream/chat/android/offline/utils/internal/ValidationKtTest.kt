@@ -18,8 +18,8 @@ package io.getstream.chat.android.offline.utils.internal
 
 import io.getstream.chat.android.client.utils.internal.validateCid
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import org.amshove.kluent.invoking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
@@ -64,7 +64,7 @@ internal class ValidationKtTest {
                     Arguments.of(
                         it.first,
                         Result.Failure(
-                            StreamError.ThrowableError(
+                            Error.ThrowableError(
                                 message = "Cid is invalid: ${it.first}",
                                 cause = it.second,
                             ),

@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import java.util.Date
 
 public fun Message.enrichWithCid(cid: String): Message = apply {
@@ -32,17 +32,17 @@ public fun Message.enrichWithCid(cid: String): Message = apply {
 /**
  * Updates a message that whose request (Edition/Delete/Reaction update...) has failed.
  *
- * @param streamError [StreamError].
+ * @param error [Error].
  */
 @InternalStreamChatApi
-public fun Message.updateFailedMessage(streamError: StreamError): Message {
+public fun Message.updateFailedMessage(error: Error): Message {
     return this.copy(
-        syncStatus = if (streamError.isPermanent()) {
+        syncStatus = if (error.isPermanent()) {
             SyncStatus.FAILED_PERMANENTLY
         } else {
             SyncStatus.SYNC_NEEDED
         },
-        syncDescription = streamError.toMessageSyncDescription(),
+        syncDescription = error.toMessageSyncDescription(),
         updatedLocallyAt = Date(),
     )
 }

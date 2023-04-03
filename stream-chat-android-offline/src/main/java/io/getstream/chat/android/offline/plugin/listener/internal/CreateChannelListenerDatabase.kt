@@ -26,8 +26,8 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import java.util.Date
 
 /**
@@ -150,10 +150,10 @@ internal class CreateChannelListenerDatabase(
     ): Result<Unit> {
         return when {
             channelId.isBlank() && memberIds.isEmpty() -> {
-                Result.Failure(StreamError.GenericError(message = "Either channelId or memberIds cannot be empty!"))
+                Result.Failure(Error.GenericError(message = "Either channelId or memberIds cannot be empty!"))
             }
             currentUser == null -> {
-                Result.Failure(StreamError.GenericError(message = "Current user is null!"))
+                Result.Failure(Error.GenericError(message = "Current user is null!"))
             }
             else -> {
                 Result.Success(Unit)

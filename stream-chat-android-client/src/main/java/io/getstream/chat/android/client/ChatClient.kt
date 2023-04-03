@@ -161,8 +161,8 @@ import io.getstream.log.CompositeStreamLogger
 import io.getstream.log.StreamLog
 import io.getstream.log.android.AndroidStreamLogger
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import io.getstream.result.flatMapSuspend
 import io.getstream.result.onErrorSuspend
 import kotlinx.coroutines.CoroutineScope
@@ -392,7 +392,7 @@ internal constructor(
                     "The user_id provided on the JWT token doesn't match with the current user you try to connect"
                 }
                 Result.Failure(
-                    StreamError.GenericError(
+                    Error.GenericError(
                         "The user_id provided on the JWT token doesn't match with the current user you try to connect",
                     )
                 )
@@ -414,7 +414,7 @@ internal constructor(
                     userState.user.id != user.id -> {
                         logger.e { "[setUser] Trying to set different user without disconnect previous one." }
                         Result.Failure(
-                            StreamError.GenericError(
+                            Error.GenericError(
                                 "User cannot be set until the previous one is disconnected.",
                             )
                         )
@@ -427,7 +427,7 @@ internal constructor(
                                         "connection."
                                 }
                                 Result.Failure(
-                                    StreamError.GenericError(
+                                    Error.GenericError(
                                         "Failed to connect user. Please check you haven't connected a user already.",
                                     )
                                 )
@@ -438,7 +438,7 @@ internal constructor(
             else -> {
                 logger.e { "[setUser] Failed to connect user. Please check you don't have connected user already." }
                 Result.Failure(
-                    StreamError.GenericError(
+                    Error.GenericError(
                         "Failed to connect user. Please check you don't have connected user already.",
                     )
                 )
@@ -693,7 +693,7 @@ internal constructor(
         timeoutMilliseconds?.let {
             withTimeoutOrNull(timeoutMilliseconds) { waitConnection.first() }
                 ?: Result.Failure(
-                    StreamError.GenericError("Connection wasn't established in ${timeoutMilliseconds}ms"),
+                    Error.GenericError("Connection wasn't established in ${timeoutMilliseconds}ms"),
                 )
         } ?: waitConnection.first()
 
@@ -1144,7 +1144,7 @@ internal constructor(
                 false -> {
                     logger.i { "[disconnect] cannot disconnect as the user wasn't connected" }
                     Result.Failure(
-                        StreamError.GenericError(
+                        Error.GenericError(
                             message = "ChatClient can't be disconnected because user wasn't connected previously",
                         ),
                     )
@@ -1259,7 +1259,7 @@ internal constructor(
         sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && (sort != null || next != null)) {
-            return ErrorCall(userScope, StreamError.GenericError("Cannot specify offset with sort or next parameters"))
+            return ErrorCall(userScope, Error.GenericError("Cannot specify offset with sort or next parameters"))
         }
         return api.searchMessages(
             channelFilter = channelFilter,
@@ -1493,7 +1493,7 @@ internal constructor(
      * @param messageId The ID of the message we are fetching from the backend.
      *
      * @return The message wrapped inside [Result] if the call was successful,
-     * otherwise returns a [StreamError] instance wrapped inside [Result].
+     * otherwise returns a [Error] instance wrapped inside [Result].
      */
     @CheckResult
     public fun getMessage(messageId: String): Call<Message> {
@@ -1934,7 +1934,7 @@ internal constructor(
         } else {
             ErrorCall(
                 userScope,
-                StreamError.GenericError(
+                Error.GenericError(
                     "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration.",
                 )
             )
@@ -2047,7 +2047,7 @@ internal constructor(
             val errorMessage = "The client-side partial update allows you to update only the current user. " +
                 "Make sure the user is set before updating it."
             logger.e { errorMessage }
-            return ErrorCall(userScope, StreamError.GenericError(errorMessage))
+            return ErrorCall(userScope, Error.GenericError(errorMessage))
         }
 
         return api.partialUpdateUser(
@@ -2485,7 +2485,7 @@ internal constructor(
     ): Call<List<ChatEvent>> {
         val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(
             userScope,
-            StreamError.GenericError(
+            Error.GenericError(
                 "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}",
             )
         )
@@ -2504,10 +2504,10 @@ internal constructor(
     private fun checkSyncHistoryPreconditions(channelsIds: List<String>, lastSyncAt: Date): Result<Unit> {
         return when {
             channelsIds.isEmpty() -> {
-                Result.Failure(StreamError.GenericError("channelsIds must contain at least 1 id."))
+                Result.Failure(Error.GenericError("channelsIds must contain at least 1 id."))
             }
             lastSyncAt.isLaterThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
-                Result.Failure(StreamError.GenericError("lastSyncAt cannot by later than 30 days."))
+                Result.Failure(Error.GenericError("lastSyncAt cannot by later than 30 days."))
             }
             else -> {
                 Result.Success(Unit)
@@ -2523,7 +2523,7 @@ internal constructor(
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
      * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
-     * [StreamError] if fails.
+     * [Error] if fails.
      */
     @CheckResult
     public fun keystroke(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
@@ -2564,7 +2564,7 @@ internal constructor(
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
      * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
-     * [StreamError] if fails.
+     * [Error] if fails.
      */
     @CheckResult
     public fun stopTyping(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {

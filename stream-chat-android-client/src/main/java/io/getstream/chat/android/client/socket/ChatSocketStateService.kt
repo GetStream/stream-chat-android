@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
 import io.getstream.log.taggedLogger
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import kotlinx.coroutines.flow.StateFlow
 
 internal class ChatSocketStateService(initialState: State = State.Disconnected.Stopped) {
@@ -76,9 +76,9 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
     /**
      * Notify that an unrecoverable error happened.
      *
-     * @param error The [StreamError.NetworkError]
+     * @param error The [Error.NetworkError]
      */
-    fun onUnrecoverableError(error: StreamError.NetworkError) {
+    fun onUnrecoverableError(error: Error.NetworkError) {
         logger.e { "[onUnrecoverableError] error: $error" }
         stateMachine.sendEvent(Event.UnrecoverableError(error))
     }
@@ -86,9 +86,9 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
     /**
      * Notify that a network error happened.
      *
-     * @param error The [StreamError.NetworkError]
+     * @param error The [Error.NetworkError]
      */
-    fun onNetworkError(error: StreamError.NetworkError) {
+    fun onNetworkError(error: Error.NetworkError) {
         logger.e { "[onNetworkError] error: $error" }
         stateMachine.sendEvent(Event.NetworkError(error))
     }
@@ -276,12 +276,12 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
         /**
          * Event to notify an Unrecoverable Error happened on the WebSocket connection.
          */
-        data class UnrecoverableError(val error: StreamError.NetworkError) : Event()
+        data class UnrecoverableError(val error: Error.NetworkError) : Event()
 
         /**
          * Event to notify a network Error happened on the WebSocket connection.
          */
-        data class NetworkError(val error: StreamError.NetworkError) : Event()
+        data class NetworkError(val error: Error.NetworkError) : Event()
 
         /**
          * Event to stop WebSocket connection required by user.
@@ -345,14 +345,14 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
             object DisconnectedByRequest : Disconnected() { override fun toString() = "Disconnected.ByRequest" }
 
             /**
-             * State of socket when a [StreamError] happens.
+             * State of socket when a [Error] happens.
              */
-            data class DisconnectedTemporarily(val error: StreamError.NetworkError) : Disconnected()
+            data class DisconnectedTemporarily(val error: Error.NetworkError) : Disconnected()
 
             /**
              * State of socket when a connection is permanently disconnected.
              */
-            data class DisconnectedPermanently(val error: StreamError.NetworkError) : Disconnected()
+            data class DisconnectedPermanently(val error: Error.NetworkError) : Disconnected()
         }
     }
 }

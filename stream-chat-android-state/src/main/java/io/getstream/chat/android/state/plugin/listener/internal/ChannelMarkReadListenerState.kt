@@ -18,8 +18,8 @@ package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 
 /**
  * [ChannelMarkReadListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
@@ -47,7 +47,7 @@ internal class ChannelMarkReadListenerState(private val state: StateRegistry) : 
         return if (shouldMarkRead) {
             Result.Success(Unit)
         } else {
-            Result.Failure(StreamError.GenericError("Can not mark channel as read with channel id: $channelId"))
+            Result.Failure(Error.GenericError("Can not mark channel as read with channel id: $channelId"))
         }
     }
 }

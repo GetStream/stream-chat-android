@@ -23,7 +23,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -94,7 +94,7 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 scope,
-                StreamError.GenericError(
+                Error.GenericError(
                     message = obj.composeErrorMessage(reserved),
                 )
             )
@@ -107,7 +107,7 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 scope,
-                StreamError.GenericError(
+                Error.GenericError(
                     message = obj.composeErrorMessage(reserved),
                 )
             )
@@ -122,7 +122,7 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 scope,
-                StreamError.GenericError(
+                Error.GenericError(
                     message = "'extraData' contains reserved keys: ${reserved.joinToString()}",
                 )
             )

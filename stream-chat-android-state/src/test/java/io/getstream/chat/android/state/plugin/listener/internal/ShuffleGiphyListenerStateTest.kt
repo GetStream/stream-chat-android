@@ -21,8 +21,8 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.test.randomCID
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -52,7 +52,7 @@ internal class ShuffleGiphyListenerStateTest {
 
     @Test
     fun `when shuffling giphys and request fails, it should NOT be upserted`() = runTest {
-        shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.Failure(StreamError.GenericError("")))
+        shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.Failure(Error.GenericError("")))
 
         verify(channelLogic, never()).upsertMessage(any())
     }

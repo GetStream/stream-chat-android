@@ -29,8 +29,8 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.test.positiveRandomLong
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
@@ -210,7 +210,7 @@ internal class WhenUploadAttachmentsTests {
                             any()
                         )
                     ) doReturn Result.Failure(
-                        StreamError.ThrowableError(
+                        Error.ThrowableError(
                             message = "",
                             cause = IllegalArgumentException("Error:-)"),
                         ),

@@ -47,13 +47,13 @@ internal class TokenAuthInterceptor internal constructor(
 
             if (!response.isSuccessful) {
                 val err = parser.toError(response)
-                if (err.streamCode == ChatErrorCode.TOKEN_EXPIRED.code) {
+                if (err.serverErrorCode == ChatErrorCode.TOKEN_EXPIRED.code) {
                     tokenManager.expireToken()
                     tokenManager.loadSync()
                     response.close()
                     response = chain.proceed(request)
                 } else {
-                    throw ChatRequestError(err.message, err.streamCode, err.statusCode, err.cause)
+                    throw ChatRequestError(err.message, err.serverErrorCode, err.statusCode, err.cause)
                 }
             }
             return response

@@ -45,8 +45,8 @@ import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import java.util.Calendar
 
 class ChatFragment : Fragment() {
@@ -254,7 +254,7 @@ class ChatFragment : Fragment() {
     private fun Result<Flag>.isAlreadyExistsError(): Boolean {
         return when (this) {
             is Result.Success -> false
-            is Result.Failure -> (value as StreamError.NetworkError).streamCode == 4
+            is Result.Failure -> (value as Error.NetworkError).serverErrorCode == 4
         }
     }
 }

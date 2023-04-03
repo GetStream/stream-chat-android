@@ -26,8 +26,8 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import java.util.Date
 
 internal class DeleteReactionListenerDatabase(
@@ -104,7 +104,7 @@ internal class DeleteReactionListenerDatabase(
         return if (currentUser != null) {
             Result.Success(Unit)
         } else {
-            Result.Failure(StreamError.GenericError(message = "Current user is null!"))
+            Result.Failure(Error.GenericError(message = "Current user is null!"))
         }
     }
 }

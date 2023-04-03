@@ -25,8 +25,8 @@ import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStat
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.randomCID
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -129,7 +129,7 @@ internal class DeleteMessageListenerStateTest {
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(StreamError.GenericError("")))
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(Error.GenericError("")))
 
         verify(channelLogic).upsertMessage(
             argThat { message ->

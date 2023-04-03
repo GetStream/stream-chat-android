@@ -38,7 +38,7 @@ import io.getstream.chat.android.state.message.attachments.internal.AttachmentUr
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.StreamLog
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 
@@ -519,9 +519,9 @@ internal class ChannelStateLogic(
     /**
      * Propagates the error in a query.
      *
-     * @param error [StreamError]
+     * @param error [Error]
      */
-    fun propagateQueryError(error: StreamError) {
+    fun propagateQueryError(error: Error) {
         if (error.isPermanent()) {
             StreamLog.d(TAG) {
                 "Permanent failure calling channel.watch for channel ${mutableState.cid}, with error $error"

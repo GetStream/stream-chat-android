@@ -216,12 +216,12 @@ public abstract class io/getstream/chat/android/models/Attachment$UploadState {
 }
 
 public final class io/getstream/chat/android/models/Attachment$UploadState$Failed : io/getstream/chat/android/models/Attachment$UploadState {
-	public fun <init> (Lio/getstream/result/StreamError;)V
-	public final fun component1 ()Lio/getstream/result/StreamError;
-	public final fun copy (Lio/getstream/result/StreamError;)Lio/getstream/chat/android/models/Attachment$UploadState$Failed;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Attachment$UploadState$Failed;Lio/getstream/result/StreamError;ILjava/lang/Object;)Lio/getstream/chat/android/models/Attachment$UploadState$Failed;
+	public fun <init> (Lio/getstream/result/Error;)V
+	public final fun component1 ()Lio/getstream/result/Error;
+	public final fun copy (Lio/getstream/result/Error;)Lio/getstream/chat/android/models/Attachment$UploadState$Failed;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Attachment$UploadState$Failed;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/models/Attachment$UploadState$Failed;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Lio/getstream/result/StreamError;
+	public final fun getError ()Lio/getstream/result/Error;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

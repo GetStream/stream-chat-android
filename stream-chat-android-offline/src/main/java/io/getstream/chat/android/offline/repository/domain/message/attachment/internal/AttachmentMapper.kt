@@ -20,7 +20,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.UploadStateEntity.Companion.UPLOAD_STATE_FAILED
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.UploadStateEntity.Companion.UPLOAD_STATE_IN_PROGRESS
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.UploadStateEntity.Companion.UPLOAD_STATE_SUCCESS
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import java.io.File
 
 internal fun Attachment.toEntity(messageId: String, index: Int): AttachmentEntity = AttachmentEntity(
@@ -136,7 +136,7 @@ private fun Attachment.UploadState.toEntity(): UploadStateEntity {
 private fun UploadStateEntity.toModel(uploadFile: File?): Attachment.UploadState = when (this.statusCode) {
     UPLOAD_STATE_SUCCESS -> Attachment.UploadState.Success
     UPLOAD_STATE_IN_PROGRESS -> Attachment.UploadState.InProgress(0, uploadFile?.length() ?: 0)
-    UPLOAD_STATE_FAILED -> Attachment.UploadState.Failed(StreamError.GenericError(message = this.errorMessage ?: ""))
+    UPLOAD_STATE_FAILED -> Attachment.UploadState.Failed(Error.GenericError(message = this.errorMessage ?: ""))
     else -> error("Integer value of $statusCode can't be mapped to UploadState")
 }
 

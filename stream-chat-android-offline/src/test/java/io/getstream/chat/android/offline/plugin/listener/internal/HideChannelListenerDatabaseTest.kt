@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -78,7 +78,7 @@ internal class HideChannelListenerDatabaseTest {
 
         val (type, id) = randomCID().cidToTypeAndId()
         hideChannelListenerDatabase.onHideChannelResult(
-            result = Result.Failure(StreamError.GenericError("")),
+            result = Result.Failure(Error.GenericError("")),
             channelType = type,
             channelId = id,
             clearHistory = randomBoolean()

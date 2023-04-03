@@ -31,7 +31,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
-import io.getstream.result.StreamError
+import io.getstream.result.Error
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -191,27 +191,27 @@ internal open class ChatSocket(
         networkStateProvider.unsubscribe(networkStateListener)
     }
 
-    private fun handleError(error: StreamError) {
+    private fun handleError(error: Error) {
         logger.e { "[handleError] error: $error" }
         when (error) {
-            is StreamError.NetworkError -> onChatNetworkError(error)
+            is Error.NetworkError -> onChatNetworkError(error)
             else -> callListeners { it.onError(error) }
         }
     }
 
-    private fun onChatNetworkError(error: StreamError.NetworkError) {
-        if (ChatErrorCode.isAuthenticationError(error.streamCode)) {
+    private fun onChatNetworkError(error: Error.NetworkError) {
+        if (ChatErrorCode.isAuthenticationError(error.serverErrorCode)) {
             tokenManager.expireToken()
         }
 
-        when (error.streamCode) {
+        when (error.serverErrorCode) {
             ChatErrorCode.UNDEFINED_TOKEN.code,
             ChatErrorCode.INVALID_TOKEN.code,
             ChatErrorCode.API_KEY_NOT_FOUND.code,
             ChatErrorCode.VALIDATION_ERROR.code,
             -> {
                 logger.d {
-                    "One unrecoverable error happened. Error: $error. Error code: ${error.streamCode}"
+                    "One unrecoverable error happened. Error: $error. Error code: ${error.serverErrorCode}"
                 }
                 chatSocketStateService.onUnrecoverableError(error)
             }

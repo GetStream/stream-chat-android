@@ -38,8 +38,8 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -260,9 +260,9 @@ internal class ChatClientTest {
         /* Given */
         whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
             Result.Failure(
-                StreamError.NetworkError(
+                Error.NetworkError(
                     statusCode = 400,
-                    streamCode = 4,
+                    serverErrorCode = 4,
                     message = "channel_cids must contain at least 1 item",
                 )
             )
@@ -272,7 +272,7 @@ internal class ChatClientTest {
         val result = client.getSyncHistory(emptyList(), Date()).await()
 
         /* Then */
-        result shouldBeEqualTo Result.Failure(StreamError.GenericError("channelsIds must contain at least 1 id."))
+        result shouldBeEqualTo Result.Failure(Error.GenericError("channelsIds must contain at least 1 id."))
     }
 
     @Test

@@ -41,8 +41,8 @@ import io.getstream.chat.android.models.UserEntity
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -333,7 +333,7 @@ internal class SyncManager(
         }
         logger.v { "[updateActiveQueryChannels] queryLogicsToRestore.size: ${queryLogicsToRestore.size}" }
 
-        val failed = AtomicReference<StreamError>()
+        val failed = AtomicReference<Error>()
         val updatedCids = mutableSetOf<String>()
         queryLogicsToRestore.forEach { queryLogic ->
             logger.v { "[updateActiveQueryChannels] queryLogic.filter: ${queryLogic.filter()}" }
@@ -350,9 +350,9 @@ internal class SyncManager(
                     logger.v { "[updateActiveQueryChannels] updatedCids.size: ${updatedCids.size}" }
                 }
         }
-        return when (val streamError = failed.get()) {
+        return when (val error = failed.get()) {
             null -> Result.Success(updatedCids)
-            else -> Result.Failure(streamError)
+            else -> Result.Failure(error)
         }
     }
 

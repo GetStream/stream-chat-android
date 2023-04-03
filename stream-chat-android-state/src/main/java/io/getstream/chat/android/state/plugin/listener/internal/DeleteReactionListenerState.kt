@@ -25,8 +25,8 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import java.util.Date
 
 /**
@@ -111,7 +111,7 @@ internal class DeleteReactionListenerState(
         return if (currentUser != null) {
             Result.Success(Unit)
         } else {
-            Result.Failure(StreamError.GenericError(message = "Current user is null!"))
+            Result.Failure(Error.GenericError(message = "Current user is null!"))
         }
     }
 }

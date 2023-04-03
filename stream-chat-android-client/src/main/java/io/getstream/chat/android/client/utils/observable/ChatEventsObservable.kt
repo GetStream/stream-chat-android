@@ -27,8 +27,8 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.EventType
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
@@ -139,7 +139,7 @@ internal class ChatEventsObservable(
             observable.onNext(event)
         }
 
-        override fun onError(error: StreamError) {
+        override fun onError(error: Error) {
             observable.onNext(
                 ErrorEvent(
                     EventType.CONNECTION_ERROR,

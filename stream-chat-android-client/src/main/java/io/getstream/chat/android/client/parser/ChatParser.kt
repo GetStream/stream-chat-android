@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.socket.ErrorDetail
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.log.StreamLog
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
@@ -42,13 +42,13 @@ internal interface ChatParser {
             Result.Success(fromJson(raw, clazz))
         } catch (expected: Throwable) {
             Result.Failure(
-                StreamError.ThrowableError("fromJsonOrError error parsing of $clazz into $raw", expected)
+                Error.ThrowableError("fromJsonOrError error parsing of $clazz into $raw", expected)
             )
         }
     }
 
     @Suppress("TooGenericExceptionCaught", "NestedBlockDepth")
-    fun toError(okHttpResponse: Response): StreamError.NetworkError {
+    fun toError(okHttpResponse: Response): Error.NetworkError {
         val statusCode: Int = okHttpResponse.code
 
         return try {
@@ -56,7 +56,7 @@ internal interface ChatParser {
             val body = okHttpResponse.peekBody(Long.MAX_VALUE).string()
 
             if (body.isEmpty()) {
-                StreamError.NetworkError.fromChatErrorCode(
+                Error.NetworkError.fromChatErrorCode(
                     chatErrorCode = ChatErrorCode.NO_ERROR_BODY,
                     statusCode = statusCode,
                 )
@@ -67,8 +67,8 @@ internal interface ChatParser {
                     ErrorResponse().apply { message = body }
                 }
                 val cause = error.extractCause()
-                StreamError.NetworkError(
-                    streamCode = error.code,
+                Error.NetworkError(
+                    serverErrorCode = error.code,
                     message = error.message +
                         moreInfoTemplate(error.moreInfo) +
                         buildDetailsTemplate(error.details),
@@ -78,7 +78,7 @@ internal interface ChatParser {
             }
         } catch (expected: Throwable) {
             StreamLog.e(tag, expected) { "[toError] failed" }
-            StreamError.NetworkError.fromChatErrorCode(
+            Error.NetworkError.fromChatErrorCode(
                 chatErrorCode = ChatErrorCode.NETWORK_FAILED,
                 cause = expected,
                 statusCode = statusCode,
@@ -86,19 +86,19 @@ internal interface ChatParser {
         }
     }
 
-    fun toError(errorResponseBody: ResponseBody): StreamError.NetworkError {
+    fun toError(errorResponseBody: ResponseBody): Error.NetworkError {
         return try {
             val errorResponse: ErrorResponse = fromJson(errorResponseBody.string(), ErrorResponse::class.java)
             val (code, message, statusCode, _, moreInfo) = errorResponse
 
-            StreamError.NetworkError(
-                streamCode = code,
+            Error.NetworkError(
+                serverErrorCode = code,
                 message = message + moreInfoTemplate(moreInfo),
                 statusCode = statusCode,
             )
         } catch (expected: Throwable) {
             StreamLog.e(tag, expected) { "[toError] failed" }
-            StreamError.NetworkError.fromChatErrorCode(
+            Error.NetworkError.fromChatErrorCode(
                 chatErrorCode = ChatErrorCode.NETWORK_FAILED,
                 cause = expected,
             )

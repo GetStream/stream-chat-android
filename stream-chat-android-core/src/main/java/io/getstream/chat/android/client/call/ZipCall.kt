@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -68,7 +68,7 @@ internal class ZipCall<A : Any, B : Any>(
         return if (this is Result.Success && result is Result.Success) {
             Result.Success(Pair(this.value, result.value))
         } else {
-            Result.Failure(StreamError.GenericError("Cannot combine results because one of them failed."))
+            Result.Failure(Error.GenericError("Cannot combine results because one of them failed."))
         }
     }
 

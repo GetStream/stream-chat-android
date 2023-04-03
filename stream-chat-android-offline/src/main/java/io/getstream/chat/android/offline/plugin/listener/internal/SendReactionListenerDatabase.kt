@@ -26,8 +26,8 @@ import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import java.util.Date
 
 /**
@@ -121,10 +121,10 @@ internal class SendReactionListenerDatabase(
     override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
-                Result.Failure(StreamError.GenericError(message = "Current user is null!"))
+                Result.Failure(Error.GenericError(message = "Current user is null!"))
             }
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.Failure(StreamError.GenericError("Reaction::messageId and Reaction::type cannot be empty!"))
+                Result.Failure(Error.GenericError("Reaction::messageId and Reaction::type cannot be empty!"))
             }
             else -> {
                 Result.Success(Unit)

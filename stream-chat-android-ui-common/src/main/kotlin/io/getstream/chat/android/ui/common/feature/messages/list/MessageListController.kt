@@ -92,8 +92,8 @@ import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -1202,10 +1202,10 @@ public class MessageListController(
 
         chatClient.deleteMessage(message.id, hard)
             .enqueue(
-                onError = { streamError ->
+                onError = { error ->
                     logger.e {
-                        "Could not delete message: ${streamError.message}, Hard: $hard. " +
-                            "Cause: ${streamError.extractCause()}. If you're using OfflinePlugin, the message " +
+                        "Could not delete message: ${error.message}, Hard: $hard. " +
+                            "Cause: ${error.extractCause()}. If you're using OfflinePlugin, the message " +
                             "should be deleted in the database and it will be deleted in the backend when " +
                             "the SDK sync its information."
                     }
@@ -1236,10 +1236,10 @@ public class MessageListController(
                 // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
             } else {
                 chatClient.markRead(channelType, channelId).enqueue(
-                    onError = { streamError ->
+                    onError = { error ->
                         logger.e {
-                            "Could not mark cid: $channelId as read. Error message: ${streamError.message}. " +
-                                "Cause: ${streamError.extractCause()}"
+                            "Could not mark cid: $channelId as read. Error message: ${error.message}. " +
+                                "Cause: ${error.extractCause()}"
                         }
                     }
                 )
@@ -1312,10 +1312,10 @@ public class MessageListController(
     public fun resendMessage(message: Message) {
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         chatClient.sendMessage(channelType, channelId, message)
-            .enqueue(onError = { streamError ->
+            .enqueue(onError = { error ->
                 logger.e {
-                    "(Retry) Could not send message: ${streamError.message}. " +
-                        "Cause: ${streamError.extractCause()}"
+                    "(Retry) Could not send message: ${error.message}. " +
+                        "Cause: ${error.extractCause()}"
                 }
             })
     }
@@ -1375,10 +1375,10 @@ public class MessageListController(
                 reactionType = reaction.type,
                 cid = cid
             ).enqueue(
-                onError = { streamError ->
+                onError = { error ->
                     logger.e {
                         "Could not delete reaction for message with id: ${reaction.messageId} " +
-                            "Error: ${streamError.message}. Cause: ${streamError.extractCause()}"
+                            "Error: ${error.message}. Cause: ${error.extractCause()}"
                     }
                 }
             )
@@ -1661,12 +1661,12 @@ public class MessageListController(
     /**
      * Quality of life function that notifies the result of an action and logs any error in case the action has failed.
      *
-     * @param error The [StreamError] thrown if the action fails.
-     * @param onError Handler to wrap [StreamError] into [ErrorEvent] depending on action.
+     * @param error The [Error] thrown if the action fails.
+     * @param onError Handler to wrap [Error] into [ErrorEvent] depending on action.
      */
     private fun onActionResult(
-        error: StreamError,
-        onError: (StreamError) -> ErrorEvent,
+        error: Error,
+        onError: (Error) -> ErrorEvent,
     ) {
         val errorMessage = error.message
         logger.e { errorMessage }
@@ -1685,49 +1685,49 @@ public class MessageListController(
      *
      * @param streamError Contains the original [Throwable] along with a message.
      */
-    public sealed class ErrorEvent(public open val streamError: StreamError) {
+    public sealed class ErrorEvent(public open val streamError: Error) {
 
         /**
          * When an error occurs while muting a user.
          *
          * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class MuteUserError(override val streamError: StreamError) : ErrorEvent(streamError)
+        public data class MuteUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while unmuting a user.
          *
          * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class UnmuteUserError(override val streamError: StreamError) : ErrorEvent(streamError)
+        public data class UnmuteUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while flagging a message.
          *
          * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class FlagMessageError(override val streamError: StreamError) : ErrorEvent(streamError)
+        public data class FlagMessageError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while blocking a user.
          *
          * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class BlockUserError(override val streamError: StreamError) : ErrorEvent(streamError)
+        public data class BlockUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while pinning a message.
          *
          * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class PinMessageError(override val streamError: StreamError) : ErrorEvent(streamError)
+        public data class PinMessageError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while unpinning a message.
          *
          * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class UnpinMessageError(override val streamError: StreamError) : ErrorEvent(streamError)
+        public data class UnpinMessageError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
     public companion object {

@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.models.Channel;
 import io.getstream.chat.android.models.Message;
 import io.getstream.result.Result;
-import io.getstream.result.StreamError;
+import io.getstream.result.Error;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/basics/core-concepts/#core-concepts">Core Concepts</a>
@@ -38,7 +38,7 @@ public class CoreConcepts {
             Channel channel = result.getOrNull();
         } else {
             // Handle error
-            StreamError error = result.streamErrorOrNull();
+            Error error = result.errorOrNull();
         }
     }
 
@@ -46,7 +46,7 @@ public class CoreConcepts {
         result.onSuccess(channel -> {
             // Handle success
             return null;
-        }).onError(streamError -> {
+        }).onError(error -> {
             // Handle error
             return null;
         });

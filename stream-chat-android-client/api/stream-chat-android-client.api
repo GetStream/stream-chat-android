@@ -656,12 +656,12 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$Error : io/getstream/chat/android/client/clientstate/DisconnectCause {
-	public fun <init> (Lio/getstream/result/StreamError$NetworkError;)V
-	public final fun component1 ()Lio/getstream/result/StreamError$NetworkError;
-	public final fun copy (Lio/getstream/result/StreamError$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;Lio/getstream/result/StreamError$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
+	public fun <init> (Lio/getstream/result/Error$NetworkError;)V
+	public final fun component1 ()Lio/getstream/result/Error$NetworkError;
+	public final fun copy (Lio/getstream/result/Error$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;Lio/getstream/result/Error$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Lio/getstream/result/StreamError$NetworkError;
+	public final fun getError ()Lio/getstream/result/Error$NetworkError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -672,12 +672,12 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError : io/getstream/chat/android/client/clientstate/DisconnectCause {
-	public fun <init> (Lio/getstream/result/StreamError$NetworkError;)V
-	public final fun component1 ()Lio/getstream/result/StreamError$NetworkError;
-	public final fun copy (Lio/getstream/result/StreamError$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;Lio/getstream/result/StreamError$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
+	public fun <init> (Lio/getstream/result/Error$NetworkError;)V
+	public final fun component1 ()Lio/getstream/result/Error$NetworkError;
+	public final fun copy (Lio/getstream/result/Error$NetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;Lio/getstream/result/Error$NetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Lio/getstream/result/StreamError$NetworkError;
+	public final fun getError ()Lio/getstream/result/Error$NetworkError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1009,16 +1009,16 @@ public final class io/getstream/chat/android/client/events/DisconnectedEvent : i
 }
 
 public final class io/getstream/chat/android/client/events/ErrorEvent : io/getstream/chat/android/client/events/ChatEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/result/StreamError;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/result/Error;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
-	public final fun component4 ()Lio/getstream/result/StreamError;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/result/StreamError;)Lio/getstream/chat/android/client/events/ErrorEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ErrorEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/result/StreamError;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ErrorEvent;
+	public final fun component4 ()Lio/getstream/result/Error;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/result/Error;)Lio/getstream/chat/android/client/events/ErrorEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ErrorEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ErrorEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getCreatedAt ()Ljava/util/Date;
-	public final fun getError ()Lio/getstream/result/StreamError;
+	public final fun getError ()Lio/getstream/result/Error;
 	public fun getRawCreatedAt ()Ljava/lang/String;
 	public fun getType ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -2417,7 +2417,7 @@ public class io/getstream/chat/android/client/socket/SocketListener {
 	public fun onConnected (Lio/getstream/chat/android/client/events/ConnectedEvent;)V
 	public fun onConnecting ()V
 	public fun onDisconnected (Lio/getstream/chat/android/client/clientstate/DisconnectCause;)V
-	public fun onError (Lio/getstream/result/StreamError;)V
+	public fun onError (Lio/getstream/result/Error;)V
 	public fun onEvent (Lio/getstream/chat/android/client/events/ChatEvent;)V
 }
 
@@ -2474,7 +2474,7 @@ public abstract interface class io/getstream/chat/android/client/user/storage/Us
 }
 
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
-	public abstract fun onError (Lio/getstream/result/StreamError;)V
+	public abstract fun onError (Lio/getstream/result/Error;)V
 	public abstract fun onProgress (JJ)V
 	public abstract fun onSuccess (Ljava/lang/String;)V
 }
@@ -2535,7 +2535,7 @@ public abstract interface class io/getstream/chat/android/client/utils/observabl
 }
 
 public abstract interface class io/getstream/chat/android/client/utils/retry/RetryPolicy {
-	public abstract fun retryTimeout (ILio/getstream/result/StreamError;)I
-	public abstract fun shouldRetry (ILio/getstream/result/StreamError;)Z
+	public abstract fun retryTimeout (ILio/getstream/result/Error;)I
+	public abstract fun shouldRetry (ILio/getstream/result/Error;)Z
 }
 

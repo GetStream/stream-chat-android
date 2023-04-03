@@ -32,8 +32,8 @@ import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 
 /**
  * A helper class that is responsible for initializing the SDK and connecting/disconnecting
@@ -90,7 +90,7 @@ object ChatHelper {
     fun connectUser(
         userCredentials: UserCredentials,
         onSuccess: () -> Unit = {},
-        onError: (StreamError) -> Unit = {},
+        onError: (Error) -> Unit = {},
     ) {
         ChatClient.instance().run {
             if (clientState.initializationState.value == InitializationState.NOT_INITIALIZED) {

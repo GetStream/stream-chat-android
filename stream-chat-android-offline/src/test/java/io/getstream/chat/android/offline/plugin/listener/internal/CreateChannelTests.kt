@@ -23,8 +23,8 @@ import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
@@ -167,7 +167,7 @@ internal class CreateChannelTests {
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }
-            val result = Result.Failure(StreamError.NetworkError(message = "", streamCode = 0, statusCode = 500))
+            val result = Result.Failure(Error.NetworkError(message = "", serverErrorCode = 0, statusCode = 500))
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOnlineState()
@@ -201,7 +201,7 @@ internal class CreateChannelTests {
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }
-            val result = Result.Failure(StreamError.NetworkError(message = "", streamCode = 60, statusCode = 403))
+            val result = Result.Failure(Error.NetworkError(message = "", serverErrorCode = 60, statusCode = 403))
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOnlineState()

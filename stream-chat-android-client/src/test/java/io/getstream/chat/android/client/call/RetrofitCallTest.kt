@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
@@ -71,7 +71,7 @@ internal class RetrofitCallTest {
         val result = call.execute()
 
         result.shouldBeInstanceOf(Result.Failure::class)
-        (result as Result.Failure).value `should be instance of` StreamError::class
+        (result as Result.Failure).value `should be instance of` Error::class
         blockedRetrofit2Call.isStarted() `should be equal to` true
         blockedRetrofit2Call.isCompleted() `should be equal to` true
     }
@@ -88,7 +88,7 @@ internal class RetrofitCallTest {
         val result = deferedResult.await()
 
         result.shouldBeInstanceOf(Result.Failure::class)
-        (result as Result.Failure).value `should be instance of` StreamError::class
+        (result as Result.Failure).value `should be instance of` Error::class
         blockedRetrofit2Call.isStarted() `should be equal to` true
         blockedRetrofit2Call.isCompleted() `should be equal to` false
         blockedRetrofit2Call.isCanceled() `should be equal to` true

@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.StreamError
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -57,7 +57,7 @@ internal class ThreadQueryListenerDatabaseTest {
         val message = randomMessage()
         val messageList = listOf(message)
 
-        threadQueryListenerDatabase.onGetRepliesResult(Result.Failure(StreamError.GenericError("")), randomString(), randomInt())
+        threadQueryListenerDatabase.onGetRepliesResult(Result.Failure(Error.GenericError("")), randomString(), randomInt())
 
         verify(userRepository, never()).insertUsers(any())
         verify(messageRepository, never()).insertMessages(messageList, false)
