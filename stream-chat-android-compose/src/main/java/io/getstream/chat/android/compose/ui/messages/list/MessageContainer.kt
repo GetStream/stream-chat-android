@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
@@ -61,7 +62,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
  * @param messageItemContent Composable that represents regular messages.
  * @param typingIndicatorContent Composable that represents a typing indicator.
  * @param emptyThreadPlaceholderItemContent Composable that represents placeholders inside of an empty thread.
- * This content is disabled by default and can be enabled via [MessageListController.showDateSeparatorInEmptyThread].
+ * This content is disabled by default and can be enabled via [MessagesViewModelFactory.showDateSeparatorInEmptyThread]
+ * or [MessageListController.showDateSeparatorInEmptyThread].
  */
 @Composable
 public fun MessageContainer(
