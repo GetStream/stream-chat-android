@@ -38,6 +38,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel responsible for handling all the business logic & state for the list of messages.
@@ -200,7 +201,9 @@ public class MessageListViewModel(
      * @param message The selected message with a thread.
      */
     public fun openMessageThread(message: Message) {
-        messageListController.enterThreadMode(message)
+        viewModelScope.launch {
+            messageListController.enterThreadMode(message)
+        }
     }
 
     /**
@@ -229,7 +232,9 @@ public class MessageListViewModel(
      * @param messageAction The action the user chose.
      */
     public fun performMessageAction(messageAction: MessageAction) {
-        messageListController.performMessageAction(messageAction)
+        viewModelScope.launch {
+            messageListController.performMessageAction(messageAction)
+        }
     }
 
     /**

@@ -45,13 +45,15 @@ import io.getstream.chat.android.state.extensions.internal.parseAttachmentNameFr
 import io.getstream.chat.android.state.extensions.internal.requestsAsState
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.internal.ConfigSingleton
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -70,16 +72,13 @@ import java.util.Locale
  */
 public val ChatClient.state: StateRegistry
     @Throws(IllegalArgumentException::class)
-    get() = requireNotNull(StateRegistry.get()) {
-        "Offline plugin must be configured in ChatClient. You must provide StreamOfflinePluginFactory as a " +
-            "PluginFactory to be able to use LogicRegistry and StateRegistry from the SDK"
-    }
+    get() = resolveDependency<StatePlugin, StateRegistry>()
 
 /**
  * [GlobalState] instance that contains information about the current user, unreads, etc.
  */
 public val ChatClient.globalState: GlobalState
-    get() = GlobalMutableState.get(clientState)
+    get() = MutableGlobalStateInstance
 
 /**
  * [StatePluginConfig] instance used to configure [io.getstream.chat.android.state.plugin.internal.StatePlugin]
@@ -146,7 +145,7 @@ public fun ChatClient.watchChannelAsState(
  * @return [ThreadState]
  */
 @JvmOverloads
-public fun ChatClient.getRepliesAsState(
+public suspend fun ChatClient.getRepliesAsState(
     messageId: String,
     messageLimit: Int,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
@@ -184,7 +183,7 @@ public suspend fun ChatClient.awaitRepliesAsState(
  */
 private fun <T> ChatClient.getStateOrNull(
     coroutineScope: CoroutineScope,
-    producer: () -> T,
+    producer: suspend () -> T,
 ): StateFlow<T?> {
     return globalState.user.map { it?.id }.distinctUntilChanged().map { userId ->
         if (userId == null) {
@@ -205,7 +204,7 @@ private fun <T> ChatClient.getStateOrNull(
  */
 @CheckResult
 public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
-    return CoroutineCall(state.scope) {
+    return CoroutineCall(inheritScope { Job(it) }) {
 
         when (val cidValidationResult = validateCidWithResult(cid)) {
             is Result.Success -> {
@@ -229,7 +228,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
  */
 @CheckResult
 public fun ChatClient.downloadAttachment(context: Context, attachment: Attachment): Call<Unit> {
-    return CoroutineCall(state.scope) {
+    return CoroutineCall(inheritScope { Job(it) }) {
         val logger by taggedLogger("Chat:DownloadAttachment")
 
         try {
@@ -263,7 +262,7 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
  * @return The channel wrapped in [Call]. This channel contains older requested messages.
  */
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
-    return CoroutineCall(state.scope) {
+    return CoroutineCall(inheritScope { Job(it) }) {
         when (val cidValidationResult = validateCidWithResult(cid)) {
             is Result.Success -> {
                 val (channelType, channelId) = cid.cidToTypeAndId()
@@ -280,7 +279,7 @@ public fun ChatClient.loadNewerMessages(
     baseMessageId: String,
     messageLimit: Int,
 ): Call<Channel> {
-    return CoroutineCall(state.scope) {
+    return CoroutineCall(inheritScope { Job(it) }) {
         when (val cidValidationResult = validateCidWithResult(channelCid)) {
             is Result.Success -> {
                 val (channelType, channelId) = channelCid.cidToTypeAndId()
@@ -301,7 +300,7 @@ public fun ChatClient.loadNewerMessages(
  * @return Executable async [Call] responsible for canceling ephemeral message.
  */
 public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
-    return CoroutineCall(state.scope) {
+    return CoroutineCall(inheritScope { Job(it) }) {
         when (val cidValidationResult = validateCidWithResult(message.cid)) {
             is Result.Success -> {
                 try {
@@ -337,7 +336,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
 public fun ChatClient.getMessageUsingCache(
     messageId: String,
 ): Call<Message> {
-    return CoroutineCall(state.scope) {
+    return CoroutineCall(inheritScope { Job(it) }) {
         val message = logic.getMessageById(messageId) ?: logic.getMessageByIdFromDb(messageId)
 
         if (message != null) {
@@ -361,7 +360,7 @@ public fun ChatClient.loadMessageById(
     cid: String,
     messageId: String,
 ): Call<Message> {
-    return CoroutineCall(state.scope) {
+    return CoroutineCall(inheritScope { Job(it) }) {
         loadMessageByIdInternal(cid, messageId)
     }
 }
@@ -414,7 +413,7 @@ public fun ChatClient.loadNewestMessages(
     messageLimit: Int,
     userPresence: Boolean = true,
 ): Call<Channel> {
-    return CoroutineCall(state.scope) {
+    return CoroutineCall(inheritScope { Job(it) }) {
         when (val cidValidationResult = validateCidWithResult(cid)) {
             is Result.Success -> {
                 val (channelType, channelId) = cid.cidToTypeAndId()

@@ -35,7 +35,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.state.sync.internal.SyncManager
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -45,6 +45,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -71,7 +72,6 @@ internal class SyncManagerTest {
     private lateinit var chatClient: ChatClient
     private lateinit var logicRegistry: LogicRegistry
     private lateinit var stateRegistry: StateRegistry
-    private lateinit var globalState: GlobalMutableState
     private lateinit var clientState: ClientState
     private lateinit var repositoryFacade: RepositoryFacade
     private lateinit var user: User
@@ -95,9 +95,8 @@ internal class SyncManagerTest {
             on(it.getActiveChannelsLogic()) doReturn listOf(channelLogic)
         }
         stateRegistry = mock()
-        globalState = mock {
-            on(it.user) doReturn MutableStateFlow(user)
-        }
+        MutableGlobalStateInstance.clearState()
+        MutableGlobalStateInstance.setUser(user)
         clientState = mock {
             on(it.connectionState) doReturn connectionState
         }
@@ -108,6 +107,11 @@ internal class SyncManagerTest {
                 on(it.selectReactionIdsBySyncStatus(any())) doReturn emptyList()
             }
         }
+    }
+
+    @AfterEach
+    fun tearDown() {
+        MutableGlobalStateInstance.clearState()
     }
 
     @Test

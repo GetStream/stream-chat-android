@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.state.plugin.state.global.internal
 
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
@@ -28,9 +27,6 @@ import io.getstream.chat.android.state.plugin.state.global.GlobalState
  * Mutable global state of [StatePlugin].
  */
 internal interface MutableGlobalState : GlobalState {
-
-    val clientState: ClientState
-
     fun setUser(user: User)
 
     fun setTotalUnreadCount(totalUnreadCount: Int)
@@ -50,4 +46,9 @@ internal interface MutableGlobalState : GlobalState {
      * @param typingEvent [TypingEvent] with information about typing users. Current user is excluded.
      */
     fun tryEmitTypingEvent(cid: String, typingEvent: TypingEvent)
+
+    /**
+     * Clears the state of [GlobalState].
+     */
+    public fun clearState()
 }

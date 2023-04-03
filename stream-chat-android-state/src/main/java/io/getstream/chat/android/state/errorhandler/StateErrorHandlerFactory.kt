@@ -16,23 +16,25 @@
 
 package io.getstream.chat.android.state.errorhandler
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
-import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.state.errorhandler.internal.CreateChannelErrorHandlerImpl
 import io.getstream.chat.android.state.errorhandler.internal.DeleteReactionErrorHandlerImpl
 import io.getstream.chat.android.state.errorhandler.internal.QueryMembersErrorHandlerImpl
 import io.getstream.chat.android.state.errorhandler.internal.SendReactionErrorHandlerImpl
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.state.plugin.state.StateRegistry
+import kotlinx.coroutines.CoroutineScope
 
-public class StateErrorHandlerFactory : ErrorHandlerFactory {
+internal class StateErrorHandlerFactory(
+    private val scope: CoroutineScope,
+    private val logicRegistry: LogicRegistry,
+    private val clientState: ClientState,
+    private val repositoryFacade: RepositoryFacade,
+) : ErrorHandlerFactory {
 
-    override fun create(channelRepository: ChannelRepository): ErrorHandler {
-        val scope = StateRegistry.get().scope
-        val logicRegistry = LogicRegistry.get()
-        val clientState = ChatClient.instance().clientState
+    override fun create(): ErrorHandler {
 
         val deleteReactionErrorHandler = DeleteReactionErrorHandlerImpl(
             scope = scope,
@@ -43,13 +45,13 @@ public class StateErrorHandlerFactory : ErrorHandlerFactory {
         val createChannelErrorHandler = CreateChannelErrorHandlerImpl(
             scope = scope,
             clientState = clientState,
-            channelRepository = channelRepository,
+            channelRepository = repositoryFacade,
         )
 
         val queryMembersErrorHandler = QueryMembersErrorHandlerImpl(
             scope = scope,
             clientState = clientState,
-            channelRepository = channelRepository
+            channelRepository = repositoryFacade
         )
 
         val sendReactionErrorHandler = SendReactionErrorHandlerImpl(scope = scope, clientState = clientState)

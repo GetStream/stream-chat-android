@@ -31,8 +31,9 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -42,6 +43,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
@@ -57,6 +59,11 @@ import java.util.Date
 @ExperimentalCoroutinesApi
 @ExtendWith(TestCoroutineExtension::class)
 internal class ChannelListViewModelTest {
+
+    @AfterEach
+    fun tearDown() {
+        MutableGlobalStateInstance.clearState()
+    }
 
     @Test
     fun `Given channel list in loading state When showing the channel list Should show loading state`() = runTest {
@@ -271,25 +278,24 @@ internal class ChannelListViewModelTest {
         private val initialSort: QuerySorter<Channel> = querySort,
         private val initialFilters: FilterObject? = queryFilter,
     ) {
-        private val globalState: GlobalMutableState = mock()
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
 
         init {
-            StateRegistry.instance = stateRegistry
-            GlobalMutableState.instance = globalState
-
+            val statePlugin: StatePlugin = mock()
+            whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
+            whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.channel(any())) doReturn channelClient
             whenever(chatClient.channel(any(), any())) doReturn channelClient
             whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            MutableGlobalStateInstance.setUser(currentUser)
         }
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
-            whenever(globalState.channelMutes) doReturn MutableStateFlow(channelMutes)
+            MutableGlobalStateInstance.setChannelMutes(channelMutes)
         }
 
         fun givenIsOffline(isOffline: Boolean = false) = apply {
@@ -336,7 +342,7 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 initialSort = initialSort,
                 initialFilters = initialFilters,
-                chatEventHandlerFactory = ChatEventHandlerFactory(clientState, globalState)
+                chatEventHandlerFactory = ChatEventHandlerFactory(clientState, MutableGlobalStateInstance)
             )
         }
     }

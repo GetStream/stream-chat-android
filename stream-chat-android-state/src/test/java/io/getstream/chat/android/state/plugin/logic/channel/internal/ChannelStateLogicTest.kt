@@ -33,7 +33,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.chat.android.state.plugin.state.global.internal.GlobalMutableState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomCID
@@ -46,6 +46,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -54,6 +55,7 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -70,14 +72,29 @@ internal class ChannelStateLogicTest {
 
     @BeforeEach
     fun setup() {
+        MutableGlobalStateInstance.clearState()
+        MutableGlobalStateInstance.setUser(user)
         channelStateLogic = ChannelStateLogic(
             mutableState,
-            globalMutableState = globalMutableState,
+            globalMutableState = spyMutableGlobalState,
             searchLogic = SearchLogic(mutableState),
             attachmentUrlValidator = attachmentUrlValidator,
             coroutineScope = testCoroutines.scope,
             unreadCountLogic = unreadCountLogic
         )
+        _messages = emptyMap()
+        _unreadCount.value = 0
+        _read.value = ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount)
+        _channelData.value = ChannelData(randomChannel(), emptySet())
+        _reads = emptyMap()
+        _insideSearch.value = false
+        _watcherCount.value = 0
+        _watcherCount.value = 0
+    }
+
+    @AfterEach
+    fun tearDown() {
+        MutableGlobalStateInstance.clearState()
     }
 
     private val user = randomUser()
@@ -115,30 +132,13 @@ internal class ChannelStateLogicTest {
         on(mock.cachedLatestMessages) doReturn _cachedMessages
         on(mock.quotedMessagesMap) doReturn _quotedMessagesMap
     }
-    private val globalMutableState: GlobalMutableState = mock {
-        on(it.channelMutes) doReturn MutableStateFlow(emptyList())
-        on(it.user) doReturn MutableStateFlow(user)
-    }
+    private val spyMutableGlobalState = spy(MutableGlobalStateInstance)
     private val unreadCountLogic: UnreadCountLogic = mock()
 
     private val attachmentUrlValidator: AttachmentUrlValidator = mock {
         on(it.updateValidAttachmentsUrl(any(), any())) doAnswer { invocationOnMock ->
             invocationOnMock.arguments[0] as List<Message>
         }
-    }
-
-    @BeforeEach
-    fun setUp() {
-        GlobalMutableState.instance = globalMutableState
-
-        _messages = emptyMap()
-        _unreadCount.value = 0
-        _read.value = ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount)
-        _channelData.value = ChannelData(randomChannel(), emptySet())
-        _reads = emptyMap()
-        _insideSearch.value = false
-        _watcherCount.value = 0
-        _watcherCount.value = 0
     }
 
     private lateinit var channelStateLogic: ChannelStateLogic
@@ -238,7 +238,7 @@ internal class ChannelStateLogicTest {
         channelStateLogic.setTyping(typingStartEvent.user.id, typingStartEvent)
 
         verify(mutableState, times(0)).updateTypingEvents(any(), any())
-        verify(globalMutableState, times(0)).tryEmitTypingEvent(any(), any())
+        verify(spyMutableGlobalState, times(0)).tryEmitTypingEvent(any(), any())
     }
 
     @Test

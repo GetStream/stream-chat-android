@@ -91,6 +91,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
+import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
@@ -551,10 +552,17 @@ public class MessageListController(
                     parentMessageId = threadId,
                     endOfNewMessagesReached = true
                 )
+            }.onFirst {
+                // Set the last message in the list of message items as the last loaded thread message
+                // when the thread is initially loaded.
+                lastLoadedThreadMessage =
+                    (it.messageItems.lastOrNull { it is MessageItemState } as? MessageItemState)?.message
             }.collect { newState ->
                 val newLastMessage =
                     (newState.messageItems.lastOrNull { it is MessageItemState } as? MessageItemState)?.message
+
                 val newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
+
                 _threadListState.value = newState.copy(newMessageState = newMessageState)
                 if (newMessageState != null) lastLoadedThreadMessage = newLastMessage
             }
@@ -853,7 +861,7 @@ public class MessageListController(
      * @param parentMessage The root [Message] which contains the thread we want to show.
      * @param messageLimit The size of the message list page to load.
      */
-    public fun enterThreadMode(parentMessage: Message, messageLimit: Int = this.messageLimit) {
+    public suspend fun enterThreadMode(parentMessage: Message, messageLimit: Int = this.messageLimit) {
         val channelState = channelState.value ?: return
         _messageActions.value = _messageActions.value + Reply(parentMessage)
         val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit)
@@ -1142,7 +1150,7 @@ public class MessageListController(
      *
      * @param messageAction The action the user chose.
      */
-    public fun performMessageAction(messageAction: MessageAction) {
+    public suspend fun performMessageAction(messageAction: MessageAction) {
         removeOverlay()
 
         when (messageAction) {
