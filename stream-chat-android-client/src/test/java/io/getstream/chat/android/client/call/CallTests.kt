@@ -16,11 +16,16 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.extensions.retry
-import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.CoroutineCall
+import io.getstream.result.call.doOnResult
+import io.getstream.result.call.doOnStart
+import io.getstream.result.call.onErrorReturn
+import io.getstream.result.call.retry
+import io.getstream.result.call.retry.RetryPolicy
+import io.getstream.result.call.withPrecondition
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`

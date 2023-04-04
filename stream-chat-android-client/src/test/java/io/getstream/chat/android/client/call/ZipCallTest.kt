@@ -22,6 +22,8 @@ import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.zipWith
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`

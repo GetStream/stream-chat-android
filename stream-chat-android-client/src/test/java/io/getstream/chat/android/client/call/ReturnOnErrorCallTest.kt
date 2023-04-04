@@ -22,6 +22,8 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.onErrorReturn
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest

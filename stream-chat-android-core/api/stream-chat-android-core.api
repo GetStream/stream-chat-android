@@ -4,38 +4,6 @@ public final class io/getstream/chat/android/client/PayloadValidator {
 	public final fun isValidNewMessage (Ljava/util/Map;)Z
 }
 
-public abstract interface class io/getstream/chat/android/client/call/Call {
-	public static final field Companion Lio/getstream/chat/android/client/call/Call$Companion;
-	public abstract fun await (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun cancel ()V
-	public abstract fun enqueue ()V
-	public abstract fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
-	public abstract fun execute ()Lio/getstream/result/Result;
-}
-
-public abstract interface class io/getstream/chat/android/client/call/Call$Callback {
-	public abstract fun onResult (Lio/getstream/result/Result;)V
-}
-
-public final class io/getstream/chat/android/client/call/Call$DefaultImpls {
-	public static fun enqueue (Lio/getstream/chat/android/client/call/Call;)V
-}
-
-public final class io/getstream/chat/android/client/call/CallKt {
-}
-
-public final class io/getstream/chat/android/client/call/ReturnOnErrorCall : io/getstream/chat/android/client/call/Call {
-	public fun <init> (Lio/getstream/chat/android/client/call/Call;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function2;)V
-	public fun await (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun cancel ()V
-	public fun enqueue ()V
-	public fun enqueue (Lio/getstream/chat/android/client/call/Call$Callback;)V
-	public fun execute ()Lio/getstream/result/Result;
-}
-
-public final class io/getstream/chat/android/client/call/SharedCalls$Key : kotlin/coroutines/CoroutineContext$Key {
-}
-
 public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/lang/Enum {
 	public static final field API_KEY_NOT_FOUND Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field AUTHENTICATION_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;

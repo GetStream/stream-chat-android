@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.utils.retry
 
 import io.getstream.result.Error
+import io.getstream.result.call.retry.RetryPolicy
 
 /**
  * Default retry policy that won't retry any calls.

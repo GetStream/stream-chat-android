@@ -18,12 +18,12 @@ package io.getstream.chat.android.client.api.internal
 
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
+import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 
 /**

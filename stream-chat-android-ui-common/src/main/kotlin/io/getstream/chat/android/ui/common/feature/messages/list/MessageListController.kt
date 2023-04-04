@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.common.feature.messages.list
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -94,6 +93,7 @@ import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.enqueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
