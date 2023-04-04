@@ -32,8 +32,8 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.call.zipWith
 import io.getstream.log.taggedLogger
+import io.getstream.result.call.zipWith
 
 internal class LoadNotificationDataWorker(
     private val context: Context,

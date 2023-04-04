@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.client.scope
 
-import io.getstream.chat.android.client.call.SharedCalls
 import io.getstream.chat.android.client.scope.user.UserIdentifier
 import io.getstream.chat.android.client.scope.user.UserJob
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.UserId
+import io.getstream.result.call.SharedCalls
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.job

@@ -38,6 +38,7 @@ dependencies {
     implementation Dependencies.androidxAnnotations
 
     api Dependencies.streamResult
+    api Dependencies.streamResultCall
     implementation Dependencies.streamLog
 
     detektPlugins(Dependencies.detektFormatting)

@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.test
 
-import io.getstream.chat.android.client.call.Call
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

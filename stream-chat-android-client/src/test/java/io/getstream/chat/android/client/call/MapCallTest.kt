@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.BlockedCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.map
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`

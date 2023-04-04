@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 import retrofit2.CallAdapter
 import retrofit2.Retrofit

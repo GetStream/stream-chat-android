@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren

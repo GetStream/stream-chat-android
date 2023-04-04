@@ -4,7 +4,7 @@ package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.enqueue
+import io.getstream.result.call.enqueue
 import io.getstream.result.Result
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 

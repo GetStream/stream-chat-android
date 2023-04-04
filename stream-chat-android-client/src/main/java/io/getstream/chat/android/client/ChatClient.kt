@@ -48,14 +48,6 @@ import io.getstream.chat.android.client.api.models.identifier.SendReactionIdenti
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.attachment.AttachmentsSender
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.doOnResult
-import io.getstream.chat.android.client.call.doOnStart
-import io.getstream.chat.android.client.call.map
-import io.getstream.chat.android.client.call.share
-import io.getstream.chat.android.client.call.toUnitCall
-import io.getstream.chat.android.client.call.withPrecondition
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
@@ -80,7 +72,6 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
-import io.getstream.chat.android.client.extensions.retry
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
@@ -126,7 +117,6 @@ import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
-import io.getstream.chat.android.client.utils.retry.RetryPolicy
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.AppSettings
@@ -163,6 +153,16 @@ import io.getstream.log.android.AndroidStreamLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.CoroutineCall
+import io.getstream.result.call.doOnResult
+import io.getstream.result.call.doOnStart
+import io.getstream.result.call.map
+import io.getstream.result.call.retry
+import io.getstream.result.call.retry.RetryPolicy
+import io.getstream.result.call.share
+import io.getstream.result.call.toUnitCall
+import io.getstream.result.call.withPrecondition
 import io.getstream.result.flatMapSuspend
 import io.getstream.result.onErrorSuspend
 import kotlinx.coroutines.CoroutineScope

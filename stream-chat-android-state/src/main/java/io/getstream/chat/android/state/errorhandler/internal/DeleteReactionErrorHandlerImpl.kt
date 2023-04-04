@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.state.errorhandler.internal
 
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.ReturnOnErrorCall
-import io.getstream.chat.android.client.call.onErrorReturn
 import io.getstream.chat.android.client.errorhandler.DeleteReactionErrorHandler
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -26,6 +23,9 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.ReturnOnErrorCall
+import io.getstream.result.call.onErrorReturn
 import kotlinx.coroutines.CoroutineScope
 
 /**

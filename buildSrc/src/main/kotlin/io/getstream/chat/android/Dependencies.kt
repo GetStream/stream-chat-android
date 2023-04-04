@@ -214,6 +214,7 @@ object Dependencies {
     const val streamPushHuawei = "io.getstream:stream-android-push-huawei:${Versions.STREAM_PUSH}"
     const val streamPushXiaomi = "io.getstream:stream-android-push-xiaomi:${Versions.STREAM_PUSH}"
     const val streamResult = "io.getstream:stream-result:${Versions.STREAM_RESULT}"
+    const val streamResultCall = "io.getstream:stream-result-call:${Versions.STREAM_RESULT}"
     const val testParameterInjector =
         "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"
     const val threeTenBp = "org.threeten:threetenbp:${Versions.THREETENBP}"

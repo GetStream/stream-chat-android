@@ -26,8 +26,6 @@ import io.getstream.chat.android.client.api2.optimisation.hash.GetReactionsHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetRepliesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.QueryBanedUsersHash
 import io.getstream.chat.android.client.api2.optimisation.hash.QueryMembersHash
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.DistinctCall
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
@@ -37,6 +35,8 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.StreamLog
+import io.getstream.result.call.Call
+import io.getstream.result.call.DistinctCall
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
