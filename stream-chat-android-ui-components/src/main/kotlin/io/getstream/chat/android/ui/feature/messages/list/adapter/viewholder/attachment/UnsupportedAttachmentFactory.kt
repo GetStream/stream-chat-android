@@ -16,11 +16,8 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment
 
-import android.content.Context
 import android.content.res.ColorStateList
-import android.util.AttributeSet
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -31,7 +28,6 @@ import io.getstream.chat.android.ui.databinding.StreamUiUnsupportedAttachmentVie
 import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.font.setTextStyle
-import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
@@ -62,43 +58,22 @@ public class UnsupportedAttachmentFactory : AttachmentFactory {
         listeners: MessageListListenerContainer?,
         parent: ViewGroup,
     ): InnerAttachmentViewHolder {
-        return object : InnerAttachmentViewHolder(UnsupportedAttachmentsView(parent.context)) {}
-    }
+        val binding = StreamUiUnsupportedAttachmentViewBinding
+            .inflate(parent.context.streamThemeInflater, parent, false)
 
-    /**
-     * View used to display unsupported attachments.
-     */
-    private class UnsupportedAttachmentsView : FrameLayout {
+        val style = UnsupportedAttachmentViewStyle(parent.context, null)
 
-        private val binding = StreamUiUnsupportedAttachmentViewBinding.inflate(streamThemeInflater, this, true)
-
-        private lateinit var style: UnsupportedAttachmentViewStyle
-
-        constructor(context: Context) : this(context, null, 0)
-
-        constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-        constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-            context.createStreamThemeWrapper(),
-            attrs,
-            defStyleAttr
-        ) {
-            init(attrs)
+        val shapeAppearanceModel = ShapeAppearanceModel.Builder()
+            .setAllCorners(CornerFamily.ROUNDED, style.cornerRadius.toFloat())
+            .build()
+        binding.attachmentContainer.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
+            fillColor = ColorStateList.valueOf(style.backgroundColor)
+            strokeColor = ColorStateList.valueOf(style.strokeColor)
+            strokeWidth = style.strokeWidth.toFloat()
         }
+        binding.titleImageView.setTextStyle(style.titleTextStyle)
 
-        private fun init(attrs: AttributeSet?) {
-            style = UnsupportedAttachmentViewStyle(context, attrs)
-
-            val shapeAppearanceModel = ShapeAppearanceModel.Builder()
-                .setAllCorners(CornerFamily.ROUNDED, style.cornerRadius.toFloat())
-                .build()
-            binding.attachmentContainer.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
-                fillColor = ColorStateList.valueOf(style.backgroundColor)
-                strokeColor = ColorStateList.valueOf(style.strokeColor)
-                strokeWidth = style.strokeWidth.toFloat()
-            }
-            binding.titleImageView.setTextStyle(style.titleTextStyle)
-        }
+        return object : InnerAttachmentViewHolder(binding.root) {}
     }
 
     /**

@@ -48,11 +48,9 @@ public class QuotedAttachmentFactoryManager(
         message: Message,
         parent: ViewGroup,
     ) {
-        val quotedAttachmentFactory = quotedAttachmentFactories.firstOrNull { it.canHandle(message) }
-        val view = quotedAttachmentFactory?.generateQuotedAttachmentView(message, parent)
-            ?: ChatUI.attachmentFactoryManager.createViewHolder(message, null, parent).apply {
-                onBindViewHolder(message)
-            }.itemView
+        val quotedAttachmentFactory =
+            quotedAttachmentFactories.firstOrNull { it.canHandle(message) } ?: FallbackQuotedAttachmentMessageFactory()
+        val view = quotedAttachmentFactory.generateQuotedAttachmentView(message, parent)
 
         parent.removeAllViews()
         parent.addView(view)
