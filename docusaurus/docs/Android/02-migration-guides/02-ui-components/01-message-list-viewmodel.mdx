@@ -32,15 +32,15 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 The highlighted parameters have been added and the parameter `navigateToThreadViaNotification: Boolean` has been removed as navigating to thread messages via push notifications is the default behavior in `v6`.
 :::
 
-- **enforceUniqueReactions**: Determines if a single user is able to set multiple reactions to a single message.
-- **maxAttachmentCount**: The maximum number of attachments that can be sent in a single message.
-- **maxAttachmentSize**: The maximum size of a single attachment, expressed in bytes. Restricted to 100mb by default by Stream's CDN.
-- **showSystemMessages**: If system messages should be visible.
-- **deletedMessageVisibility**: Sets the visibility of the deleted messages according to user ownership.
-- **messageFooterVisibility**: Sets the visibility of message footers.
-- **dateSeparatorHandler**: Determines the visibility of date separators inside the message list.
-- **threadDateSeparatorHandler**: Determines the visibility of date separators inside the message list when the list is in thread mode.
-- **messagePositionHandler**: Determines the position of the message inside the group.
+- `enforceUniqueReactions`: Determines if a single user is able to set multiple reactions to a single message.
+- `maxAttachmentCount`: The maximum number of attachments that can be sent in a single message.
+- `maxAttachmentSize`: The maximum size of a single attachment, expressed in bytes. Restricted to 100mb by default by Stream's CDN.
+- `showSystemMessages`: If system messages should be visible.
+- `deletedMessageVisibility`: Sets the visibility of the deleted messages according to user ownership.
+- `messageFooterVisibility`: Sets the visibility of message footers.
+- `dateSeparatorHandler`: Determines the visibility of date separators inside the message list.
+- `threadDateSeparatorHandler`: Determines the visibility of date separators inside the message list when the list is in thread mode.
+- `messagePositionHandler`: Determines the position of the message inside the group.
 
 Parameters `showDateSeparators: Boolean` and `dateSeparatorThresholdMillis: Long` have been removed in favor of the new date separator handlers which allow for greater flexibility.
 
