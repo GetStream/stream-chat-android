@@ -17,12 +17,14 @@
 package io.getstream.chat.android.compose.ui.attachments
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClicked
+import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClicked
+import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClicked
+import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClicked
 import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClicked
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
@@ -39,7 +41,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
-import io.getstream.chat.android.uiutils.extension.isUploading
 
 /**
  * Provides different attachment factories that build custom message content based on a given attachment.
@@ -85,29 +86,9 @@ public object StreamAttachmentFactories {
         onUploadContentItemClicked: (
             Attachment,
             List<AttachmentPreviewHandler>,
-        ) -> Unit = { attachment, previewHandlers ->
-            if (!attachment.isUploading()) {
-                previewHandlers
-                    .firstOrNull { it.canHandle(attachment) }
-                    ?.handleAttachmentPreview(attachment)
-            }
-        },
-        onLinkContentItemClicked: (context: Context, previewUrl: String) -> Unit = { context, previewUrl ->
-            context.startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(previewUrl)
-                )
-            )
-        },
-        onGiphyContentItemClick: (context: Context, Url: String) -> Unit = { context, url ->
-            context.startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(url)
-                )
-            )
-        },
+        ) -> Unit = ::onFileUploadContentItemClicked,
+        onLinkContentItemClicked: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClicked,
+        onGiphyContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClicked,
         onMediaContentItemClick: (
             mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
             message: Message,
@@ -117,13 +98,9 @@ public object StreamAttachmentFactories {
             skipEnrichUrl: Boolean,
         ) -> Unit = ::onMediaAttachmentContentItemClicked,
         onFileContentItemClick: (
-            previewHandler: List<AttachmentPreviewHandler>,
+            previewHandlers: List<AttachmentPreviewHandler>,
             attachment: Attachment,
-        ) -> Unit = { previewHandlers, attachment ->
-            previewHandlers
-                .firstOrNull { it.canHandle(attachment) }
-                ?.handleAttachmentPreview(attachment)
-        },
+        ) -> Unit = ::onFileAttachmentContentItemClicked,
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
             onContentItemClicked = onUploadContentItemClicked

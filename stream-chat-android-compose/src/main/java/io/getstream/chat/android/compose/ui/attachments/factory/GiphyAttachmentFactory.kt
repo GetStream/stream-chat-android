@@ -17,8 +17,6 @@
 package io.getstream.chat.android.compose.ui.attachments.factory
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -26,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
+import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClicked
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
@@ -54,14 +53,7 @@ public fun GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
-    onContentItemClick: (context: Context, Url: String) -> Unit = { context, url ->
-        context.startActivity(
-            Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(url)
-            )
-        )
-    }
+    onContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClicked
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = { attachments -> attachments.any(Attachment::isGiphy) },
