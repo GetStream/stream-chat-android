@@ -2,5 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexMethod:User.kt$User$override fun getComparableField(fieldName: String): Comparable&lt;*>?</ID>
   </CurrentIssues>
 </SmellBaseline>
