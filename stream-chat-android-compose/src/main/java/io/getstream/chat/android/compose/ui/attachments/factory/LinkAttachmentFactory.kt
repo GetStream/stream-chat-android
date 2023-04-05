@@ -17,14 +17,13 @@
 package io.getstream.chat.android.compose.ui.attachments.factory
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentContent
+import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClicked
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uiutils.extension.hasLink
 
@@ -40,14 +39,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
 @Suppress("FunctionName")
 public fun LinkAttachmentFactory(
     linkDescriptionMaxLines: Int,
-    onContentItemClicked: (context: Context, previewUrl: String) -> Unit = { context, previewUrl ->
-        context.startActivity(
-            Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(previewUrl)
-            )
-        )
-    },
+    onContentItemClicked: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClicked,
 ): AttachmentFactory = AttachmentFactory(
     canHandle = { links -> links.any { it.hasLink() && it.type != ModelType.attach_giphy } },
     content = @Composable { modifier, state ->

@@ -75,15 +75,7 @@ public fun ImageAttachmentContent(
         message: Message,
         attachmentPosition: Int,
         skipEnrichUrl: Boolean,
-    ) -> Unit = { imagePreviewLauncher, messageClicked, clickedAttachmentPosition, skipEnrichUrl ->
-        imagePreviewLauncher.launch(
-            ImagePreviewContract.Input(
-                messageId = messageClicked.id,
-                initialPosition = clickedAttachmentPosition,
-                skipEnrichUrl = skipEnrichUrl,
-            )
-        )
-    },
+    ) -> Unit = ::onImageAttachmentContentItemClicked,
 ) {
     val (message, onLongItemClick, onImagePreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentImageGridSpacing
@@ -306,3 +298,29 @@ private const val EqualDimensionsRatio = 1f
  * Composable when calling [Modifier.aspectRatio].
  */
 private const val TwiceAsTallAsIsWideRatio = 0.5f
+
+/**
+ * Handles click on individual image attachment content items.
+ *
+ * @param imagePreviewLauncher The launcher used for launching the image gallery after
+ * clicking on an attachment.
+ * @param message The message which contains the attachment.
+ * @param attachmentPosition The position (inside the message) of the attachment being clicked on.
+ * @param skipEnrichUrl Whether the URL should skip being enriched, i.e. rendered as
+ * a link attachment. Used when updating the message from the gallery by doing actions
+ * such as deleting an attachment.
+ */
+internal fun onImageAttachmentContentItemClicked(
+    imagePreviewLauncher: ManagedActivityResultLauncher<ImagePreviewContract.Input, ImagePreviewResult?>,
+    message: Message,
+    attachmentPosition: Int,
+    skipEnrichUrl: Boolean,
+) {
+    imagePreviewLauncher.launch(
+        ImagePreviewContract.Input(
+            messageId = message.id,
+            initialPosition = attachmentPosition,
+            skipEnrichUrl = skipEnrichUrl,
+        )
+    )
+}
