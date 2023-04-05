@@ -19,18 +19,18 @@ package io.getstream.chat.android.state.channel.controller.attachment
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.test.randomAttachment
 import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.test.positiveRandomLong
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
@@ -210,7 +210,7 @@ internal class WhenUploadAttachmentsTests {
                             any()
                         )
                     ) doReturn Result.Failure(
-                        ChatError.ThrowableError(
+                        Error.ThrowableError(
                             message = "",
                             cause = IllegalArgumentException("Error:-)"),
                         ),

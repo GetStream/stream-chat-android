@@ -25,8 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.utils.EventObserver
@@ -47,6 +45,8 @@ import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.Calendar
 
 class ChatFragment : Fragment() {
@@ -254,7 +254,7 @@ class ChatFragment : Fragment() {
     private fun Result<Flag>.isAlreadyExistsError(): Boolean {
         return when (this) {
             is Result.Success -> false
-            is Result.Failure -> (value as ChatError.NetworkError).streamCode == 4
+            is Result.Failure -> (value as Error.NetworkError).serverErrorCode == 4
         }
     }
 }

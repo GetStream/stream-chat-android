@@ -17,10 +17,10 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.result.Result
 
 /**
  * [ShuffleGiphyListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].

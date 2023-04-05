@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.scope
 
-import io.getstream.chat.android.client.call.SharedCalls
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.call.SharedCalls
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 

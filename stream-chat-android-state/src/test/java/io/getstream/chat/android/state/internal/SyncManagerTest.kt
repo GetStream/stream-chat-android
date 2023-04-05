@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.SyncStatus
@@ -41,6 +40,7 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking

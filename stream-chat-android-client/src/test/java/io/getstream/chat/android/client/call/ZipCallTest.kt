@@ -17,11 +17,13 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedCall
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.zipWith
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -41,8 +43,8 @@ internal class ZipCallTest {
     private val resultValueB = randomString()
     private val validResultB: Result<String> = Result.Success(resultValueB)
     private val expectedResult: Result<Pair<Int, String>> = Result.Success(Pair(resultValueA, resultValueB))
-    private val errorA = ChatError.ThrowableError(message = randomString(), cause = Exception())
-    private val errorB = ChatError.ThrowableError(message = randomString(), cause = Exception())
+    private val errorA = Error.ThrowableError(message = randomString(), cause = Exception())
+    private val errorB = Error.ThrowableError(message = randomString(), cause = Exception())
     private val errorResultA = Result.Failure(errorA)
     private val errorResultB = Result.Failure(errorB)
     private val expectedErrorResultA =

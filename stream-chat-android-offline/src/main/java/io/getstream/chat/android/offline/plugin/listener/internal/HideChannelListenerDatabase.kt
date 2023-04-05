@@ -20,8 +20,8 @@ import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
+import io.getstream.result.Result
 import java.util.Date
 
 /**

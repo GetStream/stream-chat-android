@@ -16,18 +16,18 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.result.Error
+import io.getstream.result.Result
 
 /**
  * State implementation for SendReactionListener. It updates the state accordingly and does the optimistic UI update.
@@ -121,11 +121,11 @@ internal class SendReactionListenerState(
     override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
-                Result.Failure(ChatError.GenericError(message = "Current user is null!"))
+                Result.Failure(Error.GenericError(message = "Current user is null!"))
             }
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
                 Result.Failure(
-                    ChatError.GenericError(
+                    Error.GenericError(
                         message = "Reaction::messageId and Reaction::type cannot be empty!",
                     ),
                 )
@@ -143,8 +143,8 @@ internal class SendReactionListenerState(
         }
     }
 
-    private fun Reaction.updateFailedReactionSyncStatus(chatError: ChatError) {
-        syncStatus = if (chatError.isPermanent()) {
+    private fun Reaction.updateFailedReactionSyncStatus(streamError: Error) {
+        syncStatus = if (streamError.isPermanent()) {
             SyncStatus.FAILED_PERMANENTLY
         } else {
             SyncStatus.SYNC_NEEDED

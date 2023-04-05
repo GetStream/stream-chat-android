@@ -6,32 +6,32 @@
 stream-chat-android-docs       @GetStream/android-developers
 
 # Core
-stream-chat-android-client                  @GetStream/android-developers-core
-stream-chat-android-client-test             @GetStream/android-developers-core
-stream-chat-android-core                    @GetStream/android-developers-core
-stream-chat-android-offline                 @GetStream/android-developers-core
-stream-chat-android-pushprovider-firebase   @GetStream/android-developers-core
-stream-chat-android-pushprovider-huawei     @GetStream/android-developers-core
-stream-chat-android-pushprovider-xiaomi     @GetStream/android-developers-core
-stream-chat-android-state                   @GetStream/android-developers-core
-stream-chat-android-test                    @GetStream/android-developers-core
+stream-chat-android-client                  @GetStream/android-developers
+stream-chat-android-client-test             @GetStream/android-developers
+stream-chat-android-core                    @GetStream/android-developers
+stream-chat-android-offline                 @GetStream/android-developers
+stream-chat-android-pushprovider-firebase   @GetStream/android-developers
+stream-chat-android-pushprovider-huawei     @GetStream/android-developers
+stream-chat-android-pushprovider-xiaomi     @GetStream/android-developers
+stream-chat-android-state                   @GetStream/android-developers
+stream-chat-android-test                    @GetStream/android-developers
 
 # UI
-stream-chat-android-ui-common               @GetStream/android-developers-ui
-stream-chat-android-ui-components           @GetStream/android-developers-ui
-stream-chat-android-ui-components-sample    @GetStream/android-developers-ui
-stream-chat-android-compose                 @GetStream/android-developers-ui
-stream-chat-android-compose-sample          @GetStream/android-developers-ui
-stream-chat-android-ui-guides               @GetStream/android-developers-ui
-stream-chat-android-ui-uitests              @GetStream/android-developers-ui
-stream-chat-android-ui-utils                @GetStream/android-developers-ui
+stream-chat-android-ui-common               @GetStream/android-developers
+stream-chat-android-ui-components           @GetStream/android-developers
+stream-chat-android-ui-components-sample    @GetStream/android-developers
+stream-chat-android-compose                 @GetStream/android-developers
+stream-chat-android-compose-sample          @GetStream/android-developers
+stream-chat-android-ui-guides               @GetStream/android-developers
+stream-chat-android-ui-uitests              @GetStream/android-developers
+stream-chat-android-ui-utils                @GetStream/android-developers
 
 # Libraries
-libraries/external                           @GetStream/android-developers-core
-libraries/logging/stream-logger              @GetStream/android-developers-core
-libraries/logging/stream-logger-android      @GetStream/android-developers-core
-libraries/logging/stream-logger-android-init @GetStream/android-developers-core
-libraries/logging/stream-logger-file         @GetStream/android-developers-core
+libraries/external                           @GetStream/android-developers
+libraries/logging/stream-logger              @GetStream/android-developers
+libraries/logging/stream-logger-android      @GetStream/android-developers
+libraries/logging/stream-logger-android-init @GetStream/android-developers
+libraries/logging/stream-logger-file         @GetStream/android-developers
 
 ### Top level files and directories
 # Git and GitHub
@@ -61,7 +61,7 @@ README.md                               @GetStream/android-developers
 DokkaRoot.md                            @GetStream/android-developers
 docs                                    @GetStream/android-developers
 docusaurus                              @GetStream/android-developers
-dokkasaurus_filter.json                 @leandroBorgesFerreira
+dokkasaurus_filter.json                 @GetStream/android-developers
 
 # Misc
 .idea                       @GetStream/android-developers

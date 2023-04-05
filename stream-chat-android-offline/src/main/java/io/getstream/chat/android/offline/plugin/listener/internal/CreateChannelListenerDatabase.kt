@@ -16,18 +16,18 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.Date
 
 /**
@@ -150,10 +150,10 @@ internal class CreateChannelListenerDatabase(
     ): Result<Unit> {
         return when {
             channelId.isBlank() && memberIds.isEmpty() -> {
-                Result.Failure(ChatError.GenericError(message = "Either channelId or memberIds cannot be empty!"))
+                Result.Failure(Error.GenericError(message = "Either channelId or memberIds cannot be empty!"))
             }
             currentUser == null -> {
-                Result.Failure(ChatError.GenericError(message = "Current user is null!"))
+                Result.Failure(Error.GenericError(message = "Current user is null!"))
             }
             else -> {
                 Result.Success(Unit)

@@ -16,18 +16,18 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.log.StreamLog
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.Date
 
 private const val TAG = "Chat:SendMessageHandler"
@@ -90,18 +90,18 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
      * Updates the message object and local database with new message state after message wasn't sent due to error.
      *
      * @param message [Message] that were being sent.
-     * @param error [ChatError] with the reason of failure.
+     * @param error [Error] with the reason of failure.
      *
      * @return [Message] Updated message.
      */
     private fun handleSendMessageFail(
         logic: LogicRegistry,
         message: Message,
-        error: ChatError,
+        error: Error,
     ) {
         val isPermanentError = error.isPermanent()
-        val isMessageModerationFailed = error is ChatError.NetworkError &&
-            error.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
+        val isMessageModerationFailed = error is Error.NetworkError &&
+            error.serverErrorCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
         StreamLog.w(TAG) {
             "[handleSendMessageFail] isPermanentError: $isPermanentError" +
                 ", isMessageModerationFailed: $isMessageModerationFailed"

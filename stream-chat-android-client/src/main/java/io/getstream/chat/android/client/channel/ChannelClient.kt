@@ -24,8 +24,6 @@ import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -75,7 +73,6 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -92,6 +89,9 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 import java.io.File
 import java.util.Date
 
@@ -712,7 +712,7 @@ public class ChannelClient internal constructor(
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
      * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
-     * [ChatError] if fails.
+     * [Error] if fails.
      */
     @CheckResult
     @JvmOverloads
@@ -726,7 +726,7 @@ public class ChannelClient internal constructor(
      * @param parentId Set this field to `message.id` to indicate that typing event is happening in a thread.
      *
      * @return Executable async [Call] which completes with [Result] having [ChatEvent] data if successful or
-     * [ChatError] if fails.
+     * [Error] if fails.
      */
     @CheckResult
     @JvmOverloads

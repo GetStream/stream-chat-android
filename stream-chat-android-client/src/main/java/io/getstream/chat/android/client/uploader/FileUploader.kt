@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.uploader
 
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
+import io.getstream.result.Result
 import java.io.File
 
 /**

@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.subscribeForSingle
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.result.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
 
 class Events(val client: ChatClient, val channelClient: ChannelClient) {

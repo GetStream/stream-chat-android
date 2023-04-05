@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.result.Error
 import java.util.Date
 
 internal sealed class ChatEventDto
@@ -481,7 +481,7 @@ internal data class DisconnectedEventDto(
 internal data class ErrorEventDto(
     val type: String,
     val created_at: ExactDate,
-    val error: ChatError,
+    val error: Error,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

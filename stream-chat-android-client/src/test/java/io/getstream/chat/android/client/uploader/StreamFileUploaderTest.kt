@@ -21,13 +21,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
+import io.getstream.result.Error
+import io.getstream.result.Result
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Before
@@ -53,7 +53,7 @@ internal class StreamFileUploaderTest {
     private val progressCallback = object : ProgressCallback {
         override fun onSuccess(url: String?) = Unit
 
-        override fun onError(error: ChatError) = Unit
+        override fun onError(error: Error) = Unit
 
         override fun onProgress(bytesUploaded: Long, totalBytes: Long) = Unit
     }

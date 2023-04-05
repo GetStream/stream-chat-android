@@ -20,11 +20,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.FirebaseLogger
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
 import io.getstream.chat.android.models.User as ChatUser
 
 class CustomLoginViewModel : ViewModel() {

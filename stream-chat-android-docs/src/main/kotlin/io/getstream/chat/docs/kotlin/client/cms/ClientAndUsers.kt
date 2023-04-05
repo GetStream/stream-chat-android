@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.client.token.TokenProvider
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.result.Result
 import io.getstream.chat.docs.TokenService
 
 class ClientAndUsers(val context: Context, val client: ChatClient, val yourTokenService: TokenService) {

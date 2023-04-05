@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.clientstate.DisconnectCause
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.result.Error
 
 /**
  * Listener which is invoked for WebSocket events.
@@ -53,9 +53,9 @@ public open class SocketListener {
     /**
      * Invoked when there is any error in this web socket connection.
      *
-     * @param error [ChatError] object with the error details.
+     * @param error [Error] object with the error details.
      */
-    public open fun onError(error: ChatError) {
+    public open fun onError(error: Error) {
     }
 
     /**

@@ -77,10 +77,6 @@ import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
-import io.getstream.chat.android.client.call.map
-import io.getstream.chat.android.client.call.toUnitCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
@@ -88,7 +84,6 @@ import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
@@ -109,6 +104,11 @@ import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.CoroutineCall
+import io.getstream.result.call.map
+import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first

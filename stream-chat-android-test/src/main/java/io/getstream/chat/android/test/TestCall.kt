@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.test
 
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 
 public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
     public var cancelled: Boolean = false

@@ -18,7 +18,6 @@ package io.getstream.chat.android.client
 
 import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -39,6 +38,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt
+import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.mockito.kotlin.mock
@@ -146,13 +146,13 @@ internal object Mother {
     }
 
     fun randomChatNetworkError(
-        streamCode: Int = randomInt(),
+        serverErrorCode: Int = randomInt(),
         description: String = randomString(),
         statusCode: Int = randomInt(),
         cause: Throwable? = null,
-    ): ChatError.NetworkError = ChatError.NetworkError(
+    ): Error.NetworkError = Error.NetworkError(
         message = description,
-        streamCode = streamCode,
+        serverErrorCode = serverErrorCode,
         statusCode = statusCode,
         cause = cause,
     )

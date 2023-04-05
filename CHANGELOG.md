@@ -68,6 +68,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed edit messages and reply messages with unsupported attachments. [#4757](https://github.com/GetStream/stream-chat-android/pull/4757)
 
 ### ⬆️ Improved
 
@@ -170,7 +171,7 @@ If you want to learn more about these changes and our decisions, check out our [
 - Separated `state` and `offline` modules. (#4214)[https://github.com/GetStream/stream-chat-android/pull/4214]
 - Moved `ClientState.user` to `GlobalState.user` because the state module is the one that correctly updates the user in the SDK. [#4333](https://github.com/GetStream/stream-chat-android/pull/4333)
 - 🚨 Breaking change: Converted `Result` class into sealed class with two implementations: `Result.Success` and `Result.Failure`. [#4356](https://github.com/GetStream/stream-chat-android/pull/4356)
-- 🚨 Breaking change: Converted `ChatError` class into sealed class with three implementations: `ChatError.Generic`, `ChatError.Throwable` and `ChatError.Network`. [#4368](https://github.com/GetStream/stream-chat-android/pull/4368)
+- 🚨 Breaking change: Converted `ChatError` class into sealed class with three implementations: `Error.Generic`, `Error.Throwable` and `Error.Network`. [#4368](https://github.com/GetStream/stream-chat-android/pull/4368)
 
 ## stream-chat-android-client
 ### ⬆️ Improved

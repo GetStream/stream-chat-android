@@ -16,12 +16,10 @@
 
 package io.getstream.chat.android.benchmark
 
-import androidx.benchmark.macro.ExperimentalBaselineProfilesApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import org.junit.Rule
 import org.junit.Test
 
-@ExperimentalBaselineProfilesApi
 internal class BaselineProfileGenerator {
     @get:Rule
     internal val baselineProfileRule = BaselineProfileRule()

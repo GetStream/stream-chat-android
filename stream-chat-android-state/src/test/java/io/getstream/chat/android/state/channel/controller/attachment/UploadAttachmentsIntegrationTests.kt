@@ -23,11 +23,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
@@ -40,6 +38,8 @@ import io.getstream.chat.android.state.utils.randomAttachmentsWithFile
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -164,8 +164,8 @@ internal class UploadAttachmentsIntegrationTests {
 
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
-            val imageResult = Result.Failure(ChatError.GenericError(""))
-            val fileResult = Result.Failure(ChatError.GenericError(""))
+            val imageResult = Result.Failure(Error.GenericError(""))
+            val fileResult = Result.Failure(Error.GenericError(""))
 
             whenever(
                 chatClient.sendFile(

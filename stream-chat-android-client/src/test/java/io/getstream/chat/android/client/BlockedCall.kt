@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay

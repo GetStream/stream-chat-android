@@ -17,12 +17,12 @@
 package io.getstream.chat.android.client.socket.experimental
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.test.randomBoolean
+import io.getstream.result.Error
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -120,7 +120,7 @@ internal class ChatSocketStateServiceTest {
     @MethodSource("onUnrecoverableErrorArgs")
     fun `When an unrecoverable error arrives, should move to the proper state`(
         initialState: State,
-        error: ChatError.NetworkError,
+        error: Error.NetworkError,
         resultState: State,
     ) {
         val sut = ChatSocketStateService(initialState)
@@ -137,7 +137,7 @@ internal class ChatSocketStateServiceTest {
     @MethodSource("onNetworkErrorArgs")
     fun `When an error arrives, should move to the proper state`(
         initialState: State,
-        error: ChatError.NetworkError,
+        error: Error.NetworkError,
         resultState: State,
     ) {
         val sut = ChatSocketStateService(initialState)

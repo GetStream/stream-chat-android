@@ -19,10 +19,10 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.result.Result
+import io.getstream.result.onSuccessSuspend
 
 /**
  * Implementation for [QueryChannelListener] that handles database update.

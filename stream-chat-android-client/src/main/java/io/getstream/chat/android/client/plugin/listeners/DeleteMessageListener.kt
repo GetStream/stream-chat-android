@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
+import io.getstream.result.Result
 
 /**
  * Listener for requests of message deletion and for message deletion results.

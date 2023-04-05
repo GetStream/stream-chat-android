@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.LifecycleHandler
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.clientstate.DisconnectCause
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -32,6 +31,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -82,7 +82,7 @@ internal open class ChatSocket(
                     streamWebSocket = socketFactory.createSocket(connectionConf).apply {
                         socketListenerJob = listen().onEach {
                             when (it) {
-                                is StreamWebSocketEvent.Error -> handleError(it.chatError)
+                                is StreamWebSocketEvent.Error -> handleError(it.streamError)
                                 is StreamWebSocketEvent.Message -> handleEvent(it.chatEvent)
                             }
                         }.launchIn(userScope)
@@ -191,27 +191,27 @@ internal open class ChatSocket(
         networkStateProvider.unsubscribe(networkStateListener)
     }
 
-    private fun handleError(error: ChatError) {
+    private fun handleError(error: Error) {
         logger.e { "[handleError] error: $error" }
         when (error) {
-            is ChatError.NetworkError -> onChatNetworkError(error)
+            is Error.NetworkError -> onChatNetworkError(error)
             else -> callListeners { it.onError(error) }
         }
     }
 
-    private fun onChatNetworkError(error: ChatError.NetworkError) {
-        if (ChatErrorCode.isAuthenticationError(error.streamCode)) {
+    private fun onChatNetworkError(error: Error.NetworkError) {
+        if (ChatErrorCode.isAuthenticationError(error.serverErrorCode)) {
             tokenManager.expireToken()
         }
 
-        when (error.streamCode) {
+        when (error.serverErrorCode) {
             ChatErrorCode.UNDEFINED_TOKEN.code,
             ChatErrorCode.INVALID_TOKEN.code,
             ChatErrorCode.API_KEY_NOT_FOUND.code,
             ChatErrorCode.VALIDATION_ERROR.code,
             -> {
                 logger.d {
-                    "One unrecoverable error happened. Error: $error. Error code: ${error.streamCode}"
+                    "One unrecoverable error happened. Error: $error. Error code: ${error.serverErrorCode}"
                 }
                 chatSocketStateService.onUnrecoverableError(error)
             }
