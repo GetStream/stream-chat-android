@@ -26,6 +26,7 @@ import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentPreviewContent
+import io.getstream.chat.android.compose.ui.attachments.content.onImageAttachmentContentItemClicked
 import io.getstream.chat.android.compose.ui.attachments.preview.ImagePreviewContract
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isMedia
@@ -46,15 +47,7 @@ public fun ImageAttachmentFactory(
         message: Message,
         attachmentPosition: Int,
         skipEnrichUrl: Boolean,
-    ) -> Unit = { imagePreviewLauncher, messageClicked, clickedAttachmentPosition, skipEnrichUrl ->
-        imagePreviewLauncher.launch(
-            ImagePreviewContract.Input(
-                messageId = messageClicked.id,
-                initialPosition = clickedAttachmentPosition,
-                skipEnrichUrl = skipEnrichUrl,
-            )
-        )
-    },
+    ) -> Unit = ::onImageAttachmentContentItemClicked,
 ): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.all { it.isMedia() } },
     previewContent = { modifier, attachments, onAttachmentRemoved ->

@@ -59,13 +59,7 @@ import io.getstream.chat.android.uiutils.extension.isUploading
 public fun FileUploadContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
-    onItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = { attachment, previewHandlers ->
-        if (!attachment.isUploading()) {
-            previewHandlers
-                .firstOrNull { it.canHandle(attachment) }
-                ?.handleAttachmentPreview(attachment)
-        }
-    },
+    onItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = ::onFileUploadContentItemClicked,
 ) {
     val message = attachmentState.message
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
@@ -175,5 +169,23 @@ private fun ProgressInfo(uploadedBytes: Long, totalBytes: Long) {
             style = ChatTheme.typography.footnote,
             color = ChatTheme.colors.textLowEmphasis
         )
+    }
+}
+
+/**
+ * Handles clicks on individual file upload content items.
+ *
+ * @param attachment The attachment being clicked.
+ * @param previewHandlers A list of preview handlers from which a suitable handler
+ * will be looked for.
+ */
+internal fun onFileUploadContentItemClicked(
+    attachment: Attachment,
+    previewHandlers: List<AttachmentPreviewHandler>,
+) {
+    if (!attachment.isUploading()) {
+        previewHandlers
+            .firstOrNull { it.canHandle(attachment) }
+            ?.handleAttachmentPreview(attachment)
     }
 }
