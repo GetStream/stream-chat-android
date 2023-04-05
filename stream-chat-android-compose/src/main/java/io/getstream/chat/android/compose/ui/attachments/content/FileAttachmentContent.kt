@@ -74,13 +74,9 @@ public fun FileAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
     onItemClicked: (
-        previewHandler: List<AttachmentPreviewHandler>,
+        previewHandlers: List<AttachmentPreviewHandler>,
         attachment: Attachment,
-    ) -> Unit = { previewHandlers, attachment ->
-        previewHandlers
-            .firstOrNull { it.canHandle(attachment) }
-            ?.handleAttachmentPreview(attachment)
-    },
+    ) -> Unit = ::onFileAttachmentContentItemClicked,
 ) {
     val (message, onItemLongClick) = attachmentState
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
@@ -246,4 +242,20 @@ public fun FileAttachmentImage(attachment: Attachment) {
         contentDescription = null,
         contentScale = if (isImage || isVideoWithThumbnails) ContentScale.Crop else ContentScale.Fit
     )
+}
+
+/**
+ * Handles clicks on individual file attachment content items.
+ *
+ * @param previewHandlers A list of preview handlers from which a suitable handler
+ * will be looked for.
+ * @param attachment The attachment being clicked.
+ */
+internal fun onFileAttachmentContentItemClicked(
+    previewHandlers: List<AttachmentPreviewHandler>,
+    attachment: Attachment,
+) {
+    previewHandlers
+        .firstOrNull { it.canHandle(attachment) }
+        ?.handleAttachmentPreview(attachment)
 }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent
+import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClicked
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
@@ -36,13 +37,9 @@ import io.getstream.chat.android.uiutils.extension.isAnyFileType
 @Suppress("FunctionName")
 public fun FileAttachmentFactory(
     onContentItemClick: (
-        previewHandler: List<AttachmentPreviewHandler>,
+        previewHandlers: List<AttachmentPreviewHandler>,
         attachment: Attachment,
-    ) -> Unit = { previewHandlers, attachment ->
-        previewHandlers
-            .firstOrNull { it.canHandle(attachment) }
-            ?.handleAttachmentPreview(attachment)
-    },
+    ) -> Unit = ::onFileAttachmentContentItemClicked,
 ): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments ->
         attachments.any { it.isAnyFileType() }
