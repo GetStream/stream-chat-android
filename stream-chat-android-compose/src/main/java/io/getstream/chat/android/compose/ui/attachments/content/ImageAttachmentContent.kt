@@ -65,6 +65,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param onContentItemClicked Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
+@Suppress("LongMethod")
 @Composable
 public fun ImageAttachmentContent(
     attachmentState: AttachmentState,
