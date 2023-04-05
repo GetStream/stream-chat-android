@@ -35,11 +35,11 @@ public class MessagesViewModelFactory(
 The highlighted parameters have been added and the parameter `navigateToThreadViaNotification: Boolean` has been removed as navigating to thread messages via push notifications is the default behavior in `v6`.
 :::
 
-- **clientState**: Represents the current state of the SDK.
-- **clipboardHandler**: Used for copying messages.
-- **dateSeparatorHandler**: Determines the visibility of date separators inside the message list.
-- **threadDateSeparatorHandler**: Determines the visibility of date separators inside the message list when the list is in thread mode.
-- **messagePositionHandler**: Determines the position of the message inside the group.
+- `clientState`: Represents the current state of the SDK.
+- `clipboardHandler`: Used for copying messages.
+- `dateSeparatorHandler`: Determines the visibility of date separators inside the message list.
+- `threadDateSeparatorHandler`: Determines the visibility of date separators inside the message list when the list is in thread mode.
+- `messagePositionHandler`: Determines the position of the message inside the group.
 
 Parameters `showDateSeparators: Boolean` and `dateSeparatorThresholdMillis: Long` have been removed in favor of the new date separator handlers which allow for greater flexibility.
 
