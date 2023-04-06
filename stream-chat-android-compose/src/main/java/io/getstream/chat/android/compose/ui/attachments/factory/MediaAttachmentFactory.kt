@@ -99,7 +99,7 @@ public fun MediaAttachmentFactory(
                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                 itemOverlayContent = itemOverlayContent,
                 skipEnrichUrl = skipEnrichUrl,
-                onContentItemClick = onContentItemClick,
+                onItemClick = onContentItemClick,
             )
         }
     )

@@ -88,7 +88,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * in a group when previewing Media attachments in the message list.
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
- * @param onContentItemClick Lambda called when an item gets clicked.
+ * @param onItemClick Lambda called when an item gets clicked.
  * @param itemOverlayContent Represents the content overlaid above individual items.
  * By default it is used to display a play button over video previews.
  */
@@ -99,7 +99,7 @@ public fun MediaAttachmentContent(
     modifier: Modifier = Modifier,
     maximumNumberOfPreviewedItems: Int = 4,
     skipEnrichUrl: Boolean = false,
-    onContentItemClick: (
+    onItemClick: (
         mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
         message: Message,
         attachmentPosition: Int,
@@ -141,7 +141,7 @@ public fun MediaAttachmentContent(
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
                 skipEnrichUrl = skipEnrichUrl,
-                onContentItemClick = onContentItemClick,
+                onContentItemClick = onItemClick,
                 overlayContent = itemOverlayContent,
             )
         } else {
@@ -154,7 +154,7 @@ public fun MediaAttachmentContent(
                 skipEnrichUrl = skipEnrichUrl,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
-                onContentItemClick = onContentItemClick,
+                onContentItemClick = onItemClick,
                 itemOverlayContent = itemOverlayContent
             )
         }
