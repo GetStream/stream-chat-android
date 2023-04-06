@@ -74,7 +74,7 @@ public fun LinkAttachmentContent(
     attachmentState: AttachmentState,
     linkDescriptionMaxLines: Int,
     modifier: Modifier = Modifier,
-    onItemClick: (context: Context, Url: String) -> Unit = ::onLinkAttachmentContentClicked,
+    onItemClick: (context: Context, Url: String) -> Unit = ::onLinkAttachmentContentClick,
 ) {
     val (message, onLongItemClick) = attachmentState
 
@@ -212,7 +212,7 @@ private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLin
  * @param context Context needed to start the Activity.
  * @param url The url of the link attachment being clicked.
  */
-internal fun onLinkAttachmentContentClicked(context: Context, url: String) {
+internal fun onLinkAttachmentContentClick(context: Context, url: String) {
     context.startActivity(
         Intent(
             Intent.ACTION_VIEW,

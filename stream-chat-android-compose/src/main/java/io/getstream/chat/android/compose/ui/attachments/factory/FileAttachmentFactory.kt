@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent
-import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClicked
+import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uiutils.extension.isFile
@@ -39,7 +39,7 @@ public fun FileAttachmentFactory(
     onContentItemClick: (
         previewHandlers: List<AttachmentPreviewHandler>,
         attachment: Attachment,
-    ) -> Unit = ::onFileAttachmentContentItemClicked,
+    ) -> Unit = ::onFileAttachmentContentItemClick,
 ): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments ->
         attachments.any { it.isFile() }
@@ -57,7 +57,7 @@ public fun FileAttachmentFactory(
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentFileWidth),
             attachmentState = state,
-            onItemClicked = onContentItemClick,
+            onItemClick = onContentItemClick,
         )
     },
 )
