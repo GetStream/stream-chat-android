@@ -175,6 +175,8 @@
 
         <attr name="streamUiMessageComposerCooldownTimerBackgroundDrawable" format="reference" />
 
+        <attr name="streamUiMessageComposerShowMessageReplyView" format="boolean" />
+
         <!-- Sets the background color of the quoted message bubble visible in the input when
          replying to a message. Applied both when replying to messages owned by the currently
          logged-in user and messages owned by other users. -->
