@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
@@ -65,12 +66,17 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  * @param modifier Modifier for styling.
+ * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
+    onItemClick: (
+        previewHandlers: List<AttachmentPreviewHandler>,
+        attachment: Attachment,
+    ) -> Unit = ::onFileAttachmentContentItemClick,
 ) {
     val (message, onItemLongClick) = attachmentState
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
@@ -92,9 +98,7 @@ public fun FileAttachmentContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            previewHandlers
-                                .firstOrNull { it.canHandle(attachment) }
-                                ?.handleAttachmentPreview(attachment)
+                            onItemClick(previewHandlers, attachment)
                         },
                         onLongClick = { onItemLongClick(message) },
                     ),
@@ -238,4 +242,20 @@ public fun FileAttachmentImage(attachment: Attachment) {
         contentDescription = null,
         contentScale = if (isImage || isVideoWithThumbnails) ContentScale.Crop else ContentScale.Fit
     )
+}
+
+/**
+ * Handles clicks on individual file attachment content items.
+ *
+ * @param previewHandlers A list of preview handlers from which a suitable handler
+ * will be looked for.
+ * @param attachment The attachment being clicked.
+ */
+internal fun onFileAttachmentContentItemClick(
+    previewHandlers: List<AttachmentPreviewHandler>,
+    attachment: Attachment,
+) {
+    previewHandlers
+        .firstOrNull { it.canHandle(attachment) }
+        ?.handleAttachmentPreview(attachment)
 }

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
+import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
@@ -40,9 +42,9 @@ import io.getstream.chat.android.ui.common.utils.GiphySizingMode
  * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
  * dimensions, however you can still clip maximum dimensions using [StreamDimens.attachmentsContentGiphyMaxWidth]
  * and [StreamDimens.attachmentsContentGiphyMaxHeight].
- *
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+ * @param onContentItemClick Lambda called when an item gets clicked.
  *
  * @return Returns an instance of [AttachmentFactory] that is used to handle Giphys.
  */
@@ -51,6 +53,7 @@ public fun GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
+    onContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = { attachments -> attachments.any(Attachment::isGiphy) },
@@ -61,6 +64,7 @@ public fun GiphyAttachmentFactory(
                 giphyInfoType = giphyInfoType,
                 giphySizingMode = giphySizingMode,
                 contentScale = contentScale,
+                onItemClick = onContentItemClick,
             )
         },
     )
