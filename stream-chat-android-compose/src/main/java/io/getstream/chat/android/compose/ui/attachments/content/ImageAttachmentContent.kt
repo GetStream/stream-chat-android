@@ -62,7 +62,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param attachmentState The state of the attachment, holding the root modifier, the message
  * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
- * @param onContentItemClicked Lambda called when an item gets clicked.
+ * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
@@ -71,12 +71,12 @@ public fun ImageAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
     skipEnrichUrl: Boolean = false,
-    onContentItemClicked: (
+    onItemClick: (
         imagePreviewLauncher: ManagedActivityResultLauncher<ImagePreviewContract.Input, ImagePreviewResult?>,
         message: Message,
         attachmentPosition: Int,
         skipEnrichUrl: Boolean,
-    ) -> Unit = ::onImageAttachmentContentItemClicked,
+    ) -> Unit = ::onImageAttachmentContentItemClick,
 ) {
     val (message, onLongItemClick, onImagePreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentImageGridSpacing
@@ -123,7 +123,7 @@ public fun ImageAttachmentContent(
                 onImagePreviewResult = onImagePreviewResult,
                 onLongItemClick = onLongItemClick,
                 skipEnrichUrl = skipEnrichUrl,
-                onContentItemClicked = onContentItemClicked,
+                onContentItemClick = onItemClick,
             )
         } else {
             Column(
@@ -141,8 +141,8 @@ public fun ImageAttachmentContent(
                             attachmentPosition = imageIndex,
                             onImagePreviewResult = onImagePreviewResult,
                             onLongItemClick = onLongItemClick,
-                            onContentItemClicked = onContentItemClicked,
                             skipEnrichUrl = skipEnrichUrl,
+                            onContentItemClick = onItemClick,
                         )
                     }
                 }
@@ -167,8 +167,8 @@ public fun ImageAttachmentContent(
                                     attachmentPosition = imageIndex,
                                     onImagePreviewResult = onImagePreviewResult,
                                     onLongItemClick = onLongItemClick,
-                                    onContentItemClicked = onContentItemClicked,
                                     skipEnrichUrl = skipEnrichUrl,
+                                    onContentItemClick = onItemClick,
                                 )
 
                                 if (!isUploading) {
@@ -187,8 +187,8 @@ public fun ImageAttachmentContent(
                                 attachmentPosition = imageIndex,
                                 onImagePreviewResult = onImagePreviewResult,
                                 onLongItemClick = onLongItemClick,
-                                onContentItemClicked = onContentItemClicked,
                                 skipEnrichUrl = skipEnrichUrl,
+                                onContentItemClick = onItemClick,
                             )
                         }
                     }
@@ -216,7 +216,7 @@ internal fun ImageAttachmentContentItem(
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     skipEnrichUrl: Boolean = false,
-    onContentItemClicked: (
+    onContentItemClick: (
         imagePreviewLauncher: ManagedActivityResultLauncher<ImagePreviewContract.Input, ImagePreviewResult?>,
         message: Message,
         attachmentPosition: Int,
@@ -237,7 +237,7 @@ internal fun ImageAttachmentContentItem(
                 interactionSource = MutableInteractionSource(),
                 indication = rememberRipple(),
                 onClick = {
-                    onContentItemClicked(
+                    onContentItemClick(
                         imagePreviewLauncher,
                         message,
                         attachmentPosition,
@@ -314,7 +314,7 @@ private const val TwiceAsTallAsIsWideRatio = 0.5f
  * a link attachment. Used when updating the message from the gallery by doing actions
  * such as deleting an attachment.
  */
-internal fun onImageAttachmentContentItemClicked(
+internal fun onImageAttachmentContentItemClick(
     imagePreviewLauncher: ManagedActivityResultLauncher<ImagePreviewContract.Input, ImagePreviewResult?>,
     message: Message,
     attachmentPosition: Int,

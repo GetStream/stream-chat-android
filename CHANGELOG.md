@@ -74,6 +74,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the lambda function `onContentItemClick` to  `UploadAttachmentFactory`, `LinkAttachmentFactory`, `GiphyAttachmentFactory`, `ImageAttachmentFactory` and `FileAttachmentFactory`. Overriding it will change the behaviour of clicking on different attachment content.
+- Added the lambda function  `onItemClick` to `FileUploadContent`, `FileAttachmentContent`, `GiphyAttachmentContent`, `ImageAttachmentContent` and `LinkAttachmentContent`. Overriding it will change the behaviour of clicking on different attachment content.
 
 ### ⚠️ Changed
 
