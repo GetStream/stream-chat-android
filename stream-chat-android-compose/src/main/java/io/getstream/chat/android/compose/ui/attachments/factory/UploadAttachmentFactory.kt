@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent
-import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClicked
+import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
@@ -31,11 +31,11 @@ import io.getstream.chat.android.uiutils.extension.isUploading
  * An [AttachmentFactory] that validates and shows uploading attachments using [FileUploadContent].
  * Has no "preview content", given that this attachment only exists after being sent.
  *
- * @param onContentItemClicked Lambda called when an item gets clicked.
+ * @param onContentItemClick Lambda called when an item gets clicked.
  */
 @Suppress("FunctionName")
 public fun UploadAttachmentFactory(
-    onContentItemClicked: (Attachment, List<AttachmentPreviewHandler>) -> Unit = ::onFileUploadContentItemClicked,
+    onContentItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = ::onFileUploadContentItemClick,
 ): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.any { it.isUploading() } },
     content = @Composable { modifier, state ->
@@ -44,7 +44,7 @@ public fun UploadAttachmentFactory(
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentFileUploadWidth),
             attachmentState = state,
-            onItemClick = onContentItemClicked,
+            onItemClick = onContentItemClick,
         )
     },
 )

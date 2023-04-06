@@ -106,7 +106,7 @@ public fun MediaAttachmentContent(
         videoThumbnailsEnabled: Boolean,
         streamCdnImageResizing: StreamCdnImageResizing,
         skipEnrichUrl: Boolean,
-    ) -> Unit = ::onMediaAttachmentContentItemClicked,
+    ) -> Unit = ::onMediaAttachmentContentItemClick,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
             PlayButton()
@@ -572,7 +572,7 @@ private const val EqualDimensionsRatio = 1f
  * a link attachment. Used when updating the message from the gallery by doing actions
  * such as deleting an attachment.
  */
-internal fun onMediaAttachmentContentItemClicked(
+internal fun onMediaAttachmentContentItemClick(
     mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
     message: Message,
     attachmentPosition: Int,

@@ -66,17 +66,17 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  * @param modifier Modifier for styling.
- * @param onItemClicked Lambda called when an item gets clicked.
+ * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
-    onItemClicked: (
+    onItemClick: (
         previewHandlers: List<AttachmentPreviewHandler>,
         attachment: Attachment,
-    ) -> Unit = ::onFileAttachmentContentItemClicked,
+    ) -> Unit = ::onFileAttachmentContentItemClick,
 ) {
     val (message, onItemLongClick) = attachmentState
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
@@ -98,7 +98,7 @@ public fun FileAttachmentContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            onItemClicked(previewHandlers, attachment)
+                            onItemClick(previewHandlers, attachment)
                         },
                         onLongClick = { onItemLongClick(message) },
                     ),
@@ -251,7 +251,7 @@ public fun FileAttachmentImage(attachment: Attachment) {
  * will be looked for.
  * @param attachment The attachment being clicked.
  */
-internal fun onFileAttachmentContentItemClicked(
+internal fun onFileAttachmentContentItemClick(
     previewHandlers: List<AttachmentPreviewHandler>,
     attachment: Attachment,
 ) {

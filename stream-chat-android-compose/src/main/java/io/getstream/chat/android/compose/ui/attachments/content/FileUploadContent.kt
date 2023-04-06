@@ -59,7 +59,7 @@ import io.getstream.chat.android.uiutils.extension.isUploading
 public fun FileUploadContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
-    onItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = ::onFileUploadContentItemClicked,
+    onItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = ::onFileUploadContentItemClick,
 ) {
     val message = attachmentState.message
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
@@ -179,7 +179,7 @@ private fun ProgressInfo(uploadedBytes: Long, totalBytes: Long) {
  * @param previewHandlers A list of preview handlers from which a suitable handler
  * will be looked for.
  */
-internal fun onFileUploadContentItemClicked(
+internal fun onFileUploadContentItemClick(
     attachment: Attachment,
     previewHandlers: List<AttachmentPreviewHandler>,
 ) {
