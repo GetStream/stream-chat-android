@@ -36,7 +36,7 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
-import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClicked
+import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -66,7 +66,7 @@ public fun MediaAttachmentFactory(
         videoThumbnailsEnabled: Boolean,
         streamCdnImageResizing: StreamCdnImageResizing,
         skipEnrichUrl: Boolean,
-    ) -> Unit = ::onMediaAttachmentContentItemClicked,
+    ) -> Unit = ::onMediaAttachmentContentItemClick,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
             DefaultItemOverlayContent()

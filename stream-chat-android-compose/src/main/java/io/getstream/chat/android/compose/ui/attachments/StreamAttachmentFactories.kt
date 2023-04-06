@@ -21,11 +21,11 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
-import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClicked
-import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClicked
-import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClicked
-import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClicked
-import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClicked
+import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
+import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
+import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
+import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
+import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
@@ -68,8 +68,8 @@ public object StreamAttachmentFactories {
      * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
      * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the
      * message by deleting an attachment contained within it. Set to false by default.
-     * @param onUploadContentItemClicked Lambda called when a uploading attachment content item gets clicked.
-     * @param onLinkContentItemClicked Lambda called when a link attachment content item gets clicked.
+     * @param onUploadContentItemClick Lambda called when a uploading attachment content item gets clicked.
+     * @param onLinkContentItemClick Lambda called when a link attachment content item gets clicked.
      * @param onGiphyContentItemClick Lambda called when a giphy attachment content item gets clicked.
      * @param onMediaContentItemClick Lambda called when a image or video attachment content item gets clicked.
      * @param onFileContentItemClick Lambda called when a file attachment content item gets clicked.
@@ -83,12 +83,12 @@ public object StreamAttachmentFactories {
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
         contentScale: ContentScale = ContentScale.Crop,
         skipEnrichUrl: Boolean = false,
-        onUploadContentItemClicked: (
+        onUploadContentItemClick: (
             Attachment,
             List<AttachmentPreviewHandler>,
-        ) -> Unit = ::onFileUploadContentItemClicked,
-        onLinkContentItemClicked: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClicked,
-        onGiphyContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClicked,
+        ) -> Unit = ::onFileUploadContentItemClick,
+        onLinkContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
+        onGiphyContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick,
         onMediaContentItemClick: (
             mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
             message: Message,
@@ -96,18 +96,18 @@ public object StreamAttachmentFactories {
             videoThumbnailsEnabled: Boolean,
             streamCdnImageResizing: StreamCdnImageResizing,
             skipEnrichUrl: Boolean,
-        ) -> Unit = ::onMediaAttachmentContentItemClicked,
+        ) -> Unit = ::onMediaAttachmentContentItemClick,
         onFileContentItemClick: (
             previewHandlers: List<AttachmentPreviewHandler>,
             attachment: Attachment,
-        ) -> Unit = ::onFileAttachmentContentItemClicked,
+        ) -> Unit = ::onFileAttachmentContentItemClick,
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
-            onContentItemClicked = onUploadContentItemClicked
+            onContentItemClick = onUploadContentItemClick
         ),
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,
-            onContentItemClicked = onLinkContentItemClicked,
+            onContentItemClick = onLinkContentItemClick,
         ),
         GiphyAttachmentFactory(
             giphyInfoType = giphyInfoType,
