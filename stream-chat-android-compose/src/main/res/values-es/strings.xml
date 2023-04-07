@@ -67,6 +67,17 @@
   <string name="stream_compose_image_preview_share">"Compartir"</string>
   <string name="stream_compose_image_preview_show_in_chat">"Mostrar en el chat"</string>
   <string name="stream_compose_images_option">"Imágenes"</string>
+  <string name="stream_compose_media_gallery_preview_could_not_share_attachment">"No se pudo compartir el archivo"</string>
+  <string name="stream_compose_media_gallery_preview_delete">"Borrar"</string>
+  <string name="stream_compose_media_gallery_preview_options">"Opciones media"</string>
+  <string name="stream_compose_media_gallery_preview_photos">"Fotos"</string>
+  <string name="stream_compose_media_gallery_preview_preparing">"Preparando..."</string>
+  <string name="stream_compose_media_gallery_preview_reply">"Contestar"</string>
+  <string name="stream_compose_media_gallery_preview_save_image">"Guardar video"</string>
+  <string name="stream_compose_media_gallery_preview_share">"Compartir"</string>
+  <string name="stream_compose_media_gallery_preview_show_in_chat">"Mostrar en el chat"</string>
+  <string name="stream_compose_media_gallery_share_large_file_prompt_message">"Para compartirlo es necesario descargar %.2f MB."</string>
+  <string name="stream_compose_media_gallery_share_large_file_prompt_title">"Archivo grande"</string>
   <string name="stream_compose_member_count_online">"%1$s, %2$d Conectados"</string>
   <string name="stream_compose_message_composer_command_template">"/%1$s %2$s"</string>
   <string name="stream_compose_message_composer_error_attachment_count">"No es posible añadir más de %1$d archivos adjuntos."</string>
@@ -85,6 +96,7 @@
   <string name="stream_compose_message_list_giphy_send">"Enviar"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"Aleatorio"</string>
   <string name="stream_compose_message_list_giphy_title">"Giphy"</string>
+  <string name="stream_compose_message_list_unsupported_attachment">"Archivo adjunto no compatible"</string>
   <string name="stream_compose_message_list_you">"Tú"</string>
   <string name="stream_compose_mute_user">"Silenciar usuario"</string>
   <string name="stream_compose_new_message">"Nuevo mensaje"</string>
@@ -98,6 +110,7 @@
   <string name="stream_compose_quoted_message_image_tag">"Imagen"</string>
   <string name="stream_compose_recent_files">"Ficheros recientes"</string>
   <string name="stream_compose_remaining_images_count">"+%1$d"</string>
+  <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
   <string name="stream_compose_replied_to_thread">"Respuestas en el hilo"</string>
   <string name="stream_compose_reply">"Responder"</string>
   <string name="stream_compose_reply_to_message">"Contestar al mensaje"</string>
