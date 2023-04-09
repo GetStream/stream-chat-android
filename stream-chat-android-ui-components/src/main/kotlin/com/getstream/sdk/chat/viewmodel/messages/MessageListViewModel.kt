@@ -246,6 +246,19 @@ public class MessageListViewModel(
     public val user: LiveData<User?> = clientState.user.asLiveData()
 
     /**
+     * Gives us information if we're currently in the [Mode.Thread] mode.
+     */
+    private val isInThread: Boolean
+        get() = currentMode is Mode.Thread
+
+    /**
+     * Provides the current [MessageListItemLiveData]
+     * It chooses between [threadListData] and [messageListData] based on if we're in a thread or not.
+     */
+    private val currentMessageListData: MessageListItemLiveData?
+        get() = if (isInThread) threadListData else messageListData
+
+    /**
      * The logger used to print to errors, warnings, information
      * and other things to log.
      */
@@ -715,7 +728,7 @@ public class MessageListViewModel(
      * @return The [Message] with the ID, if it exists.
      */
     public fun getMessageWithId(messageId: String): Message? {
-        val messageItem = messageListData?.value?.items?.firstOrNull {
+        val messageItem = currentMessageListData?.value?.items?.firstOrNull {
             it is MessageListItem.MessageItem && it.message.id == messageId
         }
 
