@@ -80,7 +80,7 @@ public fun GiphyAttachmentContent(
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
-    onItemClick: (context: Context, previewUrl: String) -> Unit = ::onGiphyAttachmentContentClicked,
+    onItemClick: (context: Context, previewUrl: String) -> Unit = ::onGiphyAttachmentContentClick,
 ) {
     val context = LocalContext.current
     val (message, onLongItemClick) = attachmentState
@@ -214,7 +214,7 @@ private fun calculateResultingDimensions(
  * @param context Context needed to start the Activity.
  * @param previewUrl The url of the Giphy attachment being clicked.
  */
-internal fun onGiphyAttachmentContentClicked(context: Context, previewUrl: String) {
+internal fun onGiphyAttachmentContentClick(context: Context, previewUrl: String) {
     context.startActivity(
         Intent(
             Intent.ACTION_VIEW,

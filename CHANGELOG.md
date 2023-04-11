@@ -71,6 +71,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the lambda function `onContentItemClick` to  `UploadAttachmentFactory`, `LinkAttachmentFactory`, `GiphyAttachmentFactory`, `ImageAttachmentFactory` and `FileAttachmentFactory`. Overriding it will change the behaviour of clicking on different attachment content. [#4754](https://github.com/GetStream/stream-chat-android/pull/4754) and [#4780](https://github.com/GetStream/stream-chat-android/pull/4780)
+- Added the lambda function  `onItemClick` to `FileUploadContent`, `FileAttachmentContent`, `GiphyAttachmentContent`, `ImageAttachmentContent` and `LinkAttachmentContent`. Overriding it will change the behaviour of clicking on different attachment content. [#4754](https://github.com/GetStream/stream-chat-android/pull/4754) and [#4780](https://github.com/GetStream/stream-chat-android/pull/4780)
 
 ### ⚠️ Changed
 
