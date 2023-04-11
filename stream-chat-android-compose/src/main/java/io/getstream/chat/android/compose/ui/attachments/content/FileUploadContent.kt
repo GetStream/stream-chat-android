@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
@@ -51,12 +52,14 @@ import io.getstream.chat.android.uiutils.extension.isUploading
  *
  * @param attachmentState The state of this attachment.
  * @param modifier Modifier for styling.
+ * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun FileUploadContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
+    onItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = ::onFileUploadContentItemClick,
 ) {
     val message = attachmentState.message
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
@@ -71,11 +74,7 @@ public fun FileUploadContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            if (!attachment.isUploading()) {
-                                previewHandlers
-                                    .firstOrNull { it.canHandle(attachment) }
-                                    ?.handleAttachmentPreview(attachment)
-                            }
+                            onItemClick(attachment, previewHandlers)
                         },
                         onLongClick = { }
                     ),
@@ -170,5 +169,23 @@ private fun ProgressInfo(uploadedBytes: Long, totalBytes: Long) {
             style = ChatTheme.typography.footnote,
             color = ChatTheme.colors.textLowEmphasis
         )
+    }
+}
+
+/**
+ * Handles clicks on individual file upload content items.
+ *
+ * @param attachment The attachment being clicked.
+ * @param previewHandlers A list of preview handlers from which a suitable handler
+ * will be looked for.
+ */
+internal fun onFileUploadContentItemClick(
+    attachment: Attachment,
+    previewHandlers: List<AttachmentPreviewHandler>,
+) {
+    if (!attachment.isUploading()) {
+        previewHandlers
+            .firstOrNull { it.canHandle(attachment) }
+            ?.handleAttachmentPreview(attachment)
     }
 }
