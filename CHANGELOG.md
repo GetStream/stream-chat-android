@@ -16,7 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added the property `deactivatedAt` to `User`. [#4751](https://github.com/GetStream/stream-chat-android/pull/4751) 
 
 ### ⚠️ Changed
 
@@ -50,7 +49,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `messageInputShowReplyView` to `MessageComposerViewStyle` to determine whether to show or hide the default reply view inside center content. [#4746](https://github.com/GetStream/stream-chat-android/pull/4746)
 
 ### ⚠️ Changed
 
@@ -69,7 +67,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed a bug that resulted in the `skipEnrichUrl` property not being propagated to the image gallery. [#4769](https://github.com/GetStream/stream-chat-android/pull/4769)
 
 ### ⬆️ Improved
 
@@ -122,6 +119,19 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# April 11th, 2023 - 5.16.0
+## stream-chat-android-client
+### ✅ Added
+- Added the property `deactivatedAt` to `User`. [#4751](https://github.com/GetStream/stream-chat-android/pull/4751)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Added `messageInputShowReplyView` to `MessageComposerViewStyle` to determine whether to show or hide the default reply view inside center content. [#4746](https://github.com/GetStream/stream-chat-android/pull/4746)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed a bug that resulted in the `skipEnrichUrl` property not being propagated to the image gallery. [#4769](https://github.com/GetStream/stream-chat-android/pull/4769)
 
 # March 17th, 2023 - 5.15.0
 ## Common changes for all artifacts
