@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
@@ -45,6 +44,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.result.call.Call
 import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date

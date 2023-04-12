@@ -23,11 +23,11 @@ import android.net.Uri
 import android.os.Environment
 import androidx.core.content.FileProvider
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.StreamFileProvider
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.io.File
 import java.io.IOException
 
@@ -69,7 +69,7 @@ public object StreamFileUtil {
      *
      * @return Returns a [Result]. If the action was successful
      * [Result.Success] will contain a [File] pointing to the cache directory,
-     * otherwise [Result.Failure] will contain a [ChatError].
+     * otherwise [Result.Failure] will contain a [Error].
      */
     @Suppress("TooGenericExceptionCaught")
     private fun getOrCreateStreamCacheDir(
@@ -83,7 +83,7 @@ public object StreamFileUtil {
             Result.Success(file)
         } catch (e: Exception) {
             Result.Failure(
-                ChatError.ThrowableError(
+                Error.ThrowableError(
                     message = "Could not get or create the Stream cache directory",
                     cause = e,
                 ),
@@ -100,7 +100,7 @@ public object StreamFileUtil {
      *
      * @return Returns a [Result]. If the action was successful
      * [Result.Success] will contain [Unit], otherwise [Result.Failure]
-     * will contain a [ChatError].
+     * will contain a [Error].
      */
     @Suppress("TooGenericExceptionCaught")
     public fun clearStreamCache(
@@ -113,7 +113,7 @@ public object StreamFileUtil {
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Failure(
-                ChatError.ThrowableError(
+                Error.ThrowableError(
                     message = "Could clear the Stream cache directory",
                     cause = e,
                 ),
@@ -129,7 +129,7 @@ public object StreamFileUtil {
      * @param attachment the attachment to be downloaded.
      *
      * @return A [Uri] to the file is returned in the form of [Result.Success]
-     * if the file was successfully fetched from the cache. Returns a [ChatError]
+     * if the file was successfully fetched from the cache. Returns a [Error]
      * accessible via [Result.Failure] otherwise.
      */
     @Suppress("TooGenericExceptionCaught")
@@ -158,13 +158,13 @@ public object StreamFileUtil {
                     if (isFileCached) {
                         Result.Success(getUriForFile(context, file))
                     } else {
-                        Result.Failure(ChatError.GenericError(message = "No such file in cache."))
+                        Result.Failure(Error.GenericError(message = "No such file in cache."))
                     }
                 }
             }
         } catch (e: Exception) {
             Result.Failure(
-                ChatError.ThrowableError(
+                Error.ThrowableError(
                     message = "Cannot determine if the file has been cached.",
                     cause = e,
                 ),
@@ -183,7 +183,7 @@ public object StreamFileUtil {
      *
      * @return Returns a [Result]. If the action was successful
      * [Result.Success] will contain a [Uri] pointing to the file, otherwise [Result.Failure]
-     * will contain a [ChatError].
+     * will contain a [Error].
      */
     @Suppress("ReturnCount")
     public suspend fun writeFileToShareableFile(
@@ -208,7 +208,7 @@ public object StreamFileUtil {
                         Result.Success(getUriForFile(context, file))
                     } else {
                         val fileUrl = attachment.assetUrl ?: attachment.url ?: return Result.Failure(
-                            ChatError.GenericError(message = "File URL cannot be null.")
+                            Error.GenericError(message = "File URL cannot be null.")
                         )
 
                         when (val response = ChatClient.instance().downloadFile(fileUrl).await()) {
@@ -235,8 +235,8 @@ public object StreamFileUtil {
     private fun createFailureResultFromException(throwable: Throwable?): Result.Failure {
         return Result.Failure(
             throwable?.let { exception ->
-                ChatError.ThrowableError(message = "Could not write to file.", cause = exception)
-            } ?: ChatError.GenericError(message = "Could not write to file.")
+                Error.ThrowableError(message = "Could not write to file.", cause = exception)
+            } ?: Error.GenericError(message = "Could not write to file.")
         )
     }
 

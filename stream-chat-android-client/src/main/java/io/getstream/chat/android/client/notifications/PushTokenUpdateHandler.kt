@@ -21,10 +21,10 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getNonNullString
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
 
 internal class PushTokenUpdateHandler(context: Context) {
     private val logger by taggedLogger("Chat:Notifications")

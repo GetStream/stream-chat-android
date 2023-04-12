@@ -20,10 +20,10 @@ import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.result.Result
 
 /**
  * [QueryMembersListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].

@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.Date
 
 /**
@@ -46,7 +46,7 @@ internal class TypingEventListenerState(
      * @param extraData Any extra data such as parent id.
      * @param eventTime [Date] object as the time of this event.
      *
-     * @return [Result] having [Unit] if precondition passes otherwise [ChatError] describing what went wrong.
+     * @return [Result] having [Unit] if precondition passes otherwise [Error] describing what went wrong.
      */
     override fun onTypingEventPrecondition(
         eventType: String,
@@ -78,10 +78,10 @@ internal class TypingEventListenerState(
      */
     private fun onTypingStopPrecondition(channelState: ChannelMutableState): Result<Unit> {
         return if (!channelState.channelConfig.value.typingEventsEnabled)
-            Result.Failure(ChatError.GenericError("Typing events are not enabled"))
+            Result.Failure(Error.GenericError("Typing events are not enabled"))
         else if (channelState.lastStartTypingEvent == null) {
             Result.Failure(
-                ChatError.GenericError(
+                Error.GenericError(
                     "lastStartTypingEvent is null. " +
                         "Make sure to send Event.TYPING_START before sending Event.TYPING_STOP",
                 ),
@@ -100,12 +100,12 @@ internal class TypingEventListenerState(
      */
     private fun onTypingStartPrecondition(channelState: ChannelMutableState, eventTime: Date): Result<Unit> {
         return if (!channelState.channelConfig.value.typingEventsEnabled)
-            Result.Failure(ChatError.GenericError("Typing events are not enabled"))
+            Result.Failure(Error.GenericError("Typing events are not enabled"))
         else if (channelState.lastStartTypingEvent != null &&
             eventTime.time - channelState.lastStartTypingEvent!!.time < TYPING_DELAY
         ) {
             Result.Failure(
-                ChatError.GenericError(
+                Error.GenericError(
                     "Last typing event was sent at ${channelState.lastStartTypingEvent}. " +
                         "There must be a delay of $TYPING_DELAY_SECS seconds before sending new event",
                 ),

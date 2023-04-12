@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.extensions
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.result.Error
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.Test
@@ -27,8 +27,8 @@ internal class ChatErrorTest {
 
     @Test
     fun `error for messages with the same ID should be permanent`() {
-        val error = ChatError.NetworkError(
-            streamCode = 4,
+        val error = Error.NetworkError(
+            serverErrorCode = 4,
             message = "a message with ID the same id already exists",
             statusCode = 400,
         )
@@ -37,8 +37,8 @@ internal class ChatErrorTest {
 
     @Test
     fun `rateLimit error should be temporary`() {
-        val error = ChatError.NetworkError(
-            streamCode = 9,
+        val error = Error.NetworkError(
+            serverErrorCode = 9,
             message = "",
             statusCode = 429,
         )
@@ -47,8 +47,8 @@ internal class ChatErrorTest {
 
     @Test
     fun `request timeout should be a temporary error`() {
-        val error = ChatError.NetworkError(
-            streamCode = 23,
+        val error = Error.NetworkError(
+            serverErrorCode = 23,
             message = "",
             statusCode = 408,
         )
@@ -57,8 +57,8 @@ internal class ChatErrorTest {
 
     @Test
     fun `broken api should be a temporary error`() {
-        val error = ChatError.NetworkError(
-            streamCode = 0,
+        val error = Error.NetworkError(
+            serverErrorCode = 0,
             message = "",
             statusCode = 500,
         )
@@ -67,8 +67,8 @@ internal class ChatErrorTest {
 
     @Test
     fun `cool down period error should be permanent`() {
-        val error = ChatError.NetworkError(
-            streamCode = 60,
+        val error = Error.NetworkError(
+            serverErrorCode = 60,
             message = "",
             statusCode = 403,
         )
@@ -77,8 +77,8 @@ internal class ChatErrorTest {
 
     @Test
     fun `UnknownHost as cause should be a temporary error`() {
-        val error = ChatError.NetworkError(
-            streamCode = 0,
+        val error = Error.NetworkError(
+            serverErrorCode = 0,
             message = "",
             statusCode = 500,
             cause = UnknownHostException(),

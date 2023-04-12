@@ -20,8 +20,8 @@ import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
+import io.getstream.result.Result
 
 /**
  * ThreadQueryListenerFull handles database read and updates. It updates the database once the requests for backend

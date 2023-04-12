@@ -17,9 +17,9 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.result.Result
 
 /**
  * [SendGiphyListener] implementation for [StatePlugin].

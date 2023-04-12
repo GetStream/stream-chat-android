@@ -26,8 +26,6 @@ import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.call.enqueue
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Channel
@@ -51,6 +49,8 @@ import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
+import io.getstream.result.call.enqueue
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -277,12 +277,12 @@ public class ChannelListViewModel(
     public fun leaveChannel(channel: Channel) {
         chatClient.globalState.user.value?.let { user ->
             chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue(
-                onError = { chatError ->
+                onError = { error ->
                     logger.e {
                         "Could not leave channel with id: ${channel.id}. " +
-                            "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
+                            "Error: ${error.message}. Cause: ${error.extractCause()}"
                     }
-                    _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(chatError)))
+                    _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(error)))
                 }
             )
         }
@@ -295,12 +295,12 @@ public class ChannelListViewModel(
      */
     public fun deleteChannel(channel: Channel) {
         chatClient.channel(channel.cid).delete().enqueue(
-            onError = { chatError ->
+            onError = { error ->
                 logger.e {
                     "Could not delete channel with id: ${channel.id}. " +
-                        "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
+                        "Error: ${error.message}. Cause: ${error.extractCause()}"
                 }
-                _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(chatError)))
+                _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(error)))
             }
         )
     }
@@ -315,12 +315,12 @@ public class ChannelListViewModel(
             channelId = channelId,
             clearHistory = false
         ).enqueue(
-            onError = { chatError ->
+            onError = { error ->
                 logger.e {
                     "Could not hide channel with id: ${channel.id}. " +
-                        "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
+                        "Error: ${error.message}. Cause: ${error.extractCause()}"
                 }
-                _errorEvents.postValue(Event(ErrorEvent.HideChannelError(chatError)))
+                _errorEvents.postValue(Event(ErrorEvent.HideChannelError(error)))
             }
         )
     }
@@ -330,10 +330,10 @@ public class ChannelListViewModel(
      */
     public fun markAllRead() {
         chatClient.markAllRead().enqueue(
-            onError = { chatError ->
+            onError = { streamError ->
                 logger.e {
                     "Could not mark all messages as read. " +
-                        "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
+                        "Error: ${streamError.message}. Cause: ${streamError.extractCause()}"
                 }
             }
         )
@@ -350,10 +350,10 @@ public class ChannelListViewModel(
             queryChannelsState.nextPageRequest.value?.let {
                 viewModelScope.launch {
                     chatClient.queryChannels(it).enqueue(
-                        onError = { chatError ->
+                        onError = { streamError ->
                             logger.e {
-                                "Could not load more channels. Error: ${chatError.message}. " +
-                                    "Cause: ${chatError.extractCause()}"
+                                "Could not load more channels. Error: ${streamError.message}. " +
+                                    "Cause: ${streamError.extractCause()}"
                             }
                         }
                     )
@@ -444,28 +444,28 @@ public class ChannelListViewModel(
     /**
      * Describes the actions that were taken.
      */
-    public sealed class ErrorEvent(public open val chatError: ChatError) {
+    public sealed class ErrorEvent(public open val streamError: Error) {
 
         /**
          * Event for errors upon leaving a channel.
          *
-         * @param chatError Contains error data such as a [Throwable] and a message.
+         * @param streamError Contains error data such as a [Throwable] and a message.
          */
-        public data class LeaveChannelError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class LeaveChannelError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * Event for errors upon deleting a channel.
          *
-         * @param chatError Contains error data such as a [Throwable] and a message.
+         * @param streamError Contains error data such as a [Throwable] and a message.
          */
-        public data class DeleteChannelError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class DeleteChannelError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * Event for errors upon hiding a channel.
          *
-         * @param chatError Contains error data such as a [Throwable] and a message.
+         * @param streamError Contains error data such as a [Throwable] and a message.
          */
-        public data class HideChannelError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class HideChannelError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
     public companion object {

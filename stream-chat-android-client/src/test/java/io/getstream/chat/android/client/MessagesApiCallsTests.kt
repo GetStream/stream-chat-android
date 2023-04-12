@@ -17,8 +17,6 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
@@ -29,6 +27,8 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -197,7 +197,7 @@ internal class MessagesApiCallsTests {
     fun sendMessageError() = runTest {
         val messageText = "message-a"
         val message = Message(text = messageText)
-        val requestResult = Result.Failure(ChatError.GenericError(message = ""))
+        val requestResult = Result.Failure(Error.GenericError(message = ""))
 
         whenever(
             mock.api.sendMessage(

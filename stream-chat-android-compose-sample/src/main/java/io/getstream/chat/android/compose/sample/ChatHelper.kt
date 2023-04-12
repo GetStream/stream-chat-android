@@ -20,11 +20,9 @@ import android.content.Context
 import android.util.Log
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
 import io.getstream.chat.android.models.Channel
@@ -34,6 +32,8 @@ import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.result.Error
+import io.getstream.result.Result
 
 /**
  * A helper class that is responsible for initializing the SDK and connecting/disconnecting
@@ -90,7 +90,7 @@ object ChatHelper {
     fun connectUser(
         userCredentials: UserCredentials,
         onSuccess: () -> Unit = {},
-        onError: (ChatError) -> Unit = {},
+        onError: (Error) -> Unit = {},
     ) {
         ChatClient.instance().run {
             if (clientState.initializationState.value == InitializationState.NOT_INITIALIZED) {

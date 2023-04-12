@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -71,7 +70,6 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -80,6 +78,8 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.t
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.Date
 
 /**
@@ -136,7 +136,7 @@ internal class ChannelLogic(
         if (mutableState.loading.value) {
             logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
             return Result.Failure(
-                ChatError.GenericError(
+                Error.GenericError(
                     "Another request to watch this channel is in progress. Ignoring this request.",
                 ),
             )

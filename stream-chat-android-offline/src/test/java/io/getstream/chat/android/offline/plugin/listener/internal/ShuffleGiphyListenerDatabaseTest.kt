@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.test.randomCID
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -60,7 +60,7 @@ internal class ShuffleGiphyListenerDatabaseTest {
 
     @Test
     fun `when shuffling giphys and request fails, it should NOT be insert in database`() = runTest {
-        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Failure(ChatError.GenericError("")))
+        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Failure(Error.GenericError("")))
 
         verify(messageRepository, never()).insertMessage(any(), any())
     }

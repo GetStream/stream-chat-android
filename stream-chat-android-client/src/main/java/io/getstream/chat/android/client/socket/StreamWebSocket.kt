@@ -16,13 +16,14 @@
 
 package io.getstream.chat.android.client.socket
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.extractCause
+import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.recover
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.recover
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -46,7 +47,7 @@ internal class StreamWebSocket(
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             eventFlow.tryEmit(
                 StreamWebSocketEvent.Error(
-                    ChatError.NetworkError.fromChatErrorCode(
+                    Error.NetworkError.fromChatErrorCode(
                         chatErrorCode = ChatErrorCode.SOCKET_FAILURE,
                         cause = t,
                     ),
@@ -59,7 +60,7 @@ internal class StreamWebSocket(
                 // Treat as failure and reconnect, socket shouldn't be closed by server
                 eventFlow.tryEmit(
                     StreamWebSocketEvent.Error(
-                        ChatError.NetworkError.fromChatErrorCode(
+                        Error.NetworkError.fromChatErrorCode(
                             chatErrorCode = ChatErrorCode.SOCKET_CLOSED,
                         ),
                     ),
@@ -87,12 +88,12 @@ internal class StreamWebSocket(
                     }
                 StreamWebSocketEvent.Error(
                     errorResponse?.let {
-                        ChatError.NetworkError(
+                        Error.NetworkError(
                             message = it.message,
                             statusCode = it.statusCode,
-                            streamCode = it.code,
+                            serverErrorCode = it.code,
                         )
-                    } ?: ChatError.NetworkError.fromChatErrorCode(
+                    } ?: Error.NetworkError.fromChatErrorCode(
                         chatErrorCode = ChatErrorCode.CANT_PARSE_EVENT,
                         cause = parseChatError.extractCause(),
                     ),
@@ -101,6 +102,6 @@ internal class StreamWebSocket(
 }
 
 internal sealed class StreamWebSocketEvent {
-    data class Error(val chatError: ChatError) : StreamWebSocketEvent()
+    data class Error(val streamError: io.getstream.result.Error) : StreamWebSocketEvent()
     data class Message(val chatEvent: ChatEvent) : StreamWebSocketEvent()
 }

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -72,6 +73,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.extension.hasLink
@@ -86,6 +88,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * in a group when previewing Media attachments in the message list.
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
+ * @param onItemClick Lambda called when an item gets clicked.
  * @param itemOverlayContent Represents the content overlaid above individual items.
  * By default it is used to display a play button over video previews.
  */
@@ -96,6 +99,14 @@ public fun MediaAttachmentContent(
     modifier: Modifier = Modifier,
     maximumNumberOfPreviewedItems: Int = 4,
     skipEnrichUrl: Boolean = false,
+    onItemClick: (
+        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+        message: Message,
+        attachmentPosition: Int,
+        videoThumbnailsEnabled: Boolean,
+        streamCdnImageResizing: StreamCdnImageResizing,
+        skipEnrichUrl: Boolean,
+    ) -> Unit = ::onMediaAttachmentContentItemClick,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
             PlayButton()
@@ -130,6 +141,7 @@ public fun MediaAttachmentContent(
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
                 skipEnrichUrl = skipEnrichUrl,
+                onContentItemClick = onItemClick,
                 overlayContent = itemOverlayContent,
             )
         } else {
@@ -142,6 +154,7 @@ public fun MediaAttachmentContent(
                 skipEnrichUrl = skipEnrichUrl,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
+                onContentItemClick = onItemClick,
                 itemOverlayContent = itemOverlayContent
             )
         }
@@ -158,6 +171,7 @@ public fun MediaAttachmentContent(
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when an item is long clicked.
+ * @param onContentItemClick Lambda called when an item gets clicked.
  * @param overlayContent Represents the content overlaid above attachment previews.
  * Usually used to display a play button over video previews.
  */
@@ -168,6 +182,14 @@ internal fun SingleMediaAttachment(
     skipEnrichUrl: Boolean,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
+    onContentItemClick: (
+        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+        message: Message,
+        attachmentPosition: Int,
+        videoThumbnailsEnabled: Boolean,
+        streamCdnImageResizing: StreamCdnImageResizing,
+        skipEnrichUrl: Boolean,
+    ) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
     val isVideo = attachment.isVideo()
@@ -208,6 +230,7 @@ internal fun SingleMediaAttachment(
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onLongItemClick = onLongItemClick,
         skipEnrichUrl = skipEnrichUrl,
+        onItemClick = onContentItemClick,
         overlayContent = overlayContent,
     )
 }
@@ -226,6 +249,7 @@ internal fun SingleMediaAttachment(
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when an item is long clicked.
+ * @param onContentItemClick Lambda called when an item gets clicked.
  * @param itemOverlayContent Represents the content overlaid above individual items.
  * Usually used to display a play button over video previews.
  */
@@ -240,6 +264,14 @@ internal fun RowScope.MultipleMediaAttachments(
     skipEnrichUrl: Boolean,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
+    onContentItemClick: (
+        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+        message: Message,
+        attachmentPosition: Int,
+        videoThumbnailsEnabled: Boolean,
+        streamCdnImageResizing: StreamCdnImageResizing,
+        skipEnrichUrl: Boolean,
+    ) -> Unit,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
 
@@ -260,6 +292,7 @@ internal fun RowScope.MultipleMediaAttachments(
                     attachmentPosition = attachmentIndex,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                     onLongItemClick = onLongItemClick,
+                    onItemClick = onContentItemClick,
                     overlayContent = itemOverlayContent,
                 )
             }
@@ -288,6 +321,7 @@ internal fun RowScope.MultipleMediaAttachments(
                             attachmentPosition = attachmentIndex,
                             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                             onLongItemClick = onLongItemClick,
+                            onItemClick = onContentItemClick,
                             overlayContent = itemOverlayContent
                         )
 
@@ -308,6 +342,7 @@ internal fun RowScope.MultipleMediaAttachments(
                         attachmentPosition = attachmentIndex,
                         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                         onLongItemClick = onLongItemClick,
+                        onItemClick = onContentItemClick,
                         overlayContent = itemOverlayContent
                     )
                 }
@@ -329,6 +364,7 @@ internal fun RowScope.MultipleMediaAttachments(
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when the item is long clicked.
+ * @param onItemClick Lambda called when an item gets clicked.
  * @param modifier Modifier used for styling.
  * @param overlayContent Represents the content overlaid above attachment previews.
  * Usually used to display a play button over video previews.
@@ -344,6 +380,14 @@ internal fun MediaAttachmentContentItem(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
+    onItemClick: (
+        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+        message: Message,
+        attachmentPosition: Int,
+        videoThumbnailsEnabled: Boolean,
+        streamCdnImageResizing: StreamCdnImageResizing,
+        skipEnrichUrl: Boolean,
+    ) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
     val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
@@ -401,14 +445,13 @@ internal fun MediaAttachmentContentItem(
                 indication = rememberRipple(),
                 onClick = {
                     if (message.syncStatus == SyncStatus.COMPLETED) {
-                        mixedMediaPreviewLauncher.launch(
-                            MediaGalleryPreviewContract.Input(
-                                message = message,
-                                initialPosition = attachmentPosition,
-                                videoThumbnailsEnabled = areVideosEnabled,
-                                streamCdnImageResizing = streamCdnImageResizing,
-                                skipEnrichUrl = skipEnrichUrl,
-                            )
+                        onItemClick(
+                            mixedMediaPreviewLauncher,
+                            message,
+                            attachmentPosition,
+                            areVideosEnabled,
+                            streamCdnImageResizing,
+                            skipEnrichUrl,
                         )
                     } else {
                         onLongItemClick(message)
@@ -517,3 +560,33 @@ internal fun MediaAttachmentShowMoreOverlay(
  * Composable when calling [Modifier.aspectRatio].
  */
 private const val EqualDimensionsRatio = 1f
+
+/**
+ * Handles click on individual image or video attachment content items.
+ *
+ * @param mediaGalleryPreviewLauncher The launcher used for launching the media gallery after
+ * clicking on an attachment.
+ * @param message The message which contains the attachment.
+ * @param attachmentPosition The position (inside the message) of the attachment being clicked on.
+ * @param skipEnrichUrl Whether the URL should skip being enriched, i.e. rendered as
+ * a link attachment. Used when updating the message from the gallery by doing actions
+ * such as deleting an attachment.
+ */
+internal fun onMediaAttachmentContentItemClick(
+    mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+    message: Message,
+    attachmentPosition: Int,
+    videoThumbnailsEnabled: Boolean,
+    streamCdnImageResizing: StreamCdnImageResizing,
+    skipEnrichUrl: Boolean,
+) {
+    mediaGalleryPreviewLauncher.launch(
+        MediaGalleryPreviewContract.Input(
+            message = message,
+            initialPosition = attachmentPosition,
+            videoThumbnailsEnabled = videoThumbnailsEnabled,
+            streamCdnImageResizing = streamCdnImageResizing,
+            skipEnrichUrl = skipEnrichUrl,
+        )
+    )
+}

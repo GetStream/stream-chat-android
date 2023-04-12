@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.result.Error
 import java.io.File
 
 /**
@@ -114,6 +114,6 @@ public data class Attachment(
         /**
          * State indicating that the attachment upload failed.
          */
-        public data class Failed(val error: ChatError) : UploadState()
+        public data class Failed(val error: Error) : UploadState()
     }
 }

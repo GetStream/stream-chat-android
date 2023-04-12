@@ -19,7 +19,6 @@ package io.getstream.chat.android.client
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.clientstate.UserStateService
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -31,7 +30,6 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.EventType
@@ -41,6 +39,8 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -187,7 +187,7 @@ internal class ConnectUserTest {
         val messageError = randomString()
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
-        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, ChatError.GenericError(message = messageError))
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, Error.GenericError(message = messageError))
 
         val localScope = testCoroutines.scope + Job()
         val deferred = localScope.async {
@@ -250,7 +250,7 @@ internal class ConnectUserTest {
         val messageError = randomString()
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
-        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, ChatError.GenericError(message = messageError))
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, Error.GenericError(message = messageError))
 
         whenever(chatApi.getGuestUser(user.id, user.name)) doReturn GuestUser(user, jwt).asCall()
         val localScope = testCoroutines.scope + Job()
@@ -285,7 +285,7 @@ internal class ConnectUserTest {
         val messageError = randomString()
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
-        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, ChatError.GenericError(message = messageError))
+        val event = ErrorEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, Error.GenericError(message = messageError))
 
         val localScope = testCoroutines.scope + Job()
         val deferred = localScope.async { client.connectAnonymousUser().await() }

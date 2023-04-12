@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.utils
 
+import io.getstream.result.Result
+import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test

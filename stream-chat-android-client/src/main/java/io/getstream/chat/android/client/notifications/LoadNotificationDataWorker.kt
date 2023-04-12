@@ -32,8 +32,8 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.call.zipWith
 import io.getstream.log.taggedLogger
+import io.getstream.result.call.zipWith
 
 internal class LoadNotificationDataWorker(
     private val context: Context,
@@ -61,7 +61,7 @@ internal class LoadNotificationDataWorker(
 
             val result = getChannel.zipWith(getMessage).await()
             when (result) {
-                is io.getstream.chat.android.client.utils.Result.Success -> {
+                is io.getstream.result.Result.Success -> {
                     val (channel, message) = result.value
                     val messageParentId = message.parentId
 
@@ -72,7 +72,7 @@ internal class LoadNotificationDataWorker(
                     ChatClient.displayNotification(channel = channel, message = message)
                     Result.success()
                 }
-                is io.getstream.chat.android.client.utils.Result.Failure -> {
+                is io.getstream.result.Result.Failure -> {
                     logger.e { "Error while loading notification data: ${result.value}" }
                     Result.failure()
                 }

@@ -16,15 +16,16 @@
 
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.result.Error
+import io.getstream.result.Result
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 
 internal fun <T : Any> verifyError(result: Result<T>, statusCode: Int) {
     result shouldBeInstanceOf Result.Failure::class
-    (result as Result.Failure).value.shouldBeInstanceOf<ChatError.NetworkError>()
+    (result as Result.Failure).value.shouldBeInstanceOf<Error.NetworkError>()
 
-    val error = result.value as ChatError.NetworkError
+    val error = result.value as Error.NetworkError
     error.statusCode shouldBeEqualTo statusCode
 }
 

@@ -16,9 +16,10 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="stream_ui_message_composer_camera_access">"Permitir acceso a la cámara"</string>
-  <string name="stream_ui_message_composer_error_attachment_count">"No es posible añadir más de %d archivos adjuntos."</string>
-  <string name="stream_ui_message_composer_error_file_size">"El fichero es demasiado grande - Máximo %s."</string>
-  <string name="stream_ui_message_composer_error_message_length">"Se ha superado la longitud máxima del mensaje (%d)."</string>
+  <string name="stream_ui_message_composer_error_attachment_count">"Recuento de archivo adjunto (%1$d) excedido."</string>
+  <string name="stream_ui_message_composer_error_file_size">"El fichero es demasiado grande - Máximo %1$s."</string>
+  <string name="stream_ui_message_composer_error_message_length">"Tamaño máximo del mensaje (%1$d) excedido."</string>
+  <string name="stream_ui_message_composer_file_not_supported">"Tipo de archivo no compatible"</string>
   <string name="stream_ui_message_composer_files_access">"Permitir acceso a tus ficheros"</string>
   <string name="stream_ui_message_composer_gallery_access">"Permitir acceso a tu galería"</string>
   <string name="stream_ui_message_composer_hint_cannot_send_message">"No puedes enviar mensajes en este canal"</string>

@@ -115,7 +115,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -161,6 +160,7 @@ import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.result.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

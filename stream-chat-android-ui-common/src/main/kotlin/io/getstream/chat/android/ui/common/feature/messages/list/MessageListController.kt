@@ -17,14 +17,11 @@
 package io.getstream.chat.android.ui.common.feature.messages.list
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.call.enqueue
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
@@ -67,6 +64,7 @@ import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocusRemoved
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -94,6 +92,9 @@ import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.enqueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -136,6 +137,8 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  * @param dateSeparatorHandler Determines the visibility of date separators inside the message list.
  * @param threadDateSeparatorHandler Determines the visibility of date separators inside the thread.
  * @param messagePositionHandler Determines the position of the message inside a group.
+ * @param showDateSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
+ * Adds the separator item when the value is `true`.
  */
 public class MessageListController(
     private val cid: String,
@@ -154,6 +157,7 @@ public class MessageListController(
     private val threadDateSeparatorHandler: DateSeparatorHandler =
         DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
+    private val showDateSeparatorInEmptyThread: Boolean = false,
 ) {
 
     /**
@@ -625,6 +629,8 @@ public class MessageListController(
             val nextMessage = messages.getOrNull(index + 1)
 
             val shouldAddDateSeparator = dateSeparatorHandler.shouldAddDateSeparator(previousMessage, message)
+            val isThreadWithNoReplies = isInThread && messages.size == 1
+            val shouldAddDateSeparatorInEmptyThread = isThreadWithNoReplies && showDateSeparatorInEmptyThread
 
             val position = messagePositionHandler.handleMessagePosition(
                 previousMessage = previousMessage,
@@ -677,7 +683,15 @@ public class MessageListController(
                 )
             }
 
-            if (index == 0 && isInThread) {
+            if (shouldAddDateSeparatorInEmptyThread) {
+                groupedMessages.add(DateSeparatorItemState(message.getCreatedAtOrThrow()))
+            }
+
+            if (isThreadWithNoReplies) {
+                groupedMessages.add(EmptyThreadPlaceholderItemState)
+            }
+
+            if (index == 0 && isInThread && isThreadWithNoReplies) {
                 groupedMessages.add(
                     ThreadDateSeparatorItemState(
                         date = message.createdAt ?: message.createdLocallyAt ?: Date(),
@@ -1202,10 +1216,10 @@ public class MessageListController(
 
         chatClient.deleteMessage(message.id, hard)
             .enqueue(
-                onError = { chatError ->
+                onError = { error ->
                     logger.e {
-                        "Could not delete message: ${chatError.message}, Hard: $hard. " +
-                            "Cause: ${chatError.extractCause()}. If you're using OfflinePlugin, the message " +
+                        "Could not delete message: ${error.message}, Hard: $hard. " +
+                            "Cause: ${error.extractCause()}. If you're using OfflinePlugin, the message " +
                             "should be deleted in the database and it will be deleted in the backend when " +
                             "the SDK sync its information."
                     }
@@ -1236,10 +1250,10 @@ public class MessageListController(
                 // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
             } else {
                 chatClient.markRead(channelType, channelId).enqueue(
-                    onError = { chatError ->
+                    onError = { error ->
                         logger.e {
-                            "Could not mark cid: $channelId as read. Error message: ${chatError.message}. " +
-                                "Cause: ${chatError.extractCause()}"
+                            "Could not mark cid: $channelId as read. Error message: ${error.message}. " +
+                                "Cause: ${error.extractCause()}"
                         }
                     }
                 )
@@ -1312,10 +1326,10 @@ public class MessageListController(
     public fun resendMessage(message: Message) {
         val (channelType, channelId) = message.cid.cidToTypeAndId()
         chatClient.sendMessage(channelType, channelId, message)
-            .enqueue(onError = { chatError ->
+            .enqueue(onError = { error ->
                 logger.e {
-                    "(Retry) Could not send message: ${chatError.message}. " +
-                        "Cause: ${chatError.extractCause()}"
+                    "(Retry) Could not send message: ${error.message}. " +
+                        "Cause: ${error.extractCause()}"
                 }
             })
     }
@@ -1375,10 +1389,10 @@ public class MessageListController(
                 reactionType = reaction.type,
                 cid = cid
             ).enqueue(
-                onError = { chatError ->
+                onError = { error ->
                     logger.e {
                         "Could not delete reaction for message with id: ${reaction.messageId} " +
-                            "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
+                            "Error: ${error.message}. Cause: ${error.extractCause()}"
                     }
                 }
             )
@@ -1388,10 +1402,10 @@ public class MessageListController(
                 reaction = reaction,
                 cid = cid
             ).enqueue(
-                onError = { chatError ->
+                onError = { streamError ->
                     logger.e {
                         "Could not send reaction for message with id: ${reaction.messageId} " +
-                            "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
+                            "Error: ${streamError.message}. Cause: ${streamError.extractCause()}"
                     }
                 }
             )
@@ -1438,8 +1452,8 @@ public class MessageListController(
      */
     public fun muteUser(userId: String, timeout: Int? = null) {
         chatClient.muteUser(userId, timeout)
-            .enqueue(onError = { chatError ->
-                val errorMessage = chatError.message
+            .enqueue(onError = { streamError ->
+                val errorMessage = streamError.message
                 logger.e { errorMessage }
             })
     }
@@ -1451,8 +1465,8 @@ public class MessageListController(
      */
     public fun unmuteUser(userId: String) {
         chatClient.unmuteUser(userId)
-            .enqueue(onError = { chatError ->
-                val errorMessage = chatError.message
+            .enqueue(onError = { streamError ->
+                val errorMessage = streamError.message
                 logger.e { errorMessage }
             })
     }
@@ -1535,10 +1549,10 @@ public class MessageListController(
             is SendGiphy -> chatClient.sendGiphy(message)
             is ShuffleGiphy -> chatClient.shuffleGiphy(message)
             is CancelGiphy -> chatClient.cancelEphemeralMessage(message)
-        }.exhaustive.enqueue(onError = { chatError ->
+        }.exhaustive.enqueue(onError = { streamError ->
             logger.e {
                 "Could not ${action::class.java.simpleName} giphy for message id: ${message.id}. " +
-                    "Error: ${chatError.message}. Cause: ${chatError.extractCause()}"
+                    "Error: ${streamError.message}. Cause: ${streamError.extractCause()}"
             }
         })
     }
@@ -1577,19 +1591,19 @@ public class MessageListController(
 
                     if (message.text.isBlank() && message.attachments.isEmpty()) {
                         chatClient.deleteMessage(messageId = messageId).enqueue(
-                            onError = { chatError ->
+                            onError = { streamError ->
                                 logger.e {
                                     "Could not remove the attachment and delete the remaining blank message" +
-                                        ": ${chatError.message}. Cause: ${chatError.extractCause()}"
+                                        ": ${streamError.message}. Cause: ${streamError.extractCause()}"
                                 }
                             }
                         )
                     } else {
                         chatClient.updateMessage(message).enqueue(
-                            onError = { chatError ->
+                            onError = { streamError ->
                                 logger.e {
-                                    "Could not edit message to remove its attachments: ${chatError.message}. " +
-                                        "Cause: ${chatError.extractCause()}"
+                                    "Could not edit message to remove its attachments: ${streamError.message}. " +
+                                        "Cause: ${streamError.extractCause()}"
                                 }
                             }
                         )
@@ -1661,12 +1675,12 @@ public class MessageListController(
     /**
      * Quality of life function that notifies the result of an action and logs any error in case the action has failed.
      *
-     * @param error The [ChatError] thrown if the action fails.
-     * @param onError Handler to wrap [ChatError] into [ErrorEvent] depending on action.
+     * @param error The [Error] thrown if the action fails.
+     * @param onError Handler to wrap [Error] into [ErrorEvent] depending on action.
      */
     private fun onActionResult(
-        error: ChatError,
-        onError: (ChatError) -> ErrorEvent,
+        error: Error,
+        onError: (Error) -> ErrorEvent,
     ) {
         val errorMessage = error.message
         logger.e { errorMessage }
@@ -1683,51 +1697,51 @@ public class MessageListController(
     /**
      * A class designed for error event propagation.
      *
-     * @param chatError Contains the original [Throwable] along with a message.
+     * @param streamError Contains the original [Throwable] along with a message.
      */
-    public sealed class ErrorEvent(public open val chatError: ChatError) {
+    public sealed class ErrorEvent(public open val streamError: Error) {
 
         /**
          * When an error occurs while muting a user.
          *
-         * @param chatError Contains the original [Throwable] along with a message.
+         * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class MuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class MuteUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while unmuting a user.
          *
-         * @param chatError Contains the original [Throwable] along with a message.
+         * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class UnmuteUserError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class UnmuteUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while flagging a message.
          *
-         * @param chatError Contains the original [Throwable] along with a message.
+         * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class FlagMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class FlagMessageError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while blocking a user.
          *
-         * @param chatError Contains the original [Throwable] along with a message.
+         * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class BlockUserError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class BlockUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while pinning a message.
          *
-         * @param chatError Contains the original [Throwable] along with a message.
+         * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class PinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class PinMessageError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while unpinning a message.
          *
-         * @param chatError Contains the original [Throwable] along with a message.
+         * @param streamError Contains the original [Throwable] along with a message.
          */
-        public data class UnpinMessageError(override val chatError: ChatError) : ErrorEvent(chatError)
+        public data class UnpinMessageError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
     public companion object {

@@ -140,7 +140,7 @@ public final class io/getstream/chat/android/client/test/utils/TestDataHelper {
 	public final fun getReactionMessage1 ()Lio/getstream/chat/android/models/Message;
 	public final fun getReactionMessage2 ()Lio/getstream/chat/android/models/Message;
 	public final fun getReadEvent ()Lio/getstream/chat/android/client/events/MessageReadEvent;
-	public final fun getSyncHistoryResult ()Lio/getstream/chat/android/client/utils/Result;
+	public final fun getSyncHistoryResult ()Lio/getstream/result/Result;
 	public final fun getUser1 ()Lio/getstream/chat/android/models/User;
 	public final fun getUser1Banned ()Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;
 	public final fun getUser1Read ()Lio/getstream/chat/android/client/events/MessageReadEvent;

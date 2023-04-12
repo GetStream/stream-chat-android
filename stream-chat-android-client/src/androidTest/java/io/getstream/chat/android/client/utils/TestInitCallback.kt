@@ -16,13 +16,14 @@
 
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.models.ConnectionData
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 
 internal class TestInitCallback : Call.Callback<ConnectionData> {
     private var data: ConnectionData? = null
-    private var error: ChatError? = null
+    private var error: Error? = null
 
     fun onSuccessIsCalled(): Boolean {
         return data != null
@@ -34,9 +35,9 @@ internal class TestInitCallback : Call.Callback<ConnectionData> {
 
     override fun onResult(result: Result<ConnectionData>) {
         if (result.isSuccess) {
-            data = result.data()
+            data = result.getOrThrow()
         } else {
-            error = result.error()
+            error = result.errorOrNull()
         }
     }
 }

@@ -25,12 +25,8 @@ import android.os.Environment
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -52,6 +48,10 @@ import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.CoroutineCall
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -248,7 +248,7 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
             Result.Success(Unit)
         } catch (exception: Exception) {
             logger.d { "Downloading attachment failed. Error: ${exception.message}" }
-            Result.Failure(ChatError.ThrowableError(message = "Could not download the attachment", cause = exception))
+            Result.Failure(Error.ThrowableError(message = "Could not download the attachment", cause = exception))
         }
     }
 }
@@ -312,7 +312,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
                     Result.Success(true)
                 } catch (exception: Exception) {
                     Result.Failure(
-                        ChatError.ThrowableError(
+                        Error.ThrowableError(
                             message = "Could not cancel ephemeral message",
                             cause = exception,
                         ),
@@ -388,11 +388,11 @@ private suspend fun ChatClient.loadMessageByIdInternal(
             if (message != null) {
                 result.map { message }
             } else {
-                Result.Failure(ChatError.GenericError("The message could not be found."))
+                Result.Failure(Error.GenericError("The message could not be found."))
             }
         }
         is Result.Failure -> Result.Failure(
-            ChatError.GenericError("Error while fetching messages from backend. Messages around id: $messageId")
+            Error.GenericError("Error while fetching messages from backend. Messages around id: $messageId")
         )
     }
 }

@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.test
 
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -47,7 +47,11 @@ public class MockRetrofitCall<T : Any>(
         job.get()?.cancel()
         job.set(null)
         pendingCallback.get()
-            ?.onResult(Result.Failure(ChatError.ThrowableError(message = "", cause = AsyncTestCallCanceledException())))
+            ?.onResult(
+                Result.Failure(
+                    Error.ThrowableError(message = "", cause = AsyncTestCallCanceledException())
+                )
+            )
         pendingCallback.set(null)
     }
 
@@ -55,7 +59,7 @@ public class MockRetrofitCall<T : Any>(
         logger.d { "[enqueue] no args" }
         if (executed.get()) {
             logger.w { "[enqueue] rejected (already executed)" }
-            callback.onResult(Result.Failure(ChatError.GenericError(message = "Already executed.")))
+            callback.onResult(Result.Failure(Error.GenericError(message = "Already executed.")))
             return
         }
         pendingCallback.set(callback)

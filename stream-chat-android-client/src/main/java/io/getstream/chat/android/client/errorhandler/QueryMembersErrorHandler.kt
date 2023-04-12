@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.client.errorhandler
 
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.ReturnOnErrorCall
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.ReturnOnErrorCall
 
 /**
  * Error handler for [io.getstream.chat.android.client.ChatClient.queryMembers] calls.

@@ -12,7 +12,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.result.Result
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig

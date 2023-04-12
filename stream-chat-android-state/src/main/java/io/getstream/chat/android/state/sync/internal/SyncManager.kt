@@ -19,7 +19,6 @@ package io.getstream.chat.android.state.sync.internal
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -31,10 +30,8 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.client.utils.onSuccessSuspend
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Filters
@@ -44,6 +41,9 @@ import io.getstream.chat.android.models.UserEntity
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -333,7 +333,7 @@ internal class SyncManager(
         }
         logger.v { "[updateActiveQueryChannels] queryLogicsToRestore.size: ${queryLogicsToRestore.size}" }
 
-        val failed = AtomicReference<ChatError>()
+        val failed = AtomicReference<Error>()
         val updatedCids = mutableSetOf<String>()
         queryLogicsToRestore.forEach { queryLogic ->
             logger.v { "[updateActiveQueryChannels] queryLogic.filter: ${queryLogic.filter()}" }
@@ -350,9 +350,9 @@ internal class SyncManager(
                     logger.v { "[updateActiveQueryChannels] updatedCids.size: ${updatedCids.size}" }
                 }
         }
-        return when (val chatError = failed.get()) {
+        return when (val error = failed.get()) {
             null -> Result.Success(updatedCids)
-            else -> Result.Failure(chatError)
+            else -> Result.Failure(error)
         }
     }
 
