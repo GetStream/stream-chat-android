@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -63,8 +64,9 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  *
  * @param attachmentState - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- *
  * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
+ * @param modifier Modifier for styling.
+ * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -72,6 +74,7 @@ public fun LinkAttachmentContent(
     attachmentState: AttachmentState,
     linkDescriptionMaxLines: Int,
     modifier: Modifier = Modifier,
+    onItemClick: (context: Context, Url: String) -> Unit = ::onLinkAttachmentContentClick,
 ) {
     val (message, onLongItemClick) = attachmentState
 
@@ -103,12 +106,13 @@ public fun LinkAttachmentContent(
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
                     try {
-                        context.startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(urlWithScheme)
-                            )
-                        )
+                        if (urlWithScheme != null) {
+                            onItemClick(context, urlWithScheme)
+                        } else {
+                            Toast
+                                .makeText(context, errorMessage, Toast.LENGTH_LONG)
+                                .show()
+                        }
                     } catch (e: ActivityNotFoundException) {
                         e.printStackTrace()
                         Toast
@@ -199,5 +203,20 @@ private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLin
         color = ChatTheme.colors.textHighEmphasis,
         maxLines = linkDescriptionMaxLines,
         overflow = TextOverflow.Ellipsis
+    )
+}
+
+/**
+ * Handles clicks on link attachment content.
+ *
+ * @param context Context needed to start the Activity.
+ * @param url The url of the link attachment being clicked.
+ */
+internal fun onLinkAttachmentContentClick(context: Context, url: String) {
+    context.startActivity(
+        Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(url)
+        )
     )
 }

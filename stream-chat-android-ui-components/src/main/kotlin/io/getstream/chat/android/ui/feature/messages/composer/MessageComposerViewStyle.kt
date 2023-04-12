@@ -65,6 +65,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param messageInputMaxLines The maximum number of message input lines.
  * @param messageInputCannotSendHintText The input hint text in case we can't send messages in this channel.
  * @param messageInputInputType The [InputType] to be applied to the message input edit text.
+ * @param messageInputShowReplyView Whether to show the default reply view inside the message input or not.
  * @param messageInputVideoAttachmentIconDrawable Overlays a drawable above video attachments.
  * By default, used to display a play button.
  * @param messageInputVideoAttachmentIconDrawableTint Sets the tint of the drawable overlaid above video attachments.
@@ -102,12 +103,20 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param cooldownTimerBackgroundDrawable Background drawable for cooldown timer.
  * @param messageReplyBackgroundColor Sets the background color of the quoted message bubble visible in the composer
  * when replying to a message.
- * @param messageReplyTextStyle Sets the style of the text inside the quoted message bubble visible in the composer
- * when replying to a message.
- * @param messageReplyMessageBackgroundStrokeColor Sets the color of the stroke of the quoted message bubble visible
- * in the composer when replying to a message.
- * @param messageReplyMessageBackgroundStrokeWidth Sets the width of the stroke of the quoted message bubble visible
- * in the composer when replying to a message.
+ * @param messageReplyTextStyleMine  Sets the style of the text inside the quoted message bubble visible in the composer
+ * when replying to a message. Applied to messages sent by the current user.
+ * @param messageReplyMessageBackgroundStrokeColorMine Sets the color of the stroke of the quoted message bubble visible
+ * in the composer when replying to a message. Applied to messages sent by the current user.
+ * @param messageReplyMessageBackgroundStrokeWidthMine Sets the width of the stroke of the quoted message bubble visible
+ * in the composer when replying to a message. Applied to messages sent by the current user.
+ * @param messageReplyTextStyleTheirs  Sets the style of the text inside the quoted message bubble visible in the
+ * composer when replying to a message. Applied to messages sent by users other than the currently logged in one.
+ * @param messageReplyMessageBackgroundStrokeColorTheirs Sets the color of the stroke of the quoted message bubble
+ * visible in the composer when replying to a message. Applied to messages sent by users other than the currently
+ * logged in one.
+ * @param messageReplyMessageBackgroundStrokeWidthTheirs Sets the width of the stroke of the quoted message bubble
+ * visible in the composer when replying to a message. Applied to messages sent by users other than the currently
+ * logged in one.
  */
 public data class MessageComposerViewStyle(
     @ColorInt public val backgroundColor: Int,
@@ -138,6 +147,7 @@ public data class MessageComposerViewStyle(
     public val messageInputMaxLines: Int,
     public val messageInputCannotSendHintText: String,
     public val messageInputInputType: Int,
+    public val messageInputShowReplyView: Boolean,
     public val messageInputVideoAttachmentIconDrawable: Drawable,
     @ColorInt public val messageInputVideoAttachmentIconDrawableTint: Int?,
     @ColorInt public val messageInputVideoAttachmentIconBackgroundColor: Int?,
@@ -549,6 +559,11 @@ public data class MessageComposerViewStyle(
                         InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
                 )
 
+                val messageInputShowReplyView = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerShowMessageReplyView,
+                    true
+                )
+
                 val messageInputVideoAttachmentIconDrawable =
                     a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawable)
                         ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_play)!!
@@ -701,6 +716,7 @@ public data class MessageComposerViewStyle(
                     messageInputMaxLines = messageInputMaxLines,
                     messageInputCannotSendHintText = messageInputCannotSendHintText,
                     messageInputInputType = messageInputInputType,
+                    messageInputShowReplyView = messageInputShowReplyView,
                     messageInputVideoAttachmentIconDrawable = messageInputVideoAttachmentIconDrawable,
                     messageInputVideoAttachmentIconDrawableTint = messageInputVideoAttachmentIconDrawableTint,
                     messageInputVideoAttachmentIconBackgroundColor = messageInputVideoAttachmentIconBackgroundColor,
@@ -744,7 +760,6 @@ public data class MessageComposerViewStyle(
                     messageReplyTextStyleTheirs = messageReplyTextStyleTheirs,
                     messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
                     messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
-
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
             }
         }
