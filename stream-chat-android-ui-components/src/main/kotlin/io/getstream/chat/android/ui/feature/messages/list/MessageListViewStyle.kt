@@ -92,6 +92,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property optionsOverlayMessageOptionsMarginStart Defines the start margin between the message option list on the options overlay and the parent.
  * @property optionsOverlayMessageOptionsMarginEnd Defines the end margin between the message option list on the options overlay and the parent.
  * @property showReactionsForUnsentMessages If we need to show the edit reactions bubble for unsent messages on the options overlay.
+ * @property readCountEnabled Enables/disables read count. Enabled by default.
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -517,7 +518,7 @@ public data class MessageListViewStyle(
                     false
                 )
 
-                val readCount = attributes.getBoolean(
+                val readCountEnabled = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiReadCount,
                     true
                 )
@@ -576,7 +577,7 @@ public data class MessageListViewStyle(
                     optionsOverlayMessageOptionsMarginStart = optionsOverlayMessageOptionsMarginStart,
                     optionsOverlayMessageOptionsMarginEnd = optionsOverlayMessageOptionsMarginEnd,
                     showReactionsForUnsentMessages = showReactionsForUnsentMessages,
-                    readCountEnabled = readCount,
+                    readCountEnabled = readCountEnabled,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }
