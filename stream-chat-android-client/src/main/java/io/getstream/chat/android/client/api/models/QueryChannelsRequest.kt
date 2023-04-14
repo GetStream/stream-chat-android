@@ -37,7 +37,7 @@ public data class QueryChannelsRequest(
     public var limit: Int,
     public val querySort: QuerySorter<Channel> = QuerySortByField(),
     public var messageLimit: Int = 0,
-    public var memberLimit: Int = 0,
+    public var memberLimit: Int = 1,
 ) : ChannelRequest<QueryChannelsRequest> {
 
     override var state: Boolean = true
