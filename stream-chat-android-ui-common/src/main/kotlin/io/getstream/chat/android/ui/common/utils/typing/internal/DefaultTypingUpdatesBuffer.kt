@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.common.utils.typing.internal
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import kotlinx.coroutines.CoroutineScope
@@ -41,8 +40,7 @@ import kotlinx.coroutines.launch
  * @param onTypingStopped Signals that a stop typing event should be sent.
  * Usually used to make an API call using [io.getstream.chat.android.client.ChatClient.stopTyping]
  */
-@InternalStreamChatApi
-public class DefaultTypingUpdatesBuffer(
+internal class DefaultTypingUpdatesBuffer(
     private val coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
     private val onTypingStarted: () -> Unit,
     private val onTypingStopped: () -> Unit,
