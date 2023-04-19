@@ -2389,7 +2389,6 @@ public abstract interface class io/getstream/chat/android/client/setup/state/Cli
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitializationState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun isConnecting ()Z
-	public abstract fun isInitialized ()Z
 	public abstract fun isNetworkAvailable ()Z
 	public abstract fun isOffline ()Z
 	public abstract fun isOnline ()Z

@@ -41,9 +41,6 @@ internal class ClientStateImpl(private val networkStateProvider: NetworkStatePro
     override val isConnecting: Boolean
         get() = _connectionState.value == ConnectionState.CONNECTING
 
-    override val isInitialized: Boolean
-        get() = _initializationState.value == InitializationState.COMPLETE
-
     override val initializationState: StateFlow<InitializationState>
         get() = _initializationState
 

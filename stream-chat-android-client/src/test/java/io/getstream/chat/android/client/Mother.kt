@@ -125,8 +125,6 @@ internal object Mother {
 
             override val isConnecting: Boolean = false
 
-            override val isInitialized: Boolean = true
-
             override val isNetworkAvailable: Boolean = true
         }
     }

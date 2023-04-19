@@ -58,13 +58,6 @@ public interface ClientState {
     public val isConnecting: Boolean
 
     /**
-     * If domain state is initialized or not.
-     *
-     * @return True if initialized otherwise False.
-     */
-    public val isInitialized: Boolean
-
-    /**
      * If internet is available or not. This is not related to the connection of the SDK, it returns
      * if internet is available in the device.
      */
