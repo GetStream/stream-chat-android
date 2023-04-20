@@ -15,7 +15,7 @@ object Versions {
     internal const val ANDROIDX_CORE_TEST = "2.1.0"
     internal const val ANDROIDX_FRAGMENT = "1.5.4"
     internal const val ANDROIDX_KTX = "1.9.0"
-    internal const val ANDROIDX_LIFECYCLE = "2.5.1"
+    internal const val ANDROIDX_LIFECYCLE = "2.6.1"
     internal const val ANDROIDX_NAVIGATION = "2.5.3"
     internal const val ANDROIDX_PREFERENCES = "1.2.0"
     internal const val ANDROIDX_RECYCLERVIEW = "1.2.1"

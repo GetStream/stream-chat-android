@@ -23,8 +23,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.state.extensions.globalState
@@ -109,8 +110,8 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun bindViewModel() {
-        Transformations.switchMap(viewModel.state) { state ->
-            Transformations.map(ChatClient.instance().globalState.user.asLiveData()) { user ->
+        viewModel.state.switchMap { state ->
+            ChatClient.instance().globalState.user.asLiveData().map { user ->
                 user to state
             }
         }.observe(viewLifecycleOwner) { (user, state) ->

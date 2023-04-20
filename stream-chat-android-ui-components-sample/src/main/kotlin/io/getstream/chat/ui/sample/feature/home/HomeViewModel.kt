@@ -19,9 +19,9 @@ package io.getstream.chat.ui.sample.feature.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.User
@@ -58,7 +58,7 @@ class HomeViewModel(
     /**
      * The home screen state wrapped in LiveData.
      */
-    val state: LiveData<UiState> = Transformations.distinctUntilChanged(_state)
+    val state: LiveData<UiState> = _state.distinctUntilChanged()
 
     /**
      * Emits one-shot events that should be handled only once.
