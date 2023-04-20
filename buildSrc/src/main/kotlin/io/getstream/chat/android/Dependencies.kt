@@ -33,7 +33,7 @@ object Versions {
     internal const val DETEKT_PLUGIN = "1.21.0"
     internal const val DOKKA = "1.7.20"
     internal const val DOKKASAURUS = "0.1.10"
-    internal const val ESPRESSO = "3.5.0"
+    internal const val ESPRESSO = "3.5.1"
     internal const val FIREBASE_ANALYTICS = "21.2.0"
     internal const val FIREBASE_CRASHLYTICS = "18.3.2"
     internal const val FIREBASE_CRASHLYTICS_PLUGIN = "2.9.2"
