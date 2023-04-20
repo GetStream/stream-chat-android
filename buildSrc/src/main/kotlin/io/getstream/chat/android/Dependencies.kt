@@ -46,7 +46,7 @@ object Versions {
     internal const val GRADLE_VERSIONS_PLUGIN = "0.46.0"
     internal const val HUAWEI_AGCP = "1.7.3.302"
     internal const val HUAWEI_PUSH = "6.7.0.300"
-    internal const val JSON = "20220924"
+    internal const val JSON = "20230227"
     internal const val JUNIT4 = "4.13.2"
     internal const val JUNIT5 = "5.9.2"
     internal const val KEYBOARD_VISIBILITY_EVENT = "2.3.0"
