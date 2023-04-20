@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.viewmodel.channels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
@@ -121,7 +120,7 @@ public class ChannelListViewModel(
      * information about the loading state and if we have
      * reached the end of all available channels.
      */
-    public val paginationState: LiveData<PaginationState> = Transformations.distinctUntilChanged(paginationStateMerger)
+    public val paginationState: LiveData<PaginationState> = paginationStateMerger.distinctUntilChanged()
 
     /**
      * Used to update and emit error events.
