@@ -68,7 +68,7 @@ object Versions {
     internal const val PHOTOVIEW = "2.3.0"
     internal const val RETROFIT = "2.9.0"
     internal const val ROBOLECTRIC = "4.9"
-    internal const val ROOM = "2.4.3"
+    internal const val ROOM = "2.5.1"
     internal const val SHIMMER = "0.5.0"
     internal const val SHOT = "5.14.1"
     internal const val SPOTLESS = "6.7.2"
