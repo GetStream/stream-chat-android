@@ -73,7 +73,7 @@ object Versions {
     internal const val SHOT = "5.14.1"
     internal const val SPOTLESS = "6.7.2"
     internal const val STFALCON_IMAGE_VIEWER = "1.0.1"
-    internal const val STREAM_LOG = "1.1.3"
+    internal const val STREAM_LOG = "1.1.4"
     internal const val STREAM_PUSH = "1.0.2"
     internal const val STREAM_RESULT = "1.1.0"
     internal const val TEST_PARAMETER_INJECTOR = "1.10"
