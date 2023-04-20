@@ -31,7 +31,7 @@ object Versions {
     internal const val CONSTRAINT_LAYOUT = "2.1.4"
     internal const val COROUTINES = "1.6.4"
     internal const val DETEKT_PLUGIN = "1.21.0"
-    internal const val DOKKA = "1.7.20"
+    internal const val DOKKA = "1.8.10"
     internal const val DOKKASAURUS = "0.1.10"
     internal const val ESPRESSO = "3.5.1"
     internal const val FIREBASE_ANALYTICS = "21.2.0"
