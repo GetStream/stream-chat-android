@@ -43,7 +43,7 @@ object Versions {
     internal const val GITVERSIONER = "0.5.0"
     internal const val GOOGLE_SERVICES = "4.3.14"
     internal const val GRADLE_NEXUS_PUBLISH_PLUGIN = "1.1.0"
-    internal const val GRADLE_VERSIONS_PLUGIN = "0.44.0"
+    internal const val GRADLE_VERSIONS_PLUGIN = "0.46.0"
     internal const val HUAWEI_AGCP = "1.7.3.302"
     internal const val HUAWEI_PUSH = "6.7.0.300"
     internal const val JSON = "20220924"
