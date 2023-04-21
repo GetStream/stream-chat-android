@@ -9,7 +9,7 @@ object Versions {
     internal const val ANDROIDX_ACTIVITY_COMPOSE = "1.7.1"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.7.1"
     internal const val ANDROIDX_ANNOTATIONS = "1.6.0"
-    internal const val ANDROIDX_APPCOMPAT = "1.5.1"
+    internal const val ANDROIDX_APPCOMPAT = "1.6.1"
     internal const val ANDROIDX_COMPOSE = "1.4.1"
     public const val ANDROIDX_COMPOSE_COMPILER = "1.4.4"
     internal const val ANDROIDX_CORE_TEST = "2.1.0"
