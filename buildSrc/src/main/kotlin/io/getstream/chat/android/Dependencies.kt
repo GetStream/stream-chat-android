@@ -76,7 +76,7 @@ object Versions {
     internal const val STREAM_LOG = "1.1.4"
     internal const val STREAM_PUSH = "1.0.2"
     internal const val STREAM_RESULT = "1.1.0"
-    internal const val TEST_PARAMETER_INJECTOR = "1.10"
+    internal const val TEST_PARAMETER_INJECTOR = "1.11"
     internal const val THREETENBP = "1.6.8"
     internal const val TIMBER = "5.0.1"
     internal const val TURBINE = "0.12.1"
