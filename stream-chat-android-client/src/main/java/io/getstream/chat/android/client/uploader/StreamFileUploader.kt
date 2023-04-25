@@ -33,7 +33,7 @@ internal class StreamFileUploader(
     private val retrofitCdnApi: RetrofitCdnApi,
 ) : FileUploader {
 
-    override fun sendFile(
+    override suspend fun sendFile(
         channelType: String,
         channelId: String,
         userId: String,
@@ -48,12 +48,12 @@ internal class StreamFileUploader(
             channelId = channelId,
             file = part,
             progressCallback = callback,
-        ).execute().map {
+        ).await().map {
             it.toUploadedFile()
         }
     }
 
-    override fun sendFile(
+    override suspend fun sendFile(
         channelType: String,
         channelId: String,
         userId: String,
@@ -67,12 +67,12 @@ internal class StreamFileUploader(
             channelId = channelId,
             file = part,
             progressCallback = null,
-        ).execute().map {
+        ).await().map {
             it.toUploadedFile()
         }
     }
 
-    override fun sendImage(
+    override suspend fun sendImage(
         channelType: String,
         channelId: String,
         userId: String,
@@ -87,12 +87,12 @@ internal class StreamFileUploader(
             channelId = channelId,
             file = part,
             progressCallback = callback,
-        ).execute().map {
+        ).await().map {
             UploadedImage(file = it.file)
         }
     }
 
-    override fun sendImage(
+    override suspend fun sendImage(
         channelType: String,
         channelId: String,
         userId: String,
@@ -106,12 +106,12 @@ internal class StreamFileUploader(
             channelId = channelId,
             file = part,
             progressCallback = null,
-        ).execute().map {
+        ).await().map {
             UploadedImage(file = it.file)
         }
     }
 
-    override fun deleteFile(
+    override suspend fun deleteFile(
         channelType: String,
         channelId: String,
         userId: String,
@@ -121,10 +121,10 @@ internal class StreamFileUploader(
             channelType = channelType,
             channelId = channelId,
             url = url
-        ).execute().toUnitResult()
+        ).await().toUnitResult()
     }
 
-    override fun deleteImage(
+    override suspend fun deleteImage(
         channelType: String,
         channelId: String,
         userId: String,
@@ -134,6 +134,6 @@ internal class StreamFileUploader(
             channelType = channelType,
             channelId = channelId,
             url = url
-        ).execute().toUnitResult()
+        ).await().toUnitResult()
     }
 }

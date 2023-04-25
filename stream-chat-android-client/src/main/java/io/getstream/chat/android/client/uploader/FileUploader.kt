@@ -37,7 +37,7 @@ public interface FileUploader {
      * @see [Result.error]
      */
     @Suppress("LongParameterList")
-    public fun sendFile(
+    public suspend fun sendFile(
         channelType: String,
         channelId: String,
         userId: String,
@@ -54,7 +54,7 @@ public interface FileUploader {
      * @see [Result.success]
      * @see [Result.error]
      */
-    public fun sendFile(
+    public suspend fun sendFile(
         channelType: String,
         channelId: String,
         userId: String,
@@ -71,7 +71,7 @@ public interface FileUploader {
      * @see [Result.error]
      */
     @Suppress("LongParameterList")
-    public fun sendImage(
+    public suspend fun sendImage(
         channelType: String,
         channelId: String,
         userId: String,
@@ -88,7 +88,7 @@ public interface FileUploader {
      * @see [Result.success]
      * @see [Result.error]
      */
-    public fun sendImage(
+    public suspend fun sendImage(
         channelType: String,
         channelId: String,
         userId: String,
@@ -103,7 +103,7 @@ public interface FileUploader {
      * @see [Result.success]
      * @see [Result.error]
      */
-    public fun deleteFile(
+    public suspend fun deleteFile(
         channelType: String,
         channelId: String,
         userId: String,
@@ -118,7 +118,7 @@ public interface FileUploader {
      * @see [Result.success]
      * @see [Result.error]
      */
-    public fun deleteImage(
+    public suspend fun deleteImage(
         channelType: String,
         channelId: String,
         userId: String,

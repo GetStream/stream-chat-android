@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.utils.Result
 import java.io.File
 
 class MyFileUploader : FileUploader {
-    override fun sendFile(
+    override suspend fun sendFile(
         channelType: String,
         channelId: String,
         userId: String,
@@ -22,7 +22,7 @@ class MyFileUploader : FileUploader {
         }
     }
 
-    override fun sendFile(
+    override suspend fun sendFile(
         channelType: String,
         channelId: String,
         userId: String,
@@ -35,7 +35,7 @@ class MyFileUploader : FileUploader {
         }
     }
 
-    override fun sendImage(
+    override suspend fun sendImage(
         channelType: String,
         channelId: String,
         userId: String,
@@ -49,7 +49,7 @@ class MyFileUploader : FileUploader {
         }
     }
 
-    override fun sendImage(
+    override suspend fun sendImage(
         channelType: String,
         channelId: String,
         userId: String,
@@ -62,7 +62,7 @@ class MyFileUploader : FileUploader {
         }
     }
 
-    override fun deleteFile(
+    override suspend fun deleteFile(
         channelType: String,
         channelId: String,
         userId: String,
@@ -75,7 +75,7 @@ class MyFileUploader : FileUploader {
         }
     }
 
-    override fun deleteImage(
+    override suspend fun deleteImage(
         channelType: String,
         channelId: String,
         userId: String,
