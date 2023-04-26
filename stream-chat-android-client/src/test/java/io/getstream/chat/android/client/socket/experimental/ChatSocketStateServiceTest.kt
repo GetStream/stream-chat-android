@@ -319,7 +319,7 @@ internal class ChatSocketStateServiceTest {
             ),
             Arguments.of(
                 State.Disconnected.Stopped,
-                State.Disconnected.Stopped,
+                State.Disconnected.DisconnectedByRequest,
             ),
             Arguments.of(
                 State.Disconnected.NetworkDisconnected,

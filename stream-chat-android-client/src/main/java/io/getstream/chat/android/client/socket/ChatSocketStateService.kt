@@ -187,6 +187,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
             }
 
             state<State.Disconnected.Stopped> {
+                onEvent<Event.RequiredDisconnection> { State.Disconnected.DisconnectedByRequest }
                 onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.isReconnection) }
                 onEvent<Event.Resume> { State.RestartConnection }
             }
@@ -212,6 +213,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
             }
 
             state<State.Disconnected.DisconnectedByRequest> {
+                onEvent<Event.RequiredDisconnection> { currentState }
                 onEvent<Event.Connect> {
                     when (it.isReconnection) {
                         true -> this
