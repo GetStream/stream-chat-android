@@ -16,7 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `ChatClient.clearPersistence()` to be able to clear local data even if the user is not connected. [#4795](https://github.com/GetStream/stream-chat-android/pull/4795)
 
 ### ⚠️ Changed
 
@@ -72,8 +71,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added the lambda function `onContentItemClick` to  `UploadAttachmentFactory`, `LinkAttachmentFactory`, `GiphyAttachmentFactory`, `ImageAttachmentFactory` and `FileAttachmentFactory`. Overriding it will change the behaviour of clicking on different attachment content. [#4754](https://github.com/GetStream/stream-chat-android/pull/4754) and [#4780](https://github.com/GetStream/stream-chat-android/pull/4780)
-- Added the lambda function  `onItemClick` to `FileUploadContent`, `FileAttachmentContent`, `GiphyAttachmentContent`, `ImageAttachmentContent` and `LinkAttachmentContent`. Overriding it will change the behaviour of clicking on different attachment content. [#4754](https://github.com/GetStream/stream-chat-android/pull/4754) and [#4780](https://github.com/GetStream/stream-chat-android/pull/4780)
 
 ### ⚠️ Changed
 
@@ -122,6 +119,16 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# April 26th, 2023 - 5.17.1
+## stream-chat-android-client
+### ✅ Added
+- Added `ChatClient.clearPersistence()` to be able to clear local data even if the user is not connected. [#4795](https://github.com/GetStream/stream-chat-android/pull/4795)
+
+## stream-chat-android-compose
+### ✅ Added
+- Added the lambda function `onContentItemClick` to  `UploadAttachmentFactory`, `LinkAttachmentFactory`, `GiphyAttachmentFactory`, `ImageAttachmentFactory` and `FileAttachmentFactory`. Overriding it will change the behaviour of clicking on different attachment content. [#4754](https://github.com/GetStream/stream-chat-android/pull/4754) and [#4780](https://github.com/GetStream/stream-chat-android/pull/4780)
+- Added the lambda function  `onItemClick` to `FileUploadContent`, `FileAttachmentContent`, `GiphyAttachmentContent`, `ImageAttachmentContent` and `LinkAttachmentContent`. Overriding it will change the behaviour of clicking on different attachment content. [#4754](https://github.com/GetStream/stream-chat-android/pull/4754) and [#4780](https://github.com/GetStream/stream-chat-android/pull/4780)
 
 # April 11th, 2023 - 5.16.0
 ## stream-chat-android-client
