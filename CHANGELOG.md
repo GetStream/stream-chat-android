@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatClient.clearPersistence()` to be able to clear local data even if the user is not connected. [#4795](https://github.com/GetStream/stream-chat-android/pull/4795)
 
 ### ⚠️ Changed
 
