@@ -108,7 +108,7 @@ internal class ChatNotificationsImpl constructor(
     }
 
     override suspend fun onLogout(flushPersistence: Boolean) {
-        logger.i { "[onLogout] no args" }
+        logger.i { "[onLogout] flusPersistence: $flushPersistence" }
         permissionManager.stop()
         handler.dismissAllNotifications()
         cancelLoadDataWork()

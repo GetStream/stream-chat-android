@@ -17,6 +17,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun channel (Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
+	public final fun clearPersistence ()Lio/getstream/result/call/Call;
 	public final fun connectAnonymousUser ()Lio/getstream/result/call/Call;
 	public final fun connectAnonymousUser (Ljava/lang/Long;)Lio/getstream/result/call/Call;
 	public static synthetic fun connectAnonymousUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/Long;ILjava/lang/Object;)Lio/getstream/result/call/Call;
