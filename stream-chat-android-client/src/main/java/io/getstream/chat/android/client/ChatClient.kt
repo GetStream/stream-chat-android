@@ -1212,6 +1212,23 @@ internal constructor(
     }
 
     /**
+     * Clear local data stored on the device from the current user.
+     *
+     * This method can be called even if the user is not connected, on that case the stored credentials
+     * will be used.
+     *
+     * If there is already a connection alive for the current user, it will be disconnected.
+     *
+     * @return Executable async [Call] which performs the cleanup.
+     */
+    @CheckResult
+    public fun clearPersistence(): Call<Unit> =
+        CoroutineCall(clientScope) {
+            disconnectSuspend(true)
+            Result.success(Unit)
+        }.doOnStart(clientScope) { setUserWithoutConnectingIfNeeded() }
+
+    /**
      * Disconnect the current user, stop all observers and clear user data.
      * This method should only be used whenever the user logout from the main app.
      * If the user will continue using the Chat in the future, you shouldn't call this method.
