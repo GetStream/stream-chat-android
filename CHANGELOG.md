@@ -23,6 +23,7 @@
 - Added the string extension function `createResizedStreamCdnImageUrl()` which resizes images hosted on Stream's CDN by adding the necessary query parameters to the URL. [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
 - Added the string extension function `getStreamCdnHostedImageDimensions()` used to extract original image dimensions from URLs of images hosted on Stream's CDN which contain the original width and height parameters. Added a new class called `StreamCdnOriginalImageDimensions` which stores the original height and width data. [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
 - Added classes `StreamCdnCropImageMode` and `StreamCdnResizeImageMode` used for modifying Stream CDN image resize requests. [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
+- Added `ChatClient.clearPersistence()` to be able to clear local data even if the user is not connected. [#4796](https://github.com/GetStream/stream-chat-android/pull/4796)
 
 ### ⚠️ Changed
 - Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
