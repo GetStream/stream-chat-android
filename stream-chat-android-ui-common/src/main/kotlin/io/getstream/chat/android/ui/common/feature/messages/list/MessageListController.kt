@@ -1077,22 +1077,21 @@ public class MessageListController(
      * @param message The selected message.
      */
     public fun selectMessage(message: Message?) {
-        if (message != null) {
-            changeSelectMessageState(
-                if (message.isModerationFailed(chatClient.getCurrentUser())) {
+        changeSelectMessageState(
+            message?.let {
+                if (it.isModerationFailed(chatClient.getCurrentUser())) {
                     SelectedMessageFailedModerationState(
-                        message = message,
+                        message = it,
                         ownCapabilities = ownCapabilities.value
                     )
                 } else {
                     SelectedMessageOptionsState(
-                        message = message,
+                        message = it,
                         ownCapabilities = ownCapabilities.value
                     )
                 }
-
-            )
-        }
+            }
+        )
     }
 
     /**
@@ -1133,7 +1132,7 @@ public class MessageListController(
      *
      * @param selectedMessageState The selected message state.
      */
-    private fun changeSelectMessageState(selectedMessageState: SelectedMessageState) {
+    private fun changeSelectMessageState(selectedMessageState: SelectedMessageState?) {
         if (isInThread) {
             _threadListState.value = _threadListState.value.copy(selectedMessageState = selectedMessageState)
         } else {
