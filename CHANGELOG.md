@@ -69,6 +69,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Allow "unselect a message" if null is passed. [#4798](https://github.com/GetStream/stream-chat-android/pull/4798)
 
 ### ✅ Added
 
