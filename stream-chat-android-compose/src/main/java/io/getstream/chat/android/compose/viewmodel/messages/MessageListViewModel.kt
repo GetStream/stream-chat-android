@@ -599,22 +599,21 @@ public class MessageListViewModel(
      * @param message The selected message.
      */
     public fun selectMessage(message: Message?) {
-        if (message != null) {
-            changeSelectMessageState(
-                if (message.isModerationFailed(currentUser = user.value)) {
+        changeSelectMessageState(
+            message?.let {
+                if (it.isModerationFailed(currentUser = user.value)) {
                     SelectedMessageFailedModerationState(
-                        message = message,
+                        message = it,
                         ownCapabilities = ownCapabilities.value
                     )
                 } else {
                     SelectedMessageOptionsState(
-                        message = message,
+                        message = it,
                         ownCapabilities = ownCapabilities.value
                     )
                 }
-
-            )
-        }
+            }
+        )
     }
 
     /**
@@ -655,7 +654,7 @@ public class MessageListViewModel(
      *
      * @param selectedMessageState The selected message state.
      */
-    private fun changeSelectMessageState(selectedMessageState: SelectedMessageState) {
+    private fun changeSelectMessageState(selectedMessageState: SelectedMessageState?) {
         if (isInThread) {
             threadMessagesState = threadMessagesState.copy(selectedMessageState = selectedMessageState)
         } else {
