@@ -91,6 +91,7 @@
 
 ### ⬆️ Improved
 - Updated Compose compiler version to `1.4.3`. [#4697](https://github.com/GetStream/stream-chat-android/pull/4697)
+- Added `ChatClient.clearPersistence()` to be able to clear local data even if the user is not connected. [#4797](https://github.com/GetStream/stream-chat-android/pull/4797)
 
 ### ✅ Added
 - Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
