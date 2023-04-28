@@ -6,18 +6,12 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+apply {
+    from("$rootDir/scripts/android.gradle")
+}
+
 android {
     namespace = "io.getstream.chat.android.benchmark"
-    compileSdk = Configuration.compileSdk
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
 
     defaultConfig {
         minSdk = 24
