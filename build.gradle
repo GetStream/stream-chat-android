@@ -26,12 +26,6 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
         google()
         mavenCentral()
-        maven {
-            url 'https://developer.huawei.com/repo/'
-            content {
-                includeGroup("com.huawei.agconnect")
-            }
-        }
     }
 
     dependencies {
@@ -46,7 +40,6 @@ buildscript {
         classpath Dependencies.gradleNexusPublishPlugin
         classpath Dependencies.dokka
         classpath Dependencies.kotlinBinaryValidator
-        classpath Dependencies.huaweiPlugin
         classpath Dependencies.shot
         classpath Dependencies.spotlessGradlePlugin
         classpath Dependencies.ksp
