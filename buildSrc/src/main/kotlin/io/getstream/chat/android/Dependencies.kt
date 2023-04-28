@@ -47,7 +47,7 @@ object Versions {
     internal const val HUAWEI_PUSH = "6.7.0.300"
     internal const val JSON = "20230227"
     internal const val JUNIT4 = "4.13.2"
-    internal const val JUNIT5 = "5.9.2"
+    internal const val JUNIT5 = "5.9.3"
     internal const val KEYBOARD_VISIBILITY_EVENT = "2.3.0"
     internal const val KFIXTURE = "0.2.0"
     internal const val KLUENT = "1.72"
