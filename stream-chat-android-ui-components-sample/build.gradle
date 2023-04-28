@@ -6,7 +6,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'com.huawei.agconnect'
 apply plugin: 'shot'
 
 apply from: "${rootDir}/scripts/android.gradle"
