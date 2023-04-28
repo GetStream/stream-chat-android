@@ -62,7 +62,7 @@ object Versions {
     internal const val MOCKITO = "5.3.0"
     internal const val MOSHI = "1.14.0"
     internal const val OK2CURL = "0.8.0"
-    internal const val OKHTTP = "4.10.0"
+    internal const val OKHTTP = "4.11.0"
     internal const val PERMISSIONX = "1.7.1"
     internal const val PHOTOVIEW = "2.3.0"
     internal const val RETROFIT = "2.9.0"
