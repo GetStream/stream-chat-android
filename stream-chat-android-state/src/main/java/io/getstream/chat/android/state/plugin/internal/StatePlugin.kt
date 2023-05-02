@@ -128,6 +128,7 @@ public class StatePlugin internal constructor(
         EventHandler::class -> eventHandler as T
         LogicRegistry::class -> logic as T
         StateRegistry::class -> stateRegistry as T
+        GlobalState::class -> globalState as T
         else -> null
     }
 }

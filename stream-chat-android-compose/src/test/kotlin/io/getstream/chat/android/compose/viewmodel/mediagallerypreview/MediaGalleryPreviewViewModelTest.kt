@@ -23,29 +23,25 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class MediaGalleryPreviewViewModelTest {
-
-    @AfterEach
-    fun tearDown() {
-        MutableGlobalStateInstance.clearState()
-    }
 
     @Test
     fun `Given a message with media attachments When showing media gallery Should show the gallery`() = runTest {
@@ -83,6 +79,7 @@ internal class MediaGalleryPreviewViewModelTest {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val messageId: String = MESSAGE_ID,
+        private val globalState: GlobalState = mock()
     ) {
 
         private val clientState: ClientState = mock {
@@ -90,11 +87,14 @@ internal class MediaGalleryPreviewViewModelTest {
         }
 
         init {
+            val statePlugin: StatePlugin = mock()
+            whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
+            whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            MutableGlobalStateInstance.setUser(currentUser)
+            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenAttachments(attachments: MutableList<Attachment>) = apply {

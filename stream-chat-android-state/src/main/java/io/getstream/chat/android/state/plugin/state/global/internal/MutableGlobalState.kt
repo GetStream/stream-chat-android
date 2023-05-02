@@ -22,22 +22,74 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Mutable global state of [StatePlugin].
  */
-internal interface MutableGlobalState : GlobalState {
-    fun setUser(user: User)
+internal class MutableGlobalState : GlobalState {
 
-    fun setTotalUnreadCount(totalUnreadCount: Int)
+    private val _totalUnreadCount = MutableStateFlow(0)
+    private val _channelUnreadCount = MutableStateFlow(0)
+    private val _banned = MutableStateFlow(false)
 
-    fun setChannelUnreadCount(channelUnreadCount: Int)
+    private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
+    private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
+    private val _typingChannels = MutableStateFlow(emptyMap<String, TypingEvent>())
 
-    fun setBanned(banned: Boolean)
+    private val _user = MutableStateFlow<User?>(null)
 
-    fun setChannelMutes(channelMutes: List<ChannelMute>)
+    override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount
 
-    fun setMutedUsers(mutedUsers: List<Mute>)
+    override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount
+
+    override val muted: StateFlow<List<Mute>> = _mutedUsers
+
+    override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes
+
+    override val banned: StateFlow<Boolean> = _banned
+
+    override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels
+
+    override val user: StateFlow<User?> = _user
+
+    /**
+     * Clears the state of [GlobalState].
+     */
+    fun clearState() {
+        _user.value = null
+        _totalUnreadCount.value = 0
+        _channelUnreadCount.value = 0
+        _mutedUsers.value = emptyList()
+        _channelMutes.value = emptyList()
+        _banned.value = false
+        _typingChannels.value = emptyMap()
+    }
+
+    fun setUser(user: User) {
+        _user.value = user
+    }
+
+    fun setTotalUnreadCount(totalUnreadCount: Int) {
+        _totalUnreadCount.value = totalUnreadCount
+    }
+
+    fun setChannelUnreadCount(channelUnreadCount: Int) {
+        _channelUnreadCount.value = channelUnreadCount
+    }
+
+    fun setBanned(banned: Boolean) {
+        _banned.value = banned
+    }
+
+    fun setChannelMutes(channelMutes: List<ChannelMute>) {
+        _channelMutes.value = channelMutes
+    }
+
+    fun setMutedUsers(mutedUsers: List<Mute>) {
+        _mutedUsers.value = mutedUsers
+    }
 
     /**
      * Tries emit typing event for a particular channel.
@@ -45,10 +97,14 @@ internal interface MutableGlobalState : GlobalState {
      * @param cid The full channel id, i.e. "messaging:123" to which the message with reaction belongs.
      * @param typingEvent [TypingEvent] with information about typing users. Current user is excluded.
      */
-    fun tryEmitTypingEvent(cid: String, typingEvent: TypingEvent)
+    fun tryEmitTypingEvent(cid: String, typingEvent: TypingEvent) {
+        val typingChannelsCopy = _typingChannels.value.toMutableMap()
 
-    /**
-     * Clears the state of [GlobalState].
-     */
-    public fun clearState()
+        if (typingEvent.users.isEmpty()) {
+            typingChannelsCopy.remove(cid)
+        } else {
+            typingChannelsCopy[cid] = typingEvent
+        }
+        _typingChannels.tryEmit(typingChannelsCopy)
+    }
 }
