@@ -1,6 +1,6 @@
 # Replace Database
 
-In some cases, uses may want to add their own database/ORM to Stream Android SDK instead of using the default one. This can be useful to add side effects when a certain data is used to control the flow of information in a specific way, use it to debug the SDK or support an existing database that already exists in the app without adding a new one. 
+In some cases, users may want to add their own database/ORM to Stream Android SDK instead of using the default one. This can be useful to add side effects when a certain data is used to control the flow of information in a specific way, use it to debug the SDK or support an existing database that already exists in the app without adding a new one.
 
 There are 2 ways to replace the default offline support of the SDK. It is possible to implement your own Plugin that handles persistence in the SDK. The best way for this would be to extend `io.getstream.chat.android.client.plugin.Plugin` interface and override all the methods and substitute `io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory.Provider` providing the repository that should handle the data. Another option would be to just substitute `RepositoryFactory.Provider` inside OfflinePlugin, which we will cover in this document.
 
