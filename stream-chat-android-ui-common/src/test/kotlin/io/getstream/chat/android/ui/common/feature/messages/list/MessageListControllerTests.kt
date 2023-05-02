@@ -26,6 +26,7 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
@@ -290,6 +291,7 @@ internal class MessageListControllerTests {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = CID,
+        statePluginConfig: StatePluginConfig = StatePluginConfig()
     ) {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
@@ -298,6 +300,7 @@ internal class MessageListControllerTests {
         init {
             val statePlugin: StatePlugin = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
+            whenever(statePlugin.resolveDependency(eq(StatePluginConfig::class))) doReturn statePluginConfig
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.clientState) doReturn clientState
             whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState

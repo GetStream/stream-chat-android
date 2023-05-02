@@ -40,6 +40,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.listener.internal.ChannelMarkReadListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteReactionListenerState
@@ -88,6 +89,7 @@ public class StatePlugin internal constructor(
     private val eventHandler: EventHandler,
     private val globalState: MutableGlobalState,
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
+    private val statePluginConfig: StatePluginConfig,
 ) : Plugin,
     DependencyResolver,
     QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
@@ -129,6 +131,7 @@ public class StatePlugin internal constructor(
         LogicRegistry::class -> logic as T
         StateRegistry::class -> stateRegistry as T
         GlobalState::class -> globalState as T
+        StatePluginConfig::class -> statePluginConfig as T
         else -> null
     }
 }

@@ -40,7 +40,6 @@ import io.getstream.chat.android.state.extensions.internal.logic
 import io.getstream.chat.android.state.extensions.internal.parseAttachmentNameFromUrl
 import io.getstream.chat.android.state.extensions.internal.requestsAsState
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.internal.ConfigSingleton
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
@@ -83,11 +82,12 @@ public val ChatClient.globalState: GlobalState
     get() = resolveDependency<StatePlugin, GlobalState>()
 
 /**
- * [StatePluginConfig] instance used to configure [io.getstream.chat.android.state.plugin.internal.StatePlugin]
- * or null if the config doesn't exist.
+ * [StatePluginConfig] instance used to configure [io.getstream.chat.android.state.plugin.internal.StatePlugin].
+ *
+ * @throws IllegalArgumentException If the StatePluginConfig was not initialized yet.
  */
-public val ChatClient.stateConfig: StatePluginConfig?
-    get() = ConfigSingleton.statePluginConfig
+internal val ChatClient.stateConfig: StatePluginConfig
+    get() = resolveDependency<StatePlugin, StatePluginConfig>()
 
 /**
  * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.

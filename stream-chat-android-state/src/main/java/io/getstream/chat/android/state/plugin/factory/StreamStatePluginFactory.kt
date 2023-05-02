@@ -28,7 +28,6 @@ import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.event.handler.internal.EventHandlerSequential
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.internal.ConfigSingleton
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -55,10 +54,6 @@ public class StreamStatePluginFactory(
     private val appContext: Context,
 ) : PluginFactory {
     private val logger by taggedLogger("Chat:StatePluginFactory")
-
-    init {
-        ConfigSingleton.statePluginConfig = config
-    }
 
     /**
      * Creates a [Plugin]
@@ -157,7 +152,8 @@ public class StreamStatePluginFactory(
             syncManager = syncManager,
             eventHandler = eventHandler,
             globalState = mutableGlobalState,
-            queryingChannelsFree = isQueryingFree
+            queryingChannelsFree = isQueryingFree,
+            statePluginConfig = config,
         )
     }
 
