@@ -32,7 +32,7 @@ import io.getstream.chat.android.state.plugin.internal.ConfigSingleton
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.sync.internal.OfflineSyncFirebaseMessagingHandler
 import io.getstream.chat.android.state.sync.internal.SyncManager
 import io.getstream.log.StreamLog
@@ -76,22 +76,23 @@ public class StreamStatePluginFactory(
         val scope = ChatClient.instance().inheritScope { parentJob ->
             SupervisorJob(parentJob) + DispatcherProvider.IO + exceptionHandler
         }
-        return createStatePlugin(user, scope)
+        return createStatePlugin(user, scope, MutableGlobalState())
     }
 
     @SuppressWarnings("LongMethod")
     private fun createStatePlugin(
         user: User,
         scope: CoroutineScope,
+        mutableGlobalState: MutableGlobalState,
     ): StatePlugin {
         logger.i { "[createStatePlugin] no args" }
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
         val clientState = chatClient.clientState
-        MutableGlobalStateInstance.clearState()
+        mutableGlobalState.clearState()
 
         val stateRegistry = StateRegistry(
-            MutableGlobalStateInstance.user,
+            mutableGlobalState.user,
             repositoryFacade.observeLatestUsers(),
             scope.coroutineContext.job,
             scope
@@ -101,7 +102,7 @@ public class StreamStatePluginFactory(
 
         val logic = LogicRegistry(
             stateRegistry = stateRegistry,
-            mutableGlobalState = MutableGlobalStateInstance,
+            mutableGlobalState = mutableGlobalState,
             userPresence = config.userPresence,
             repos = repositoryFacade,
             client = chatClient,
@@ -128,7 +129,7 @@ public class StreamStatePluginFactory(
             client = chatClient,
             logicRegistry = logic,
             stateRegistry = stateRegistry,
-            mutableGlobalState = MutableGlobalStateInstance,
+            mutableGlobalState = mutableGlobalState,
             repos = repositoryFacade,
             syncedEvents = syncManager.syncedEvents,
             sideEffect = syncManager::awaitSyncing
@@ -155,7 +156,7 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             syncManager = syncManager,
             eventHandler = eventHandler,
-            globalState = MutableGlobalStateInstance,
+            globalState = mutableGlobalState,
             queryingChannelsFree = isQueryingFree
         )
     }
@@ -167,7 +168,7 @@ public class StreamStatePluginFactory(
         client: ChatClient,
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
-        mutableGlobalState: MutableGlobalStateInstance,
+        mutableGlobalState: MutableGlobalState,
         repos: RepositoryFacade,
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,

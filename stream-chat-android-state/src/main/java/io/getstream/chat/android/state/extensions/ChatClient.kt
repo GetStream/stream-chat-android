@@ -45,7 +45,6 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -76,9 +75,12 @@ public val ChatClient.state: StateRegistry
 
 /**
  * [GlobalState] instance that contains information about the current user, unreads, etc.
+ *
+ * @throws IllegalArgumentException If the GlobalState was not initialized yet.
  */
 public val ChatClient.globalState: GlobalState
-    get() = MutableGlobalStateInstance
+    @Throws(IllegalArgumentException::class)
+    get() = resolveDependency<StatePlugin, GlobalState>()
 
 /**
  * [StatePluginConfig] instance used to configure [io.getstream.chat.android.state.plugin.internal.StatePlugin]

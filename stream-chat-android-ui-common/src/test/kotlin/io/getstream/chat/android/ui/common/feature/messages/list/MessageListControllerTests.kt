@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalStateInstance
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.createDate
@@ -44,7 +44,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
@@ -288,28 +287,24 @@ internal class MessageListControllerTests {
             dateSeparatorCount `should be equal to` 3
         }
 
-    @AfterEach
-    fun tearDown() {
-        MutableGlobalStateInstance.clearState()
-    }
-
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = CID,
     ) {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
+        private val globalState: GlobalState = mock()
 
         init {
             val statePlugin: StatePlugin = mock()
-            MutableGlobalStateInstance.clearState()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.clientState) doReturn clientState
+            whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
-            MutableGlobalStateInstance.setUser(currentUser)
+            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
