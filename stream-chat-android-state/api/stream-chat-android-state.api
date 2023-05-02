@@ -82,7 +82,6 @@ public final class io/getstream/chat/android/state/extensions/ChatClientExtensio
 	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun getRepliesAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun getState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/state/plugin/state/StateRegistry;
-	public static final fun getStateConfig (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
 	public static final fun loadMessageById (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static final fun loadNewerMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
 	public static final fun loadNewestMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IZ)Lio/getstream/result/call/Call;
