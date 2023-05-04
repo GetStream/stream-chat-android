@@ -298,7 +298,5 @@ public class StreamStatePluginFactory(
 
     private fun clearCachedInstance() {
         cachedStatePluginInstance = null
-        StateRegistry.clear()
-        LogicRegistry.clear()
     }
 }
