@@ -122,6 +122,15 @@
 
 ### ❌ Removed
 
+# May 4th, 2023 - 5.17.2
+## stream-chat-android-state
+### ⚠️ Changed
+- Keep `Logic`and `State` instances even if the user is disconnected. [#4805](https://github.com/GetStream/stream-chat-android/pull/4805)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Allow "unselect a message" if null is passed. [#4798](https://github.com/GetStream/stream-chat-android/pull/4798)
+
 # April 26th, 2023 - 5.17.1
 ## stream-chat-android-client
 ### ✅ Added
