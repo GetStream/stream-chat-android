@@ -40,6 +40,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Keep `Logic`and `State` instances even if the user is disconnected. [#4805](https://github.com/GetStream/stream-chat-android/pull/4805)
 
 ### ❌ Removed
 
