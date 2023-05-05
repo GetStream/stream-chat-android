@@ -75,7 +75,7 @@ public class StatefulStreamMediaRecorder(
     /**
      * Represents the latest error state of the [MediaRecorder] used by [StreamMediaRecorder].
      */
-    private val onErrorState: State<StreamMediaRecorderState?> = mutableStateOf(null)
+    public val onErrorState: State<StreamMediaRecorderState?> = _onErrorState
 
     /**
      * Emits the latest [MediaRecorder] max amplitude reading.
