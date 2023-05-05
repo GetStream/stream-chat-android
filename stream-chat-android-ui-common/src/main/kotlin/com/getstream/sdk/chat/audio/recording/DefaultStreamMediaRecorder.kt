@@ -347,8 +347,8 @@ public class DefaultStreamMediaRecorder(
     }
 
     /**
-     * Keeps track of the duration of the currently active recording and updates [onCurrentRecordingDurationChangedListener]
-     * accordingly
+     * Keeps track of the duration of the currently active recording and updates
+     * [onCurrentRecordingDurationChangedListener] accordingly.
      */
     private fun trackMaxDuration() {
         currentRecordingDurationJob?.cancel()
@@ -445,7 +445,8 @@ public class DefaultStreamMediaRecorder(
     }
 
     /**
-     * Sets a [StreamMediaRecorder.OnCurrentRecordingDurationChanged] listener on this instance of [StreamMediaRecorder].
+     * Sets a [StreamMediaRecorder.OnCurrentRecordingDurationChanged] listener on this instance of
+     * [StreamMediaRecorder].
      *
      * @param onCurrentRecordingDurationChanged [StreamMediaRecorder.OnCurrentRecordingDurationChanged] SAM updated
      * when the duration of the currently active recording has changed.
