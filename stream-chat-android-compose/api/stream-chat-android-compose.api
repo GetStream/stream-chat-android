@@ -247,6 +247,7 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public fun <init> (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;)V
 	public final fun getLatestMaxAmplitude ()Landroidx/compose/runtime/State;
 	public final fun getMediaRecorderState ()Landroidx/compose/runtime/State;
+	public final fun getOnErrorState ()Landroidx/compose/runtime/State;
 	public final fun getOnInfoState ()Landroidx/compose/runtime/State;
 }
 
