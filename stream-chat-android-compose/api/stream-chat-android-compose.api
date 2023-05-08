@@ -1403,6 +1403,17 @@ public final class io/getstream/chat/android/compose/ui/messages/list/MessagesKt
 	public static final fun Messages (Lio/getstream/chat/android/compose/state/messages/MessagesState;Landroidx/compose/foundation/lazy/LazyListState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
+public abstract class io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart {
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$BOTTOM : io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$BOTTOM;
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$TOP : io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$TOP;
+}
+
 public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/theme/ChatTheme;
