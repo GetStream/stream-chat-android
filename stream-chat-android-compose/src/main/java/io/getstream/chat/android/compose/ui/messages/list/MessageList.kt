@@ -51,6 +51,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
+ * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
+ * Default: [ThreadMessagesStart.BOTTOM].
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
@@ -79,6 +81,7 @@ public fun MessageList(
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
+    threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
@@ -130,6 +133,7 @@ public fun MessageList(
         currentState = viewModel.currentMessagesState,
         messagesLazyListState = messagesLazyListState,
         onMessagesPageStartReached = onMessagesPageStartReached,
+        threadMessagesStart = threadMessagesStart,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
@@ -212,7 +216,13 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * Clean representation of the MessageList that is decoupled from ViewModels. This components allows
  * users to connect the UI to their own data providers, as it relies on pure state.
  *
+<<<<<<< HEAD
  * @param currentState The state of the component, represented by [MessageListState].
+=======
+ * @param currentState The state of the component, represented by [MessagesState].
+ * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
+ * Default: [ThreadMessagesStart.BOTTOM].
+>>>>>>> 4daf5d7984 (Add ThreadMessagesStart param to the Messages component)
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
@@ -240,6 +250,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 @Composable
 public fun MessageList(
     currentState: MessageListState,
+    threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messagesLazyListState: MessagesLazyListState =
@@ -288,6 +299,7 @@ public fun MessageList(
             messagesState = currentState,
             messagesLazyListState = messagesLazyListState,
             onMessagesStartReached = onMessagesPageStartReached,
+            threadMessagesStart = threadMessagesStart,
             onLastVisibleMessageChanged = onLastVisibleMessageChanged,
             onScrolledToBottom = onScrolledToBottom,
             helperContent = helperContent,
