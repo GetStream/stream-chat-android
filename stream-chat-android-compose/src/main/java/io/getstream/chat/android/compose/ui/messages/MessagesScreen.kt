@@ -81,6 +81,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPick
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.messages.list.ThreadMessagesStart
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -114,6 +115,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
+ * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
+ * Default: [ThreadMessagesStart.BOTTOM].
  */
 @Suppress("LongMethod")
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -133,6 +136,7 @@ public fun MessagesScreen(
     navigateToThreadViaNotification: Boolean = false,
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
+    threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
 ) {
     val factory = buildViewModelFactory(
         context = LocalContext.current,
@@ -230,6 +234,7 @@ public fun MessagesScreen(
                     .padding(it),
                 viewModel = listViewModel,
                 lazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
+                threadMessagesStart = threadMessagesStart,
                 onThreadClick = { message ->
                     composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                     listViewModel.openMessageThread(message)
