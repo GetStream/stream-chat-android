@@ -1277,6 +1277,20 @@ public abstract interface class io/getstream/chat/android/compose/ui/messages/li
 	public abstract fun calculateOffset-TemP2vQ (JJ)I
 }
 
+public abstract class io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart {
+	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$BOTTOM : io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$BOTTOM;
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$TOP : io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$TOP;
+}
+
 public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/theme/ChatTheme;
