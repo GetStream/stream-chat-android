@@ -340,6 +340,7 @@ internal constructor(
 
         event.extractCurrentUser()?.let { currentUser ->
             userStateService.onUserUpdated(currentUser)
+            mutableClientState.updateCurrentUser(currentUser)
             storePushNotificationsConfig(
                 currentUser.id,
                 currentUser.name,

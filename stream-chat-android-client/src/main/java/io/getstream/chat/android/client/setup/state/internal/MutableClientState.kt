@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -78,5 +79,16 @@ internal class MutableClientState(private val networkStateProvider: NetworkState
      */
     fun setInitializationState(state: InitializationState) {
         _initializationState.value = state
+    }
+
+    /**
+     * Update the current connected user.
+     *
+     * @param currentUser The [User] instance that will be configured.
+     */
+    fun updateCurrentUser(currentUser: User) {
+        (_connectionState.value as? ConnectionState.Connected)
+            ?.copy(user = currentUser)
+            ?.let { _connectionState.value = it }
     }
 }
