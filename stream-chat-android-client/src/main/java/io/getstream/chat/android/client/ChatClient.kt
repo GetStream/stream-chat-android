@@ -311,14 +311,14 @@ internal constructor(
                 api.setConnection(user.id, connectionId)
                 notifications.onSetUser()
 
-                clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTED)
+                clientState.toMutableState()?.setConnectionState(ConnectionState.Connected(user))
             }
             is NewMessageEvent -> {
                 notifications.onNewMessageEvent(event)
             }
             is ConnectingEvent -> {
                 logger.i { "[handleEvent] event: ConnectingEvent" }
-                clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
+                clientState.toMutableState()?.setConnectionState(ConnectionState.Connecting)
             }
             is DisconnectedEvent -> {
                 logger.i { "[handleEvent] event: DisconnectedEvent(disconnectCause=${event.disconnectCause})" }
@@ -334,7 +334,7 @@ internal constructor(
                         userStateService.onSocketUnrecoverableError()
                     }
                 }
-                clientState.toMutableState()?.setConnectionState(ConnectionState.OFFLINE)
+                clientState.toMutableState()?.setConnectionState(ConnectionState.Offline)
             }
             else -> Unit // Ignore other events
         }
@@ -1184,7 +1184,7 @@ internal constructor(
         plugins = emptyList()
         userStateService.onLogout()
         chatSocket.disconnect()
-        clientState.awaitConnectionState(ConnectionState.OFFLINE)
+        clientState.awaitConnectionState(ConnectionState.Offline)
         userScope.cancelChildren(userId)
 
         if (flushPersistence) {

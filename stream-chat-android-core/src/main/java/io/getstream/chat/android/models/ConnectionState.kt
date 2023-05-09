@@ -19,19 +19,21 @@ package io.getstream.chat.android.models
 /**
  * Represents possible states of the WebSocket connection.
  */
-public enum class ConnectionState {
+public sealed class ConnectionState {
     /**
      * The client is connected to the WebSocket.
+     *
+     * @property user Current [User] connected to the WebSocket.
      */
-    CONNECTED,
+    public data class Connected(val user: User) : ConnectionState()
 
     /**
      * The client is trying to connect to the WebSocket.
      */
-    CONNECTING,
+    public object Connecting : ConnectionState()
 
     /**
      * The client is permanently disconnected from the WebSocket.
      */
-    OFFLINE
+    public object Offline : ConnectionState()
 }

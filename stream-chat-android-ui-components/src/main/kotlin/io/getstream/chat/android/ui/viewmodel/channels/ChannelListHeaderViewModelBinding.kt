@@ -37,9 +37,9 @@ public fun ChannelListHeaderViewModel.bindView(view: ChannelListHeaderView, life
         }
         connectionState.observe(lifecycleOwner) { connectionState ->
             when (connectionState) {
-                ConnectionState.CONNECTED -> showOnlineTitle()
-                ConnectionState.CONNECTING -> showConnectingTitle()
-                ConnectionState.OFFLINE -> showOfflineTitle()
+                is ConnectionState.Connected -> showOnlineTitle()
+                is ConnectionState.Connecting -> showConnectingTitle()
+                is ConnectionState.Offline -> showOfflineTitle()
             }
         }
     }

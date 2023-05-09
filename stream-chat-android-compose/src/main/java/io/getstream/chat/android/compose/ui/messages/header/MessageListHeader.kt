@@ -66,10 +66,10 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  *
  * @param channel Channel info to display.
  * @param currentUser The current user, required for different UI states.
+ * @param connectionState The state of WS connection used to switch between the subtitle and the network loading view.
  * @param modifier Modifier for styling.
  * @param typingUsers The list of typing users.
  * @param messageMode The current message mode, that changes the header content, if we're in a Thread.
- * @param connectionState The state of WS connection used to switch between the subtitle and the network loading view.
  * @param color The color of the header.
  * @param shape The shape of the header.
  * @param elevation The elevation of the header.
@@ -85,10 +85,10 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 public fun MessageListHeader(
     channel: Channel,
     currentUser: User?,
+    connectionState: ConnectionState,
     modifier: Modifier = Modifier,
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
-    connectionState: ConnectionState = ConnectionState.CONNECTED,
     color: Color = ChatTheme.colors.barsBackground,
     shape: Shape = ChatTheme.shapes.header,
     elevation: Dp = ChatTheme.dimens.headerElevation,
@@ -160,21 +160,22 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
  * if we should show a loading view for network, or the channel information.
  *
  * @param channel The channel used for the title information.
+ * @param currentUser The current user.
+ * @param connectionState A flag that governs if we show the subtitle or the network loading view.
  * @param modifier Modifier for styling.
  * @param typingUsers The list of typing users.
  * @param messageMode Currently active message mode, used to define the title information.
  * @param onHeaderTitleClick Handler for when the user taps on the header title section.
- * @param connectionState A flag that governs if we show the subtitle or the network loading view.
  */
 @Composable
 public fun DefaultMessageListHeaderCenterContent(
     channel: Channel,
     currentUser: User?,
+    connectionState: ConnectionState,
     modifier: Modifier = Modifier,
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
     onHeaderTitleClick: (Channel) -> Unit = {},
-    connectionState: ConnectionState = ConnectionState.CONNECTED,
 ) {
     val title = when (messageMode) {
         MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
@@ -209,13 +210,13 @@ public fun DefaultMessageListHeaderCenterContent(
         )
 
         when (connectionState) {
-            ConnectionState.CONNECTED -> {
+            is ConnectionState.Connected -> {
                 DefaultMessageListHeaderSubtitle(
                     subtitle = subtitle,
                     typingUsers = typingUsers
                 )
             }
-            ConnectionState.CONNECTING -> {
+            is ConnectionState.Connecting -> {
                 NetworkLoadingIndicator(
                     modifier = Modifier.wrapContentHeight(),
                     spinnerSize = 12.dp,
@@ -223,7 +224,7 @@ public fun DefaultMessageListHeaderCenterContent(
                     textStyle = ChatTheme.typography.footnote
                 )
             }
-            ConnectionState.OFFLINE -> {
+            is ConnectionState.Offline -> {
                 Text(
                     text = stringResource(id = R.string.stream_compose_disconnected),
                     color = ChatTheme.colors.textLowEmphasis,
@@ -316,7 +317,8 @@ private fun MessageListHeaderConnectedPreview() {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
-            currentUser = PreviewUserData.user1
+            currentUser = PreviewUserData.user1,
+            connectionState = ConnectionState.Connected(PreviewUserData.user1),
         )
     }
 }
@@ -331,7 +333,7 @@ private fun MessageListHeaderConnectingPreview() {
                 .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.CONNECTING
+            connectionState = ConnectionState.Connecting
         )
     }
 }
@@ -346,7 +348,7 @@ private fun MessageListHeaderOfflinePreview() {
                 .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.OFFLINE
+            connectionState = ConnectionState.Offline
         )
     }
 }
@@ -361,7 +363,8 @@ private fun MessageListHeaderUserTypingPreview() {
                 .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
-            typingUsers = listOf(PreviewUserData.user2)
+            typingUsers = listOf(PreviewUserData.user2),
+            connectionState = ConnectionState.Connected(PreviewUserData.user1),
         )
     }
 }
@@ -376,6 +379,7 @@ private fun MessageListHeaderManyMembersPreview() {
                 .wrapContentHeight(),
             channel = PreviewChannelData.channelWithManyMembers,
             currentUser = PreviewUserData.user1,
+            connectionState = ConnectionState.Connected(PreviewUserData.user1),
         )
     }
 }

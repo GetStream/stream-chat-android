@@ -447,16 +447,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             val textColor = ChatTheme.colors.textHighEmphasis
 
             when (mediaGalleryPreviewViewModel.connectionState) {
-                ConnectionState.CONNECTED -> Text(
+                is ConnectionState.Connected -> Text(
                     text = message.user.name,
                     style = textStyle,
                     color = textColor
                 )
-                ConnectionState.CONNECTING -> NetworkLoadingIndicator(
+                is ConnectionState.Connecting -> NetworkLoadingIndicator(
                     textStyle = textStyle,
                     textColor = textColor
                 )
-                ConnectionState.OFFLINE -> Text(
+                is ConnectionState.Offline -> Text(
                     text = getString(R.string.stream_compose_disconnected),
                     style = textStyle,
                     color = textColor
@@ -1114,7 +1114,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             else -> shareAttachment(attachment)
                         }
                     },
-                    enabled = mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED
+                    enabled = mediaGalleryPreviewViewModel.connectionState is ConnectionState.Connected
                 ) {
 
                     val shareIcon = if (!mediaGalleryPreviewViewModel.isSharingInProgress) {
@@ -1126,7 +1126,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     Icon(
                         painter = painterResource(id = shareIcon),
                         contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
-                        tint = if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) {
+                        tint = if (mediaGalleryPreviewViewModel.connectionState is ConnectionState.Connected) {
                             ChatTheme.colors.textHighEmphasis
                         } else {
                             ChatTheme.colors.disabled
@@ -1192,7 +1192,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
         val isChatConnected by remember(mediaGalleryPreviewViewModel.connectionState) {
             derivedStateOf {
-                mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED
+                mediaGalleryPreviewViewModel.connectionState is ConnectionState.Connected
             }
         }
 
@@ -1232,7 +1232,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
         if (message.user.id == user?.id) {
             val deleteColor =
-                if (mediaGalleryPreviewViewModel.connectionState == ConnectionState.CONNECTED) {
+                if (mediaGalleryPreviewViewModel.connectionState is ConnectionState.Connected) {
                     ChatTheme.colors.errorAccent
                 } else {
                     ChatTheme.colors.disabled

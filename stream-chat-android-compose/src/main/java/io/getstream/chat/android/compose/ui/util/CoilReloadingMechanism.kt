@@ -35,7 +35,7 @@ internal fun onImageNeedsToReload(
     asyncImagePainterState: AsyncImagePainter.State,
     onReload: () -> Unit,
 ) {
-    if (data != null && connectionState == ConnectionState.CONNECTED &&
+    if (data != null && connectionState is ConnectionState.Connected &&
         asyncImagePainterState is AsyncImagePainter.State.Error
     ) {
         val errorCode = (asyncImagePainterState.result.throwable as? HttpException)?.response?.code

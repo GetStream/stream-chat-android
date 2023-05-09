@@ -96,10 +96,12 @@ private object MessageListHeaderHandlingActionsSnippet {
                 ChatTheme {
                     val channel = listViewModel.channel
                     val currentUser by listViewModel.user.collectAsState()
+                    val connectionState by listViewModel.connectionState.collectAsState()
 
                     MessageListHeader(
                         channel = channel,
                         currentUser = currentUser,
+                        connectionState = connectionState,
                         onBackPressed = { finish() },
                         onHeaderTitleClick = {
                             // Handle clicks on the header title
@@ -137,6 +139,7 @@ private object MessageListHeaderCustomizationSnippet {
                 ChatTheme {
                     val channel = listViewModel.channel
                     val currentUser by listViewModel.user.collectAsState()
+                    val connectionState by listViewModel.connectionState.collectAsState()
 
                     MessageListHeader(
                         channel = channel,
@@ -148,7 +151,8 @@ private object MessageListHeaderCustomizationSnippet {
                                 currentUser = currentUser,
                             )
                         },
-                        trailingContent = { InfoButton() }
+                        trailingContent = { InfoButton() },
+                        connectionState = connectionState,
                     )
                 }
             }

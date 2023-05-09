@@ -118,13 +118,15 @@ class ChannelsActivity : BaseConnectedActivity() {
     @Composable
     private fun MyCustomUiSimplified() {
         val user by ChatClient.instance().globalState.user.collectAsState()
+        val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 ChannelListHeader(
                     title = stringResource(id = R.string.app_name),
-                    currentUser = user
+                    currentUser = user,
+                    connectionState = connectionState,
                 )
             }
         ) {

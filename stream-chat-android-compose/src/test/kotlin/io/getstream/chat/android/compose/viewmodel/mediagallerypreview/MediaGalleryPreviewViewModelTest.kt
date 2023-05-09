@@ -82,9 +82,7 @@ internal class MediaGalleryPreviewViewModelTest {
         private val globalState: GlobalState = mock()
     ) {
 
-        private val clientState: ClientState = mock {
-            whenever(it.connectionState) doReturn MutableStateFlow(ConnectionState.CONNECTED)
-        }
+        private val clientState: ClientState = mock()
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -95,6 +93,7 @@ internal class MediaGalleryPreviewViewModelTest {
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
             whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected(currentUser))
         }
 
         fun givenAttachments(attachments: MutableList<Attachment>) = apply {

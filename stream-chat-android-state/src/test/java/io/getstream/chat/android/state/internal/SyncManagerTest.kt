@@ -76,7 +76,7 @@ internal class SyncManagerTest {
 
     private val _syncEvents: Tube<List<ChatEvent>> = mock()
 
-    private val connectionState = MutableStateFlow(ConnectionState.OFFLINE)
+    private val connectionState = MutableStateFlow(ConnectionState.Offline)
     private val streamDateFormatter = StreamDateFormatter()
 
     @BeforeEach
