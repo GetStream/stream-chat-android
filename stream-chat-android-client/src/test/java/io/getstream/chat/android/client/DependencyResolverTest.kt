@@ -92,7 +92,7 @@ public class DependencyResolverTest {
             chatSocket = mock(),
             pluginFactories = mock(),
             repositoryFactoryProvider = mock(),
-            clientState = mock(),
+            mutableClientState = mock(),
         ).apply {
             this.plugins = this@Fixture.plugins
         }

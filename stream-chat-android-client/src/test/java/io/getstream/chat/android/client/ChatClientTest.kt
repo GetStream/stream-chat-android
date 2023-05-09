@@ -129,7 +129,7 @@ internal class ChatClientTest {
             appSettingsManager = mock(),
             chatSocket = fakeChatSocket,
             pluginFactories = pluginFactories,
-            clientState = Mother.mockedClientState(),
+            mutableClientState = Mother.mockedClientState(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
         ).apply {
             connectUser(user, token).enqueue()

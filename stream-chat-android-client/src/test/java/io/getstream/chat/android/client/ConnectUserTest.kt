@@ -26,8 +26,7 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
-import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
+import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -80,7 +79,7 @@ internal class ConnectUserTest {
     private val user = User(id = userId)
     private val anonId = "!anon"
     private val anonUser = User(id = anonId)
-    private val clientState: ClientState = ClientStateImpl(mock())
+    private val mutableClientState: MutableClientState = MutableClientState(mock())
     private val streamDateFormatter = StreamDateFormatter()
 
     @BeforeEach
@@ -118,7 +117,7 @@ internal class ConnectUserTest {
             chatSocket = fakeChatSocket,
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = clientState
+            mutableClientState = mutableClientState
         )
     }
 
@@ -146,14 +145,14 @@ internal class ConnectUserTest {
         val result = deferred.await()
 
         result.shouldBeInstanceOf(Result.Success::class)
-        clientState.initializationState.value `should be equal to` InitializationState.COMPLETE
+        mutableClientState.initializationState.value `should be equal to` InitializationState.COMPLETE
     }
 
     @Test
     fun `When connection is running, initialisation state should be updated`() = runTest {
         client.connectUser(user, jwt).enqueue()
 
-        clientState.initializationState.value `should be equal to` InitializationState.RUNNING
+        mutableClientState.initializationState.value `should be equal to` InitializationState.RUNNING
     }
 
     @Test

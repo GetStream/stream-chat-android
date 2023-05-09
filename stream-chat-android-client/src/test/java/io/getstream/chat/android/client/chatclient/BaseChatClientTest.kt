@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
-import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.TokenManager
@@ -75,7 +75,7 @@ internal open class BaseChatClientTest {
     @Mock
     protected lateinit var api: ChatApi
 
-    protected val clientState = mock<ClientState>()
+    protected val mutableClientState = mock<MutableClientState>()
 
     protected lateinit var chatClient: ChatClient
     protected lateinit var fakeChatSocket: FakeChatSocket
@@ -113,7 +113,7 @@ internal open class BaseChatClientTest {
             chatSocket = fakeChatSocket,
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = clientState
+            mutableClientState = mutableClientState
         )
 
         Mockito.reset(

@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
-import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -91,7 +91,7 @@ internal class MockClientBuilder(
         )
 
         val tokenUtil: TokenUtils = mock()
-        val clientState: ClientState = mock()
+        val mutableClientState: MutableClientState = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
         fileUploader = mock()
         notificationsManager = mock()
@@ -117,7 +117,7 @@ internal class MockClientBuilder(
             chatSocket = mock(),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = clientState
+            mutableClientState = mutableClientState
         )
 
         client.attachmentsSender = attachmentSender
