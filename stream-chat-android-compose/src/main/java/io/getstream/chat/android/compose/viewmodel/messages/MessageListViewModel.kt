@@ -112,7 +112,7 @@ public class MessageListViewModel(
     /**
      * Gives us information about the online state of the device.
      */
-    public val isOnline: Flow<Boolean> = messageListController.connectionState.map { it == ConnectionState.CONNECTED }
+    public val isOnline: Flow<Boolean> = messageListController.connectionState.map { it is ConnectionState.Connected }
 
     /**
      * Gives us information about the logged in user state.

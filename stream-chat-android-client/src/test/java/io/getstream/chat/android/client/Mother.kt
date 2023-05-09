@@ -117,7 +117,8 @@ internal object Mother {
             override val initializationState: StateFlow<InitializationState> =
                 MutableStateFlow(InitializationState.COMPLETE)
 
-            override val connectionState: StateFlow<ConnectionState> = MutableStateFlow(ConnectionState.CONNECTED)
+            override val connectionState: StateFlow<ConnectionState> =
+                MutableStateFlow(ConnectionState.Connected(randomUser()))
 
             override val isOnline: Boolean = true
 

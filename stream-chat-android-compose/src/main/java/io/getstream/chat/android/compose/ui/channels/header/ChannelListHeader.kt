@@ -74,7 +74,7 @@ public fun ChannelListHeader(
     modifier: Modifier = Modifier,
     title: String = "",
     currentUser: User? = null,
-    connectionState: ConnectionState = ConnectionState.CONNECTED,
+    connectionState: ConnectionState,
     color: Color = ChatTheme.colors.barsBackground,
     shape: Shape = ChatTheme.shapes.header,
     elevation: Dp = ChatTheme.dimens.headerElevation,
@@ -158,7 +158,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
     title: String,
 ) {
     when (connectionState) {
-        ConnectionState.CONNECTED -> {
+        is ConnectionState.Connected -> {
             Text(
                 modifier = Modifier
                     .weight(1f)
@@ -170,8 +170,8 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 color = ChatTheme.colors.textHighEmphasis
             )
         }
-        ConnectionState.CONNECTING -> NetworkLoadingIndicator(modifier = Modifier.weight(1f))
-        ConnectionState.OFFLINE -> {
+        is ConnectionState.Connecting -> NetworkLoadingIndicator(modifier = Modifier.weight(1f))
+        is ConnectionState.Offline -> {
             Text(
                 modifier = Modifier
                     .weight(1f)
@@ -221,7 +221,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
 @Preview(name = "ChannelListHeader Preview (Connected state)")
 @Composable
 private fun ChannelListHeaderForConnectedStatePreview() {
-    ChannelListHeaderPreview(connectionState = ConnectionState.CONNECTED)
+    ChannelListHeaderPreview(connectionState = ConnectionState.Connected(PreviewUserData.user1))
 }
 
 /**
@@ -232,7 +232,7 @@ private fun ChannelListHeaderForConnectedStatePreview() {
 @Preview(name = "ChannelListHeader Preview (Connecting state)")
 @Composable
 private fun ChannelListHeaderForConnectingStatePreview() {
-    ChannelListHeaderPreview(connectionState = ConnectionState.CONNECTING)
+    ChannelListHeaderPreview(connectionState = ConnectionState.Connecting)
 }
 
 /**
@@ -246,7 +246,7 @@ private fun ChannelListHeaderForConnectingStatePreview() {
 private fun ChannelListHeaderPreview(
     title: String = "Stream Chat",
     currentUser: User? = PreviewUserData.user1,
-    connectionState: ConnectionState = ConnectionState.CONNECTED,
+    connectionState: ConnectionState = ConnectionState.Connected(PreviewUserData.user1),
 ) {
     ChatTheme {
         ChannelListHeader(

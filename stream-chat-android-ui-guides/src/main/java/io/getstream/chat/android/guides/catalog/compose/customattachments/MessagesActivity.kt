@@ -109,6 +109,7 @@ class MessagesActivity : AppCompatActivity() {
 
         val messageMode = messageListViewModel.messageMode
         val currentUser by messageListViewModel.user.collectAsState()
+        val connectionState by messageListViewModel.connectionState.collectAsState()
 
         BackHandler(enabled = true, onBack = onBackPressed)
 
@@ -121,7 +122,8 @@ class MessagesActivity : AppCompatActivity() {
                         channel = messageListViewModel.channel,
                         currentUser = currentUser,
                         messageMode = messageMode,
-                        onBackPressed = onBackPressed
+                        onBackPressed = onBackPressed,
+                        connectionState = connectionState,
                     )
                 },
                 bottomBar = {

@@ -30,16 +30,16 @@ internal class ClientStateImpl(private val networkStateProvider: NetworkStatePro
     private val logger by taggedLogger("Chat:ClientState")
 
     private val _initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
-    private val _connectionState = MutableStateFlow(ConnectionState.OFFLINE)
+    private val _connectionState: MutableStateFlow<ConnectionState> = MutableStateFlow(ConnectionState.Offline)
 
     override val isOnline: Boolean
-        get() = _connectionState.value == ConnectionState.CONNECTED
+        get() = _connectionState.value is ConnectionState.Connected
 
     override val isOffline: Boolean
-        get() = _connectionState.value == ConnectionState.OFFLINE
+        get() = _connectionState.value == ConnectionState.Offline
 
     override val isConnecting: Boolean
-        get() = _connectionState.value == ConnectionState.CONNECTING
+        get() = _connectionState.value == ConnectionState.Connecting
 
     override val initializationState: StateFlow<InitializationState>
         get() = _initializationState
@@ -52,7 +52,7 @@ internal class ClientStateImpl(private val networkStateProvider: NetworkStatePro
     override fun clearState() {
         logger.d { "[clearState] no args" }
         _initializationState.value = InitializationState.NOT_INITIALIZED
-        _connectionState.value = ConnectionState.OFFLINE
+        _connectionState.value = ConnectionState.Offline
     }
 
     override fun setConnectionState(connectionState: ConnectionState) {

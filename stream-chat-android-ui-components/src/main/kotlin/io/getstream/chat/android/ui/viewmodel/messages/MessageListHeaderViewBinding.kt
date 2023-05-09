@@ -45,13 +45,13 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
 
     online.observe(lifecycle) { onlineState ->
         when (onlineState) {
-            ConnectionState.CONNECTED -> {
+            is ConnectionState.Connected -> {
                 view.showOnlineStateSubtitle()
             }
-            ConnectionState.CONNECTING -> {
+            is ConnectionState.Connecting -> {
                 view.showSearchingForNetworkLabel()
             }
-            ConnectionState.OFFLINE -> {
+            is ConnectionState.Offline -> {
                 view.showOfflineStateLabel()
             }
         }

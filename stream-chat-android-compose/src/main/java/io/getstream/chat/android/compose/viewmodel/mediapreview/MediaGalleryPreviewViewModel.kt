@@ -86,7 +86,7 @@ public class MediaGalleryPreviewViewModel(
     /**
      * Represent the header title of the gallery screen.
      */
-    public var connectionState: ConnectionState by mutableStateOf(ConnectionState.OFFLINE)
+    public var connectionState: ConnectionState by mutableStateOf(ConnectionState.Offline)
         private set
 
     /**
@@ -130,12 +130,12 @@ public class MediaGalleryPreviewViewModel(
     private suspend fun observeConnectionStateChanges() {
         clientState.connectionState.collect { connectionState ->
             when (connectionState) {
-                ConnectionState.CONNECTED -> {
+                is ConnectionState.Connected -> {
                     onConnected()
                     this.connectionState = connectionState
                 }
-                ConnectionState.CONNECTING -> this.connectionState = connectionState
-                ConnectionState.OFFLINE -> this.connectionState = connectionState
+                is ConnectionState.Connecting -> this.connectionState = connectionState
+                is ConnectionState.Offline -> this.connectionState = connectionState
             }
         }
     }
