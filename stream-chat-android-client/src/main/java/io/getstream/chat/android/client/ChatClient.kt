@@ -96,8 +96,7 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.setup.state.internal.ClientStateImpl
-import io.getstream.chat.android.client.setup.state.internal.toMutableState
+import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.CacheableTokenProvider
@@ -206,12 +205,12 @@ internal constructor(
     private val appSettingsManager: AppSettingManager,
     private val chatSocket: ChatSocket,
     private val pluginFactories: List<PluginFactory>,
-    public val clientState: ClientState,
+    private val mutableClientState: MutableClientState,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger by taggedLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
-
+    public val clientState: ClientState = mutableClientState
     @InternalStreamChatApi
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
@@ -311,14 +310,14 @@ internal constructor(
                 api.setConnection(user.id, connectionId)
                 notifications.onSetUser()
 
-                clientState.toMutableState()?.setConnectionState(ConnectionState.Connected(user))
+                mutableClientState.setConnectionState(ConnectionState.Connected(user))
             }
             is NewMessageEvent -> {
                 notifications.onNewMessageEvent(event)
             }
             is ConnectingEvent -> {
                 logger.i { "[handleEvent] event: ConnectingEvent" }
-                clientState.toMutableState()?.setConnectionState(ConnectionState.Connecting)
+                mutableClientState.setConnectionState(ConnectionState.Connecting)
             }
             is DisconnectedEvent -> {
                 logger.i { "[handleEvent] event: DisconnectedEvent(disconnectCause=${event.disconnectCause})" }
@@ -334,7 +333,7 @@ internal constructor(
                         userStateService.onSocketUnrecoverableError()
                     }
                 }
-                clientState.toMutableState()?.setConnectionState(ConnectionState.Offline)
+                mutableClientState.setConnectionState(ConnectionState.Offline)
             }
             else -> Unit // Ignore other events
         }
@@ -446,7 +445,7 @@ internal constructor(
         }.onErrorSuspend {
             disconnectSuspend(flushPersistence = true)
         }.onSuccess {
-            clientState.toMutableState()?.setInitializationState(InitializationState.COMPLETE)
+            mutableClientState.setInitializationState(InitializationState.COMPLETE)
         }
     }
 
@@ -534,7 +533,7 @@ internal constructor(
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long?,
     ): Result<ConnectionData> {
-        clientState.toMutableState()?.setInitializationState(InitializationState.RUNNING)
+        mutableClientState.setInitializationState(InitializationState.RUNNING)
         logger.d { "[connectUserSuspend] userId: '${user.id}', username: '${user.name}'" }
         return setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
             logger.v {
@@ -1195,7 +1194,7 @@ internal constructor(
         _repositoryFacade = null
         appSettingsManager.clear()
 
-        clientState.toMutableState()?.clearState()
+        mutableClientState.clearState()
         logger.v { "[disconnectUserSuspend] completed('$userId')" }
     }
 
@@ -2982,7 +2981,7 @@ internal constructor(
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
-                clientState = ClientStateImpl(module.networkStateProvider)
+                mutableClientState = MutableClientState(module.networkStateProvider),
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     appContext,

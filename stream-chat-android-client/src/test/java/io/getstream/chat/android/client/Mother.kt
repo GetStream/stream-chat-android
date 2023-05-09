@@ -23,8 +23,9 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfig
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
+import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
-import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
@@ -39,9 +40,9 @@ import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt
 import io.getstream.result.Error
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.Date
 import java.util.UUID
 
@@ -111,22 +112,12 @@ internal object Mother {
         false -> randomUserConnectionConf(endpoint, apiKey, user)
     }
 
-    fun mockedClientState(): ClientState {
-        return object : ClientState {
-
-            override val initializationState: StateFlow<InitializationState> =
-                MutableStateFlow(InitializationState.COMPLETE)
-
-            override val connectionState: StateFlow<ConnectionState> =
-                MutableStateFlow(ConnectionState.Connected(randomUser()))
-
-            override val isOnline: Boolean = true
-
-            override val isOffline: Boolean = false
-
-            override val isConnecting: Boolean = false
-
-            override val isNetworkAvailable: Boolean = true
+    fun mockedClientState(): MutableClientState {
+        val networkStatProvider: NetworkStateProvider = mock()
+        whenever(networkStatProvider.isConnected()) doReturn true
+        return MutableClientState(networkStatProvider).apply {
+            setConnectionState(ConnectionState.Connected(randomUser()))
+            setInitializationState(InitializationState.COMPLETE)
         }
     }
 
