@@ -48,6 +48,16 @@ public interface DateFormatter {
      */
     public fun formatTime(localTime: LocalTime?): String
 
+    /**
+     * Formats the given date-time as a String.
+     *
+     * @param localDateTime The [LocalDateTime] object to format as a String.
+     * @return The formatted date-time string.
+     */
+    public fun formatTime(localDateTime: LocalDateTime?): String {
+        return formatTime(localDateTime?.toLocalTime())
+    }
+
     public companion object {
         /**
          * Builds the default date formatter.
@@ -73,11 +83,11 @@ public fun DateFormatter.formatDate(date: Date?): String {
  */
 @InternalStreamChatApi
 public fun DateFormatter.formatTime(date: Date?): String {
-    return formatTime(date?.let(DateConverter::toLocalTime))
+    return formatTime(date?.let(DateConverter::toLocalDateTime))
 }
 
 internal class DefaultDateFormatter(
-    private val dateContext: DateContext
+    private val dateContext: DateContext,
 ) : DateFormatter {
 
     constructor(context: Context) : this(DefaultDateContext(context))
@@ -127,7 +137,7 @@ internal class DefaultDateFormatter(
     }
 
     private class DefaultDateContext(
-        private val context: Context
+        private val context: Context,
     ) : DateContext {
         override fun now(): LocalDate = LocalDate.now()
 

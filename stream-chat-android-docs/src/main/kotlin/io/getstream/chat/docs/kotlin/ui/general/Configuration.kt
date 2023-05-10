@@ -195,6 +195,11 @@ private class ChatUiSnippets {
                 localTime ?: return ""
                 return dateTimeFormatter.format(localTime)
             }
+
+            override fun formatTime(localDateTime: LocalDateTime?): String {
+                localDateTime ?: return ""
+                return formatTime(localDateTime.toLocalTime())
+            }
         }
     }
 }
