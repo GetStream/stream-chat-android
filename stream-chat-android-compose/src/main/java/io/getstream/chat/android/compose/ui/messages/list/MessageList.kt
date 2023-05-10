@@ -216,13 +216,9 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * Clean representation of the MessageList that is decoupled from ViewModels. This components allows
  * users to connect the UI to their own data providers, as it relies on pure state.
  *
-<<<<<<< HEAD
  * @param currentState The state of the component, represented by [MessageListState].
-=======
- * @param currentState The state of the component, represented by [MessagesState].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
->>>>>>> 4daf5d7984 (Add ThreadMessagesStart param to the Messages component)
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
