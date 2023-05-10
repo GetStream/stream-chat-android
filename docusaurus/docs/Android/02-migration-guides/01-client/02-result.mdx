@@ -1,0 +1,101 @@
+# Stream Result
+
+The low level implementation of our Chat SDK provides multiple methods to perform actions and communicate with our server.
+The implementation of those actions is almost always done by a deferred computation that is encapsulate on a class named `Call`.
+This `Call` class allows you to perform the actions asynchronously providing a `callback` or suspending the process within a coroutine.
+When this `call` is completed, a `Result` object is returned. This `result` object encapsulates the result of the `call` computation and could contains a success value if the process completed successfully or an error notifying what was wrong.
+
+Previous implementation of those classes wasn't safe enough, delegating on you to check if the result was successfully before to access to the value.
+Accessing to the value data while `result` contains an error was allowed, producing an illegal state exception. Similar happens accessing to the error value while the result was successful.
+It caused our code to be very verbose any time a `result` needs to be handle, or leaving without properly handling Happy/Unhappy path in our code.
+
+To avoid this inconvenience and relying on Kotlin language, we are improving the implementation of those classes to be easy and safe to use.
+The new implementation rely on Railway-Oriented Programming.
+
+## What's Railway-Oriented Programming?
+Railway Oriented Programming is a functional approach to handling success and errors in normalized ways, always allowing you to predict the result.
+Read [Railway Oriented Programming](https://fsharpforfunandprofit.com/rop/) if you want to learn more about ROP.
+![](../../assets/railway-oriented-programming.jpg)
+
+## Result
+
+This is a basic model to represent a normalized result from business work. This looks similar to [Kotlin's Result](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-result/), but Stream Result was designed to include more information about success and error and support more convenient functionalities to handle results. Result is basically consist of two detailed types below:
+
+- **`Result.Success`**: This represents your business's successful result, including a `value` property, a generic type of Result.
+- **`Result.Failure`**: This represents the failed result of your business result and includes a `value` property, the `Error` type.
+
+The old way to work with `result` was by checking if the result was successful or not and perform different actions on any case, something like:
+```kotlin {2,3,6}
+val result = obtainResult()
+if (result.isSuccess) {
+    val data = result.data()
+    [...] // work with successful data
+} else {
+    val error = result.error()
+    [...] // Notify an error happened
+}
+```
+
+On the new implementation it has been improved, and allows you to use it in an easier and safer way:
+```kotlin
+val result = obtainResult()
+result.onSuccess { data ->
+    [...] // work with successful data
+}.onError { error ->
+    [...] // Notify an error happened
+}
+```
+
+## Error
+
+`Result.Failure` has `Error` as a value property, which contains error details of your business work. Basically, `Error` consists of three different types of errors below:
+
+- **`Error.GenericError`**: Represents a normal type of error and only contains an error message.
+- **`Error.ThrowableError`**: Represents an exceptional type of error and contains a message and cause information.
+- **`Error.NetworkError`**: Represents a network error and contains status code, message, and cause information.
+
+## Result Extensions
+
+**Stream Result** library useful extensions below to effectively achieve Railway Oriented Programming in Kotlin:
+
+### Result.then
+
+Composition the `Result` with a given `Result` from a lambda function.
+
+```kotlin
+val result0: Result<String> = Result.Success(value = "result0")
+val result1: Result<Int> = Result.Success(value = 123)
+val result = result0 then { result1 }
+result.onSuccess { intValue -> .. }
+```
+
+### Result.map, Result.mapSuspend
+
+Returns a transformed `Result` of applying the given function if the `Result` contains a successful data payload.
+
+```kotlin
+val result: Result<String> = Result.Success(value = "result")
+val mappedResult = result.map { 123 }
+mappedResult.onSuccess { intValue -> }
+```
+
+### Result.flatMap, Result.flatMapSuspend
+
+Returns a transformed `Result` from results of the function if the `Result` contains a successful data payload. Returns an original `Result` if the `Result` contains an error payload.
+
+```kotlin
+val result: Result<String> = Result.Success(value = "result")
+val mappedResult = result.flatMap { Result.Success(value = 123) }
+mappedResult.onSuccess { intValue -> }
+```
+
+## Use Stream Result within your project
+This implementation has been extracted on an open source library that you can use in your own project without needs to depend on ChatSDK.
+You can include the dependency in your project using the following code:
+```groovy {2}
+dependencies {
+    implementation "io.getstream:stream-result:$stream_result_version"
+}
+```
+
+The source code is on [GitHub](https://github.com/GetStream/stream-result).
