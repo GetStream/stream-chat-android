@@ -28,6 +28,7 @@
 ### ⚠️ Changed
 - Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
 - Moved `ChatClient.dismissChannelNotifications()` into `ChatClient` class. [#4692](https://github.com/GetStream/stream-chat-android/pull/4692)
+- Changed `ConnectionState` from interface to Sealed Class. The new `ConnectionState.Connected` class contains the `user` that open the WebSocket connection. [#4808](https://github.com/GetStream/stream-chat-android/pull/4808)
 
 ### ❌ Removed
 - Removed `ChatClient.setDevice()` method. [#4692](https://github.com/GetStream/stream-chat-android/pull/4692)
