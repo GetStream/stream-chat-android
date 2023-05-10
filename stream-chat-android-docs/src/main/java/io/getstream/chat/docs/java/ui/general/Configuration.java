@@ -159,6 +159,15 @@ public class Configuration {
                 }
                 return dateTimeFormatter.format(localTime);
             }
+
+            @NonNull
+            @Override
+            public String formatTime(@Nullable LocalDateTime localDateTime) {
+                if (localDateTime == null) {
+                    return "";
+                }
+                return formatTime(localDateTime.toLocalTime());
+            }
         });
     }
 }
