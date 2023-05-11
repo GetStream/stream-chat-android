@@ -35,7 +35,7 @@ import java.util.Locale
 private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 
 @InternalStreamChatApi
-public class CaptureMediaContract(private val mode: Mode = Mode.PHOTO_AND_VIDEO) :
+public class CaptureMediaContract(private val mode: Mode) :
     ActivityResultContract<Unit, File?>() {
 
     private var pictureFile: File? = null
