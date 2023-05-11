@@ -49,6 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- New method on `DateFormatter` to format date-time. [#4810](https://github.com/GetStream/stream-chat-android/pull/4810)
 
 ### ⚠️ Changed
 
