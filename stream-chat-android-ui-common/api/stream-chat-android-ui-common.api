@@ -97,12 +97,17 @@ public final class com/getstream/sdk/chat/startup/ThreeTenInitializer : androidx
 public abstract interface class com/getstream/sdk/chat/utils/DateFormatter {
 	public static final field Companion Lcom/getstream/sdk/chat/utils/DateFormatter$Companion;
 	public abstract fun formatDate (Lorg/threeten/bp/LocalDateTime;)Ljava/lang/String;
+	public abstract fun formatTime (Lorg/threeten/bp/LocalDateTime;)Ljava/lang/String;
 	public abstract fun formatTime (Lorg/threeten/bp/LocalTime;)Ljava/lang/String;
 	public static fun from (Landroid/content/Context;)Lcom/getstream/sdk/chat/utils/DateFormatter;
 }
 
 public final class com/getstream/sdk/chat/utils/DateFormatter$Companion {
 	public final fun from (Landroid/content/Context;)Lcom/getstream/sdk/chat/utils/DateFormatter;
+}
+
+public final class com/getstream/sdk/chat/utils/DateFormatter$DefaultImpls {
+	public static fun formatTime (Lcom/getstream/sdk/chat/utils/DateFormatter;Lorg/threeten/bp/LocalDateTime;)Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/utils/DateFormatterKt {
