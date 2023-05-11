@@ -184,6 +184,8 @@
         <attr name="streamUiMediaAttachmentsTabEnabled" format="boolean" />
         <attr name="streamUiFileAttachmentsTabEnabled" format="boolean" />
         <attr name="streamUiCameraAttachmentsTabEnabled" format="boolean" />
+        <attr name="streamUiTakeImageEnabledEnabled" format="boolean" />
+        <attr name="streamUiRecordVideoEnabledEnabled" format="boolean" />
 
         <!-- Attachment permissions -->
         <attr name="streamUiAllowAccessToGalleryText" format="string" />

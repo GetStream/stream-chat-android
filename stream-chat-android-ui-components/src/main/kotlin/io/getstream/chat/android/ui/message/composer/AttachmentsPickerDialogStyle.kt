@@ -69,6 +69,8 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param cameraAttachmentsTabIconDrawable The icon for the camera attachments tab.
  * @param allowAccessToCameraButtonText The text to request required permissions on the camera attachments tab.
  * @param allowAccessToCameraIconDrawable The icon above the permissions text on the camera attachments tab.
+ * @param takeImageEnabled If starting image capture is enabled.
+ * @param recordVideoEnabled If starting video capture is enabled.
  */
 @ExperimentalStreamChatApi
 public data class AttachmentsPickerDialogStyle(
@@ -107,6 +109,8 @@ public data class AttachmentsPickerDialogStyle(
     val cameraAttachmentsTabIconDrawable: Drawable,
     val allowAccessToCameraButtonText: String,
     val allowAccessToCameraIconDrawable: Drawable,
+    val takeImageEnabled: Boolean,
+    val recordVideoEnabled: Boolean,
 ) {
     public companion object {
         internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle {
@@ -353,6 +357,14 @@ public data class AttachmentsPickerDialogStyle(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerCameraAttachmentsTabEnabled,
                     true
                 )
+                val takeImageEnabled = a.getBoolean(
+                    R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerTakeImageEnabled,
+                    true
+                )
+                val recordVideoEnabled = a.getBoolean(
+                    R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerRecordVideoEnabled,
+                    true
+                )
 
                 val cameraAttachmentsTabIconDrawable = a.getDrawable(
                     R.styleable.AttachmentsPickerDialog_streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable
@@ -402,6 +414,8 @@ public data class AttachmentsPickerDialogStyle(
                     cameraAttachmentsTabIconDrawable = cameraAttachmentsTabIconDrawable,
                     allowAccessToCameraButtonText = allowAccessToCameraButtonText,
                     allowAccessToCameraIconDrawable = allowAccessToCameraIconDrawable,
+                    takeImageEnabled = takeImageEnabled,
+                    recordVideoEnabled = recordVideoEnabled,
                 ).let(TransformStyle.attachmentsPickerStyleTransformer::transform)
             }
         }

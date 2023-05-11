@@ -107,6 +107,8 @@
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
+        <attr name="streamUiMessageComposerTakeImageEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerRecordVideoEnabled" format="boolean" />
         <attr name="streamUiMessageComposerAttachmentsButtonIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerAttachmentsButtonRippleColor" format="color|reference" />
         <attr name="streamUiMessageComposerCommandsButtonVisible" format="boolean" />

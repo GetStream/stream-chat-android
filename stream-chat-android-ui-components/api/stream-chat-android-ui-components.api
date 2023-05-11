@@ -1851,7 +1851,7 @@ public final class io/getstream/chat/android/ui/message/MessageListFragment$Comp
 
 public final class io/getstream/chat/android/ui/message/composer/AttachmentsPickerDialogStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/composer/AttachmentsPickerDialogStyle$Companion;
-	public fun <init> (ILio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ZLio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;)V
+	public fun <init> (ILio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ZLio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ZZ)V
 	public final fun component1 ()I
 	public final fun component10 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component11 ()Z
@@ -1878,14 +1878,16 @@ public final class io/getstream/chat/android/ui/message/composer/AttachmentsPick
 	public final fun component30 ()Landroid/graphics/drawable/Drawable;
 	public final fun component31 ()Ljava/lang/String;
 	public final fun component32 ()Landroid/graphics/drawable/Drawable;
+	public final fun component33 ()Z
+	public final fun component34 ()Z
 	public final fun component4 ()Landroid/content/res/ColorStateList;
 	public final fun component5 ()Z
 	public final fun component6 ()Landroid/graphics/drawable/Drawable;
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Landroid/graphics/drawable/Drawable;
 	public final fun component9 ()Z
-	public final fun copy (ILio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ZLio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/message/composer/AttachmentsPickerDialogStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/composer/AttachmentsPickerDialogStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ZLio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/message/composer/AttachmentsPickerDialogStyle;
+	public final fun copy (ILio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ZLio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ZZ)Lio/getstream/chat/android/ui/message/composer/AttachmentsPickerDialogStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/composer/AttachmentsPickerDialogStyle;ILio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ZLio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;IZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;ZZIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/composer/AttachmentsPickerDialogStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAllowAccessButtonTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getAllowAccessToCameraButtonText ()Ljava/lang/String;
@@ -1914,7 +1916,9 @@ public final class io/getstream/chat/android/ui/message/composer/AttachmentsPick
 	public final fun getMediaAttachmentsTabIconDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getRecentFilesText ()Ljava/lang/String;
 	public final fun getRecentFilesTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getRecordVideoEnabled ()Z
 	public final fun getSubmitAttachmentsButtonIconDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getTakeImageEnabled ()Z
 	public final fun getVideoIconDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getVideoIconVisible ()Z
 	public final fun getVideoLengthTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -1985,7 +1989,7 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 
 public final class io/getstream/chat/android/ui/message/composer/MessageComposerViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle$Companion;
-	public fun <init> (ILjava/lang/Integer;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZILjava/lang/String;IZZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;IFLio/getstream/chat/android/ui/common/style/TextStyle;IF)V
+	public fun <init> (ILjava/lang/Integer;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZILjava/lang/String;IZZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZZZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;IFLio/getstream/chat/android/ui/common/style/TextStyle;IF)V
 	public final fun component1 ()I
 	public final fun component10 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component11 ()I
@@ -2010,36 +2014,38 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public final fun component29 ()Ljava/lang/Integer;
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
 	public final fun component30 ()Z
-	public final fun component31 ()Landroid/graphics/drawable/Drawable;
-	public final fun component32 ()Ljava/lang/Integer;
-	public final fun component33 ()Z
-	public final fun component34 ()Landroid/graphics/drawable/Drawable;
-	public final fun component35 ()Ljava/lang/String;
-	public final fun component36 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component31 ()Z
+	public final fun component32 ()Z
+	public final fun component33 ()Landroid/graphics/drawable/Drawable;
+	public final fun component34 ()Ljava/lang/Integer;
+	public final fun component35 ()Z
+	public final fun component36 ()Landroid/graphics/drawable/Drawable;
 	public final fun component37 ()Ljava/lang/String;
-	public final fun component38 ()Landroid/graphics/drawable/Drawable;
+	public final fun component38 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component39 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component40 ()Landroid/graphics/drawable/Drawable;
-	public final fun component41 ()Landroid/graphics/drawable/Drawable;
-	public final fun component42 ()Z
+	public final fun component41 ()Ljava/lang/String;
+	public final fun component42 ()Landroid/graphics/drawable/Drawable;
 	public final fun component43 ()Landroid/graphics/drawable/Drawable;
-	public final fun component44 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component44 ()Z
 	public final fun component45 ()Landroid/graphics/drawable/Drawable;
-	public final fun component46 ()I
-	public final fun component47 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component46 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component47 ()Landroid/graphics/drawable/Drawable;
 	public final fun component48 ()I
-	public final fun component49 ()F
+	public final fun component49 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component5 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component50 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
-	public final fun component51 ()I
-	public final fun component52 ()F
+	public final fun component50 ()I
+	public final fun component51 ()F
+	public final fun component52 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun component53 ()I
+	public final fun component54 ()F
 	public final fun component6 ()Landroid/graphics/drawable/Drawable;
 	public final fun component7 ()I
 	public final fun component8 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component9 ()Ljava/lang/String;
-	public final fun copy (ILjava/lang/Integer;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZILjava/lang/String;IZZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;IFLio/getstream/chat/android/ui/common/style/TextStyle;IF)Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;ILjava/lang/Integer;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZILjava/lang/String;IZZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;IFLio/getstream/chat/android/ui/common/style/TextStyle;IFIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
+	public final fun copy (ILjava/lang/Integer;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZILjava/lang/String;IZZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZZZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;IFLio/getstream/chat/android/ui/common/style/TextStyle;IF)Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;ILjava/lang/Integer;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;ZZLio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZZILjava/lang/String;IZZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZZZLandroid/graphics/drawable/Drawable;Ljava/lang/Integer;ZLandroid/graphics/drawable/Drawable;Ljava/lang/String;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;ZLandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ILio/getstream/chat/android/ui/common/style/TextStyle;IFLio/getstream/chat/android/ui/common/style/TextStyle;IFIILjava/lang/Object;)Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAlsoSendToChannelCheckboxDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getAlsoSendToChannelCheckboxText ()Ljava/lang/String;
@@ -2089,10 +2095,12 @@ public final class io/getstream/chat/android/ui/message/composer/MessageComposer
 	public final fun getMessageReplyMessageBackgroundStrokeWidthTheirs ()F
 	public final fun getMessageReplyTextStyleMine ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getMessageReplyTextStyleTheirs ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getRecordVideoEnabled ()Z
 	public final fun getReplyModeIconDrawable ()Landroid/graphics/drawable/Drawable;
 	public final fun getReplyModeText ()Ljava/lang/String;
 	public final fun getSendMessageButtonEnabled ()Z
 	public final fun getSendMessageButtonIconDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getTakeImageEnabled ()Z
 	public fun hashCode ()I
 	public final fun toMessageReplyStyle ()Lio/getstream/chat/android/ui/message/list/MessageReplyStyle;
 	public fun toString ()Ljava/lang/String;
@@ -2554,7 +2562,7 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 
 public final class io/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle$Companion;
-	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZZZ)V
+	public fun <init> (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZZZZZ)V
 	public final fun component1 ()Landroid/graphics/drawable/Drawable;
 	public final fun component10 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun component11 ()Lio/getstream/chat/android/ui/common/style/TextStyle;
@@ -2571,6 +2579,8 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public final fun component21 ()Z
 	public final fun component22 ()Z
 	public final fun component23 ()Z
+	public final fun component24 ()Z
+	public final fun component25 ()Z
 	public final fun component3 ()Landroid/graphics/drawable/Drawable;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
@@ -2578,8 +2588,8 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public final fun component7 ()Landroid/graphics/drawable/Drawable;
 	public final fun component8 ()Landroid/graphics/drawable/Drawable;
 	public final fun component9 ()Landroid/graphics/drawable/Drawable;
-	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZZZ)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;
+	public final fun copy (Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZZZZZ)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Lio/getstream/chat/android/ui/common/style/TextStyle;Ljava/lang/String;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/style/TextStyle;Landroid/graphics/drawable/Drawable;ZZILandroid/graphics/drawable/Drawable;Landroid/content/res/ColorStateList;ZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/message/input/attachment/AttachmentSelectionDialogStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAllowAccessToCameraIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getAllowAccessToCameraText ()Ljava/lang/String;
@@ -2599,6 +2609,8 @@ public final class io/getstream/chat/android/ui/message/input/attachment/Attachm
 	public final fun getPictureAttachmentIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getRecentFilesText ()Ljava/lang/String;
 	public final fun getRecentFilesTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
+	public final fun getRecordVideoEnabled ()Z
+	public final fun getTakeImageEnabled ()Z
 	public final fun getToggleButtonColorStateList ()Landroid/content/res/ColorStateList;
 	public final fun getVideoDurationTextStyle ()Lio/getstream/chat/android/ui/common/style/TextStyle;
 	public final fun getVideoIconDrawable ()Landroid/graphics/drawable/Drawable;

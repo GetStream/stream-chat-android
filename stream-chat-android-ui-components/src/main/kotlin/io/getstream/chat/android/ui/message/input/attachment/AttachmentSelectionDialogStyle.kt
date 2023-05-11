@@ -54,6 +54,8 @@ import io.getstream.chat.android.ui.common.style.TextStyle
  * @param mediaAttachmentsTabEnabled If the media attachments tab is displayed in the picker.
  * @param fileAttachmentsTabEnabled If the file attachments tab is displayed in the picker..
  * @param cameraAttachmentsTabEnabled If the media capture tab is displayed in the picker.
+ * @param takeImageEnabled If starting image capture is enabled.
+ * @param recordVideoEnabled If starting video capture is enabled.
  */
 public data class AttachmentSelectionDialogStyle(
     val pictureAttachmentIcon: Drawable,
@@ -79,6 +81,8 @@ public data class AttachmentSelectionDialogStyle(
     val mediaAttachmentsTabEnabled: Boolean,
     val fileAttachmentsTabEnabled: Boolean,
     val cameraAttachmentsTabEnabled: Boolean,
+    val takeImageEnabled: Boolean,
+    val recordVideoEnabled: Boolean,
 ) {
     public companion object {
         /**
@@ -120,6 +124,8 @@ public data class AttachmentSelectionDialogStyle(
                 mediaAttachmentsTabEnabled = true,
                 fileAttachmentsTabEnabled = true,
                 cameraAttachmentsTabEnabled = true,
+                takeImageEnabled = true,
+                recordVideoEnabled = true,
             )
         }
     }

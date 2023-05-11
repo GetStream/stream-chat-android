@@ -118,6 +118,8 @@
 
         <!-- Camera attachments tab -->
         <attr name="streamUiAttachmentsPickerCameraAttachmentsTabEnabled" format="boolean" />
+        <attr name="streamUiAttachmentsPickerTakeImageEnabled" format="boolean" />
+        <attr name="streamUiAttachmentsPickerRecordVideoEnabled" format="boolean" />
         <attr name="streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable" format="reference" />
         <attr name="streamUiAttachmentsPickerAllowAccessToCameraButtonText" format="string" />
         <attr name="streamUiAttachmentsPickerAllowAccessToCameraIconDrawable" format="reference" />

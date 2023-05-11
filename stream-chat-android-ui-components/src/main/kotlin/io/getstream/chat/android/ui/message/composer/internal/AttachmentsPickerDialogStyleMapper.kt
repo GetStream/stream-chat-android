@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.message.composer.internal
 
 import android.content.Context
 import io.getstream.chat.android.ui.message.composer.AttachmentsPickerDialogStyle
+import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogFragment
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
@@ -28,7 +29,10 @@ import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelection
  *
  * @param context The context to load string resources.
  */
-internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(context: Context): MessageInputViewStyle {
+internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(
+    context: Context,
+    style: MessageComposerViewStyle,
+): MessageInputViewStyle {
     return MessageInputViewStyle.createDefault(context).copy(
         attachmentSelectionDialogStyle = AttachmentSelectionDialogStyle.createDefault(context).copy(
             backgroundColor = attachmentsPickerBackgroundColor,
@@ -57,6 +61,8 @@ internal fun AttachmentsPickerDialogStyle.toMessageInputViewStyle(context: Conte
             cameraAttachmentIcon = cameraAttachmentsTabIconDrawable,
             allowAccessToCameraText = allowAccessToCameraButtonText,
             allowAccessToCameraIcon = allowAccessToCameraIconDrawable,
+            takeImageEnabled = style.takeImageEnabled,
+            recordVideoEnabled = style.recordVideoEnabled,
         ),
         // Media attachments tab
         mediaAttachmentEmptyStateText = mediaAttachmentNoMediaText,

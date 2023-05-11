@@ -68,6 +68,8 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
+ * @param takeImageEnabled If starting image capture is enabled.
+ * @param recordVideoEnabled If starting video capture is enabled.
  * @param commandsButtonVisible If the button to select commands is displayed.
  * @param commandsButtonIconDrawable The icon for the commands button.
  * @param commandsButtonRippleColor Ripple color of the commands button.
@@ -128,6 +130,8 @@ public data class MessageComposerViewStyle(
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
     @ColorInt public val attachmentsButtonRippleColor: Int?,
+    public val takeImageEnabled: Boolean,
+    public val recordVideoEnabled: Boolean,
     public val commandsButtonVisible: Boolean,
     public val commandsButtonIconDrawable: Drawable,
     @ColorInt public val commandsButtonRippleColor: Int?,
@@ -402,6 +406,14 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonVisible,
                     true
                 )
+                val takeImageEnabled = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerTakeImageEnabled,
+                    true
+                )
+                val recordVideoEnabled = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerRecordVideoEnabled,
+                    true
+                )
 
                 val attachmentsButtonIconDrawable = a.getDrawableCompat(
                     context,
@@ -635,6 +647,8 @@ public data class MessageComposerViewStyle(
                     messageInputShowReplyView = messageInputShowReplyView,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
+                    takeImageEnabled = takeImageEnabled,
+                    recordVideoEnabled = recordVideoEnabled,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
                     attachmentsButtonRippleColor = attachmentsButtonRippleColor,
                     commandsButtonVisible = commandsButtonVisible,
