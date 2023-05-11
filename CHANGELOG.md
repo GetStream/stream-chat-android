@@ -40,7 +40,6 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- Keep `Logic`and `State` instances even if the user is disconnected. [#4805](https://github.com/GetStream/stream-chat-android/pull/4805)
 
 ### ❌ Removed
 
@@ -70,7 +69,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Allow "unselect a message" if null is passed. [#4798](https://github.com/GetStream/stream-chat-android/pull/4798)
 
 ### ✅ Added
 - Add `ThreadMessagesStart` that allows to control if the stack of thread messages starts at the bottom or the top. [#4806](https://github.com/GetStream/stream-chat-android/pull/4806) 
