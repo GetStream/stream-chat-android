@@ -20,6 +20,8 @@
 
     <!-- Media capture -->
     <string name="stream_ui_message_input_capture_media">Capture Image or Video</string>
+    <string name="stream_ui_message_input_capture_media_take_photo">Capture Image</string>
+    <string name="stream_ui_message_input_capture_media_record_video">Capture Video</string>
 
     <!-- Permissions -->
     <string name="stream_ui_message_input_permission_camera_title">Camera and Storage Access Permission</string>
