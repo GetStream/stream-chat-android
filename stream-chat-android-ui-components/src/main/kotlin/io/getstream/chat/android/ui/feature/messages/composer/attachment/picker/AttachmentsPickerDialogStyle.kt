@@ -57,6 +57,7 @@ import io.getstream.chat.android.ui.font.TextStyle
  * @param cameraAttachmentsTabIconDrawable The icon for the camera attachments tab.
  * @param allowAccessToCameraButtonText The text to request required permissions on the camera attachments tab.
  * @param allowAccessToCameraIconDrawable The icon above the permissions text on the camera attachments tab.
+ * @param pickerMediaMode define which media type will be allowed.
  */
 public data class AttachmentsPickerDialogStyle(
     @ColorInt val attachmentsPickerBackgroundColor: Int,
@@ -96,4 +97,5 @@ public data class AttachmentsPickerDialogStyle(
     val cameraAttachmentsTabIconDrawable: Drawable,
     val allowAccessToCameraButtonText: String,
     val allowAccessToCameraIconDrawable: Drawable,
+    val pickerMediaMode: PickerMediaMode,
 )

@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.PickerMediaMode
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
@@ -38,6 +39,7 @@ import io.getstream.chat.android.ui.utils.extensions.getColorStateListCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
+import io.getstream.chat.android.ui.utils.extensions.getEnum
 import io.getstream.chat.android.ui.utils.extensions.use
 
 /**
@@ -1023,6 +1025,11 @@ public data class MessageComposerViewStyle(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToCameraIconDrawable
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
 
+            val pickerMediaMode = a.getEnum(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaMode,
+                PickerMediaMode.PHOTO_AND_VIDEO,
+            )
+
             return AttachmentsPickerDialogStyle(
                 attachmentsPickerBackgroundColor = attachmentsPickerBackgroundColor,
                 allowAccessButtonTextStyle = allowAccessButtonTextStyle,
@@ -1060,6 +1067,7 @@ public data class MessageComposerViewStyle(
                 cameraAttachmentsTabIconDrawable = cameraAttachmentsTabIconDrawable,
                 allowAccessToCameraButtonText = allowAccessToCameraButtonText,
                 allowAccessToCameraIconDrawable = allowAccessToCameraIconDrawable,
+                pickerMediaMode = pickerMediaMode,
             ).let(TransformStyle.attachmentsPickerStyleTransformer::transform)
         }
 

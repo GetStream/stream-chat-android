@@ -27,6 +27,7 @@ import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContrac
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentCameraBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.PickerMediaMode
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.PermissionChecker
@@ -102,7 +103,10 @@ internal class CameraAttachmentFragment : Fragment() {
 
     private fun setupResultListener() {
         activityResultLauncher = activity?.activityResultRegistry
-            ?.register(LauncherRequestsKeys.CAPTURE_MEDIA, CaptureMediaContract()) { file: File? ->
+            ?.register(
+                LauncherRequestsKeys.CAPTURE_MEDIA,
+                CaptureMediaContract(style.pickerMediaMode.mode),
+            ) { file: File? ->
                 val result: List<AttachmentMetaData> = if (file == null) {
                     emptyList()
                 } else {
@@ -157,5 +161,15 @@ internal class CameraAttachmentFragment : Fragment() {
                 setStyle(style)
             }
         }
+
+        /**
+         * Map [PickerMediaMode] into [CaptureMediaContract.Mode]
+         */
+        private val PickerMediaMode.mode: CaptureMediaContract.Mode
+            get() = when (this) {
+                PickerMediaMode.PHOTO -> CaptureMediaContract.Mode.PHOTO
+                PickerMediaMode.VIDEO -> CaptureMediaContract.Mode.VIDEO
+                PickerMediaMode.PHOTO_AND_VIDEO -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
+            }
     }
 }

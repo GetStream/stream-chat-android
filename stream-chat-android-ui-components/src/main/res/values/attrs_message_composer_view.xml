@@ -264,6 +264,11 @@
 
         <!-- Media attachments tab -->
         <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerAttachmentsPickerMediaMode" format="enum">
+            <enum name="photo" value="0" />
+            <enum name="video" value="1" />
+            <enum name="photo_and_video" value="2" />
+        </attr>
         <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToMediaButtonText" format="string" />
         <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToMediaIconDrawable" format="reference" />

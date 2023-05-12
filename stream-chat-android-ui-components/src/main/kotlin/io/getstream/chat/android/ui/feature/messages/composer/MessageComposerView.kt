@@ -33,7 +33,6 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCenterContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCommandSuggestionsContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerFooterContent
