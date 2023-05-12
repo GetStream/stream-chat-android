@@ -60,11 +60,6 @@ public class MessageComposerView : ConstraintLayout {
     private lateinit var binding: StreamUiMessageComposerBinding
 
     /**
-     * Legacy style that is needed for the attachments picker dialog.
-     */
-    private lateinit var attachmentsPickerDialogStyle: AttachmentsPickerDialogStyle
-
-    /**
      * The context that will be propagated to each content view.
      */
     private lateinit var messageComposerContext: MessageComposerContext
@@ -129,11 +124,12 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var attachmentsButtonClickListener: () -> Unit = {
         context.getFragmentManager()?.let {
-            AttachmentsPickerDialogFragment.newInstance(attachmentsPickerDialogStyle).apply {
-                setAttachmentSelectionListener { attachments: List<AttachmentMetaData> ->
-                    attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
-                }
-            }.show(it, AttachmentsPickerDialogFragment.TAG)
+            AttachmentsPickerDialogFragment
+                .newInstance(messageComposerContext.style.attachmentsPickerDialogStyle).apply {
+                    setAttachmentSelectionListener { attachments: List<AttachmentMetaData> ->
+                        attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
+                    }
+                }.show(it, AttachmentsPickerDialogFragment.TAG)
         }
     }
 
@@ -213,7 +209,6 @@ public class MessageComposerView : ConstraintLayout {
 
         validationErrorRenderer = ValidationErrorRenderer(context, this)
         messageComposerContext = MessageComposerContext(MessageComposerViewStyle(context, attrs))
-        attachmentsPickerDialogStyle = AttachmentsPickerDialogStyle(context, attrs)
 
         setBackgroundColor(messageComposerContext.style.backgroundColor)
         binding.separator.background = messageComposerContext.style.dividerBackgroundDrawable

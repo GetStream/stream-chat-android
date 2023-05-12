@@ -55,6 +55,5 @@
         <attr name="streamUiTypingIndicatorView" format="reference" />
         <attr name="streamUiPinnedMessageListStyle" format="reference" />
         <attr name="streamUiMessageComposerViewStyle" format="reference" />
-        <attr name="streamUiAttachmentsPickerDialogStyle" format="reference" />
     </declare-styleable>
 </resources>

@@ -246,5 +246,113 @@
         replying to a message. Applied when replying to messages owned by other users
          user. -->
         <attr name="streamUiMessageComposerMessageReplyStrokeWidthTheirs" format="dimension|reference" />
+
+        <attr name="streamUiMessageComposerAttachmentsPickerBackgroundColor" format="reference|color" />
+
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextFont" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageComposerAttachmentsPickerSubmitAttachmentsButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAttachmentTabToggleButtonStateList" format="color|reference" />
+
+        <!-- Media attachments tab -->
+        <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToMediaButtonText" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToMediaIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsPickerVideoLengthTextVisible" format="boolean" />
+
+        <attr name="streamUiMessageComposerAttachmentsPickerVideoLengthTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAttachmentsPickerVideoLengthTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAttachmentsPickerVideoLengthTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerVideoLengthTextFont" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerVideoLengthTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageComposerAttachmentsPickerVideoIconVisible" format="boolean" />
+        <attr name="streamUiMessageComposerAttachmentsPickerVideoIconDrawable" format="reference" />
+        <!-- The tint of the icon used for video files. -->
+        <attr name="streamUiMessageComposerAttachmentsPickerVideoIconDrawableTint" format="reference|color"/>
+        <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaText" format="string" />
+
+        <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextFont" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <!-- File attachments tab -->
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentsTabEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentsTabIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToFilesButtonText" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToFilesIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsPickerRecentFilesText" format="string" />
+
+        <attr name="streamUiMessageComposerAttachmentsPickerRecentFilesTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAttachmentsPickerRecentFilesTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAttachmentsPickerRecentFilesTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerRecentFilesTextFont" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerRecentFilesTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageComposerAttachmentsPickerFileManagerIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesText" format="string" />
+
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextFont" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextFont" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextFont" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxSelectedDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxDeselectedDrawable" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxTextColor" format="reference|color" />
+
+        <!-- Camera attachments tab -->
+        <attr name="streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToCameraButtonText" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToCameraIconDrawable" format="reference" />
     </declare-styleable>
 </resources>

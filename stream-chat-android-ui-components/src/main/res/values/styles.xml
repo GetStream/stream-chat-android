@@ -258,7 +258,6 @@
         <item name="streamUiMediaAttachmentGridViewStyle">@style/StreamUi.MediaAttachmentGridView</item>
         <item name="streamUiAttachmentGalleryVideoAttachmentsStyle">@style/StreamUi.AttachmentGallery.VideoAttachments</item>
         <item name="streamUiMessageComposerViewStyle">@style/StreamUi.MessageComposerView</item>
-        <item name="streamUiAttachmentsPickerDialogStyle">@style/StreamUi.AttachmentsPickerDialog</item>
     </style>
 
     <style name="StreamUi">
@@ -1072,51 +1071,49 @@
         <item name="streamUiMessageComposerCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiMessageComposerCooldownTimerTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiMessageComposerCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>
-    </style>
 
-    <style name="StreamUi.AttachmentsPickerDialog" parent="StreamUi">
-        <item name="streamUiAttachmentsPickerBackgroundColor">@color/stream_ui_white_smoke</item>
-        <item name="streamUiAttachmentsPickerAllowAccessButtonTextSize">@dimen/stream_ui_text_large</item>
-        <item name="streamUiAttachmentsPickerAllowAccessButtonTextColor">@color/stream_ui_accent_blue</item>
-        <item name="streamUiAttachmentsPickerSubmitAttachmentsButtonIconDrawable">@drawable/stream_ui_ic_next</item>
-        <item name="streamUiAttachmentsPickerAttachmentTabToggleButtonStateList">@color/stream_ui_attachment_tab_button</item>
+        <item name="streamUiMessageComposerAttachmentsPickerBackgroundColor">@color/stream_ui_white_smoke</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextColor">@color/stream_ui_accent_blue</item>
+        <item name="streamUiMessageComposerAttachmentsPickerSubmitAttachmentsButtonIconDrawable">@drawable/stream_ui_ic_next</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAttachmentTabToggleButtonStateList">@color/stream_ui_attachment_tab_button</item>
 
         <!-- Media attachments tab -->
-        <item name="streamUiAttachmentsPickerMediaAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
-        <item name="streamUiAttachmentsPickerAllowAccessToMediaButtonText">@string/stream_ui_message_composer_gallery_access</item>
-        <item name="streamUiAttachmentsPickerAllowAccessToMediaIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
-        <item name="streamUiAttachmentsPickerVideoLengthTextVisible">true</item>
-        <item name="streamUiAttachmentsPickerVideoLengthTextSize">@dimen/stream_ui_text_small</item>
-        <item name="streamUiAttachmentsPickerVideoLengthTextColor">@color/stream_ui_black</item>
-        <item name="streamUiAttachmentsPickerVideoIconVisible">true</item>
-        <item name="streamUiAttachmentsPickerVideoIconDrawable">@drawable/stream_ui_ic_video</item>
-        <item name="streamUiAttachmentsPickerVideoIconDrawableTint">@color/stream_ui_black</item>
-        <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaText">@string/stream_ui_message_composer_no_files</item>
-        <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextSize">@dimen/stream_ui_text_large</item>
-        <item name="streamUiAttachmentsPickerMediaAttachmentNoMediaTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToMediaButtonText">@string/stream_ui_message_composer_gallery_access</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToMediaIconDrawable">@drawable/stream_ui_attachment_permission_media</item>
+        <item name="streamUiMessageComposerAttachmentsPickerVideoLengthTextVisible">true</item>
+        <item name="streamUiMessageComposerAttachmentsPickerVideoLengthTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageComposerAttachmentsPickerVideoLengthTextColor">@color/stream_ui_black</item>
+        <item name="streamUiMessageComposerAttachmentsPickerVideoIconVisible">true</item>
+        <item name="streamUiMessageComposerAttachmentsPickerVideoIconDrawable">@drawable/stream_ui_ic_video</item>
+        <item name="streamUiMessageComposerAttachmentsPickerVideoIconDrawableTint">@color/stream_ui_black</item>
+        <item name="streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaText">@string/stream_ui_message_composer_no_files</item>
+        <item name="streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextColor">@color/stream_ui_text_color_primary</item>
 
         <!-- File attachments tab -->
-        <item name="streamUiAttachmentsPickerFileAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
-        <item name="streamUiAttachmentsPickerAllowAccessToFilesButtonText">@string/stream_ui_message_composer_files_access</item>
-        <item name="streamUiAttachmentsPickerAllowAccessToFilesIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
-        <item name="streamUiAttachmentsPickerRecentFilesText">@string/stream_ui_message_composer_recent_files</item>
-        <item name="streamUiAttachmentsPickerRecentFilesTextSize">@dimen/stream_ui_spacing_medium</item>
-        <item name="streamUiAttachmentsPickerRecentFilesTextColor">@color/stream_ui_black</item>
-        <item name="streamUiAttachmentsPickerFileManagerIconDrawable">@drawable/stream_ui_ic_file_manager</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentsNoFilesText">@string/stream_ui_message_composer_no_files</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentsNoFilesTextSize">@dimen/stream_ui_text_large</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentsNoFilesTextColor">@color/stream_ui_text_color_primary</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentItemNameTextSize">@dimen/stream_ui_text_medium</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentItemNameTextColor">@color/stream_ui_black</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentItemSizeTextSize">@dimen/stream_ui_text_small</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentItemSizeTextColor">@color/stream_ui_text_color_secondary</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentItemCheckboxSelectedDrawable">@drawable/stream_ui_circle_blue</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentItemCheckboxDeselectedDrawable">@drawable/stream_ui_ic_file_manager</item>
-        <item name="streamUiAttachmentsPickerFileAttachmentItemCheckboxTextColor">@color/stream_ui_literal_white</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToFilesButtonText">@string/stream_ui_message_composer_files_access</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToFilesIconDrawable">@drawable/stream_ui_attachment_permission_file</item>
+        <item name="streamUiMessageComposerAttachmentsPickerRecentFilesText">@string/stream_ui_message_composer_recent_files</item>
+        <item name="streamUiMessageComposerAttachmentsPickerRecentFilesTextSize">@dimen/stream_ui_spacing_medium</item>
+        <item name="streamUiMessageComposerAttachmentsPickerRecentFilesTextColor">@color/stream_ui_black</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileManagerIconDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesText">@string/stream_ui_message_composer_no_files</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextColor">@color/stream_ui_black</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextSize">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxSelectedDrawable">@drawable/stream_ui_circle_blue</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxDeselectedDrawable">@drawable/stream_ui_ic_file_manager</item>
+        <item name="streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxTextColor">@color/stream_ui_literal_white</item>
 
         <!-- Camera attachments tab -->
-        <item name="streamUiAttachmentsPickerCameraAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
-        <item name="streamUiAttachmentsPickerAllowAccessToCameraButtonText">@string/stream_ui_message_composer_camera_access</item>
-        <item name="streamUiAttachmentsPickerAllowAccessToCameraIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
+        <item name="streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToCameraButtonText">@string/stream_ui_message_composer_camera_access</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToCameraIconDrawable">@drawable/stream_ui_attachment_permission_camera</item>
     </style>
 </resources>
