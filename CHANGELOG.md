@@ -61,6 +61,12 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the ability to enable/disable camera recorder and/or take picture attachment feature in `MessageComposerView` via xml attributes. [#4811](https://github.com/GetStream/stream-chat-android/pull/4811)
+  * `streamUiMessageComposerTakeImageEnabled`
+  * `streamUiMessageComposerRecordVideoEnabled`
+- Added the ability to enable/disable camera recorder and/or take picture attachment feature in `MessageInputView` via xml attributes. [#4811](https://github.com/GetStream/stream-chat-android/pull/4811)
+  * `stream_ui_message_input_capture_media_take_photo`
+  * `stream_ui_message_input_capture_media_record_video`
 
 ### ⚠️ Changed
 
@@ -73,6 +79,7 @@
 
 ### ✅ Added
 - Add `ThreadMessagesStart` that allows to control if the stack of thread messages starts at the bottom or the top. [#4806](https://github.com/GetStream/stream-chat-android/pull/4806) 
+- Add `PickerMediaMode` that allows control if the camera recorder and/or take picture feature is allowed or not. [#4811](https://github.com/GetStream/stream-chat-android/pull/4811)
 
 ### ⚠️ Changed
 
