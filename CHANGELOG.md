@@ -78,6 +78,8 @@
 ### ✅ Added
 - Added `ChatUI.streamCdnImageResizing` which allows resizing images where they appear as previews, such as the message list, attachment gallery overview or user and channel avatars. Only images hosted by Stream's CDN which contain original width and height query parameters can be resized. Image resizing is a paid feature and is disabled by default, you can enable it by overriding the aforementioned `ChatUI.streamCdnImageResizing` property with with an instance that has `StreamCdnImageResizing.imageResizingEnabled` set to true. Pricing can be found [here](https://getstream.io/chat/pricing/). [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
 - Added `showDateSeparatorInEmptyThread: Boolean` to `MessageListViewModelFactory`. It is used to regulate whether date separators appear in empty threads. [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
+- Added the ability to choose `PickerMediaMode` that allows control if the camera recorder and/or take picture feature is allowed or not in `MessageComposerView` via xml attributes. [#4812](https://github.com/GetStream/stream-chat-android/pull/4812)
+  * `streamUiMessageComposerAttachmentsPickerMediaMode`
 
 ### ⚠️ Changed
 - Replaced the method parameter `replyMessageId: String` with `replyTo: Message` inside `ReplyMessageClickListener.onReplyClick()`. The new parameter now contains the complete message to which the reply was made. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
@@ -100,6 +102,7 @@
 - Added the composable content slot `emptyThreadPlaceholderItemContent` to `MessageContainer`. It is used to display placeholders inside empty threads if the feature was enabled by the `MessageListController` of the `MessageListViewModel` instance you have created.  [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
 - Added `showDateSeparatorInEmptyThread: Boolean` to `MessagesViewModelFactory`. It is used to regulate whether date separators appear in empty threads. [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
 - Add `ThreadMessagesStart` that allows to control if the stack of thread messages starts at the bottom or the top. [#4807](https://github.com/GetStream/stream-chat-android/pull/4807)
+- Add `PickerMediaMode` that allows control if the camera recorder and/or take picture feature is allowed or not. [#4812](https://github.com/GetStream/stream-chat-android/pull/4812)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Renamed `onHeaderActionClick` to `onHeaderTitleClick` in `MessagesScreen`. Change made in order to better reflect the handler's behavior. [#4535](https://github.com/GetStream/stream-chat-android/pull/4535)

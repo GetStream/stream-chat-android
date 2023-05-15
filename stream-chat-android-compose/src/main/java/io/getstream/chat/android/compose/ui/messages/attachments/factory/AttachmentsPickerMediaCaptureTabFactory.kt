@@ -43,8 +43,11 @@ import java.io.File
 
 /**
  * Holds the information required to add support for "media capture" tab in the attachment picker.
+ *
+ * @property pickerMediaMode define which media type will be allowed.
  */
-public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFactory {
+public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode: PickerMediaMode) :
+    AttachmentsPickerTabFactory {
 
     /**
      * The attachment picker mode that this factory handles.
@@ -95,7 +98,7 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
             if (requiresCameraPermission) rememberPermissionState(permission = Manifest.permission.CAMERA) else null
 
         val mediaCaptureResultLauncher =
-            rememberLauncherForActivityResult(contract = CaptureMediaContract()) { file: File? ->
+            rememberLauncherForActivityResult(contract = CaptureMediaContract(pickerMediaMode.mode)) { file: File? ->
                 val attachments = if (file == null) {
                     emptyList()
                 } else {
@@ -128,4 +131,23 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
             .requestedPermissions
             .contains(Manifest.permission.CAMERA)
     }
+
+    /**
+     * Define which media type will be allowed.
+     */
+    public enum class PickerMediaMode {
+        PHOTO,
+        VIDEO,
+        PHOTO_AND_VIDEO,
+    }
+
+    /**
+     * Map [PickerMediaMode] into [CaptureMediaContract.Mode]
+     */
+    private val PickerMediaMode.mode: CaptureMediaContract.Mode
+        get() = when (this) {
+            PickerMediaMode.PHOTO -> CaptureMediaContract.Mode.PHOTO
+            PickerMediaMode.VIDEO -> CaptureMediaContract.Mode.VIDEO
+            PickerMediaMode.PHOTO_AND_VIDEO -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
+        }
 }

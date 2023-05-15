@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.composer
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.InputType
@@ -26,15 +27,19 @@ import androidx.annotation.Px
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.PickerMediaMode
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
+import io.getstream.chat.android.ui.utils.extensions.getColorStateListCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
+import io.getstream.chat.android.ui.utils.extensions.getEnum
 import io.getstream.chat.android.ui.utils.extensions.use
 
 /**
@@ -188,6 +193,7 @@ public data class MessageComposerViewStyle(
     public val messageReplyTextStyleTheirs: TextStyle,
     @ColorInt public val messageReplyMessageBackgroundStrokeColorTheirs: Int,
     @Px public val messageReplyMessageBackgroundStrokeWidthTheirs: Float,
+    public val attachmentsPickerDialogStyle: AttachmentsPickerDialogStyle,
 ) {
 
     /**
@@ -760,8 +766,309 @@ public data class MessageComposerViewStyle(
                     messageReplyTextStyleTheirs = messageReplyTextStyleTheirs,
                     messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
                     messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
+                    attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(context, a),
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
             }
+        }
+
+        private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle {
+            val attachmentsPickerBackgroundColor = a.getColor(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerBackgroundColor,
+                context.getColorCompat(R.color.stream_ui_white_smoke)
+            )
+
+            val allowAccessButtonTextStyle = TextStyle.Builder(a)
+                .size(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_large)
+                )
+                .color(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextColor,
+                    context.getColorCompat(R.color.stream_ui_accent_blue)
+                )
+                .font(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextFontAssets,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextFont
+                )
+                .style(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextStyle,
+                    Typeface.BOLD
+                )
+                .build()
+
+            val submitAttachmentsButtonIconDrawable = a.getDrawableCompat(
+                context,
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSubmitAttachmentsButtonIconDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!
+
+            val attachmentTabToggleButtonStateList = a.getColorStateList(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAttachmentTabToggleButtonStateList
+            ) ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)
+
+            /**
+             * Media attachments tab
+             */
+            val mediaAttachmentsTabEnabled = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabEnabled,
+                true
+            )
+
+            val mediaAttachmentsTabIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabIconDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
+
+            val allowAccessToMediaButtonText = a.getText(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToMediaButtonText
+            )?.toString() ?: context.getString(R.string.stream_ui_message_composer_gallery_access)
+
+            val allowAccessToMediaIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToMediaIconDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
+
+            val videoLengthTextVisible = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextVisible,
+                true
+            )
+
+            val videoLengthTextStyle = TextStyle.Builder(a)
+                .size(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_small)
+                )
+                .color(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextColor,
+                    context.getColorCompat(R.color.stream_ui_black)
+                )
+                .font(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextFontAssets,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextFont
+                )
+                .style(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
+
+            val videoIconVisible = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoIconVisible,
+                true
+            )
+
+            val videoIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoIconDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!
+
+            val videoIconDrawableTint =
+                a.getColorOrNull(R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoIconDrawableTint)
+
+            val mediaAttachmentNoMediaText = a.getString(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaText
+            ) ?: context.getString(R.string.stream_ui_message_composer_no_files)
+
+            val mediaAttachmentNoMediaTextStyle = TextStyle.Builder(a)
+                .size(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_large)
+                )
+                .color(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .font(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextFontAssets,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextFont
+                )
+                .style(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
+
+            /**
+             * File attachments tab
+             */
+            val fileAttachmentsTabEnabled = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsTabEnabled,
+                true
+            )
+
+            val fileAttachmentsTabIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsTabIconDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
+
+            val allowAccessToFilesButtonText = a.getText(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToFilesButtonText
+            )?.toString() ?: context.getString(R.string.stream_ui_message_composer_files_access)
+
+            val allowAccessToFilesIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToFilesIconDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
+
+            val recentFilesText = a.getText(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesText
+            )?.toString() ?: context.getString(R.string.stream_ui_message_composer_recent_files)
+
+            val recentFilesTextStyle = TextStyle.Builder(a)
+                .size(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextSize,
+                    context.getDimension(R.dimen.stream_ui_spacing_medium)
+                )
+                .color(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextColor,
+                    context.getColorCompat(R.color.stream_ui_black)
+                )
+                .font(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextFontAssets,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextFont
+                )
+                .style(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextStyle,
+                    Typeface.BOLD
+                )
+                .build()
+
+            val fileManagerIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileManagerIconDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
+
+            val fileAttachmentsNoFilesText = a.getString(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesText
+            ) ?: context.getString(R.string.stream_ui_message_composer_no_files)
+
+            val fileAttachmentsNoFilesTextStyle = TextStyle.Builder(a)
+                .size(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_large)
+                )
+                .color(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                )
+                .font(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextFontAssets,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextFont
+                )
+                .style(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextStyle,
+                    Typeface.NORMAL
+                )
+                .build()
+
+            val fileAttachmentItemNameTextStyle = TextStyle.Builder(a)
+                .size(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_medium)
+                )
+                .color(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextColor,
+                    context.getColorCompat(R.color.stream_ui_black)
+                )
+                .font(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextFontAssets,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextFont
+                )
+                .style(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextStyle,
+                    Typeface.BOLD
+                )
+                .build()
+
+            val fileAttachmentItemSizeTextStyle = TextStyle.Builder(a)
+                .size(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_small)
+                )
+                .color(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextColor,
+                    context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                )
+                .font(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextFontAssets,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextFont
+                )
+                .style(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextStyle,
+                    Typeface.BOLD
+                )
+                .build()
+
+            val fileAttachmentItemCheckboxSelectedDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxSelectedDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_circle_blue)!!
+
+            val fileAttachmentItemCheckboxDeselectedDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxDeselectedDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
+
+            val fileAttachmentItemCheckboxTextColor = a.getColor(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxTextColor,
+                context.getColorCompat(R.color.stream_ui_literal_white)
+            )
+
+            /**
+             * Camera attachments tab
+             */
+            val cameraAttachmentsTabEnabled = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabEnabled,
+                true
+            )
+
+            val cameraAttachmentsTabIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabIconDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
+
+            val allowAccessToCameraButtonText = a.getText(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToCameraButtonText
+            )?.toString() ?: context.getString(R.string.stream_ui_message_composer_camera_access)
+
+            val allowAccessToCameraIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToCameraIconDrawable
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
+
+            val pickerMediaMode = a.getEnum(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaMode,
+                PickerMediaMode.PHOTO_AND_VIDEO,
+            )
+
+            return AttachmentsPickerDialogStyle(
+                attachmentsPickerBackgroundColor = attachmentsPickerBackgroundColor,
+                allowAccessButtonTextStyle = allowAccessButtonTextStyle,
+                submitAttachmentsButtonIconDrawable = submitAttachmentsButtonIconDrawable,
+                attachmentTabToggleButtonStateList = attachmentTabToggleButtonStateList,
+                // Media attachments tab
+                mediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
+                mediaAttachmentsTabIconDrawable = mediaAttachmentsTabIconDrawable,
+                allowAccessToMediaButtonText = allowAccessToMediaButtonText,
+                allowAccessToMediaIconDrawable = allowAccessToMediaIconDrawable,
+                videoLengthTextVisible = videoLengthTextVisible,
+                videoLengthTextStyle = videoLengthTextStyle,
+                videoIconVisible = videoIconVisible,
+                videoIconDrawable = videoIconDrawable,
+                videoIconDrawableTint = videoIconDrawableTint,
+                mediaAttachmentNoMediaText = mediaAttachmentNoMediaText,
+                mediaAttachmentNoMediaTextStyle = mediaAttachmentNoMediaTextStyle,
+                // File attachments tab
+                fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
+                fileAttachmentsTabIconDrawable = fileAttachmentsTabIconDrawable,
+                allowAccessToFilesButtonText = allowAccessToFilesButtonText,
+                allowAccessToFilesIconDrawable = allowAccessToFilesIconDrawable,
+                recentFilesText = recentFilesText,
+                recentFilesTextStyle = recentFilesTextStyle,
+                fileManagerIconDrawable = fileManagerIconDrawable,
+                fileAttachmentsNoFilesText = fileAttachmentsNoFilesText,
+                fileAttachmentsNoFilesTextStyle = fileAttachmentsNoFilesTextStyle,
+                fileAttachmentItemNameTextStyle = fileAttachmentItemNameTextStyle,
+                fileAttachmentItemSizeTextStyle = fileAttachmentItemSizeTextStyle,
+                fileAttachmentItemCheckboxSelectedDrawable = fileAttachmentItemCheckboxSelectedDrawable,
+                fileAttachmentItemCheckboxDeselectedDrawable = fileAttachmentItemCheckboxDeselectedDrawable,
+                fileAttachmentItemCheckboxTextColor = fileAttachmentItemCheckboxTextColor,
+                // Camera attachments tab
+                cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
+                cameraAttachmentsTabIconDrawable = cameraAttachmentsTabIconDrawable,
+                allowAccessToCameraButtonText = allowAccessToCameraButtonText,
+                allowAccessToCameraIconDrawable = allowAccessToCameraIconDrawable,
+                pickerMediaMode = pickerMediaMode,
+            ).let(TransformStyle.attachmentsPickerStyleTransformer::transform)
         }
 
         private const val DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH = 4F
