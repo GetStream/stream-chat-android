@@ -26,6 +26,8 @@
 - Added `ChatClient.clearPersistence()` to be able to clear local data even if the user is not connected. [#4796](https://github.com/GetStream/stream-chat-android/pull/4796)
 - Added new `hideHistory` flag into `ChatClient.addMembers` function. This flag can be used to hide the channel's history from the added member. [#4817](https://github.com/GetStream/stream-chat-android/pull/4817)
 - Added new `hideHistory` flag into `ChannelClient.addMembers` function. This flag can be used to hide the channel's history from the added member. [#4817](https://github.com/GetStream/stream-chat-android/pull/4817)
+- Added `ChatClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
+- Added `ChannelClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
 
 ### ⚠️ Changed
 - Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
