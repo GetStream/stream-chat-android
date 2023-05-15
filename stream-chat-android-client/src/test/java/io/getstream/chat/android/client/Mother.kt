@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.SocketFactory
+import io.getstream.chat.android.client.socket.experimental.ChatSocketStateService
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomDate
 import io.getstream.chat.android.test.randomInt
@@ -109,6 +110,9 @@ internal object Mother {
         true -> randomAnonymousConnectionConf(endpoint, apiKey, user)
         false -> randomUserConnectionConf(endpoint, apiKey, user)
     }
+
+    fun randomConnectionType(): ChatSocketStateService.ConnectionType =
+        ChatSocketStateService.ConnectionType.values().random()
 
     fun mockedClientState(): ClientState {
         return object : ClientState {

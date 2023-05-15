@@ -67,12 +67,22 @@ internal class ChatSocket private constructor(
         reconnectCallback = { chatSocketStateService.onWebSocketEventLost() }
     )
     private val lifecycleHandler = object : LifecycleHandler {
-        override fun resume() { chatSocketStateService.onResume() }
-        override fun stopped() { chatSocketStateService.onStop() }
+        override fun resume() {
+            chatSocketStateService.onResume()
+        }
+
+        override fun stopped() {
+            chatSocketStateService.onStop()
+        }
     }
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
-        override fun onConnected() { chatSocketStateService.onNetworkAvailable() }
-        override fun onDisconnected() { chatSocketStateService.onNetworkNotAvailable() }
+        override fun onConnected() {
+            chatSocketStateService.onNetworkAvailable()
+        }
+
+        override fun onDisconnected() {
+            chatSocketStateService.onNetworkNotAvailable()
+        }
     }
 
     @Suppress("ComplexMethod")
@@ -106,7 +116,7 @@ internal class ChatSocket private constructor(
             chatSocketStateService.observer { state ->
                 when (state) {
                     is State.RestartConnection -> {
-                        connectionConf?.let { chatSocketStateService.onReconnect(it) }
+                        connectionConf?.let { chatSocketStateService.onReconnect(it, false) }
                     }
                     is State.Connected -> {
                         healthMonitor.ack()
@@ -114,9 +124,13 @@ internal class ChatSocket private constructor(
                     }
                     is State.Connecting -> {
                         callListeners { listener -> listener.onConnecting() }
-                        when (state.isReconnection) {
-                            true -> reconnect(state.connectionConf.asReconnectionConf())
-                            false -> connectUser(state.connectionConf)
+                        when (state.connectionType) {
+                            ChatSocketStateService.ConnectionType.INITIAL_CONNECTION ->
+                                connectUser(state.connectionConf)
+                            ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION ->
+                                reconnect(state.connectionConf.asReconnectionConf())
+                            ChatSocketStateService.ConnectionType.FORCE_RECONNECTION ->
+                                reconnect(state.connectionConf.asReconnectionConf())
                         }
                     }
                     is State.Disconnected -> {
@@ -145,7 +159,7 @@ internal class ChatSocket private constructor(
                             }
                             is State.Disconnected.WebSocketEventLost -> {
                                 streamWebSocket?.close()
-                                connectionConf?.let { chatSocketStateService.onReconnect(it) }
+                                connectionConf?.let { chatSocketStateService.onReconnect(it, false) }
                             }
                         }
                         callListeners { listener -> listener.onDisconnected(cause = state.cause) }
@@ -271,12 +285,13 @@ internal class ChatSocket private constructor(
         else -> error("This state doesn't contain connectionId")
     }
 
-    fun reconnectUser(user: User, isAnonymous: Boolean) {
+    fun reconnectUser(user: User, isAnonymous: Boolean, forceReconnection: Boolean) {
         chatSocketStateService.onReconnect(
             when (isAnonymous) {
                 true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
                 false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
-            }
+            },
+            forceReconnection
         )
     }
 

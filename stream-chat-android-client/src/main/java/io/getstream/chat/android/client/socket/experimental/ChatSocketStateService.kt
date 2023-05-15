@@ -36,8 +36,16 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      *
      * @param connectionConf The [SocketFactory.ConnectionConf] to be used to reconnect.
      */
-    fun onReconnect(connectionConf: SocketFactory.ConnectionConf) {
-        stateMachine.sendEvent(Event.Connect(connectionConf, true))
+    fun onReconnect(connectionConf: SocketFactory.ConnectionConf, forceReconnection: Boolean) {
+        stateMachine.sendEvent(
+            Event.Connect(
+                connectionConf,
+                when (forceReconnection) {
+                    true -> ConnectionType.FORCE_RECONNECTION
+                    false -> ConnectionType.AUTOMATIC_RECONNECTION
+                },
+            )
+        )
     }
 
     /**
@@ -46,7 +54,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
      * @param connectionConf The [SocketFactory.ConnectionConf] to be used on the new connection.
      */
     fun onConnect(connectionConf: SocketFactory.ConnectionConf) {
-        stateMachine.sendEvent(Event.Connect(connectionConf, false))
+        stateMachine.sendEvent(Event.Connect(connectionConf, ConnectionType.INITIAL_CONNECTION))
     }
 
     /**
@@ -140,7 +148,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
             }
 
             state<State.RestartConnection> {
-                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.isReconnection) }
+                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.connectionType) }
                 onEvent<Event.ConnectionEstablished> { State.Connected(it.connectedEvent) }
                 onEvent<Event.WebSocketEventLost> { State.Disconnected.WebSocketEventLost }
                 onEvent<Event.NetworkNotAvailable> { State.Disconnected.NetworkDisconnected }
@@ -151,7 +159,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
             }
 
             state<State.Connecting> {
-                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.isReconnection) }
+                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.connectionType) }
                 onEvent<Event.ConnectionEstablished> { State.Connected(it.connectedEvent) }
                 onEvent<Event.WebSocketEventLost> { State.Disconnected.WebSocketEventLost }
                 onEvent<Event.NetworkNotAvailable> { State.Disconnected.NetworkDisconnected }
@@ -173,12 +181,12 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
 
             state<State.Disconnected.Stopped> {
                 onEvent<Event.RequiredDisconnection> { State.Disconnected.DisconnectedByRequest }
-                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.isReconnection) }
+                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.connectionType) }
                 onEvent<Event.Resume> { State.RestartConnection }
             }
 
             state<State.Disconnected.NetworkDisconnected> {
-                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.isReconnection) }
+                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.connectionType) }
                 onEvent<Event.ConnectionEstablished> { State.Connected(it.connectedEvent) }
                 onEvent<Event.UnrecoverableError> { State.Disconnected.DisconnectedPermanently(it.error) }
                 onEvent<Event.NetworkError> { State.Disconnected.DisconnectedTemporarily(it.error) }
@@ -188,7 +196,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
             }
 
             state<State.Disconnected.WebSocketEventLost> {
-                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.isReconnection) }
+                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.connectionType) }
                 onEvent<Event.ConnectionEstablished> { State.Connected(it.connectedEvent) }
                 onEvent<Event.NetworkNotAvailable> { State.Disconnected.NetworkDisconnected }
                 onEvent<Event.UnrecoverableError> { State.Disconnected.DisconnectedPermanently(it.error) }
@@ -200,15 +208,16 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
             state<State.Disconnected.DisconnectedByRequest> {
                 onEvent<Event.RequiredDisconnection> { currentState }
                 onEvent<Event.Connect> {
-                    when (it.isReconnection) {
-                        true -> this
-                        false -> State.Connecting(it.connectionConf, it.isReconnection)
+                    when (it.connectionType) {
+                        ConnectionType.INITIAL_CONNECTION -> State.Connecting(it.connectionConf, it.connectionType)
+                        ConnectionType.AUTOMATIC_RECONNECTION -> this
+                        ConnectionType.FORCE_RECONNECTION -> State.Connecting(it.connectionConf, it.connectionType)
                     }
                 }
             }
 
             state<State.Disconnected.DisconnectedTemporarily> {
-                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.isReconnection) }
+                onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.connectionType) }
                 onEvent<Event.ConnectionEstablished> { State.Connected(it.connectedEvent) }
                 onEvent<Event.NetworkNotAvailable> { State.Disconnected.NetworkDisconnected }
                 onEvent<Event.WebSocketEventLost> { State.Disconnected.WebSocketEventLost }
@@ -220,14 +229,21 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
 
             state<State.Disconnected.DisconnectedPermanently> {
                 onEvent<Event.Connect> {
-                    when (it.isReconnection) {
-                        true -> this
-                        false -> State.Connecting(it.connectionConf, it.isReconnection)
+                    when (it.connectionType) {
+                        ConnectionType.INITIAL_CONNECTION -> State.Connecting(it.connectionConf, it.connectionType)
+                        ConnectionType.AUTOMATIC_RECONNECTION -> this
+                        ConnectionType.FORCE_RECONNECTION -> State.Connecting(it.connectionConf, it.connectionType)
                     }
                 }
                 onEvent<Event.RequiredDisconnection> { State.Disconnected.DisconnectedByRequest }
             }
         }
+    }
+
+    internal enum class ConnectionType {
+        INITIAL_CONNECTION,
+        AUTOMATIC_RECONNECTION,
+        FORCE_RECONNECTION,
     }
 
     private sealed class Event {
@@ -237,7 +253,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
          */
         data class Connect(
             val connectionConf: SocketFactory.ConnectionConf,
-            val isReconnection: Boolean,
+            val connectionType: ConnectionType,
         ) : Event()
 
         /**
@@ -298,7 +314,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
          */
         data class Connecting(
             val connectionConf: SocketFactory.ConnectionConf,
-            val isReconnection: Boolean,
+            val connectionType: ConnectionType,
         ) : State()
 
         /**
