@@ -314,6 +314,14 @@ internal interface ChatApi {
     ): Call<Channel>
 
     @CheckResult
+    fun inviteMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>,
+        systemMessage: Message?,
+    ): Call<Channel>
+
+    @CheckResult
     fun queryMembers(
         channelType: String,
         channelId: String,
