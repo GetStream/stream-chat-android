@@ -986,7 +986,8 @@ internal constructor(
         when (val userState = userStateService.state) {
             is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocket.reconnectUser(
                 userState.userOrError(),
-                userState is UserState.AnonymousUserSet
+                userState is UserState.AnonymousUserSet,
+                true,
             )
             else -> error("Invalid user state $userState without user being set!")
         }
