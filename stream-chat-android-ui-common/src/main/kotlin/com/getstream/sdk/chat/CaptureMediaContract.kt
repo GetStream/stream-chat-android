@@ -34,31 +34,16 @@ import java.util.Locale
 private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 
 @InternalStreamChatApi
-public class CaptureMediaContract : ActivityResultContract<Unit, File?>() {
+public class CaptureMediaContract(private val mode: Mode) :
+    ActivityResultContract<Unit, File?>() {
 
     private var pictureFile: File? = null
     private var videoFile: File? = null
 
     override fun createIntent(context: Context, input: Unit): Intent {
-        val takePictureIntents =
-            File(
-                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
-                createFileName("STREAM_IMG", "jpg")
-            ).let {
-                pictureFile = it
-                createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it)
-            }
-        val recordVideoIntents =
-            File(
-                context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.cacheDir,
-                createFileName("STREAM_VID", "mp4")
-            ).let {
-                videoFile = it
-                createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it)
-            }
-        val intents = takePictureIntents + recordVideoIntents
+        val intents: List<Intent> = mode.intents(context)
         val initialIntent = intents.lastOrNull() ?: Intent()
-        return Intent.createChooser(initialIntent, context.getString(R.string.stream_ui_message_input_capture_media))
+        return Intent.createChooser(initialIntent, mode.label(context))
             .apply {
                 putExtra(
                     Intent.EXTRA_INITIAL_INTENTS,
@@ -67,13 +52,31 @@ public class CaptureMediaContract : ActivityResultContract<Unit, File?>() {
             }
     }
 
+    private fun getRecordVideoIntents(context: Context): List<Intent> =
+        File(
+            context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.cacheDir,
+            createFileName("STREAM_VID", "mp4")
+        ).let {
+            videoFile = it
+            createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it)
+        }
+
+    private fun getTakePictureIntents(context: Context): List<Intent> =
+        File(
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
+            createFileName("STREAM_IMG", "jpg")
+        ).let {
+            pictureFile = it
+            createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it)
+        }
+
     private fun createFileName(prefix: String, extension: String) =
         "${prefix}_${dateFormat.format(Date().time)}.$extension"
 
     private fun createIntentList(
         context: Context,
         action: String,
-        destinationFile: File
+        destinationFile: File,
     ): List<Intent> {
         val destinationUri = StreamFileUtil.getUriForFile(
             context,
@@ -96,6 +99,27 @@ public class CaptureMediaContract : ActivityResultContract<Unit, File?>() {
     override fun parseResult(resultCode: Int, intent: Intent?): File? =
         (pictureFile.takeIfCaptured() ?: videoFile.takeIfCaptured())
             .takeIf { resultCode == Activity.RESULT_OK }
+
+    @InternalStreamChatApi
+    public enum class Mode {
+        PHOTO,
+        VIDEO,
+        PHOTO_AND_VIDEO,
+    }
+
+    private fun Mode.intents(context: Context): List<Intent> = when (this) {
+        Mode.PHOTO -> getTakePictureIntents(context)
+        Mode.VIDEO -> getRecordVideoIntents(context)
+        Mode.PHOTO_AND_VIDEO -> getTakePictureIntents(context) + getRecordVideoIntents(context)
+    }
+
+    private fun Mode.label(context: Context): String = context.getString(
+        when (this) {
+            Mode.PHOTO -> R.string.stream_ui_message_input_capture_media_take_photo
+            Mode.VIDEO -> R.string.stream_ui_message_input_capture_media_record_video
+            Mode.PHOTO_AND_VIDEO -> R.string.stream_ui_message_input_capture_media
+        }
+    )
 }
 
 private fun File?.takeIfCaptured(): File? = this?.takeIf { it.exists() && it.length() > 0 }

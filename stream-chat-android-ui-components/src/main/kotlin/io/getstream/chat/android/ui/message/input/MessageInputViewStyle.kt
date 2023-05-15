@@ -443,6 +443,14 @@ public data class MessageInputViewStyle(
                     R.styleable.MessageInputView_streamUiCameraAttachmentsTabEnabled,
                     true
                 )
+                val takeImageEnabled = a.getBoolean(
+                    R.styleable.MessageInputView_streamUiTakeImageEnabledEnabled,
+                    true
+                )
+                val recordVideoEnabled = a.getBoolean(
+                    R.styleable.MessageInputView_streamUiRecordVideoEnabledEnabled,
+                    true
+                )
 
                 val attachmentDialogStyle = AttachmentSelectionDialogStyle(
                     pictureAttachmentIcon = pictureAttachmentIcon,
@@ -468,6 +476,8 @@ public data class MessageInputViewStyle(
                     mediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
                     fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
                     cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
+                    takeImageEnabled = takeImageEnabled,
+                    recordVideoEnabled = recordVideoEnabled,
                 )
 
                 val commandInputCancelIcon = a.getDrawable(

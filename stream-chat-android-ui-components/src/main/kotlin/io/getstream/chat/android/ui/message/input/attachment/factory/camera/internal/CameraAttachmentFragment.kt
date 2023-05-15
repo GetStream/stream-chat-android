@@ -30,6 +30,7 @@ import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflat
 import io.getstream.chat.android.ui.common.style.setTextStyle
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentCameraBinding
 import io.getstream.chat.android.ui.message.input.MessageInputViewStyle
+import io.getstream.chat.android.ui.message.input.attachment.AttachmentSelectionDialogStyle
 import io.getstream.chat.android.ui.message.input.attachment.AttachmentSource
 import io.getstream.chat.android.ui.message.input.attachment.factory.AttachmentsPickerTabListener
 import java.io.File
@@ -69,7 +70,7 @@ internal class CameraAttachmentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (::style.isInitialized) {
             setupViews()
-            setupResultListener()
+            setupResultListener(style.mode)
             checkPermissions()
         }
     }
@@ -103,9 +104,9 @@ internal class CameraAttachmentFragment : Fragment() {
         }
     }
 
-    private fun setupResultListener() {
+    private fun setupResultListener(mode: CaptureMediaContract.Mode) {
         activityResultLauncher = activity?.activityResultRegistry
-            ?.register(LauncherRequestsKeys.CAPTURE_MEDIA, CaptureMediaContract()) { file: File? ->
+            ?.register(LauncherRequestsKeys.CAPTURE_MEDIA, CaptureMediaContract(mode)) { file: File? ->
                 val result: List<AttachmentMetaData> = if (file == null) {
                     emptyList()
                 } else {
@@ -160,5 +161,15 @@ internal class CameraAttachmentFragment : Fragment() {
                 setStyle(style)
             }
         }
+
+        private val MessageInputViewStyle.mode: CaptureMediaContract.Mode
+            get() = this.attachmentSelectionDialogStyle.mode
+
+        private val AttachmentSelectionDialogStyle.mode: CaptureMediaContract.Mode
+            get() = when {
+                takeImageEnabled && recordVideoEnabled.not() -> CaptureMediaContract.Mode.PHOTO
+                takeImageEnabled.not() && recordVideoEnabled -> CaptureMediaContract.Mode.VIDEO
+                else -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
+            }
     }
 }

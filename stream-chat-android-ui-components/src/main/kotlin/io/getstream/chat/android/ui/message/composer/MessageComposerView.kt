@@ -221,8 +221,9 @@ public class MessageComposerView : ConstraintLayout {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
 
         validationErrorRenderer = ValidationErrorRenderer(context, this)
-        messageInputViewStyle = AttachmentsPickerDialogStyle(context, attr).toMessageInputViewStyle(context)
         messageComposerContext = MessageComposerContext(MessageComposerViewStyle(context, attr))
+        messageInputViewStyle = AttachmentsPickerDialogStyle(context, attr)
+            .toMessageInputViewStyle(context, messageComposerContext.style)
 
         setBackgroundColor(messageComposerContext.style.backgroundColor)
         binding.separator.background = messageComposerContext.style.dividerBackgroundDrawable
