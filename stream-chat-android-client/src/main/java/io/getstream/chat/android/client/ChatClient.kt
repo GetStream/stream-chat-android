@@ -2158,6 +2158,7 @@ internal constructor(
      * @param channelId The channel id. ie 123.
      * @param memberIds The list of the member ids to be added.
      * @param systemMessage The system message that will be shown in the channel.
+     * @param hideHistory Hides the history of the channel to the added member.
      *
      * @return Executable async [Call] responsible for adding the members.
      */
@@ -2167,12 +2168,14 @@ internal constructor(
         channelId: String,
         memberIds: List<String>,
         systemMessage: Message? = null,
+        hideHistory: Boolean? = null,
     ): Call<Channel> {
         return api.addMembers(
             channelType,
             channelId,
             memberIds,
             systemMessage,
+            hideHistory,
         )
     }
 

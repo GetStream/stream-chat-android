@@ -661,11 +661,12 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         channelId: String,
         members: List<String>,
         systemMessage: Message?,
+        hideHistory: Boolean?,
     ): Call<Channel> {
         return channelApi.addMembers(
             channelType = channelType,
             channelId = channelId,
-            body = AddMembersRequest(members, systemMessage?.toDto()),
+            body = AddMembersRequest(members, systemMessage?.toDto(), hideHistory),
         ).map(this::flattenChannel)
     }
 
