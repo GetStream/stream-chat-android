@@ -436,7 +436,7 @@ Using the `addMembers()` method adds the given users as members:
 val channelClient = client.channel("messaging", "general")
 
 // Add members with ids "thierry" and "josh"
-channelClient.addMembers("thierry", "josh").enqueue { result ->
+channelClient.addMembers(listOf("thierry", "josh")).enqueue { result ->
     if (result.isSuccess) {
         val channel: Channel = result.data()
     } else {
@@ -453,7 +453,7 @@ Using the `removeMembers()` method removes the given users from members:
 val channelClient = client.channel("messaging", "general")
 
 // Remove member with id "tommaso"
-channelClient.removeMembers("tommaso").enqueue { result ->
+channelClient.removeMembers(listOf("tommaso")).enqueue { result ->
     if (result.isSuccess) {
         val channel: Channel = result.data()
     } else {
@@ -468,7 +468,7 @@ _Stream Chat_ provides the ability to invite users to a channel via the `channel
 
 ### Inviting a User
 
-See the following for an example on how to invite a user by adding an `invites` array containing the user ID:
+See the following for an example on how to invite a user to a new channel by adding an `invites` array containing the user ID:
 
 ```kotlin
 val channelClient = client.channel("messaging", "general") 
@@ -483,6 +483,20 @@ channelClient.create(data).enqueue { result ->
     } else { 
         // Handle result.error() 
     } 
+}
+```
+
+To invite users to an existing channel, you can use the following snippet:
+
+```kotlin
+val channelClient = client.channel("messaging", "general")
+
+channelClient.inviteMembers(listOf("thierry", "josh")).enqueue { result ->
+    if (result.isSuccess) {
+        val channel = result.data()
+    } else {
+        // Handle result.error()
+    }
 }
 ```
 
