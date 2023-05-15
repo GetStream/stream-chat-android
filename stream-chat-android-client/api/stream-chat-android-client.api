@@ -76,6 +76,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun hideChannel (Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun hideChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun instance ()Lio/getstream/chat/android/client/ChatClient;
+	public final fun inviteMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun inviteMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun isSocketConnected ()Z
 	public final fun keystroke (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun keystroke$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
@@ -827,6 +829,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun getReactions (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun hide (Z)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun hide$default (Lio/getstream/chat/android/client/channel/ChannelClient;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
+	public final fun inviteMembers (Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun inviteMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun keystroke ()Lio/getstream/chat/android/client/call/Call;
 	public final fun keystroke (Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun keystroke$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
