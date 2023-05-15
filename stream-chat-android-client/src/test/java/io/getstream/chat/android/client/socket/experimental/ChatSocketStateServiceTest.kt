@@ -38,11 +38,12 @@ internal class ChatSocketStateServiceTest {
     fun `When Reconnect event arrives, should move to the proper state`(
         initialState: State,
         connectionConf: SocketFactory.ConnectionConf,
+        forceReconnection: Boolean,
         resultState: State,
     ) {
         val sut = ChatSocketStateService(initialState)
 
-        sut.onReconnect(connectionConf)
+        sut.onReconnect(connectionConf, forceReconnection)
 
         sut.currentState `should be equal to` resultState
     }
@@ -219,7 +220,7 @@ internal class ChatSocketStateServiceTest {
                 State.RestartConnection,
                 State.RestartConnection,
             ),
-            State.Connecting(Mother.randomConnectionConf(), randomBoolean()).let {
+            State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()).let {
                 Arguments.of(
                     it,
                     it,
@@ -268,7 +269,7 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.NetworkDisconnected,
             ),
             Arguments.of(
-                State.Connecting(Mother.randomConnectionConf(), randomBoolean()),
+                State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
                 State.Disconnected.NetworkDisconnected,
             ),
             Arguments.of(
@@ -310,7 +311,7 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.DisconnectedByRequest,
             ),
             Arguments.of(
-                State.Connecting(Mother.randomConnectionConf(), randomBoolean()),
+                State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
                 State.Disconnected.DisconnectedByRequest,
             ),
             Arguments.of(
@@ -350,7 +351,7 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.Stopped,
             ),
             Arguments.of(
-                State.Connecting(Mother.randomConnectionConf(), randomBoolean()),
+                State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
                 State.Disconnected.Stopped,
             ),
             Arguments.of(
@@ -391,7 +392,7 @@ internal class ChatSocketStateServiceTest {
                 State.RestartConnection,
                 State.RestartConnection,
             ),
-            State.Connecting(Mother.randomConnectionConf(), randomBoolean()).let {
+            State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()).let {
                 Arguments.of(
                     it,
                     it,
@@ -440,7 +441,7 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.WebSocketEventLost,
             ),
             Arguments.of(
-                State.Connecting(Mother.randomConnectionConf(), randomBoolean()),
+                State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
                 State.Disconnected.WebSocketEventLost,
             ),
             Arguments.of(
@@ -476,54 +477,114 @@ internal class ChatSocketStateServiceTest {
         )
 
         @JvmStatic
+        @Suppress("LongMethod")
         fun onReconnectArgs() = Mother.randomConnectionConf().let { newConnectionConf ->
             listOf(
                 Arguments.of(
                     State.RestartConnection,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, true)
+                    true,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION)
                 ),
                 Arguments.of(
-                    State.Connecting(Mother.randomConnectionConf(), randomBoolean()),
+                    State.RestartConnection,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, true),
+                    false,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION)
+                ),
+                Arguments.of(
+                    State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
+                    newConnectionConf,
+                    true,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
+                ),
+                Arguments.of(
+                    State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
+                    newConnectionConf,
+                    false,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION),
                 ),
                 Mother.randomConnectedEvent().let {
                     Arguments.of(
                         State.Connected(it),
                         newConnectionConf,
+                        randomBoolean(),
                         State.Connected(it),
                     )
                 },
                 Arguments.of(
                     State.Disconnected.Stopped,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, true),
+                    true,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
+                ),
+                Arguments.of(
+                    State.Disconnected.Stopped,
+                    newConnectionConf,
+                    false,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION),
                 ),
                 Arguments.of(
                     State.Disconnected.NetworkDisconnected,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, true),
+                    true,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
+                ),
+                Arguments.of(
+                    State.Disconnected.NetworkDisconnected,
+                    newConnectionConf,
+                    false,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION),
                 ),
                 Arguments.of(
                     State.Disconnected.WebSocketEventLost,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, true),
+                    true,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
+                ),
+                Arguments.of(
+                    State.Disconnected.WebSocketEventLost,
+                    newConnectionConf,
+                    false,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION),
                 ),
                 Arguments.of(
                     State.Disconnected.DisconnectedByRequest,
                     newConnectionConf,
+                    true,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
+                ),
+                Arguments.of(
+                    State.Disconnected.DisconnectedByRequest,
+                    newConnectionConf,
+                    false,
                     State.Disconnected.DisconnectedByRequest,
                 ),
                 Arguments.of(
                     State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, true),
+                    true,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
+                ),
+                Arguments.of(
+                    State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                    newConnectionConf,
+                    false,
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION),
                 ),
                 Mother.randomChatNetworkError().let {
                     Arguments.of(
                         State.Disconnected.DisconnectedPermanently(it),
                         newConnectionConf,
+                        true,
+                        State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
+                    )
+                },
+                Mother.randomChatNetworkError().let {
+                    Arguments.of(
+                        State.Disconnected.DisconnectedPermanently(it),
+                        newConnectionConf,
+                        false,
                         State.Disconnected.DisconnectedPermanently(it),
                     )
                 },
@@ -539,7 +600,7 @@ internal class ChatSocketStateServiceTest {
                     State.Connected(connectedEvent),
                 ),
                 Arguments.of(
-                    State.Connecting(Mother.randomConnectionConf(), randomBoolean()),
+                    State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
                     connectedEvent,
                     State.Connected(connectedEvent),
                 ),
@@ -594,7 +655,7 @@ internal class ChatSocketStateServiceTest {
                     State.Disconnected.DisconnectedPermanently(error),
                 ),
                 Arguments.of(
-                    State.Connecting(Mother.randomConnectionConf(), randomBoolean()),
+                    State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
                     error,
                     State.Disconnected.DisconnectedPermanently(error),
                 ),
@@ -647,7 +708,7 @@ internal class ChatSocketStateServiceTest {
                     State.Disconnected.DisconnectedTemporarily(error),
                 ),
                 Arguments.of(
-                    State.Connecting(Mother.randomConnectionConf(), randomBoolean()),
+                    State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
                     error,
                     State.Disconnected.DisconnectedTemporarily(error),
                 ),
@@ -697,12 +758,12 @@ internal class ChatSocketStateServiceTest {
                 Arguments.of(
                     State.RestartConnection,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, false),
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
                 Arguments.of(
-                    State.Connecting(Mother.randomConnectionConf(), randomBoolean()),
+                    State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, false),
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
                 Mother.randomConnectedEvent().let {
                     Arguments.of(
@@ -714,32 +775,32 @@ internal class ChatSocketStateServiceTest {
                 Arguments.of(
                     State.Disconnected.Stopped,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, false),
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
                 Arguments.of(
                     State.Disconnected.NetworkDisconnected,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, false),
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
                 Arguments.of(
                     State.Disconnected.WebSocketEventLost,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, false),
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
                 Arguments.of(
                     State.Disconnected.DisconnectedByRequest,
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, false),
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
                 Arguments.of(
                     State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, false),
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
                 Arguments.of(
                     State.Disconnected.DisconnectedPermanently(Mother.randomChatNetworkError()),
                     newConnectionConf,
-                    State.Connecting(newConnectionConf, false),
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
             )
         }

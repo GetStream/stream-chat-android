@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
+import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
@@ -120,6 +121,9 @@ internal object Mother {
             setInitializationState(InitializationState.COMPLETE)
         }
     }
+
+    fun randomConnectionType(): ChatSocketStateService.ConnectionType =
+        ChatSocketStateService.ConnectionType.values().random()
 
     fun chatLoggerConfig(): ChatLoggerConfig = object : ChatLoggerConfig {
         override val level: ChatLogLevel = ChatLogLevel.NOTHING
