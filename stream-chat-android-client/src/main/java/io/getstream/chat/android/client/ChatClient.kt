@@ -2203,6 +2203,29 @@ internal constructor(
     )
 
     /**
+     * Invites members to a given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param memberIds The list of the member ids to be invited.
+     * @param systemMessage The system message that will be shown in the channel.
+     *
+     * @return Executable async [Call] responsible for inviting the members.
+     */
+    @CheckResult
+    public fun inviteMembers(
+        channelType: String,
+        channelId: String,
+        memberIds: List<String>,
+        systemMessage: Message? = null,
+    ): Call<Channel> = api.inviteMembers(
+        channelType,
+        channelId,
+        memberIds,
+        systemMessage
+    )
+
+    /**
      * Mutes a channel for the current user. Messages added to the channel will not trigger
      * push notifications, and will not change the unread count for the users that muted it.
      * By default, mutes stay in place indefinitely until the user removes it. However, you

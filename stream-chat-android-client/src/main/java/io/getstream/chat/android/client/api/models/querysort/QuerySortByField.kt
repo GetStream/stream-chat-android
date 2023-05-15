@@ -52,7 +52,6 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
     private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
         Comparator { o1, o2 ->
             val fieldName = this.snakeToLowerCamelCase()
-            logger.v { "[compare] fieldName: $fieldName" }
             val fieldOne = o1.getComparableField(fieldName) as? Comparable<Any>
             val fieldTwo = o2.getComparableField(fieldName) as? Comparable<Any>
 
@@ -80,7 +79,7 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
          */
         @JvmStatic
         public fun <R : ComparableFieldProvider> ascByName(
-            fieldName: String
+            fieldName: String,
         ): QuerySortByField<R> = QuerySortByField<R>().asc(fieldName)
 
         /**
@@ -90,7 +89,7 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
          */
         @JvmStatic
         public fun <R : ComparableFieldProvider> descByName(
-            fieldName: String
+            fieldName: String,
         ): QuerySortByField<R> = QuerySortByField<R>().desc(fieldName)
 
         /**
@@ -100,7 +99,7 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
          */
         @JvmStatic
         public fun <R : ComparableFieldProvider> QuerySortByField<R>.ascByName(
-            fieldName: String
+            fieldName: String,
         ): QuerySortByField<R> = asc(fieldName)
 
         /**
@@ -110,7 +109,7 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
          */
         @JvmStatic
         public fun <R : ComparableFieldProvider> QuerySortByField<R>.descByName(
-            fieldName: String
+            fieldName: String,
         ): QuerySortByField<R> = desc(fieldName)
     }
 }

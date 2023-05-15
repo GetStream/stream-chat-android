@@ -628,6 +628,26 @@ public class ChannelClient internal constructor(
         )
     }
 
+    /**
+     * Invites members to a given channel.
+     *
+     * @see [ChatClient.inviteMembers]
+     *
+     * @param memberIds The list of the member ids to be invited.
+     * @param systemMessage The system message object that will be shown in the channel.
+     *
+     * @return Executable async [Call] responsible for inviting the members.
+     */
+    @CheckResult
+    public fun inviteMembers(memberIds: List<String>, systemMessage: Message? = null): Call<Channel> {
+        return client.inviteMembers(
+            channelType = channelType,
+            channelId = channelId,
+            memberIds = memberIds,
+            systemMessage = systemMessage,
+        )
+    }
+
     @CheckResult
     public fun acceptInvite(message: String?): Call<Channel> {
         return client.acceptInvite(channelType, channelId, message)

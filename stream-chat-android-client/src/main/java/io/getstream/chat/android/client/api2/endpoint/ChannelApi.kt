@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
+import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
@@ -124,6 +125,13 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body body: RemoveMembersRequest,
+    ): RetrofitCall<ChannelResponse>
+
+    @POST("/channels/{type}/{id}")
+    fun inviteMembers(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Body body: InviteMembersRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}/event")
