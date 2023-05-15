@@ -1612,7 +1612,7 @@ internal constructor(
     ): Call<Message> {
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
         val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
-
+        getCurrentUser()?.let { message.user = it }
         return CoroutineCall(userScope) {
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
