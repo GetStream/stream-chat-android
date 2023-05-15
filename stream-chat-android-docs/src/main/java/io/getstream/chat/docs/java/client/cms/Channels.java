@@ -550,6 +550,23 @@ public class Channels {
         }
 
         /**
+         * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=java#inviting-users">Iniviting Users</a>
+         */
+        public void invitingUsersToExistingChannel() {
+            ChannelClient channelClient = client.channel("messaging", "general");
+
+            List<String> memberIds = Arrays.asList("nick");
+
+            channelClient.inviteMembers(memberIds, null).enqueue(result -> {
+                if (result.isSuccess()) {
+                    Channel channel = result.data();
+                } else {
+                    // Handle result.error()
+                }
+            });
+        }
+
+        /**
          * @see <a href="https://getstream.io/chat/docs/channel_invites/?language=java#accepting-an-invite">Accept an Invite</a>
          */
         public void acceptingAnInvite() {
