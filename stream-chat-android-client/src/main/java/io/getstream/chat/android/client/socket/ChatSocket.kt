@@ -62,7 +62,7 @@ internal open class ChatSocket constructor(
         userScope = userScope,
         reconnectCallback = {
             if (state is State.DisconnectedTemporarily) {
-                this@ChatSocket.reconnect(connectionConf)
+                this@ChatSocket.reconnect(connectionConf, false)
             }
         },
         checkCallback = {
@@ -77,7 +77,7 @@ internal open class ChatSocket constructor(
             logger.i { "[onNetworkConnected] socket state: ${state.javaClass.simpleName}" }
             if (state is State.DisconnectedTemporarily || state == State.NetworkDisconnected) {
                 logger.i { "network connected, reconnecting socket" }
-                reconnect(connectionConf)
+                reconnect(connectionConf, false)
             }
         }
 
@@ -164,7 +164,7 @@ internal open class ChatSocket constructor(
                 if (reconnectionAttempts < RETRY_LIMIT) {
                     userScope.launch {
                         delay(DEFAULT_DELAY * reconnectionAttempts.toDouble().pow(2.0).toLong())
-                        reconnect(connectionConf)
+                        reconnect(connectionConf, false)
                         reconnectionAttempts += 1
                     }
                 }
@@ -204,13 +204,14 @@ internal open class ChatSocket constructor(
         )
     }
 
-    fun reconnectUser(user: User, isAnonymous: Boolean) {
+    fun reconnectUser(user: User, isAnonymous: Boolean, forceReconnection: Boolean) {
         logger.i { "[reconnectUser] isAnonymous: $isAnonymous, user.id: ${user.id}" }
         reconnect(
             when (isAnonymous) {
                 true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
                 false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
-            }
+            },
+            forceReconnection,
         )
     }
 
@@ -232,9 +233,19 @@ internal open class ChatSocket constructor(
         state = State.DisconnectedPermanently(null)
     }
 
-    open fun releaseConnection() {
-        logger.d { "[releaseConnection] no args" }
-        state = State.DisconnectedByRequest
+    open fun releaseConnection(requested: Boolean) {
+        logger.d { "[releaseConnection] requested: $requested" }
+        state = when (requested) {
+            true -> State.DisconnectedByRequest
+            false -> when (state) {
+                is State.DisconnectedByRequest,
+                is State.DisconnectedPermanently -> state
+                is State.Connected,
+                is State.Connecting,
+                is State.DisconnectedTemporarily,
+                is State.NetworkDisconnected -> State.DisconnectedTemporarily(null)
+            }
+        }
     }
 
     open fun onConnectionResolved(event: ConnectedEvent) {
@@ -253,10 +264,15 @@ internal open class ChatSocket constructor(
         socket?.send(event)
     }
 
-    private fun reconnect(connectionConf: SocketFactory.ConnectionConf?) {
+    private fun reconnect(
+        connectionConf: SocketFactory.ConnectionConf?,
+        forceReconnection: Boolean,
+    ) {
         logger.d { "[reconnect] user.id: ${connectionConf?.user?.id}" }
-        shutdownSocketConnection()
-        setupSocket(connectionConf?.asReconnectionConf())
+        if (state != State.DisconnectedByRequest || forceReconnection) {
+            shutdownSocketConnection()
+            setupSocket(connectionConf?.asReconnectionConf())
+        }
     }
 
     private fun setupSocket(connectionConf: SocketFactory.ConnectionConf?) {

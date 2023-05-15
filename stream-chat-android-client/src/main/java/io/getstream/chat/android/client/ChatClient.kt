@@ -251,7 +251,7 @@ internal constructor(
     private val lifecycleHandler = object : LifecycleHandler {
         override fun resume() = reconnectSocket(false)
         override fun stopped() {
-            socket.releaseConnection()
+            socket.releaseConnection(false)
         }
     }
 
@@ -1045,7 +1045,7 @@ internal constructor(
         if (ToggleService.isSocketExperimental()) {
             chatSocketExperimental.disconnect()
         } else {
-            socket.disconnect()
+            socket.releaseConnection(true)
         }
     }
 
@@ -1055,15 +1055,18 @@ internal constructor(
 
     private fun reconnectSocket(forceReconnection: Boolean) {
         if (ToggleService.isSocketExperimental().not()) {
-            when (socketStateService.state is SocketState.Disconnected) {
-                true -> when (val userState = userStateService.state) {
+            when (socketStateService.state) {
+                is SocketState.Disconnected,
+                is SocketState.Idle -> when (val userState = userStateService.state) {
                     is UserState.UserSet, is UserState.AnonymousUserSet -> socket.reconnectUser(
                         userState.userOrError(),
                         userState is UserState.AnonymousUserSet,
+                        forceReconnection,
                     )
                     else -> error("Invalid user state $userState without user being set!")
                 }
-                false -> Unit
+                is SocketState.Connected,
+                is SocketState.Pending -> Unit
             }
         } else {
             when (val userState = userStateService.state) {
