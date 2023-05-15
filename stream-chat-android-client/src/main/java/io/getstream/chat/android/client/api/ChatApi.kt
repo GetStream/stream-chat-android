@@ -302,6 +302,7 @@ internal interface ChatApi {
         channelId: String,
         members: List<String>,
         systemMessage: Message?,
+        hideHistory: Boolean?,
     ): Call<Channel>
 
     @CheckResult

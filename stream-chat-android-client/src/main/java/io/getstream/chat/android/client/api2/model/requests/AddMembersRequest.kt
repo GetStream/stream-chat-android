@@ -23,4 +23,5 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 internal data class AddMembersRequest(
     val add_members: List<String>,
     val message: UpstreamMessageDto?,
+    val hide_history: Boolean?,
 )
