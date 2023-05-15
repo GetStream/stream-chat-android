@@ -20,15 +20,12 @@ import io.getstream.chat.android.client.api.models.querysort.internal.SortAttrib
 import io.getstream.chat.android.client.api.models.querysort.internal.SortSpecification
 import io.getstream.chat.android.client.api.models.querysort.internal.compare
 import io.getstream.chat.android.client.extensions.snakeToLowerCamelCase
-import io.getstream.logging.StreamLog
 
 /**
  * Implementation of QuerySorter for fields that implements `ComparableFieldProvider`. This QuerySorter doesn't
  * use reflection and it's more performant than `QuerySortByReflection`.
  */
 public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() {
-
-    private val logger = StreamLog.getLogger("Chat:QuerySortByField")
 
     /**
      * Comparator from [SortAttribute.FieldSortAttribute]
