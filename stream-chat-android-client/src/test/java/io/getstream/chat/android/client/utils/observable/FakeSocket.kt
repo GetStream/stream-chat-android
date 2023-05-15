@@ -60,7 +60,7 @@ internal class FakeSocket(
         // no-op
     }
 
-    override fun releaseConnection() {
+    override fun releaseConnection(requested: Boolean) {
         // no-op
     }
 
