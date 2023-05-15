@@ -69,8 +69,8 @@ internal class SendMessageInterceptorImpl(
         isRetrying: Boolean,
     ): Result<Message> {
         val channel = logic.channel(channelType, channelId)
-
-        val preparedMessage = prepareMessageLogic.prepareMessage(message, channelId, channelType, user).apply {
+        val currentUser = clientState.user.value ?: user
+        val preparedMessage = prepareMessageLogic.prepareMessage(message, channelId, channelType, currentUser).apply {
             message.populateMentions(channel.toChannel())
         }
 
