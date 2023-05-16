@@ -2,6 +2,7 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
 - When a message is sent, updated user is set. [#4814](https://github.com/GetStream/stream-chat-android/pull/4814)
+- Fix reconnection socket behavior. [#4820](https://github.com/GetStream/stream-chat-android/pull/4820)
 
 ### ⬆️ Improved
 
