@@ -15,6 +15,8 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixing unread messages count for channels. [#4499](https://github.com/GetStream/stream-chat-android/pull/4499)
+- statu  
+- [#4821](https://github.com/GetStream/stream-chat-android/pull/4821)
 
 ### ⬆️ Improved
 - Changes in messages that are quoted now reflect in all messages, not only the original message.[#4646](https://github.com/GetStream/stream-chat-android/pull/4646)
