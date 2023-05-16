@@ -559,7 +559,7 @@ public class Channels {
 
             channelClient.inviteMembers(memberIds, null).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Channel channel = result.data();
+                    Channel channel = result.getOrNull();
                 } else {
                     // Handle result.error()
                 }
