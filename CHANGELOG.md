@@ -1,8 +1,6 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
-- When a message is sent, updated user is set. [#4814](https://github.com/GetStream/stream-chat-android/pull/4814)
-- Fix reconnection socket behavior. [#4820](https://github.com/GetStream/stream-chat-android/pull/4820)
 
 ### ⬆️ Improved
 
@@ -18,10 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added new `hideHistory` flag into `ChatClient.addMembers` function. This flag can be used to hide the channel's history from the added member. [#4817](https://github.com/GetStream/stream-chat-android/pull/4817)
-- Added new `hideHistory` flag into `ChannelClient.addMembers` function. This flag can be used to hide the channel's history from the added member. [#4817](https://github.com/GetStream/stream-chat-android/pull/4817)
-- Added `ChatClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
-- Added `ChannelClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
 
 ### ⚠️ Changed
 
@@ -55,7 +49,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- New method on `DateFormatter` to format date-time. [#4810](https://github.com/GetStream/stream-chat-android/pull/4810)
 
 ### ⚠️ Changed
 
@@ -67,12 +60,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added the ability to enable/disable camera recorder and/or take picture attachment feature in `MessageComposerView` via xml attributes. [#4811](https://github.com/GetStream/stream-chat-android/pull/4811)
-  * `streamUiMessageComposerTakeImageEnabled`
-  * `streamUiMessageComposerRecordVideoEnabled`
-- Added the ability to enable/disable camera recorder and/or take picture attachment feature in `MessageInputView` via xml attributes. [#4811](https://github.com/GetStream/stream-chat-android/pull/4811)
-  * `stream_ui_message_input_capture_media_take_photo`
-  * `stream_ui_message_input_capture_media_record_video`
 
 ### ⚠️ Changed
 
@@ -84,8 +71,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ThreadMessagesStart` that allows to control if the stack of thread messages starts at the bottom or the top. [#4806](https://github.com/GetStream/stream-chat-android/pull/4806) 
-- Add `PickerMediaMode` that allows control if the camera recorder and/or take picture feature is allowed or not. [#4811](https://github.com/GetStream/stream-chat-android/pull/4811)
 
 ### ⚠️ Changed
 
@@ -134,6 +119,37 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# May 17th, 2023 - 5.17.3
+## Common changes for all artifacts
+### 🐞 Fixed
+- When a message is sent, updated user is set. [#4814](https://github.com/GetStream/stream-chat-android/pull/4814)
+- Fix reconnection socket behavior. [#4820](https://github.com/GetStream/stream-chat-android/pull/4820)
+
+## stream-chat-android-client
+### ✅ Added
+- Added new `hideHistory` flag into `ChatClient.addMembers` function. This flag can be used to hide the channel's history from the added member. [#4817](https://github.com/GetStream/stream-chat-android/pull/4817)
+- Added new `hideHistory` flag into `ChannelClient.addMembers` function. This flag can be used to hide the channel's history from the added member. [#4817](https://github.com/GetStream/stream-chat-android/pull/4817)
+- Added `ChatClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
+- Added `ChannelClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- New method on `DateFormatter` to format date-time. [#4810](https://github.com/GetStream/stream-chat-android/pull/4810)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Added the ability to enable/disable camera recorder and/or take picture attachment feature in `MessageComposerView` via xml attributes. [#4811](https://github.com/GetStream/stream-chat-android/pull/4811)
+  * `streamUiMessageComposerTakeImageEnabled`
+  * `streamUiMessageComposerRecordVideoEnabled`
+- Added the ability to enable/disable camera recorder and/or take picture attachment feature in `MessageInputView` via xml attributes. [#4811](https://github.com/GetStream/stream-chat-android/pull/4811)
+  * `stream_ui_message_input_capture_media_take_photo`
+  * `stream_ui_message_input_capture_media_record_video`
+
+## stream-chat-android-compose
+### ✅ Added
+- Add `ThreadMessagesStart` that allows to control if the stack of thread messages starts at the bottom or the top. [#4806](https://github.com/GetStream/stream-chat-android/pull/4806)
+- Add `PickerMediaMode` that allows control if the camera recorder and/or take picture feature is allowed or not. [#4811](https://github.com/GetStream/stream-chat-android/pull/4811)
 
 # May 4th, 2023 - 5.17.2
 ## stream-chat-android-state
