@@ -41,7 +41,7 @@ internal class UploadAttachmentsAndroidWorker(
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val messageId = inputData.getString(DATA_MESSAGE_ID)!!
 
-        val logger = StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
+        val logger = StreamLog.getLogger(TAG)
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
 
@@ -55,10 +55,10 @@ internal class UploadAttachmentsAndroidWorker(
             messageId
         ).let { result ->
             if (result.isSuccess) {
-                logger.d { "[doWork] Attachments uploaded successfully" }
+                logger.d { "[doWork] #uploader; attachments uploaded successfully" }
                 Result.success()
             } else {
-                logger.i { "[doWork] Error while uploading attachments: ${result.error()}" }
+                logger.i { "[doWork] #uploader; error while uploading attachments: ${result.error()}" }
                 val message = result.error().message ?: "Error while uploading attachments"
                 Result.failure(Data.Builder().putAll(mapOf(ERROR_KEY to message)).build())
             }
@@ -66,6 +66,7 @@ internal class UploadAttachmentsAndroidWorker(
     }
 
     internal companion object {
+        private const val TAG = "Chat:SystemUploadWorker"
         private const val DATA_MESSAGE_ID = "message_id"
         private const val DATA_CHANNEL_TYPE = "channel_type"
         private const val DATA_CHANNEL_ID = "channel_id"
@@ -89,8 +90,8 @@ internal class UploadAttachmentsAndroidWorker(
                 )
                 .build()
 
-            StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
-                .d { "[start] Enqueueing attachments upload work for $messageId" }
+            StreamLog.getLogger(TAG)
+                .d { "[start] #uploader; enqueueing attachments upload work for $messageId" }
 
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
@@ -107,8 +108,8 @@ internal class UploadAttachmentsAndroidWorker(
          * @param workId UUID of the enqueued work.
          */
         internal fun stop(context: Context, workId: UUID) {
-            StreamLog.getLogger("Chat:UploadAttachmentsAndroidWorker")
-                .d { "[stop] Upload attachments work cancelled" }
+            StreamLog.getLogger(TAG)
+                .d { "[stop] #uploader; upload attachments work cancelled" }
             WorkManager.getInstance(context).cancelWorkById(workId)
         }
     }

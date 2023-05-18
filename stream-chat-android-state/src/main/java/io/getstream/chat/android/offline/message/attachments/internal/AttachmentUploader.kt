@@ -30,7 +30,7 @@ internal class AttachmentUploader(
     private val client: ChatClient = ChatClient.instance(),
 ) {
 
-    private val logger = StreamLog.getLogger("Chat:AttachmentUploader")
+    private val logger = StreamLog.getLogger("Chat:Uploader")
 
     /**
      * Uploads the given attachment.
@@ -56,7 +56,7 @@ internal class AttachmentUploader(
         val attachmentType = mimeType.toAttachmentType()
 
         return if (attachmentType == AttachmentType.IMAGE) {
-            logger.d { "[uploadAttachment] Uploading ${attachment.uploadId} as image" }
+            logger.d { "[uploadAttachment] #uploader; uploading ${attachment.uploadId} as image" }
             uploadImage(
                 channelType = channelType,
                 channelId = channelId,
@@ -67,7 +67,7 @@ internal class AttachmentUploader(
                 attachmentType = attachmentType
             )
         } else {
-            logger.d { "[uploadAttachment] Uploading ${attachment.uploadId} as file" }
+            logger.d { "[uploadAttachment] #uploader; uploading ${attachment.uploadId} as file" }
             uploadFile(
                 channelType = channelType,
                 channelId = channelId,
@@ -104,9 +104,10 @@ internal class AttachmentUploader(
         mimeType: String,
         attachmentType: AttachmentType,
     ): Result<Attachment> {
+        logger.d { "[uploadImage] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, file: $file, cid: ${channelType}:$${channelId}, attachment: $attachment" }
         val result = client.sendImage(channelType, channelId, file, progressCallback)
             .await()
-
+        logger.v { "[uploadImage] #uploader; result: $result" }
         return if (result.isSuccess) {
             val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
                 file = file,
@@ -153,9 +154,10 @@ internal class AttachmentUploader(
         mimeType: String,
         attachmentType: AttachmentType,
     ): Result<Attachment> {
+        logger.d { "[uploadFile] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, file: $file, cid: ${channelType}:$${channelId}, attachment: $attachment" }
         val result = client.sendFile(channelType, channelId, file, progressCallback)
             .await()
-
+        logger.v { "[uploadFile] #uploader; result: $result" }
         return if (result.isSuccess) {
             val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
                 file = file,
@@ -194,7 +196,7 @@ internal class AttachmentUploader(
         augmentedAttachment: Attachment,
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
-        logger.d { "[onSuccessfulUpload] Attachment ${augmentedAttachment.uploadId} uploaded successfully" }
+        logger.d { "[onSuccessfulUpload] #uploader; attachment ${augmentedAttachment.uploadId} uploaded successfully" }
         augmentedAttachment.uploadState = Attachment.UploadState.Success
         progressCallback?.onSuccess(augmentedAttachment.url)
         return Result(augmentedAttachment)
@@ -216,7 +218,7 @@ internal class AttachmentUploader(
         result: Result<T>,
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
-        logger.i { "[onFailedUpload] Attachment ${attachment.uploadId} upload failed: ${result.error()}" }
+        logger.e { "[onFailedUpload] #uploader; attachment ${attachment.uploadId} upload failed: ${result.error()}" }
         attachment.uploadState = Attachment.UploadState.Failed(result.error())
         progressCallback?.onError(result.error())
         return Result(result.error())
