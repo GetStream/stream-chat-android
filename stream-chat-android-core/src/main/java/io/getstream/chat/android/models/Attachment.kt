@@ -90,7 +90,7 @@ public data class Attachment(
 
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
-) : CustomObject {
+    ) : CustomObject {
 
     /**
      * Represents various states in attachment upload lifecycle.
@@ -99,7 +99,7 @@ public data class Attachment(
         /**
          * Idle state before attachment starts to upload.
          */
-        public object Idle : UploadState()
+        public object Idle : UploadState() { override fun toString(): String = "Idle" }
 
         /**
          * State representing attachment upload progress.
@@ -109,11 +109,44 @@ public data class Attachment(
         /**
          * State indicating that the attachment was uploaded successfully
          */
-        public object Success : UploadState()
+        public object Success : UploadState() { override fun toString(): String = "Success" }
 
         /**
          * State indicating that the attachment upload failed.
          */
         public data class Failed(val error: Error) : UploadState()
+    }
+
+    override fun toString(): String = StringBuilder().apply {
+        append("Attachment(")
+        append("mimeType=\"").append(mimeType).append("\"")
+        if (authorName != null) append(", authorName=").append(authorName)
+        if (authorLink != null) append(", authorLink=").append(authorLink)
+        if (titleLink != null) append(", titleLink=").append(titleLink)
+        if (thumbUrl != null) append(", thumbUrl=").append(thumbUrl?.shorten())
+        if (imageUrl != null) append(", imageUrl=").append(imageUrl?.shorten())
+        if (assetUrl != null) append(", assetUrl=").append(assetUrl?.shorten())
+        if (ogUrl != null) append(", ogUrl=").append(ogUrl.hashCode())
+        if (fileSize > 0) append(", fileSize=").append(fileSize)
+        if (title != null) append(", title=\"").append(title).append("\"")
+        if (text != null) append(", text=\"").append(text).append("\"")
+        if (type != null) append(", type=\"").append(type).append("\"")
+        if (image != null) append(", image=").append(image)
+        if (url != null) append(", url=").append(url?.shorten())
+        if (name != null) append(", name=").append(name)
+        if (fallback != null) append(", fallback=").append(fallback)
+        if (originalHeight != null) append(", origH=").append(originalHeight)
+        if (originalWidth != null) append(", origW=").append(originalWidth)
+        if (upload != null) append(", upload=\"").append(upload).append("\"")
+        if (uploadState != null) append(", uploadState=").append(uploadState)
+        if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
+        append(")")
+    }.toString()
+
+    private fun String.shorten(): String {
+        val min = 0
+        val max = 9
+        if (length <= max) return this
+        return substring(min..max).let { "$it..." }
     }
 }

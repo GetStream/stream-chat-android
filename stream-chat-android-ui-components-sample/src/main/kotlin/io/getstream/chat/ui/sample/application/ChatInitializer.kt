@@ -34,6 +34,7 @@ import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.ui.sample.BuildConfig
+import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
 
 class ChatInitializer(private val context: Context) {
@@ -88,6 +89,7 @@ class ChatInitializer(private val context: Context) {
             .withPlugins(offlinePlugin, statePluginFactory)
             .debugRequests(true)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
+            .clientDebugger(CustomChatClientDebugger())
             .build()
 
         // Using markdown as text transformer
