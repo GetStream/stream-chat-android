@@ -64,6 +64,8 @@ import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.SocketStateService
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.debugger.ChatClientDebugger
+import io.getstream.chat.android.client.debugger.StubChatClientDebugger
 import io.getstream.chat.android.client.di.ChatModule
 import io.getstream.chat.android.client.errorhandler.CreateChannelErrorHandler
 import io.getstream.chat.android.client.errorhandler.DeleteReactionErrorHandler
@@ -225,6 +227,7 @@ internal constructor(
     private val socketStateService: SocketStateService = SocketStateService(),
     private val userCredentialStorage: UserCredentialStorage,
     private val userStateService: UserStateService = UserStateService(),
+    private val clientDebugger: ChatClientDebugger = StubChatClientDebugger,
     private val tokenUtils: TokenUtils = TokenUtils,
     private val clientScope: ClientScope,
     private val userScope: UserScope,
@@ -1618,17 +1621,26 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
+        val debugger = clientDebugger.debugSendMessage(channelType, channelId, message, isRetrying)
         val relevantPlugins = plugins.filterIsInstance<SendMessageListener>().also(::logPlugins)
         val sendMessageInterceptors = interceptors.filterIsInstance<SendMessageInterceptor>()
         getCurrentUser()?.let { message.user = it }
         return CoroutineCall(userScope) {
+            debugger.onStart(message)
             // Message is first prepared i.e. all its attachments are uploaded and message is updated with
             // these attachments.
-            sendMessageInterceptors.fold(Result.success(message)) { message, interceptor ->
-                if (message.isSuccess) {
-                    interceptor.interceptMessage(channelType, channelId, message.data(), isRetrying)
-                } else message
+            sendMessageInterceptors.fold(Result.success(message)) { messageResult, interceptor ->
+                if (messageResult.isSuccess) {
+                    val messageToUpload = messageResult.data()
+                    debugger.onInterceptionStart(messageToUpload)
+                    interceptor.interceptMessage(channelType, channelId, messageToUpload, isRetrying) { updated ->
+                        debugger.onInterceptionUpdate(updated)
+                    }.also { result ->
+                        debugger.onInterceptionStop(result)
+                    }
+                } else messageResult
             }.flatMapSuspend { newMessage ->
+                debugger.onSendStart(newMessage)
                 api.sendMessage(
                     channelType = channelType,
                     channelId = channelId,
@@ -1636,7 +1648,12 @@ internal constructor(
                 )
                     .retry(userScope, retryPolicy)
                     .doOnResult(userScope) { result ->
-                        logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
+                        debugger.onSendStop(result)
+                        val hasAttachments = newMessage.attachments.isNotEmpty()
+                        logger.i {
+                            "[sendMessage]${if (hasAttachments) " #uploader;" else ""} " +
+                                "result: ${result.stringify { it.toString() }}"
+                        }
                         relevantPlugins.forEach { listener ->
                             logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                             listener.onMessageSendResult(
@@ -1647,6 +1664,8 @@ internal constructor(
                             )
                         }
                     }.await()
+            }.also { result ->
+                debugger.onStop(result)
             }
         }
     }
@@ -2821,6 +2840,7 @@ internal constructor(
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
+        private var clientDebugger: ChatClientDebugger? = null
         private var notificationsHandler: NotificationHandler? = null
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
@@ -2858,6 +2878,20 @@ internal constructor(
          */
         public fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
             this.loggerHandler = loggerHandler
+            return this
+        }
+
+        /**
+         * Sets a [ChatClientDebugger] instance that will receive log events from the SDK.
+         *
+         * Use this to forward SDK events to your own logging solutions.
+         *
+         * See the FirebaseLogger class in the UI Components sample app for an example implementation.
+         *
+         * @param clientDebugger Your custom [ChatClientDebugger] implementation.
+         */
+        public fun clientDebugger(clientDebugger: ChatClientDebugger): Builder {
+            this.clientDebugger = clientDebugger
             return this
         }
 
@@ -3064,7 +3098,6 @@ internal constructor(
                 )
 
             val appSettingsManager = AppSettingManager(module.api())
-            val clientState = ClientStateImpl(module.networkStateProvider)
 
             return ChatClient(
                 config,
@@ -3074,7 +3107,8 @@ internal constructor(
                 tokenManager,
                 module.socketStateService,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
-                module.userStateService,
+                userStateService = module.userStateService,
+                clientDebugger = clientDebugger ?: StubChatClientDebugger,
                 clientScope = clientScope,
                 userScope = userScope,
                 retryPolicy = retryPolicy,
