@@ -196,6 +196,7 @@ public final class io/getstream/chat/android/models/Attachment$UploadState$Faile
 
 public final class io/getstream/chat/android/models/Attachment$UploadState$Idle : io/getstream/chat/android/models/Attachment$UploadState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/Attachment$UploadState$Idle;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/Attachment$UploadState$InProgress : io/getstream/chat/android/models/Attachment$UploadState {
@@ -213,6 +214,7 @@ public final class io/getstream/chat/android/models/Attachment$UploadState$InPro
 
 public final class io/getstream/chat/android/models/Attachment$UploadState$Success : io/getstream/chat/android/models/Attachment$UploadState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/Attachment$UploadState$Success;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/AttachmentType {

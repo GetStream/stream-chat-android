@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.debugger.ChatClientDebugger;
 import io.getstream.chat.android.client.debugger.SendMessageDebugger;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.utils.Result;
+import io.getstream.chat.android.models.Message;
+import io.getstream.result.Result;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/basics/debugging/">Debugging</a>
