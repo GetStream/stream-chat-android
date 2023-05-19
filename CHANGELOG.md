@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatClientDebugger` and `SendMessageDebugger` to debug an internal flow of `ChatClient`. [#4823](https://github.com/GetStream/stream-chat-android/pull/4823)
 
 ### ⚠️ Changed
 

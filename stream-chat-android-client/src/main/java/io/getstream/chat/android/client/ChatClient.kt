@@ -2882,11 +2882,9 @@ internal constructor(
         }
 
         /**
-         * Sets a [ChatClientDebugger] instance that will receive log events from the SDK.
+         * Sets a [ChatClientDebugger] instance that will be invoked accordingly through various flows within SDK.
          *
-         * Use this to forward SDK events to your own logging solutions.
-         *
-         * See the FirebaseLogger class in the UI Components sample app for an example implementation.
+         * Use this to debug SDK inner processes like [Message] sending.
          *
          * @param clientDebugger Your custom [ChatClientDebugger] implementation.
          */
