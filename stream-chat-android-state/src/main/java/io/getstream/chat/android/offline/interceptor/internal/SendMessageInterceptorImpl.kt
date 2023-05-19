@@ -75,7 +75,10 @@ internal class SendMessageInterceptorImpl(
             logger.d { "[interceptMessage] #uploader; uploadedAttachments: ${uploadedMessage.attachments}" }
             val corruptedAttachment = uploadedMessage.attachments.find { it.imageUrl == null && it.assetUrl == null }
             if (corruptedAttachment != null) {
-                logger.e { "[interceptMessage] #uploader; message(${uploadedMessage.id}) has corrupted attachment: $corruptedAttachment" }
+                logger.e {
+                    "[interceptMessage] #uploader; message(${uploadedMessage.id}) " +
+                        "has corrupted attachment: $corruptedAttachment"
+                }
                 return Result.error(
                     ChatError("Message(${uploadedMessage.id}) contains corrupted attachment: $corruptedAttachment")
                 )
@@ -201,7 +204,10 @@ internal class SendMessageInterceptorImpl(
             logger.d { "[waitForAttachmentsToBeSent] #uploader; all attachments for message ${newMessage.id} uploaded" }
             Result.success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
         } else {
-            logger.e { "[waitForAttachmentsToBeSent] #uploader; could not upload attachments for message ${newMessage.id}" }
+            logger.e {
+                "[waitForAttachmentsToBeSent] #uploader; could not upload attachments " +
+                    "for message ${newMessage.id}"
+            }
             Result.error(ChatError("Could not upload attachments, not sending message with id ${newMessage.id}"))
         }.also {
             uploadIds.remove(newMessage.id)
