@@ -184,6 +184,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public fun <init> (Ljava/lang/String;Landroid/content/Context;)V
 	public final fun baseUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public fun build ()Lio/getstream/chat/android/client/ChatClient;
+	public final fun clientDebugger (Lio/getstream/chat/android/client/debugger/ChatClientDebugger;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun credentialStorage (Lio/getstream/chat/android/client/user/storage/UserCredentialStorage;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun debugRequests (Z)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun disableDistinctApiCalls ()Lio/getstream/chat/android/client/ChatClient$Builder;
@@ -935,6 +936,35 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$WebSocketNotAvailable : io/getstream/chat/android/client/clientstate/DisconnectCause {
 	public static final field INSTANCE Lio/getstream/chat/android/client/clientstate/DisconnectCause$WebSocketNotAvailable;
+}
+
+public abstract interface class io/getstream/chat/android/client/debugger/ChatClientDebugger {
+	public abstract fun debugSendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/debugger/SendMessageDebugger;
+}
+
+public final class io/getstream/chat/android/client/debugger/ChatClientDebugger$DefaultImpls {
+	public static fun debugSendMessage (Lio/getstream/chat/android/client/debugger/ChatClientDebugger;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;Z)Lio/getstream/chat/android/client/debugger/SendMessageDebugger;
+	public static synthetic fun debugSendMessage$default (Lio/getstream/chat/android/client/debugger/ChatClientDebugger;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/debugger/SendMessageDebugger;
+}
+
+public abstract interface class io/getstream/chat/android/client/debugger/SendMessageDebugger {
+	public abstract fun onInterceptionStart (Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun onInterceptionStop (Lio/getstream/chat/android/client/utils/Result;)V
+	public abstract fun onInterceptionUpdate (Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun onSendStart (Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun onSendStop (Lio/getstream/chat/android/client/utils/Result;)V
+	public abstract fun onStart (Lio/getstream/chat/android/client/models/Message;)V
+	public abstract fun onStop (Lio/getstream/chat/android/client/utils/Result;)V
+}
+
+public final class io/getstream/chat/android/client/debugger/SendMessageDebugger$DefaultImpls {
+	public static fun onInterceptionStart (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onInterceptionStop (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/client/utils/Result;)V
+	public static fun onInterceptionUpdate (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onSendStart (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onSendStop (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/client/utils/Result;)V
+	public static fun onStart (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/client/models/Message;)V
+	public static fun onStop (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/client/utils/Result;)V
 }
 
 public final class io/getstream/chat/android/client/errorhandler/CreateChannelErrorHandler$DefaultImpls {
@@ -2262,6 +2292,10 @@ public final class io/getstream/chat/android/client/extensions/internal/Reaction
 public final class io/getstream/chat/android/client/extensions/internal/UserKt {
 }
 
+public final class io/getstream/chat/android/client/interceptor/SendMessageInterceptor$DefaultImpls {
+	public static synthetic fun interceptMessage$default (Lio/getstream/chat/android/client/interceptor/SendMessageInterceptor;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;ZLkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/client/interceptor/message/PrepareMessageLogic {
 	public abstract fun prepareMessage (Lio/getstream/chat/android/client/models/Message;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/models/Message;
 }
@@ -2425,6 +2459,7 @@ public final class io/getstream/chat/android/client/models/Attachment$UploadStat
 
 public final class io/getstream/chat/android/client/models/Attachment$UploadState$Idle : io/getstream/chat/android/client/models/Attachment$UploadState {
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/Attachment$UploadState$Idle;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/Attachment$UploadState$InProgress : io/getstream/chat/android/client/models/Attachment$UploadState {
@@ -2442,6 +2477,7 @@ public final class io/getstream/chat/android/client/models/Attachment$UploadStat
 
 public final class io/getstream/chat/android/client/models/Attachment$UploadState$Success : io/getstream/chat/android/client/models/Attachment$UploadState {
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/Attachment$UploadState$Success;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/BannedUser {

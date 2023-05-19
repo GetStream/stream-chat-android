@@ -2,8 +2,11 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexMethod:Attachment.kt$Attachment$override fun toString(): String</ID>
+    <ID>ComplexMethod:Message.kt$Message$override fun toString(): String</ID>
     <ID>ComplexMethod:User.kt$User$override fun getComparableField(fieldName: String): Comparable&lt;*>?</ID>
     <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
+    <ID>MagicNumber:Attachment.kt$Attachment$9</ID>
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>

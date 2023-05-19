@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.interceptor
 
-import io.getstream.chat.android.client.debugger.SendMessageDebugger
-import io.getstream.chat.android.client.debugger.StubSendMessageDebugger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi

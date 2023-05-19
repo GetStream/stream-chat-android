@@ -104,7 +104,10 @@ internal class AttachmentUploader(
         mimeType: String,
         attachmentType: AttachmentType,
     ): Result<Attachment> {
-        logger.d { "[uploadImage] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, file: $file, cid: ${channelType}:$${channelId}, attachment: $attachment" }
+        logger.d {
+            "[uploadImage] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
+                "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
+        }
         val result = client.sendImage(channelType, channelId, file, progressCallback)
             .await()
         logger.v { "[uploadImage] #uploader; result: $result" }
@@ -154,7 +157,10 @@ internal class AttachmentUploader(
         mimeType: String,
         attachmentType: AttachmentType,
     ): Result<Attachment> {
-        logger.d { "[uploadFile] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, file: $file, cid: ${channelType}:$${channelId}, attachment: $attachment" }
+        logger.d {
+            "[uploadFile] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
+                "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
+        }
         val result = client.sendFile(channelType, channelId, file, progressCallback)
             .await()
         logger.v { "[uploadFile] #uploader; result: $result" }
