@@ -314,5 +314,4 @@ public data class Message(
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
-
 }

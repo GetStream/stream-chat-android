@@ -26,10 +26,13 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.recover
+
+private const val TAG = "Chat:UploadWorker"
 
 @InternalStreamChatApi
 public class UploadAttachmentsWorker(
@@ -41,7 +44,7 @@ public class UploadAttachmentsWorker(
     private val attachmentUploader: AttachmentUploader = AttachmentUploader(chatClient),
 ) {
 
-    private val logger by taggedLogger("Chat:UploadAttachmentsWorker")
+    private val logger by taggedLogger(TAG)
 
     @Suppress("TooGenericExceptionCaught")
     @InternalStreamChatApi
@@ -54,7 +57,7 @@ public class UploadAttachmentsWorker(
                 Error.GenericError("The message with id $messageId could not be found.")
             )
         } catch (e: Exception) {
-            logger.i { "[uploadAttachmentsForMessage] Couldn't upload attachments ${e.message}" }
+            logger.e { "[uploadAttachmentsForMessage] #uploader; couldn't upload attachments ${e.message}" }
             message?.let { updateMessages(it) }
             Result.Failure(
                 Error.ThrowableError(
@@ -67,9 +70,9 @@ public class UploadAttachmentsWorker(
 
     private suspend fun sendAttachments(message: Message): Result<Unit> {
         if (chatClient.getCurrentUser() == null) {
-            logger.d { "[sendAttachments] Current user is not set. Restoring credentials" }
+            logger.d { "[sendAttachments] #uploader; current user is not set. Restoring credentials" }
             if (!chatClient.containsStoredCredentials()) {
-                logger.d { "[sendAttachments] User's credentials are not available" }
+                logger.e { "[sendAttachments] #uploader; user's credentials are not available" }
                 return Result.Failure(Error.GenericError("Could not set user"))
             }
 
@@ -82,17 +85,17 @@ public class UploadAttachmentsWorker(
         }
 
         return if (!hasPendingAttachment) {
-            logger.d { "[sendAttachments] Message ${message.id} doesn't have pending attachments" }
+            logger.d { "[sendAttachments] #uploader; message ${message.id} doesn't have pending attachments" }
             Result.Success(Unit)
         } else {
             val attachments = uploadAttachments(message)
             updateMessages(message)
 
             if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
-                logger.d { "[sendAttachments] All attachments for message ${message.id} uploaded" }
+                logger.d { "[sendAttachments] #uploader; all attachments for message ${message.id} uploaded" }
                 Result.Success(Unit)
             } else {
-                logger.i { "[sendAttachments] Unable to upload attachments for message ${message.id}" }
+                logger.e { "[sendAttachments] #uploader; unable to upload attachments for message ${message.id}" }
                 Result.Failure(Error.GenericError("Unable to upload attachments for message ${message.id}"))
             }
         }
@@ -104,7 +107,7 @@ public class UploadAttachmentsWorker(
             message.attachments.map { attachment ->
                 if (attachment.uploadState != Attachment.UploadState.Success) {
                     logger.d {
-                        "[uploadAttachments] Uploading attachment ${attachment.uploadId} " +
+                        "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} " +
                             "for message ${message.id}"
                     }
                     val progressCallback = channelStateLogic?.let { logic ->
@@ -120,14 +123,14 @@ public class UploadAttachmentsWorker(
                         .value
                 } else {
                     logger.i {
-                        "[uploadAttachments] Attachment ${attachment.uploadId}" +
+                        "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
                             " for message ${message.id} already uploaded"
                     }
                     attachment
                 }
             }.toMutableList()
         } catch (e: Exception) {
-            logger.i { "[uploadAttachments] Unable to upload attachments: ${e.message}" }
+            logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
             message.attachments.map {
                 if (it.uploadState != Attachment.UploadState.Success) {
                     it.uploadState = Attachment.UploadState.Failed(
@@ -158,10 +161,12 @@ public class UploadAttachmentsWorker(
     ) :
         ProgressCallback {
         override fun onSuccess(url: String?) {
+            StreamLog.i(TAG) { "[Progress.onSuccess] #uploader; url: $url" }
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)
         }
 
         override fun onError(error: Error) {
+            StreamLog.e(TAG) { "[Progress.onError] #uploader; error: $error" }
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Failed(error))
         }
 

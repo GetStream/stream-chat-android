@@ -54,6 +54,7 @@ import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
+import io.getstream.chat.android.client.debugger.SendMessageDebugger
 import io.getstream.chat.android.client.debugger.StubChatClientDebugger
 import io.getstream.chat.android.client.di.ChatModule
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
@@ -214,6 +215,7 @@ internal constructor(
     private val logger by taggedLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     public val clientState: ClientState = mutableClientState
+
     @InternalStreamChatApi
     public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
@@ -315,13 +317,16 @@ internal constructor(
 
                 mutableClientState.setConnectionState(ConnectionState.Connected(user))
             }
+
             is NewMessageEvent -> {
                 notifications.onNewMessageEvent(event)
             }
+
             is ConnectingEvent -> {
                 logger.i { "[handleEvent] event: ConnectingEvent" }
                 mutableClientState.setConnectionState(ConnectionState.Connecting)
             }
+
             is DisconnectedEvent -> {
                 logger.i { "[handleEvent] event: DisconnectedEvent(disconnectCause=${event.disconnectCause})" }
                 api.releseConnection()
@@ -332,12 +337,14 @@ internal constructor(
                     is DisconnectCause.Error,
                     -> {
                     }
+
                     is DisconnectCause.UnrecoverableError -> {
                         userStateService.onSocketUnrecoverableError()
                     }
                 }
                 mutableClientState.setConnectionState(ConnectionState.Offline)
             }
+
             else -> Unit // Ignore other events
         }
 
@@ -362,6 +369,7 @@ internal constructor(
             is UserEvent -> getCurrentUser()
                 ?.takeIf { it.id == user.id }
                 ?.mergePartially(user)
+
             else -> null
         }
     }
@@ -400,6 +408,7 @@ internal constructor(
                     )
                 )
             }
+
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
@@ -408,6 +417,7 @@ internal constructor(
                 chatSocket.connectUser(user, isAnonymous)
                 waitFirstConnection(timeoutMilliseconds)
             }
+
             userState is UserState.UserSet -> {
                 logger.w {
                     "[setUser] Trying to set user without disconnecting the previous one - " +
@@ -422,6 +432,7 @@ internal constructor(
                             )
                         )
                     }
+
                     else -> {
                         getConnectionId()?.let { Result.Success(ConnectionData(userState.user, it)) }
                             ?: run {
@@ -438,6 +449,7 @@ internal constructor(
                     }
                 }
             }
+
             else -> {
                 logger.e { "[setUser] Failed to connect user. Please check you don't have connected user already." }
                 Result.Failure(
@@ -992,6 +1004,7 @@ internal constructor(
                 userState is UserState.AnonymousUserSet,
                 true,
             )
+
             else -> error("Invalid user state $userState without user being set!")
         }
     }
@@ -1162,6 +1175,7 @@ internal constructor(
                     disconnectSuspend(flushPersistence)
                     Result.Success(Unit)
                 }
+
                 false -> {
                     logger.i { "[disconnect] cannot disconnect as the user wasn't connected" }
                     Result.Failure(
@@ -1551,9 +1565,9 @@ internal constructor(
         val debugger = clientDebugger.debugSendMessage(channelType, channelId, message, isRetrying)
         return CoroutineCall(userScope) {
             debugger.onStart(message)
-            sendAttachments(channelType, channelId, message, isRetrying)
+            sendAttachments(channelType, channelId, message, isRetrying, debugger)
                 .flatMapSuspend { newMessage ->
-                    doSendMessage(channelType, channelId, newMessage)
+                    doSendMessage(channelType, channelId, newMessage, debugger)
                 }
                 .also { result ->
                     debugger.onStop(result)
@@ -1565,7 +1579,9 @@ internal constructor(
         channelType: String,
         channelId: String,
         message: Message,
+        debugger: SendMessageDebugger,
     ): Result<Message> {
+        debugger.onSendStart(message)
         return api.sendMessage(channelType, channelId, message)
             .retry(userScope, retryPolicy)
             .doOnResult(userScope) { result ->
@@ -1575,6 +1591,9 @@ internal constructor(
                     listener.onMessageSendResult(result, channelType, channelId, message)
                 }
             }.await()
+            .also { result ->
+                debugger.onSendStop(result)
+            }
     }
 
     private suspend fun sendAttachments(
@@ -1582,17 +1601,23 @@ internal constructor(
         channelId: String,
         message: Message,
         isRetrying: Boolean = false,
+        debugger: SendMessageDebugger,
     ): Result<Message> {
+        debugger.onInterceptionStart(message)
         val prepareMessageLogic = PrepareMessageLogicImpl(clientState, logicRegistry)
 
         val preparedMessage = getCurrentUser()?.let { user ->
             prepareMessageLogic.prepareMessage(message, channelId, channelType, user)
         } ?: message
+        debugger.onInterceptionUpdate(preparedMessage)
 
         plugins.forEach { listener -> listener.onAttachmentSendRequest(channelType, channelId, preparedMessage) }
 
         return attachmentsSender
             .sendAttachments(preparedMessage, channelType, channelId, isRetrying, repositoryFacade)
+            .also { result ->
+                debugger.onInterceptionStop(result)
+            }
     }
 
     /**
@@ -2558,9 +2583,11 @@ internal constructor(
             channelsIds.isEmpty() -> {
                 Result.Failure(Error.GenericError("channelsIds must contain at least 1 id."))
             }
+
             lastSyncAt.isLaterThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
                 Result.Failure(Error.GenericError("lastSyncAt cannot by later than 30 days."))
             }
+
             else -> {
                 Result.Success(Unit)
             }

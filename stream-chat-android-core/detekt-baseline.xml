@@ -2,6 +2,9 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexMethod:Attachment.kt$Attachment$override fun toString(): String</ID>
+    <ID>ComplexMethod:Message.kt$Message$override fun toString(): String</ID>
     <ID>ComplexMethod:User.kt$User$override fun getComparableField(fieldName: String): Comparable&lt;*>?</ID>
+    <ID>MagicNumber:Attachment.kt$Attachment$9</ID>
   </CurrentIssues>
 </SmellBaseline>
