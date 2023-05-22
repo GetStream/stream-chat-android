@@ -306,7 +306,7 @@ internal constructor(
         logger.i { "Initialised: ${buildSdkTrackingHeaders()}" }
     }
 
-    private fun handleEvent(event: ChatEvent) {
+    private suspend fun handleEvent(event: ChatEvent) {
         when (event) {
             is ConnectedEvent -> {
                 logger.i { "[handleEvent] event: ConnectedEvent(userId='${event.me.id}')" }
@@ -994,18 +994,19 @@ internal constructor(
     //endregion
 
     public fun disconnectSocket() {
-        chatSocket.disconnect()
+        launch { chatSocket.disconnect() }
     }
 
     public fun reconnectSocket() {
-        when (val userState = userStateService.state) {
-            is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocket.reconnectUser(
-                userState.userOrError(),
-                userState is UserState.AnonymousUserSet,
-                true,
-            )
-
-            else -> error("Invalid user state $userState without user being set!")
+        launch {
+            when (val userState = userStateService.state) {
+                is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocket.reconnectUser(
+                    userState.userOrError(),
+                    userState is UserState.AnonymousUserSet,
+                    true,
+                )
+                else -> error("Invalid user state $userState without user being set!")
+            }
         }
     }
 

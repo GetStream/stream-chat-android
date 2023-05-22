@@ -65,7 +65,7 @@ internal class FakeChatSocket private constructor(
         webSocketListener.onMessage(mock(), randomString)
     }
 
-    fun prepareAliveConnection(user: User, connectionId: String) {
+    suspend fun prepareAliveConnection(user: User, connectionId: String) {
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
         connectUser(user, false)

@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -57,19 +58,19 @@ internal class ChatEventsObservableTest {
     fun before() {
         result = mutableListOf()
         val clientScope = ClientTestScope(testCoroutines.scope)
+        val userScope = UserTestScope(clientScope)
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
-        val lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle)
+        val lifecycleObserver = StreamLifecycleObserver(userScope, lifecycleOwner.lifecycle)
         val tokenManager = FakeTokenManager("")
         val networkStateProvider: NetworkStateProvider = mock()
         whenever(networkStateProvider.isConnected()) doReturn true
-        val userScope = UserTestScope(clientScope)
         fakeChatSocket = FakeChatSocket(
             userScope = userScope,
             lifecycleObserver = lifecycleObserver,
             tokenManager = tokenManager,
             networkStateProvider = networkStateProvider,
         )
-        fakeChatSocket.prepareAliveConnection(randomUser(), randomString())
+        userScope.launch { fakeChatSocket.prepareAliveConnection(randomUser(), randomString()) }
         observable = ChatEventsObservable(mock(), testCoroutines.scope, fakeChatSocket)
     }
 
