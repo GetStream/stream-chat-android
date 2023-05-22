@@ -24,12 +24,12 @@ import kotlinx.coroutines.flow.StateFlow
 internal class UserStateService {
     private val logger by taggedLogger("Chat:UserStateService")
 
-    fun onUserUpdated(user: User) {
+    suspend fun onUserUpdated(user: User) {
         logger.d { "[onUserUpdated] user.id: '${user.id}'" }
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
     }
 
-    fun onSetUser(user: User, isAnonymous: Boolean) {
+    suspend fun onSetUser(user: User, isAnonymous: Boolean) {
         logger.i { "[onSetUser] user.id: '${user.id}', isAnonymous: $isAnonymous" }
         if (isAnonymous) {
             fsm.sendEvent(UserStateEvent.ConnectAnonymous(user))
@@ -38,12 +38,12 @@ internal class UserStateService {
         }
     }
 
-    fun onLogout() {
+    suspend fun onLogout() {
         logger.i { "[onLogout] no args" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
-    fun onSocketUnrecoverableError() {
+    suspend fun onSocketUnrecoverableError() {
         logger.e { "[onSocketUnrecoverableError] no args" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }

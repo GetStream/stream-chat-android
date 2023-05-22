@@ -22,7 +22,6 @@ import io.getstream.chat.android.core.internal.fsm.builder.FSMBuilderMarker
 import io.getstream.chat.android.core.internal.fsm.builder.StateFunction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.reflect.KClass
@@ -59,13 +58,11 @@ public class FiniteStateMachine<S : Any, E : Any>(
     /**
      * Sends an event to the state machine. The entry point to change state.
      */
-    public fun sendEvent(event: E) {
-        runBlocking {
-            mutex.withLock {
-                val currentState = _state.value
-                val handler = stateFunctions[currentState::class]?.get(event::class) ?: defaultEventHandler
-                _state.value = handler(currentState, event)
-            }
+    public suspend fun sendEvent(event: E) {
+        mutex.withLock {
+            val currentState = _state.value
+            val handler = stateFunctions[currentState::class]?.get(event::class) ?: defaultEventHandler
+            _state.value = handler(currentState, event)
         }
     }
 

@@ -103,7 +103,7 @@ internal class ChatClientTest {
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutines.scope)
         val userScope = UserTestScope(clientScope)
-        val lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle)
+        val lifecycleObserver = StreamLifecycleObserver(userScope, lifecycleOwner.lifecycle)
         val tokenManager = FakeTokenManager("")
         val networkStateProvider: NetworkStateProvider = mock()
         whenever(networkStateProvider.isConnected()) doReturn true
