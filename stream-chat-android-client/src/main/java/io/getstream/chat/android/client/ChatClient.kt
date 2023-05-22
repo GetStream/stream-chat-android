@@ -415,6 +415,7 @@ internal constructor(
 
                 userStateService.onSetUser(user, isAnonymous)
                 chatSocket.connectUser(user, isAnonymous)
+                mutableClientState.setInitializationState(InitializationState.COMPLETE)
                 waitFirstConnection(timeoutMilliseconds)
             }
 
@@ -434,7 +435,10 @@ internal constructor(
                     }
 
                     else -> {
-                        getConnectionId()?.let { Result.Success(ConnectionData(userState.user, it)) }
+                        getConnectionId()?.let {
+                            mutableClientState.setInitializationState(InitializationState.COMPLETE)
+                            Result.Success(ConnectionData(userState.user, it))
+                        }
                             ?: run {
                                 logger.e {
                                     "[setUser] Trying to connect the same user twice without a previously completed " +
@@ -460,8 +464,6 @@ internal constructor(
             }
         }.onErrorSuspend {
             disconnectSuspend(flushPersistence = true)
-        }.onSuccess {
-            mutableClientState.setInitializationState(InitializationState.COMPLETE)
         }
     }
 
@@ -549,7 +551,7 @@ internal constructor(
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long?,
     ): Result<ConnectionData> {
-        mutableClientState.setInitializationState(InitializationState.RUNNING)
+        mutableClientState.setInitializationState(InitializationState.INITIALIZING)
         logger.d { "[connectUserSuspend] userId: '${user.id}', username: '${user.name}'" }
         return setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
             logger.v {
@@ -648,7 +650,7 @@ internal constructor(
      */
     @InternalStreamChatApi
     public suspend fun setUserWithoutConnectingIfNeeded() {
-        if (clientState.initializationState.value == InitializationState.RUNNING) {
+        if (clientState.initializationState.value == InitializationState.INITIALIZING) {
             delay(INITIALIZATION_DELAY)
             return setUserWithoutConnectingIfNeeded()
         } else if (isUserSet() || clientState.initializationState.value == InitializationState.COMPLETE) {

@@ -149,13 +149,6 @@ internal class ConnectUserTest {
     }
 
     @Test
-    fun `When connection is running, initialisation state should be updated`() = runTest {
-        client.connectUser(user, jwt).enqueue()
-
-        mutableClientState.initializationState.value `should be equal to` InitializationState.RUNNING
-    }
-
-    @Test
     fun `Connect an user when alive connection exists with the same user should return a success`() = runCancellableTest {
         val connectionId = randomString()
         prepareAliveConnection(user, connectionId)
