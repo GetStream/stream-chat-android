@@ -51,6 +51,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatHelper
@@ -60,6 +61,7 @@ import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.ChannelsActivity
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import kotlinx.coroutines.launch
 
 /**
  * An Activity that allows users to log in using one of our predefined sample users.
@@ -73,13 +75,15 @@ class UserLoginActivity : AppCompatActivity() {
             ChatTheme {
                 UserLoginScreen(
                     onUserItemClick = { userCredentials ->
-                        if (ChatClient.instance().config.apiKey != userCredentials.apiKey) {
-                            // If the user attempted to login with custom credentials on the custom
-                            // login screen then we need to reinitialize the SDK with our API key.
-                            ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
+                        lifecycleScope.launch {
+                            if (ChatClient.instance().config.apiKey != userCredentials.apiKey) {
+                                // If the user attempted to login with custom credentials on the custom
+                                // login screen then we need to reinitialize the SDK with our API key.
+                                ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
+                            }
+                            ChatHelper.connectUser(userCredentials = userCredentials)
+                            openChannels()
                         }
-                        ChatHelper.connectUser(userCredentials = userCredentials)
-                        openChannels()
                     },
                     onCustomLoginClick = ::openCustomLogin
                 )

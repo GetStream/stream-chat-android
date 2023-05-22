@@ -19,6 +19,7 @@ package io.getstream.chat.ui.sample.feature.user_login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.InitializationState
@@ -28,6 +29,9 @@ import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.transformWhile
+import kotlinx.coroutines.launch
 import io.getstream.chat.android.models.User as ChatUser
 
 class UserLoginViewModel : ViewModel() {
@@ -77,11 +81,22 @@ class UserLoginViewModel : ViewModel() {
                     _events.postValue(Event(UiEvent.RedirectToChannels))
                 }.enqueue(::handleUserConnection)
             } else {
-                if (clientState.initializationState.value == InitializationState.NOT_INITIALIZED) {
-                    connectUser(chatUser, user.token).enqueue(::handleUserConnection)
+                viewModelScope.launch {
+                    clientState.initializationState
+                        .transformWhile {
+                            emit(it)
+                            it != InitializationState.COMPLETE
+                        }
+                        .collect {
+                            when (it) {
+                                InitializationState.COMPLETE -> _events.postValue(Event(UiEvent.RedirectToChannels))
+                                InitializationState.INITIALIZING -> { }
+                                InitializationState.NOT_INITIALIZED -> {
+                                    async { connectUser(chatUser, user.token).await().let(::handleUserConnection) }
+                                }
+                            }
+                        }
                 }
-
-                _events.postValue(Event(UiEvent.RedirectToChannels))
             }
         }
     }

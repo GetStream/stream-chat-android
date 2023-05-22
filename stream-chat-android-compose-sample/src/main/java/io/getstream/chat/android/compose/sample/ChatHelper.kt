@@ -33,7 +33,7 @@ import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFacto
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.result.Error
-import io.getstream.result.Result
+import kotlinx.coroutines.flow.transformWhile
 
 /**
  * A helper class that is responsible for initializing the SDK and connecting/disconnecting
@@ -87,26 +87,29 @@ object ChatHelper {
     /**
      * Initializes [ChatClient] with the given user and saves it to the persistent storage.
      */
-    fun connectUser(
+    suspend fun connectUser(
         userCredentials: UserCredentials,
         onSuccess: () -> Unit = {},
         onError: (Error) -> Unit = {},
     ) {
         ChatClient.instance().run {
-            if (clientState.initializationState.value == InitializationState.NOT_INITIALIZED) {
-                connectUser(userCredentials.user, userCredentials.token)
-                    .enqueue { result ->
-                        when (result) {
-                            is Result.Success -> {
-                                ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
-                                onSuccess()
+            clientState.initializationState
+                .transformWhile {
+                    emit(it)
+                    it != InitializationState.COMPLETE
+                }
+                .collect {
+                    if (it == InitializationState.NOT_INITIALIZED) {
+                        connectUser(userCredentials.user, userCredentials.token)
+                            .enqueue { result ->
+                                result.onError(onError)
+                                    .onSuccess {
+                                        ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
+                                        onSuccess()
+                                    }
                             }
-                            is Result.Failure -> onError(result.value)
-                        }
                     }
-            } else {
-                onSuccess()
-            }
+                }
         }
     }
 
