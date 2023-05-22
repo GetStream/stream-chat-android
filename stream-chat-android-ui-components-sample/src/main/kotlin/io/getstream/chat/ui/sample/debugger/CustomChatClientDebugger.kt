@@ -35,10 +35,10 @@ class CustomChatClientDebugger : ChatClientDebugger {
 }
 
 class CustomSendMessageDebugger(
-    private val channelType: String,
-    private val channelId: String,
-    private val message: Message,
-    private val isRetrying: Boolean,
+    channelType: String,
+    channelId: String,
+    message: Message,
+    isRetrying: Boolean,
 ) : SendMessageDebugger {
 
     private val logger = StreamLog.getLogger("SendMessageDebugger")

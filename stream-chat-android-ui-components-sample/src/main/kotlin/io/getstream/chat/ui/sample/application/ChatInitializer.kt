@@ -77,8 +77,12 @@ class ChatInitializer(private val context: Context) {
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
             .withPlugin(offlinePlugin)
-            .debugRequests(true)
-            .clientDebugger(CustomChatClientDebugger())
+            .apply {
+                if (BuildConfig.DEBUG) {
+                    this.debugRequests(true)
+                        .clientDebugger(CustomChatClientDebugger())
+                }
+            }
             .build()
 
         // Using markdown as text transformer
