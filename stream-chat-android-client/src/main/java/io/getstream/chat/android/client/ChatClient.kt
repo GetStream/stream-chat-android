@@ -1032,6 +1032,10 @@ internal constructor(
         }
     }
 
+    /**
+     * Reconnects the socket.
+     * Works only if the user was previously set and the WS connections is closed.
+     */
     @CheckResult
     public fun reconnectSocket(): Call<Unit> =
         CoroutineCall(userScope) {
