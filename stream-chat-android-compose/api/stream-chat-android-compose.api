@@ -290,6 +290,21 @@ public final class io/getstream/chat/android/compose/ui/attachments/StreamAttach
 	public final fun defaultQuotedFactories ()Ljava/util/List;
 }
 
+public final class io/getstream/chat/android/compose/ui/attachments/content/AudioRecordAttachmentContentKt {
+	public static final fun AudioRecordAttachmentContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Attachment;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/content/AudioRecordGroupContentKt {
+	public static final fun AudioRecordGroupContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$AudioRecordAttachmentContentKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$AudioRecordAttachmentContentKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$MediaAttachmentContentKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$MediaAttachmentContentKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
@@ -364,6 +379,17 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Quot
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/UnsupportedAttachmentContentKt {
 	public static final fun UnsupportedAttachmentContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/factory/AudioRecordAttachmentFactoryKt {
+	public static final fun AudioRecordAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+}
+
+public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$AudioRecordAttachmentFactoryKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$AudioRecordAttachmentFactoryKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function4;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$FileAttachmentFactoryKt {
@@ -1104,6 +1130,10 @@ public final class io/getstream/chat/android/compose/ui/components/userreactions
 
 public final class io/getstream/chat/android/compose/ui/components/userreactions/UserReactionsKt {
 	public static final fun UserReactions (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/composables/AudioWaveSeekbarKt {
+	public static final fun AudioWaveVSeekbar-t6yy7ic (Ljava/util/List;Landroidx/compose/ui/Modifier;JJLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {
