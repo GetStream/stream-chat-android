@@ -29,7 +29,6 @@ import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
 import io.getstream.chat.android.models.User as ChatUser
@@ -92,7 +91,7 @@ class UserLoginViewModel : ViewModel() {
                                 InitializationState.COMPLETE -> _events.postValue(Event(UiEvent.RedirectToChannels))
                                 InitializationState.INITIALIZING -> { }
                                 InitializationState.NOT_INITIALIZED -> {
-                                    async { connectUser(chatUser, user.token).await().let(::handleUserConnection) }
+                                    launch { connectUser(chatUser, user.token).await().let(::handleUserConnection) }
                                 }
                             }
                         }
