@@ -509,6 +509,7 @@ internal constructor(
      *
      * @return [AppSettings] the settings of the app.
      */
+    @CheckResult
     public fun appSettings(): Call<AppSettings> = api.appSettings()
 
     /**
@@ -1461,6 +1462,7 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for sending the Giphy.
      */
+    @CheckResult
     public fun sendGiphy(message: Message): Call<Message> {
         val request = message.run {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
@@ -1487,6 +1489,7 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for shuffling the Giphy.
      */
+    @CheckResult
     public fun shuffleGiphy(message: Message): Call<Message> {
         val request = message.run {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
@@ -1561,6 +1564,7 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for sending a message.
      */
+    @CheckResult
     public fun sendMessage(
         channelType: String,
         channelId: String,
@@ -2745,6 +2749,7 @@ internal constructor(
      */
     public fun devToken(userId: String): String = tokenUtils.devToken(userId)
 
+    @CheckResult
     internal fun <R, T : Any> Call<T>.precondition(
         pluginsList: List<R>,
         preconditionCheck: suspend R.() -> Result<Unit>,
