@@ -993,22 +993,26 @@ internal constructor(
 
     //endregion
 
-    public fun disconnectSocket() {
-        launch { chatSocket.disconnect() }
-    }
+    @CheckResult
+    public fun disconnectSocket(): Call<Unit> =
+        CoroutineCall(userScope) {
+            Result.Success(chatSocket.disconnect())
+        }
 
-    public fun reconnectSocket() {
-        launch {
+    @CheckResult
+    public fun reconnectSocket(): Call<Unit> =
+        CoroutineCall(userScope) {
             when (val userState = userStateService.state) {
-                is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocket.reconnectUser(
-                    userState.userOrError(),
-                    userState is UserState.AnonymousUserSet,
-                    true,
+                is UserState.UserSet, is UserState.AnonymousUserSet -> Result.Success(
+                    chatSocket.reconnectUser(
+                        userState.userOrError(),
+                        userState is UserState.AnonymousUserSet,
+                        true,
+                    )
                 )
-                else -> error("Invalid user state $userState without user being set!")
+                else -> Result.Failure(Error.GenericError("Invalid user state $userState without user being set!"))
             }
         }
-    }
 
     public fun addSocketListener(listener: SocketListener) {
         chatSocket.addListener(listener)
