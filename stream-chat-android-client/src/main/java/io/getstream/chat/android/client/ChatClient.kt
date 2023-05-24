@@ -216,8 +216,7 @@ internal constructor(
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     public val clientState: ClientState = mutableClientState
 
-    @InternalStreamChatApi
-    public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
+    private val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
 
@@ -510,6 +509,7 @@ internal constructor(
      *
      * @return [AppSettings] the settings of the app.
      */
+    @CheckResult
     public fun appSettings(): Call<AppSettings> = api.appSettings()
 
     /**
@@ -648,8 +648,7 @@ internal constructor(
      * This method initializes [ChatClient] to allow the use of Stream REST API client.
      * Moreover, it warms up the connection, and sets up notifications.
      */
-    @InternalStreamChatApi
-    public suspend fun setUserWithoutConnectingIfNeeded() {
+    internal suspend fun setUserWithoutConnectingIfNeeded() {
         if (clientState.initializationState.value == InitializationState.INITIALIZING) {
             delay(INITIALIZATION_DELAY)
             return setUserWithoutConnectingIfNeeded()
@@ -995,22 +994,26 @@ internal constructor(
 
     //endregion
 
-    public fun disconnectSocket() {
-        launch { chatSocket.disconnect() }
-    }
+    @CheckResult
+    public fun disconnectSocket(): Call<Unit> =
+        CoroutineCall(userScope) {
+            Result.Success(chatSocket.disconnect())
+        }
 
-    public fun reconnectSocket() {
-        launch {
+    @CheckResult
+    public fun reconnectSocket(): Call<Unit> =
+        CoroutineCall(userScope) {
             when (val userState = userStateService.state) {
-                is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocket.reconnectUser(
-                    userState.userOrError(),
-                    userState is UserState.AnonymousUserSet,
-                    true,
+                is UserState.UserSet, is UserState.AnonymousUserSet -> Result.Success(
+                    chatSocket.reconnectUser(
+                        userState.userOrError(),
+                        userState is UserState.AnonymousUserSet,
+                        true,
+                    )
                 )
-                else -> error("Invalid user state $userState without user being set!")
+                else -> Result.Failure(Error.GenericError("Invalid user state $userState without user being set!"))
             }
         }
-    }
 
     public fun addSocketListener(listener: SocketListener) {
         chatSocket.addListener(listener)
@@ -1459,6 +1462,7 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for sending the Giphy.
      */
+    @CheckResult
     public fun sendGiphy(message: Message): Call<Message> {
         val request = message.run {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND))
@@ -1485,6 +1489,7 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for shuffling the Giphy.
      */
+    @CheckResult
     public fun shuffleGiphy(message: Message): Call<Message> {
         val request = message.run {
             SendActionRequest(cid, id, type, mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE))
@@ -1559,6 +1564,7 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for sending a message.
      */
+    @CheckResult
     public fun sendMessage(
         channelType: String,
         channelId: String,
@@ -1746,7 +1752,6 @@ internal constructor(
      * @see [queryChannel]
      */
     @CheckResult
-    @InternalStreamChatApi
     private fun queryChannelInternal(
         channelType: String,
         channelId: String,
@@ -2744,6 +2749,7 @@ internal constructor(
      */
     public fun devToken(userId: String): String = tokenUtils.devToken(userId)
 
+    @CheckResult
     internal fun <R, T : Any> Call<T>.precondition(
         pluginsList: List<R>,
         preconditionCheck: suspend R.() -> Result<Unit>,
