@@ -216,8 +216,7 @@ internal constructor(
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     public val clientState: ClientState = mutableClientState
 
-    @InternalStreamChatApi
-    public val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
+    private val streamDateFormatter: StreamDateFormatter = StreamDateFormatter()
     private val eventsObservable = ChatEventsObservable(waitConnection, userScope, chatSocket)
     private val eventMutex = Mutex()
 
@@ -648,8 +647,7 @@ internal constructor(
      * This method initializes [ChatClient] to allow the use of Stream REST API client.
      * Moreover, it warms up the connection, and sets up notifications.
      */
-    @InternalStreamChatApi
-    public suspend fun setUserWithoutConnectingIfNeeded() {
+    internal suspend fun setUserWithoutConnectingIfNeeded() {
         if (clientState.initializationState.value == InitializationState.INITIALIZING) {
             delay(INITIALIZATION_DELAY)
             return setUserWithoutConnectingIfNeeded()
@@ -1746,7 +1744,6 @@ internal constructor(
      * @see [queryChannel]
      */
     @CheckResult
-    @InternalStreamChatApi
     private fun queryChannelInternal(
         channelType: String,
         channelId: String,
