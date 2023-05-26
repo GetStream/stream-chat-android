@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Emails are highlighted and clickable in the message text. [#4832](https://github.com/GetStream/stream-chat-android/pull/4832)
 
 ### ✅ Added
 - Added `ChatClientDebugger` and `SendMessageDebugger` to debug an internal flow of `ChatClient`. [#4823](https://github.com/GetStream/stream-chat-android/pull/4823)
