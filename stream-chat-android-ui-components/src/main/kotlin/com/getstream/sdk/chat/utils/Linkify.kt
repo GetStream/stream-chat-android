@@ -50,7 +50,7 @@ public object Linkify {
 
     /**
      * Scans the provided TextView and turns all occurrences
-     * of the link types into clickable links (Currently only support web urls).
+     * of the link types into clickable links.
      * If matches are found the movement method for the TextView is set to
      * LinkMovementMethod.
      *
@@ -88,6 +88,10 @@ public object Linkify {
         gatherLinks(
             links, text, PatternsCompat.AUTOLINK_WEB_URL, arrayOf("http://", "https://", "rtsp://"),
             Linkify.sUrlMatchFilter, null
+        )
+        gatherLinks(
+            links, text, PatternsCompat.AUTOLINK_EMAIL_ADDRESS, arrayOf("mailto:"),
+            null, null
         )
 
         pruneOverlaps(links, text)
