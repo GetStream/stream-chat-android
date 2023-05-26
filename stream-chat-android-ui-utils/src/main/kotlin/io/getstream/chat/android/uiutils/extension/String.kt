@@ -32,6 +32,7 @@ public fun String.containsLinks(): Boolean {
  * they can be opened using [android.content.Intent.ACTION_VIEW]
  */
 public fun String.addSchemeToUrlIfNeeded(): String = when {
+    this.startsWith("mailto:") -> this
     this.startsWith("http://") -> this
     this.startsWith("https://") -> this
     else -> "http://$this"
