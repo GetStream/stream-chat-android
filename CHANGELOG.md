@@ -82,6 +82,7 @@
 - Fixed edit messages and reply messages with unsupported attachments. [#4757](https://github.com/GetStream/stream-chat-android/pull/4757)
 
 ### ⬆️ Improved
+- Emails are highlighted and clickable in the message text. [#4833](https://github.com/GetStream/stream-chat-android/pull/4833)
 
 ### ✅ Added
 - Added `ChatUI.streamCdnImageResizing` which allows resizing images where they appear as previews, such as the message list, attachment gallery overview or user and channel avatars. Only images hosted by Stream's CDN which contain original width and height query parameters can be resized. Image resizing is a paid feature and is disabled by default, you can enable it by overriding the aforementioned `ChatUI.streamCdnImageResizing` property with with an instance that has `StreamCdnImageResizing.imageResizingEnabled` set to true. Pricing can be found [here](https://getstream.io/chat/pricing/). [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
@@ -103,6 +104,7 @@
 ### ⬆️ Improved
 - Updated Compose compiler version to `1.4.3`. [#4697](https://github.com/GetStream/stream-chat-android/pull/4697)
 - Added `ChatClient.clearPersistence()` to be able to clear local data even if the user is not connected. [#4797](https://github.com/GetStream/stream-chat-android/pull/4797)
+- Emails are highlighted and clickable in the message text. [#4833](https://github.com/GetStream/stream-chat-android/pull/4833)
 
 ### ✅ Added
 - Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)
