@@ -376,6 +376,7 @@ internal data class ChannelUserBannedEventDto(
     val channel_id: String,
     val user: DownstreamUserDto,
     val expiration: Date?,
+    val shadow: Boolean?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
