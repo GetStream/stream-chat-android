@@ -476,7 +476,7 @@ internal class EventHandlerSequential(
                 is ChannelUserBannedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.updateMemberBanned(event.user.id, banned = true)
+                            channel.updateMemberBanned(event.user.id, banned = true, event.shadow)
                                 .updateMembershipBanned(event.user.id, banned = true)
                         )
                     }
@@ -484,7 +484,7 @@ internal class EventHandlerSequential(
                 is ChannelUserUnbannedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.updateMemberBanned(event.user.id, banned = false)
+                            channel.updateMemberBanned(event.user.id, banned = false, false)
                                 .updateMembershipBanned(event.user.id, banned = false)
                         )
                     }
