@@ -1218,7 +1218,7 @@ public final class io/getstream/chat/android/client/events/ChannelUpdatedEvent :
 }
 
 public final class io/getstream/chat/android/client/events/ChannelUserBannedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/UserEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Z)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
@@ -1227,8 +1227,9 @@ public final class io/getstream/chat/android/client/events/ChannelUserBannedEven
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Lio/getstream/chat/android/client/models/User;
 	public final fun component8 ()Ljava/util/Date;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;)Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;
+	public final fun component9 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;Z)Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/User;Ljava/util/Date;ZILjava/lang/Object;)Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getChannelId ()Ljava/lang/String;
 	public fun getChannelType ()Ljava/lang/String;
@@ -1236,6 +1237,7 @@ public final class io/getstream/chat/android/client/events/ChannelUserBannedEven
 	public fun getCreatedAt ()Ljava/util/Date;
 	public final fun getExpiration ()Ljava/util/Date;
 	public fun getRawCreatedAt ()Ljava/lang/String;
+	public final fun getShadow ()Z
 	public fun getType ()Ljava/lang/String;
 	public fun getUser ()Lio/getstream/chat/android/client/models/User;
 	public fun hashCode ()I
