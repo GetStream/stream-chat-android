@@ -17,6 +17,7 @@
 
 ### ✅ Added
 - Added `ChatClientDebugger` and `SendMessageDebugger` to debug an internal flow of `ChatClient`. [#4823](https://github.com/GetStream/stream-chat-android/pull/4823)
+- Added `ChannelUserBannedEvent.shadow` property to know if the user is shadow-banned or standard banned. [#4835](https://github.com/GetStream/stream-chat-android/pull/4835)
 
 ### ⚠️ Changed
 
@@ -37,6 +38,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- The `ChannelStateLogic` class keeps members updated after ban/unban events are received. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
 
 ### ✅ Added
 

@@ -371,7 +371,7 @@ internal class EventHandlerImpl(
                 is ChannelUserBannedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.updateMemberBanned(event.user.id, banned = true)
+                            channel.updateMemberBanned(event.user.id, banned = true, event.shadow)
                                 .updateMembershipBanned(event.user.id, banned = true)
                         )
                     }
@@ -379,7 +379,7 @@ internal class EventHandlerImpl(
                 is ChannelUserUnbannedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.updateMemberBanned(event.user.id, banned = false)
+                            channel.updateMemberBanned(event.user.id, banned = false, false)
                                 .updateMembershipBanned(event.user.id, banned = false)
                         )
                     }
