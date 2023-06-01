@@ -29,6 +29,7 @@
 - Added new `hideHistory` flag into `ChannelClient.addMembers` function. This flag can be used to hide the channel's history from the added member. [#4817](https://github.com/GetStream/stream-chat-android/pull/4817)
 - Added `ChatClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
 - Added `ChannelClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
+- Added `ChannelUserBannedEvent.shadow` property to know if the user is shadow-banned or standard banned. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
 
 ### ⚠️ Changed
 - Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
@@ -58,6 +59,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- The `ChannelStateLogic` keeps members updated after ban/unban events are received. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
 
 ### ✅ Added
 
