@@ -110,13 +110,19 @@ public fun Channel.updateMember(member: Member?): Channel {
  *
  * @param memberUserId Updated member user id.
  * @param banned Shows whether a user is banned or not in this channel.
+ * @param shadow Shows whether a user is shadow banned or not in this channel.
  */
 @InternalStreamChatApi
-public fun Channel.updateMemberBanned(memberUserId: String?, banned: Boolean): Channel {
+public fun Channel.updateMemberBanned(
+    memberUserId: String?,
+    banned: Boolean,
+    shadow: Boolean,
+): Channel {
     members = members.map { member ->
         member.apply {
             if (this.user.id == memberUserId) {
                 this.banned = banned
+                this.shadowBanned = shadow
             }
         }
     }

@@ -512,7 +512,8 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         user = user,
-        expiration = date
+        expiration = date,
+        shadow = false,
     )
     private val globalUserBannedEvent = GlobalUserBannedEvent(
         type = EventType.USER_BANNED,

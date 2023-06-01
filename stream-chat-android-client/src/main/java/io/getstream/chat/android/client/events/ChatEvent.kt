@@ -540,6 +540,7 @@ public data class ChannelUserBannedEvent(
     override val channelId: String,
     override val user: User,
     val expiration: Date?,
+    val shadow: Boolean,
 ) : CidEvent(), UserEvent
 
 /**

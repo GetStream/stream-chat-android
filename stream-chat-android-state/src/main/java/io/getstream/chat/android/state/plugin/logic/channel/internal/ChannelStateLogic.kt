@@ -300,6 +300,30 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Updates banned state of a member.
+     *
+     * @param memberUserId Updated member user id.
+     * @param banned Shows whether a user is banned or not in this channel.
+     * @param shadow Shows whether a user is shadow banned or not in this channel.
+     */
+    fun updateMemberBanned(
+        memberUserId: String?,
+        banned: Boolean,
+        shadow: Boolean,
+    ) {
+        mutableState.upsertMembers(
+            mutableState.members.value.map { member ->
+                member.apply {
+                    if (this.user.id == memberUserId) {
+                        this.banned = banned
+                        this.shadowBanned = shadow
+                    }
+                }
+            }
+        )
+    }
+
+    /**
      * Deletes channel.
      *
      * @param deleteDate The date when the channel was deleted.

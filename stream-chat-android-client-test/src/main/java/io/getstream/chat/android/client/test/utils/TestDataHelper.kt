@@ -574,7 +574,8 @@ public class TestDataHelper {
             channel2.type,
             channel2.id,
             user1,
-            null
+            null,
+            false,
         )
     }
     public val user1Unbanned: ChannelUserUnbannedEvent by lazy {
