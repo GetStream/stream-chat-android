@@ -16,8 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `ChatClientDebugger` and `SendMessageDebugger` to debug an internal flow of `ChatClient`. [#4823](https://github.com/GetStream/stream-chat-android/pull/4823)
-- Added `ChannelUserBannedEvent.shadow` property to know if the user is shadow-banned or standard banned. [#4835](https://github.com/GetStream/stream-chat-android/pull/4835)
 
 ### ⚠️ Changed
 
@@ -38,7 +36,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- The `ChannelStateLogic` class keeps members updated after ban/unban events are received. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
 
 ### ✅ Added
 
@@ -61,7 +58,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Emails are highlighted and clickable in the message text. [#4832](https://github.com/GetStream/stream-chat-android/pull/4832)
 
 ### ✅ Added
 
@@ -73,7 +69,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Emails are highlighted and clickable in the message text. [#4832](https://github.com/GetStream/stream-chat-android/pull/4832)
 
 ### ✅ Added
 
@@ -124,6 +119,24 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# June 2nd, 2023 - 5.17.4
+## stream-chat-android-client
+### ✅ Added
+- Added `ChatClientDebugger` and `SendMessageDebugger` to debug an internal flow of `ChatClient`. [#4823](https://github.com/GetStream/stream-chat-android/pull/4823)
+- Added `ChannelUserBannedEvent.shadow` property to know if the user is shadow-banned or standard banned. [#4835](https://github.com/GetStream/stream-chat-android/pull/4835)
+
+## stream-chat-android-state
+### ⬆️ Improved
+- The `ChannelStateLogic` class keeps members updated after ban/unban events are received. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Emails are highlighted and clickable in the message text. [#4832](https://github.com/GetStream/stream-chat-android/pull/4832)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Emails are highlighted and clickable in the message text. [#4832](https://github.com/GetStream/stream-chat-android/pull/4832)
 
 # May 17th, 2023 - 5.17.3
 ## Common changes for all artifacts
