@@ -23,11 +23,15 @@ import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
+import io.getstream.chat.android.client.audio.WaveformExtractor
+import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationParser
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.log.taggedLogger
 
 private const val NULL_DURATION = 0.0
 
@@ -49,7 +53,23 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         setPadding(2.dpToPx(), 0.dpToPx(), 2.dpToPx(), 2.dpToPx())
     }
 
+    private val logger by taggedLogger("AudioRecordsGroupView")
+
     private var audioAttachments: List<Attachment>? = null
+
+    private val extractor by lazy(LazyThreadSafetyMode.NONE) {
+        WaveformExtractor(context, "key", 100) { extractor, progress ->
+            if (progress >= 1.0f) {
+                logger.v { "[onProgress] progress: $progress, sampleData: ${extractor.sampleData}" }
+                if (childCount > 0) {
+                    val playerView = getChildAt(0) as AudioRecordPlayerView
+                    playerView.setWaveBars(extractor.sampleData)
+                    playerView.invalidate()
+                    playerView.requestLayout()
+                }
+            }
+        }
+    }
 
     /**
      * Shows audio track.
@@ -66,13 +86,19 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
     }
 
     private fun addAttachmentPlayerView(index: Int, attachment: Attachment) {
-        AudioRecordPlayer(context).apply {
-            (attachment.extraData["duration"] as? Double)
+        logger.d { "[addAttachmentPlayerView] index: $index" }
+        attachment.assetUrl?.also {
+            extractor.start(it)
+        }
+
+        AudioRecordPlayerView(context).apply {
+            attachment.duration
                 ?.toInt()
                 ?.let(DurationParser::durationInMilliToReadableTime)
                 ?.let(this::setTotalDuration)
 
-            (attachment.extraData["waveList"] as? List<Float>)?.let(::setWaveBars)
+            logger.i { "[addAttachmentPlayerView] waveformData: ${attachment.waveformData}" }
+            attachment.waveformData?.let(::setWaveBars)
         }.let { playerView ->
             if (attachment.assetUrl != null) {
 
@@ -95,7 +121,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         }
     }
 
-    private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayer, hashCode: Int) {
+    private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
         onAudioStateChange(hashCode) { audioState ->
             when (audioState) {
                 AudioState.LOADING -> playerView.setLoading()
@@ -111,7 +137,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         onSpeedChange(hashCode, playerView::setSpeedText)
     }
 
-    private fun AudioRecordPlayer.registerButtonsListeners(
+    private fun AudioRecordPlayerView.registerButtonsListeners(
         audioPlayer: AudioPlayer,
         attachment: Attachment,
         hashCode: Int,
@@ -150,6 +176,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
      * Unbinds the view.
      */
     public fun unbind() {
+        extractor.stop()
         audioAttachments?.map { attachment -> attachment.hashCode() }
             ?.let(ChatClient.instance().audioPlayer::removeAudios)
     }

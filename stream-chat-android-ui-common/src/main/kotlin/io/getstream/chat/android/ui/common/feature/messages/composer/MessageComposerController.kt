@@ -471,6 +471,7 @@ public class MessageComposerController(
      * @param attachments The attachments to store and show in the composer.
      */
     public fun addSelectedAttachments(attachments: List<Attachment>) {
+        logger.d { "[addSelectedAttachments] attachments: $attachments" }
         val newAttachments = (selectedAttachments.value + attachments).distinctBy {
             if (it.name != null) {
                 it.name

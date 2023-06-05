@@ -28,6 +28,6 @@ public object AttachmentType {
     public const val PRODUCT: String = "product"
     public const val FILE: String = "file"
     public const val LINK: String = "link"
-    public const val AUDIO_RECORDING: String = "audio_recording"
+    public const val AUDIO_RECORDING: String = "voiceRecording"
     public const val UNKNOWN: String = "unknown"
 }

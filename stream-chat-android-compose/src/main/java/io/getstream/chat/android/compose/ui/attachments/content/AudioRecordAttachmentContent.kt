@@ -42,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioState
+import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
@@ -60,7 +61,7 @@ public fun AudioRecordAttachmentContent(
 ) {
     val audioPlayer = ChatClient.instance().audioPlayer
 
-    val duration = ((audioTrack.extraData["duration"] as? Int) ?: 0)
+    val duration = ((audioTrack.duration?.toInt()) ?: 0)
         .let(DurationParser::durationInMilliToReadableTime)
 
     var trackProgress by remember { mutableStateOf(0F) }
