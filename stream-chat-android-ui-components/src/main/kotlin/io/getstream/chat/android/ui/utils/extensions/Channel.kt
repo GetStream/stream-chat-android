@@ -18,7 +18,7 @@ package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
+import io.getstream.chat.android.client.extensions.getMemberExcludingCurrent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -66,7 +66,7 @@ public fun Channel.getMembersStatusText(
 public fun Channel.getLastMessage(): Message? = getPreviewMessage(ChatUI.currentUserProvider.getCurrentUser())
 
 internal fun Channel.diff(other: Channel): ChannelListPayloadDiff {
-    val usersChanged = getUsersExcludingCurrent() != other.getUsersExcludingCurrent()
+    val usersChanged = getMemberExcludingCurrent() != other.getMemberExcludingCurrent()
     return ChannelListPayloadDiff(
         nameChanged = name != other.name,
         avatarViewChanged = usersChanged,
