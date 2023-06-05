@@ -58,6 +58,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- `ChannelListPayloadDiff` is calculated using the list of members instead of the list of users. [#4839](https://github.com/GetStream/stream-chat-android/pull/4839)
 
 ### ✅ Added
 
