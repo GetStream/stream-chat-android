@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.extensions.internal.containsUserMention
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 
 public fun Channel.isAnonymousChannel(): Boolean = id.isAnonymousChannelId()
@@ -42,15 +43,19 @@ public fun Channel.isMutedFor(user: User): Boolean = user.channelMutes.any { mut
 @InternalStreamChatApi
 public fun Channel.getUsersExcludingCurrent(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-): List<User> {
-    val users = members.map { it.user }
-    val currentUserId = currentUser?.id
-    return if (currentUserId != null) {
-        users.filterNot { it.id == currentUserId }
-    } else {
-        users
-    }
-}
+): List<User> = getMemberExcludingCurrent(currentUser).map { it.user }
+
+/**
+ * Returns a list of members of the channel excluding the currently logged in user.
+ *
+ * @param currentUser The currently logged in user.
+ * @return The list of members in the channel without the current user.
+ */
+@InternalStreamChatApi
+public fun Channel.getMemberExcludingCurrent(
+    currentUser: User? = ChatClient.instance().getCurrentUser(),
+): List<Member> =
+    members.filter { it.user.id != currentUser?.id }
 
 /**
  * Counts messages in which [user] is mentioned.
