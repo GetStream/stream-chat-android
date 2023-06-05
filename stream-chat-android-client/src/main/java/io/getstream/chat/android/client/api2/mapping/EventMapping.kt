@@ -588,6 +588,7 @@ private fun ChannelUserBannedEventDto.toDomain(): ChannelUserBannedEvent {
         channelId = channel_id,
         user = user.toDomain(),
         expiration = expiration,
+        shadow = shadow ?: false,
     )
 }
 

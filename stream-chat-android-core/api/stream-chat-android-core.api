@@ -884,8 +884,8 @@ public final class io/getstream/chat/android/models/InFilterObject : io/getstrea
 
 public final class io/getstream/chat/android/models/InitializationState : java/lang/Enum {
 	public static final field COMPLETE Lio/getstream/chat/android/models/InitializationState;
+	public static final field INITIALIZING Lio/getstream/chat/android/models/InitializationState;
 	public static final field NOT_INITIALIZED Lio/getstream/chat/android/models/InitializationState;
-	public static final field RUNNING Lio/getstream/chat/android/models/InitializationState;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/InitializationState;
 	public static fun values ()[Lio/getstream/chat/android/models/InitializationState;
 }

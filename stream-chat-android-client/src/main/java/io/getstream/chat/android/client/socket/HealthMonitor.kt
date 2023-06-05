@@ -35,8 +35,8 @@ internal class HealthMonitor(
     private val timeProvider: TimeProvider = TimeProvider,
     private val retryInterval: RetryInterval = ExponencialRetryInterval,
     private val userScope: UserScope,
-    private val checkCallback: () -> Unit,
-    private val reconnectCallback: () -> Unit,
+    private val checkCallback: suspend () -> Unit,
+    private val reconnectCallback: suspend () -> Unit,
 ) {
 
     private var consecutiveFailures = 0

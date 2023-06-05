@@ -61,19 +61,19 @@ internal open class ChatSocket(
         reconnectCallback = { chatSocketStateService.onWebSocketEventLost() }
     )
     private val lifecycleHandler = object : LifecycleHandler {
-        override fun resume() { chatSocketStateService.onResume() }
-        override fun stopped() { chatSocketStateService.onStop() }
+        override suspend fun resume() { chatSocketStateService.onResume() }
+        override suspend fun stopped() { chatSocketStateService.onStop() }
     }
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
-        override fun onConnected() { chatSocketStateService.onNetworkAvailable() }
-        override fun onDisconnected() { chatSocketStateService.onNetworkNotAvailable() }
+        override suspend fun onConnected() { chatSocketStateService.onNetworkAvailable() }
+        override suspend fun onDisconnected() { chatSocketStateService.onNetworkNotAvailable() }
     }
 
     @Suppress("ComplexMethod")
     private fun observeSocketStateService(): Job {
         var socketListenerJob: Job? = null
 
-        fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
+        suspend fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
             userScope.launch { startObservers() }
             this.connectionConf = connectionConf
             socketListenerJob?.cancel()
@@ -92,7 +92,7 @@ internal open class ChatSocket(
             }
         }
 
-        fun reconnect(connectionConf: SocketFactory.ConnectionConf) {
+        suspend fun reconnect(connectionConf: SocketFactory.ConnectionConf) {
             connectUser(connectionConf.asReconnectionConf())
         }
 
@@ -154,7 +154,7 @@ internal open class ChatSocket(
         }
     }
 
-    fun connectUser(user: User, isAnonymous: Boolean) {
+    suspend fun connectUser(user: User, isAnonymous: Boolean) {
         logger.d { "[connectUser] user.id: ${user.id}, isAnonymous: $isAnonymous" }
         socketStateObserverJob?.cancel()
         socketStateObserverJob = observeSocketStateService()
@@ -166,13 +166,13 @@ internal open class ChatSocket(
         )
     }
 
-    fun disconnect() {
+    suspend fun disconnect() {
         logger.d { "[disconnect] no args" }
         connectionConf = null
         chatSocketStateService.onRequiredDisconnect()
     }
 
-    private fun handleEvent(chatEvent: ChatEvent) {
+    private suspend fun handleEvent(chatEvent: ChatEvent) {
         StreamLog.v("Chat:Events") { "[handleEvent] Received $chatEvent" }
         when (chatEvent) {
             is ConnectedEvent -> chatSocketStateService.onConnectionEstablished(chatEvent)
@@ -195,7 +195,7 @@ internal open class ChatSocket(
         networkStateProvider.unsubscribe(networkStateListener)
     }
 
-    private fun handleError(error: Error) {
+    private suspend fun handleError(error: Error) {
         logger.e { "[handleError] error: $error" }
         when (error) {
             is Error.NetworkError -> onChatNetworkError(error)
@@ -203,7 +203,7 @@ internal open class ChatSocket(
         }
     }
 
-    private fun onChatNetworkError(error: Error.NetworkError) {
+    private suspend fun onChatNetworkError(error: Error.NetworkError) {
         if (ChatErrorCode.isAuthenticationError(error.serverErrorCode)) {
             tokenManager.expireToken()
         }
@@ -273,7 +273,7 @@ internal open class ChatSocket(
         else -> error("This state doesn't contain connectionId")
     }
 
-    fun reconnectUser(user: User, isAnonymous: Boolean, forceReconnection: Boolean) {
+    suspend fun reconnectUser(user: User, isAnonymous: Boolean, forceReconnection: Boolean) {
         logger.d {
             "[reconnectUser] user.id: ${user.id}, isAnonymous: $isAnonymous, forceReconnection: $forceReconnection"
         }

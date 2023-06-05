@@ -96,9 +96,9 @@ internal open class BaseChatModule(
         StreamFileUploader(buildRetrofitCdnApi())
     }
 
-    val lifecycleObserver: StreamLifecycleObserver by lazy { StreamLifecycleObserver(lifecycle) }
+    val lifecycleObserver: StreamLifecycleObserver by lazy { StreamLifecycleObserver(scope, lifecycle) }
     val networkStateProvider: NetworkStateProvider by lazy {
-        NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+        NetworkStateProvider(scope, appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
     }
     val userStateService: UserStateService = UserStateService()
 

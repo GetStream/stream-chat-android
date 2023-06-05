@@ -87,7 +87,7 @@ internal open class BaseChatClientTest {
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         clientScope = ClientTestScope(testCoroutines.scope)
         val userScope = UserTestScope(clientScope)
-        val lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle)
+        val lifecycleObserver = StreamLifecycleObserver(userScope, lifecycleOwner.lifecycle)
         val networkStateProvider: NetworkStateProvider = mock()
         MockitoAnnotations.openMocks(this)
         whenever(networkStateProvider.isConnected()) doReturn true

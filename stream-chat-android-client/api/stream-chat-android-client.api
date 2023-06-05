@@ -43,7 +43,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun disconnect (Z)Lio/getstream/result/call/Call;
-	public final fun disconnectSocket ()V
+	public final fun disconnectSocket ()Lio/getstream/result/call/Call;
 	public final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
@@ -111,7 +111,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryUsers (Lio/getstream/chat/android/client/api/models/QueryUsersRequest;)Lio/getstream/result/call/Call;
-	public final fun reconnectSocket ()V
+	public final fun reconnectSocket ()Lio/getstream/result/call/Call;
 	public final fun rejectInvite (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun removeMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public static synthetic fun removeMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -909,7 +909,7 @@ public final class io/getstream/chat/android/client/events/ChannelUpdatedEvent :
 }
 
 public final class io/getstream/chat/android/client/events/ChannelUserBannedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/UserEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/util/Date;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/util/Date;Z)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
@@ -918,8 +918,9 @@ public final class io/getstream/chat/android/client/events/ChannelUserBannedEven
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Lio/getstream/chat/android/models/User;
 	public final fun component8 ()Ljava/util/Date;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/util/Date;)Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;
+	public final fun component9 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/util/Date;Z)Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/util/Date;ZILjava/lang/Object;)Lio/getstream/chat/android/client/events/ChannelUserBannedEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getChannelId ()Ljava/lang/String;
 	public fun getChannelType ()Ljava/lang/String;
@@ -927,6 +928,7 @@ public final class io/getstream/chat/android/client/events/ChannelUserBannedEven
 	public fun getCreatedAt ()Ljava/util/Date;
 	public final fun getExpiration ()Ljava/util/Date;
 	public fun getRawCreatedAt ()Ljava/lang/String;
+	public final fun getShadow ()Z
 	public fun getType ()Ljava/lang/String;
 	public fun getUser ()Lio/getstream/chat/android/models/User;
 	public fun hashCode ()I

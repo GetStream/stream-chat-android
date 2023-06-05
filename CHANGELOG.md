@@ -29,11 +29,15 @@
 - Added new `hideHistory` flag into `ChannelClient.addMembers` function. This flag can be used to hide the channel's history from the added member. [#4817](https://github.com/GetStream/stream-chat-android/pull/4817)
 - Added `ChatClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
 - Added `ChannelClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
+- Added `ChannelUserBannedEvent.shadow` property to know if the user is shadow-banned or standard banned. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
 
 ### ⚠️ Changed
 - Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
 - Moved `ChatClient.dismissChannelNotifications()` into `ChatClient` class. [#4692](https://github.com/GetStream/stream-chat-android/pull/4692)
 - Changed `ConnectionState` from interface to Sealed Class. The new `ConnectionState.Connected` class contains the `user` that open the WebSocket connection. [#4808](https://github.com/GetStream/stream-chat-android/pull/4808)
+- Renamed `InitializationState.RUNNING` to `InitializationState.INITIALIZING`. [#4827](https://github.com/GetStream/stream-chat-android/pull/4827)
+- Changed return type of `ChatClient.disconnectSocket()` to `Call<Unit>`. [#4829](https://github.com/GetStream/stream-chat-android/pull/4829)
+- Changed return type of `ChatClient.reconnectSocket()` to `Call<Unit>`. [#4829](https://github.com/GetStream/stream-chat-android/pull/4829)
 
 ### ❌ Removed
 - Removed `ChatClient.setDevice()` method. [#4692](https://github.com/GetStream/stream-chat-android/pull/4692)
@@ -55,6 +59,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- The `ChannelStateLogic` keeps members updated after ban/unban events are received. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
 
 ### ✅ Added
 
@@ -79,6 +84,7 @@
 - Fixed edit messages and reply messages with unsupported attachments. [#4757](https://github.com/GetStream/stream-chat-android/pull/4757)
 
 ### ⬆️ Improved
+- Emails are highlighted and clickable in the message text. [#4833](https://github.com/GetStream/stream-chat-android/pull/4833)
 
 ### ✅ Added
 - Added `ChatUI.streamCdnImageResizing` which allows resizing images where they appear as previews, such as the message list, attachment gallery overview or user and channel avatars. Only images hosted by Stream's CDN which contain original width and height query parameters can be resized. Image resizing is a paid feature and is disabled by default, you can enable it by overriding the aforementioned `ChatUI.streamCdnImageResizing` property with with an instance that has `StreamCdnImageResizing.imageResizingEnabled` set to true. Pricing can be found [here](https://getstream.io/chat/pricing/). [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
@@ -100,6 +106,7 @@
 ### ⬆️ Improved
 - Updated Compose compiler version to `1.4.3`. [#4697](https://github.com/GetStream/stream-chat-android/pull/4697)
 - Added `ChatClient.clearPersistence()` to be able to clear local data even if the user is not connected. [#4797](https://github.com/GetStream/stream-chat-android/pull/4797)
+- Emails are highlighted and clickable in the message text. [#4833](https://github.com/GetStream/stream-chat-android/pull/4833)
 
 ### ✅ Added
 - Added `onChannelAvatarClick` handler to `MessageListHeader`. [#4545](https://github.com/GetStream/stream-chat-android/pull/4545)

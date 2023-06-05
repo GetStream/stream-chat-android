@@ -18,9 +18,14 @@ package io.getstream.chat.android.client.utils.internal.toggle.dialog
 
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.internal.fsm.FiniteStateMachine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
-internal class ToggleDialogController(private val toggleService: ToggleService) {
+internal class ToggleDialogController(
+    private val scope: CoroutineScope,
+    private val toggleService: ToggleService,
+) {
 
     private var viewRef: WeakReference<ToggleDialogFragment> = WeakReference(null)
 
@@ -69,19 +74,19 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
     }
 
     fun attachView(toggleDialogFragment: ToggleDialogFragment) {
-        fsm.sendEvent(ToggleEvent.AttachView(toggleDialogFragment))
+        scope.launch { fsm.sendEvent(ToggleEvent.AttachView(toggleDialogFragment)) }
     }
 
     fun onToggleSwitchClicked(toggleName: String, isChecked: Boolean) {
-        fsm.sendEvent(ToggleEvent.ToggleChanged(toggleName, isChecked))
+        scope.launch { fsm.sendEvent(ToggleEvent.ToggleChanged(toggleName, isChecked)) }
     }
 
     fun onSaveButtonClicked(togglesChangesCommittedListener: (changedToggles: List<Pair<String, Boolean>>) -> Unit) {
-        fsm.sendEvent(ToggleEvent.CommitChanges(togglesChangesCommittedListener))
+        scope.launch { fsm.sendEvent(ToggleEvent.CommitChanges(togglesChangesCommittedListener)) }
     }
 
     fun onDismissButtonClicked() {
-        fsm.sendEvent(ToggleEvent.Dismiss)
+        scope.launch { fsm.sendEvent(ToggleEvent.Dismiss) }
     }
 
     internal sealed class ToggleState {

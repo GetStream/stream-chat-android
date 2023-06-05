@@ -92,7 +92,7 @@ internal class ConnectUserTest {
         userStateService = UserStateService()
         clientScope = ClientTestScope(testCoroutines.scope)
         val userScope = UserTestScope(clientScope)
-        val lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle)
+        val lifecycleObserver = StreamLifecycleObserver(userScope, lifecycleOwner.lifecycle)
         val tokenManager = FakeTokenManager("")
         val networkStateProvider: NetworkStateProvider = mock()
         whenever(networkStateProvider.isConnected()) doReturn true
@@ -146,13 +146,6 @@ internal class ConnectUserTest {
 
         result.shouldBeInstanceOf(Result.Success::class)
         mutableClientState.initializationState.value `should be equal to` InitializationState.COMPLETE
-    }
-
-    @Test
-    fun `When connection is running, initialisation state should be updated`() = runTest {
-        client.connectUser(user, jwt).enqueue()
-
-        mutableClientState.initializationState.value `should be equal to` InitializationState.RUNNING
     }
 
     @Test
@@ -295,7 +288,7 @@ internal class ConnectUserTest {
         (result as Result.Failure).value.message `should be equal to` messageError
     }
 
-    private fun prepareAliveConnection(user: User, connectionId: String) {
+    private suspend fun prepareAliveConnection(user: User, connectionId: String) {
         userStateService.onSetUser(user, false)
         fakeChatSocket.prepareAliveConnection(user, connectionId)
     }

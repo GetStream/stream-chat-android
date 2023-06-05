@@ -51,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
@@ -59,6 +60,7 @@ import io.getstream.chat.android.compose.sample.ui.ChannelsActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
+import kotlinx.coroutines.launch
 
 /**
  * An Activity that allows users to manually log in to an environment with an API key,
@@ -76,11 +78,13 @@ class CustomLoginActivity : AppCompatActivity() {
                     onLoginButtonClick = { userCredentials ->
                         ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
 
-                        ChatHelper.connectUser(
-                            userCredentials = userCredentials,
-                            onSuccess = ::openChannels,
-                            onError = ::showError
-                        )
+                        lifecycleScope.launch {
+                            ChatHelper.connectUser(
+                                userCredentials = userCredentials,
+                                onSuccess = ::openChannels,
+                                onError = ::showError
+                            )
+                        }
                     }
                 )
             }

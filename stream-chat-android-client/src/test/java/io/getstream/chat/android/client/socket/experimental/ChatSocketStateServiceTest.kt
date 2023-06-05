@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.result.Error
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -40,7 +41,7 @@ internal class ChatSocketStateServiceTest {
         connectionConf: SocketFactory.ConnectionConf,
         forceReconnection: Boolean,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onReconnect(connectionConf, forceReconnection)
@@ -57,7 +58,7 @@ internal class ChatSocketStateServiceTest {
         initialState: State,
         connectionConf: SocketFactory.ConnectionConf,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onConnect(connectionConf)
@@ -73,7 +74,7 @@ internal class ChatSocketStateServiceTest {
     fun `When NetworkNotAvailable event arrives, should move to the proper state`(
         initialState: State,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onNetworkNotAvailable()
@@ -89,7 +90,7 @@ internal class ChatSocketStateServiceTest {
     fun `When NetworkAvailable event arrives, should move to the proper state`(
         initialState: State,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onNetworkAvailable()
@@ -106,7 +107,7 @@ internal class ChatSocketStateServiceTest {
         initialState: State,
         connectedEvent: ConnectedEvent,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onConnectionEstablished(connectedEvent)
@@ -123,7 +124,7 @@ internal class ChatSocketStateServiceTest {
         initialState: State,
         error: Error.NetworkError,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onUnrecoverableError(error)
@@ -140,7 +141,7 @@ internal class ChatSocketStateServiceTest {
         initialState: State,
         error: Error.NetworkError,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onNetworkError(error)
@@ -156,7 +157,7 @@ internal class ChatSocketStateServiceTest {
     fun `When RequiredDisconnect event arrives, should move to the proper state`(
         initialState: State,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onRequiredDisconnect()
@@ -172,7 +173,7 @@ internal class ChatSocketStateServiceTest {
     fun `When Stop event arrives, should move to the proper state`(
         initialState: State,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onStop()
@@ -188,7 +189,7 @@ internal class ChatSocketStateServiceTest {
     fun `When Resume event arrives, should move to the proper state`(
         initialState: State,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onResume()
@@ -204,7 +205,7 @@ internal class ChatSocketStateServiceTest {
     fun `When WebSocket event lost arrives, should move to the proper state`(
         initialState: State,
         resultState: State,
-    ) {
+    ) = runTest {
         val sut = ChatSocketStateService(initialState)
 
         sut.onWebSocketEventLost()

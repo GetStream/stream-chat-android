@@ -31,7 +31,7 @@ public enum class InitializationState {
      * Initialization was requested and should be completed shortly. During this state, the SDK is still
      * not ready to be used.
      */
-    RUNNING,
+    INITIALIZING,
 
     /**
      * The initialization of the SDK was not requested. Use ChatClient.connectUser to start the
