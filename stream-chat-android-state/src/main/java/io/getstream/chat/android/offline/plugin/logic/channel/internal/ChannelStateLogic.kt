@@ -286,11 +286,12 @@ internal class ChannelStateLogic(
     ) {
         mutableState.upsertMembers(
             mutableState.members.value.map { member ->
-                member.apply {
-                    if (this.user.id == memberUserId) {
-                        this.banned = banned
-                        this.shadowBanned = shadow
-                    }
+                when (member.user.id == memberUserId) {
+                    true -> member.copy(
+                        banned = banned,
+                        shadowBanned = shadow,
+                    )
+                    false -> member
                 }
             }
         )
