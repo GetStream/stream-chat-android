@@ -22,7 +22,7 @@
     android:background="@drawable/stream_ui_borders_16dp_corners"
     >
 
-    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordPlayer
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordPlayerView
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

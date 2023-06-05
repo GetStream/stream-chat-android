@@ -28,13 +28,14 @@ import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerBinding
 import io.getstream.chat.android.ui.feature.messages.list.background.ShapeAppearanceModelFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.log.taggedLogger
 
 private const val PERCENTAGE = 100
 
 /**
  * Embedded player of audio messages.
  */
-public class AudioRecordPlayer : LinearLayoutCompat {
+public class AudioRecordPlayerView : LinearLayoutCompat {
 
     public constructor(context: Context) : super(context)
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -50,6 +51,8 @@ public class AudioRecordPlayer : LinearLayoutCompat {
 
         background = ShapeAppearanceModelFactory.audioBackground(context)
     }
+
+    private val logger by taggedLogger("Chat:PlayerView")
 
     private var totalDuration: String? = null
 
@@ -70,6 +73,7 @@ public class AudioRecordPlayer : LinearLayoutCompat {
      * @param waveBars each from 0 to 1.
      */
     public fun setWaveBars(waveBars: List<Float>) {
+        logger.i { "[setWaveBars] value: $waveBars" }
         playerView.progressBar.waveBars = waveBars
     }
 

@@ -20,13 +20,15 @@ import android.view.ViewGroup
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
+import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationParser
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerPreviewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordPlayer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordPlayerView
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 private const val NULL_DURATION = 0.0
@@ -89,14 +91,14 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
 
             this.attachment = attachment
 
-            (attachment.extraData["duration"] as? Double)
+            attachment.duration
                 ?.toInt()
                 ?.let(DurationParser::durationInMilliToReadableTime)
                 ?.let { duration ->
                     playerView.setDuration(duration)
                 }
 
-            (attachment.extraData["waveList"] as? List<Float>)?.let { waveBars ->
+            attachment.waveformData?.let { waveBars ->
                 playerView.setWaveBars(waveBars)
             }
 
@@ -110,7 +112,7 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
     }
 }
 
-private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayer, hashCode: Int) {
+private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
     onAudioStateChange(hashCode) { audioState ->
         when (audioState) {
             AudioState.LOADING -> playerView.setLoading()
@@ -126,7 +128,7 @@ private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayer, hashC
     onSpeedChange(hashCode, playerView::setSpeedText)
 }
 
-private fun AudioRecordPlayer.registerButtonsListeners(
+private fun AudioRecordPlayerView.registerButtonsListeners(
     audioPlayer: AudioPlayer,
     attachment: Attachment,
     hashCode: Int,

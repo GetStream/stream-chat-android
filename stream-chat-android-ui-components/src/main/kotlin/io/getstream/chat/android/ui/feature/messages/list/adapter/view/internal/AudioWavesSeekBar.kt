@@ -100,6 +100,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
     internal var waveBars: List<Float>
         set(value) {
             internalWaveBars = value
+            invalidate()
         }
         get() = internalWaveBars ?: buildList {
             repeat(DEFAULT_BAR_NUMBER) {

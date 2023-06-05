@@ -19,8 +19,11 @@ package com.getstream.sdk.chat.audio.recording
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
+import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -30,6 +33,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.math.log10
 
 /**
  * The default implementation of [StreamMediaRecorder], used as a wrapper around [MediaRecorder] simplifying
@@ -39,7 +43,7 @@ import java.io.File
  * how often [onMaxAmplitudeSampledListener] emits a new value.
  */
 public class DefaultStreamMediaRecorder(
-    private var amplitudePollingInterval: Long = 33L,
+    private var amplitudePollingInterval: Long = 100L,
 ) : StreamMediaRecorder {
 
     /**
@@ -53,9 +57,13 @@ public class DefaultStreamMediaRecorder(
             when (field) {
                 MediaRecorderState.RECORDING -> {
                     activeRecordingStartedAt = System.currentTimeMillis()
+                    logger.d { "[onMediaRecorderState] #1; activeRecordingStartedAt: $activeRecordingStartedAt" }
                     trackMaxDuration()
                 }
-                else -> activeRecordingStartedAt = 0L
+                else -> {
+                    activeRecordingStartedAt = 0L
+                    logger.d { "[onMediaRecorderState] #2; activeRecordingStartedAt: $activeRecordingStartedAt" }
+                }
             }
         }
 
@@ -105,6 +113,8 @@ public class DefaultStreamMediaRecorder(
      * Reset to null when a recording has been stopped.
      */
     private var activeRecordingStartedAt: Long? = null
+
+    private var sampleData = arrayListOf<Float>()
 
     /**
      * Used for listening to the error events emitted by [mediaRecorder].
@@ -162,7 +172,7 @@ public class DefaultStreamMediaRecorder(
             setAudioSource(MediaRecorder.AudioSource.MIC)
             // TODO - consult with the SDK teams to see the best
             // TODO - format for this
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             setOutputFile(recordingFile.path)
             prepare()
@@ -179,7 +189,7 @@ public class DefaultStreamMediaRecorder(
      * @param override Determines if the new recording file should override one with the same name, if it exists.
      *
      * @return The [File] to which the recording will be stored wrapped inside a [Result] if recording has
-     * started successfully. Returns a [ChatError] wrapped inside a [Result] if the action had failed.
+     * started successfully. Returns a [Error] wrapped inside a [Result] if the action had failed.
      */
     override fun startAudioRecording(
         context: Context,
@@ -265,6 +275,13 @@ public class DefaultStreamMediaRecorder(
     override fun stopRecording(): Result<Attachment> {
         return try {
             requireNotNull(mediaRecorder)
+
+            val durationMs = activeRecordingStartedAt?.let {
+                System.currentTimeMillis() - it
+            } ?: 0
+
+            logger.d { "[stopRecording] startedAt: $activeRecordingStartedAt, durationMs: $durationMs" }
+
             mediaRecorder?.stop()
             release()
             onStopRecordingListener?.onStopped()
@@ -272,14 +289,17 @@ public class DefaultStreamMediaRecorder(
             val attachment = Attachment(
                 title = recordingFile?.name ?: "recording",
                 upload = recordingFile,
-                type = "audio",
-                mimeType = "audio/mp3"
-            )
-
+                type = AttachmentType.AUDIO_RECORDING,
+                mimeType = "audio/aac",
+            ).apply {
+                duration = durationMs / 1000f
+                waveformData = sampleData
+            }
+            logger.v { "[stopRecording] succeed: $attachment" }
             Result.Success(attachment)
         } catch (exception: Exception) {
+            logger.e(exception) { "[stopRecording] failed: $exception" }
             release()
-            logger.e(exception) { "Could not stop the recording" }
             Result.Failure(
                 Error.ThrowableError(
                     message = "Could not Stop audio recording.",
@@ -326,14 +346,18 @@ public class DefaultStreamMediaRecorder(
      * Polls the latest maximum amplitude value and updates [onMaxAmplitudeSampledListener] listener with the new value.
      */
     private fun pollMaxAmplitude() {
+        sampleData.clear()
         pollingJob?.cancel()
-
         pollingJob = coroutineScope.launch {
             try {
                 while (mediaRecorderState == MediaRecorderState.RECORDING) {
                     val maxAmplitude = mediaRecorder?.maxAmplitude
 
                     if (maxAmplitude != null) {
+                        val db = 20 * log10(maxAmplitude.toDouble())
+                        val normalized = maxAmplitude / Short.MAX_VALUE.toFloat()
+                        logger.d { "[pollMaxAmplitude] maxAmplitude: $maxAmplitude, db: $db, normalized: $normalized" }
+                        sampleData.add(normalized)
                         onMaxAmplitudeSampledListener?.onSampled(maxAmplitude)
                     }
                     delay(amplitudePollingInterval)

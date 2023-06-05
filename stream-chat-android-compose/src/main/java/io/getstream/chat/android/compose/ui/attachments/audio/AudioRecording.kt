@@ -74,7 +74,7 @@ public fun RunningWaveForm(
         Pair(1f, ChatTheme.colors.primaryAccent)
     ),
 ) {
-    val values = remember(restartKey) {
+    val waveformData = remember(restartKey) {
         mutableStateListOf<Int>()
     }
 
@@ -87,13 +87,13 @@ public fun RunningWaveForm(
 
     LaunchedEffect(newValueKey) {
         latestValue?.let {
-            if (values.count() <= maxBars) {
-                values.add(latestValue)
+            if (waveformData.count() <= maxBars) {
+                waveformData.add(latestValue)
             } else {
-                values.removeFirst()
-                values.add(latestValue)
+                waveformData.removeFirst()
+                waveformData.add(latestValue)
             }
-            println(values.toList())
+            println(waveformData.toList())
         }
     }
 
@@ -109,8 +109,8 @@ public fun RunningWaveForm(
             canvasWidth = this.size.width
             canvasHeight = this.size.height
 
-            values.forEachIndexed { index, value ->
-                val barHeight = (size.height * (value.toFloat() / maxInputValue))
+            waveformData.forEachIndexed { index, waveformItem ->
+                val barHeight = (size.height * (waveformItem.toFloat() / maxInputValue))
                     .coerceIn(
                         minimumValue = minBarHeightFloat,
                         maximumValue = this.size.height

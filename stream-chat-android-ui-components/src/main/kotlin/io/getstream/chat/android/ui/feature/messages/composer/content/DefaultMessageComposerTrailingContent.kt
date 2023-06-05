@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.ui.feature.messages.composer.content
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -53,6 +55,11 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
      */
     public var sendMessageButtonClickListener: () -> Unit = {}
 
+    /**
+     * Touch listener for the mic button.
+     */
+    public var audioRecordButtonTouchListener: (event: MotionEvent) -> Boolean = { false }
+
     public constructor(context: Context) : this(context, null)
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -68,9 +75,11 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     /**
      * Initializes the initial layout of the view.
      */
+    @SuppressLint("ClickableViewAccessibility")
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
         binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener() }
+        binding.micButton.setOnTouchListener { _, event -> audioRecordButtonTouchListener(event) }
     }
 
     /**
@@ -101,22 +110,26 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
      */
     override fun renderState(state: MessageComposerState) {
         val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+        val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
         val hasTextInput = state.inputValue.isNotEmpty()
         val hasAttachments = state.attachments.isNotEmpty()
         val isInputValid = state.validationErrors.isEmpty()
+        val isInEditMode = state.action is Edit
 
         val coolDownTime = state.coolDownTime
         val hasValidContent = (hasTextInput || hasAttachments) && isInputValid
 
         binding.apply {
-            if (coolDownTime > 0 && state.action !is Edit) {
+            if (coolDownTime > 0 && !isInEditMode) {
                 cooldownBadgeTextView.isVisible = true
                 cooldownBadgeTextView.text = coolDownTime.toString()
                 sendMessageButton.isVisible = false
+                micButton.isVisible = false
             } else {
                 cooldownBadgeTextView.isVisible = false
-                sendMessageButton.isVisible = true
+                sendMessageButton.isVisible = hasTextInput || isInEditMode
                 sendMessageButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && hasValidContent
+                micButton.isVisible = canUploadFile && canSendMessage && !hasTextInput && !isInEditMode
             }
         }
     }
