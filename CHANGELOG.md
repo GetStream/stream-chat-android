@@ -58,7 +58,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- `ChannelListPayloadDiff` is calculated using the list of members instead of the list of users. [#4839](https://github.com/GetStream/stream-chat-android/pull/4839)
 
 ### ✅ Added
 
@@ -120,6 +119,11 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# June 5th, 2023 - 5.17.5
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- `ChannelListPayloadDiff` is calculated using the list of members instead of the list of users. [#4839](https://github.com/GetStream/stream-chat-android/pull/4839)
 
 # June 2nd, 2023 - 5.17.4
 ## stream-chat-android-client
