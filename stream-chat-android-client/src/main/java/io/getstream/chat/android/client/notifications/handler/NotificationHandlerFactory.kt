@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.notifications.handler
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -24,9 +25,9 @@ import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.IconCompat
+import io.getstream.android.push.permissions.DefaultNotificationPermissionHandler
+import io.getstream.android.push.permissions.NotificationPermissionHandler
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.notifications.permissions.DefaultNotificationPermissionHandler
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import kotlin.reflect.full.primaryConstructor
@@ -106,8 +107,10 @@ public object NotificationHandlerFactory {
         val appContext = context.applicationContext
         return runCatching {
             Class.forName(
-                "io.getstream.chat.android.ui.common.notifications.permissions.SnackbarNotificationPermissionHandler"
+                "io.getstream.android.push.permissions.snackbar.SnackbarNotificationPermissionHandler"
             ).kotlin.primaryConstructor?.call(appContext) as NotificationPermissionHandler
-        }.getOrDefault(DefaultNotificationPermissionHandler(appContext))
+        }.getOrDefault(
+            DefaultNotificationPermissionHandler.createDefaultNotificationPermissionHandler(appContext as Application)
+        )
     }
 }

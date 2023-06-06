@@ -73,6 +73,7 @@ dependencies {
     implementation Dependencies.streamLogAndroid
     debugImplementation Dependencies.streamLogAndroidFile
     implementation Dependencies.streamPushDelegate
+    api Dependencies.streamPushPermissions
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
     ksp Dependencies.moshiCodegen

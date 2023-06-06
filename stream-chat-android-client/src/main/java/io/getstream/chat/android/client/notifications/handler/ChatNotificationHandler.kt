@@ -26,9 +26,9 @@ import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
+import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message

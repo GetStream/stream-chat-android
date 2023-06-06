@@ -27,10 +27,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.content.edit
+import io.getstream.android.push.permissions.NotificationPermissionHandler
+import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
