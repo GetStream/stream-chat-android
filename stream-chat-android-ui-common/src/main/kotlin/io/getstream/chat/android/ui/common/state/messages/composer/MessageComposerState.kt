@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * For a full list @see [ChannelCapabilities].
  * @param hasCommands Whether there are any commands available.
  * @param currentUser The currently logged in user.
+ * @param recording The current recording state.
  */
 public data class MessageComposerState @JvmOverloads constructor(
     val inputValue: String = "",
@@ -47,6 +48,7 @@ public data class MessageComposerState @JvmOverloads constructor(
     val validationErrors: List<ValidationError> = emptyList(),
     val mentionSuggestions: List<User> = emptyList(),
     val commandSuggestions: List<Command> = emptyList(),
+    val recording: RecordingState = RecordingState.Idle,
     val coolDownTime: Int = 0,
     val messageMode: MessageMode = MessageMode.Normal,
     val alsoSendToChannel: Boolean = false,

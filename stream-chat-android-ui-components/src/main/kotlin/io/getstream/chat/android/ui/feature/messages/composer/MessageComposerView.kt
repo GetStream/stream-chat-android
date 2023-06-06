@@ -26,11 +26,13 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCenterContent
@@ -40,6 +42,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMes
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerMentionSuggestionsContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerTrailingContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerOverlappingContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.feature.messages.composer.internal.MessageComposerSuggestionsPopup
 import io.getstream.chat.android.ui.feature.messages.composer.internal.ValidationErrorRenderer
@@ -47,12 +50,16 @@ import io.getstream.chat.android.ui.feature.messages.composer.internal.toAttachm
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.log.taggedLogger
 
 /**
  * UI component designed for handling message text input, attachments, actions,
  * and sending the message.
  */
 public class MessageComposerView : ConstraintLayout {
+
+    private val logger by taggedLogger("Chat:MsgComposerView")
+
     /**
      * Generated binding class for the XML layout.
      */
@@ -111,7 +118,9 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Click listener for the pick commands button.
      */
-    public var commandsButtonClickListener: () -> Unit = {}
+    public var commandsButtonClickListener: () -> Unit = {
+        logger.d { "[onCommandsButtonClick] no args" }
+    }
 
     /**
      * Click listener invoked when suggestion popup is dismissed.
@@ -130,6 +139,33 @@ public class MessageComposerView : ConstraintLayout {
                     }
                 }.show(it, AttachmentsPickerDialogFragment.TAG)
         }
+    }
+
+    private var maxOffset = 0
+
+    /**
+     * Touch listener for the audio record button.
+     */
+    public var audioRecordButtonTouchListener: (event: MotionEvent) -> Boolean = { event ->
+        //maxOffset = maxOf(maxOffset, v.width - v.micButton.width)
+        logger.v { "[onMicBtnTouchListener] event(${maxOffset}): $event" }
+        //event.offsetLocation(maxOffset.toFloat(), 0f)
+        // when (event.actionMasked) {
+        //     MotionEvent.ACTION_DOWN -> {
+        //         logger.i { "[onMicBtnTouchListener] ACTION_DOWN" }
+        //         RecordingState.Hold
+        //     }
+        //     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+        //         logger.i { "[onMicBtnTouchListener] ACTION_UP" }
+        //         RecordingState.Idle
+        //     }
+        // }
+        binding.overlappingContent.children.first().dispatchTouchEvent(event)
+        true
+    }
+
+    public var audioRecordStateChangeListener: (RecordingState) -> Unit = { state ->
+        logger.i { "[onRecordingStateChange] state: $state" }
     }
 
     /**
@@ -227,6 +263,7 @@ public class MessageComposerView : ConstraintLayout {
         setTrailingContent(
             DefaultMessageComposerTrailingContent(context).also {
                 it.sendMessageButtonClickListener = { sendMessageButtonClickListener() }
+                it.audioRecordButtonTouchListener = { event -> audioRecordButtonTouchListener(event) }
             }
         )
         setFooterContent(
@@ -237,6 +274,11 @@ public class MessageComposerView : ConstraintLayout {
         setHeaderContent(
             DefaultMessageComposerHeaderContent(context).also {
                 it.dismissActionClickListener = { dismissActionClickListener() }
+            }
+        )
+        setOverlappingContent(
+            DefaultMessageComposerOverlappingContent(context).also {
+                it.onStateChangeListener = { state -> audioRecordStateChangeListener(state) }
             }
         )
     }
@@ -252,6 +294,15 @@ public class MessageComposerView : ConstraintLayout {
         (binding.leadingContent.children.first() as? MessageComposerContent)?.renderState(state)
         (binding.footerContent.children.first() as? MessageComposerContent)?.renderState(state)
         (binding.headerContent.children.first() as? MessageComposerContent)?.renderState(state)
+        (binding.overlappingContent.children.first() as? MessageComposerContent)?.renderState(state)
+
+        val isRecording = state.recording != RecordingState.Idle
+        binding.trailingContent.isVisible = !isRecording
+        binding.centerContent.isVisible = !isRecording
+        binding.leadingContent.isVisible = !isRecording
+        binding.footerContent.isVisible = !isRecording
+        binding.headerContent.isVisible = !isRecording
+        binding.overlappingContent.isVisible = isRecording
 
         renderSuggestion(state)
 
@@ -363,6 +414,27 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.headerContent.removeAllViews()
         binding.headerContent.addView(contentView.attachContext(), layoutParams)
+    }
+
+    /**
+     * Sets a custom overlapping content view. It must implement the [MessageComposerContent] interface and should
+     * render the currently active action according to the received state. The currently active action
+     * is propagated to the [contentView] in the [MessageComposerContent.renderState] function.
+     *
+     * @param contentView The [View] which shows the currently active action.
+     * @param layoutParams The layout parameters to set on the content view.
+     * @see [DefaultMessageComposerOverlappingContent]
+     */
+    @JvmOverloads
+    public fun <V> setOverlappingContent(
+        contentView: V,
+        layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+        ),
+    ) where V : View, V : MessageComposerContent {
+        binding.overlappingContent.removeAllViews()
+        binding.overlappingContent.addView(contentView.attachContext(), layoutParams)
     }
 
     /**

@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import kotlinx.coroutines.launch
 
@@ -59,6 +60,7 @@ public fun MessageComposerViewModel.bindView(
     dismissActionClickListener: () -> Unit = { dismissMessageActions() },
     commandsButtonClickListener: () -> Unit = { toggleCommandsVisibility() },
     dismissSuggestionsListener: () -> Unit = { dismissSuggestionsPopup() },
+    audioRecordStateChangeListener: (RecordingState) -> Unit = { setRecordingState(it) },
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener
@@ -70,6 +72,7 @@ public fun MessageComposerViewModel.bindView(
     view.dismissActionClickListener = dismissActionClickListener
     view.commandsButtonClickListener = commandsButtonClickListener
     view.dismissSuggestionsListener = dismissSuggestionsListener
+    view.audioRecordStateChangeListener = audioRecordStateChangeListener
 
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect(view::renderState)
