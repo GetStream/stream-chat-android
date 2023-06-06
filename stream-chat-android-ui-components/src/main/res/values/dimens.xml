@@ -183,5 +183,7 @@
     <dimen name="stream_ui_message_composer_leading_content_vertical_padding">12dp</dimen>
     <dimen name="stream_ui_message_composer_trailing_content_horizontal_padding">4dp</dimen>
     <dimen name="stream_ui_message_composer_trailing_content_vertical_padding">12dp</dimen>
+    <dimen name="stream_ui_message_composer_overlapping_content_horizontal_padding">4dp</dimen>
+    <dimen name="stream_ui_message_composer_overlapping_content_vertical_padding">12dp</dimen>
 
 </resources>

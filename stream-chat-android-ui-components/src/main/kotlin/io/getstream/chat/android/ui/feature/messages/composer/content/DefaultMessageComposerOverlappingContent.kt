@@ -67,12 +67,19 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     override fun renderState(state: MessageComposerState) {
-        // TODO
+        val vPadding = context.resources.getDimensionPixelSize(
+            R.dimen.stream_ui_message_composer_overlapping_content_vertical_padding
+        )
+        val hPadding = context.resources.getDimensionPixelSize(
+            R.dimen.stream_ui_message_composer_overlapping_content_horizontal_padding
+        )
+        setPadding(hPadding, vPadding, hPadding, vPadding)
+
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        parentView.isVisible = false
+        //isVisible = false
     }
 
     override fun onDetachedFromWindow() {
@@ -108,7 +115,14 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         micLastRect.set(micBaseRect)
         lockLastRect.set(lockBaseRect)
         lockPopup?.dismiss()
+        lockPopup = null
         micPopup?.dismiss()
+        micPopup = null
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        Log.i(TAG, "[onLayout] w: $width, h: $height")
     }
 
     private fun cancel() {
@@ -133,6 +147,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
         binding.recordingIndicator.doOnPreDraw {
             Log.e(TAG, "[doOnPreDraw] left: ${binding.recordingStart.left}, top: ${binding.recordingStart.top}")
+            Log.i(TAG, "[doOnPreDraw] w: ${binding.root.width}, h: ${binding.root.height}")
             micXY.fetchLocationInWindow()
             showLockPopup(micXY)
             showMicPopup(micXY)
@@ -152,6 +167,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingComplete.isVisible = true
 
         micPopup?.dismiss()
+        micPopup = null;
         (lockPopup?.contentView as? ImageView?)?.setImageResource(R.drawable.stream_ui_ic_mic_locked_light)
 
         lockPopup?.update(lockBaseRect.left, lockBaseRect.top - 16.dpToPx(), -1, 64.dpToPx())
@@ -181,7 +197,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (parentView.isVisible && state != RecordingState.Hold) {
+        if (isVisible && state != RecordingState.Hold) {
             Log.w(TAG, "[onTouchEvent] rejected (not unlocked): $state")
             return false
         }
@@ -203,7 +219,11 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                 val deltaY = (y - baseTouch[1]).toInt()
 
                 if (micBaseRect.width() == 0 || lockBaseRect.width() == 0) {
-                    Log.v(TAG, "[onTouchEvent] ACTION_MOVE rejected (no popups)")
+                    Log.v(TAG, "[onTouchEvent] ACTION_MOVE rejected (no popups 1)")
+                    return false
+                }
+                if (micPopup == null || lockPopup == null) {
+                    Log.v(TAG, "[onTouchEvent] ACTION_MOVE rejected (no popups 2)")
                     return false
                 }
 
@@ -266,7 +286,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             height = lockH
 
             val lockLeft = micXY[0]
-            val lockTop = micXY[1] - 128.dpToPx()
+            val lockTop = micXY[1] - lockH
             showAtLocation(binding.root, Gravity.TOP or Gravity.START, lockLeft, lockTop)
             lockBaseRect.apply {
                 left = lockLeft

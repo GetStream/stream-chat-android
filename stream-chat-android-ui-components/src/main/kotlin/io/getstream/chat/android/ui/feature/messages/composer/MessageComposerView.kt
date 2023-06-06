@@ -17,16 +17,23 @@
 package io.getstream.chat.android.ui.feature.messages.composer
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.User
@@ -48,6 +55,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.internal.MessageCo
 import io.getstream.chat.android.ui.feature.messages.composer.internal.ValidationErrorRenderer
 import io.getstream.chat.android.ui.feature.messages.composer.internal.toAttachment
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
@@ -139,6 +147,10 @@ public class MessageComposerView : ConstraintLayout {
                     }
                 }.show(it, AttachmentsPickerDialogFragment.TAG)
         }
+    }
+
+    public var showOverlappingContent: (MessageComposerState) -> Boolean = {
+        it.recording != RecordingState.Idle
     }
 
     private var maxOffset = 0
@@ -283,6 +295,11 @@ public class MessageComposerView : ConstraintLayout {
         )
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        background = ColorDrawable(Color.LTGRAY)
+    }
+
     /**
      * Invoked when the state has changed and the UI needs to be updated accordingly.
      *
@@ -296,13 +313,16 @@ public class MessageComposerView : ConstraintLayout {
         (binding.headerContent.children.first() as? MessageComposerContent)?.renderState(state)
         (binding.overlappingContent.children.first() as? MessageComposerContent)?.renderState(state)
 
-        val isRecording = state.recording != RecordingState.Idle
-        binding.trailingContent.isVisible = !isRecording
-        binding.centerContent.isVisible = !isRecording
-        binding.leadingContent.isVisible = !isRecording
-        binding.footerContent.isVisible = !isRecording
-        binding.headerContent.isVisible = !isRecording
-        binding.overlappingContent.isVisible = isRecording
+        val showOverlappingContent = showOverlappingContent(state)
+
+        binding.trailingContent.children.first().isVisible = !showOverlappingContent
+        binding.centerContent.children.first().isVisible = !showOverlappingContent
+        binding.leadingContent.children.first().isVisible = !showOverlappingContent
+        // TODO binding.footerContent.children.first().isVisible = !showOverlappingContent
+        binding.headerContent.children.first().isVisible = !showOverlappingContent
+        binding.overlappingContent.children.first().isVisible = showOverlappingContent
+
+        binding.root.requestLayout()
 
         renderSuggestion(state)
 
