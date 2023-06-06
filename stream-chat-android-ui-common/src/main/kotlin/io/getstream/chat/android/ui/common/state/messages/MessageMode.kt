@@ -27,7 +27,7 @@ public sealed class MessageMode {
     /**
      * Regular mode, conversation with other users.
      */
-    public object Normal : MessageMode()
+    public object Normal : MessageMode() { override fun toString(): String = "Normal" }
 
     /**
      * Thread mode, where there's a parent message to respond to.
@@ -35,7 +35,7 @@ public sealed class MessageMode {
      * @param parentMessage The message users are responding to in a Thread.
      * @param threadState The state of the current thread.
      */
-    public class MessageThread @JvmOverloads constructor(
+    public data class MessageThread @JvmOverloads constructor(
         public val parentMessage: Message,
         public val threadState: ThreadState? = null,
     ) : MessageMode()

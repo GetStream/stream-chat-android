@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
@@ -237,6 +238,11 @@ public class MessageComposerController(
     public val commandSuggestions: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
 
     /**
+     * Represents the current recording state.
+     */
+    public val recordingState: MutableStateFlow<RecordingState> = MutableStateFlow(RecordingState.Idle)
+
+    /**
      * Represents the list of users in the channel.
      */
     private var users: List<User> = emptyList()
@@ -372,6 +378,10 @@ public class MessageComposerController(
             state.value = state.value.copy(commandSuggestions = commandSuggestions)
         }.launchIn(scope)
 
+        recordingState.onEach { recording ->
+            state.value = state.value.copy(recording = recording)
+        }.launchIn(scope)
+
         cooldownTimer.onEach { cooldownTimer ->
             state.value = state.value.copy(coolDownTime = cooldownTimer)
         }.launchIn(scope)
@@ -421,6 +431,10 @@ public class MessageComposerController(
      */
     public fun setAlsoSendToChannel(alsoSendToChannel: Boolean) {
         this.alsoSendToChannel.value = alsoSendToChannel
+    }
+
+    public fun setRecordingState(state: RecordingState) {
+        this.recordingState.value = state
     }
 
     /**

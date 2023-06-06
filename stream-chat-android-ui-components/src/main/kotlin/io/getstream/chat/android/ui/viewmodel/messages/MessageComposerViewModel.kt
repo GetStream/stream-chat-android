@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
@@ -28,6 +29,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +44,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param messageComposerController The controller used to relay all the actions and fetch all the state.
  */
+@OptIn(InternalStreamChatApi::class)
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
 ) : ViewModel() {
@@ -228,6 +231,10 @@ public class MessageComposerViewModel(
      * Dismisses the suggestions popup above the message composer.
      */
     public fun dismissSuggestionsPopup(): Unit = messageComposerController.dismissSuggestionsPopup()
+
+    public fun setRecordingState(state: RecordingState) {
+        messageComposerController.setRecordingState(state)
+    }
 
     /**
      * Disposes the inner [MessageComposerController].
