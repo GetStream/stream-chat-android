@@ -207,6 +207,8 @@ object Dependencies {
     const val streamLogAndroid = "io.getstream:stream-log-android:${Versions.STREAM_LOG}"
     const val streamLogAndroidFile = "io.getstream:stream-log-android-file:${Versions.STREAM_LOG}"
     const val streamPush = "io.getstream:stream-android-push:${Versions.STREAM_PUSH}"
+    const val streamPushPermissions = "io.getstream:stream-android-push-permissions:${Versions.STREAM_PUSH}"
+    const val streamPushPermissionsSnackbar = "io.getstream:stream-android-push-permissions-snackbar:${Versions.STREAM_PUSH}"
     const val streamPushDelegate = "io.getstream:stream-android-push-delegate:${Versions.STREAM_PUSH}"
     const val streamPushFirebase = "io.getstream:stream-android-push-firebase:${Versions.STREAM_PUSH}"
     const val streamPushHuawei = "io.getstream:stream-android-push-huawei:${Versions.STREAM_PUSH}"

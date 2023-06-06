@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.client.notifications
 
+import android.app.Application
 import android.content.Context
+import io.getstream.android.push.permissions.NotificationPermissionManager
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManager
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManagerImpl
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
@@ -53,14 +53,15 @@ internal class ChatNotificationsImpl constructor(
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context)
     private val showedMessages = mutableSetOf<String>()
-    private val permissionManager: NotificationPermissionManager = NotificationPermissionManagerImpl(
-        context = context,
-        requestPermissionOnAppLaunch = notificationConfig.requestPermissionOnAppLaunch,
-        onPermissionStatus = { status ->
-            logger.i { "[onPermissionStatus] status: $status" }
-            handler.onNotificationPermissionStatus(status)
-        }
-    )
+    private val permissionManager: NotificationPermissionManager =
+        NotificationPermissionManager.createNotificationPermissionsManager(
+            application = context.applicationContext as Application,
+            requestPermissionOnAppLaunch = notificationConfig.requestPermissionOnAppLaunch,
+            onPermissionStatus = { status ->
+                logger.i { "[onPermissionStatus] status: $status" }
+                handler.onNotificationPermissionStatus(status)
+            }
+        )
 
     init {
         logger.i { "<init> no args" }

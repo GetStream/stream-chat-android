@@ -1997,7 +1997,7 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 	public abstract fun dismissAllNotifications ()V
 	public abstract fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
-	public abstract fun onNotificationPermissionStatus (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;)V
+	public abstract fun onNotificationPermissionStatus (Lio/getstream/android/push/permissions/NotificationPermissionStatus;)V
 	public abstract fun onPushMessage (Lio/getstream/chat/android/models/PushMessage;)Z
 	public abstract fun showNotification (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)V
 }
@@ -2013,8 +2013,8 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static synthetic fun createNotificationHandler$default (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static synthetic fun createNotificationHandler$default (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 }
 
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
