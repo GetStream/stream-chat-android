@@ -2027,39 +2027,6 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 	public abstract fun buildIcon (Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class io/getstream/chat/android/client/notifications/permissions/DefaultNotificationPermissionHandler : io/getstream/chat/android/client/notifications/permissions/ActivityLifecycleCallbacks, io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler {
-	public fun <init> (Landroid/content/Context;)V
-	public fun onActivityStarted (Landroid/app/Activity;)V
-	public fun onLastActivityStopped (Landroid/app/Activity;)V
-	public fun onPermissionDenied ()V
-	public fun onPermissionGranted ()V
-	public fun onPermissionRationale ()V
-	public fun onPermissionRequested ()V
-}
-
-public abstract interface class io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler {
-	public abstract fun onPermissionDenied ()V
-	public abstract fun onPermissionGranted ()V
-	public abstract fun onPermissionRationale ()V
-	public abstract fun onPermissionRequested ()V
-}
-
-public final class io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler$DefaultImpls {
-	public static fun onPermissionDenied (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)V
-	public static fun onPermissionGranted (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)V
-	public static fun onPermissionRationale (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)V
-	public static fun onPermissionRequested (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)V
-}
-
-public final class io/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus : java/lang/Enum {
-	public static final field DENIED Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static final field GRANTED Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static final field RATIONALE_NEEDED Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static final field REQUESTED Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static fun values ()[Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-}
-
 public abstract interface class io/getstream/chat/android/client/persistance/repository/AttachmentRepository {
 	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun observeAttachmentsForMessage (Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
