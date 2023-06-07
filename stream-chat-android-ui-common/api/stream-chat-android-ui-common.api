@@ -312,17 +312,6 @@ public final class io/getstream/chat/android/ui/common/notifications/StreamCoilU
 	public fun buildIcon (Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class io/getstream/chat/android/ui/common/notifications/permissions/SnackbarNotificationPermissionHandler : io/getstream/chat/android/client/notifications/permissions/ActivityLifecycleCallbacks, io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler {
-	public static final field $stable I
-	public fun <init> (Landroid/content/Context;)V
-	public fun onActivityStarted (Landroid/app/Activity;)V
-	public fun onLastActivityStopped (Landroid/app/Activity;)V
-	public fun onPermissionDenied ()V
-	public fun onPermissionGranted ()V
-	public fun onPermissionRationale ()V
-	public fun onPermissionRequested ()V
-}
-
 public final class io/getstream/chat/android/ui/common/state/channels/actions/Cancel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channels/actions/Cancel;

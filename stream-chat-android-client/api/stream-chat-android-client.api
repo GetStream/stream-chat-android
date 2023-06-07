@@ -1997,7 +1997,7 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 	public abstract fun dismissAllNotifications ()V
 	public abstract fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
-	public abstract fun onNotificationPermissionStatus (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;)V
+	public abstract fun onNotificationPermissionStatus (Lio/getstream/android/push/permissions/NotificationPermissionStatus;)V
 	public abstract fun onPushMessage (Lio/getstream/chat/android/models/PushMessage;)Z
 	public abstract fun showNotification (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)V
 }
@@ -2013,8 +2013,8 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static synthetic fun createNotificationHandler$default (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static synthetic fun createNotificationHandler$default (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 }
 
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
@@ -2025,39 +2025,6 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 
 public abstract interface class io/getstream/chat/android/client/notifications/handler/UserIconBuilder {
 	public abstract fun buildIcon (Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class io/getstream/chat/android/client/notifications/permissions/DefaultNotificationPermissionHandler : io/getstream/chat/android/client/notifications/permissions/ActivityLifecycleCallbacks, io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler {
-	public fun <init> (Landroid/content/Context;)V
-	public fun onActivityStarted (Landroid/app/Activity;)V
-	public fun onLastActivityStopped (Landroid/app/Activity;)V
-	public fun onPermissionDenied ()V
-	public fun onPermissionGranted ()V
-	public fun onPermissionRationale ()V
-	public fun onPermissionRequested ()V
-}
-
-public abstract interface class io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler {
-	public abstract fun onPermissionDenied ()V
-	public abstract fun onPermissionGranted ()V
-	public abstract fun onPermissionRationale ()V
-	public abstract fun onPermissionRequested ()V
-}
-
-public final class io/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler$DefaultImpls {
-	public static fun onPermissionDenied (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)V
-	public static fun onPermissionGranted (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)V
-	public static fun onPermissionRationale (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)V
-	public static fun onPermissionRequested (Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionHandler;)V
-}
-
-public final class io/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus : java/lang/Enum {
-	public static final field DENIED Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static final field GRANTED Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static final field RATIONALE_NEEDED Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static final field REQUESTED Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
-	public static fun values ()[Lio/getstream/chat/android/client/notifications/permissions/NotificationPermissionStatus;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/AttachmentRepository {
