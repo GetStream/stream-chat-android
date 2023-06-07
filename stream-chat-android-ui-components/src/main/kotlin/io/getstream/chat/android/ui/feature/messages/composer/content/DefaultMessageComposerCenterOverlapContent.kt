@@ -15,7 +15,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
+import android.view.ViewParent
 import android.widget.ImageView
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +24,7 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
-import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultOverlappingContentBinding
+import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterOverlapContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import kotlin.math.roundToInt
 
@@ -43,8 +43,11 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     )
 
     private var navBarHeight: Int
+    private var parentHeight: Int = 0
 
-    private lateinit var binding: StreamUiMessageComposerDefaultOverlappingContentBinding
+    private val centerContainer by lazy { findParent(R.id.centerContainer) ?: error("no centerContainer found") }
+
+    private lateinit var binding: StreamUiMessageComposerDefaultCenterOverlapContentBinding
 
     public var onStateChangeListener: ((state: RecordingState) -> Unit)? = null
 
@@ -53,33 +56,38 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         navBarHeight = context.getNavigationBarHeight()
     }
 
-    private val parentView: ViewGroup by lazy(LazyThreadSafetyMode.NONE) { parent as ViewGroup }
-
     init {
         val inflater = LayoutInflater.from(context)
-        binding = StreamUiMessageComposerDefaultOverlappingContentBinding.inflate(inflater, this)
+        binding = StreamUiMessageComposerDefaultCenterOverlapContentBinding.inflate(inflater, this)
 
         navBarHeight = context.getNavigationBarHeight()
     }
 
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         // TODO
+
+    }
+
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+        parentHeight = findParent(R.id.centerContainer)?.height ?: error("no parent found")
     }
 
     override fun renderState(state: MessageComposerState) {
-        val vPadding = context.resources.getDimensionPixelSize(
-            R.dimen.stream_ui_message_composer_overlapping_content_vertical_padding
-        )
-        val hPadding = context.resources.getDimensionPixelSize(
-            R.dimen.stream_ui_message_composer_overlapping_content_horizontal_padding
-        )
-        setPadding(hPadding, vPadding, hPadding, vPadding)
+        binding.root.isVisible = state.recording != RecordingState.Idle
+        // val vPadding = context.resources.getDimensionPixelSize(
+        //     R.dimen.stream_ui_message_composer_overlapping_content_vertical_padding
+        // )
+        // val hPadding = context.resources.getDimensionPixelSize(
+        //     R.dimen.stream_ui_message_composer_overlapping_content_horizontal_padding
+        // )
+        // setPadding(hPadding, vPadding, hPadding, vPadding)
 
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        //isVisible = false
+        parentHeight = findParent(R.id.centerContainer)?.height ?: error("no parent found")
     }
 
     override fun onDetachedFromWindow() {
@@ -105,6 +113,17 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             Log.e(TAG, "[onVisibilityChanged] NOT_VISIBLE")
             resetUI()
         }
+    }
+
+    private fun View.findParent(id: Int): View? {
+        var p = parent
+        while (p != null) {
+            if (p.id == id) {
+                return p as View
+            }
+            p = p.parent
+        }
+        return null
     }
 
     private fun resetUI() {
@@ -136,9 +155,9 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         Log.e(TAG, "[unlock] no args")
         state = RecordingState.Hold
 
+        binding.horizontalGuideline.setGuidelinePercent(1f)
+        layoutParams.height = parentHeight
         binding.recordingSlider.isVisible = true
-        //binding.recordingStart.isVisible = true
-        binding.recordingStart.visibility = View.INVISIBLE
 
         binding.recordingWaveform.isVisible = false
         binding.recordingStop.isVisible = false
@@ -146,7 +165,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingComplete.isVisible = false
 
         binding.recordingIndicator.doOnPreDraw {
-            Log.e(TAG, "[doOnPreDraw] left: ${binding.recordingStart.left}, top: ${binding.recordingStart.top}")
             Log.i(TAG, "[doOnPreDraw] w: ${binding.root.width}, h: ${binding.root.height}")
             micXY.fetchLocationInWindow()
             showLockPopup(micXY)
@@ -158,8 +176,9 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         Log.e(TAG, "[cancel] no args")
         state = RecordingState.Locked
 
+        binding.horizontalGuideline.setGuidelinePercent(0.5f)
+        layoutParams.height = layoutParams.height * 2
         binding.recordingSlider.isVisible = false
-        binding.recordingStart.isVisible = false
 
         binding.recordingWaveform.isVisible = true
         binding.recordingStop.isVisible = true
@@ -206,7 +225,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         val y = event.rawY
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                Log.i(TAG, "[onTouchEvent] ACTION_DOWN: ${binding.recordingStart.left}")
+                Log.i(TAG, "[onTouchEvent] ACTION_DOWN")
+                parentHeight = centerContainer.height
                 baseTouch[0] = x
                 baseTouch[1] = y
 
@@ -271,7 +291,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private fun showLockPopup(micXY: IntArray) {
         Log.d(TAG, "[showLockPopup] no args")
-        val lockW = binding.recordingStart.width
+        val lockW = binding.root.height
         val lockH = 128.dpToPx()
         lockPopup?.dismiss()
         lockPopup = PopupWindow(context).apply {
@@ -304,8 +324,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private fun showMicPopup(micXY: IntArray) {
         Log.d(TAG, "[showMicPopup] no args")
-        val micW = binding.recordingStart.width
-        val micH = binding.recordingStart.height
+        val micH = binding.root.height
+        val micW = micH
         micPopup?.dismiss()
         micPopup = PopupWindow(context).apply {
             setBackgroundDrawable(ColorDrawable(Color.LTGRAY))
@@ -342,7 +362,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private fun IntArray.fetchLocationInWindow() {
         binding.root.getLocationInWindow(this)
-        this[0] = this[0] + binding.root.width - binding.recordingStart.width
+        this[0] = this[0] + binding.root.width - binding.root.height
     }
 
 }
@@ -387,3 +407,6 @@ private fun Int.limitTo(min: Int, max: Int): Int {
         else -> this
     }
 }
+
+private val ViewParent.id: Int
+    get() = (this as? View)?.id ?: ConstraintLayout.NO_ID

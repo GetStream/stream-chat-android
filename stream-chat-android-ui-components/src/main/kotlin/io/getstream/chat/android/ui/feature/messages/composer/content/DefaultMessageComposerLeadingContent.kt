@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.composer.content
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
@@ -25,6 +26,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultLeadingContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
@@ -121,7 +123,10 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
         val hasMentionSuggestions = state.mentionSuggestions.isNotEmpty()
         val isInEditMode = state.action is Edit
         val hasCommands = state.hasCommands
+        val noRecording = state.recording is RecordingState.Idle
 
+        binding.root.isVisible = noRecording
+        //isVisible = noRecording
         binding.attachmentsButton.isEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
         binding.attachmentsButton.isVisible = style.attachmentsButtonVisible && canSendMessage && canUploadFile && !isInEditMode
 

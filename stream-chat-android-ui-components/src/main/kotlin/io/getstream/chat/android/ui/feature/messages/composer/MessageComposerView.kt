@@ -24,16 +24,11 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.isVisible
-import androidx.core.view.marginBottom
-import androidx.core.view.marginLeft
-import androidx.core.view.marginRight
-import androidx.core.view.marginTop
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.User
@@ -55,7 +50,6 @@ import io.getstream.chat.android.ui.feature.messages.composer.internal.MessageCo
 import io.getstream.chat.android.ui.feature.messages.composer.internal.ValidationErrorRenderer
 import io.getstream.chat.android.ui.feature.messages.composer.internal.toAttachment
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
-import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
@@ -149,10 +143,6 @@ public class MessageComposerView : ConstraintLayout {
         }
     }
 
-    public var showOverlappingContent: (MessageComposerState) -> Boolean = {
-        it.recording != RecordingState.Idle
-    }
-
     private var maxOffset = 0
 
     /**
@@ -162,17 +152,7 @@ public class MessageComposerView : ConstraintLayout {
         //maxOffset = maxOf(maxOffset, v.width - v.micButton.width)
         logger.v { "[onMicBtnTouchListener] event(${maxOffset}): $event" }
         //event.offsetLocation(maxOffset.toFloat(), 0f)
-        // when (event.actionMasked) {
-        //     MotionEvent.ACTION_DOWN -> {
-        //         logger.i { "[onMicBtnTouchListener] ACTION_DOWN" }
-        //         RecordingState.Hold
-        //     }
-        //     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-        //         logger.i { "[onMicBtnTouchListener] ACTION_UP" }
-        //         RecordingState.Idle
-        //     }
-        // }
-        binding.overlappingContent.children.first().dispatchTouchEvent(event)
+        binding.centerOverlapContent.children.first().dispatchTouchEvent(event)
         true
     }
 
@@ -288,7 +268,7 @@ public class MessageComposerView : ConstraintLayout {
                 it.dismissActionClickListener = { dismissActionClickListener() }
             }
         )
-        setOverlappingContent(
+        setCenterOverlapContent(
             DefaultMessageComposerOverlappingContent(context).also {
                 it.onStateChangeListener = { state -> audioRecordStateChangeListener(state) }
             }
@@ -308,21 +288,10 @@ public class MessageComposerView : ConstraintLayout {
     public fun renderState(state: MessageComposerState) {
         (binding.trailingContent.children.first() as? MessageComposerContent)?.renderState(state)
         (binding.centerContent.children.first() as? MessageComposerContent)?.renderState(state)
+        (binding.centerOverlapContent.children.first() as? MessageComposerContent)?.renderState(state)
         (binding.leadingContent.children.first() as? MessageComposerContent)?.renderState(state)
         (binding.footerContent.children.first() as? MessageComposerContent)?.renderState(state)
         (binding.headerContent.children.first() as? MessageComposerContent)?.renderState(state)
-        (binding.overlappingContent.children.first() as? MessageComposerContent)?.renderState(state)
-
-        val showOverlappingContent = showOverlappingContent(state)
-
-        binding.trailingContent.children.first().isVisible = !showOverlappingContent
-        binding.centerContent.children.first().isVisible = !showOverlappingContent
-        binding.leadingContent.children.first().isVisible = !showOverlappingContent
-        // TODO binding.footerContent.children.first().isVisible = !showOverlappingContent
-        binding.headerContent.children.first().isVisible = !showOverlappingContent
-        binding.overlappingContent.children.first().isVisible = showOverlappingContent
-
-        binding.root.requestLayout()
 
         renderSuggestion(state)
 
@@ -446,15 +415,15 @@ public class MessageComposerView : ConstraintLayout {
      * @see [DefaultMessageComposerOverlappingContent]
      */
     @JvmOverloads
-    public fun <V> setOverlappingContent(
+    public fun <V> setCenterOverlapContent(
         contentView: V,
         layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
             FrameLayout.LayoutParams.WRAP_CONTENT,
         ),
     ) where V : View, V : MessageComposerContent {
-        binding.overlappingContent.removeAllViews()
-        binding.overlappingContent.addView(contentView.attachContext(), layoutParams)
+        binding.centerOverlapContent.removeAllViews()
+        binding.centerOverlapContent.addView(contentView.attachContext(), layoutParams)
     }
 
     /**

@@ -23,6 +23,7 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultHeaderContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
@@ -86,6 +87,8 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
      * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
+        val noRecording = state.recording is RecordingState.Idle
+        binding.root.isVisible = noRecording
         when (state.action) {
             is Reply -> {
                 binding.inputModeHeaderContainer.isVisible = true
