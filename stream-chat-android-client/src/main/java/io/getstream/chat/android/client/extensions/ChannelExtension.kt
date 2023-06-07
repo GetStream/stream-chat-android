@@ -52,7 +52,7 @@ public fun Channel.getUsersExcludingCurrent(
  * @return The list of members in the channel without the current user.
  */
 @InternalStreamChatApi
-public fun Channel.getMemberExcludingCurrent(
+public fun Channel.getMembersExcludingCurrent(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
 ): List<Member> =
     members.filter { it.user.id != currentUser?.id }
