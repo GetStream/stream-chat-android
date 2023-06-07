@@ -26,11 +26,13 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
@@ -44,6 +46,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 /**
  * Represents the default content shown at the center of [MessageComposerView].
  */
+@OptIn(InternalStreamChatApi::class)
 public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
@@ -127,6 +130,8 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
+        val noRecording = state.recording is RecordingState.Idle
+        binding.root.isVisible = noRecording
         renderTextInputState(state)
         renderReplyState(state)
         renderAttachmentState(state)

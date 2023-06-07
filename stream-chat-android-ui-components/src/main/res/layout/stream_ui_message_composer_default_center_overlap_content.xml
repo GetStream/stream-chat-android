@@ -3,9 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="112dp"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontalGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5"
+        />
 
     <ImageView
         android:id="@+id/recordingIndicator"
@@ -14,10 +22,10 @@
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:scaleType="center"
         android:src="@drawable/baseline_mic_none_24"
-        app:layout_constraintBottom_toTopOf="@id/recordingDelete"
+        app:layout_constraintBottom_toTopOf="@id/horizontalGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+
         app:tint="#f00"
         />
 
@@ -35,43 +43,28 @@
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:layout_gravity="end"
-        android:layout_marginEnd="64dp"
+        android:layout_marginEnd="96dp"
         android:drawableLeft="@drawable/baseline_keyboard_arrow_left_24"
         android:gravity="center"
         android:text="Slide to cancel"
         app:layout_constraintBottom_toBottomOf="@id/recordingIndicator"
-        app:layout_constraintEnd_toStartOf="@+id/recordingStart"
-        app:layout_constraintTop_toTopOf="@id/recordingIndicator"
-        />
-
-    <ImageButton
-        android:id="@+id/recordingStart"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="end"
-        android:padding="@dimen/stream_ui_spacing_tiny"
-        android:src="@drawable/baseline_mic_24"
-        app:layout_constraintBottom_toBottomOf="@id/recordingIndicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/recordingIndicator"
-        app:tint="#00f"
         />
 
 
     <View
         android:id="@+id/recordingWaveform"
         android:layout_width="0dp"
-        android:layout_height="32dp"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:background="#ff0"
-        android:padding="@dimen/stream_ui_spacing_tiny"
         android:src="@drawable/baseline_mic_24"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/recordingIndicator"
+        app:layout_constraintBottom_toBottomOf="@id/horizontalGuideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/recordingTimer"
-        app:layout_constraintTop_toTopOf="@id/recordingIndicator"
+        app:layout_constraintStart_toEndOf="@+id/recordingTimer"
+        app:layout_constraintTop_toTopOf="parent"
         app:tint="#00f"
         />
 
@@ -87,11 +80,9 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recordingStart"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
         app:tint="#00f"
         />
-
 
     <ImageButton
         android:id="@+id/recordingStop"
@@ -102,13 +93,12 @@
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:src="@drawable/baseline_stop_circle_24"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/recordingDelete"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/recordingComplete"
         app:layout_constraintStart_toEndOf="@id/recordingDelete"
-        app:layout_constraintTop_toTopOf="@id/recordingDelete"
+        app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
         app:tint="#f00"
         />
-
 
     <ImageButton
         android:id="@+id/recordingComplete"
@@ -119,10 +109,9 @@
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:src="@drawable/baseline_done_24"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/recordingDelete"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/recordingDelete"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
         app:tint="#00f"
         />
 
