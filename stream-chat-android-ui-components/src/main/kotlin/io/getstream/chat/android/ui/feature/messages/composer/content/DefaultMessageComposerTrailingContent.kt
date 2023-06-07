@@ -59,7 +59,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     /**
      * Touch listener for the mic button.
      */
-    public var audioRecordButtonTouchListener: (event: MotionEvent) -> Boolean = { false }
+    public var recordAudioButtonTouchListener: (event: MotionEvent) -> Boolean = { false }
 
     public constructor(context: Context) : this(context, null)
 
@@ -80,7 +80,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
         binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener() }
-        binding.micButton.setOnTouchListener { _, event -> audioRecordButtonTouchListener(event) }
+        binding.recordAudioButton.setOnTouchListener { _, event -> recordAudioButtonTouchListener(event) }
     }
 
     /**
@@ -128,12 +128,14 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                 cooldownBadgeTextView.isVisible = true
                 cooldownBadgeTextView.text = coolDownTime.toString()
                 sendMessageButton.isVisible = false
-                micButton.isVisible = false
+                recordAudioButton.isVisible = false
             } else {
                 cooldownBadgeTextView.isVisible = false
-                sendMessageButton.isVisible = hasTextInput || isInEditMode
+                // sendMessageButton.isVisible = hasTextInput || isInEditMode
+                sendMessageButton.isVisible = true
                 sendMessageButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && hasValidContent
-                micButton.isVisible = canUploadFile && canSendMessage && !hasTextInput && !isInEditMode
+                // recordAudioButton.isVisible = canUploadFile && canSendMessage && !hasTextInput && !isInEditMode
+                recordAudioButton.isVisible = canUploadFile && canSendMessage && /*!hasTextInput &&*/ !isInEditMode
             }
         }
     }

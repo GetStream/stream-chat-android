@@ -28,7 +28,6 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
-import androidx.core.view.isVisible
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.User
@@ -148,7 +147,7 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Touch listener for the audio record button.
      */
-    public var audioRecordButtonTouchListener: (event: MotionEvent) -> Boolean = { event ->
+    public var recordAudioButtonTouchListener: (event: MotionEvent) -> Boolean = { event ->
         //maxOffset = maxOf(maxOffset, v.width - v.micButton.width)
         logger.v { "[onMicBtnTouchListener] event(${maxOffset}): $event" }
         //event.offsetLocation(maxOffset.toFloat(), 0f)
@@ -255,7 +254,7 @@ public class MessageComposerView : ConstraintLayout {
         setTrailingContent(
             DefaultMessageComposerTrailingContent(context).also {
                 it.sendMessageButtonClickListener = { sendMessageButtonClickListener() }
-                it.audioRecordButtonTouchListener = { event -> audioRecordButtonTouchListener(event) }
+                it.recordAudioButtonTouchListener = { event -> recordAudioButtonTouchListener(event) }
             }
         )
         setFooterContent(

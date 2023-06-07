@@ -21,11 +21,10 @@
         android:layout_height="32dp"
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:scaleType="center"
-        android:src="@drawable/baseline_mic_none_24"
+        android:src="@drawable/stream_ui_ic_mic"
         app:layout_constraintBottom_toTopOf="@id/horizontalGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
         app:tint="#f00"
         />
 
@@ -41,12 +40,12 @@
     <TextView
         android:id="@+id/recordingSlider"
         android:layout_width="wrap_content"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginEnd="96dp"
-        android:drawableLeft="@drawable/baseline_keyboard_arrow_left_24"
         android:gravity="center"
-        android:text="Slide to cancel"
+        android:text="@string/stream_ui_message_composer_slide_to_cancel"
+        app:drawableStartCompat="@drawable/stream_ui_arrow_left"
         app:layout_constraintBottom_toBottomOf="@id/recordingIndicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/recordingIndicator"
@@ -59,60 +58,66 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:background="#ff0"
-        android:src="@drawable/baseline_mic_24"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/horizontalGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/recordingTimer"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="#00f"
+        app:tint="#005FFF"
         />
 
 
-    <ImageButton
+    <ImageView
         android:id="@+id/recordingDelete"
-        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="end"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
         android:padding="@dimen/stream_ui_spacing_tiny"
-        android:src="@drawable/baseline_delete_outline_24"
+        android:src="@drawable/stream_ui_ic_delete"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
-        app:tint="#00f"
+        app:tint="#005FFF"
+        tools:ignore="ContentDescription"
         />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/recordingStop"
-        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="end"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
         android:padding="@dimen/stream_ui_spacing_tiny"
-        android:src="@drawable/baseline_stop_circle_24"
+        android:src="@drawable/stream_ui_ic_stop_circle"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/recordingComplete"
         app:layout_constraintStart_toEndOf="@id/recordingDelete"
         app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
-        app:tint="#f00"
+        tools:ignore="ContentDescription"
         />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/recordingComplete"
-        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="end"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
         android:padding="@dimen/stream_ui_spacing_tiny"
-        android:src="@drawable/baseline_done_24"
+        android:src="@drawable/stream_ui_ic_check_circle"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
-        app:tint="#00f"
+        tools:ignore="ContentDescription"
         />
 
 </merge>

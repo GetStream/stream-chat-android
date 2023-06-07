@@ -186,7 +186,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingComplete.isVisible = true
 
         micPopup?.dismiss()
-        micPopup = null;
+        micPopup = null
         (lockPopup?.contentView as? ImageView?)?.setImageResource(R.drawable.stream_ui_ic_mic_locked_light)
 
         lockPopup?.update(lockBaseRect.left, lockBaseRect.top - 16.dpToPx(), -1, 64.dpToPx())
@@ -325,14 +325,11 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private fun showMicPopup(micXY: IntArray) {
         Log.d(TAG, "[showMicPopup] no args")
         val micH = binding.root.height
-        val micW = micH
+        val micW = binding.recordingIndicator.width
         micPopup?.dismiss()
         micPopup = PopupWindow(context).apply {
             setBackgroundDrawable(ColorDrawable(Color.LTGRAY))
-            val imageView = ImageView(context).apply {
-                scaleType = ImageView.ScaleType.CENTER
-                setImageResource(R.drawable.baseline_mic_24)
-            }
+            val imageView = LayoutInflater.from(context).inflate(R.layout.stream_ui_message_composer_default_center_overlap_floating_mic, null, false)
             contentView = imageView
             width = micW
             height = micH
@@ -362,7 +359,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private fun IntArray.fetchLocationInWindow() {
         binding.root.getLocationInWindow(this)
-        this[0] = this[0] + binding.root.width - binding.root.height
+        // this[0] = this[0] + binding.root.width - binding.root.height
+        this[0] = this[0] + binding.root.width - binding.recordingIndicator.width - 4.dpToPx()
     }
 
 }
