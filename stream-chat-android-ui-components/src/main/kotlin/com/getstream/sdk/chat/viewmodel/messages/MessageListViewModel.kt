@@ -221,14 +221,14 @@ public class MessageListViewModel(
      * Used when scrolling to a pinned message, a message opened from
      * a push notification or similar.
      */
-    private val _targetMessage: MutableLiveData<Message> = MutableLiveData()
+    private val _targetMessage: MutableLiveData<Message?> = MutableLiveData(null)
 
     /**
      * The target message that the list should scroll to.
      * Used when scrolling to a pinned message, a message opened from
      * a push notification or similar.
      */
-    public val targetMessage: LiveData<Message> = _targetMessage
+    public val targetMessage: LiveData<Message?> = _targetMessage
 
     /**
      * Emits error events.
@@ -311,6 +311,10 @@ public class MessageListViewModel(
                 }
             }
         }
+    }
+
+    public fun consumeTargetMessage() {
+        _targetMessage.postValue(null)
     }
 
     /**

@@ -208,6 +208,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 	public static final field SEPARATOR_TIME I
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;IZ)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/setup/state/ClientState;IZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun consumeTargetMessage ()V
 	public final fun getChannel ()Landroidx/lifecycle/LiveData;
 	public final fun getChannelState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getDeletedMessageVisibility ()Landroidx/lifecycle/LiveData;
