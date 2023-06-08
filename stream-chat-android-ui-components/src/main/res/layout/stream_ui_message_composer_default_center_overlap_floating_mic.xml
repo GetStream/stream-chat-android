@@ -8,9 +8,6 @@
     android:padding="@dimen/stream_ui_spacing_tiny"
     android:scaleType="center"
     android:src="@drawable/stream_ui_ic_mic"
-    app:layout_constraintBottom_toTopOf="@id/horizontalGuideline"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
     app:tint="#005FFF"
     tools:ignore="ContentDescription"
     />

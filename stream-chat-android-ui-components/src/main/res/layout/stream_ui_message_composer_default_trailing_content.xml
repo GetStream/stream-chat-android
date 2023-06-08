@@ -46,6 +46,7 @@
             android:background="?selectableItemBackgroundBorderless"
             android:padding="@dimen/stream_ui_spacing_tiny"
             android:src="@drawable/stream_ui_ic_mic"
+            android:tag="record_audio"
             tools:ignore="ContentDescription"
             />
 

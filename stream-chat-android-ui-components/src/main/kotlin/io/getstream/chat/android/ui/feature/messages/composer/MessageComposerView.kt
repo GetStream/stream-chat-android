@@ -270,6 +270,10 @@ public class MessageComposerView : ConstraintLayout {
         setCenterOverlapContent(
             DefaultMessageComposerOverlappingContent(context).also {
                 it.onStateChangeListener = { state -> audioRecordStateChangeListener(state) }
+                it.centerContainer = { binding.centerContainer }
+                it.recordAudioButton = {
+                    DefaultMessageComposerTrailingContent.recordAudioButton(binding.trailingContent)
+                }
             }
         )
     }
