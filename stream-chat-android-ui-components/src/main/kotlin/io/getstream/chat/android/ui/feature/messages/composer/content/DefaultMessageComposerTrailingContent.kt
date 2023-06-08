@@ -20,6 +20,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -44,7 +46,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     /**
      * Generated binding class for the XML layout.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
+    internal lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
 
     /**
      * The style for [MessageComposerView].
@@ -81,6 +83,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
         binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener() }
         binding.recordAudioButton.setOnTouchListener { _, event -> recordAudioButtonTouchListener(event) }
+        binding.recordAudioButton.tag = RECORD_AUDIO_TAG
     }
 
     /**
@@ -137,6 +140,16 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                 // recordAudioButton.isVisible = canUploadFile && canSendMessage && !hasTextInput && !isInEditMode
                 recordAudioButton.isVisible = canUploadFile && canSendMessage && /*!hasTextInput &&*/ !isInEditMode
             }
+        }
+    }
+
+    internal companion object {
+
+        private const val RECORD_AUDIO_TAG = "record_audio"
+        internal fun recordAudioButton(container: ViewGroup): View {
+            return container.findViewById(R.id.recordAudioButton)
+                ?: container.findViewWithTag(RECORD_AUDIO_TAG)
+                ?: error("recordAudioButton not found in $container")
         }
     }
 }
