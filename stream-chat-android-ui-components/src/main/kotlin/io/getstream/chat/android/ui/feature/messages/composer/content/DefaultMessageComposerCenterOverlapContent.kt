@@ -2,14 +2,11 @@ package io.getstream.chat.android.ui.feature.messages.composer.content
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -19,14 +16,13 @@ import android.view.ViewParent
 import android.widget.ImageView
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterOverlapContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
-import kotlin.math.roundToInt
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 
 private const val TAG = "OverlappingContent"
 
@@ -42,11 +38,9 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         defStyleRes
     )
 
-    private var navBarHeight: Int
     private var parentHeight: Int = 0
-
-    internal var centerContainer: () -> View = { error("no parent container found") }
-    internal var recordAudioButton: () -> View = { error("no recordAudioButton found") }
+    private var parentWidth: Int = 0
+    private var centerContentHeight: Int = 0
 
     private lateinit var binding: StreamUiMessageComposerDefaultCenterOverlapContentBinding
 
@@ -78,13 +72,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     init {
         val inflater = LayoutInflater.from(context)
         binding = StreamUiMessageComposerDefaultCenterOverlapContentBinding.inflate(inflater, this)
-
-        navBarHeight = context.getNavigationBarHeight()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration?) {
-        super.onConfigurationChanged(newConfig)
-        navBarHeight = context.getNavigationBarHeight()
     }
 
     private lateinit var composerContext: MessageComposerContext
@@ -125,7 +112,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == View.VISIBLE) {
             Log.e(TAG, "[onVisibilityChanged] VISIBLE")
-            unlock()
+
         } else {
             Log.e(TAG, "[onVisibilityChanged] NOT_VISIBLE")
             resetUI()
@@ -157,12 +144,12 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         onStateChangeListener?.invoke(RecordingState.Idle)
     }
 
-    private fun unlock() {
-        Log.e(TAG, "[unlock] no args")
+    private fun hold() {
+        Log.e(TAG, "[hold] no args")
         state = RecordingState.Hold
 
         binding.horizontalGuideline.setGuidelinePercent(1f)
-        layoutParams.height = parentHeight
+        layoutParams.height = centerContentHeight
         binding.recordingSlider.isVisible = true
 
         binding.recordingWaveform.isVisible = false
@@ -170,14 +157,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingDelete.isVisible = false
         binding.recordingComplete.isVisible = false
 
-        binding.recordingIndicator.doOnPreDraw {
-            Log.i(TAG, "[doOnPreDraw] w: ${binding.root.width}, h: ${binding.root.height}")
-            val micXY = IntArray(size = 2).apply {
-                fetchLocationInWindow()
-            }
-            showMicPopup(micXY)
-            showLockPopup(micXY)
-        }
+        Log.i(TAG, "[doOnPreDraw] w: ${binding.root.width}, h: ${binding.root.height}")
     }
 
     private fun lock() {
@@ -214,11 +194,16 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 Log.i(TAG, "[onTouchEvent] ACTION_DOWN")
-                parentHeight = composerContext.content.center?.asView()?.height ?: error("no center content found")
+                parentWidth = composerContext.content.asView().width
+                parentHeight = composerContext.content.asView().height
+                centerContentHeight = composerContext.content.center?.asView()?.height ?: error("no center content found")
                 val recordAudioButton = composerContext.content.findViewByKey(MessageComposerContent.RECORD_AUDIO_BUTTON)
                     ?: composerContext.content.trailing?.asView()?.findViewById(R.id.recordAudioButton)
                     ?: error("recordAudioButton not found")
                 recordAudioButton.getRectInWindow(micOrigRect)
+                showMicPopup()
+                showLockPopup()
+                hold()
 
                 baseTouch[0] = x
                 baseTouch[1] = y
@@ -259,7 +244,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                 binding.recordingSlider.alpha = 1 - progress * 1.5f
 
                 if (micLastRect.left == micMoveRect.left) {
-                    Log.w(TAG, "[onMove] cancelled")
+                    Log.w(TAG, "[onMove] cancelled; micLastRect: $micLastRect, micMoveRect: $micMoveRect")
                     cancel()
                     return false
                 }
@@ -282,55 +267,37 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         return true
     }
 
-    private fun showMicPopup(micXY: IntArray) {
-        Log.d(TAG, "[showMicPopup] micXY: ${micXY.toList()}")
+    private fun showMicPopup() {
         Log.d(TAG, "[showMicPopup] orig: $micOrigRect")
+        val micW = micW
+        val micH = micH
         val micContent = LayoutInflater.from(context).inflate(
             R.layout.stream_ui_message_composer_default_center_overlap_floating_mic, this, false
         )
         micPopup?.dismiss()
         micPopup = PopupWindow(context).apply {
-            setBackgroundDrawable(ColorDrawable(Color.LTGRAY))
+            setBackgroundDrawable(null)
+            isClippingEnabled = false
 
             contentView = micContent
             width = micW
             height = micH
 
-            isClippingEnabled = false
-
-            val micLeft = micXY[0]
-            val micTop = micXY[1]
-            Log.v(
-                TAG,
-                "[showMicPopup] x(${binding.root.width}): ${micLeft}, y(${binding.root.height}): ${micTop}, navBarHeight: $navBarHeight"
-            )
             micBaseRect.set(0, 0, micW, micH)
             val deltaX = micOrigRect.centerX() - micBaseRect.centerX()
             val deltaY = micOrigRect.centerY() - micBaseRect.centerY()
             micBaseRect.offset(deltaX, deltaY)
-
-            val newMicBaseRect = Rect().apply {
-                left = micLeft
-                top = micTop
-                right = micLeft + micW
-                bottom = micTop + micH
-            }
-            if (micBaseRect != newMicBaseRect) {
-                Log.w(TAG, "[showMicPopup] warning; micBaseRect: $micBaseRect, newMicBaseRect: $newMicBaseRect")
-
-            }
             micLastRect.set(micBaseRect)
             micMoveRect.apply {
                 set(micBaseRect)
-                left -= (binding.root.width / 3)
-                top -= binding.root.height * 2
+                left -= (parentWidth / 3)
+                top -= centerContentHeight * 2
             }
             showAtLocation(binding.root, Gravity.TOP or Gravity.START, micBaseRect.left, micBaseRect.top)
         }
     }
 
-    private fun showLockPopup(micXY: IntArray) {
-        Log.d(TAG, "[showLockPopup] micXY: ${micXY.toList()}")
+    private fun showLockPopup() {
         Log.d(TAG, "[showLockPopup] micOrigRect: $micOrigRect")
         val lockW = 52.dpToPx()
         val lockH = 92.dpToPx()
@@ -340,13 +307,11 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         lockPopup?.dismiss()
         lockPopup = PopupWindow(context).apply {
             setBackgroundDrawable(null)
-
             isClippingEnabled = true
 
             contentView = lockContent
             width = lockW
             height = lockH
-
 
             lockBaseRect.set(0, 0, lockW, lockH)
             val deltaX = micBaseRect.centerX() - lockBaseRect.centerX()
@@ -356,16 +321,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             lockLastRect.set(lockBaseRect)
             lockMoveRect.apply {
                 set(lockBaseRect)
-                top -= binding.root.height * 2
+                top -= centerContentHeight * 2
             }
-
             showAtLocation(binding.root, Gravity.TOP or Gravity.START, lockBaseRect.left, lockBaseRect.top)
         }
-    }
-
-    private fun IntArray.fetchLocationInWindow() {
-        binding.root.getLocationInWindow(this)
-        this[0] = this[0] + binding.root.width - binding.recordingIndicator.width - 4.dpToPx()
     }
 
 }
@@ -378,41 +337,6 @@ private fun View.getRectInWindow(out: Rect) {
         top = xy[1]
         right = xy[0] + width
         bottom = xy[1] + height
-    }
-}
-
-
-
-/**
- * Transforms DP value integer to pixels, based on the screen density.
- */
-internal fun Int.dpToPx(): Int = dpToPxPrecise().roundToInt()
-
-/**
- * Uses the display metrics to transform the value of DP to pixels.
- */
-internal fun Int.dpToPxPrecise(): Float = (this * displayMetrics().density)
-
-/**
- * Fetches the current system display metrics based on [Resources].
- */
-internal fun displayMetrics(): DisplayMetrics = Resources.getSystem().displayMetrics
-
-private fun Context.getNavigationBarHeight(): Int {
-    val resources: Resources = resources
-
-    val resName = if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-        "navigation_bar_height"
-    } else {
-        "navigation_bar_height_landscape"
-    }
-
-    val id: Int = resources.getIdentifier(resName, "dimen", "android")
-
-    return if (id > 0) {
-        resources.getDimensionPixelSize(id)
-    } else {
-        0
     }
 }
 

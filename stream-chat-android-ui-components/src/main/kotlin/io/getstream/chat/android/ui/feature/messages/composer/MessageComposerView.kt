@@ -589,6 +589,8 @@ private fun StreamUiMessageComposerBinding.asContentContainer() = object : Messa
     override val header get() = headerContent.children.firstOrNull() as? MessageComposerContent
     override val footer get() = footerContent.children.firstOrNull() as? MessageComposerContent
 
+    override fun asView(): View = root
+
     override fun findViewByKey(key: String): View? {
         for (content in this) {
             return content?.findViewByKey(key) ?: continue
