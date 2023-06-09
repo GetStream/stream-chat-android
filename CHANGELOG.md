@@ -58,7 +58,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- When the list of channels scroll to the target message, it is consumed. [#4842](https://github.com/GetStream/stream-chat-android/pull/4842)
 
 ### ✅ Added
 
@@ -120,6 +119,11 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# June 9th, 2023 - 5.17.6
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- When the list of channels scroll to the target message, it is consumed. [#4842](https://github.com/GetStream/stream-chat-android/pull/4842)
 
 # June 5th, 2023 - 5.17.5
 ## stream-chat-android-ui-components
