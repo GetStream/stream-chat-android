@@ -28,7 +28,7 @@
         app:tint="#f00"
         />
 
-    <Chronometer
+    <TextView
         android:id="@+id/recordingTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
         />
 
 
-    <View
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.WaveformView
         android:id="@+id/recordingWaveform"
         android:layout_width="0dp"
         android:layout_height="0dp"

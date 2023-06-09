@@ -3,9 +3,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.content
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
@@ -17,15 +15,23 @@ import android.widget.ImageView
 import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.MediaRecorderState
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterOverlapContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
+import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.log.taggedLogger
+import java.util.Date
 
 private const val TAG = "OverlappingContent"
 
+@OptIn(InternalStreamChatApi::class)
 public class DefaultMessageComposerOverlappingContent : ConstraintLayout, MessageComposerContent {
 
     public constructor(context: Context) : super(context)
@@ -37,6 +43,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         defStyleAttr,
         defStyleRes
     )
+
+    private val logger by taggedLogger(TAG)
 
     private var parentHeight: Int = 0
     private var parentWidth: Int = 0
@@ -51,7 +59,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private val lockLastRect = Rect()
     private val lockMoveRect = Rect()
 
-
     private var micPopup: PopupWindow? = null
     private val micOrigRect = Rect()
     private val micBaseRect = Rect()
@@ -62,6 +69,9 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private var micW: Int = 64.dpToPx()
     private var micH: Int = 64.dpToPx()
+
+    private val permissionChecker = PermissionChecker()
+    private val mediaRecorder = DefaultStreamMediaRecorder()
 
     private var state: RecordingState = RecordingState.Hold
         set(value) {
@@ -77,12 +87,11 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private lateinit var composerContext: MessageComposerContext
 
     override fun attachContext(messageComposerContext: MessageComposerContext) {
-        composerContext= messageComposerContext
+        composerContext = messageComposerContext
     }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-
     }
 
     override fun renderState(state: MessageComposerState) {
@@ -91,7 +100,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-
     }
 
     override fun onDetachedFromWindow() {
@@ -101,7 +109,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
@@ -112,7 +119,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == View.VISIBLE) {
             Log.e(TAG, "[onVisibilityChanged] VISIBLE")
-
         } else {
             Log.e(TAG, "[onVisibilityChanged] NOT_VISIBLE")
             resetUI()
@@ -124,6 +130,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
         binding.recordingSlider.translationX = 0f
         binding.recordingSlider.alpha = 1f
+        // TODO binding.recordingTimer.stop()
+
         micLastRect.set(micBaseRect)
         lockLastRect.set(lockBaseRect)
         lockPopup?.dismiss()
@@ -142,6 +150,9 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         resetUI()
         state = RecordingState.Idle
         onStateChangeListener?.invoke(RecordingState.Idle)
+
+        mediaRecorder.stopRecording()
+        mediaRecorder.release()
     }
 
     private fun hold() {
@@ -156,8 +167,49 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingStop.isVisible = false
         binding.recordingDelete.isVisible = false
         binding.recordingComplete.isVisible = false
+        //TODO binding.recordingTimer.base = 0L
+        //TODO binding.recordingTimer.start()
 
         Log.i(TAG, "[doOnPreDraw] w: ${binding.root.width}, h: ${binding.root.height}")
+
+        mediaRecorder.startAudioRecording(context, recordingName = "audio_recording_${Date()}")
+
+        mediaRecorder.setOnInfoListener(::onRecorderInfo)
+        mediaRecorder.setOnErrorListener(::onRecorderError)
+        mediaRecorder.setOnMediaRecorderStateChangedListener(::onRecorderStateChanged)
+        mediaRecorder.setOnMaxAmplitudeSampledListener(::onRecorderMaxAmplitudeSampled)
+        mediaRecorder.setOnCurrentRecordingDurationChangedListener(::onRecorderDurationChanged)
+        mediaRecorder.setOnRecordingStoppedListener(::onRecorderStopped)
+    }
+
+    private fun onRecorderStopped() {
+        Log.i(TAG, "[onRecorderStopped] no args")
+    }
+
+    private fun onRecorderDurationChanged(durationMs: Long) {
+        logger.v { "[onRecorderDurationChanged] duration: $durationMs" }
+        post { binding.recordingTimer.text = formatMillis(durationMs) }
+    }
+
+    private fun onRecorderStateChanged(mediaRecorderState: MediaRecorderState) {
+        Log.i(TAG, "[onRecorderStateChanged] state: $mediaRecorderState")
+    }
+
+    private fun onRecorderInfo(streamMediaRecorder: StreamMediaRecorder, what: Int, extra: Int) {
+        Log.i(TAG, "[onRecorderInfo] what: $what, extra: $extra")
+    }
+
+    private fun onRecorderError(streamMediaRecorder: StreamMediaRecorder, what: Int, extra: Int) {
+        Log.e(TAG, "[onRecorderError] what: $what, extra: $extra")
+    }
+
+    private val waveformData = arrayListOf<Float>()
+    private fun onRecorderMaxAmplitudeSampled(maxAmplitude: Int) {
+        Log.v(TAG, "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude")
+        post {
+            waveformData.add(maxAmplitude.toFloat() / 32767f)
+            binding.recordingWaveform.waveBars = waveformData
+        }
     }
 
     private fun lock() {
@@ -194,12 +246,18 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 Log.i(TAG, "[onTouchEvent] ACTION_DOWN")
+                if (!permissionChecker.isGrantedAudioRecordPermission(context)) {
+                    permissionChecker.checkAudioRecordPermissions(this)
+                    return false
+                }
                 parentWidth = composerContext.content.asView().width
                 parentHeight = composerContext.content.asView().height
-                centerContentHeight = composerContext.content.center?.asView()?.height ?: error("no center content found")
-                val recordAudioButton = composerContext.content.findViewByKey(MessageComposerContent.RECORD_AUDIO_BUTTON)
-                    ?: composerContext.content.trailing?.asView()?.findViewById(R.id.recordAudioButton)
-                    ?: error("recordAudioButton not found")
+                centerContentHeight =
+                    composerContext.content.center?.asView()?.height ?: error("no center content found")
+                val recordAudioButton =
+                    composerContext.content.findViewByKey(MessageComposerContent.RECORD_AUDIO_BUTTON)
+                        ?: composerContext.content.trailing?.asView()?.findViewById(R.id.recordAudioButton)
+                        ?: error("recordAudioButton not found")
                 recordAudioButton.getRectInWindow(micOrigRect)
                 showMicPopup()
                 showLockPopup()
@@ -258,9 +316,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 Log.d(TAG, "[onTouchEvent] ACTION_UP")
-                resetUI()
-                state = RecordingState.Idle
-                onStateChangeListener?.invoke(RecordingState.Idle)
+                cancel()
                 return true
             }
         }
@@ -326,7 +382,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             showAtLocation(binding.root, Gravity.TOP or Gravity.START, lockBaseRect.left, lockBaseRect.top)
         }
     }
-
 }
 
 private fun View.getRectInWindow(out: Rect) {
@@ -350,3 +405,10 @@ private fun Int.limitTo(min: Int, max: Int): Int {
 
 private val ViewParent.id: Int
     get() = (this as? View)?.id ?: ConstraintLayout.NO_ID
+
+private fun formatMillis(milliseconds: Long): String {
+    val totalSeconds = milliseconds / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return "%02d:%02d".format(minutes, seconds)
+}

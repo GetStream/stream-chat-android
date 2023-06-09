@@ -47,6 +47,7 @@ public class PermissionChecker {
                         Manifest.permission.READ_MEDIA_IMAGES,
                         Manifest.permission.READ_MEDIA_VIDEO,
                     )
+
                     else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
                 }
             )
@@ -62,6 +63,7 @@ public class PermissionChecker {
                         Manifest.permission.READ_MEDIA_VIDEO,
                         Manifest.permission.READ_MEDIA_AUDIO,
                     )
+
                     else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
                 }
             )
@@ -79,6 +81,11 @@ public class PermissionChecker {
     public fun isGrantedCameraPermissions(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
             ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+
+    public fun isGrantedAudioRecordPermission(context: Context): Boolean =
+        ContextCompat.checkSelfPermission(
+            context, Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
 
     /**
      * Check if Camera Permission needs to be requested to the user
@@ -103,6 +110,7 @@ public class PermissionChecker {
                     Manifest.permission.READ_MEDIA_IMAGES,
                     Manifest.permission.READ_MEDIA_VIDEO,
                 )
+
                 else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             },
             onPermissionDenied,
@@ -123,6 +131,7 @@ public class PermissionChecker {
                     Manifest.permission.READ_MEDIA_VIDEO,
                     Manifest.permission.READ_MEDIA_AUDIO,
                 )
+
                 else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             },
             onPermissionDenied,
@@ -190,6 +199,22 @@ public class PermissionChecker {
             view.context.getString(R.string.stream_ui_message_composer_permission_camera_message),
             view.context.getString(R.string.stream_ui_message_composer_permission_camera_message),
             listOf(Manifest.permission.CAMERA),
+            onPermissionDenied,
+            onPermissionGranted
+        )
+    }
+
+    public fun checkAudioRecordPermissions(
+        view: View,
+        onPermissionDenied: () -> Unit = { },
+        onPermissionGranted: () -> Unit = { },
+    ) {
+        checkPermissions(
+            view,
+            view.context.getString(R.string.stream_ui_message_composer_permission_audio_record_title),
+            view.context.getString(R.string.stream_ui_message_composer_permission_audio_record_message),
+            view.context.getString(R.string.stream_ui_message_composer_permission_audio_record_message),
+            listOf(Manifest.permission.RECORD_AUDIO),
             onPermissionDenied,
             onPermissionGranted
         )

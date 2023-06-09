@@ -28,6 +28,8 @@
     <string name="stream_ui_message_composer_permission_camera_message">Camera and storage access permissions are needed in order to be able to take photos and videos</string>
     <string name="stream_ui_message_composer_permission_storage_title">Storage Access Permissions</string>
     <string name="stream_ui_message_composer_permission_storage_message">Storage access permissions is needed in order to be able to send and save photos, videos, music and the other files</string>
+    <string name="stream_ui_message_composer_permission_audio_record_title">Record Audio Permissions</string>
+    <string name="stream_ui_message_composer_permission_audio_record_message">Record Audio permission is needed in order to be able to record and send audio files</string>
     <string name="stream_ui_message_composer_permission_setting_message">Enable permissions on App Settings</string>
     <string name="stream_ui_message_composer_permissions_setting_button">Settings</string>
 
