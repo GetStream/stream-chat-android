@@ -58,6 +58,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- When the list of channels scroll to the target message, it is consumed. [#4842](https://github.com/GetStream/stream-chat-android/pull/4842)
 
 ### ✅ Added
 
