@@ -10,5 +10,6 @@ public interface MessageComposerContentContainer : Iterable<MessageComposerConte
     public val header: MessageComposerContent?
     public val footer: MessageComposerContent?
 
+    public fun asView(): View
     public fun findViewByKey(key: String): View?
 }
