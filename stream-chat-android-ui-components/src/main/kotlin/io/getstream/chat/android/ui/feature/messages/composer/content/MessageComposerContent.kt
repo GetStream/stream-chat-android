@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.composer.content
 
+import android.view.View
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
@@ -37,4 +38,21 @@ public interface MessageComposerContent {
      * @param state The state that will be used to render the updated UI.
      */
     public fun renderState(state: MessageComposerState)
+
+    /**
+     * Finds the first descendant view with the given [key].
+     *
+     * @param key the key to search for.
+     */
+    public fun findViewByKey(key: String): View? {
+        return null
+    }
+
+    public companion object PredefinedKeys {
+        public const val RECORD_AUDIO_BUTTON: String = "record_audio_button"
+    }
 }
+
+public fun MessageComposerContent.asView(): View? = this as? View
+
+public fun MessageComposerContent.findRecordAudioButton(): View? = findViewByKey(MessageComposerContent.RECORD_AUDIO_BUTTON)

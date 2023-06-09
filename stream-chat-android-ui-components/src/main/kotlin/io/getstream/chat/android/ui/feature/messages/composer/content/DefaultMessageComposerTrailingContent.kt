@@ -143,6 +143,13 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
         }
     }
 
+    override fun findViewByKey(key: String): View? {
+        return when (key) {
+            MessageComposerContent.RECORD_AUDIO_BUTTON ->  binding.recordAudioButton
+            else -> null
+        }
+    }
+
     internal companion object {
 
         private const val RECORD_AUDIO_TAG = "record_audio"

@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.feature.messages.composer
 
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContentContainer
+
 /**
  * An object with the data that will be propagated to each content view.
  *
@@ -23,4 +25,5 @@ package io.getstream.chat.android.ui.feature.messages.composer
  */
 public data class MessageComposerContext(
     val style: MessageComposerViewStyle,
+    val content: MessageComposerContentContainer,
 )

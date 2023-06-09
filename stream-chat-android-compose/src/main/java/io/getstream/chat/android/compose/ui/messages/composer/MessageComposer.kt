@@ -95,6 +95,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.log.Priority
+import io.getstream.log.StreamLog
 import io.getstream.log.streamLog
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -783,7 +784,12 @@ internal fun DefaultMessageComposerTrailingContent(
 
                                                 if (event.changes.all { it.changedToUp() }) {
                                                     statefulStreamMediaRecorder.stopRecording()
-                                                        .onSuccess(onRecordingSaved)
+                                                        .onSuccess {
+                                                            StreamLog.i("MessageComposer") {
+                                                                "[onRecordingSaved] attachment: $it"
+                                                            }
+                                                            onRecordingSaved(it)
+                                                        }
                                                         .onError {
                                                             streamLog(throwable = it.extractCause()) {
                                                                 "Could not save audio recording: ${it.message}"

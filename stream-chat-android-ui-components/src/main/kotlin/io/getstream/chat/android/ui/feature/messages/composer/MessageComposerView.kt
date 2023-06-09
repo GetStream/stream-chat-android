@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMes
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerTrailingContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerOverlappingContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContentContainer
 import io.getstream.chat.android.ui.feature.messages.composer.internal.MessageComposerSuggestionsPopup
 import io.getstream.chat.android.ui.feature.messages.composer.internal.ValidationErrorRenderer
 import io.getstream.chat.android.ui.feature.messages.composer.internal.toAttachment
@@ -234,7 +235,10 @@ public class MessageComposerView : ConstraintLayout {
         binding = StreamUiMessageComposerBinding.inflate(streamThemeInflater, this)
 
         validationErrorRenderer = ValidationErrorRenderer(context, this)
-        messageComposerContext = MessageComposerContext(MessageComposerViewStyle(context, attrs))
+        messageComposerContext = MessageComposerContext(
+            MessageComposerViewStyle(context, attrs),
+            binding.asContentContainer()
+        )
 
         setBackgroundColor(messageComposerContext.style.backgroundColor)
         binding.separator.background = messageComposerContext.style.dividerBackgroundDrawable
@@ -270,10 +274,6 @@ public class MessageComposerView : ConstraintLayout {
         setCenterOverlapContent(
             DefaultMessageComposerOverlappingContent(context).also {
                 it.onStateChangeListener = { state -> audioRecordStateChangeListener(state) }
-                it.centerContainer = { binding.centerContainer }
-                it.recordAudioButton = {
-                    DefaultMessageComposerTrailingContent.recordAudioButton(binding.trailingContent)
-                }
             }
         )
     }
@@ -575,6 +575,42 @@ public class MessageComposerView : ConstraintLayout {
                 }
             }
             return false
+        }
+    }
+}
+
+private fun StreamUiMessageComposerBinding.asContentContainer() = object : MessageComposerContentContainer {
+    private val childCount = 6
+
+    override val center get() = centerContent.children.firstOrNull() as? MessageComposerContent
+    override val centerOverlap get() = centerOverlapContent.children.firstOrNull() as? MessageComposerContent
+    override val leading get() = leadingContent.children.firstOrNull() as? MessageComposerContent
+    override val trailing get() = trailingContent.children.firstOrNull() as? MessageComposerContent
+    override val header get() = headerContent.children.firstOrNull() as? MessageComposerContent
+    override val footer get() = footerContent.children.firstOrNull() as? MessageComposerContent
+
+    override fun findViewByKey(key: String): View? {
+        for (content in this) {
+            return content?.findViewByKey(key) ?: continue
+        }
+        return null
+    }
+
+    private fun getChildAt(index: Int): MessageComposerContent? = when (index) {
+        0 -> center
+        1 -> centerOverlap
+        2 -> leading
+        3 -> trailing
+        4 -> header
+        5 -> footer
+        else -> null
+    }
+
+    override fun iterator(): Iterator<MessageComposerContent?> {
+        return object : Iterator<MessageComposerContent?> {
+            private var index = 0
+            override fun hasNext() = index < childCount
+            override fun next() = getChildAt(index++) ?: throw IndexOutOfBoundsException()
         }
     }
 }
