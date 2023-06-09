@@ -43,7 +43,7 @@ public fun Channel.isMutedFor(user: User): Boolean = user.channelMutes.any { mut
 @InternalStreamChatApi
 public fun Channel.getUsersExcludingCurrent(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-): List<User> = getMemberExcludingCurrent(currentUser).map { it.user }
+): List<User> = getMembersExcludingCurrent(currentUser).map { it.user }
 
 /**
  * Returns a list of members of the channel excluding the currently logged in user.
