@@ -5,15 +5,14 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
-import kotlin.math.max
+import io.getstream.log.taggedLogger
 
 private const val MIN_BAR_VALUE = 0.05F
 private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
@@ -37,6 +36,8 @@ internal class WaveformView : LinearLayoutCompat {
         defStyleAttr
     )
 
+    private val logger by taggedLogger("WaveformView")
+
     private val tracker: ImageView
 
     init {
@@ -45,6 +46,7 @@ internal class WaveformView : LinearLayoutCompat {
         tracker = ImageView(context).apply {
             setBackgroundResource(R.drawable.stream_ui_share_rectangle)
         }
+        tracker.visibility = View.INVISIBLE
 
         val layoutParamsButton = LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -52,11 +54,10 @@ internal class WaveformView : LinearLayoutCompat {
         )
 
         addView(tracker, layoutParamsButton)
+
+        setWillNotDraw(false)
     }
 
-    private val barPadding = DEFAULT_BAR_PADDING.dpToPx()
-    private val realPaddingStart = paddingStart + barPadding
-    private val realPaddingEnd = paddingEnd + barPadding
     private var barWidth: Float? = null
     private var spaceWidth: Float? = null
     private var maxHeight: Int? = null
@@ -66,7 +67,7 @@ internal class WaveformView : LinearLayoutCompat {
     private var onEndDrag: (Int) -> Unit = {}
     private var isDragging = false
 
-    private fun seekWidth(): Int = width - realPaddingStart - realPaddingEnd
+    private val viewportWidth: Int get() = width - paddingStart - paddingEnd
 
     private val paintLeft = Paint().apply {
         color = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
@@ -78,18 +79,27 @@ internal class WaveformView : LinearLayoutCompat {
         style = Paint.Style.FILL
     }
 
-    private var internalWaveBars: List<Float>? = null
+    private val waveformData = arrayListOf<Float>()
 
-    internal var waveBars: List<Float>
-        set(value) {
-            internalWaveBars = value
-            invalidate()
+    public fun setData(data: List<Float>) {
+        this.waveformData.clear()
+        this.waveformData.addAll(data)
+        invalidate()
+    }
+
+    public fun clearData() {
+        this.waveformData.clear()
+        invalidate()
+    }
+
+    public fun addValue(normalized: Float) {
+        if (normalized > 1 || normalized < 0) {
+            logger.w { "[addValue] rejected (Normalized value must be between 0 and 1): $normalized" }
+            return
         }
-        get() = internalWaveBars ?: buildList {
-            repeat(DEFAULT_BAR_NUMBER) {
-                add(DEFAULT_BAR_VALUE)
-            }
-        }
+        this.waveformData.add(normalized)
+        invalidate()
+    }
 
     private var progress: Float = INITIAL_PROGRESS
 
@@ -121,102 +131,69 @@ internal class WaveformView : LinearLayoutCompat {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        val totalWidth = measuredWidth - realPaddingStart - realPaddingEnd
-        val totalBarWidth = totalWidth * (1 - barSpacing)
-        val totalSpaceWidth = totalWidth * barSpacing
-        val barCount = waveBars.size
+        val viewportWidth = measuredWidth - paddingStart - paddingEnd
+        val totalBarWidth = viewportWidth * (1 - barSpacing)
+        val totalSpaceWidth = viewportWidth * barSpacing
+        val barCount = waveformData.size
 
         barWidth = totalBarWidth.toFloat() / barCount
         spaceWidth = totalSpaceWidth.toFloat() / barCount
         maxHeight = measuredHeight - paddingTop - paddingBottom
     }
 
-    /**
-     * This methods intercepts any [MotionEvent] in this view. When the user is interacting with this view, it
-     * intercepts the actions, so it is not possible to perform actions like scrolling while interacting with this view.
-     *
-     * The progress of the view will change accordingly with the horizontal movement of the user. The wave bars and
-     * the tracker will move accordingly with the progress.
-     */
-    override fun onTouchEvent(motionEvent: MotionEvent): Boolean {
-        return when (motionEvent.action) {
-            MotionEvent.ACTION_DOWN -> {
-                performClick()
-                isDragging = true
-                onStartDrag()
-                parent.requestDisallowInterceptTouchEvent(true)
-                tracker.updateLayoutParams {
-                    width += EXPAND_TRACKER_WIDTH.dpToPx()
-                }
-                forceProgress(xToProgress(motionEvent.x))
-                true
-            }
-
-            MotionEvent.ACTION_MOVE -> {
-                forceProgress(xToProgress(motionEvent.x))
-                true
-            }
-
-            MotionEvent.ACTION_UP -> {
-                isDragging = false
-                onEndDrag(xToProgress(motionEvent.x).toInt())
-                parent.requestDisallowInterceptTouchEvent(false)
-                tracker.updateLayoutParams {
-                    width -= EXPAND_TRACKER_WIDTH.dpToPx()
-                }
-                true
-            }
-
-            MotionEvent.ACTION_CANCEL -> {
-                isDragging = false
-                parent.requestDisallowInterceptTouchEvent(false)
-                tracker.updateLayoutParams {
-                    width -= EXPAND_TRACKER_WIDTH.dpToPx()
-                }
-                true
-            }
-
-            else -> super.onTouchEvent(motionEvent)
-        }
-    }
+    private val barRect = RectF()
 
     /**
      * In onDraw all the bars are drawn and the tracker position is calculated.
      */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        val barW = 2.dpToPx()
+        val spacerW = 1.dpToPx()
+        val occupiedW = barW + spacerW
 
-        waveBars.forEachIndexed { index, barValue ->
-            val barHeight = (maxHeight!! * max(barValue, MIN_BAR_VALUE) * barHeightRatio)
+        val maxBarHeight = height - paddingBottom - paddingTop
+        val centerY = height / 2f
+        val maxEnd = width - paddingEnd
+        val minStart = paddingStart
 
-            val left = (barWidth!! + spaceWidth!!) * index + realPaddingStart
-            val right = left + barWidth!!
-            val top = (height - barHeight) / 2
-            val bottom = top + barHeight
+        val maxBarCount = (maxEnd - minStart) / occupiedW + 1
+        val minVisibleIndex = maxOf((waveformData.size - maxBarCount), 0)
 
-            val rect = RectF(left, top, right, bottom)
-            val paint = if (progressToX(progress) > left + barWidth!! / 2) paintLeft else paintRight
+        var deltaX = 0f
+        for (index in waveformData.lastIndex downTo minVisibleIndex) {
+            val value = waveformData[index]
+            val barHeight = maxOf(maxBarHeight * value, barW.toFloat())
 
-            tracker.x = trackerPosition(progressToX(progress)) - tracker.width / 2
+            val relativeIndex = index - minVisibleIndex
+            val top = centerY - barHeight / 2
+            val bottom = centerY + barHeight / 2
+            val start = (minStart + occupiedW * relativeIndex).toFloat()
+            val end = start + barW
 
-            canvas.drawRoundRect(rect, barWidth!! / 2, barWidth!! / 2, paint)
+
+
+            val rx = barW / 2f
+            val ry = rx
+
+            barRect.set(start, top, end, bottom)
+            // if (deltaX == 0f && end > maxEnd) {
+            //     deltaX = maxEnd - end
+            //     logger.i { "[onDraw] index: $index, end: $end($maxEnd) -> end is out of viewport" }
+            // }
+            // if (deltaX != 0f) {
+            //     logger.v { "[onDraw] index: $index, deltaX: $deltaX -> moving into viewport" }
+            //     barRect.offset(deltaX, 0f)
+            // }
+
+
+            if (barRect.left < minStart) {
+                barRect.left = minStart.toFloat()
+            } else if (barRect.right > maxEnd) {
+                barRect.right = maxEnd.toFloat()
+            }
+
+            canvas.drawRoundRect(barRect, rx, ry, paintLeft)
         }
-    }
-
-    /**
-     * Calculates the tracker position not allowing it go beyond the bounds of the seekbar.
-     */
-    private fun trackerPosition(positionX: Float) =
-        java.lang.Float.min(
-            max(realPaddingStart.toFloat() + tracker.width / 2, positionX),
-            (width - realPaddingEnd - tracker.width / 2).toFloat()
-        )
-
-    private fun progressToX(progress: Float): Float =
-        (progress / 100) * seekWidth() + realPaddingStart
-
-    private fun xToProgress(x: Float): Float {
-        val croppedX = java.lang.Float.min(max(realPaddingStart.toFloat(), x), width - realPaddingEnd.toFloat())
-        return 100 * ((croppedX - realPaddingStart) / seekWidth())
     }
 }

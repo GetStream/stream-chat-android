@@ -28,6 +28,8 @@ import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
 import java.util.Date
+import kotlin.math.abs
+import kotlin.math.log10
 
 private const val TAG = "OverlappingContent"
 
@@ -82,6 +84,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     init {
         val inflater = LayoutInflater.from(context)
         binding = StreamUiMessageComposerDefaultCenterOverlapContentBinding.inflate(inflater, this)
+
+        binding.recordingDelete.setOnClickListener {
+            cancel()
+        }
     }
 
     private lateinit var composerContext: MessageComposerContext
@@ -104,7 +110,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        resetUI()
+        cancel()
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -128,6 +134,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private fun resetUI() {
         Log.e(TAG, "[resetUI] no args")
 
+        binding.recordingWaveform.clearData()
         binding.recordingSlider.translationX = 0f
         binding.recordingSlider.alpha = 1f
         // TODO binding.recordingTimer.stop()
@@ -203,12 +210,20 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         Log.e(TAG, "[onRecorderError] what: $what, extra: $extra")
     }
 
-    private val waveformData = arrayListOf<Float>()
     private fun onRecorderMaxAmplitudeSampled(maxAmplitude: Int) {
         Log.v(TAG, "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude")
+        //val normalized = maxOf(maxAmplitude.toFloat() / 32767f, 0.2f)
+        val normalized = maxAmplitude.toFloat() / Short.MAX_VALUE
+
+        val MAX_AMPLITUDE = 32767.0
+        val MAX_DB = 90.0 // Maximum decibel level for normalization
+
+        val decibels = 20 * log10(maxAmplitude / MAX_AMPLITUDE)
+        //val normalizedValue = maxOf(0.0, minOf(decibels / MAX_DB, 1.0))
+        val normalizedValue = abs((50 + decibels) / 50)
+        Log.v(TAG, "[onRecorderMaxAmplitudeSampled] decibels: $decibels, normalizedValue: $normalizedValue")
         post {
-            waveformData.add(maxAmplitude.toFloat() / 32767f)
-            binding.recordingWaveform.waveBars = waveformData
+            binding.recordingWaveform.addValue(normalizedValue.toFloat())
         }
     }
 
@@ -224,6 +239,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingStop.isVisible = true
         binding.recordingDelete.isVisible = true
         binding.recordingComplete.isVisible = true
+
+        binding.recordingTimer.text = formatMillis(0L)
 
         micPopup?.dismiss()
         micPopup = null
