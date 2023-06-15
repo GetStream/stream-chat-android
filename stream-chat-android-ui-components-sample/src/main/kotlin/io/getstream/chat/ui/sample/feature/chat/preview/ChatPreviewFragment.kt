@@ -85,7 +85,7 @@ class ChatPreviewFragment : Fragment() {
     }
 
     private fun initializeChatPreview(cid: String) {
-        val factory = MessageListViewModelFactory(cid)
+        val factory = MessageListViewModelFactory(requireContext(), cid)
         val messageListHeaderViewModel = factory.create(MessageListHeaderViewModel::class.java)
         val messageListViewModel = factory.create(MessageListViewModel::class.java)
         val messageComposerViewModel = factory.create(MessageComposerViewModel::class.java)

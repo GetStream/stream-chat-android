@@ -48,7 +48,9 @@ class GroupChatInfoFragment : Fragment() {
 
     private val args: GroupChatInfoFragmentArgs by navArgs()
     private val viewModel: GroupChatInfoViewModel by viewModels { ChatViewModelFactory(args.cid) }
-    private val headerViewModel: MessageListHeaderViewModel by viewModels { MessageListViewModelFactory(args.cid) }
+    private val headerViewModel: MessageListHeaderViewModel by viewModels {
+        MessageListViewModelFactory(requireContext(), args.cid)
+    }
     private val adapter: GroupChatInfoAdapter = GroupChatInfoAdapter()
 
     private var _binding: FragmentGroupChatInfoBinding? = null

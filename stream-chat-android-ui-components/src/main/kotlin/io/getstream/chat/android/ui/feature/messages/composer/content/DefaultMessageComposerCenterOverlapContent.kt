@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.content
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.AttributeSet
@@ -13,9 +14,12 @@ import android.view.View
 import android.view.ViewParent
 import android.widget.ImageView
 import android.widget.PopupWindow
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import androidx.core.widget.ImageViewCompat
 import com.getstream.sdk.chat.audio.recording.MediaRecorderState
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -27,7 +31,6 @@ import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerCon
 import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
-import java.util.Date
 import kotlin.math.abs
 import kotlin.math.log10
 
@@ -56,6 +59,16 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     public var onStateChangeListener: ((state: RecordingState) -> Unit)? = null
 
+    public var recordButtonHoldListener: () -> Unit = {}
+    public var recordButtonLockListener: () -> Unit = {}
+    public var recordButtonCancelListener: () -> Unit = {}
+    public var recordButtonReleaseListener: () -> Unit = {}
+
+    public var toggleButtonClickListener: () -> Unit = {} // TODO not used
+    public var stopButtonClickListener: () -> Unit = {}
+    public var deleteButtonClickListener: () -> Unit = {}
+    public var completeButtonClickListener: () -> Unit = {}
+
     private var lockPopup: PopupWindow? = null
     private val lockBaseRect = Rect()
     private val lockLastRect = Rect()
@@ -73,9 +86,19 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private var micH: Int = 64.dpToPx()
 
     private val permissionChecker = PermissionChecker()
-    private val mediaRecorder = DefaultStreamMediaRecorder()
+    // private val mediaRecorder = DefaultStreamMediaRecorder(context.applicationContext, amplitudePollingInterval = 100L)
+    // private val extractor by lazy(LazyThreadSafetyMode.NONE) {
+    //     WaveformExtractor(context, "key", 100) { extractor, progress ->
+    //         if (progress >= 1.0f) {
+    //             logger.v { "[onProgress] progress: $progress, sampleData: ${extractor.sampleData}" }
+    //             if (childCount > 0) {
+    //                 binding.recordingWaveform.waveform = extractor.sampleData
+    //             }
+    //         }
+    //     }
+    // }
 
-    private var state: RecordingState = RecordingState.Hold
+    private var _state: RecordingState = RecordingState.Idle
         set(value) {
             Log.e(TAG, "[setState] value: $value")
             field = value
@@ -86,7 +109,14 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding = StreamUiMessageComposerDefaultCenterOverlapContentBinding.inflate(inflater, this)
 
         binding.recordingDelete.setOnClickListener {
-            cancel()
+            deleteButtonClickListener()
+        }
+
+        binding.recordingStop.setOnClickListener {
+            stopButtonClickListener()
+        }
+        binding.recordingComplete.setOnClickListener {
+            completeButtonClickListener()
         }
     }
 
@@ -102,6 +132,17 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     override fun renderState(state: MessageComposerState) {
         binding.root.isVisible = state.recording != RecordingState.Idle
+        val recording = state.recording
+        if (recording is RecordingState.Hold) {
+            renderHold(recording)
+        } else if (recording is RecordingState.Locked) {
+            renderLocked(recording)
+        } else if (recording is RecordingState.Overview) {
+            renderOverview(recording)
+        } else if (recording is RecordingState.Idle) {
+            renderIdle()
+        }
+        _state = recording
     }
 
     override fun onAttachedToWindow() {
@@ -110,7 +151,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        cancel()
+        renderIdle()
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -118,7 +159,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return state == RecordingState.Hold
+        return _state is RecordingState.Idle || _state is RecordingState.Hold
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
@@ -137,7 +178,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingWaveform.clearData()
         binding.recordingSlider.translationX = 0f
         binding.recordingSlider.alpha = 1f
-        // TODO binding.recordingTimer.stop()
 
         micLastRect.set(micBaseRect)
         lockLastRect.set(lockBaseRect)
@@ -152,41 +192,54 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         Log.i(TAG, "[onLayout] w: $width, h: $height")
     }
 
-    private fun cancel() {
-        Log.e(TAG, "[cancel] no args")
+    private fun renderIdle() {
+        val state = _state
+        if (state is RecordingState.Idle) {
+            logger.w { "[cancel] rejected (state is Idle)" }
+            return
+        }
+        logger.e { "[cancel] no args" }
         resetUI()
-        state = RecordingState.Idle
+        //_state = RecordingState.Idle
         onStateChangeListener?.invoke(RecordingState.Idle)
 
-        mediaRecorder.stopRecording()
-        mediaRecorder.release()
+        // mediaRecorder.release()
+        // extractor.stop()
     }
 
-    private fun hold() {
-        Log.e(TAG, "[hold] no args")
-        state = RecordingState.Hold
+    private fun renderHold(state: RecordingState.Hold) {
+        //val state = _state
+        // if (state !is RecordingState.Idle) {
+        //     logger.w { "[hold] rejected (state is not Idle): $state" }
+        //     return
+        // }
+        //_state = RecordingState.Hold()
+        logger.d { "[hold] no args" }
 
         binding.horizontalGuideline.setGuidelinePercent(1f)
         layoutParams.height = centerContentHeight
         binding.recordingSlider.isVisible = true
 
+        binding.recordingIndicator.setImageResource(R.drawable.stream_ui_ic_mic)
+        binding.recordingIndicator.setImageColorRes(R.color.stream_ui_accent_red)
+        binding.recordingIndicator.isVisible = true
+        binding.recordingIndicator.isClickable = false
+        binding.recordingIndicator.isFocusable = false
         binding.recordingWaveform.isVisible = false
         binding.recordingStop.isVisible = false
         binding.recordingDelete.isVisible = false
         binding.recordingComplete.isVisible = false
-        //TODO binding.recordingTimer.base = 0L
-        //TODO binding.recordingTimer.start()
 
-        Log.i(TAG, "[doOnPreDraw] w: ${binding.root.width}, h: ${binding.root.height}")
+        binding.recordingTimer.text = formatMillis(state.duration)
 
-        mediaRecorder.startAudioRecording(context, recordingName = "audio_recording_${Date()}")
-
-        mediaRecorder.setOnInfoListener(::onRecorderInfo)
-        mediaRecorder.setOnErrorListener(::onRecorderError)
-        mediaRecorder.setOnMediaRecorderStateChangedListener(::onRecorderStateChanged)
-        mediaRecorder.setOnMaxAmplitudeSampledListener(::onRecorderMaxAmplitudeSampled)
-        mediaRecorder.setOnCurrentRecordingDurationChangedListener(::onRecorderDurationChanged)
-        mediaRecorder.setOnRecordingStoppedListener(::onRecorderStopped)
+        // mediaRecorder.startAudioRecording(recordingName = "audio_recording_${Date()}")
+        //
+        // mediaRecorder.setOnInfoListener(::onRecorderInfo)
+        // mediaRecorder.setOnErrorListener(::onRecorderError)
+        // mediaRecorder.setOnMediaRecorderStateChangedListener(::onRecorderStateChanged)
+        // mediaRecorder.setOnMaxAmplitudeSampledListener(::onRecorderMaxAmplitudeSampled)
+        // mediaRecorder.setOnCurrentRecordingDurationChangedListener(::onRecorderDurationChanged)
+        // mediaRecorder.setOnRecordingStoppedListener(::onRecorderStopped)
     }
 
     private fun onRecorderStopped() {
@@ -211,7 +264,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     private fun onRecorderMaxAmplitudeSampled(maxAmplitude: Int) {
-        Log.v(TAG, "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude")
         //val normalized = maxOf(maxAmplitude.toFloat() / 32767f, 0.2f)
         val normalized = maxAmplitude.toFloat() / Short.MAX_VALUE
 
@@ -221,26 +273,36 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         val decibels = 20 * log10(maxAmplitude / MAX_AMPLITUDE)
         //val normalizedValue = maxOf(0.0, minOf(decibels / MAX_DB, 1.0))
         val normalizedValue = abs((50 + decibels) / 50)
-        Log.v(TAG, "[onRecorderMaxAmplitudeSampled] decibels: $decibels, normalizedValue: $normalizedValue")
+        Log.v(
+            TAG,
+            "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude, decibels: $decibels, normalizedValue: $normalizedValue ($normalized)"
+        )
         post {
-            binding.recordingWaveform.addValue(normalizedValue.toFloat())
+            binding.recordingWaveform.addValue(normalized.toFloat())
         }
     }
 
-    private fun lock() {
-        Log.e(TAG, "[cancel] no args")
-        state = RecordingState.Locked
+    private fun renderLocked(state: RecordingState.Locked) {
+        // val state = _state
+        // if (state !is RecordingState.Hold) {
+        //     logger.w { "[lock] rejected (state is not Hold): $state" }
+        //     return
+        // }
+        // _state = RecordingState.Locked(state.duration, state.waveform)
+        logger.d { "[lock] waveform: ${state.waveform.size}" }
 
+        layoutParams.height = parentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
-        layoutParams.height = layoutParams.height * 2
         binding.recordingSlider.isVisible = false
 
-        binding.recordingWaveform.isVisible = true
-        binding.recordingStop.isVisible = true
+
         binding.recordingDelete.isVisible = true
+        binding.recordingStop.isVisible = true
         binding.recordingComplete.isVisible = true
 
-        binding.recordingTimer.text = formatMillis(0L)
+        binding.recordingTimer.text = formatMillis(state.duration)
+        binding.recordingWaveform.isVisible = true
+        binding.recordingWaveform.waveform = state.waveform
 
         micPopup?.dismiss()
         micPopup = null
@@ -248,19 +310,73 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
         lockPopup?.update(lockBaseRect.left, lockBaseRect.top - 16.dpToPx(), -1, 64.dpToPx())
 
-        onStateChangeListener?.invoke(RecordingState.Locked)
+        onStateChangeListener?.invoke(_state)
+    }
+
+    private fun renderOverview(state: RecordingState.Overview) {
+        // val state = _state
+        // if (state !is RecordingState.Locked) {
+        //     logger.w { "[overview] rejected (state is not Locked): $state" }
+        //     return
+        // }
+        // _state = RecordingState.Overview()
+        logger.d { "[overview] no args" }
+
+        // val result = mediaRecorder.stopRecording()
+        // mediaRecorder.release()
+
+        layoutParams.height = parentHeight * 2
+        binding.horizontalGuideline.setGuidelinePercent(0.5f)
+
+        binding.recordingIndicator.setImageResource(R.drawable.stream_ui_ic_play)
+        binding.recordingIndicator.setImageColorRes(R.color.stream_ui_accent_blue)
+        binding.recordingIndicator.isClickable = true
+        binding.recordingIndicator.isFocusable = true
+        binding.recordingIndicator.isVisible = true
+
+        binding.recordingSlider.isVisible = false
+
+        binding.recordingTimer.text = formatMillis(0L)
+        binding.recordingWaveform.isVisible = true
+        binding.recordingWaveform.waveform = state.waveform
+
+        binding.recordingDelete.isVisible = true
+        binding.recordingStop.isVisible = false
+        binding.recordingComplete.isVisible = true
+
+        micPopup?.dismiss()
+        micPopup = null
+        lockPopup?.dismiss()
+        lockPopup = null
+
+        onStateChangeListener?.invoke(_state)
+
+        // result.onSuccess {
+            //Log.i(TAG, "[overview] attachment: $it")
+            //extractor.start(it.upload?.absolutePath ?: error("no upload found"))
+
+            //val amplituda = Amplituda(context)
+            //val data = MediaDecoder(it.upload?.absolutePath).readShortData()
+            //Log.v(TAG, "[overview] data: ${data}")
+        // }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (isVisible && state != RecordingState.Hold) {
-            Log.w(TAG, "[onTouchEvent] rejected (not unlocked): $state")
+        val state = _state
+        val action = event.actionMasked
+        if (action == MotionEvent.ACTION_DOWN && state !is RecordingState.Idle) {
+            Log.w(TAG, "[onTouchEvent] rejected ACTION_DOWN (state is not Idle): $state")
             return false
         }
-        Log.v(TAG, "[onTouchEvent] event: $event")
+        if (action != MotionEvent.ACTION_DOWN && state !is RecordingState.Hold) {
+            Log.w(TAG, "[onTouchEvent] rejected ${actionToString(action)} (state is not Hold): $state")
+            return false
+        }
+        Log.v(TAG, "[onTouchEvent] state: $state, event: $event")
         val x = event.rawX
         val y = event.rawY
-        when (event.actionMasked) {
+        when (action) {
             MotionEvent.ACTION_DOWN -> {
                 Log.i(TAG, "[onTouchEvent] ACTION_DOWN")
                 if (!permissionChecker.isGrantedAudioRecordPermission(context)) {
@@ -278,13 +394,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                 recordAudioButton.getRectInWindow(micOrigRect)
                 showMicPopup()
                 showLockPopup()
-                hold()
+                recordButtonHoldListener()
 
                 baseTouch[0] = x
                 baseTouch[1] = y
-
-                state = RecordingState.Hold
-                onStateChangeListener?.invoke(RecordingState.Hold)
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -320,20 +433,26 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
                 if (micLastRect.left == micMoveRect.left) {
                     Log.w(TAG, "[onMove] cancelled; micLastRect: $micLastRect, micMoveRect: $micMoveRect")
-                    cancel()
+                    renderIdle()
+                    recordButtonCancelListener()
                     return false
                 }
 
                 if (micLastRect.top == micMoveRect.top) {
                     Log.w(TAG, "[onMove] locked")
-                    lock()
+                    recordButtonLockListener()
                     return false
                 }
             }
+            MotionEvent.ACTION_CANCEL -> {
+                Log.d(TAG, "[onTouchEvent] ACTION_CANCEL")
+                recordButtonCancelListener()
+                return true
+            }
 
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+            MotionEvent.ACTION_UP -> {
                 Log.d(TAG, "[onTouchEvent] ACTION_UP")
-                cancel()
+                recordButtonReleaseListener()
                 return true
             }
         }
@@ -428,4 +547,23 @@ private fun formatMillis(milliseconds: Long): String {
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
     return "%02d:%02d".format(minutes, seconds)
+}
+
+private fun ImageView.setImageColor(@ColorInt color: Int) {
+    ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
+}
+
+private fun ImageView.setImageColorRes(@ColorRes colorResId: Int) {
+    val color = ContextCompat.getColor(context, colorResId)
+    ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
+}
+
+private fun actionToString(action: Int): String {
+    return when (action) {
+        MotionEvent.ACTION_DOWN -> "ACTION_DOWN"
+        MotionEvent.ACTION_MOVE -> "ACTION_MOVE"
+        MotionEvent.ACTION_CANCEL -> "ACTION_CANCEL"
+        MotionEvent.ACTION_UP -> "ACTION_UP"
+        else -> "ACTION_UNKNOWN"
+    }
 }

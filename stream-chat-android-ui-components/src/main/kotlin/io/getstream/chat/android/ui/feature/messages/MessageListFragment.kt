@@ -78,7 +78,11 @@ public open class MessageListFragment : Fragment() {
 
     /** A ViewModel factory for creating message list relevant ViewModels. */
     protected val factory: MessageListViewModelFactory by lazy(LazyThreadSafetyMode.NONE) {
-        MessageListViewModelFactory(cid, messageId)
+        MessageListViewModelFactory(
+            context = requireContext().applicationContext,
+            cid = cid,
+            messageId = messageId,
+        )
     }
 
     /** A message list header ViewModel for binding [MessageListHeaderView]. */

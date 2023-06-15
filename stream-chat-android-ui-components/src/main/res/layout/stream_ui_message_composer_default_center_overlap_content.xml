@@ -15,17 +15,29 @@
         app:layout_constraintGuide_percent="0.5"
         />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/verticalGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/recordingIndicator"
+
+        />
+
     <ImageView
         android:id="@+id/recordingIndicator"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
         android:padding="@dimen/stream_ui_spacing_tiny"
         android:scaleType="center"
         android:src="@drawable/stream_ui_ic_mic"
         app:layout_constraintBottom_toTopOf="@id/horizontalGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="#f00"
+        app:tint="@color/stream_ui_accent_red"
         />
 
     <TextView
@@ -57,13 +69,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:background="#ff0"
+        android:background="#80FFFF00"
+        android:padding="8dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/horizontalGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/recordingTimer"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="#005FFF"
+        app:tint="@color/stream_ui_accent_blue"
         />
 
 
@@ -81,7 +94,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
-        app:tint="#005FFF"
+        app:tint="@color/stream_ui_accent_blue"
         tools:ignore="ContentDescription"
         />
 

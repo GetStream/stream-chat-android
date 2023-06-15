@@ -232,6 +232,20 @@ public class MessageComposerViewModel(
      */
     public fun dismissSuggestionsPopup(): Unit = messageComposerController.dismissSuggestionsPopup()
 
+    public fun startRecording(): Unit = messageComposerController.startRecording()
+
+    public fun lockRecording(): Unit = messageComposerController.lockRecording()
+
+    public fun deleteRecording(): Unit = messageComposerController.deleteRecording()
+
+    public fun cancelRecording(): Unit = messageComposerController.cancelRecording()
+
+    public fun stopRecording(): Unit = messageComposerController.stopRecording()
+
+    public fun toggleRecording(): Unit = messageComposerController.toggleRecording()
+
+    public fun completeRecording(): Unit = messageComposerController.completeRecording()
+
     public fun setRecordingState(state: RecordingState) {
         messageComposerController.setRecordingState(state)
     }

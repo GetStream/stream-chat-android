@@ -20,6 +20,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
@@ -46,6 +48,7 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
  * message we want to scroll to is not in a thread, you can pass in a null value.
  * @param chatClient The client to use for API calls.
  * @param clientState The current state of the SDK.
+ * @param mediaRecorder The media recorder for async voice messages.
  * @param messageLimit The number of messages to load in a single page.
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
@@ -67,6 +70,7 @@ public class MessagesViewModelFactory(
     private val parentMessageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val clipboardHandler: ClipboardHandler =
         ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
@@ -91,6 +95,7 @@ public class MessagesViewModelFactory(
             MessageComposerViewModel(
                 MessageComposerController(
                     chatClient = chatClient,
+                    mediaRecorder = mediaRecorder,
                     channelId = channelId,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize

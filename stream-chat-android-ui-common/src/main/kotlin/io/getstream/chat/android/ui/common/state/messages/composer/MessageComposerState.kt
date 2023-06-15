@@ -48,11 +48,11 @@ public data class MessageComposerState @JvmOverloads constructor(
     val validationErrors: List<ValidationError> = emptyList(),
     val mentionSuggestions: List<User> = emptyList(),
     val commandSuggestions: List<Command> = emptyList(),
-    val recording: RecordingState = RecordingState.Idle,
     val coolDownTime: Int = 0,
     val messageMode: MessageMode = MessageMode.Normal,
     val alsoSendToChannel: Boolean = false,
     val ownCapabilities: Set<String> = setOf(),
     val hasCommands: Boolean = false,
     val currentUser: User? = null,
+    val recording: RecordingState = RecordingState.Idle,
 )

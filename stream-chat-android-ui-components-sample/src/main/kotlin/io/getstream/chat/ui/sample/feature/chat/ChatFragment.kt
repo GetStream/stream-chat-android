@@ -55,9 +55,10 @@ class ChatFragment : Fragment() {
 
     private val factory: MessageListViewModelFactory by lazy {
         MessageListViewModelFactory(
+            context = requireContext().applicationContext,
             cid = args.cid,
             messageId = args.messageId,
-            parentMessageId = args.parentMessageId
+            parentMessageId = args.parentMessageId,
         )
     }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }

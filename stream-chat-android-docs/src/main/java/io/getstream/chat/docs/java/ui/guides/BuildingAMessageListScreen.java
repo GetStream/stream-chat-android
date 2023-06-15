@@ -30,7 +30,7 @@ public class BuildingAMessageListScreen extends Fragment {
 
     public void usage() {
         // Create ViewModels for the Views
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
                 .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);

@@ -36,7 +36,7 @@ class MessagesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCustomMessageComposerBinding
 
     private val cid: String by lazy { requireNotNull(intent.getStringExtra(EXTRA_CID)) }
-    private val factory: MessageListViewModelFactory by lazy { MessageListViewModelFactory(cid) }
+    private val factory: MessageListViewModelFactory by lazy { MessageListViewModelFactory(applicationContext, cid) }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
