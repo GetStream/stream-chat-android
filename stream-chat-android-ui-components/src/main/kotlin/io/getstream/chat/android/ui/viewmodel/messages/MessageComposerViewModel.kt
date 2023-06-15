@@ -246,10 +246,6 @@ public class MessageComposerViewModel(
 
     public fun completeRecording(): Unit = messageComposerController.completeRecording()
 
-    public fun setRecordingState(state: RecordingState) {
-        messageComposerController.setRecordingState(state)
-    }
-
     /**
      * Disposes the inner [MessageComposerController].
      */

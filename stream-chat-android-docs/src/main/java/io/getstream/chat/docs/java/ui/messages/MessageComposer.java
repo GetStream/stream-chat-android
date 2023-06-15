@@ -3,6 +3,7 @@ package io.getstream.chat.docs.java.ui.messages;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -355,6 +356,13 @@ public class MessageComposer extends Fragment {
             @Override
             public void renderState(@NonNull MessageComposerState state) {
                 // Render the state of the component
+            }
+
+            @Nullable
+            @Override
+            public View findViewByKey(@NonNull String key) {
+                // Return the required view if contained in the component
+                return null;
             }
         }
     }

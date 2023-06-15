@@ -60,7 +60,6 @@ public fun MessageComposerViewModel.bindView(
     dismissActionClickListener: () -> Unit = { dismissMessageActions() },
     commandsButtonClickListener: () -> Unit = { toggleCommandsVisibility() },
     dismissSuggestionsListener: () -> Unit = { dismissSuggestionsPopup() },
-
     audioRecordButtonHoldListener: () -> Unit = { startRecording() },
     audioRecordButtonLockListener: () -> Unit = { lockRecording() },
     audioRecordButtonCancelListener: () -> Unit = { cancelRecording() },
@@ -69,8 +68,6 @@ public fun MessageComposerViewModel.bindView(
     audioStopButtonClickListener: () -> Unit = { stopRecording() },
     audioToggleButtonClickListener: () -> Unit = { toggleRecording() },
     audioCompleteButtonClickListener: () -> Unit = { completeRecording() },
-
-    audioRecordStateChangeListener: (RecordingState) -> Unit = { setRecordingState(it) },
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener
@@ -82,9 +79,6 @@ public fun MessageComposerViewModel.bindView(
     view.dismissActionClickListener = dismissActionClickListener
     view.commandsButtonClickListener = commandsButtonClickListener
     view.dismissSuggestionsListener = dismissSuggestionsListener
-
-    view.dismissSuggestionsListener = dismissSuggestionsListener
-
     view.audioRecordButtonHoldListener = audioRecordButtonHoldListener
     view.audioRecordButtonLockListener = audioRecordButtonLockListener
     view.audioRecordButtonCancelListener = audioRecordButtonCancelListener
@@ -93,8 +87,6 @@ public fun MessageComposerViewModel.bindView(
     view.audioStopButtonClickListener = audioStopButtonClickListener
     view.audioToggleButtonClickListener = audioToggleButtonClickListener
     view.audioCompleteButtonClickListener = audioCompleteButtonClickListener
-
-    view.audioRecordStateChangeListener = audioRecordStateChangeListener
 
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect(view::renderState)

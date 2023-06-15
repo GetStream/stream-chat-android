@@ -432,11 +432,6 @@ public class MessageComposerController(
         this.alsoSendToChannel.value = alsoSendToChannel
     }
 
-    public fun setRecordingState(state: RecordingState) {
-        // TODO delete
-        //  this.audioRecordingController.recordingState.value = state
-    }
-
     /**
      * Handles selected [messageAction]. We only have three actions we can react to in the composer:
      * - [ThreadReply] - We change the [messageMode] so we can send the message to a thread.
