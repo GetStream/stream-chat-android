@@ -70,21 +70,11 @@ public class AudioRecordingController(
         }
         mediaRecorder.setOnMaxAmplitudeSampledListener { maxAmplitude ->
 
-            //val normalized = maxOf(maxAmplitude.toFloat() / 32767f, 0.2f)
-            val normalized = maxAmplitude.toFloat() / Short.MAX_VALUE
-
-            val MAX_AMPLITUDE = 32767.0
-            val MAX_DB = 90.0 // Maximum decibel level for normalization
-
-            val decibels = 20 * log10(maxAmplitude / MAX_AMPLITUDE)
-            //val normalizedValue = maxOf(0.0, minOf(decibels / MAX_DB, 1.0))
-            val normalizedValue = abs((50 + decibels) / 50)
-            // logger.v { "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude, decibels: $decibels, " +
-            //     "normalizedValue: $normalizedValue ($normalized)" }
+            val normalized = normalize(maxAmplitude)
 
             scope.launch {
                 mutex.withLock {
-                    waveform.add(normalizedValue.toFloat())
+                    waveform.add(normalized)
                     val state = recordingState.value
                     if (state is RecordingState.Recording) {
                         logger.v { "[onRecorderMaxAmplitudeSampled] waveform: ${waveform.size}" }
@@ -169,4 +159,18 @@ public class AudioRecordingController(
         mediaRecorder.release()
     }
 
+    private fun normalize(maxAmplitude: Int): Float {
+        //val normalized = maxOf(maxAmplitude.toFloat() / 32767f, 0.2f)
+        val normalized = maxAmplitude.toFloat() / Short.MAX_VALUE
+
+        val MAX_AMPLITUDE = 32767f
+        val MAX_DB = 90.0 // Maximum decibel level for normalization
+
+        val decibels = 20 * log10(maxAmplitude / MAX_AMPLITUDE)
+        //val normalizedValue = maxOf(0.0, minOf(decibels / MAX_DB, 1.0))
+        val normalizedValue = abs((50 + decibels) / 50)
+        // logger.v { "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude, decibels: $decibels, " +
+        //     "normalizedValue: $normalizedValue ($normalized)" }
+        return normalizedValue
+    }
 }

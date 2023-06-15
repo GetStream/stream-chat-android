@@ -32,6 +32,8 @@ public interface StreamMediaRecorder {
      * Calling the function again after a recording has already been started will reset the recording process.
      *
      * @param recordingName The file name the recording will be stored under.
+     * @param amplitudePollingInterval Dictates how often the recorder is polled for the latest max amplitude and
+     * how often [OnMaxAmplitudeSampled] emits a new value.
      * @param override Determines if the new recording file should override one with the same name, if it exists.
      *
      * @return The [File] to which the recording will be stored wrapped inside a [Result] if recording has
@@ -39,6 +41,7 @@ public interface StreamMediaRecorder {
      */
     public fun startAudioRecording(
         recordingName: String,
+        amplitudePollingInterval: Long = 100L,
         override: Boolean = true,
     ): Result<File>
 
@@ -47,12 +50,15 @@ public interface StreamMediaRecorder {
      * Calling the function again after a recording has already been started will reset the recording process.
      *
      * @param recordingFile The [File] the audio will be saved to once the recording stops.
+     * @param amplitudePollingInterval Dictates how often the recorder is polled for the latest max amplitude and
+     * how often [OnMaxAmplitudeSampled] emits a new value.
      *
      * @return A Unit wrapped inside a [Result] if recording has started successfully. Returns a [ChatError] wrapped
      * inside [Result] if the action had failed.
      */
     public fun startAudioRecording(
         recordingFile: File,
+        amplitudePollingInterval: Long = 100L,
     ): Result<Unit>
 
     /**
