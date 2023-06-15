@@ -154,10 +154,6 @@ public class MessageComposerView : ConstraintLayout {
         true
     }
 
-    public var audioRecordStateChangeListener: (RecordingState) -> Unit = { state ->
-        logger.i { "[onRecordingStateChange] state: $state" }
-    }
-
     public var audioRecordButtonHoldListener: () -> Unit = {}
     public var audioRecordButtonLockListener: () -> Unit = {}
     public var audioRecordButtonCancelListener: () -> Unit = {}
@@ -280,8 +276,6 @@ public class MessageComposerView : ConstraintLayout {
         )
         setCenterOverlapContent(
             DefaultMessageComposerOverlappingContent(context).also {
-                it.onStateChangeListener = { state -> audioRecordStateChangeListener(state) }
-
                 it.recordButtonHoldListener = { audioRecordButtonHoldListener() }
                 it.recordButtonLockListener = { audioRecordButtonLockListener() }
                 it.recordButtonCancelListener = { audioRecordButtonCancelListener() }

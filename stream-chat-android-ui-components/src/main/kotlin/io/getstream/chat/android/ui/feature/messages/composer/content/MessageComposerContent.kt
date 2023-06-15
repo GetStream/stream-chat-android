@@ -54,5 +54,3 @@ public interface MessageComposerContent {
 }
 
 public fun MessageComposerContent.asView(): View? = this as? View
-
-public fun MessageComposerContent.findRecordAudioButton(): View? = findViewByKey(MessageComposerContent.RECORD_AUDIO_BUTTON)

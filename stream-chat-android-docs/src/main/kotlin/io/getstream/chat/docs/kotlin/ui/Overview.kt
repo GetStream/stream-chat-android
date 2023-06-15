@@ -19,7 +19,7 @@ class Overview : Fragment() {
      */
     fun viewModels() {
         // 1
-        val factory = MessageListViewModelFactory(cid = "messaging:123")
+        val factory = MessageListViewModelFactory(requireContext(), cid = "messaging:123")
         // 2
         val viewModel: MessageListViewModel by viewModels { factory }
         // 3

@@ -51,10 +51,10 @@ public class AudioRecordingController(
         mediaRecorder.setOnMediaRecorderStateChangedListener { state ->
             logger.i { "[onRecorderStateChanged] state: $state" }
         }
-        mediaRecorder.setOnErrorListener { recorder, what, extra ->
+        mediaRecorder.setOnErrorListener { _, what, extra ->
             logger.e { "[onRecorderError] what: $what, extra: $extra" }
         }
-        mediaRecorder.setOnInfoListener { recorder, what, extra ->
+        mediaRecorder.setOnInfoListener { _, what, extra ->
             logger.i { "[onRecorderInfo] what: $what, extra: $extra" }
         }
         mediaRecorder.setOnCurrentRecordingDurationChangedListener { durationMs ->
@@ -165,6 +165,7 @@ public class AudioRecordingController(
     }
 
     public fun onCleared() {
+        logger.i { "[onCleared] no args" }
         mediaRecorder.release()
     }
 

@@ -13,3 +13,7 @@ public interface MessageComposerContentContainer : Iterable<MessageComposerConte
     public fun asView(): View
     public fun findViewByKey(key: String): View?
 }
+
+public fun MessageComposerContentContainer.findRecordAudioButton(): View? = findViewByKey(
+    MessageComposerContent.RECORD_AUDIO_BUTTON
+)

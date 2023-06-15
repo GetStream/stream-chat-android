@@ -57,8 +57,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private lateinit var binding: StreamUiMessageComposerDefaultCenterOverlapContentBinding
 
-    public var onStateChangeListener: ((state: RecordingState) -> Unit)? = null
-
     public var recordButtonHoldListener: () -> Unit = {}
     public var recordButtonLockListener: () -> Unit = {}
     public var recordButtonCancelListener: () -> Unit = {}
@@ -86,17 +84,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private var micH: Int = 64.dpToPx()
 
     private val permissionChecker = PermissionChecker()
-    // private val mediaRecorder = DefaultStreamMediaRecorder(context.applicationContext, amplitudePollingInterval = 100L)
-    // private val extractor by lazy(LazyThreadSafetyMode.NONE) {
-    //     WaveformExtractor(context, "key", 100) { extractor, progress ->
-    //         if (progress >= 1.0f) {
-    //             logger.v { "[onProgress] progress: $progress, sampleData: ${extractor.sampleData}" }
-    //             if (childCount > 0) {
-    //                 binding.recordingWaveform.waveform = extractor.sampleData
-    //             }
-    //         }
-    //     }
-    // }
 
     private var _state: RecordingState = RecordingState.Idle
         set(value) {
@@ -195,26 +182,15 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private fun renderIdle() {
         val state = _state
         if (state is RecordingState.Idle) {
-            logger.w { "[cancel] rejected (state is Idle)" }
+            logger.w { "[renderIdle] rejected (state is Idle)" }
             return
         }
-        logger.e { "[cancel] no args" }
+        logger.e { "[renderIdle] no args" }
         resetUI()
-        //_state = RecordingState.Idle
-        onStateChangeListener?.invoke(RecordingState.Idle)
-
-        // mediaRecorder.release()
-        // extractor.stop()
     }
 
     private fun renderHold(state: RecordingState.Hold) {
-        //val state = _state
-        // if (state !is RecordingState.Idle) {
-        //     logger.w { "[hold] rejected (state is not Idle): $state" }
-        //     return
-        // }
-        //_state = RecordingState.Hold()
-        logger.d { "[hold] no args" }
+        logger.d { "[renderHold] no args" }
 
         binding.horizontalGuideline.setGuidelinePercent(1f)
         layoutParams.height = centerContentHeight
@@ -231,65 +207,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingComplete.isVisible = false
 
         binding.recordingTimer.text = formatMillis(state.duration)
-
-        // mediaRecorder.startAudioRecording(recordingName = "audio_recording_${Date()}")
-        //
-        // mediaRecorder.setOnInfoListener(::onRecorderInfo)
-        // mediaRecorder.setOnErrorListener(::onRecorderError)
-        // mediaRecorder.setOnMediaRecorderStateChangedListener(::onRecorderStateChanged)
-        // mediaRecorder.setOnMaxAmplitudeSampledListener(::onRecorderMaxAmplitudeSampled)
-        // mediaRecorder.setOnCurrentRecordingDurationChangedListener(::onRecorderDurationChanged)
-        // mediaRecorder.setOnRecordingStoppedListener(::onRecorderStopped)
-    }
-
-    private fun onRecorderStopped() {
-        Log.i(TAG, "[onRecorderStopped] no args")
-    }
-
-    private fun onRecorderDurationChanged(durationMs: Long) {
-        logger.v { "[onRecorderDurationChanged] duration: $durationMs" }
-        post { binding.recordingTimer.text = formatMillis(durationMs) }
-    }
-
-    private fun onRecorderStateChanged(mediaRecorderState: MediaRecorderState) {
-        Log.i(TAG, "[onRecorderStateChanged] state: $mediaRecorderState")
-    }
-
-    private fun onRecorderInfo(streamMediaRecorder: StreamMediaRecorder, what: Int, extra: Int) {
-        Log.i(TAG, "[onRecorderInfo] what: $what, extra: $extra")
-    }
-
-    private fun onRecorderError(streamMediaRecorder: StreamMediaRecorder, what: Int, extra: Int) {
-        Log.e(TAG, "[onRecorderError] what: $what, extra: $extra")
-    }
-
-    private fun onRecorderMaxAmplitudeSampled(maxAmplitude: Int) {
-        //val normalized = maxOf(maxAmplitude.toFloat() / 32767f, 0.2f)
-        val normalized = maxAmplitude.toFloat() / Short.MAX_VALUE
-
-        val MAX_AMPLITUDE = 32767.0
-        val MAX_DB = 90.0 // Maximum decibel level for normalization
-
-        val decibels = 20 * log10(maxAmplitude / MAX_AMPLITUDE)
-        //val normalizedValue = maxOf(0.0, minOf(decibels / MAX_DB, 1.0))
-        val normalizedValue = abs((50 + decibels) / 50)
-        Log.v(
-            TAG,
-            "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude, decibels: $decibels, normalizedValue: $normalizedValue ($normalized)"
-        )
-        post {
-            binding.recordingWaveform.addValue(normalized.toFloat())
-        }
     }
 
     private fun renderLocked(state: RecordingState.Locked) {
-        // val state = _state
-        // if (state !is RecordingState.Hold) {
-        //     logger.w { "[lock] rejected (state is not Hold): $state" }
-        //     return
-        // }
-        // _state = RecordingState.Locked(state.duration, state.waveform)
-        logger.d { "[lock] waveform: ${state.waveform.size}" }
+        logger.d { "[renderLocked] waveform: ${state.waveform.size}" }
 
         layoutParams.height = parentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
@@ -309,21 +230,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         (lockPopup?.contentView as? ImageView?)?.setImageResource(R.drawable.stream_ui_ic_mic_locked_light)
 
         lockPopup?.update(lockBaseRect.left, lockBaseRect.top - 16.dpToPx(), -1, 64.dpToPx())
-
-        onStateChangeListener?.invoke(_state)
     }
 
     private fun renderOverview(state: RecordingState.Overview) {
-        // val state = _state
-        // if (state !is RecordingState.Locked) {
-        //     logger.w { "[overview] rejected (state is not Locked): $state" }
-        //     return
-        // }
-        // _state = RecordingState.Overview()
-        logger.d { "[overview] no args" }
-
-        // val result = mediaRecorder.stopRecording()
-        // mediaRecorder.release()
+        logger.d { "[renderOverview] no args" }
 
         layoutParams.height = parentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
@@ -348,17 +258,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         micPopup = null
         lockPopup?.dismiss()
         lockPopup = null
-
-        onStateChangeListener?.invoke(_state)
-
-        // result.onSuccess {
-            //Log.i(TAG, "[overview] attachment: $it")
-            //extractor.start(it.upload?.absolutePath ?: error("no upload found"))
-
-            //val amplituda = Amplituda(context)
-            //val data = MediaDecoder(it.upload?.absolutePath).readShortData()
-            //Log.v(TAG, "[overview] data: ${data}")
-        // }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -388,7 +287,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                 centerContentHeight =
                     composerContext.content.center?.asView()?.height ?: error("no center content found")
                 val recordAudioButton =
-                    composerContext.content.findViewByKey(MessageComposerContent.RECORD_AUDIO_BUTTON)
+                    composerContext.content.findRecordAudioButton()
                         ?: composerContext.content.trailing?.asView()?.findViewById(R.id.recordAudioButton)
                         ?: error("recordAudioButton not found")
                 recordAudioButton.getRectInWindow(micOrigRect)
