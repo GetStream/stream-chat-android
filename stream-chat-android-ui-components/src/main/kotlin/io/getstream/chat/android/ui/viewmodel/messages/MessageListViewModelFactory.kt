@@ -16,8 +16,11 @@
 
 package io.getstream.chat.android.ui.viewmodel.messages
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
@@ -38,6 +41,7 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
  * message we want to scroll to is not in a thread, you can pass in a null value.
  * @param chatClient The client to use for API calls.
  * @param clientState The current state of the SDK.
+ * @param mediaRecorder The media recorder for async voice messages.
  * @param messageLimit The limit of the messages to load in a single page.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
@@ -56,11 +60,13 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
  * @see MessageComposerViewModel
  */
 public class MessageListViewModelFactory @JvmOverloads constructor(
+    context: Context,
     private val cid: String,
     private val messageId: String? = null,
     private val parentMessageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val enforceUniqueReactions: Boolean = true,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
@@ -81,7 +87,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             MessageComposerViewModel(
                 MessageComposerController(
                     cid,
-                    messageId = messageId
+                    messageId = messageId,
+                    mediaRecorder = mediaRecorder
                 )
             )
         },
@@ -112,6 +119,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 MessageComposerController(
                     channelId = cid,
                     chatClient = chatClient,
+                    mediaRecorder = mediaRecorder,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize
                 )
@@ -128,7 +136,9 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    public class Builder @SinceKotlin("99999.9") constructor() {
+    public class Builder @SinceKotlin("99999.9") constructor(
+        private val context: Context
+    ) {
         private var cid: String? = null
         private var messageId: String? = null
         private var chatClient: ChatClient = ChatClient.instance()
@@ -142,6 +152,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         private var threadDateSeparatorHandler: DateSeparatorHandler =
             DateSeparatorHandler.getDefaultThreadDateSeparatorHandler()
         private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
+        private var mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext)
 
         /**
          * Sets the channel id in the format messaging:123.
@@ -159,6 +170,10 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 
         public fun chatClient(chatClient: ChatClient): Builder = apply {
             this.chatClient = chatClient
+        }
+
+        public fun mediaRecorder(mediaRecorder: StreamMediaRecorder): Builder = apply {
+            this.mediaRecorder = mediaRecorder
         }
 
         public fun enforceUniqueReactions(enforceUniqueReactions: Boolean): Builder = apply {
@@ -198,9 +213,11 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
          */
         public fun build(): ViewModelProvider.Factory {
             return MessageListViewModelFactory(
+                context = context,
                 cid = cid ?: error("Channel cid should not be null"),
                 messageId = messageId,
                 chatClient = chatClient,
+                mediaRecorder = mediaRecorder,
                 enforceUniqueReactions = enforceUniqueReactions,
                 maxAttachmentCount = maxAttachmentCount,
                 maxAttachmentSize = maxAttachmentSize,
@@ -209,7 +226,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 messageFooterVisibility = messageFooterVisibility,
                 dateSeparatorHandler = dateSeparatorHandler,
                 threadDateSeparatorHandler = threadDateSeparatorHandler,
-                messagePositionHandler = messagePositionHandler
+                messagePositionHandler = messagePositionHandler,
             )
         }
     }

@@ -17,9 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.composer
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
@@ -148,7 +146,7 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * Touch listener for the audio record button.
      */
-    public var recordAudioButtonTouchListener: (event: MotionEvent) -> Boolean = { event ->
+    public var audioRecordButtonTouchListener: (event: MotionEvent) -> Boolean = { event ->
         //maxOffset = maxOf(maxOffset, v.width - v.micButton.width)
         logger.v { "[onMicBtnTouchListener] event(${maxOffset}): $event" }
         //event.offsetLocation(maxOffset.toFloat(), 0f)
@@ -159,6 +157,15 @@ public class MessageComposerView : ConstraintLayout {
     public var audioRecordStateChangeListener: (RecordingState) -> Unit = { state ->
         logger.i { "[onRecordingStateChange] state: $state" }
     }
+
+    public var audioRecordButtonHoldListener: () -> Unit = {}
+    public var audioRecordButtonLockListener: () -> Unit = {}
+    public var audioRecordButtonCancelListener: () -> Unit = {}
+    public var audioRecordButtonReleaseListener: () -> Unit = {}
+    public var audioDeleteButtonClickListener: () -> Unit = {}
+    public var audioStopButtonClickListener: () -> Unit = {}
+    public var audioToggleButtonClickListener: () -> Unit = {}
+    public var audioCompleteButtonClickListener: () -> Unit = {}
 
     /**
      * Handle for [PopupWindow] which is currently displayed. Used to display command
@@ -258,7 +265,7 @@ public class MessageComposerView : ConstraintLayout {
         setTrailingContent(
             DefaultMessageComposerTrailingContent(context).also {
                 it.sendMessageButtonClickListener = { sendMessageButtonClickListener() }
-                it.recordAudioButtonTouchListener = { event -> recordAudioButtonTouchListener(event) }
+                it.recordAudioButtonTouchListener = { event -> audioRecordButtonTouchListener(event) }
             }
         )
         setFooterContent(
@@ -274,13 +281,22 @@ public class MessageComposerView : ConstraintLayout {
         setCenterOverlapContent(
             DefaultMessageComposerOverlappingContent(context).also {
                 it.onStateChangeListener = { state -> audioRecordStateChangeListener(state) }
+
+                it.recordButtonHoldListener = { audioRecordButtonHoldListener() }
+                it.recordButtonLockListener = { audioRecordButtonLockListener() }
+                it.recordButtonCancelListener = { audioRecordButtonCancelListener() }
+                it.recordButtonReleaseListener = { audioRecordButtonReleaseListener() }
+                it.deleteButtonClickListener = { audioDeleteButtonClickListener() }
+                it.stopButtonClickListener = { audioStopButtonClickListener() }
+                it.toggleButtonClickListener = { audioToggleButtonClickListener() }
+                it.completeButtonClickListener = { audioCompleteButtonClickListener() }
             }
         )
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        background = ColorDrawable(Color.LTGRAY)
+        // TODO background = ColorDrawable(Color.LTGRAY)
     }
 
     /**

@@ -39,10 +39,12 @@ import kotlin.math.log10
  * The default implementation of [StreamMediaRecorder], used as a wrapper around [MediaRecorder] simplifying
  * working with it.
  *
+ * @param context The [Context] necessary to prepare for recording.
  * @param amplitudePollingInterval Dictates how often the recorder is polled for the latest max amplitude and
  * how often [onMaxAmplitudeSampledListener] emits a new value.
  */
 public class DefaultStreamMediaRecorder(
+    private val context: Context,
     private var amplitudePollingInterval: Long = 100L,
 ) : StreamMediaRecorder {
 
@@ -192,7 +194,6 @@ public class DefaultStreamMediaRecorder(
      * started successfully. Returns a [Error] wrapped inside a [Result] if the action had failed.
      */
     override fun startAudioRecording(
-        context: Context,
         recordingName: String,
         override: Boolean,
     ): Result<File> {
@@ -229,14 +230,12 @@ public class DefaultStreamMediaRecorder(
      * Prepares the given [recordingFile] and starts recording.
      * Calling the function again after a recording has already been started will reset the recording process.
      *
-     * @param context The [Context] necessary to prepare for recording.
      * @param recordingFile The [File] the audio will be saved to once the recording stops.
      *
      * @return A Unit wrapped inside a [Result] if recording has started successfully. Returns a [ChatError] wrapped
      * inside [Result] if the action had failed.
      */
     override fun startAudioRecording(
-        context: Context,
         recordingFile: File,
     ): Result<Unit> {
         return try {

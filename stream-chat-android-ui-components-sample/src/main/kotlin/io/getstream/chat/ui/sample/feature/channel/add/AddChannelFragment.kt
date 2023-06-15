@@ -67,7 +67,7 @@ class AddChannelFragment : Fragment() {
     }
 
     private fun initializeChannel(cid: String) {
-        val factory = MessageListViewModelFactory(cid)
+        val factory = MessageListViewModelFactory(requireContext(), cid)
         val messageListViewModel = factory.create(MessageListViewModel::class.java)
         val messageComposerViewModel = factory.create(MessageComposerViewModel::class.java)
         binding.addChannelView.apply {

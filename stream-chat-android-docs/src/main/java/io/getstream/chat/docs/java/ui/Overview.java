@@ -21,7 +21,7 @@ public class Overview extends Fragment {
     public void viewModels() {
         // 1
         ViewModelProvider.Factory factory = new MessageListViewModelFactory
-                .Builder()
+                .Builder(requireContext())
                 .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);

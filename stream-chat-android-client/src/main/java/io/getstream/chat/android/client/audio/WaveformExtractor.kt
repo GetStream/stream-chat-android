@@ -90,16 +90,14 @@ public class WaveformExtractor(
                     override fun onOutputFormatChanged(codec: MediaCodec, format: MediaFormat) {
                         sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE)
                         channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-                        pcmEncodingBit = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            if (format.containsKey(MediaFormat.KEY_PCM_ENCODING)) {
-                                when (format.getInteger(MediaFormat.KEY_PCM_ENCODING)) {
-                                    AudioFormat.ENCODING_PCM_16BIT -> 16
-                                    AudioFormat.ENCODING_PCM_8BIT -> 8
-                                    AudioFormat.ENCODING_PCM_FLOAT -> 32
-                                    else -> 16
-                                }
-                            } else {
-                                16
+                        pcmEncodingBit = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                            && format.containsKey(MediaFormat.KEY_PCM_ENCODING)
+                        ) {
+                            when (format.getInteger(MediaFormat.KEY_PCM_ENCODING)) {
+                                AudioFormat.ENCODING_PCM_16BIT -> 16
+                                AudioFormat.ENCODING_PCM_8BIT -> 8
+                                AudioFormat.ENCODING_PCM_FLOAT -> 32
+                                else -> 16
                             }
                         } else {
                             16
@@ -168,7 +166,7 @@ public class WaveformExtractor(
             val averageSquaredSample = squaredSampleSum / samplesPerPoint
             val rms = sqrt(averageSquaredSample)
             logger.v { "[rms] sample: $sample, averageSquaredSample: $averageSquaredSample, rms: $rms" }
-            sampleData.add(rms * 5)
+            sampleData.add(rms /** 5*/)
             extractorCallBack.onProgress(this, progress)
             sampleCount = 0
             squaredSampleSum = 0.0f
@@ -188,7 +186,7 @@ public class WaveformExtractor(
     private fun handle8bit(size: Int, buf: ByteBuffer) {
         logger.v { "[handle8bit] size: $size" }
         repeat(size / if (channels == 2) 2 else 1) {
-            val result = buf.get().toInt() / 128f
+            val result = buf.get().toInt() / 127f
             if (channels == 2) {
                 buf.get()
             }
@@ -202,7 +200,9 @@ public class WaveformExtractor(
         repeat(size / if (channels == 2) 4 else 2) {
             val first = buf.get().toInt()
             val second = buf.get().toInt() shl 8
-            val sample = (first or second) / 32767f
+            val amplitude = first or second
+            logger.v { "[handle16bit] amplitude: $amplitude" }
+            val sample = amplitude / 32767f
             if (channels == 2) {
                 buf.get()
                 buf.get()

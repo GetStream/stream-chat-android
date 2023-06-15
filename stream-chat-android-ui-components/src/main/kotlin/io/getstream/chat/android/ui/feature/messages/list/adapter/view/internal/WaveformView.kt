@@ -13,6 +13,8 @@ import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 private const val MIN_BAR_VALUE = 0.05F
 private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
@@ -79,16 +81,18 @@ internal class WaveformView : LinearLayoutCompat {
         style = Paint.Style.FILL
     }
 
-    private val waveformData = arrayListOf<Float>()
+    private val _waveform = arrayListOf<Float>()
 
-    public fun setData(data: List<Float>) {
-        this.waveformData.clear()
-        this.waveformData.addAll(data)
-        invalidate()
-    }
+    public var waveform: List<Float>
+        get() = _waveform
+        set(value) {
+            _waveform.clear()
+            _waveform.addAll(value)
+            invalidate()
+        }
 
     public fun clearData() {
-        this.waveformData.clear()
+        this._waveform.clear()
         invalidate()
     }
 
@@ -97,7 +101,7 @@ internal class WaveformView : LinearLayoutCompat {
             logger.w { "[addValue] rejected (Normalized value must be between 0 and 1): $normalized" }
             return
         }
-        this.waveformData.add(normalized)
+        this._waveform.add(normalized)
         invalidate()
     }
 
@@ -134,7 +138,7 @@ internal class WaveformView : LinearLayoutCompat {
         val viewportWidth = measuredWidth - paddingStart - paddingEnd
         val totalBarWidth = viewportWidth * (1 - barSpacing)
         val totalSpaceWidth = viewportWidth * barSpacing
-        val barCount = waveformData.size
+        val barCount = _waveform.size
 
         barWidth = totalBarWidth.toFloat() / barCount
         spaceWidth = totalSpaceWidth.toFloat() / barCount
@@ -158,11 +162,11 @@ internal class WaveformView : LinearLayoutCompat {
         val minStart = paddingStart
 
         val maxBarCount = (maxEnd - minStart) / occupiedW + 1
-        val minVisibleIndex = maxOf((waveformData.size - maxBarCount), 0)
+        val minVisibleIndex = maxOf((_waveform.size - maxBarCount), 0)
 
         var deltaX = 0f
-        for (index in waveformData.lastIndex downTo minVisibleIndex) {
-            val value = waveformData[index]
+        for (index in _waveform.lastIndex downTo minVisibleIndex) {
+            val value = _waveform[index]
             val barHeight = maxOf(maxBarHeight * value, barW.toFloat())
 
             val relativeIndex = index - minVisibleIndex
@@ -196,4 +200,19 @@ internal class WaveformView : LinearLayoutCompat {
             canvas.drawRoundRect(barRect, rx, ry, paintLeft)
         }
     }
+}
+
+private fun List<Float>.downsampleRms(targetSamples: Int): List<Float> {
+    val sourceSamples = size
+    val sourceStep = sourceSamples / targetSamples
+    val target = ArrayList<Float>(targetSamples)
+    for (targetIndex in 0 until targetSamples) {
+        var sum = 0f
+        for (sourceIndex in 0 until sourceStep) {
+            val sourceSample = this[targetIndex * sourceStep + sourceIndex]
+            sum += sourceSample.pow(2)
+        }
+        target.add(sqrt(sum / sourceStep))
+    }
+    return target
 }

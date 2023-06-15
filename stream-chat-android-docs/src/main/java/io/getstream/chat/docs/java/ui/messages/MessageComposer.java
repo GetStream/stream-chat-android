@@ -54,7 +54,7 @@ public class MessageComposer extends Fragment {
 
         public void usage1() {
             // Create MessageComposerViewModel for a given channel
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
                     .cid("messaging:123")
                     .build();
             ViewModelProvider provider = new ViewModelProvider(this, factory);
@@ -67,7 +67,7 @@ public class MessageComposer extends Fragment {
 
         public void usage2() {
             // Create ViewModels for MessageComposerView and MessageListView
-            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
                     .cid("messaging:123")
                     .build();
             ViewModelProvider provider = new ViewModelProvider(this, factory);

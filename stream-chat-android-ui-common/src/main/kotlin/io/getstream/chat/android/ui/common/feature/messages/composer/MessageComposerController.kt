@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
+import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -93,6 +94,7 @@ import java.util.regex.Pattern
 public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val mediaRecorder: StreamMediaRecorder,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     messageId: String? = null,
@@ -113,6 +115,8 @@ public class MessageComposerController(
      * really fast.
      */
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
+
+    private val audioRecordingController = AudioRecordingController(channelId, chatClient, mediaRecorder, scope)
 
     /**
      * Buffers typing updates.
@@ -236,11 +240,6 @@ public class MessageComposerController(
      * Represents the list of commands that can be executed for the channel.
      */
     public val commandSuggestions: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
-
-    /**
-     * Represents the current recording state.
-     */
-    public val recordingState: MutableStateFlow<RecordingState> = MutableStateFlow(RecordingState.Idle)
 
     /**
      * Represents the list of users in the channel.
@@ -378,10 +377,6 @@ public class MessageComposerController(
             state.value = state.value.copy(commandSuggestions = commandSuggestions)
         }.launchIn(scope)
 
-        recordingState.onEach { recording ->
-            state.value = state.value.copy(recording = recording)
-        }.launchIn(scope)
-
         cooldownTimer.onEach { cooldownTimer ->
             state.value = state.value.copy(coolDownTime = cooldownTimer)
         }.launchIn(scope)
@@ -400,6 +395,10 @@ public class MessageComposerController(
 
         chatClient.globalState.user.onEach { currentUser ->
             state.value = state.value.copy(currentUser = currentUser)
+        }.launchIn(scope)
+
+        audioRecordingController.recordingState.onEach { recording ->
+            state.value = state.value.copy(recording = recording)
         }.launchIn(scope)
     }
 
@@ -434,7 +433,8 @@ public class MessageComposerController(
     }
 
     public fun setRecordingState(state: RecordingState) {
-        this.recordingState.value = state
+        // TODO delete
+        //  this.audioRecordingController.recordingState.value = state
     }
 
     /**
@@ -630,6 +630,7 @@ public class MessageComposerController(
      */
     public fun onCleared() {
         typingUpdatesBuffer.clear()
+        audioRecordingController.onCleared()
         scope.cancel()
     }
 
@@ -715,6 +716,20 @@ public class MessageComposerController(
         mentionSuggestions.value = emptyList()
         commandSuggestions.value = emptyList()
     }
+
+    public fun startRecording(): Unit = audioRecordingController.startRecording()
+
+    public fun lockRecording(): Unit = audioRecordingController.lockRecording()
+
+    public fun cancelRecording(): Unit = audioRecordingController.cancelRecording()
+
+    public fun deleteRecording(): Unit = audioRecordingController.deleteRecording()
+
+    public fun toggleRecording(): Unit = audioRecordingController.toggleRecording()
+
+    public fun stopRecording(): Unit = audioRecordingController.stopRecording()
+
+    public fun completeRecording(): Unit = audioRecordingController.completeRecording()
 
     /**
      * Shows the mention suggestion list popup if necessary.

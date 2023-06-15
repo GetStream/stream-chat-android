@@ -16,9 +16,9 @@
 
 package com.getstream.sdk.chat.audio.recording
 
-import android.content.Context
 import android.media.MediaRecorder
 import io.getstream.chat.android.models.Attachment
+import io.getstream.result.Error
 import io.getstream.result.Result
 import java.io.File
 
@@ -31,7 +31,6 @@ public interface StreamMediaRecorder {
      * Creates a [File] internally and starts recording.
      * Calling the function again after a recording has already been started will reset the recording process.
      *
-     * @param context The [Context] necessary to prepare for recording.
      * @param recordingName The file name the recording will be stored under.
      * @param override Determines if the new recording file should override one with the same name, if it exists.
      *
@@ -39,7 +38,6 @@ public interface StreamMediaRecorder {
      * started successfully. Returns a [ChatError] wrapped inside a [Result] if the action had failed.
      */
     public fun startAudioRecording(
-        context: Context,
         recordingName: String,
         override: Boolean = true,
     ): Result<File>
@@ -48,14 +46,12 @@ public interface StreamMediaRecorder {
      * Prepares the given [recordingFile] and starts recording.
      * Calling the function again after a recording has already been started will reset the recording process.
      *
-     * @param context The [Context] necessary to prepare for recording.
      * @param recordingFile The [File] the audio will be saved to once the recording stops.
      *
      * @return A Unit wrapped inside a [Result] if recording has started successfully. Returns a [ChatError] wrapped
      * inside [Result] if the action had failed.
      */
     public fun startAudioRecording(
-        context: Context,
         recordingFile: File,
     ): Result<Unit>
 
