@@ -40,12 +40,9 @@ import kotlin.math.log10
  * working with it.
  *
  * @param context The [Context] necessary to prepare for recording.
- * @param amplitudePollingInterval Dictates how often the recorder is polled for the latest max amplitude and
- * how often [onMaxAmplitudeSampledListener] emits a new value.
  */
 public class DefaultStreamMediaRecorder(
     private val context: Context,
-    private var amplitudePollingInterval: Long = 100L,
 ) : StreamMediaRecorder {
 
     /**
@@ -186,8 +183,9 @@ public class DefaultStreamMediaRecorder(
      * Creates a [File] internally and starts recording.
      * Calling the function again after a recording has already been started will reset the recording process.
      *
-     * @param context The [Context] necessary to prepare for recording.
      * @param recordingName The file name the recording will be stored under.
+     * @param amplitudePollingInterval Dictates how often the recorder is polled for the latest max amplitude and
+     * how often [onMaxAmplitudeSampledListener] emits a new value.
      * @param override Determines if the new recording file should override one with the same name, if it exists.
      *
      * @return The [File] to which the recording will be stored wrapped inside a [Result] if recording has
@@ -195,6 +193,7 @@ public class DefaultStreamMediaRecorder(
      */
     override fun startAudioRecording(
         recordingName: String,
+        amplitudePollingInterval: Long,
         override: Boolean,
     ): Result<File> {
         return try {
@@ -210,7 +209,7 @@ public class DefaultStreamMediaRecorder(
                     onStartRecordingListener?.onStarted()
 
                     mediaRecorderState = MediaRecorderState.RECORDING
-                    pollMaxAmplitude()
+                    pollMaxAmplitude(amplitudePollingInterval)
 
                     Result.Success(it)
                 }
@@ -231,12 +230,15 @@ public class DefaultStreamMediaRecorder(
      * Calling the function again after a recording has already been started will reset the recording process.
      *
      * @param recordingFile The [File] the audio will be saved to once the recording stops.
+     * @param amplitudePollingInterval Dictates how often the recorder is polled for the latest max amplitude and
+     * how often [onMaxAmplitudeSampledListener] emits a new value.
      *
      * @return A Unit wrapped inside a [Result] if recording has started successfully. Returns a [ChatError] wrapped
      * inside [Result] if the action had failed.
      */
     override fun startAudioRecording(
         recordingFile: File,
+        amplitudePollingInterval: Long,
     ): Result<Unit> {
         return try {
             this.recordingFile = recordingFile
@@ -251,7 +253,7 @@ public class DefaultStreamMediaRecorder(
             mediaRecorder?.start()
             onStartRecordingListener?.onStarted()
             mediaRecorderState = MediaRecorderState.RECORDING
-            pollMaxAmplitude()
+            pollMaxAmplitude(amplitudePollingInterval)
             Result.Success(Unit)
         } catch (exception: Exception) {
             release()
@@ -344,7 +346,7 @@ public class DefaultStreamMediaRecorder(
     /**
      * Polls the latest maximum amplitude value and updates [onMaxAmplitudeSampledListener] listener with the new value.
      */
-    private fun pollMaxAmplitude() {
+    private fun pollMaxAmplitude(amplitudePollingInterval: Long) {
         sampleData.clear()
         pollingJob?.cancel()
         pollingJob = coroutineScope.launch {
