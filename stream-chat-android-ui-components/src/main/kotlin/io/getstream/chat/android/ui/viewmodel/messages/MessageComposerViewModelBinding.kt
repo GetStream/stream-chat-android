@@ -63,11 +63,17 @@ public fun MessageComposerViewModel.bindView(
     audioRecordButtonHoldListener: () -> Unit = { startRecording() },
     audioRecordButtonLockListener: () -> Unit = { lockRecording() },
     audioRecordButtonCancelListener: () -> Unit = { cancelRecording() },
-    audioRecordButtonReleaseListener: () -> Unit = { completeRecording() },
+    audioRecordButtonReleaseListener: () -> Unit = {
+        completeRecording()
+        sendMessage(buildNewMessage())
+    },
     audioDeleteButtonClickListener: () -> Unit = { deleteRecording() },
     audioStopButtonClickListener: () -> Unit = { stopRecording() },
     audioToggleButtonClickListener: () -> Unit = { toggleRecording() },
-    audioCompleteButtonClickListener: () -> Unit = { completeRecording() },
+    audioCompleteButtonClickListener: () -> Unit = {
+        completeRecording()
+        sendMessage(buildNewMessage())
+    },
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener

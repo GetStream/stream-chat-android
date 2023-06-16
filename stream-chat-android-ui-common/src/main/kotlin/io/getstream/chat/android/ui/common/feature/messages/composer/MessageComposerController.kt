@@ -399,6 +399,9 @@ public class MessageComposerController(
 
         audioRecordingController.recordingState.onEach { recording ->
             state.value = state.value.copy(recording = recording)
+            if (recording is RecordingState.Complete) {
+                selectedAttachments.value = selectedAttachments.value + recording.attachment
+            }
         }.launchIn(scope)
     }
 
@@ -527,6 +530,7 @@ public class MessageComposerController(
      * @param message The message to send.
      */
     public fun sendMessage(message: Message) {
+        logger.i { "[sendMessage] message.attachments.size: ${message.attachments.size}" }
         val activeMessage = activeAction?.message ?: message
 
         val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(currentUser = chatClient.getCurrentUser())) {

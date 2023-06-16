@@ -2,6 +2,8 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.waveformData
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.copy
 import io.getstream.log.StreamLog
@@ -9,8 +11,6 @@ import io.getstream.log.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.log10
@@ -39,14 +39,12 @@ public class AudioRecordingController(
     private val drawPollingInterval = 100 // 100ms
     private val realPollingInterval = 10  // 10ms
 
-    private val samplesMutex = Mutex()
     private val samples = arrayListOf<Int>()
     private val samplesTarget = 100 // 100 samples represent entire recording
     private val samplesLimit = samplesTarget * realPollingInterval // max samples representing entire recording
     private val samplesBuffer = arrayListOf<Int>()
     private var samplesBufferLimit = 1
 
-    private val waveformMutex = Mutex()
     private val waveform = arrayListOf<Float>()
     private val waveformBuffer = IntArray(drawPollingInterval / realPollingInterval)
     private var waveformBufferCount = 0
@@ -82,7 +80,7 @@ public class AudioRecordingController(
             }
         }
         mediaRecorder.setOnMaxAmplitudeSampledListener { maxAmplitude ->
-            scope.launch {
+            scope.launch(DispatcherProvider.Main) {
                 saveSamples(maxAmplitude)
                 processWave(maxAmplitude)
             }
@@ -90,7 +88,7 @@ public class AudioRecordingController(
     }
 
     // called each 10ms
-    private suspend fun saveSamples(maxAmplitude: Int) = samplesMutex.withLock {
+    private fun saveSamples(maxAmplitude: Int) {
         samplesBuffer.add(maxAmplitude)
         if (samplesBuffer.size < samplesBufferLimit) {
             return
@@ -107,7 +105,7 @@ public class AudioRecordingController(
         }
     }
 
-    private suspend fun processWave(maxAmplitude: Int) = waveformMutex.withLock {
+    private fun processWave(maxAmplitude: Int) {
         waveformBuffer[waveformBufferCount++] = maxAmplitude
         if (waveformBufferCount < waveformBuffer.size) {
             //logger.v { "[processWave] skip ($waveformBufferCount): $maxAmplitude" }
@@ -115,7 +113,7 @@ public class AudioRecordingController(
         }
         val amplitude = waveformBuffer.downsampleMax()
         val normalized = normalize(amplitude)
-        logger.w { "[processWave] amplitudeOf($waveformBufferCount): $amplitude ($normalized)" }
+        // logger.w { "[processWave] amplitudeOf($waveformBufferCount): $amplitude ($normalized)" }
         waveformBufferCount = 0
 
         waveform.add(normalized)
@@ -156,6 +154,7 @@ public class AudioRecordingController(
         }
         logger.i { "[cancelRecording] state: $state" }
         mediaRecorder.release()
+        clearData()
         this.recordingState.value = RecordingState.Idle
     }
 
@@ -167,6 +166,7 @@ public class AudioRecordingController(
         }
         logger.i { "[deleteRecording] state: $state" }
         mediaRecorder.release()
+        clearData()
         this.recordingState.value = RecordingState.Idle
     }
 
@@ -181,19 +181,18 @@ public class AudioRecordingController(
             return
         }
         logger.i { "[stopRecording] no args: $state" }
-        mediaRecorder.stopRecording()
-        scope.launch {
-            waveformMutex.withLock {
-                waveform.clear()
-            }
-            samplesMutex.withLock {
-                val adjusted = samples.downsampleMax(samplesTarget)
-                val normalized = adjusted.normalize()
-                recordingState.value = RecordingState.Overview(state.duration, normalized)
-                samplesBuffer.clear()
-                samples.clear()
-            }
+        val result = mediaRecorder.stopRecording()
+        if (result.isFailure) {
+            logger.e { "[stopRecording] failed: ${result.errorOrNull()}" }
+            clearData()
+            recordingState.value = RecordingState.Idle
+            return
         }
+        val adjusted = samples.downsampleMax(samplesTarget)
+        val normalized = adjusted.normalize()
+        clearData()
+        val attachment = result.getOrThrow()
+        recordingState.value = RecordingState.Overview(state.duration, normalized, attachment)
     }
 
     public fun completeRecording() {
@@ -203,15 +202,38 @@ public class AudioRecordingController(
             return
         }
         logger.i { "[completeRecording] state: $state" }
-        this.recordingState.value = RecordingState.Idle
+        if (state is RecordingState.Overview) {
+            clearData()
+            state.attachment.waveformData = state.waveform
+            this.recordingState.value = RecordingState.Complete(state.attachment)
+            this.recordingState.value = RecordingState.Idle
+            return
+        }
+        val result = mediaRecorder.stopRecording()
+        if (result.isFailure) {
+            logger.e { "[completeRecording] failed: ${result.errorOrNull()}" }
+            clearData()
+            recordingState.value = RecordingState.Idle
+            return
+        }
+        val adjusted = samples.downsampleMax(samplesTarget)
+        val normalized = adjusted.normalize()
+        clearData()
+        val attachment = result.getOrThrow().apply {
+            waveformData = normalized
+        }
+        recordingState.value = RecordingState.Complete(attachment)
+        recordingState.value = RecordingState.Idle
     }
 
     public fun onCleared() {
         logger.i { "[onCleared] no args" }
         mediaRecorder.release()
+        clearData()
     }
 
     private fun clearData() {
+        logger.v { "[clearData] no args" }
         waveform.clear()
         samples.clear()
         samplesBuffer.clear()
