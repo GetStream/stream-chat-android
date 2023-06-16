@@ -1,5 +1,7 @@
 package io.getstream.chat.android.ui.common.state.messages.composer
 
+import io.getstream.chat.android.models.Attachment
+
 public sealed class RecordingState {
 
     public object Idle : RecordingState() {
@@ -28,8 +30,21 @@ public sealed class RecordingState {
     public data class Overview(
         val duration: Long = 0L,
         val waveform: List<Float> = emptyList(),
+        val attachment: Attachment
     ) : RecordingState() {
-        override fun toString(): String = "Recording.Overview(waveform=${waveform.size}, duration=${duration}ms)"
+        override fun toString(): String = "Recording.Overview(" +
+            "waveform=${waveform.size}, " +
+            "duration=${duration}ms," +
+            "attachment=${attachment.upload}" +
+            ")"
+    }
+
+    public data class Complete(
+        val attachment: Attachment
+    ) : RecordingState() {
+        override fun toString(): String = "Recording.Complete(" +
+            "attachment=${attachment.upload}" +
+            ")"
     }
 }
 

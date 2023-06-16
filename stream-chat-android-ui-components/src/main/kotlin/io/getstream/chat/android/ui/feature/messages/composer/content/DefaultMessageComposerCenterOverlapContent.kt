@@ -126,6 +126,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             renderLocked(recording)
         } else if (recording is RecordingState.Overview) {
             renderOverview(recording)
+        } else if (recording is RecordingState.Complete) {
+            renderComplete()
         } else if (recording is RecordingState.Idle) {
             renderIdle()
         }
@@ -186,6 +188,16 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             return
         }
         logger.e { "[renderIdle] no args" }
+        resetUI()
+    }
+
+    private fun renderComplete() {
+        val state = _state
+        if (state is RecordingState.Complete) {
+            logger.w { "[renderComplete] rejected (state is Complete)" }
+            return
+        }
+        logger.e { "[renderComplete] no args" }
         resetUI()
     }
 

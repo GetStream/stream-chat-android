@@ -87,9 +87,9 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
 
     private fun addAttachmentPlayerView(index: Int, attachment: Attachment) {
         logger.d { "[addAttachmentPlayerView] index: $index" }
-        attachment.assetUrl?.also {
-            extractor.start(it)
-        }
+        // attachment.assetUrl?.also {
+        //     extractor.start(it)
+        // }
 
         AudioRecordPlayerView(context).apply {
             attachment.duration
@@ -176,7 +176,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
      * Unbinds the view.
      */
     public fun unbind() {
-        extractor.stop()
+        //extractor.stop()
         audioAttachments?.map { attachment -> attachment.hashCode() }
             ?.let(ChatClient.instance().audioPlayer::removeAudios)
     }
