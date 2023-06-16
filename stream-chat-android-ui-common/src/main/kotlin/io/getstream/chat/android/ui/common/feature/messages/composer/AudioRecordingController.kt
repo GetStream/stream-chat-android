@@ -14,6 +14,9 @@ import kotlinx.coroutines.sync.withLock
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.log10
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 public class AudioRecordingController(
     private val channelId: String,
@@ -33,13 +36,27 @@ public class AudioRecordingController(
      */
     public val recordingState: MutableStateFlow<RecordingState> = MutableStateFlow(RecordingState.Idle)
 
+    private val drawPollingInterval = 100 // 100ms
+    private val realPollingInterval = 10  // 10ms
+
+    private val samplesMutex = Mutex()
+    private val samples = arrayListOf<Int>()
+    private val samplesTarget = 100 // 100 samples represent entire recording
+    private val samplesLimit = samplesTarget * realPollingInterval // max samples representing entire recording
+    private val samplesBuffer = arrayListOf<Int>()
+    private var samplesBufferLimit = 1
+
+    private val waveformMutex = Mutex()
+    private val waveform = arrayListOf<Float>()
+    private val waveformBuffer = IntArray(drawPollingInterval / realPollingInterval)
+    private var waveformBufferCount = 0
+
     init {
+        if (drawPollingInterval < realPollingInterval) {
+            throw IllegalArgumentException("drawPollingInterval must be greater than realPollingInterval")
+        }
         setupMediaRecorder()
     }
-
-    private val mutex = Mutex()
-
-    private val waveform = arrayListOf<Float>()
 
     private fun setupMediaRecorder() {
         mediaRecorder.setOnRecordingStartedListener {
@@ -59,31 +76,54 @@ public class AudioRecordingController(
         }
         mediaRecorder.setOnCurrentRecordingDurationChangedListener { durationMs ->
             logger.v { "[onRecorderDurationChanged] duration: $durationMs" }
-            scope.launch {
-                mutex.withLock {
-                    val state = recordingState.value
-                    if (state is RecordingState.Recording) {
-                        recordingState.value = state.copy(duration = durationMs)
-                    }
-                }
+            val state = recordingState.value
+            if (state is RecordingState.Recording) {
+                recordingState.value = state.copy(duration = durationMs)
             }
         }
         mediaRecorder.setOnMaxAmplitudeSampledListener { maxAmplitude ->
-
-            val normalized = normalize(maxAmplitude)
-
             scope.launch {
-                mutex.withLock {
-                    waveform.add(normalized)
-                    val state = recordingState.value
-                    if (state is RecordingState.Recording) {
-                        logger.v { "[onRecorderMaxAmplitudeSampled] waveform: ${waveform.size}" }
-                        recordingState.value = state.copy(waveform = ArrayList(waveform))
-                    }
-                }
+                saveSamples(maxAmplitude)
+                processWave(maxAmplitude)
             }
         }
+    }
 
+    // called each 10ms
+    private suspend fun saveSamples(maxAmplitude: Int) = samplesMutex.withLock {
+        samplesBuffer.add(maxAmplitude)
+        if (samplesBuffer.size < samplesBufferLimit) {
+            return
+        }
+        val amplitude = samplesBuffer.max()
+        samplesBuffer.clear()
+        samples.add(amplitude)
+        if (samples.size > samplesLimit) {
+            val newSamples = samples.downsampleMax(samplesTarget)
+            samples.clear()
+            samples.addAll(newSamples)
+            samplesBufferLimit *= samplesLimit / samplesTarget
+            logger.v { "[saveSamples] reached samples limit; samplesBufferLimit: $samplesBufferLimit" }
+        }
+    }
+
+    private suspend fun processWave(maxAmplitude: Int) = waveformMutex.withLock {
+        waveformBuffer[waveformBufferCount++] = maxAmplitude
+        if (waveformBufferCount < waveformBuffer.size) {
+            //logger.v { "[processWave] skip ($waveformBufferCount): $maxAmplitude" }
+            return
+        }
+        val amplitude = waveformBuffer.downsampleMax()
+        val normalized = normalize(amplitude)
+        logger.w { "[processWave] amplitudeOf($waveformBufferCount): $amplitude ($normalized)" }
+        waveformBufferCount = 0
+
+        waveform.add(normalized)
+        val state = recordingState.value
+        if (state is RecordingState.Recording) {
+            logger.v { "[processWave] waveform.size($normalized): ${waveform.size}" }
+            recordingState.value = state.copy(waveform = ArrayList(waveform))
+        }
     }
 
     public fun startRecording() {
@@ -93,7 +133,8 @@ public class AudioRecordingController(
             return
         }
         logger.i { "[startRecording] state: $state" }
-        mediaRecorder.startAudioRecording(recordingName = "audio_recording_${Date()}")
+        val recordingName = "audio_recording_${Date()}"
+        mediaRecorder.startAudioRecording(recordingName, realPollingInterval.toLong())
         this.recordingState.value = RecordingState.Hold()
     }
 
@@ -141,7 +182,18 @@ public class AudioRecordingController(
         }
         logger.i { "[stopRecording] no args: $state" }
         mediaRecorder.stopRecording()
-        this.recordingState.value = RecordingState.Overview(state.duration, state.waveform)
+        scope.launch {
+            waveformMutex.withLock {
+                waveform.clear()
+            }
+            samplesMutex.withLock {
+                val adjusted = samples.downsampleMax(samplesTarget)
+                val normalized = adjusted.normalize()
+                recordingState.value = RecordingState.Overview(state.duration, normalized)
+                samplesBuffer.clear()
+                samples.clear()
+            }
+        }
     }
 
     public fun completeRecording() {
@@ -159,6 +211,18 @@ public class AudioRecordingController(
         mediaRecorder.release()
     }
 
+    private fun clearData() {
+        waveform.clear()
+        samples.clear()
+        samplesBuffer.clear()
+    }
+
+    private fun List<Int>.normalize(): List<Float> {
+        return map { amplitude ->
+            normalize(amplitude)
+        }
+    }
+
     private fun normalize(maxAmplitude: Int): Float {
         //val normalized = maxOf(maxAmplitude.toFloat() / 32767f, 0.2f)
         val normalized = maxAmplitude.toFloat() / Short.MAX_VALUE
@@ -171,6 +235,79 @@ public class AudioRecordingController(
         val normalizedValue = abs((50 + decibels) / 50)
         // logger.v { "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude, decibels: $decibels, " +
         //     "normalizedValue: $normalizedValue ($normalized)" }
+        if (maxAmplitude > 20_000) {
+            logger.w { "[normalize] normalizedValue: $normalizedValue, maxAmplitude: $maxAmplitude" }
+        }
+        if (normalizedValue == Float.NEGATIVE_INFINITY || normalizedValue == Float.POSITIVE_INFINITY) {
+            return 0f
+        }
         return normalizedValue
     }
+
+    private fun List<Float>.downsample(targetSamples: Int): List<Float> {
+        val sourceSamples = size
+        val sourceStep = sourceSamples / targetSamples
+        val target = ArrayList<Float>(targetSamples)
+        for (targetIndex in 0 until targetSamples) {
+            var sum = 0f
+            for (sourceIndex in 0 until sourceStep) {
+                val sourceSample = this[targetIndex * sourceStep + sourceIndex]
+                sum += sourceSample.pow(2)
+            }
+            target.add(sqrt(sum / sourceStep))
+        }
+        return target
+    }
+
+    private fun List<Int>.downsampleMax(targetSamples: Int): List<Int> {
+        val sourceSamples = size
+        val sourceStep = sourceSamples / targetSamples
+        val target = ArrayList<Int>(targetSamples)
+        for (targetIndex in 0 until targetSamples) {
+            var max = 0
+            for (sourceIndex in 0 until sourceStep) {
+                val sourceSample = this[targetIndex * sourceStep + sourceIndex]
+                max = maxOf (max, sourceSample)
+            }
+            target.add(max)
+        }
+        return target
+    }
+
+    private fun FloatArray.downsampleRms(): Float {
+        var sumOfSquaredSamples = 0f
+        for (sample in this) {
+            sumOfSquaredSamples += sample.pow(n = 2)
+        }
+        return sqrt(sumOfSquaredSamples / size)
+    }
+
+    private fun FloatArray.downsampleAverage(): Float {
+        return sum() / size
+    }
+
+    private fun FloatArray.downsample(): Float {
+        return last()
+    }
+
+
+    private fun IntArray.downsampleRms(): Int {
+        var sumOfSquaredSamples = 0
+        for (sample in this) {
+            sumOfSquaredSamples += sample * sample
+        }
+        if (sumOfSquaredSamples == 0) {
+            return 0
+        }
+        return sqrt(sumOfSquaredSamples / size.toDouble()).roundToInt()
+    }
+
+    private fun IntArray.downsampleMax(): Int {
+        return max()
+    }
+
+    private fun List<Int>.downsampleToSingleMax(): Int {
+        return max()
+    }
+
 }
