@@ -11,7 +11,6 @@ import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -60,6 +59,7 @@ internal class WaveformView : LinearLayoutCompat {
         setWillNotDraw(false)
     }
 
+    private var barLimit = 100
     private var barWidth: Float? = null
     private var spaceWidth: Float? = null
     private var maxHeight: Int? = null
@@ -68,8 +68,6 @@ internal class WaveformView : LinearLayoutCompat {
     private var onStartDrag: () -> Unit = {}
     private var onEndDrag: (Int) -> Unit = {}
     private var isDragging = false
-
-    private val viewportWidth: Int get() = width - paddingStart - paddingEnd
 
     private val paintLeft = Paint().apply {
         color = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
@@ -152,17 +150,17 @@ internal class WaveformView : LinearLayoutCompat {
      */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val barW = 2.dpToPx()
-        val spacerW = 1.dpToPx()
-        val occupiedW = barW + spacerW
+        val viewportW = (width - paddingStart - paddingEnd).toFloat()
+        val perBarW = viewportW / barLimit
+        val spacerW = perBarW * 0.3f
+        val barW = perBarW - spacerW
 
         val maxBarHeight = height - paddingBottom - paddingTop
         val centerY = height / 2f
         val maxEnd = width - paddingEnd
         val minStart = paddingStart
 
-        val maxBarCount = (maxEnd - minStart) / occupiedW + 1
-        val minVisibleIndex = maxOf((_waveform.size - maxBarCount), 0)
+        val minVisibleIndex = maxOf((_waveform.size - barLimit), 0)
 
         var deltaX = 0f
         for (index in _waveform.lastIndex downTo minVisibleIndex) {
@@ -172,10 +170,8 @@ internal class WaveformView : LinearLayoutCompat {
             val relativeIndex = index - minVisibleIndex
             val top = centerY - barHeight / 2
             val bottom = centerY + barHeight / 2
-            val start = (minStart + occupiedW * relativeIndex).toFloat()
+            val start = (minStart + perBarW * relativeIndex).toFloat()
             val end = start + barW
-
-
 
             val rx = barW / 2f
             val ry = rx
