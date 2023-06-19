@@ -17,8 +17,11 @@
 package io.getstream.chat.android.client.audio
 
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
+import androidx.core.net.toUri
 import io.getstream.chat.android.client.scope.UserScope
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,6 +38,8 @@ internal class StreamMediaPlayer(
     private val progressUpdatePeriod: Long = 50,
 ) : AudioPlayer {
 
+    private val logger by taggedLogger("StreamMediaPlayer")
+
     private val onStateListeners: MutableMap<Int, MutableList<(AudioState) -> Unit>> = mutableMapOf()
     private val onProgressListeners: MutableMap<Int, MutableList<(ProgressData) -> Unit>> = mutableMapOf()
     private val onSpeedListeners: MutableMap<Int, MutableList<(Float) -> Unit>> = mutableMapOf()
@@ -42,31 +47,25 @@ internal class StreamMediaPlayer(
     private val registeredTrackHashSet: MutableSet<Int> = mutableSetOf()
     private val seekMap: MutableMap<Int, Int> = mutableMapOf()
     private var playerState = PlayerState.UNSET
-    private var poolJob: Job? = null
+    private var pollJob: Job? = null
     private var currentAudioHash: Int = -1
     private var playingSpeed = 1F
     private var currentIndex = 0
 
     override fun onAudioStateChange(hash: Int, func: (AudioState) -> Unit) {
-        if (onStateListeners[hash] != null) {
-            onStateListeners[hash]!!.add(func)
-        } else {
+        onStateListeners[hash]?.add(func) ?: run {
             onStateListeners[hash] = mutableListOf(func)
         }
     }
 
     override fun onProgressStateChange(hash: Int, func: (ProgressData) -> Unit) {
-        if (onProgressListeners[hash] != null) {
-            onProgressListeners[hash]!!.add(func)
-        } else {
+        onProgressListeners[hash]?.add(func) ?: run {
             onProgressListeners[hash] = mutableListOf(func)
         }
     }
 
     override fun onSpeedChange(hash: Int, func: (Float) -> Unit) {
-        if (onSpeedListeners[hash] != null) {
-            onSpeedListeners[hash]!!.add(func)
-        } else {
+        onSpeedListeners[hash]?.add(func) ?: run {
             onSpeedListeners[hash] = mutableListOf(func)
         }
     }
@@ -85,6 +84,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun play(sourceUrl: String, audioHash: Int) {
+        logger.d { "[play] audioHash: $audioHash, sourceUrl: $sourceUrl" }
         if (audioHash != currentAudioHash) {
             publishAudioState(currentAudioHash, AudioState.UNSET)
             mediaPlayer.reset()
@@ -123,7 +123,7 @@ internal class StreamMediaPlayer(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) mediaPlayer.playbackParams.speed else 1F
 
     override fun dispose() {
-        stopPooling()
+        stopPolling()
         onStateListeners.clear()
         onProgressListeners.clear()
         onSpeedListeners.clear()
@@ -132,17 +132,31 @@ internal class StreamMediaPlayer(
         mediaPlayer.release()
     }
 
+    override fun removeAudio(audioHash: Int) {
+        onStateListeners.remove(audioHash)
+        onProgressListeners.remove(audioHash)
+        onSpeedListeners.remove(audioHash)
+        audioTracks.removeAll { trackInto -> trackInto.hash == audioHash }
+        seekMap.remove(audioHash)
+    }
+
     override fun removeAudios(audioHashList: List<Int>) {
         audioHashList.forEach { hash ->
-            onStateListeners.remove(hash)
-            onProgressListeners.remove(hash)
-            onSpeedListeners.remove(hash)
-            audioTracks.removeAll { trackInto -> trackInto.hash == hash }
-            seekMap.remove(hash)
+            removeAudio(hash)
         }
     }
 
+    override fun resetAudio(audioHash: Int) {
+        if (audioHash == currentAudioHash) {
+            mediaPlayer.reset()
+            playerState = PlayerState.UNSET
+            publishAudioState(audioHash, AudioState.UNSET)
+        }
+        removeAudio(audioHash)
+    }
+
     private fun setAudio(sourceUrl: String, audioHash: Int) {
+        logger.i { "[setAudio] sourceUrl: $sourceUrl" }
         currentIndex = audioTracks.indexOfFirst { trackInfo -> trackInfo.hash == audioHash }
             .takeUnless { index -> index == -1 }
             ?: 0
@@ -179,7 +193,7 @@ internal class StreamMediaPlayer(
                 mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(playingSpeed)
                 publishSpeed(currentAudioHash, playingSpeed)
             }
-            poolProgress()
+            pollProgress()
         }
     }
 
@@ -187,9 +201,15 @@ internal class StreamMediaPlayer(
         if (playerState == PlayerState.PLAYING) {
             mediaPlayer.pause()
             seekMap[currentAudioHash] = mediaPlayer.currentPosition
-            publishAudioState(currentAudioHash, AudioState.PAUSE)
             playerState = PlayerState.PAUSE
-            stopPooling()
+            publishAudioState(currentAudioHash, AudioState.PAUSE)
+            stopPolling()
+        }
+    }
+
+    override fun resume(audioHash: Int) {
+        if (playerState == PlayerState.PAUSE && currentAudioHash == audioHash) {
+            start()
         }
     }
 
@@ -208,8 +228,9 @@ internal class StreamMediaPlayer(
     }
 
     private fun onComplete() {
-        stopPooling()
+        stopPolling()
         publishProgress(currentAudioHash, ProgressData(0, 0.0))
+        playerState = PlayerState.IDLE
         publishAudioState(currentAudioHash, AudioState.IDLE)
         seekMap[currentAudioHash] = 0
 
@@ -222,8 +243,8 @@ internal class StreamMediaPlayer(
         }
     }
 
-    private fun poolProgress() {
-        poolJob = userScope.launch(Dispatchers.Default) {
+    private fun pollProgress() {
+        pollJob = userScope.launch(Dispatchers.Default) {
             while (true) {
                 delay(progressUpdatePeriod)
 
@@ -236,8 +257,8 @@ internal class StreamMediaPlayer(
         }
     }
 
-    private fun stopPooling() {
-        poolJob?.cancel()
+    private fun stopPolling() {
+        pollJob?.cancel()
     }
 
     private fun publishAudioState(audioHash: Int, audioState: AudioState) {
@@ -250,6 +271,14 @@ internal class StreamMediaPlayer(
 
     private fun publishSpeed(audioHash: Int, speed: Float) {
         onSpeedListeners[audioHash]?.forEach { listener -> listener.invoke(speed) }
+    }
+
+    private fun normalize(uri: String): String {
+        try {
+            return uri.toUri().toString()
+        } catch (_: Throwable) {
+            return uri
+        }
     }
 }
 

@@ -30,17 +30,22 @@ public sealed class RecordingState {
     public data class Overview(
         val duration: Long = 0L,
         val waveform: List<Float> = emptyList(),
-        val attachment: Attachment
+        val attachment: Attachment,
+        val isPlaying: Boolean = false,
+        val playingProgress: Float = 0f,
+        val playingId: Int = -1,
     ) : RecordingState() {
         override fun toString(): String = "Recording.Overview(" +
             "waveform=${waveform.size}, " +
-            "duration=${duration}ms," +
+            "duration=${duration}ms, " +
+            "isPlaying=${isPlaying}, " +
+            "playingProgress=${playingProgress}, " +
             "attachment=${attachment.upload}" +
             ")"
     }
 
     public data class Complete(
-        val attachment: Attachment
+        val attachment: Attachment,
     ) : RecordingState() {
         override fun toString(): String = "Recording.Complete(" +
             "attachment=${attachment.upload}" +

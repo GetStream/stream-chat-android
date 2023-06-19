@@ -172,7 +172,6 @@ public class StatefulStreamMediaRecorder(
         override: Boolean = true,
     ): Result<File> =
         streamMediaRecorder.startAudioRecording(
-            context = context,
             recordingName = recordingName,
             override = override
         )
@@ -191,7 +190,6 @@ public class StatefulStreamMediaRecorder(
         context: Context,
         recordingFile: File,
     ): Result<Unit> = streamMediaRecorder.startAudioRecording(
-        context = context,
         recordingFile = recordingFile
     )
 

@@ -69,6 +69,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
@@ -95,6 +96,7 @@ public class MessageComposerController(
     private val channelId: String,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val mediaRecorder: StreamMediaRecorder,
+    private val fileToUri: (File) -> String,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     messageId: String? = null,
@@ -116,7 +118,9 @@ public class MessageComposerController(
      */
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
 
-    private val audioRecordingController = AudioRecordingController(channelId, chatClient, mediaRecorder, scope)
+    private val audioRecordingController = AudioRecordingController(
+        channelId, chatClient, mediaRecorder, fileToUri, scope
+    )
 
     /**
      * Buffers typing updates.
@@ -724,7 +728,7 @@ public class MessageComposerController(
 
     public fun deleteRecording(): Unit = audioRecordingController.deleteRecording()
 
-    public fun toggleRecording(): Unit = audioRecordingController.toggleRecording()
+    public fun toggleRecordingPlayback(): Unit = audioRecordingController.toggleRecordingPlayback()
 
     public fun stopRecording(): Unit = audioRecordingController.stopRecording()
 

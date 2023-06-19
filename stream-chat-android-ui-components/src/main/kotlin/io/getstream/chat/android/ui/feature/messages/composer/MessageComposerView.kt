@@ -31,7 +31,6 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCenterContent
@@ -160,7 +159,7 @@ public class MessageComposerView : ConstraintLayout {
     public var audioRecordButtonReleaseListener: () -> Unit = {}
     public var audioDeleteButtonClickListener: () -> Unit = {}
     public var audioStopButtonClickListener: () -> Unit = {}
-    public var audioToggleButtonClickListener: () -> Unit = {}
+    public var audioPlaybackButtonClickListener: () -> Unit = {}
     public var audioCompleteButtonClickListener: () -> Unit = {}
 
     /**
@@ -282,7 +281,7 @@ public class MessageComposerView : ConstraintLayout {
                 it.recordButtonReleaseListener = { audioRecordButtonReleaseListener() }
                 it.deleteButtonClickListener = { audioDeleteButtonClickListener() }
                 it.stopButtonClickListener = { audioStopButtonClickListener() }
-                it.toggleButtonClickListener = { audioToggleButtonClickListener() }
+                it.playbackButtonClickListener = { audioPlaybackButtonClickListener() }
                 it.completeButtonClickListener = { audioCompleteButtonClickListener() }
             }
         )

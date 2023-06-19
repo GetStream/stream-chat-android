@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.viewmodel.messages
 
 import android.content.Context
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
@@ -31,6 +32,7 @@ import io.getstream.chat.android.ui.common.feature.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
+import java.io.File
 
 /**
  * A ViewModel factory for MessageListViewModel, MessageListHeaderViewModel and MessageComposerViewModel.
@@ -67,6 +69,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),
+    private val fileToUri: (File) -> String = { file -> file.toUri().toString() },
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val enforceUniqueReactions: Boolean = true,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
@@ -87,8 +90,9 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             MessageComposerViewModel(
                 MessageComposerController(
                     cid,
+                    mediaRecorder = mediaRecorder,
                     messageId = messageId,
-                    mediaRecorder = mediaRecorder
+                    fileToUri = fileToUri
                 )
             )
         },
@@ -121,7 +125,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     chatClient = chatClient,
                     mediaRecorder = mediaRecorder,
                     maxAttachmentCount = maxAttachmentCount,
-                    maxAttachmentSize = maxAttachmentSize
+                    maxAttachmentSize = maxAttachmentSize,
+                    fileToUri = fileToUri
                 )
             )
         },

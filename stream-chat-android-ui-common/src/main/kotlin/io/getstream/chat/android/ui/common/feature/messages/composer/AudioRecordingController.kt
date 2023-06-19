@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.ProgressData
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -11,6 +12,7 @@ import io.getstream.log.TaggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.log10
@@ -22,6 +24,7 @@ public class AudioRecordingController(
     private val channelId: String,
     private val chatClient: ChatClient,
     private val mediaRecorder: StreamMediaRecorder,
+    private val fileToUri: (File) -> String,
     private val scope: CoroutineScope,
 ) {
 
@@ -30,6 +33,8 @@ public class AudioRecordingController(
      * and other things to log.
      */
     private val logger: TaggedLogger = StreamLog.getLogger("Chat:RecordController")
+
+    private val audioPlayer get() = chatClient.audioPlayer
 
     /**
      * Represents the current recording state.
@@ -170,8 +175,46 @@ public class AudioRecordingController(
         this.recordingState.value = RecordingState.Idle
     }
 
-    public fun toggleRecording() {
-        // TODO
+    public fun toggleRecordingPlayback() {
+        val state = this.recordingState.value
+        if (state !is RecordingState.Overview) {
+            logger.w { "[toggleRecordingPlayback] rejected (state is not Locked): $state" }
+            return
+        }
+        logger.i { "[toggleRecordingPlayback] state: $state" }
+        val audioFile = state.attachment.upload ?: run {
+            logger.w { "[toggleRecordingPlayback] rejected (audioFile is null)" }
+            return
+        }
+        if (state.isPlaying) {
+            audioPlayer.pause()
+            this.recordingState.value = state.copy(isPlaying = false)
+            return
+        }
+        if (state.playingId != -1) {
+            audioPlayer.resume(state.playingId)
+            this.recordingState.value = state.copy(isPlaying = true)
+            return
+        }
+        val hash = audioFile.hashCode()
+        audioPlayer.onProgressStateChange(hash, ::onAudioPlayingProgress)
+        audioPlayer.play(fileToUri(audioFile), hash)
+        this.recordingState.value = state.copy(
+            isPlaying = true,
+            playingId = hash,
+        )
+
+    }
+
+    private fun onAudioPlayingProgress(progressState: ProgressData) {
+        logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
+        val curState = this.recordingState.value
+        if (curState is RecordingState.Overview) {
+            this.recordingState.value = curState.copy(
+                isPlaying = true,
+                playingProgress = progressState.progress.toFloat()
+            )
+        }
     }
 
     public fun stopRecording() {
@@ -203,6 +246,7 @@ public class AudioRecordingController(
         }
         logger.i { "[completeRecording] state: $state" }
         if (state is RecordingState.Overview) {
+            audioPlayer.resetAudio(state.playingId)
             clearData()
             state.attachment.waveformData = state.waveform
             this.recordingState.value = RecordingState.Complete(state.attachment)
@@ -229,14 +273,21 @@ public class AudioRecordingController(
     public fun onCleared() {
         logger.i { "[onCleared] no args" }
         mediaRecorder.release()
+        val state = this.recordingState.value
+        if (state is RecordingState.Overview) {
+            audioPlayer.resetAudio(state.playingId)
+        }
         clearData()
     }
 
     private fun clearData() {
         logger.v { "[clearData] no args" }
         waveform.clear()
+        waveformBuffer.fill(0)
+        waveformBufferCount = 0
         samples.clear()
         samplesBuffer.clear()
+        samplesBufferLimit = 1
     }
 
     private fun List<Int>.normalize(): List<Float> {
