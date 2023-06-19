@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
@@ -37,6 +38,7 @@ import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
+import java.io.File
 
 /**
  * Holds all the dependencies needed to build the ViewModels for the Messages Screen.
@@ -71,6 +73,7 @@ public class MessagesViewModelFactory(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),
+    private val fileToUriConverter: (File) -> String = { file -> file.toUri().toString() },
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val clipboardHandler: ClipboardHandler =
         ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
@@ -96,6 +99,7 @@ public class MessagesViewModelFactory(
                 MessageComposerController(
                     chatClient = chatClient,
                     mediaRecorder = mediaRecorder,
+                    fileToUriConverter = fileToUriConverter,
                     channelId = channelId,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize

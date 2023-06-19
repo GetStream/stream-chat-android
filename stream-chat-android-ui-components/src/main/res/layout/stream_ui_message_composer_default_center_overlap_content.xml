@@ -20,12 +20,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintStart_toEndOf="@id/recordingIndicator"
+        app:layout_constraintStart_toEndOf="@id/recordingPlayback"
 
         />
 
     <ImageView
-        android:id="@+id/recordingIndicator"
+        android:id="@+id/recordingPlayback"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:background="?selectableItemBackgroundBorderless"
@@ -44,9 +44,9 @@
         android:id="@+id/recordingTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/recordingIndicator"
-        app:layout_constraintStart_toEndOf="@id/recordingIndicator"
-        app:layout_constraintTop_toTopOf="@id/recordingIndicator"
+        app:layout_constraintBottom_toBottomOf="@id/recordingPlayback"
+        app:layout_constraintStart_toEndOf="@id/recordingPlayback"
+        app:layout_constraintTop_toTopOf="@id/recordingPlayback"
         />
 
     <TextView
@@ -58,9 +58,9 @@
         android:gravity="center"
         android:text="@string/stream_ui_message_composer_slide_to_cancel"
         app:drawableStartCompat="@drawable/stream_ui_arrow_left"
-        app:layout_constraintBottom_toBottomOf="@id/recordingIndicator"
+        app:layout_constraintBottom_toBottomOf="@id/recordingPlayback"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/recordingIndicator"
+        app:layout_constraintTop_toTopOf="@id/recordingPlayback"
         />
 
 
@@ -69,8 +69,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:background="#80FFFF00"
-        android:padding="8dp"
+
+        android:paddingVertical="8dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/horizontalGuideline"
         app:layout_constraintEnd_toEndOf="parent"

@@ -29,7 +29,6 @@ import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -242,9 +241,14 @@ public class MessageComposerViewModel(
 
     public fun stopRecording(): Unit = messageComposerController.stopRecording()
 
-    public fun toggleRecording(): Unit = messageComposerController.toggleRecording()
+    public fun toggleRecordingPlayback(): Unit = messageComposerController.toggleRecordingPlayback()
 
     public fun completeRecording(): Unit = messageComposerController.completeRecording()
+
+    public fun sendRecording() {
+        completeRecording()
+        sendMessage(buildNewMessage())
+    }
 
     /**
      * Disposes the inner [MessageComposerController].

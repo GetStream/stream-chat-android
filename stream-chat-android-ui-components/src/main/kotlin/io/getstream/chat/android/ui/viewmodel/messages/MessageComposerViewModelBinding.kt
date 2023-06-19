@@ -24,7 +24,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import kotlinx.coroutines.launch
 
@@ -63,17 +62,11 @@ public fun MessageComposerViewModel.bindView(
     audioRecordButtonHoldListener: () -> Unit = { startRecording() },
     audioRecordButtonLockListener: () -> Unit = { lockRecording() },
     audioRecordButtonCancelListener: () -> Unit = { cancelRecording() },
-    audioRecordButtonReleaseListener: () -> Unit = {
-        completeRecording()
-        sendMessage(buildNewMessage())
-    },
+    audioRecordButtonReleaseListener: () -> Unit = { sendRecording() },
     audioDeleteButtonClickListener: () -> Unit = { deleteRecording() },
     audioStopButtonClickListener: () -> Unit = { stopRecording() },
-    audioToggleButtonClickListener: () -> Unit = { toggleRecording() },
-    audioCompleteButtonClickListener: () -> Unit = {
-        completeRecording()
-        sendMessage(buildNewMessage())
-    },
+    audioPlaybackButtonClickListener: () -> Unit = { toggleRecordingPlayback() },
+    audioCompleteButtonClickListener: () -> Unit = { completeRecording() },
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener
@@ -91,7 +84,7 @@ public fun MessageComposerViewModel.bindView(
     view.audioRecordButtonReleaseListener = audioRecordButtonReleaseListener
     view.audioDeleteButtonClickListener = audioDeleteButtonClickListener
     view.audioStopButtonClickListener = audioStopButtonClickListener
-    view.audioToggleButtonClickListener = audioToggleButtonClickListener
+    view.audioPlaybackButtonClickListener = audioPlaybackButtonClickListener
     view.audioCompleteButtonClickListener = audioCompleteButtonClickListener
 
     lifecycleOwner.lifecycleScope.launch {

@@ -63,6 +63,10 @@ public interface AudioPlayer {
      */
     public fun pause()
 
+    public fun resume(audioHash: Int)
+
+    public fun resetAudio(audioHash: Int)
+
     /**
      * Seeks the audio track of the audio hash to the milli second position. If the hash is the same of the current
      * playing audio track, the current audio track pauses.
@@ -86,6 +90,11 @@ public interface AudioPlayer {
      * Current speed of reproduction. Options are 1x, 1.5x and 2x
      */
     public fun currentSpeed(): Float
+
+    /**
+     * Removes the current audio form the reproduction queue and removes the listeners
+     */
+    public fun removeAudio(audioHash: Int)
 
     /**
      * Removes the current audios form the reproduction queue and removes the listeners

@@ -3,10 +3,8 @@ package io.getstream.chat.android.ui.feature.messages.composer.content
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -20,8 +18,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
-import com.getstream.sdk.chat.audio.recording.MediaRecorderState
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -31,8 +27,6 @@ import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerCon
 import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
-import kotlin.math.abs
-import kotlin.math.log10
 
 private const val TAG = "OverlappingContent"
 
@@ -49,23 +43,23 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         defStyleRes
     )
 
-    private val logger by taggedLogger(TAG)
-
-    private var parentHeight: Int = 0
-    private var parentWidth: Int = 0
-    private var centerContentHeight: Int = 0
-
-    private lateinit var binding: StreamUiMessageComposerDefaultCenterOverlapContentBinding
-
     public var recordButtonHoldListener: () -> Unit = {}
     public var recordButtonLockListener: () -> Unit = {}
     public var recordButtonCancelListener: () -> Unit = {}
     public var recordButtonReleaseListener: () -> Unit = {}
 
-    public var toggleButtonClickListener: () -> Unit = {} // TODO not used
+    public var playbackButtonClickListener: () -> Unit = {}
     public var stopButtonClickListener: () -> Unit = {}
     public var deleteButtonClickListener: () -> Unit = {}
     public var completeButtonClickListener: () -> Unit = {}
+
+    private val logger by taggedLogger(TAG)
+
+    private val binding: StreamUiMessageComposerDefaultCenterOverlapContentBinding
+
+    private var parentHeight: Int = 0
+    private var parentWidth: Int = 0
+    private var centerContentHeight: Int = 0
 
     private var lockPopup: PopupWindow? = null
     private val lockBaseRect = Rect()
@@ -87,7 +81,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private var _state: RecordingState = RecordingState.Idle
         set(value) {
-            Log.e(TAG, "[setState] value: $value")
+            logger.i { "[setState] old: $field, new: $value" }
             field = value
         }
 
@@ -105,16 +99,15 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingComplete.setOnClickListener {
             completeButtonClickListener()
         }
+        binding.recordingPlayback.setOnClickListener {
+            playbackButtonClickListener()
+        }
     }
 
     private lateinit var composerContext: MessageComposerContext
 
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         composerContext = messageComposerContext
-    }
-
-    override fun onFinishInflate() {
-        super.onFinishInflate()
     }
 
     override fun renderState(state: MessageComposerState) {
@@ -134,17 +127,9 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         _state = recording
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-    }
-
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         renderIdle()
-    }
-
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
@@ -154,15 +139,15 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == View.VISIBLE) {
-            Log.e(TAG, "[onVisibilityChanged] VISIBLE")
+            logger.i { "[onVisibilityChanged] VISIBLE" }
         } else {
-            Log.e(TAG, "[onVisibilityChanged] NOT_VISIBLE")
+            logger.i { "[onVisibilityChanged] NOT_VISIBLE" }
             resetUI()
         }
     }
 
     private fun resetUI() {
-        Log.e(TAG, "[resetUI] no args")
+        logger.d { "[resetUI] no args" }
 
         binding.recordingWaveform.clearData()
         binding.recordingSlider.translationX = 0f
@@ -178,7 +163,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        Log.i(TAG, "[onLayout] w: $width, h: $height")
+        logger.i { "[onLayout] w: $width, h: $height" }
     }
 
     private fun renderIdle() {
@@ -208,11 +193,11 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         layoutParams.height = centerContentHeight
         binding.recordingSlider.isVisible = true
 
-        binding.recordingIndicator.setImageResource(R.drawable.stream_ui_ic_mic)
-        binding.recordingIndicator.setImageColorRes(R.color.stream_ui_accent_red)
-        binding.recordingIndicator.isVisible = true
-        binding.recordingIndicator.isClickable = false
-        binding.recordingIndicator.isFocusable = false
+        binding.recordingPlayback.setImageResource(R.drawable.stream_ui_ic_mic)
+        binding.recordingPlayback.setImageColorRes(R.color.stream_ui_accent_red)
+        binding.recordingPlayback.isVisible = true
+        binding.recordingPlayback.isClickable = false
+        binding.recordingPlayback.isFocusable = false
         binding.recordingWaveform.isVisible = false
         binding.recordingStop.isVisible = false
         binding.recordingDelete.isVisible = false
@@ -250,11 +235,11 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         layoutParams.height = parentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
 
-        binding.recordingIndicator.setImageResource(R.drawable.stream_ui_ic_play)
-        binding.recordingIndicator.setImageColorRes(R.color.stream_ui_accent_blue)
-        binding.recordingIndicator.isClickable = true
-        binding.recordingIndicator.isFocusable = true
-        binding.recordingIndicator.isVisible = true
+        binding.recordingPlayback.setImageResource(R.drawable.stream_ui_ic_play)
+        binding.recordingPlayback.setImageColorRes(R.color.stream_ui_accent_blue)
+        binding.recordingPlayback.isClickable = true
+        binding.recordingPlayback.isFocusable = true
+        binding.recordingPlayback.isVisible = true
 
         binding.recordingSlider.isVisible = false
 
@@ -277,19 +262,19 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         val state = _state
         val action = event.actionMasked
         if (action == MotionEvent.ACTION_DOWN && state !is RecordingState.Idle) {
-            Log.w(TAG, "[onTouchEvent] rejected ACTION_DOWN (state is not Idle): $state")
+            logger.w { "[onTouchEvent] rejected ACTION_DOWN (state is not Idle): $state" }
             return false
         }
         if (action != MotionEvent.ACTION_DOWN && state !is RecordingState.Hold) {
-            Log.w(TAG, "[onTouchEvent] rejected ${actionToString(action)} (state is not Hold): $state")
+            logger.w { "[onTouchEvent] rejected ${actionToString(action)} (state is not Hold): $state" }
             return false
         }
-        Log.v(TAG, "[onTouchEvent] state: $state, event: $event")
+        logger.v { "[onTouchEvent] state: $state, event: $event" }
         val x = event.rawX
         val y = event.rawY
         when (action) {
             MotionEvent.ACTION_DOWN -> {
-                Log.i(TAG, "[onTouchEvent] ACTION_DOWN")
+                logger.i { "[onTouchEvent] ACTION_DOWN" }
                 if (!permissionChecker.isGrantedAudioRecordPermission(context)) {
                     permissionChecker.checkAudioRecordPermissions(this)
                     return false
@@ -316,15 +301,14 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                 val deltaY = (y - baseTouch[1]).toInt()
 
                 if (micBaseRect.width() == 0 || lockBaseRect.width() == 0) {
-                    Log.v(TAG, "[onTouchEvent] ACTION_MOVE rejected (no popups 1)")
+                    logger.v { "[onTouchEvent] ACTION_MOVE rejected (no popups 1)" }
                     return false
                 }
                 if (micPopup == null || lockPopup == null) {
-                    Log.v(TAG, "[onTouchEvent] ACTION_MOVE rejected (no popups 2)")
+                    logger.v { "[onTouchEvent] ACTION_MOVE rejected (no popups 2)" }
                     return false
                 }
-
-                Log.i(TAG, "[onTouchEvent] ACTION_MOVE: offsetX: $deltaX, offsetY: $deltaY")
+                logger.i { "[onTouchEvent] ACTION_MOVE: offsetX: $deltaX, offsetY: $deltaY" }
 
                 val micX = micBaseRect.left + deltaX
                 val micY = micBaseRect.top + deltaY
@@ -338,31 +322,31 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
                 val progress =
                     (micBaseRect.left - micLastRect.left).toFloat() / (micBaseRect.left - micMoveRect.left).toFloat()
-                Log.w(TAG, "[onMove] progress: $progress, diff: ${micLastRect.left - micBaseRect.left}")
+                logger.w { "[onMove] progress: $progress, diff: ${micLastRect.left - micBaseRect.left}" }
                 binding.recordingSlider.translationX = micLastRect.left - micBaseRect.left.toFloat()
                 binding.recordingSlider.alpha = 1 - progress * 1.5f
 
                 if (micLastRect.left == micMoveRect.left) {
-                    Log.w(TAG, "[onMove] cancelled; micLastRect: $micLastRect, micMoveRect: $micMoveRect")
+                    logger.w { "[onMove] cancelled; micLastRect: $micLastRect, micMoveRect: $micMoveRect" }
                     renderIdle()
                     recordButtonCancelListener()
                     return false
                 }
 
                 if (micLastRect.top == micMoveRect.top) {
-                    Log.w(TAG, "[onMove] locked")
+                    logger.w { "[onMove] locked" }
                     recordButtonLockListener()
                     return false
                 }
             }
             MotionEvent.ACTION_CANCEL -> {
-                Log.d(TAG, "[onTouchEvent] ACTION_CANCEL")
+                logger.d { "[onTouchEvent] ACTION_CANCEL" }
                 recordButtonCancelListener()
                 return true
             }
 
             MotionEvent.ACTION_UP -> {
-                Log.d(TAG, "[onTouchEvent] ACTION_UP")
+                logger.d { "[onTouchEvent] ACTION_UP" }
                 recordButtonReleaseListener()
                 return true
             }
@@ -371,7 +355,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     private fun showMicPopup() {
-        Log.d(TAG, "[showMicPopup] orig: $micOrigRect")
+        logger.d { "[showMicPopup] orig: $micOrigRect" }
         val micW = micW
         val micH = micH
         val micContent = LayoutInflater.from(context).inflate(
@@ -401,7 +385,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     private fun showLockPopup() {
-        Log.d(TAG, "[showLockPopup] micOrigRect: $micOrigRect")
+        logger.d { "[showLockPopup] micOrigRect: $micOrigRect" }
         val lockW = 52.dpToPx()
         val lockH = 92.dpToPx()
         val lockContent = LayoutInflater.from(context).inflate(
