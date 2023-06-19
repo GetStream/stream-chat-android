@@ -66,6 +66,10 @@ module.exports = {
                 },
                 {
                     type: 'doc',
+                    id: 'client/guides/replace-database',
+                },
+                {
+                    type: 'doc',
                     id: 'client/guides/offline-support',
                 },
                 {
