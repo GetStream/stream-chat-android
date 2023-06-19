@@ -230,12 +230,15 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     private fun renderOverview(state: RecordingState.Overview) {
-        logger.d { "[renderOverview] no args" }
+        logger.d { "[renderOverview] state.isPlaying: ${state.isPlaying}" }
 
         layoutParams.height = parentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
 
-        binding.recordingPlayback.setImageResource(R.drawable.stream_ui_ic_play)
+        binding.recordingPlayback.setImageResource(when (state.isPlaying) {
+            true -> R.drawable.stream_ui_ic_pause
+            else -> R.drawable.stream_ui_ic_play
+        })
         binding.recordingPlayback.setImageColorRes(R.color.stream_ui_accent_blue)
         binding.recordingPlayback.isClickable = true
         binding.recordingPlayback.isFocusable = true

@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.ProgressData
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -187,23 +188,45 @@ public class AudioRecordingController(
             return
         }
         if (state.isPlaying) {
+            logger.v { "[toggleRecordingPlayback] pause playback" }
             audioPlayer.pause()
             this.recordingState.value = state.copy(isPlaying = false)
             return
         }
         if (state.playingId != -1) {
+            logger.v { "[toggleRecordingPlayback] resume playback" }
+            //audioPlayer.play(fileToUri(audioFile), state.playingId)
             audioPlayer.resume(state.playingId)
             this.recordingState.value = state.copy(isPlaying = true)
             return
         }
+        logger.v { "[toggleRecordingPlayback] start playback" }
         val hash = audioFile.hashCode()
         audioPlayer.onProgressStateChange(hash, ::onAudioPlayingProgress)
+        audioPlayer.onAudioStateChange(hash, ::onAudioStateChanged)
         audioPlayer.play(fileToUri(audioFile), hash)
         this.recordingState.value = state.copy(
             isPlaying = true,
             playingId = hash,
         )
 
+    }
+
+    private fun onAudioStateChanged(playbackState: AudioState) {
+        val state = this.recordingState.value
+        if (state !is RecordingState.Overview) {
+            logger.d { "[onAudioStateChanged] rejected (state is not Overview): $state" }
+            return
+        }
+        logger.d { "[onAudioStateChanged] playbackState: $playbackState" }
+        this.recordingState.value = state.copy(
+            isPlaying = playbackState == AudioState.PLAYING,
+            playingProgress = when (playbackState) {
+                AudioState.PLAYING,
+                AudioState.PAUSE -> state.playingProgress
+                else -> 0f
+            }
+        )
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
