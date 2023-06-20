@@ -53,7 +53,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     public var stopButtonClickListener: () -> Unit = {}
     public var deleteButtonClickListener: () -> Unit = {}
     public var completeButtonClickListener: () -> Unit = {}
-    public var sliderProgressChangeListener: (Float) -> Unit = {}
+    public var sliderDragStartListener: (Float) -> Unit = {}
+    public var sliderDragStopListener: (Float) -> Unit = {}
 
     private val logger by taggedLogger(TAG)
 
@@ -83,7 +84,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private var _state: RecordingState = RecordingState.Idle
         set(value) {
-            logger.i { "[setState] old: $field, new: $value" }
+            logger.i { "[setState] state: $value" }
             field = value
         }
 
@@ -104,8 +105,11 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingPlayback.setOnClickListener {
             playbackButtonClickListener()
         }
-        binding.recordingWaveform.onSliderProgressChange = { progress ->
-            sliderProgressChangeListener(progress)
+        binding.recordingWaveform.onSliderDragStart = { progress ->
+            sliderDragStartListener(progress)
+        }
+        binding.recordingWaveform.onSliderDragStop = { progress ->
+            sliderDragStopListener(progress)
         }
     }
 

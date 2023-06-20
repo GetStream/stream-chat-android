@@ -67,6 +67,8 @@ public fun MessageComposerViewModel.bindView(
     audioStopButtonClickListener: () -> Unit = { stopRecording() },
     audioPlaybackButtonClickListener: () -> Unit = { toggleRecordingPlayback() },
     audioCompleteButtonClickListener: () -> Unit = { completeRecording() },
+    audioSliderDragStartListener: (Float) -> Unit = { pauseRecording() },
+    audioSliderDragStopListener: (Float) -> Unit = { progress -> seekRecordingTo(progress) },
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener
@@ -86,6 +88,8 @@ public fun MessageComposerViewModel.bindView(
     view.audioStopButtonClickListener = audioStopButtonClickListener
     view.audioPlaybackButtonClickListener = audioPlaybackButtonClickListener
     view.audioCompleteButtonClickListener = audioCompleteButtonClickListener
+    view.audioSliderDragStartListener = audioSliderDragStartListener
+    view.audioSliderDragStopListener = audioSliderDragStopListener
 
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect(view::renderState)
